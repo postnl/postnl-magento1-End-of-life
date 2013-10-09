@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/**
+ *                  ___________       __            __   
+ *                  \__    ___/____ _/  |_ _____   |  |  
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/       
+ *          ___          __                                   __   
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
+ *                  \/                           \/               
+ *                  ________       
+ *                 /  _____/_______   ____   __ __ ______  
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/ 
+ *                        \/                       |__|    
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL: 
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */		
+-->
+<config>
+	<modules>
+		<TIG_PostNL>
+			<version>0.1.0</version>
+		</TIG_PostNL>
+	</modules>
+	<global>
+		<blocks>
+			<postnl>
+				<class>TIG_PostNL_Block</class>
+			</postnl>
+		</blocks>
+		<helpers>
+			<postnl>
+				<class>TIG_PostNL_Helper</class>
+			</postnl>
+		</helpers>
+        <models>
+        	<!-- Model definitions per submodule -->
+            <postnl>
+                <class>TIG_PostNL_Model</class>
+                <resourceModel>postnl_resource</resourceModel>
+            </postnl>
+            <postnl_core>
+                <class>TIG_PostNL_Model_Core</class>
+            </postnl_core>
+            <postnl_carrier>
+                <class>TIG_PostNL_Model_Carrier</class>
+            </postnl_carrier>
+            
+            <!-- Resource model definitions per submodule -->
+            <postnl_resource>
+                <class>TIG_PostNL_Model_Resource</class>
+            </postnl_resource>
+        </models>
+        <resources>
+            <postnl_setup>
+                <setup>
+                    <module>TIG_PostNL</module>
+                    <class>TIG_PostNL_Model_Resource_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </postnl_setup>
+            <postnl_write>
+                <connection>
+                	<use>core_write</use>
+                </connection>
+            </postnl_write>
+            <postnl_read>
+                <connection>
+               		<use>core_read</use>
+            	</connection>
+            </postnl_read>
+        </resources>
+	</global>
+    <default>
+        <carriers>
+            <postnl>
+                <active>1</active>
+                <sallowspecific>0</sallowspecific>
+                <model>postnl_carrier/postnl</model>
+                <name>PostNL</name>
+                <price>5.00</price>
+                <title>PostNL</title>
+                <type>I</type>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <handling_type>F</handling_type>
+            </postnl>
+        </carriers>
+    </default>
+</config>

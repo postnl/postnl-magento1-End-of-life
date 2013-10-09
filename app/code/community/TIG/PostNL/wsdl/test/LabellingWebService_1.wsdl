@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="LabellingWebService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="LabellingWebService.xsd" namespace="http://postnl.nl/cif/services/LabellingWebService/"/>
+      <xsd:import schemaLocation="LabellingWebService_1_2.xsd" namespace="http://schemas.datacontract.org/2004/07/Tpp.Cif.WebServices.WebServices"/>
+      <xsd:import schemaLocation="LabellingWebService_1_2_3_4.xsd" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+      <xsd:import schemaLocation="LabellingWebService_1.xsd" namespace="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Domain.LabellingService"/>
+      <xsd:import schemaLocation="LabellingWebService_1_2_3.xsd" namespace="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Services.Exception"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="GenerateLabelRequestContract">
+    <wsdl:part name="GenerateLabel" element="q1:GenerateLabel" xmlns:q1="http://postnl.nl/cif/services/LabellingWebService/"/>
+  </wsdl:message>
+  <wsdl:message name="GenerateLabelResponseContract">
+    <wsdl:part name="ResponseShipment" element="q2:ResponseShipment" xmlns:q2="http://postnl.nl/cif/services/LabellingWebService/"/>
+  </wsdl:message>
+  <wsdl:message name="ILabellingWebService_GenerateLabel_CifExceptionFault_FaultMessage">
+    <wsdl:part name="detail" element="q3:CifException" xmlns:q3="http://schemas.datacontract.org/2004/07/Tpp.Cif.WebServices.WebServices"/>
+  </wsdl:message>
+  <wsdl:message name="ILabellingWebService_GenerateLabelWithoutConfirm_CifExceptionFault_FaultMessage">
+    <wsdl:part name="detail" element="q4:CifException" xmlns:q4="http://schemas.datacontract.org/2004/07/Tpp.Cif.WebServices.WebServices"/>
+  </wsdl:message>
+  <wsdl:portType name="ILabellingWebService">
+    <wsdl:operation name="GenerateLabel">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILabellingWebService/GenerateLabel" name="GenerateLabelRequestContract" message="tns:GenerateLabelRequestContract"/>
+      <wsdl:output wsaw:Action="http://tempuri.org/ILabellingWebService/GenerateLabelResponse" name="GenerateLabelResponseContract" message="tns:GenerateLabelResponseContract"/>
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILabellingWebService/GenerateLabelCifExceptionFault" name="CifExceptionFault" message="tns:ILabellingWebService_GenerateLabel_CifExceptionFault_FaultMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateLabelWithoutConfirm">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILabellingWebService/GenerateLabelWithoutConfirm" name="GenerateLabelRequestContract" message="tns:GenerateLabelRequestContract"/>
+      <wsdl:output wsaw:Action="http://tempuri.org/ILabellingWebService/GenerateLabelWithoutConfirmResponse" name="GenerateLabelResponseContract" message="tns:GenerateLabelResponseContract"/>
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILabellingWebService/GenerateLabelWithoutConfirmCifExceptionFault" name="CifExceptionFault" message="tns:ILabellingWebService_GenerateLabelWithoutConfirm_CifExceptionFault_FaultMessage"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_ILabellingWebService" type="tns:ILabellingWebService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GenerateLabel">
+      <soap:operation soapAction="http://tempuri.org/ILabellingWebService/GenerateLabel" style="document"/>
+      <wsdl:input name="GenerateLabelRequestContract">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GenerateLabelResponseContract">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="CifExceptionFault">
+        <soap:fault name="CifExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateLabelWithoutConfirm">
+      <soap:operation soapAction="http://tempuri.org/ILabellingWebService/GenerateLabelWithoutConfirm" style="document"/>
+      <wsdl:input name="GenerateLabelRequestContract">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GenerateLabelResponseContract">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="CifExceptionFault">
+        <soap:fault name="CifExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="LabellingWebService">
+    <wsdl:port name="BasicHttpBinding_ILabellingWebService" binding="tns:BasicHttpBinding_ILabellingWebService">
+      <soap:address location="https://testservice.postnl.com/CIF_SB/LabellingWebService/1_3/LabellingWebService.svc"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,13 +35,8 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
--->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-        </TIG_PostNL>
-    </modules>
-</config>
+ */
+class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
+{
+    
+}

@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,13 +35,33 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
--->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-        </TIG_PostNL>
-    </modules>
-</config>
+ */
+class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
+{
+    protected $_requestXml;
+    protected $_responseXml;
+    
+    public function setRequestXml($xml)
+    {
+        $this->_requestXml = $xml;
+        
+        return $this;
+    }
+    
+    public function setResponseXml($xml)
+    {
+        $this->_responseXml = $xml;
+        
+        return $this;
+    }
+    
+    public function getRequestXml()
+    {
+        return $this->_requestXml;
+    }
+    
+    public function getResponseXml()
+    {
+        return $this->_responseXml;
+    }
+}
