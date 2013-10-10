@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ShippingStatusWebService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://tempuri.org/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="ShippingStatusWebService.xsd" namespace="http://postnl.nl/cif/services/ShippingStatusWebService/"/>
+      <xsd:import schemaLocation="ShippingStatusWebService_1_2.xsd" namespace="http://schemas.datacontract.org/2004/07/Tpp.Cif.WebServices.WebServices"/>
+      <xsd:import schemaLocation="ShippingStatusWebService_1_2_3_4.xsd" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+      <xsd:import schemaLocation="ShippingStatusWebService_1.xsd" namespace="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Domain.ShippingStatusService"/>
+      <xsd:import schemaLocation="ShippingStatusWebService_1_2_3.xsd" namespace="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Services.Exception"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="CurrentStatusRequestContract">
+    <wsdl:part name="CurrentStatus" element="q1:CurrentStatus" xmlns:q1="http://postnl.nl/cif/services/ShippingStatusWebService/"/>
+  </wsdl:message>
+  <wsdl:message name="CurrentStatusResponseContract">
+    <wsdl:part name="CurrentStatusResponse" element="q2:CurrentStatusResponse" xmlns:q2="http://postnl.nl/cif/services/ShippingStatusWebService/"/>
+  </wsdl:message>
+  <wsdl:message name="IShippingStatusWebService_CurrentStatus_CifExceptionFault_FaultMessage">
+    <wsdl:part name="detail" element="q3:CifException" xmlns:q3="http://schemas.datacontract.org/2004/07/Tpp.Cif.WebServices.WebServices"/>
+  </wsdl:message>
+  <wsdl:message name="CompleteStatusRequestContract">
+    <wsdl:part name="CompleteStatus" element="q4:CompleteStatus" xmlns:q4="http://postnl.nl/cif/services/ShippingStatusWebService/"/>
+  </wsdl:message>
+  <wsdl:message name="CompleteStatusResponseContract">
+    <wsdl:part name="CompleteStatusResponse" element="q5:CompleteStatusResponse" xmlns:q5="http://postnl.nl/cif/services/ShippingStatusWebService/"/>
+  </wsdl:message>
+  <wsdl:message name="IShippingStatusWebService_CompleteStatus_CifExceptionFault_FaultMessage">
+    <wsdl:part name="detail" element="q6:CifException" xmlns:q6="http://schemas.datacontract.org/2004/07/Tpp.Cif.WebServices.WebServices"/>
+  </wsdl:message>
+  <wsdl:portType name="IShippingStatusWebService">
+    <wsdl:operation name="CurrentStatus">
+      <wsdl:input wsaw:Action="http://tempuri.org/IShippingStatusWebService/CurrentStatus" name="CurrentStatusRequestContract" message="tns:CurrentStatusRequestContract"/>
+      <wsdl:output wsaw:Action="http://tempuri.org/IShippingStatusWebService/CurrentStatusResponse" name="CurrentStatusResponseContract" message="tns:CurrentStatusResponseContract"/>
+      <wsdl:fault wsaw:Action="http://tempuri.org/IShippingStatusWebService/CurrentStatusCifExceptionFault" name="CifExceptionFault" message="tns:IShippingStatusWebService_CurrentStatus_CifExceptionFault_FaultMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="CompleteStatus">
+      <wsdl:input wsaw:Action="http://tempuri.org/IShippingStatusWebService/CompleteStatus" name="CompleteStatusRequestContract" message="tns:CompleteStatusRequestContract"/>
+      <wsdl:output wsaw:Action="http://tempuri.org/IShippingStatusWebService/CompleteStatusResponse" name="CompleteStatusResponseContract" message="tns:CompleteStatusResponseContract"/>
+      <wsdl:fault wsaw:Action="http://tempuri.org/IShippingStatusWebService/CompleteStatusCifExceptionFault" name="CifExceptionFault" message="tns:IShippingStatusWebService_CompleteStatus_CifExceptionFault_FaultMessage"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IShippingStatusWebService" type="tns:IShippingStatusWebService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="CurrentStatus">
+      <soap:operation soapAction="http://tempuri.org/IShippingStatusWebService/CurrentStatus" style="document"/>
+      <wsdl:input name="CurrentStatusRequestContract">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="CurrentStatusResponseContract">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="CifExceptionFault">
+        <soap:fault name="CifExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="CompleteStatus">
+      <soap:operation soapAction="http://tempuri.org/IShippingStatusWebService/CompleteStatus" style="document"/>
+      <wsdl:input name="CompleteStatusRequestContract">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="CompleteStatusResponseContract">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="CifExceptionFault">
+        <soap:fault name="CifExceptionFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ShippingStatusWebService">
+    <wsdl:port name="BasicHttpBinding_IShippingStatusWebService" binding="tns:BasicHttpBinding_IShippingStatusWebService">
+      <soap:address location="https://testservice.postnl.com/CIF_SB/ShippingStatusWebService/1_1/ShippingStatusWebService.svc"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,13 +35,42 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
--->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-        </TIG_PostNL>
-    </modules>
-</config>
+ */
+ 
+/**
+ * Observer to edit the sales > order grid
+ */
+class TIG_PostNL_Model_Adminhtml_OrderGridObserver
+{
+    /**
+     * Edits the sales order grid by adding a mass action to create shipments for selected orders
+     * 
+     * @param Varien_Event_Observer $observer
+     * 
+     * @return TIG_PostNL_Model_Adminhtml_OrderGridObserver
+     * 
+     * @event adminhtml_block_html_before
+     * 
+     * @observer postnl_adminhtml_ordergrid
+     */
+    public function modifyGrid(Varien_Event_Observer $observer)
+    {
+        $block = $observer->getBlock();
+        $orderGridClass = Mage::getConfig()->getBlockClassName('adminhtml/sales_order_grid');
+       
+        if (get_class($block) !== $orderGridClass) {
+            return $this;
+        }
+        
+        $block->getMassactionBlock()
+              ->addItem(
+                  'create_shipments', 
+                  array(
+                      'label'=> Mage::helper('postnl')->__('Create Shipments'),
+                      'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massCreateShipments'),
+                  )
+              );
+             
+        return $this;
+    }
+}

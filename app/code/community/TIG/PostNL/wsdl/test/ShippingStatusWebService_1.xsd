@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Domain.ShippingStatusService" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Domain.ShippingStatusService">
+  <xs:complexType name="CurrentStatusRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Message" nillable="true" type="tns:Message"/>
+      <xs:element minOccurs="0" name="Customer" nillable="true" type="tns:RequestCustomer"/>
+      <xs:element minOccurs="0" name="Shipment" nillable="true" type="tns:RequestShipment"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CurrentStatusRequest" nillable="true" type="tns:CurrentStatusRequest"/>
+  <xs:complexType name="Message">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="MessageID" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="MessageTimeStamp" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Message" nillable="true" type="tns:Message"/>
+  <xs:complexType name="RequestCustomer">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CustomerCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="CustomerNumber" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RequestCustomer" nillable="true" type="tns:RequestCustomer"/>
+  <xs:complexType name="RequestShipment">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Barcode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Reference" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Zipcode" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RequestShipment" nillable="true" type="tns:RequestShipment"/>
+  <xs:complexType name="CurrentStatusResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Shipments" nillable="true" type="tns:ArrayOfCurrentStatusResponseShipment"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CurrentStatusResponse" nillable="true" type="tns:CurrentStatusResponse"/>
+  <xs:complexType name="ArrayOfCurrentStatusResponseShipment">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CurrentStatusResponseShipment" nillable="true" type="tns:CurrentStatusResponseShipment"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCurrentStatusResponseShipment" nillable="true" type="tns:ArrayOfCurrentStatusResponseShipment"/>
+  <xs:complexType name="CurrentStatusResponseShipment">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Addresses" nillable="true" type="tns:ArrayOfResponseAddress"/>
+      <xs:element minOccurs="0" name="Amounts" nillable="true" type="tns:ArrayOfResponseAmount"/>
+      <xs:element minOccurs="0" name="Barcode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Customer" nillable="true" type="tns:ResponseCustomer"/>
+      <xs:element minOccurs="0" name="Dimension" nillable="true" type="tns:ResponseDimension"/>
+      <xs:element minOccurs="0" name="Groups" nillable="true" type="tns:ArrayOfResponseGroup"/>
+      <xs:element minOccurs="0" name="ProductCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="ProductDescription" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Reference" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Status" nillable="true" type="tns:ResponseStatus"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CurrentStatusResponseShipment" nillable="true" type="tns:CurrentStatusResponseShipment"/>
+  <xs:complexType name="ArrayOfResponseAddress">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ResponseAddress" nillable="true" type="tns:ResponseAddress"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfResponseAddress" nillable="true" type="tns:ArrayOfResponseAddress"/>
+  <xs:complexType name="ResponseAddress">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AddressType" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Building" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="City" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="CompanyName" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="CountryCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="DepartmentName" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="District" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="DoorCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="FirstName" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Floor" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="HouseNumber" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="HouseNumberSuffix" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="LastName" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Region" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="RegistrationDate" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Remark" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Street" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Zipcode" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ResponseAddress" nillable="true" type="tns:ResponseAddress"/>
+  <xs:complexType name="ArrayOfResponseAmount">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ResponseAmount" nillable="true" type="tns:ResponseAmount"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfResponseAmount" nillable="true" type="tns:ArrayOfResponseAmount"/>
+  <xs:complexType name="ResponseAmount">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AccountName" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="AccountNr" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="AmountType" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Currency" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Reference" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="TransactionNumber" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Value" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ResponseAmount" nillable="true" type="tns:ResponseAmount"/>
+  <xs:complexType name="ResponseCustomer">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CustomerCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="CustomerNumber" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ResponseCustomer" nillable="true" type="tns:ResponseCustomer"/>
+  <xs:complexType name="ResponseDimension">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Height" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Length" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Volume" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Weight" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Width" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ResponseDimension" nillable="true" type="tns:ResponseDimension"/>
+  <xs:complexType name="ArrayOfResponseGroup">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ResponseGroup" nillable="true" type="tns:ResponseGroup"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfResponseGroup" nillable="true" type="tns:ArrayOfResponseGroup"/>
+  <xs:complexType name="ResponseGroup">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="GroupType" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="MainBarcode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="ShipmentAmount" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="ShipmentCounter" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ResponseGroup" nillable="true" type="tns:ResponseGroup"/>
+  <xs:complexType name="ResponseStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CurrentPhaseCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="CurrentPhaseDescription" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="CurrentStatusCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="CurrentStatusDescription" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="CurrentStatusTimeStamp" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ResponseStatus" nillable="true" type="tns:ResponseStatus"/>
+  <xs:complexType name="CompleteStatusRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Message" nillable="true" type="tns:Message"/>
+      <xs:element minOccurs="0" name="Customer" nillable="true" type="tns:RequestCustomer"/>
+      <xs:element minOccurs="0" name="Shipment" nillable="true" type="tns:RequestShipment"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CompleteStatusRequest" nillable="true" type="tns:CompleteStatusRequest"/>
+  <xs:complexType name="CompleteStatusResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Shipments" nillable="true" type="tns:ArrayOfCompleteStatusResponseShipment"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CompleteStatusResponse" nillable="true" type="tns:CompleteStatusResponse"/>
+  <xs:complexType name="ArrayOfCompleteStatusResponseShipment">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CompleteStatusResponseShipment" nillable="true" type="tns:CompleteStatusResponseShipment"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCompleteStatusResponseShipment" nillable="true" type="tns:ArrayOfCompleteStatusResponseShipment"/>
+  <xs:complexType name="CompleteStatusResponseShipment">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Addresses" nillable="true" type="tns:ArrayOfResponseAddress"/>
+      <xs:element minOccurs="0" name="Amounts" nillable="true" type="tns:ArrayOfResponseAmount"/>
+      <xs:element minOccurs="0" name="Barcode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Customer" nillable="true" type="tns:ResponseCustomer"/>
+      <xs:element minOccurs="0" name="Dimension" nillable="true" type="tns:ResponseDimension"/>
+      <xs:element minOccurs="0" name="Events" nillable="true" type="tns:ArrayOfCompleteStatusResponseEvent"/>
+      <xs:element minOccurs="0" name="Groups" nillable="true" type="tns:ArrayOfResponseGroup"/>
+      <xs:element minOccurs="0" name="OldStatuses" nillable="true" type="tns:ArrayOfCompleteStatusResponseOldStatus"/>
+      <xs:element minOccurs="0" name="ProductCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="ProductDescription" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Reference" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Status" nillable="true" type="tns:ResponseStatus"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CompleteStatusResponseShipment" nillable="true" type="tns:CompleteStatusResponseShipment"/>
+  <xs:complexType name="ArrayOfCompleteStatusResponseEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CompleteStatusResponseEvent" nillable="true" type="tns:CompleteStatusResponseEvent"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCompleteStatusResponseEvent" nillable="true" type="tns:ArrayOfCompleteStatusResponseEvent"/>
+  <xs:complexType name="CompleteStatusResponseEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Code" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="DestinationLocationCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="LocationCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="RouteCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="RouteName" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="TimeStamp" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CompleteStatusResponseEvent" nillable="true" type="tns:CompleteStatusResponseEvent"/>
+  <xs:complexType name="ArrayOfCompleteStatusResponseOldStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CompleteStatusResponseOldStatus" nillable="true" type="tns:CompleteStatusResponseOldStatus"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCompleteStatusResponseOldStatus" nillable="true" type="tns:ArrayOfCompleteStatusResponseOldStatus"/>
+  <xs:complexType name="CompleteStatusResponseOldStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Code" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="PhaseCode" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="PhaseDescription" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="TimeStamp" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CompleteStatusResponseOldStatus" nillable="true" type="tns:CompleteStatusResponseOldStatus"/>
+</xs:schema>

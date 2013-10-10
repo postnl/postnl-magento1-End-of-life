@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Services.Exception" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Services.Exception">
+  <xs:complexType name="ArrayOfExceptionData">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ExceptionData" nillable="true" type="tns:ExceptionData"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfExceptionData" nillable="true" type="tns:ArrayOfExceptionData"/>
+  <xs:complexType name="ExceptionData">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="ErrorMsg" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="ErrorNumber" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ExceptionData" nillable="true" type="tns:ExceptionData"/>
+</xs:schema>

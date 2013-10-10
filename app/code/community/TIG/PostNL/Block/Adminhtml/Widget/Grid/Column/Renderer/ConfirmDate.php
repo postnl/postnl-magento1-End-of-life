@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,13 +35,38 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
--->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-        </TIG_PostNL>
-    </modules>
-</config>
+ */
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
+{
+    /**
+     * Column name containing ther shipment's shipping method
+     */
+    const SHIPPING_METHOD_COLUMN = 'shipping_method';
+    
+    /**
+     * Code of postnl shipping method
+     */
+    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
+    
+    /**
+     * Renders column.
+     *
+     * @param Varien_Object $row
+     * 
+     * @return string
+     */
+    public function render(Varien_Object $row)
+    {
+        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
+        if ($shippingMethod != self::POSTNL_SHIPPING_METHOD) {
+            return parent::render($row);
+        }
+        
+        $value = $row->getData($this->getColumn()->getIndex());
+        if (date('Ymd') == date('Ymd', strtotime($value))) { //check if value equals today
+            return Mage::helper('postnl')->__('Today');
+        }
+        
+        return parent::render($row);
+    }
+}
