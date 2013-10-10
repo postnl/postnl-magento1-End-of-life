@@ -46,9 +46,13 @@
 	</modules>
 	<global>
 		<blocks>
+        	<!-- Block definitions per submodule -->
 			<postnl>
 				<class>TIG_PostNL_Block</class>
 			</postnl>
+			<postnl_adminhtml>
+				<class>TIG_PostNL_Block_Adminhtml</class>
+			</postnl_adminhtml>
 		</blocks>
 		<helpers>
 			<postnl>
@@ -67,10 +71,18 @@
             <postnl_carrier>
                 <class>TIG_PostNL_Model_Carrier</class>
             </postnl_carrier>
+            <postnl_adminhtml>
+            	<class>TIG_PostNL_Model_Adminhtml</class>
+            </postnl_adminhtml>
             
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
                 <class>TIG_PostNL_Model_Resource</class>
+                <entities>
+                    <shipment>
+                        <table>tig_postnl_shipment</table>
+                    </shipment>
+                </entities>
             </postnl_resource>
         </models>
         <resources>
@@ -95,6 +107,41 @@
             </postnl_read>
         </resources>
 	</global>
+    <admin>
+        <routers>
+            <postnl>
+                <use>admin</use>
+                <args>
+                    <module>TIG_PostNL</module>
+                    <frontName>postnl</frontName>
+                </args>
+            </postnl>
+        </routers>
+    </admin>
+    <adminhtml>
+		<events>
+			<adminhtml_block_html_before>
+			    <observers>
+			   		<!-- Adds a massaction the grid that allows merchants to create shipments for selected orders-->
+				    <postnl_adminhtml_ordergrid>
+					    <type>Model</type>
+					    <class>postnl_adminhtml/orderGridObserver</class>
+					    <method>modifyGrid</method>
+				    </postnl_adminhtml_ordergrid>
+			    </observers>
+			</adminhtml_block_html_before>
+			<sales_order_shipment_grid_collection_load_before>
+				<observers>
+					<!-- Adds new columns to the shipment grid and allows these columns to be filtered and sorted properly -->
+					<postnl_adminhtml_shipmentgrid>
+						<type>singleton</type>
+						<class>postnl_adminhtml/shipmentGridObserver</class>
+						<method>modifyGrid</method>
+					</postnl_adminhtml_shipmentgrid>
+				</observers>
+			</sales_order_shipment_grid_collection_load_before>
+		</events>
+    </adminhtml>
     <default>
         <carriers>
             <postnl>

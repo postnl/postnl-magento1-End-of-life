@@ -40,9 +40,12 @@
 /**
  * PostNL shipping method model
  */
-class TIG_PostNL_Model_Carrier_PostNL extends Mage_Shipping_Model_Carrier_Flatrate
+class TIG_PostNL_Model_Carrier_Postnl 
+    extends Mage_Shipping_Model_Carrier_Abstract
+    implements Mage_Shipping_Model_Carrier_Interface
 {
     protected $_code = 'postnl';
+    protected $_isFixed = true;
 
     /**
      * Collect shipping rate
