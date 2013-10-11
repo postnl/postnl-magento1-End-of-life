@@ -65,28 +65,70 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      */
     const HEADER_SECURITY_NAMESPACE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
     
-    /**
-     * Test mode flag. 
-     * If set to true, test wsdl files will be used to connect to the CIF API
-     * 
-     * @var boolean
-     */
-    protected $_testMode = false;
+    const XML_PATH_LIVE_USERNAME = 'postnl/cif/live_username';
+    const XML_PATH_LIVE_PASSWORD = 'postnl/cif/live_password';
+    const XML_PATH_TEST_USERNAME = 'postnl/cif/test_username';
+    const XML_PATH_TEST_PASSWORD = 'postnl/cif/test_password';
+    const XML_PATH_TEST_MODE     = 'postnl/cif/mode';
     
+    /**
+     * Checks if the module is set to testmode
+     * 
+     * @return boolean
+     */
     public function getTestMode()
     {
-        return $this->_testMode;
-    }
-
-    public function setTestMode($testMode)
-    {
-        $this->_testMode = (bool) $testMode;
+        if ($this->getData('test_mode')) {
+            return $this->getData('test_mode');
+        }
         
-        return $this;
+        $testMode = (bool) Mage::getStoreConfig(self::XML_PATH_TEST_MODE, 0);
+        
+        $this->setData('test_mode', $testMode);
+        return $testMode;
+    }
+    
+    /**
+     * Gets the username from system/config. Test mode determines if live or test username is used.
+     * 
+     * @return string
+     */
+    protected function _getUsername()
+    {
+        if ($this->isTestMode()) {
+            $username = Mage::getStoreConfig(self::XML_PATH_TEST_USERNAME, 0);
+            return $username;
+        }
+        
+        $username = Mage::getStoreConfig(self::XML_PATH_LIVE_USERNAME, 0);
+        return $username;
+    }
+    
+    /**
+     * Gets the password from system/config. Test mode determines if live or test password is used.
+     * Passwords will be decrypted using Magento's encryption key and then re-encrypted using sha1
+     * 
+     * @return string
+     */
+    protected function _getPassword()
+    {
+        if ($this->isTestMode()) {
+            $password = Mage::getStoreConfig(self::XML_PATH_TEST_PASSWORD, 0);
+            $password = sha1(Mage::helper('core')->decrypt($password));
+            return $password;
+        }
+        
+        $password = Mage::getStoreConfig(self::XML_PATH_LIVE_PASSWORD, 0);
+        $password = sha1(Mage::helper('core')->decrypt($password));
+        return $password;
     }
     
     /**
      * Alias for getTestMode()
+     * 
+     * @see getTestMode()
+     * 
+     * @return boolean
      */
     public function isTestMode()
     {
@@ -103,12 +145,13 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * @return object
      * 
      * @throws TIG_PostNL_Model_Core_CIF_Exception
+     * @throws TIG_PostNL_Exception
      */
     public function call($wsdlType, $method, $soapParams)
     {
         try {
-            if (!$this->getUserName() || !$this->getPassword()) {
-                Mage::throwException('No username or password set.');
+            if (!$this->_getUserName() || !$this->_getPassword()) {
+                throw Mage::exception('TIG_PostNL', 'No username or password set.');
             }
             
             $wsdlFile = $this->_getWsdl($wsdlType);
@@ -133,12 +176,16 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         } catch(Exception $e) {
             $cifHelper = Mage::helper('postnl/cif');
             
-            $requestXML  = $cifHelper->formatXml($client->__getLastRequest());
-            $responseXML = $cifHelper->formatXml($client->__getLastResponse());
+            if (isset($client)) {
+                $requestXML  = $cifHelper->formatXml($client->__getLastRequest());
+                $responseXML = $cifHelper->formatXml($client->__getLastResponse());
+            }
 
-            $exception = Mage::exception('TIG_PostNL_Model_Core_CIF', $e->getMessage());
-            $exception->setRequestXml($requestXML)
-                      ->setResponseXml($responseXML);
+            $exception = Mage::exception('TIG_PostNL_Model_Core_Cif', $e->getMessage());
+            if (isset($client)) {
+                $exception->setRequestXml($requestXML)
+                          ->setResponseXml($responseXML);
+            }
                       
             $cifHelper->logCifException($exception);
             
@@ -184,7 +231,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $wsdlPath = Mage::getModuleDir(self::WSDL_DIRECTORY_NAME, 'TIG_PostNL');
         
         if ($this->isTestMode()) {
-            $wsdlPath .= DS . self::TEST_WSDL_DIRECTORY_NAME;
+            $wsdlPath .= DS . self::WSDL_DIRECTORY_NAME . DS . self::TEST_WSDL_DIRECTORY_NAME;
         }
         
         $wsdlPath .= DS . $wsdlFileName;
@@ -203,8 +250,8 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $headers = array();
 
         $namespace = self::HEADER_SECURITY_NAMESPACE;
-        $node1     = new SoapVar($this->getUserName(),  XSD_STRING,      null, null, 'Username',      $namespace);
-        $node2     = new SoapVar($this->getPassWord(),  XSD_STRING,      null, null, 'Password',      $namespace);
+        $node1     = new SoapVar($this->_getUserName(), XSD_STRING,      null, null, 'Username',      $namespace);
+        $node2     = new SoapVar($this->_getPassWord(), XSD_STRING,      null, null, 'Password',      $namespace);
         $token     = new SoapVar(array($node1, $node2), SOAP_ENC_OBJECT, null, null, 'UsernameToken', $namespace);
         $security  = new SoapVar(array($token),         SOAP_ENC_OBJECT, null, null, 'Security',      $namespace);
         $headers[] = new SOAPHeader($namespace, 'Security', $security, false);

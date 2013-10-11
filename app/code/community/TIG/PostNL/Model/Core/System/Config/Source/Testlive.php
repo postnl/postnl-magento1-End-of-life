@@ -36,24 +36,26 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
+
+class TIG_PostNL_Model_Core_System_Config_Source_Testlive
 {
     /**
-     * xml path to postnl general active/inactive setting
-     */
-    const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
-    
-    /**
-     * Determines if the extension has been activated
+     * Source model for test / live setting
      * 
-     * @return bool
+     * @return array
      */
-    public function isEnabled()
+    public function toOptionArray()
     {
-        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        
-        $enabled = Mage::getStoreCOnfig(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
-        
-        return (bool) $enabled;
+        $array = array(
+             array(
+                'value' => '1', 
+                'label' => Mage::helper('postnl')->__('Test')
+             ),
+             array(
+                'value' => '0', 
+                'label' => Mage::helper('postnl')->__('Live')
+             ),
+        );
+        return $array;
     }
 }

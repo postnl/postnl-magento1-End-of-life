@@ -44,6 +44,13 @@
  */
 class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 {
+    const XML_PATH_CUSTOMER_CODE       = 'postnl/cif/customer_code';
+    const XML_PATH_CUSTOMER_NUMBER     = 'postnl/cif/customer_number';
+    const XML_PATH_COMPANY_NAME        = 'postnl/cif/company_name';
+    const XML_PATH_CONTACT_NAME        = 'postnl/cif/contact_name';
+    const XML_PATH_CONTACT_EMAIL       = 'postnl/cif/contact_email';
+    const XML_PATH_COLLECTION_LOCATION = 'postnl/cif/collection_location';
+    
     /**
      * array containing various barcode types.
      * 
@@ -58,7 +65,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         //dutch address
         'NL' => array(
                     'type'  => '3S', 
-                    'range' => '', 
+                    'range' => 'TOTA', 
                     'serie' => '000000000-999999999',
                 ),
         // european address
@@ -162,18 +169,37 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         return $this->_addressTypes;
     }
     
+    public function getPrinterTypes()
+    {
+        return $this->_printerTypes;
+    }
+    
+    public function getStoreId()
+    {
+        if ($this->getData('store_id')) {
+            return $this->getData('store_id');
+        }
+
+        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        
+        return $storeId;
+    }
+    
     /**
      * Retrieves a barcode from CIF
      * 
-     * @param $barcodeType Which kind of barcode to generate
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param string $barcodeType Which kind of barcode to generate
      * 
      * @return string
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function generateBarcode($barcodeType = 'NL')
+    public function generateBarcode($shipment, $barcodeType = 'NL')
     {
-        $availableBarcodeTypes = $this->getBarcodeTypes();
+        $this->setStoreId($shipment->getStoreId());
+        
+        $availableBarcodeTypes = self::getBarcodeTypes();
         if(!array_key_exists($barcodeType, $availableBarcodeTypes)) {
             throw Mage::exception('TIG_PostNL', 'Invalid barcode type requested: ' . $barcodeType);
         }
@@ -317,40 +343,114 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         return $labels;
     }
-
-    protected function _getAddress($type, $object)
+    
+    /**
+     * Gets the Message parameter
+     * 
+     * @param array $extra An array of additional parameters to add
+     * 
+     * @return array
+     */
+    protected function _getMessage($extra = array())
     {
-        if(!isset($this->_addressTypes[$type]))
-        {
-            throw new Exception("Address type '$type' not available");
+        $time = Mage::getModel('core/date')->timestamp();
+        $message = array(
+            'MessageID'        => $time, // TODO: improve to something unique
+            'MessageTimeStamp' => date('d-m-Y H:i:s', $time),
+        );
+        
+        if ($extra) {
+            $message = array_merge($message, $extra);
         }
-        $addressType  = array('AddressType' => $this->_addressTypes[$type]);
-        $addressArray = $this->_prepareAddressArray($type, $object);
+        
+        return $message;
+    }
+    
+    /**
+     * Gets the customer parameter
+     * 
+     * @param Mage_Sales_Model_Order_Shipment | boolean $shipment
+     * 
+     * @return array
+     */
+    protected function _getCustomer($shipment = false)
+    {
+        $customer = array(
+            'CustomerCode'       => $this->_getCustomerCode(),
+            'CustomerNumber'     => $this->_getCustomerNumber(),
+        );
+        
+        if ($shipment) {
+            $additionalCustomerData = array(
+                'Address'            => $this->_getAddress('Sender', $shipment->getShippingAddress()),
+                'CollectionLocation' => $this->_getCollectionLocation(),
+                'ContactPerson'      => $this->_getContactName(),
+                'Email'              => $this->_getContactEmail(),
+                'Name'               => $this->_getCompanyName(),
+            );
+            
+            $customer = array_merge($customer, $additionalCustomerData);
+        }
+        
+        return $customer;
+    }
+    
+    /**
+     * Gets an array containing required address data
+     * 
+     * @param string $addressType
+     * @param Mage_Sales_Model_Order_Address $address
+     * 
+     * @return array
+     */
+    protected function _getAddress($addressType, $address)
+    {
+        $availableAddressTypes = $this->getAddressTypes();
+        if (!array_key_exists($addressType, $availableAddressTypes)) {
+            throw Exception('TIG_PostNL', 'Invalid address type supplied: ' . $addressType);
+        }
+        
+        $addressType  = array(
+            'AddressType' => $availableAddressTypes[$addressType]
+        );
+        
+        $addressArray = $this->_prepareAddressArray($address);
 
-        return array_merge($addressType, $addressArray);
+        $addressArray =  array_merge($addressType, $addressArray);
+        
+        return $addressArray;
     }
 
-    protected function _prepareAddressArray($type, $object)
+    /**
+     * Forms an array of address data compatible with CIF
+     * 
+     * @param Mage_Sales_Model_Order_Address $address
+     * 
+     * @return array
+     */
+    protected function _prepareAddressArray($address)
     {
-        return array(
-            'Area'             => $object->getArea(),
-            'Buildingname'     => $object->getBuilding(),
-            'City'             => $object->getCity(),
-            'CompanyName'      => $object->getCompany(),
-            'Countrycode'      => $object->getCountry(),
-            'Department'       => $object->getDepartment(),
-            'Doorcode'         => $object->getDoorcode(),
-            'FirstName'        => $object->getFirstName(),
-            'Floor'            => $object->getFloor(),
-            'HouseNr'          => $object->getHouseNr(),
-            'HouseNrExt'       => $object->getHouseNrExt(),
-            'Name'             => $object->getName(),
-            'Region'           => $object->getRegion(),
-            'Remark'           => $object->getRemark(),
-            'Street'           => $object->getStreet(),
-            'Zipcode'          => $object->getZipcode(),
-            'StreetHouseNrExt' => $object->getStreetHouseNrExt(),
+        $addressArray = array(
+            'Area'             => $address->getArea(),
+            'Buildingname'     => $address->getBuilding(),
+            'City'             => $address->getCity(),
+            'CompanyName'      => $address->getCompany(),
+            'Countrycode'      => $address->getCountry(),
+            'Department'       => $address->getDepartment(),
+            'Doorcode'         => $address->getDoorcode(),
+            'FirstName'        => $address->getFirstName(),
+            'Floor'            => $address->getFloor(),
+            'HouseNr'          => $address->getHouseNr(),
+            'HouseNrExt'       => $address->getHouseNrExt(),
+            'Name'             => $address->getName(),
+            'Region'           => $address->getRegion(),
+            'Remark'           => $address->getRemark(),
+            'Street'           => $address->getStreet(),
+            'Zipcode'          => $address->getZipcode(),
+            'StreetHouseNrExt' => $address->getStreetHouseNrExt(),
         );
+        
+        return $addressArray;
     }
 
     protected function _getAmount($shipment)
@@ -419,34 +519,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
     }
 
-    protected function _getCustomer($shipment = false)
-    {
-        $res = array(
-            'CustomerCode'   => $this->_customerCode,
-            'CustomerNumber' => $this->_customerNumber,
-        );
-        if($shipment)
-        {
-            $res += array(
-                'Address'            => $this->_getAddress('Sender', $shipment),
-                'CollectionLocation' => $this->_customerCollectionLocation,
-                'ContactPerson'      => $this->_customerContractPerson,
-                'Email'              => $this->_customerEmail,
-                'Name'               => $this->_customerName,
-            );
-        }
-        return $res;
-    }
-
-    protected function _getMessage($extra = array())
-    {
-        $res = array(
-            'MessageID'        => time(), // TODO: improve to something unique
-            'MessageTimeStamp' => date('d-m-Y H:i:s'),
-        );
-        return array_merge($res, $extra);
-    }
-
     protected function _getShipment($shipment)
     {
         $res = array(
@@ -491,85 +563,82 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
         return $res;
     }
-
+    
     /**
-     * The SOAP functions
+     * Gets the customer code from system/config
+     * 
+     * @return string
      */
-
-    protected function _formatXML($xml)
+    protected function _getCustomerCode()
     {
-        $dom = new DOMDocument();
-        $dom->loadXML($xml);
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-
-        return $dom->saveXML();
+        $storeId = $this->getStoreId();
+        $customerCode = Mage::getStoreConfig(self::XML_PATH_CUSTOMER_CODE, $storeId);
+        
+        return $customerCode;
     }
-
-    protected function _getSoapHeaders()
+    
+    /**
+     * Gets the customer number from system/config
+     * 
+     * @return string
+     */
+    protected function _getCustomerNumber()
     {
-        $headers = array();
-
-        // http://stackoverflow.com/questions/13465168/php-namespaces-in-soapheader-child-nodes
-        $namespace = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
-        $node1     = new SoapVar($this->_username,      XSD_STRING,      null, null, 'Username',      $namespace);
-        $node2     = new SoapVar($this->_password,      XSD_STRING,      null, null, 'Password',      $namespace);
-        $token     = new SoapVar(array($node1, $node2), SOAP_ENC_OBJECT, null, null, 'UsernameToken', $namespace);
-        $security  = new SoapVar(array($token),         SOAP_ENC_OBJECT, null, null, 'Security',      $namespace);
-        $headers[] = new SOAPHeader($namespace, 'Security', $security, false);
-
-        return $headers;
+        $storeId = $this->getStoreId();
+        $customerNumber = Mage::getStoreConfig(self::XML_PATH_CUSTOMER_NUMBER, $storeId);
+        
+        return $customerNumber;
     }
-
-    protected function _soapCall($wsdl, $function, $soapParams)
+    
+    /**
+     * Gets the company name from system/config
+     * 
+     * @return string
+     */
+    protected function _getCompanyName()
     {
-        if(!isset($this->_wsdlFiles[$wsdl]))
-        {
-            throw new Exception(".wsdl file for function '$wsdl' not specified");
-        }
-        try
-        {
-            $wsdlUrl = $this->_wsdlPrefix . $this->_wsdlFiles[$wsdl];
-            $client  = new SoapClient($wsdlUrl, array('trace' => 1, 'cache_wsdl' => WSDL_CACHE_NONE));
-            $headers = $this->_getSoapHeaders();
-
-            $client->__setSoapHeaders($headers);
-
-//$cif_start = microtime(true);
-
-            $response = $client->__soapCall(
-                $function,
-                array(
-                    $function => $soapParams,
-                )
-            );
-
-//$cif_end = microtime(true) - $cif_start;
-//mail('martin.boer@totalinternetgroup.nl', 'CIF response for function ' . $function . ' took ' . round($cif_end, 2) . ' seconds', '');
-
-            return $response;
-        }
-        catch(Exception $e)
-        {
-            $requestXML  = $this->_formatXML($client->__getLastRequest());
-            $responseXML = $this->_formatXML($client->__getLastResponse());
-
-            if(APPLICATION_ENV != 'live')
-            {
-                ini_set('xdebug.var_display_max_depth', 9);
-                echo '<h2>Request XML</h2>';
-                echo '<pre>' . htmlentities($requestXML) . '</pre>';
-                echo '<h2>Response XML</h2>';
-                echo '<pre>' . htmlentities($responseXML) . '</pre>';
-                die;
-            }
-            else
-            {
-                // TODO: convert to error logging in DB
-                mail('martin.boer@totalinternetgroup.nl', 'MyParcel CIF error', $requestXML . "\n\n" . $responseXML);
-            }
-            preg_match('/ErrorMsg>(.*)</', $responseXML, $matches);
-            throw new Exception("PostNL error: '" . $matches[1] . "'");
-        }
+        $storeId = $this->getStoreId();
+        $companyName = Mage::getStoreConfig(self::XML_PATH_COMPANY_NAME, $storeId);
+        
+        return $companyName;
+    }
+    
+    /**
+     * Gets the contact name from system/config
+     * 
+     * @return string
+     */
+    protected function _getContactName()
+    {
+        $storeId = $this->getStoreId();
+        $contactName = Mage::getStoreConfig(self::XML_PATH_CONTACT_NAME, $storeId);
+        
+        return $contactName;
+    }
+    
+    /**
+     * Gets the contact email address from system/config
+     * 
+     * @return string
+     */
+    protected function _getContactEmail()
+    {
+        $storeId = $this->getStoreId();
+        $contactEmail = Mage::getStoreConfig(self::XML_PATH_CONTACT_EMAIL, $storeId);
+        
+        return $contactEmail;
+    }
+    
+    /**
+     * Gets the collection location from system/config
+     * 
+     * @return string
+     */
+    protected function _getCollectionLocation()
+    {
+        $storeId = $this->getStoreId();
+        $collectionLocation = Mage::getStoreConfig(self::XML_PATH_COLLECTION_LOCATION, $storeId);
+        
+        return $collectionLocation;
     }
 }

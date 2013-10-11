@@ -42,7 +42,60 @@
   */
 class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
 {
+    /**
+     * Log filename to log all CIF exceptions
+     */
     const CIF_EXCEPTION_LOG_FILE = 'TIG_PostNL_CIF_Exception.log';
+    
+    /**
+     * dutch country code
+     */
+    const DUTCH_COUNTRY_CODE = 'NL';
+    
+    /**
+     * available barcode types
+     */
+    const DUTCH_BARCODE_TYPE  = 'NL';
+    const EU_BARCODE_TYPE     = 'EU';
+    const GLOBAL_BARCODE_TYPE = 'CD';
+    
+    /**
+     * xml path to eu countries setting
+     */
+    const XML_PATH_EU_COUNTRIES = 'general/country/eu_countries';
+    
+    /**
+     * Checks which barcode type is applicable for this shipment
+     * 
+     * Possible return values:
+     * - NL
+     * - EU
+     * - CD (global)
+     * 
+     * @var Mage_Sales_Model_Order_Shipment
+     * 
+     * @return string
+     */
+    public function getBarcodeTypeForShipment($shipment)
+    {
+        $shippingDestination = $shipment->getShippingAddress()->getCountry();
+        
+        if ($shippingDestination == self::DUTCH_COUNTRY_CODE) {
+            $barcodeType = self::DUTCH_BARCODE_TYPE;
+            return $barcodeType;
+        }
+        
+        $euCountries = Mage::getStoreConfig(XML_PATH_EU_COUNTRIES, $shipment->getStoreId());
+        $euCountriesArray = explode(',', $euCountries);
+        
+        if (in_array($shippingDestination, $euCountriesArray)) {
+            $barcodeType = self::EU_BARCODE_TYPE;
+            return $barcodeType;
+        }
+        
+        $barcodeType = self::GLOBAL_BARCODE_TYPE;
+        return $barcodeType;
+    }
     
     /**
      * formats input XML string to improve readability
@@ -74,11 +127,11 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
     {
         if (true) { //@TODO: replace by configuration value check
             if ($exception instanceof TIG_PostNL_Model_Core_Cif_Exception) {
-                Mage::log("\nRequest:\n" . $e->__toString(), Zend_Log::DEBUG, self::CIF_EXCEPTION_LOG_FILE, true);
-                Mage::log("\nResponse:\n" . $e->__toString(), Zend_Log::DEBUG, self::CIF_EXCEPTION_LOG_FILE, true);
+                Mage::log("\nRequest:\n" . $this->formatXml($exception->getRequestXml()), Zend_Log::DEBUG, self::CIF_EXCEPTION_LOG_FILE, true);
+                Mage::log("\nResponse:\n" . $this->formatXml($exception->getResponseXml()), Zend_Log::DEBUG, self::CIF_EXCEPTION_LOG_FILE, true);
             }
             
-            Mage::log("\n" . $e->__toString(), Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);
+            Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);
         }
         
         return $this;

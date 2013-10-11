@@ -1,0 +1,110 @@
+<?php
+/**
+ *                  ___________       __            __   
+ *                  \__    ___/____ _/  |_ _____   |  |  
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/       
+ *          ___          __                                   __   
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
+ *                  \/                           \/               
+ *                  ________       
+ *                 /  _____/_______   ____   __ __ ______  
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/ 
+ *                        \/                       |__|    
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL: 
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+class TIG_PostNL_Model_Core_Observer
+{
+    const POSTNL_CARRIER_CODE = 'postnl';
+    
+    /**
+     * Generates a barcode for the shipment if it is new
+     * 
+     * @param Varien_Event_Observer $observer
+     * 
+     * @return TIG_PostNL_Model_Core_Observer
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function generateBarcode(Varien_Event_Observer $observer)
+    {
+        $shipment = $observer->getShipment();
+        
+        //@TODO: rewrite to simple query to check if row exists, rather than loading the entire model
+        $postnlShipment = Mage::getModel('postnl/shipment')->load($shipment->getId(), 'shipment_id');
+        if ($postnlShipment->getId()) {
+            return $this;
+        }
+        
+        $cif = Mage::getModel('postnl_core/cif');
+        $barcodeType = Mage::helper('postnl/cif')->getBarcodeTypeForShipment($shipment);
+        
+        $barcode = $cif->generateBarcode($shipment, $barcodeType);
+        
+        if (!$barcode) {
+            throw Mage::exception('TIG_PostNL', 'Unable to generate barcode for this shipment: '. $shipment->getId());
+        }
+        
+        //store the barcode in a postnl_shipment entity
+        $postnlShipment->setShipmentId($shipment->getId())
+                       ->setConfirmData(time()) //TODO change this to the actual confirm date
+                       ->setBarcode($barcode);
+        
+        $shipment = $this->_addTrackingCodeToShipment($shipment, $barcode);
+        
+        $transactionSave = Mage::getModel('core/resource_transaction')
+                               ->addObject($shipment)
+                               ->addObject($postnlShipment)
+                               ->save();
+        
+        return $this;
+    }
+
+    /**
+     * Adds Magento tracking information to the order containing the previously retrieved barcode
+     * 
+     * @param Mage_Sales_Model_Order_Shipment #shipment
+     * @param string $barcode
+     * 
+     * @return Mage_Sales_Model_Order_Shipment
+     */
+    protected function _addTrackingCodeToShipment($shipment, $barcode)
+    {
+        $carrierCode = self::POSTNL_CARRIER_CODE;
+        $carrierTitle = Mage::getStoreConfig('carrier/' . $carrierCode . '/name', $shipment->getStoreId());
+        
+        $data = array(
+            'carrier_code' => $carrierCode,
+            'title'        => $carrierTitle,
+            'number'       => $barcode,
+        );
+        
+        $track = Mage::getModel('sales/order_shipment_track')->addData($data);
+        $shipment->addTrack($track);
+        
+        return $shipment;
+    }
+}

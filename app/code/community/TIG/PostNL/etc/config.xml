@@ -106,6 +106,17 @@
             	</connection>
             </postnl_read>
         </resources>
+        <events>
+        	<sales_order_shipment_save_after>
+        		<observers>
+        			<postnl_shipment_generate_barcode>
+					    <type>Model</type>
+					    <class>postnl_core/observer</class>
+					    <method>generateBarcode</method>
+        			</postnl_shipment_generate_barcode>
+        		</observers>
+        	</sales_order_shipment_save_after>
+        </events>
 	</global>
     <admin>
         <routers>
@@ -128,18 +139,14 @@
 					    <class>postnl_adminhtml/orderGridObserver</class>
 					    <method>modifyGrid</method>
 				    </postnl_adminhtml_ordergrid>
-			    </observers>
-			</adminhtml_block_html_before>
-			<sales_order_shipment_grid_collection_load_before>
-				<observers>
 					<!-- Adds new columns to the shipment grid and allows these columns to be filtered and sorted properly -->
 					<postnl_adminhtml_shipmentgrid>
 						<type>singleton</type>
 						<class>postnl_adminhtml/shipmentGridObserver</class>
 						<method>modifyGrid</method>
 					</postnl_adminhtml_shipmentgrid>
-				</observers>
-			</sales_order_shipment_grid_collection_load_before>
+			    </observers>
+			</adminhtml_block_html_before>
 		</events>
     </adminhtml>
     <default>
