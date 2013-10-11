@@ -43,22 +43,30 @@
 class TIG_PostNL_Model_Adminhtml_ShipmentGridObserver extends Varien_Object
 {
     /**
-     * The default name given to the shipment grid block when it is added by the container
+     * The block we want to edit
+     * 
+     * @var string
      */
-    const SHIPMENT_GRID_BLOCK_NAME = 'sales_shipment.grid';
+    const SHIPMENT_GRID_BLOCK_NAME = 'adminhtml/sales_shipment_grid';
     
     /**
      * variable name for shipment grid filter
+     * 
+     * @var string
      */
     const SHIPMENT_GRID_FILTER_VAR_NAME = 'sales_shipment_gridfilter';
     
     /**
      * variable name for shipment grid sorting
+     * 
+     * @var string
      */
     const SHIPMENT_GRID_SORT_VAR_NAME = 'sales_shipment_gridsort';
     
     /**
      * variable name for shipment grid sorting direction
+     * 
+     * @var string
      */
     const SHIPMENT_GRID_DIR_VAR_NAME = 'sales_shipment_griddir';
     
@@ -85,15 +93,36 @@ class TIG_PostNL_Model_Adminhtml_ShipmentGridObserver extends Varien_Object
      * 
      * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
      * 
-     * @event sales_order_shipment_grid_collection_load_before
+     * @event adminhtml_block_html_before
      * 
      * @observer postnl_adminhtml_shipmentgrid
      */
     public function modifyGrid(Varien_Event_Observer $observer)
     {
-        $block = Mage::app()->getLayout()->getBlock(self::SHIPMENT_GRID_BLOCK_NAME);
+        //check if the extension is active
+        if (!Mage::helper('postnl')->isEnabled()) {
+            return $this;
+        }
         
-        $collection = $observer->getOrderShipmentGridCollection();
+        /**
+         * Checks if the current block is the one we want to edit.
+         * 
+         * Unfortunately there is no unique event for this block
+         */
+        $block = $observer->getBlock();
+        $shipmentGridClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_GRID_BLOCK_NAME);
+       
+        if (get_class($block) !== $shipmentGridClass) {
+            return $this;
+        }
+        
+        $collection = $block->getCollection();
+        /**
+         * reset the collection as it has previously been loaded and we still need to edit it
+         * 
+         * @TODO check if there is no way to avoid having to do this as it constitutes a decent perfomrance hit
+         */
+        $collection->clear(); 
         
         $this->setCollection($collection);
         $this->setBlock($block);
@@ -202,6 +231,10 @@ class TIG_PostNL_Model_Adminhtml_ShipmentGridObserver extends Varien_Object
         $resource = Mage::getSingleton('core/resource');
         
         $select = $collection->getSelect();
+        
+        /**
+         * Join sales_flat_order table
+         */
         $select->joinInner(
             array('order' => $resource->getTableName('sales/order')),
             'main_table.order_id=order.entity_id',
@@ -210,6 +243,22 @@ class TIG_PostNL_Model_Adminhtml_ShipmentGridObserver extends Varien_Object
                 'shipping_description' => 'order.shipping_description',
             )
         );
+        
+        /**
+         * join sales_flat_order_address table
+         */
+        $select->joinLeft(
+            array('shipping_address' => $resource->getTableName('sales/order_address')),
+            "main_table.order_id=shipping_address.parent_id AND shipping_address.address_type='shipping'",
+            array(
+                'postcode'   => 'shipping_address.postcode',
+                'country_id' => 'shipping_address.country_id',
+            )
+        );
+        
+        /**
+         * Join tig_postnl_shipment table
+         */
         $select->joinLeft(
             array('postnl_shipment' => $resource->getTableName('postnl/shipment')),
             'main_table.entity_id=postnl_shipment.shipment_id',

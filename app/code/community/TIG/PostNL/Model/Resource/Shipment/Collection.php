@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,24 +36,11 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
+class TIG_PostNL_Model_Resource_Shipment_Collection extends Mage_Core_Model_Resource_Db_Collection_Abstract
 {
-    /**
-     * xml path to postnl general active/inactive setting
-     */
-    const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
-    
-    /**
-     * Determines if the extension has been activated
-     * 
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        
-        $enabled = Mage::getStoreCOnfig(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
-        
-        return (bool) $enabled;
+    public function _construct()
+    {    
+        parent::_construct();
+        $this->_init('postnl/shipment');
     }
 }

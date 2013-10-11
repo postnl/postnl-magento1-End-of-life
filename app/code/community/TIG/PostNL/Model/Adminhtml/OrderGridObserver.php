@@ -43,6 +43,13 @@
 class TIG_PostNL_Model_Adminhtml_OrderGridObserver
 {
     /**
+     * The block we want to edit
+     * 
+     * @var string
+     */
+    const SHIPMENT_GRID_BLOCK_NAME = 'adminhtml/sales_order_grid';
+    
+    /**
      * Edits the sales order grid by adding a mass action to create shipments for selected orders
      * 
      * @param Varien_Event_Observer $observer
@@ -55,8 +62,18 @@ class TIG_PostNL_Model_Adminhtml_OrderGridObserver
      */
     public function modifyGrid(Varien_Event_Observer $observer)
     {
+        //check if the extension is active
+        if (!Mage::helper('postnl')->isEnabled()) {
+            return $this;
+        }
+        
+        /**
+         * Checks if the current block is the one we want to edit.
+         * 
+         * Unfortunately there is no unique event for this block
+         */
         $block = $observer->getBlock();
-        $orderGridClass = Mage::getConfig()->getBlockClassName('adminhtml/sales_order_grid');
+        $orderGridClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_GRID_BLOCK_NAME);
        
         if (get_class($block) !== $orderGridClass) {
             return $this;
