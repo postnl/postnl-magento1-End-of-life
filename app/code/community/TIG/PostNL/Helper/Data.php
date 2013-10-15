@@ -111,4 +111,28 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         
         return $this;
     }
+    
+    /**
+     * Checks if the current edition of Magento is enterprise. Uses Mage::getEdition if available or version_compare if it is not.
+     * 
+     * @return boolean
+     */
+    public function isEnterprise()
+    {
+        if (method_exists('Mage', 'getEdition')) { // available since 1.7.0.0 / 1.12.0.0
+            $edition = Mage::getEdition();
+            if (strcasecmp($edition, 'enterprise') === 0) {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        $version = Mage::getVersion();
+        if (version_compare($version, '1.9.0.0', '>=')) { //1.9.0.0 was the first Magento Enterprise version
+            return true;
+        }
+        
+        return false;
+    }
 }

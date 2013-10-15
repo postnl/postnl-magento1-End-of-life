@@ -44,12 +44,16 @@
  */
 class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 {
-    const XML_PATH_CUSTOMER_CODE       = 'postnl/cif/customer_code';
-    const XML_PATH_CUSTOMER_NUMBER     = 'postnl/cif/customer_number';
-    const XML_PATH_COMPANY_NAME        = 'postnl/cif/company_name';
-    const XML_PATH_CONTACT_NAME        = 'postnl/cif/contact_name';
-    const XML_PATH_CONTACT_EMAIL       = 'postnl/cif/contact_email';
-    const XML_PATH_COLLECTION_LOCATION = 'postnl/cif/collection_location';
+    const XML_PATH_CUSTOMER_CODE               = 'postnl/cif/customer_code';
+    const XML_PATH_CUSTOMER_NUMBER             = 'postnl/cif/customer_number';
+    const XML_PATH_COMPANY_NAME                = 'postnl/cif/company_name';
+    const XML_PATH_CONTACT_NAME                = 'postnl/cif/contact_name';
+    const XML_PATH_CONTACT_EMAIL               = 'postnl/cif/contact_email';
+    const XML_PATH_COLLECTION_LOCATION         = 'postnl/cif/collection_location';
+    const XML_PATH_SPLIT_STREET                = 'postnl/cif_address/split_street';
+    const XML_PATH_STREETNAME_FIELD            = 'postnl/cif_address/streetname_field';
+    const XML_PATH_HOUSENUMBER_FIELD           = 'postnl/cif_address/housenr_field';
+    const XML_PATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
     
     /**
      * array containing various barcode types.
@@ -475,16 +479,18 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _prepareAddressArray($address)
     {
+        $streetData = $this->_getStreetData($address);
+        
         $addressArray = array(
-            'Area'             => $address->getArea(),
-            'Buildingname'     => $address->getBuilding(),
+            'Area'             => '',
+            'Buildingname'     => '',
             'City'             => $address->getCity(),
             'CompanyName'      => $address->getCompany(),
             'Countrycode'      => $address->getCountry(),
-            'Department'       => $address->getDepartment(),
-            'Doorcode'         => $address->getDoorcode(),
+            'Department'       => '',
+            'Doorcode'         => '',
             'FirstName'        => $address->getFirstname(),
-            'Floor'            => $address->getFloor(),
+            'Floor'            => '',
             'HouseNr'          => $address->getHouseNr(),
             'HouseNrExt'       => $address->getHouseNrExt(),
             'Name'             => $address->getName(),
@@ -556,6 +562,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
         
         return $group;
+    }
+    
+    protected function _getStreetData($address)
+    {
+        
     }
 
     protected function _getCustoms($shipment)
