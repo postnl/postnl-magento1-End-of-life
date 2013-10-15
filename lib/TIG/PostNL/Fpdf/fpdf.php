@@ -126,8 +126,21 @@ function FPDF($orientation='P', $unit='mm', $size='A4')
 	else
 		$this->Error('Incorrect unit: '.$unit);
 	// Page sizes
-	$this->StdPageSizes = array('a3'=>array(841.89,1190.55), 'a4'=>array(595.28,841.89), 'a5'=>array(420.94,595.28),
-		'letter'=>array(612,792), 'legal'=>array(612,1008));
+	$this->StdPageSizes = array(
+        'a0' => array(2383.94, 3370.39),
+        'a1' => array(1683.78, 2383.94),
+        'a2' => array(1190.55, 1683.78),
+        'a3' => array(841.89, 1190.55),
+        'a4' => array(595.28, 841.89),
+        'a5' => array(420.94, 595.28),
+        'a6' => array(297.64, 420.94),
+        'a7' => array(209.76, 297.64),
+        'a8' => array(147.40, 209.76),
+        'a9' => array(104.88, 147.40),
+        'a10' => array(73.30, 104.88),
+        'letter' => array(612, 792),
+        'legal' => array(612, 1008),
+    );
 	$size = $this->_getpagesize($size);
 	$this->DefPageSize = $size;
 	$this->CurPageSize = $size;
@@ -275,10 +288,7 @@ function AliasNbPages($alias='{nb}')
 
 function Error($msg)
 {
-	// Fatal error
-	echo '<pre>';
-	debug_print_backtrace();
-	die('<b>FPDF error:</b> '.$msg);
+	throw new Exception('FPDF error: '.$msg);
 }
 
 function Open()

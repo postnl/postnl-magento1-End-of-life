@@ -184,7 +184,7 @@ class TIG_PostNL_Model_Adminhtml_ShipmentGridObserver extends Varien_Object
         
         $actions[] = array(
             'caption'   => $helper->__('Print label'),
-            'url'       => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/printLabel'),
+            'url'       => array('base' => 'postnl/adminhtml_shipment/printLabel'),
             'field'     => 'shipment_id',
             'is_postnl' => true //custom flag for renderer
         );
