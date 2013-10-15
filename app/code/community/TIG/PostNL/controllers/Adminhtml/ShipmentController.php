@@ -38,14 +38,20 @@
  */
 class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_Action
 {
+    /**
+     * Print a shipping label for a single shipment
+     * 
+     * @return TIG_PostNL_Adminhtml_ShipmentController
+     */
     public function printLabelAction()
     {
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         
         $label = $this->_getShippingLabel($shipmentId);
         $labelModel = Mage::getModel('postnl_core/label');
-        $labelModel->createPdf($labels);
+        $labelModel->createPdf($label);
         
+        $this->_redirect('adminhtml/sales_shipment/index');
         return $this;
     }
     
@@ -166,7 +172,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
-                Mage::helper('postnl')->__('An error occurred while processing this action: %s', $e->getMessage())
+                $this->__('An error occurred while processing this action: %s', $e->getMessage())
             );
         }
         
