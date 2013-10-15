@@ -38,6 +38,17 @@
  */
 class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_Action
 {
+    public function printLabelAction()
+    {
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        
+        $label = $this->_getShippingLabel($shipmentId);
+        $labelModel = Mage::getModel('postnl_core/label');
+        $labelModel->createPdf($labels);
+        
+        return $this;
+    }
+    
     /**
      * Creates shipments for a supplied array of orders. This action is triggered by a massaction in the sales > order grid
      * 
@@ -48,6 +59,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         $orderIds = $this->getRequest()->getParam('order_ids');
         if (!$orderIds) {
             $this->_redirect('adminhtml/sales_order/index');
+            return $this;
         }
         
         foreach ($orderIds as $orderId) {
@@ -126,5 +138,78 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                                ->save();
 
         return $this;
+    }
+    
+    /**
+     * Prints shipping labels for selected orders.
+     * 
+     * Please note that if you use a different label than the default 'GraphicFile|PDF' you must overload the 'postnl_core/label' model
+     * 
+     * @return TIG_PostNL_Adminhtml_ShipmentController
+     */
+    public function massPrintLabelsAction()
+    {
+        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
+        if (!$shipmentIds) {
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+        
+        $labels = array();
+        try {
+            foreach ($shipmentIds as $shipmentId) {
+                $labels[] = $this->_getShippingLabel($shipmentId);
+            }
+        
+            $label = Mage::getModel('postnl_core/label');
+            $label->createPdf($labels);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                Mage::helper('postnl')->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+        }
+        
+        $this->_redirect('adminhtml/sales_shipment/index');
+        return $this;
+    }
+    
+    /**
+     * Retrieves the shipping label for a given shipment.
+     * 
+     * If the shipment has a stored label, it is returned. Otherwise a new one is generated.
+     * 
+     * @param int $shipmentId
+     * 
+     * @return string The encoded label
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getShippingLabel($shipmentId)
+    {
+        $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
+        if ($shipment->getOrder()->getShippingMethod() != Mage::helper('postnl/carrier')->getPostnlShippingMethod()) {
+            throw Mage::Exception('TIG_PostNL', 'This action cannot be used on non-PostNL shipments.');
+        }
+        
+        $postnlShipment = Mage::getModel('postnl/shipment')->load($shipmentId, 'shipment_id');
+        if ($postnlShipment->getLabel()) {
+            return $postnlShipment->getlabel();
+        }
+        
+        if (!$postnlShipment->getShipmentId()) {
+            $postnlShipment->setShipmentId($shipmentId);
+        }
+        
+        if (!$postnlShipment->getBarcode()) {
+            $postnlShipment->generateBarcode()
+                           ->addTrackingCodeToShipment();
+        }
+        
+        $postnlShipment->confirmAndPrintLabel()
+                       ->save();
+                       
+        $label = $postnlShipment->getLabel();
+        return $label;
     }
 }

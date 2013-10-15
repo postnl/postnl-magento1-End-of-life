@@ -51,7 +51,7 @@ $postnlShipmentTable = $installer->getConnection()
         ), 'Entity Id')
     ->addColumn('shipment_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
         'unsigned'  => true,
-        'nullable'  => false,
+        'nullable'  => true,
         ), 'Shipment Id')
     ->addColumn('confirm_date', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
         'nullable'  => false,
@@ -59,17 +59,24 @@ $postnlShipmentTable = $installer->getConnection()
     ->addColumn('confirm_status', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
         'nullable'  => true,
         ), 'Confirm Status')
+    ->addColumn('shipping_status', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+        'nullable'  => true,
+        ), 'Shipping Status')
     ->addColumn('barcode', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
         'unsigned'  => true,
         ), 'Barcode')
-    ->addColumn('label', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+    ->addColumn('product_code', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+        'unsigned'  => true,
+        ), 'Product Code')
+    ->addColumn('label', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
         'unsigned'  => true,
         ), 'Label')
-    ->addIndex($installer->getIdxName('postnl/shipment', array('shipment_id')),
-        array('shipment_id'))
+    ->addIndex($installer->getIdxName('postnl/shipment', array('shipment_id'), Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE), 
+        array('shipment_id'), 
+        array('type' => Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE))
     ->addForeignKey($installer->getFkName('postnl/shipment', 'shipment_id', 'sales/shipment', 'entity_id'),
         'shipment_id', $installer->getTable('sales/shipment'), 'entity_id',
-        Varien_Db_Ddl_Table::ACTION_CASCADE, Varien_Db_Ddl_Table::ACTION_CASCADE)
+        Varien_Db_Ddl_Table::ACTION_SET_NULL, Varien_Db_Ddl_Table::ACTION_CASCADE)
     ->setComment('TIG PostNL Shipment');
 
 $installer->getConnection()->createTable($postnlShipmentTable);

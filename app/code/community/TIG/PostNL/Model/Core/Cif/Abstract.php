@@ -44,16 +44,22 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 {
     /**
      * directory containing wsdl files
+     * 
+     * @var string
      */
     const WSDL_DIRECTORY_NAME = 'wsdl';
     
     /**
      * Subdirectory containing test mode wsdl files
+     * 
+     * @var string
      */
     const TEST_WSDL_DIRECTORY_NAME = 'test';
     
     /**
      * available wsdl filenames
+     * 
+     * @var string
      */
     const WSDL_BARCODE_NAME         = 'BarcodeWebService_1.wsdl';
     const WSDL_CONFIRMING_NAME      = 'ConfirmingWebService_1.wsdl';
@@ -62,9 +68,16 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     
     /**
      * header security namespace. Used for constructing the SOAP headers array
+     * 
+     * @var string
      */
     const HEADER_SECURITY_NAMESPACE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
     
+    /**
+     * XML paths for config options
+     * 
+     * @var string
+     */
     const XML_PATH_LIVE_USERNAME = 'postnl/cif/live_username';
     const XML_PATH_LIVE_PASSWORD = 'postnl/cif/live_password';
     const XML_PATH_TEST_USERNAME = 'postnl/cif/test_username';
@@ -165,7 +178,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 
             $client->__setSoapHeaders($headers);
 
-            $response = $client->__soapCall(
+            @$response = $client->__soapCall(
                 $method,
                 array(
                     $method => $soapParams,
@@ -206,7 +219,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * 
      * @return string
      * 
-     * @throws Mage_Core_Exception
+     * @throws TIG_PostNL_Exception
      */
     protected function _getWsdl($wsdlType)
     {
@@ -228,10 +241,10 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 throw Mage::exception('TIG_PostNL', 'Chosen wsdl type is not supported: ' . $wsdlType);
         }
         
-        $wsdlPath = Mage::getModuleDir(self::WSDL_DIRECTORY_NAME, 'TIG_PostNL');
+        $wsdlPath = Mage::helper('postnl')->getModuleDir(self::WSDL_DIRECTORY_NAME, 'TIG_PostNL');
         
         if ($this->isTestMode()) {
-            $wsdlPath .= DS . self::WSDL_DIRECTORY_NAME . DS . self::TEST_WSDL_DIRECTORY_NAME;
+            $wsdlPath .= DS . self::TEST_WSDL_DIRECTORY_NAME;
         }
         
         $wsdlPath .= DS . $wsdlFileName;
