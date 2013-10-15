@@ -36,79 +36,22 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
+class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
 {
     /**
-     * Log filename to log all non-specific PostNL exceptions
+     * Shipping method code used by PostNL
      * 
      * @var string
      */
-    const POSTNL_EXCEPTION_LOG_FILE = 'TIG_PostNL_Exception.log';
+    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
     
     /**
-     * xml path to postnl general active/inactive setting
-     * 
-     * @var string
-     */
-    const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
-    
-    /**
-     * Determines if the extension has been activated
-     * 
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        
-        $enabled = Mage::getStoreCOnfig(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
-        
-        return (bool) $enabled;
-    }
-    
-    /**
-     * Returns path to specified directory for specified module.
-     * 
-     * Based on Mage_Core_Model_Config::getModuleDir()
-     * 
-     * @param string $dir The directory in question
-     * @param string $module The module for which the directory is needed
+     * Returns the PostNL shipping method
      * 
      * @return string
-     * 
-     * @see Mage_Core_Model_Config::getModuleDir()
      */
-    public function getModuleDir($dir, $moduleName = 'TIG_PostNL')
+    public function getPostnlShippingMethod()
     {
-        $config = Mage::app()->getConfig();
-        
-        $codePool = (string)$config->getModuleConfig($moduleName)->codePool;
-        $path = $config->getOptions()->getCodeDir()
-              . DS
-              . $codePool
-              . DS
-              . uc_words($moduleName, DS);
-
-        $path .= DS . $dir;
-
-        $path = str_replace('/', DS, $path);
-        
-        return $path;
-    }
-    
-    /**
-     * Logs a PostNL Exception. Based on Mage::logException
-     * 
-     * @param Exception $exception
-     * 
-     * @return TIG_PostNL_Helper_Data
-     * 
-     * @see Mage::logException
-     */
-    public function logException($exception)
-    {
-        Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::POSTNL_EXCEPTION_LOG_FILE);
-        
-        return $this;
+        return self::POSTNL_SHIPPING_METHOD;
     }
 }

@@ -64,20 +64,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected $_barcodeTypes = array(
         //dutch address
         'NL' => array(
-                    'type'  => '3S', 
-                    'range' => 'TOTA', 
+                    'type'  => '3S',
                     'serie' => '000000000-999999999',
                 ),
         // european address
         'EU' => array( 
-                    'type'  => '3S', 
-                    'range' => '', 
+                    'type'  => '3S',
                     'serie' => '0000000-9999999',
                 ),
         //global address
         'CD' => array(
-                    'type'  => 'CD', 
-                    'range' => '', 
+                    'type'  => 'CD',
                     'serie' => '0000-9999',
                 ),
     );
@@ -206,11 +203,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         $barcode = $availableBarcodeTypes[$barcodeType];
         
-        $message = $this->_getMessage();
+        $message  = $this->_getMessage();
         $customer = $this->_getCustomer();
-        $type = $barcode['type'];
-        $range = $barcode['range'];
-        $serie = $barcode['serie'];
+        $range    = $this->_getCustomerCode();
+        $type     = $barcode['type'];
+        $serie    = $barcode['serie'];
         
         $soapParams = array(
             'Message'  => $message,
@@ -303,22 +300,24 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Generates shipping labels for the chosen shipment
      * 
      * @param Mage_Sales_Model_Order_Shipment $shipment
-     * @param string $printerType
+     * @param string $printerType The printertype used. Currently only 'GraphicFile|PDF' is fully supported
      * 
      * @return array
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function generateLabels($shipment, $printerType = 'GraphicFile|PDF')
+    public function generateLabels($postnlShipment, $printerType = 'GraphicFile|PDF')
     {
+        $shipment = $postnlShipment->getShipment();
+        
         $availablePrinterTypes = $this->_printerTypes;
         if (!in_array($printerType, $availablePrinterTypes)) {
             throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
         }
         
         $message     = $this->_getMessage(array('Printertype' => $printerType));
-        $customer    = $this->_getCustomer();
-        $cifShipment = $this->_getShipment($shipment);
+        $customer    = $this->_getCustomer($shipment);
+        $cifShipment = $this->_getShipment($postnlShipment);
         
         $soapParams =  array(
             'Message'  => $message,
@@ -336,12 +335,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($reponse, true));
         }
         
-        $labels = $response->Labels->Label;
-        if (!is_array($labels)) {
-            $labels = array($labels);
-        }
-        
-        return $labels;
+        return $response;
     }
     
     /**
@@ -396,6 +390,57 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
     
     /**
+     * Creates the CIF shipment object based on a PostNL shipment
+     */
+    protected function _getShipment($postnlShipment)
+    {
+        $shipment = $postnlShipment->getShipment();
+        $shippingAddress = $shipment->getShippingAddress();
+        
+        $res = array(
+            'Addresses' => array(
+                'Address' => $this->_getAddress('Receiver', $shippingAddress),
+            ),
+            'Amounts' => array(
+                'Amount' => $this->_getAmount($postnlShipment),
+            ),
+            'Barcode' => $postnlShipment->getBarcode(),
+            'CollectionTimeStampEnd'   => '',
+            'CollectionTimeStampStart' => '',
+            'Contacts' => array(
+                'Contact' => $this->_getContact($shippingAddress),
+            ),
+            'Dimension' => array(
+                'Weight' => (int) $shipment->getOrder()->getWeight(),
+            ),
+            'DownPartnerBarcode' => '',
+            'DownPartnerID'      => '',
+            'Groups' => array(
+                'Group' => $this->_getGroup(),
+            ),
+            'ProductCodeDelivery' => $postnlShipment->getProductCode(),
+            'Reference'           => $shipment->getReference(),
+        );
+        
+        // if($shipment->isPakjeGemak()) {
+            // // we do not save a separate PakjeGemak address, so duplicate and filter it
+            // $res['Addresses']['Address'] = array(
+                // 0 => $this->_getAddress('Receiver', $shipment),
+                // 1 => $this->_getAddress('Delivery', $shipment),
+            // );
+            // $res['Addresses']['Address'][0]['CompanyName'] = '';
+            // $res['Addresses']['Address'][1]['Name'] = '';
+// 
+            // $res['Contacts']['Contact']['SMSNr'] = $shipment->phone_number;
+        // }
+        
+        // if($shipment->isCD()) {
+            // $res['Customs'] = $this->_getCustoms($shipment);
+        // }
+        return $res;
+    }
+    
+    /**
      * Gets an array containing required address data
      * 
      * @param string $addressType
@@ -438,36 +483,79 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Countrycode'      => $address->getCountry(),
             'Department'       => $address->getDepartment(),
             'Doorcode'         => $address->getDoorcode(),
-            'FirstName'        => $address->getFirstName(),
+            'FirstName'        => $address->getFirstname(),
             'Floor'            => $address->getFloor(),
             'HouseNr'          => $address->getHouseNr(),
             'HouseNrExt'       => $address->getHouseNrExt(),
             'Name'             => $address->getName(),
             'Region'           => $address->getRegion(),
             'Remark'           => $address->getRemark(),
-            'Street'           => $address->getStreet(),
-            'Zipcode'          => $address->getZipcode(),
+            'Street'           => $address->getStreetFull(),
+            'Zipcode'          => $address->getPostcode(),
             'StreetHouseNrExt' => $address->getStreetHouseNrExt(),
         );
         
         return $addressArray;
     }
-
-    protected function _getAmount($shipment)
+    
+    /**
+     * Generates the CIF amount object containing the shipment's insured amount (if any)
+     * 
+     * @param TIG_PostNL_Model_Shipment $shipment
+     * 
+     * @return array
+     */
+    protected function _getAmount($postnlShipment)
     {
-        if($insuredAmount = $shipment->insuredAmount())
-        {
-            return array(
-                'AccountName'       => '',
-                'AccountNr'         => '',
-                'AmountType'        => '02', // 01 = COD, 02 = Insured
-                'Currency'          => 'EUR',
-                'Reference'         => '',
-                'TransactionNumber' => '',
-                'Value'             => $insuredAmount,
-            );
+        $insuredAmount = $postnlShipment->getInsuredAmount();
+        if (!$insuredAmount) {
+            return array();
         }
-        return array();
+        
+        $amount = array(
+            'AccountName'       => '',
+            'AccountNr'         => '',
+            'AmountType'        => '02', // 01 = COD, 02 = Insured
+            'Currency'          => 'EUR',
+            'Reference'         => '',
+            'TransactionNumber' => '',
+            'Value'             => $insuredAmount,
+        );
+        return $amount;
+    }
+    
+    /**
+     * Creates the CIF contact object
+     * 
+     * @param Mage_Sales_Model_Order_Address $address
+     * 
+     * @return array
+     */
+    protected function _getContact($address)
+    {
+        $contact = array(
+            'ContactType' => '01', // Receiver
+            'Email'       => $address->getEmail(),
+            'SMSNr'       => '', // never sure if clean 06 number - TODO: check needed for PakjeGemak?
+            'TelNr'       => $address->getPhone(),
+        );
+        
+        return $contact;
+    }
+    
+    /**
+     * Creates the CIF group object
+     * 
+     * @return array
+     */
+    protected function _getGroup()
+    {
+        // NOTE: extra fields can be used to group multi collo shipments (GroupType 03)
+        $group =  array(
+            'GroupType' => '01',
+        );
+        
+        return $group;
     }
 
     protected function _getCustoms($shipment)
@@ -492,75 +580,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 ),
             ),
         );
-        return $res;
-    }
-
-    protected function _getContact($shipment)
-    {
-        $res = array(
-            'ContactType' => '01', // Receiver
-            'Email'       => $shipment->email,
-            'SMSNr'       => '', // never sure if clean 06 number - TODO: check needed for PakjeGemak?
-            'TelNr'       => $shipment->phone_number,
-        );
-        if(empty($res['Email']) && empty($res['SMSNr']) && empty($res['TelNr']))
-        {
-            // avoid empty contact errors
-            $res['Email'] = $this->_customerEmail;
-        }
-        return $res;
-    }
-
-    protected function _getGroup($shipment)
-    {
-        // NOTE: extra fields can be used to group multi collo shipments (GroupType 03)
-        return array(
-            'GroupType' => '01',
-        );
-    }
-
-    protected function _getShipment($shipment)
-    {
-        $res = array(
-            'Addresses' => array(
-                'Address' => $this->_getAddress('Receiver', $shipment),
-            ),
-            'Amounts' => array(
-                'Amount' => $this->_getAmount($shipment),
-            ),
-            'Barcode' => $shipment->getBarcode(),
-            'CollectionTimeStampEnd'   => '',
-            'CollectionTimeStampStart' => '',
-            'Contacts' => array(
-                'Contact' => $this->_getContact($shipment),
-            ),
-            'Dimension' => array(
-                'Weight' => $shipment->getWeight(),
-            ),
-            'DownPartnerBarcode' => '',
-            'DownPartnerID'      => '',
-            'Groups' => array(
-                'Group' => $this->_getGroup($shipment),
-            ),
-            'ProductCodeDelivery' => $shipment->getProductCode(),
-            'Reference'           => $shipment->getReference(),
-        );
-        if($shipment->isPakjeGemak())
-        {
-            // we do not save a separate PakjeGemak address, so duplicate and filter it
-            $res['Addresses']['Address'] = array(
-                0 => $this->_getAddress('Receiver', $shipment),
-                1 => $this->_getAddress('Delivery', $shipment),
-            );
-            $res['Addresses']['Address'][0]['CompanyName'] = '';
-            $res['Addresses']['Address'][1]['Name'] = '';
-
-            $res['Contacts']['Contact']['SMSNr'] = $shipment->phone_number;
-        }
-        if($shipment->isCD())
-        {
-            $res['Customs'] = $this->_getCustoms($shipment);
-        }
         return $res;
     }
     

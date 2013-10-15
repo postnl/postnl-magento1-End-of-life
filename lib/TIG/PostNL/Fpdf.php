@@ -36,30 +36,51 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Observer
+include('Fpdf/fpdf.php');
+class TIG_PostNL_Fpdf extends FPDF
 {
-    /**
-     * Generates a barcode for the shipment if it is new
-     * 
-     * @param Varien_Event_Observer $observer
-     * 
-     * @return TIG_PostNL_Model_Core_Observer
-     */
-    public function generateBarcode(Varien_Event_Observer $observer)
-    {
-        $shipment = $observer->getShipment();
-        
-        //@TODO: rewrite to simple query to check if row exists, rather than loading the entire model
-        $postnlShipment = Mage::getModel('postnl/shipment')->load($shipment->getId(), 'shipment_id');
-        if ($postnlShipment->getId()) {
-            return $this;
-        }
-        
-        //create a new postnl shipment entity
-        $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmData(time()) //TODO change this to the actual confirm date
-                       ->save();
-        
-        return $this;
-    }
+    // public static function pix2pt($input)
+    // {
+        // if($input>0) {
+            // return round($input/3.8,1); // 3.8 pixels = 1pt in pdf
+        // } else {
+            // return 0;
+        // }
+    // }
+// 
+    // public function writeRotie($x, $y, $txt, $text_angle = 90, $font_angle = 0)
+    // {
+        // if ($x < 0) {
+            // $x += $this->w;
+        // }
+        // if ($y < 0) {
+            // $y += $this->h;
+        // }
+// 
+        // /* Escape text. */
+        // $text = $this->_escape($txt);
+// 
+        // $font_angle += 90 + $text_angle;
+        // $text_angle *= M_PI / 180;
+        // $font_angle *= M_PI / 180;
+// 
+        // $text_dx = cos($text_angle);
+        // $text_dy = sin($text_angle);
+        // $font_dx = cos($font_angle);
+        // $font_dy = sin($font_angle);
+// 
+        // $s = sprintf('BT %.2f %.2f %.2f %.2f %.2f %.2f Tm (', $text_dx, $text_dy, $font_dx, $font_dy, $x * $this->k, ($this->h - $y) * $this->k);
+        // $s = str_replace(',', '.', $s); // fix for Dutch locale formatting
+        // $s .= $text . ') Tj ET';
+// 
+        // if($this->underline && $txt!='')
+        // {
+            // $s .= ' ' . $this->_dounderline($x, $y, $txt);
+        // }
+        // if($this->ColorFlag)
+        // {
+            // $s = 'q ' . $this->TextColor . ' ' . $s . ' Q';
+        // }
+        // $this->_out($s);
+    // }
 }

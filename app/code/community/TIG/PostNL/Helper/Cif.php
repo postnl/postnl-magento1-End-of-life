@@ -44,16 +44,15 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
 {
     /**
      * Log filename to log all CIF exceptions
+     * 
+     * @var string
      */
     const CIF_EXCEPTION_LOG_FILE = 'TIG_PostNL_CIF_Exception.log';
     
     /**
-     * dutch country code
-     */
-    const DUTCH_COUNTRY_CODE = 'NL';
-    
-    /**
      * available barcode types
+     * 
+     * @var string
      */
     const DUTCH_BARCODE_TYPE  = 'NL';
     const EU_BARCODE_TYPE     = 'EU';
@@ -61,6 +60,8 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
     
     /**
      * xml path to eu countries setting
+     * 
+     * @var string
      */
     const XML_PATH_EU_COUNTRIES = 'general/country/eu_countries';
     
@@ -80,7 +81,7 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
     {
         $shippingDestination = $shipment->getShippingAddress()->getCountry();
         
-        if ($shippingDestination == self::DUTCH_COUNTRY_CODE) {
+        if ($shippingDestination == 'NL') {
             $barcodeType = self::DUTCH_BARCODE_TYPE;
             return $barcodeType;
         }
@@ -106,6 +107,10 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
      */
     public function formatXML($xml)
     {
+        if (empty($xml)) {
+            return '';
+        }
+        
         $dom = new DOMDocument();
         $dom->loadXML($xml);
         $dom->preserveWhiteSpace = false;
@@ -122,13 +127,15 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
      * @param Mage_Core_Exception | TIG_PostNL_Model_Core_Cif_Exception $exception
      * 
      * @return TIG_PostNL_Helper_Cif
+     * 
+     * @see Mage::logException()
      */
     public function logCifException($exception)
     {
         if (true) { //@TODO: replace by configuration value check
             if ($exception instanceof TIG_PostNL_Model_Core_Cif_Exception) {
-                Mage::log("\nRequest:\n" . $this->formatXml($exception->getRequestXml()), Zend_Log::DEBUG, self::CIF_EXCEPTION_LOG_FILE, true);
-                Mage::log("\nResponse:\n" . $this->formatXml($exception->getResponseXml()), Zend_Log::DEBUG, self::CIF_EXCEPTION_LOG_FILE, true);
+                Mage::log("\nRequest:\n" . $this->formatXml($exception->getRequestXml()), Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);
+                Mage::log("\nResponse:\n" . $this->formatXml($exception->getResponseXml()), Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);
             }
             
             Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);
