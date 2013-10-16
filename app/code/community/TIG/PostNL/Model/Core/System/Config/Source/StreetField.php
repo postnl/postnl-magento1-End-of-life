@@ -36,30 +36,66 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Observer
+
+class TIG_PostNL_Model_Core_System_Config_Source_StreetField
 {
+    const XML_PATH_COMMUNITY_STREET_LINES = 'customer/address/street_lines';
+    
     /**
-     * Generates a barcode for the shipment if it is new
+     * Source model for street line settings
      * 
-     * @param Varien_Event_Observer $observer
-     * 
-     * @return TIG_PostNL_Model_Core_Observer
+     * @return array
      */
-    public function generateBarcode(Varien_Event_Observer $observer)
+    public function toOptionArray()
     {
-        $shipment = $observer->getShipment();
-        
-        //@TODO: rewrite to simple query to check if row exists, rather than loading the entire model
-        $postnlShipment = Mage::getModel('postnl/shipment')->load($shipment->getId(), 'shipment_id');
-        if ($postnlShipment->getId()) {
-            return $this;
+        if (Mage::helper('postnl')->isEnterprise()) {
+            $array = $this->_getEnterpriseOptions($scopeData);
+            return $array;
         }
         
-        //create a new postnl shipment entity
-        $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmData(Mage::getModel('core/date')->timestamp()) //TODO change this to the actual confirm date
-                       ->save();
+        $array = $this->_getCommunityOptions($scopeData);
+        return $array;
+    }
+
+    protected function _getCommunityOptions($scopeData)
+    {
+        $request = Mage::app()->getRequest();
+        $helper = Mage::helper('postnl');
         
-        return $this;
+        $scopeData = array();
+        if ($request->getParam('store')) {
+            $lineCount = Mage::getStoreConfig(self::XML_PATH_COMMUNITY_STREET_LINES, $request->getparam('store'));
+        } elseif ($request->getParam('website')) {
+            $website = Mage::getModel('core/website')->load($request->getparam('website'), 'name');
+            $lineCount = $website->getConfig(self::XML_PATH_COMMUNITY_STREET_LINES, $website->getId());
+        } else {
+            $lineCount = Mage::getStoreConfig(self::XML_PATH_COMMUNITY_STREET_LINES, Mage_Core_Model_App::ADMIN_STORE_ID);
+        }
+        
+        $array = array();
+        for ($n = 1; $n <= $lineCount; $n++) {
+            $array[] = array(
+                'value' => $n,
+                'label' => $helper->__('Street line #%s', $n),
+            );
+        }
+        
+        return $array;
+    }
+    
+    protected function _getEnterpriseOptions()
+    {
+        $helper = Mage::helper('postnl');
+        $lineCount = Mage::helper('customer/address')->getStreetLines();
+        
+        $array = array();
+        for ($n = 1; $n <= $lineCount; $n++) {
+            $array[] = array(
+                'value' => $n,
+                'label' => $helper->__('Street line #%s', $n),
+            );
+        }
+        
+        return $array;
     }
 }
