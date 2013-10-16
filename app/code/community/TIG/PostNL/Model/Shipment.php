@@ -49,6 +49,11 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
      */
     const POSTNL_CARRIER_CODE = 'postnl';
     
+    /**
+     * Possible confirm statusses
+     * 
+     * @var string
+     */
     const CONFIRM_STATUS_CONFIRMED = 'confirmed';
     const CONFIRM_STATUS_UNCONFIRMED = 'unconfirmed';
     
@@ -188,7 +193,9 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         $track = Mage::getModel('sales/order_shipment_track')->addData($data);
         $shipment->addTrack($track);
                  
-        
+        /**
+         * Save the Mage_Sales_Order_Shipment object and the TIG_PostNL_Model_Shipment objects simultaneously
+         */
         $transactionSave = Mage::getModel('core/resource_transaction')
                                ->addObject($this)
                                ->addObject($shipment)
@@ -218,8 +225,18 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         }
         $label = $result->Labels->Label;
         
-        $this->setLabel(base64_encode($label->Content));
+        $this->setLabel(base64_encode($label->Content))
+             ->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
         
         return $this;
+    }
+    
+    protected function _beforeSave()
+    {
+        if ($this->getConfirmStatus() === null) {
+            $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
+        }
+        
+        return parent::_beforeSave();
     }
 }

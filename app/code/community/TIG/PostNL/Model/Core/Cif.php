@@ -44,6 +44,11 @@
  */
 class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 {
+    /**
+     * Constants containing xml paths to required configuration options
+     * 
+     * @var string
+     */
     const XML_PATH_CUSTOMER_CODE               = 'postnl/cif/customer_code';
     const XML_PATH_CUSTOMER_NUMBER             = 'postnl/cif/customer_number';
     const XML_PATH_COMPANY_NAME                = 'postnl/cif/company_name';
@@ -53,7 +58,23 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XML_PATH_SPLIT_STREET                = 'postnl/cif_address/split_street';
     const XML_PATH_STREETNAME_FIELD            = 'postnl/cif_address/streetname_field';
     const XML_PATH_HOUSENUMBER_FIELD           = 'postnl/cif_address/housenr_field';
+    const XML_PATH_SPLIT_HOUSENUMBER           = 'postnl/cif_address/split_housenr';
     const XML_PATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
+    
+    /**
+     * Regular expression used to split streetname from housenumber. This regex works well for dutch 
+     * addresses, but may fail for int. addresses. We strongly recommend using split address lines instead.
+     * 
+     * @var string
+     */
+    const SPLIT_STREET_REGEX = '#\A(.*?)\s+(\d+[a-zA-Z]{0,1}\s{0,1}[-]{1}\s{0,1}\d*[a-zA-Z]{0,1}|\d+[a-zA-Z-]{0,1}\d*[a-zA-Z]{0,1})#';
+    
+    /**
+     * Regular expression used to split housenumber and housenumber extension
+     * 
+     * @var string
+     */
+    const SPLIT_HOUSENUMBER_REGEX = '#^([\d]+)(.*)#s';
     
     /**
      * array containing various barcode types.
@@ -160,6 +181,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         'Zebra|GK420d',
     );
     
+    /**
+     * Array of countires which may send their full street data in a single line, 
+     * rather than having to split them into streetname, housenr and extension parts
+     * 
+     * @var array
+     */
+    protected $_allowedFullStreetCountries = array(
+        'NL',
+        'BE'
+    );
+    
     public function getBarcodeTypes()
     {
         return $this->_barcodeTypes;
@@ -175,6 +207,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         return $this->_printerTypes;
     }
     
+    public function getAllowedFullStreetCountries()
+    {
+        return $this->_allowedFullStreetCountries;
+    }
+    
     public function getStoreId()
     {
         if ($this->getData('store_id')) {
@@ -182,6 +219,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        $this->setStoreId($storeId);
         
         return $storeId;
     }
@@ -395,6 +433,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     
     /**
      * Creates the CIF shipment object based on a PostNL shipment
+     * 
+     * @param TIG_PostNL_Model_Shipment $shipment
+     * 
+     * @return array
      */
     protected function _getShipment($postnlShipment)
     {
@@ -456,7 +498,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $availableAddressTypes = $this->getAddressTypes();
         if (!array_key_exists($addressType, $availableAddressTypes)) {
-            throw Exception('TIG_PostNL', 'Invalid address type supplied: ' . $addressType);
+            throw Mage::exception('TIG_PostNL', 'Invalid address type supplied: ' . $addressType);
         }
         
         $addressType  = array(
@@ -482,23 +524,23 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $streetData = $this->_getStreetData($address);
         
         $addressArray = array(
+            'FirstName'        => $address->getFirstname(),
+            'Name'             => $address->getLastname(),
+            'CompanyName'      => $address->getCompany(),
+            'Street'           => $streetData['streetname'],
+            'HouseNr'          => $streetData['housenumber'],
+            'HouseNrExt'       => $streetData['housenumberExtension'],
+            'StreetHouseNrExt' => $streetData['fullStreet'],
+            'Zipcode'          => $address->getPostcode(),
+            'City'             => $address->getCity(),
+            'Region'           => $address->getRegion(),
+            'Countrycode'      => $address->getCountry(),
             'Area'             => '',
             'Buildingname'     => '',
-            'City'             => $address->getCity(),
-            'CompanyName'      => $address->getCompany(),
-            'Countrycode'      => $address->getCountry(),
             'Department'       => '',
             'Doorcode'         => '',
-            'FirstName'        => $address->getFirstname(),
             'Floor'            => '',
-            'HouseNr'          => $address->getHouseNr(),
-            'HouseNrExt'       => $address->getHouseNrExt(),
-            'Name'             => $address->getName(),
-            'Region'           => $address->getRegion(),
-            'Remark'           => $address->getRemark(),
-            'Street'           => $address->getStreetFull(),
-            'Zipcode'          => $address->getPostcode(),
-            'StreetHouseNrExt' => $address->getStreetHouseNrExt(),
+            'Remark'           => '',
         );
         
         return $addressArray;
@@ -564,11 +606,172 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         return $group;
     }
     
+    /**
+     * Retrieves streetname, housenumber and housenumber extension from the shipping address.
+     * The shipping address may be in multiple streetlines configuration or single line 
+     * configuration. In the case of multi-line, each part of the street data will be in a seperate 
+     * field. In the single line configuration, each part will be in the same field and will have 
+     * to be split using PREG.
+     * 
+     * PREG cannot be relied on as it is impossible to create a regex that can filter all
+     * possible street syntaxes. Therefore we strongly recommend to use multiple street lines. This
+     * can be enabled in Magento communiy in system > config > customer configuration. Or if you 
+     * use Enterprise, in customers > attributes > manage customer address attributes. 
+     * 
+     * @param Mage_Sales_Model_Order_Address $address
+     * 
+     * @return array
+     */
     protected function _getStreetData($address)
     {
+        $storeId = $this->getStoreId();
+        $splitStreet = Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, $storeId);
         
+        /**
+         * Website uses multi-line address mode
+         */
+        if ($splitStreet) {
+            $streetData = $this->_getMultiLineStreetData($address);
+            return $streetData;
+        }
+        
+        /**
+         * Website uses single-line address mode
+         */
+        $allowedFullStreetCountries = $this->getAllowedFullStreetCountries();
+        $fullStreet = $address->getStreetFull();
+        
+        /**
+         * Select countries don't have to split their street values into seperate part
+         */
+        if (in_array($address->getCountry(), $allowedFullStreetCountries)) {
+            $streetData = array(
+                'streetname'           => '',
+                'housenumber'          => '',
+                'housenumberExtension' => '',
+                'fullStreet'           => $fullStreet,
+            );
+            return $streetData;
+        }
+        
+        /**
+         * All other countries must split them using PREG
+         */
+        $streetData = $this->_getSplitStreetData($fullStreet);
+        
+        return $streetData;
     }
-
+    
+    /**
+     * Retrieves streetname, housenumber and housenumber extension from the shipping address in the multiple streetlines configuration.
+     * 
+     * @param Mage_Sales_Model_Order_Address $address
+     * 
+     * @return array
+     */
+    protected function _getMultiLineStreetData($address)
+    {
+        $storeId = $this->getStoreId();
+        $streetnameField = (int) Mage::getStoreConfig(self::XML_PATH_STREETNAME_FIELD, $storeId);
+        $housenumberField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_FIELD, $storeId);
+        
+        $streetname = $address->getStreet($streetnameField);
+        $housenumber = $address->getStreet($housenumberField);
+        
+        $splitHouseNumber = Mage::getStoreConfig(self::XML_PATH_SPLIT_HOUSENUMBER, $storeId);
+        if ($splitHouseNumber) {
+            $housenumberExtensionField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);
+            $housenumberExtension = $address->getStreet($housenumberExtensionField);
+        } else {
+            $housenumberParts = $this->_splitHousenumber($housenumber);
+            $housenumber = $housenumberParts['number'];
+            $housenumberExtension = $housenumberParts['extension'];
+        }
+        
+        $streetData = array(
+            'streetname'           => $streetname,
+            'housenumber'          => $housenumber,
+            'housenumberExtension' => $housenumberExtension,
+            'fullStreet'           => '',
+        );
+        
+        return $streetData;
+    }
+    
+    /**
+     * Splits street data into seperate parts for streetname, housenumber and extension.
+     * 
+     * @param string $fullStreet The full streetname including all parts
+     * 
+     * @return array
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getSplitStreetData($fullStreet)
+    {
+        $result = preg_match(self::SPLIT_STREET_REGEX, $fullStreet, $matches);
+        if (!$result || !is_array($matches)) {
+            throw Mage::exception('TIG_PostNL', 'Invalid full street supplied: ' . $fullStreet);
+        }
+        
+        $streetname = '';
+        $housenumber = '';
+        if (isset($matches[1])) {
+            $streetname = $matches[1];
+        }
+        
+        if (isset($matches[2])) {
+            $housenumber = $matches[2];
+        }
+        
+        $housenumberParts = $this->_splitHousenumber($housenumber);
+        $housenumber = $housenumberParts['number'];
+        $housenumberExtension = $housenumberParts['extension'];
+        
+        $streetData = array(
+            'streetname'           => $streetname,
+            'housenumber'          => $housenumber,
+            'housenumberExtension' => $housenumberExtension,
+            'fullStreet'           => '',
+        );
+        
+        return $streetData;
+    }
+    
+    /**
+     * Splits a supplier housenumber into a number and an extension
+     * 
+     * @param string $housenumber
+     * 
+     * @return array
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _splitHousenumber($housenumber)
+    {
+        $result = preg_match(self::SPLIT_HOUSENUMBER_REGEX, $housenumber, $matches);
+        if (!$result || !is_array($matches)) {
+            throw Mage::exception('TIG_PostNL', 'Invalid housnumber supplied: ' . $housenumber);
+        }
+        
+        $extension = '';
+        $number = '';
+        if (isset($matches[0])) {
+            $number = $matches[0];
+        }
+        
+        if (isset($matches[1])) {
+            $extension = $matches[1];
+        }
+        
+        $housenumberParts = array(
+            'number' => $number,
+            'extension' => $extension,
+        );
+        
+        return $housenumberParts;
+    }
+    
     protected function _getCustoms($shipment)
     {
         $invoiceNumber = $shipment->customs_invoice;

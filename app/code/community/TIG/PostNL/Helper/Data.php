@@ -116,16 +116,22 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Checks if the current edition of Magento is enterprise. Uses Mage::getEdition if available or version_compare if it is not.
      * 
      * @return boolean
+     * 
+     * @throws TIG_PostNL_Exception
      */
     public function isEnterprise()
     {
         if (method_exists('Mage', 'getEdition')) { // available since 1.7.0.0 / 1.12.0.0
             $edition = Mage::getEdition();
-            if (strcasecmp($edition, 'enterprise') === 0) {
+            if ($edition == Mage::EDITION_ENTERPRISE) {
                 return true;
             }
             
-            return false;
+            if ($edition == Mage::EDITION_COMMUNITY) {
+                return false;
+            }
+            
+            throw Mage::exception('TIG_PostNL', 'Invalid Magento edition detected: ' . $edition);
         }
         
         $version = Mage::getVersion();

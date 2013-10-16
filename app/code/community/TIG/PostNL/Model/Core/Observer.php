@@ -57,7 +57,7 @@ class TIG_PostNL_Model_Core_Observer
         
         //create a new postnl shipment entity
         $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmData(time()) //TODO change this to the actual confirm date
+                       ->setConfirmData(Mage::getModel('core/date')->timestamp()) //TODO change this to the actual confirm date
                        ->save();
         
         return $this;
