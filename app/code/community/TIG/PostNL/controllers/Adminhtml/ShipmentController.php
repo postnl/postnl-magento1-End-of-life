@@ -64,13 +64,25 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     {
         $orderIds = $this->getRequest()->getParam('order_ids');
         if (!$orderIds) {
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('Please select one or more orders.')
+            );
             $this->_redirect('adminhtml/sales_order/index');
             return $this;
         }
         
-        foreach ($orderIds as $orderId) {
-            $this->_createShipment($orderId);
+        try {
+            foreach ($orderIds as $orderId) {
+                $this->_createShipment($orderId);
+            }
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred whilst creating processing the shipment(s): %s', $e->getMessage())
+            );
             
+            $this->_redirect('adminhtml/sales_order/index');
+            return $this;
         }
         
         $this->_redirect('adminhtml/sales_shipment/index');
@@ -157,8 +169,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     {
         $shipmentIds = $this->getRequest()->getParam('shipment_ids');
         if (!$shipmentIds) {
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('Please select one or more shipments.')
+            );
             $this->_redirect('adminhtml/sales_shipment/index');
             return $this;
+        }
+        
+        if(count($shipmentIds) > 200 && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('You can print a maximum of 200 labels at once.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/index');
         }
         
         $labels = array();
@@ -166,7 +188,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             foreach ($shipmentIds as $shipmentId) {
                 $labels[] = $this->_getShippingLabel($shipmentId);
             }
-        
+            
+            /**
+             * The label will be a base64 encoded string. Convert this to a pdf
+             */
             $label = Mage::getModel('postnl_core/label');
             $label->createPdf($labels);
         } catch (Exception $e) {
@@ -181,7 +206,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     }
     
     /**
-     * Retrieves the shipping label for a given shipment.
+     * Retrieves the shipping label for a given shipment ID.
      * 
      * If the shipment has a stored label, it is returned. Otherwise a new one is generated.
      * 
@@ -193,25 +218,40 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     protected function _getShippingLabel($shipmentId)
     {
+        /**
+         * Check iof the shipment was shipped with PostNL
+         */
         $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
         if ($shipment->getOrder()->getShippingMethod() != Mage::helper('postnl/carrier')->getPostnlShippingMethod()) {
             throw Mage::Exception('TIG_PostNL', 'This action cannot be used on non-PostNL shipments.');
         }
         
+        /**
+         * Load the PostNL shipment and check if it already has a label
+         */
         $postnlShipment = Mage::getModel('postnl/shipment')->load($shipmentId, 'shipment_id');
         if ($postnlShipment->getLabel()) {
             return $postnlShipment->getlabel();
         }
         
+        /**
+         * If the PostNL shipment is new, set the magento shipment ID
+         */
         if (!$postnlShipment->getShipmentId()) {
             $postnlShipment->setShipmentId($shipmentId);
         }
         
+        /**
+         * If the shipment does not have a barcode, generate one
+         */
         if (!$postnlShipment->getBarcode()) {
             $postnlShipment->generateBarcode()
                            ->addTrackingCodeToShipment();
         }
         
+        /**
+         * Confirm the shipment and request a new label
+         */
         $postnlShipment->confirmAndPrintLabel()
                        ->save();
                        

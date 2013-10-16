@@ -66,6 +66,25 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
     const XML_PATH_EU_COUNTRIES = 'general/country/eu_countries';
     
     /**
+     * xml path to infinite label printiong setting
+     * 
+     * @var string
+     */
+    const XML_PATH_INFINITE_LABEL_PRINTING = 'postnl/advanced/infinite_label_printing';
+    
+    /**
+     * Checks if infinite label printing is enabled in the module configuration.
+     * 
+     * @return boolean
+     */
+    public function allowInfinitePrinting()
+    {
+        $storeId = Mage_Core_Mode_App::ADMIN_STORE_ID;
+        $enabled = Mage::getStoreConfig(self::XML_PATH_INFINITE_LABEL_PRINTING, $storeId);
+        
+        return (bool) $enabled;
+    }
+    /**
      * Checks which barcode type is applicable for this shipment
      * 
      * Possible return values:
@@ -86,7 +105,7 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
             return $barcodeType;
         }
         
-        $euCountries = Mage::getStoreConfig(XML_PATH_EU_COUNTRIES, $shipment->getStoreId());
+        $euCountries = Mage::getStoreConfig(self::XML_PATH_EU_COUNTRIES, $shipment->getStoreId());
         $euCountriesArray = explode(',', $euCountries);
         
         if (in_array($shippingDestination, $euCountriesArray)) {
@@ -96,6 +115,39 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
         
         $barcodeType = self::GLOBAL_BARCODE_TYPE;
         return $barcodeType;
+    }
+    
+    /**
+     * Checks if a given barcode exists using Zend_Validate_Db_RecordExists.
+     * 
+     * @param string $barcode
+     * 
+     * @return boolean
+     * 
+     * @see Zend_Validate_Db_RecordExists
+     * 
+     * @link http://framework.zend.com/manual/1.12/en/zend.validate.set.html#zend.validate.Db
+     */
+    public function barcodeExists($barcode)
+    {
+        $coreResource = Mage::getSingleton('core/resource');
+        $readAdapter = $coreResource->getConnection('core_read');
+        
+        $validator = Mage::getModel('Zend_Validate_Db_RecordExists', 
+            array(
+                'table'   => $coreResource->getTableName('postnl/shipment'),
+                'field'   => 'barcode',
+                'adapter' => $readAdapter,
+            )
+        );
+        
+        $barcodeExists = $validator->isValid($barcode);
+        
+        if ($barcodeExists) {
+            return true;
+        }
+        
+        return false;
     }
     
     /**

@@ -46,6 +46,13 @@ class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
     const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
     
     /**
+     * PostNL's track and trace base URL
+     * 
+     * @var string
+     */
+    const POSTNL_TRACK_AND_TRACE_BASE_URL = 'http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?lang=nl';
+    
+    /**
      * Returns the PostNL shipping method
      * 
      * @return string
@@ -53,5 +60,77 @@ class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
     public function getPostnlShippingMethod()
     {
         return self::POSTNL_SHIPPING_METHOD;
+    }
+    
+    /**
+     * Checks if a given postnl shipment exists using Zend_Validate_Db_RecordExists.
+     * 
+     * @param string $shipmentId
+     * 
+     * @return boolean
+     * 
+     * @see Zend_Validate_Db_RecordExists
+     * 
+     * @link http://framework.zend.com/manual/1.12/en/zend.validate.set.html#zend.validate.Db
+     */
+    public function postnlShipmentExists($shipmentId)
+    {
+        $coreResource = Mage::getSingleton('core/resource');
+        $readAdapter = $coreResource->getConnection('core_read');
+        
+        $validator = Mage::getModel('Zend_Validate_Db_RecordExists', 
+            array(
+                'table'   => $coreResource->getTableName('postnl/shipment'),
+                'field'   => 'shipment_id',
+                'adapter' => $readAdapter,
+            )
+        );
+        
+        $postnlShipmentExists = $validator->isValid($shipmentId);
+        
+        if ($postnlShipmentExists) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Constructs a PostNL track & trace url based on a barcode and the destination of the package (country and zipcode)
+     * 
+     * @param string $barcode
+     * @param mixed $destination An array or object containing the shipment's destination data
+     * 
+     * @return string
+     */
+    public function getBarcodeUrl($barcode, $destination = false)
+    {
+        $countryCode = null;
+        $postcode    = null;
+        if (is_array($destination)) {
+            $countryCode = $destination['countryCode'];
+            $postcode    = $destination['postcode'];
+        }
+        
+        if (is_object($destination) && $destination instanceof Varien_Object) {
+            $countryCode = $destination->getCountry();
+            $postcode    = $destination->getPostcode();
+        }
+        
+        $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_BASE_URL
+                    . '&B=' . $barcode;
+        if ($countryCode == 'NL' && $postcode) {
+            /**
+             * For Dutch shipments we can add the destination zip code
+             */
+            $barcodeUrl .= '&P=' . $postcode;
+        } elseif (!empty($countryCode) && $countryCode != 'NL') {
+            /**
+             * For international shipments we need to add a flag
+             */
+            $barcodeUrl .= '&I=True';
+        }
+        
+        return $barcodeUrl;
     }
 }

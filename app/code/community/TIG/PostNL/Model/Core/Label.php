@@ -97,6 +97,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      */
     public function createPdf($labels)
     {
+        Varien_Profiler::start('generate_label');
+        
         /**
          * Open a new pdf object and assign some basic values
          */
@@ -108,10 +110,20 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         $pdf->SetAuthor('PostNL');
         $pdf->SetCreator('PostNL');
         
-        if (is_array($labels)) {
+        if (is_array($labels) && count($labels) > 1) {
+            /**
+             * Create a pdf containing multiple labels
+             */
             $pdf->addOrientedPage('L', 'A4'); //landscape A4
             $pdf = $this->_createMultiLabelPdf($pdf, $labels);
         } else {
+            /**
+             * Create a pdf containing a single label
+             * If $labels is an array, get the current element. There should be only 1.
+             */
+            if (is_array($labels)) {
+                $labels = current($labels);
+            }
             $pdf->addOrientedPage('L', 'A6'); //landscape A6
             $pdf = $this->_addPdfTemplate($pdf, $labels);
         }
@@ -126,6 +138,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         $pdf->Output('PostNL Shipping Labels.pdf', 'D');
         
+        Varien_Profiler::stop('generate_label');
+        
         return $this;
     }
 
@@ -136,13 +150,31 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * @param array $labels
      * 
      * @return TIG_PostNL_Fpdi $pdf
+     * 
+     * @throws TIG_PostNL_Exception
      */
     protected function _createMultiLabelPdf($pdf, $labels)
     {
+        /**
+         * Check if printing the required number of labels is allowed.
+         * 
+         * This is limited to 200 by default to prevent out of memory errors. 
+         * On a clean Magento install with 256 MB of memory, several thousands of
+         * labels can be printed at once. However, for safety reasons a limit
+         * of 200 is used. By default you shouldn't be able to select more than 200
+         * in the shipment grid.
+         */
+        if(count($labels) > 200 && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
+            throw Mage::exception('TIG_PostNL', 'Maximum amount of labels exceeded. Maximum allowed: 200. Requested: ' . count($labels));
+        }
+        
+        /**
+         * Counter used to determine the position of each label on the page
+         */
         $n = 0;
         foreach ($labels as $label) {
             /**
-             * Every 4 labels result in a single page
+             * Add a new page every 4 labels and reset the counter
              */
             if (++$n > 4) {
                 $pdf->addOrientedPage('L', 'A4');
@@ -197,9 +229,15 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         $tempFilePath = Mage::getConfig()->getVarDir('TIG' . DS . 'PostNL' . DS . 'temp_label')
                       . DS
-                      . md5($label) 
+                      . md5($label)
+                      . '-'
+                      . microtime(true)
                       . '-'
                       . self::TEMP_LABEL_FILENAME;
+        
+        if (file_exists($tempFilePath)) {
+            throw Mage::exception('TIG_PostNL', 'Temporary template file already exists: ' . $tempFilePath);
+        }
         
         /**
          * Add the base64 decoded label to the file

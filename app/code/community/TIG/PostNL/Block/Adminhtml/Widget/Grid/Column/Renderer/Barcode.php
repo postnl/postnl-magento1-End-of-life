@@ -39,25 +39,14 @@
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
 {
     /**
-     * Column name containing the shipment's shipping method
+     * Additional column names used
      * 
      * @var string
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
-    
-    /**
-     * Column name containing the shipping address' postcode
-     * 
-     * @var string
-     */
-    const POSTCODE_COLUMN = 'postcode';
-    
-    /**
-     * Column name containing the shipping address' country id
-     * 
-     * @var string
-     */
-    const COUNTRY_ID_COLUMN = 'country_id';
+    const POSTCODE_COLUMN        = 'postcode';
+    const COUNTRY_ID_COLUMN      = 'country_id';
+    const CONFIRM_STATUS_COLUMN  = 'confirm_status';
     
     /**
      * Code of postnl shipping method
@@ -67,21 +56,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode extends Mag
     const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
     
     /**
-     * PostNL's track and trace base URL
-     * 
-     * @var
-     */
-    const POSTNL_DUTCH_TRACK_AND_TRACE_BASE_URL = 'http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?lang=nl';
-    
-    /**
-     * PostNL's track and trace base URL
-     * 
-     * @var
-     */
-    const POSTNL_GLOBAL_TRACK_AND_TRACE_BASE_URL = '    http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?lang=nl&I=True';
-    
-    /**
-     * Renders column.
+     * Renders the barcode column. This column will be empty for non-PostNL shipments.
+     * If the shipment has been confirmed, it will be displayed as a track& trace URL. Otherwise the bare code will be displayed.
      *
      * @param Varien_Object $row
      * 
@@ -89,29 +65,44 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode extends Mag
      */
     public function render(Varien_Object $row)
     {
+        /**
+         * The shipment was not shipped using PostNL
+         */
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
         if ($shippingMethod != self::POSTNL_SHIPPING_METHOD) {
             return parent::render($row);
         }
         
+        /**
+         * Check if any data is available
+         */
         $value = $row->getData($this->getColumn()->getIndex());
         if (!$value) {
-            $value = Mage::helper('postnl')->__('Not yet confirmed');
+            $value = Mage::helper('postnl')->__('No barcode available.');
             return $value;
         }
         
-        $countryCode = $row->getData(self::COUNTRY_ID_COLUMN);
-        
-        if ($countryCode == 'NL') {
-            $postcode = $row->getData(self::POSTCODE_COLUMN);
-            $barcodeBaseUrl = self::POSTNL_DUTCH_TRACK_AND_TRACE_BASE_URL
-                            . '&P=' . $postcode;
-        } else {
-            $barcodeBaseUrl = self::POSTNL_GLOBAL_TRACK_AND_TRACE_BASE_URL;
+        /**
+         * If the shipment hasn't been confirmed yet, the barcode will not be known by PostNL track & trace
+         */
+        $postnlShipmentClassName = Mage::getConfig()->getModelClassName('postnl/shipment');
+        if ($row->getData(self::CONFIRM_STATUS_COLUMN) != $postnlShipmentClassName::CONFIRM_STATUS_CONFIRMED) {
+            return $value;
         }
         
-        $barcodeUrl = $barcodeBaseUrl . '&B=' . $value;
-        $barcodeHtml = "<a href='{$barcodeUrl}'>{$value}</a>";
+        /**
+         * Create a track & trace URL based on shipping destination
+         */
+        $countryCode = $row->getData(self::COUNTRY_ID_COLUMN);
+        $postcode = $row->getData(self::POSTCODE_COLUMN);
+        $destinationData = array(
+            'countryCode' => $countryCode,
+            'postcode'    => $postcode,
+        );
+        
+        $barcodeUrl = Mage::helper('postnl/carrier')->getBarcodeUrl($value, $destinationData);
+        
+        $barcodeHtml = "<a href='{$barcodeUrl}' target='_blank'>{$value}</a>";
         
         return $barcodeHtml;
     }

@@ -186,7 +186,7 @@ class TIG_PostNL_Model_Adminhtml_ShipmentGridObserver extends Varien_Object
             'caption'   => $helper->__('Print label'),
             'url'       => array('base' => 'postnl/adminhtml_shipment/printLabel'),
             'field'     => 'shipment_id',
-            'is_postnl' => true //custom flag for renderer
+            'is_postnl' => true, //custom flag for renderer
         );
         
         $actionColumn->setActions($actions)
@@ -237,9 +237,9 @@ class TIG_PostNL_Model_Adminhtml_ShipmentGridObserver extends Varien_Object
          */
         $select->joinInner(
             array('order' => $resource->getTableName('sales/order')),
-            'main_table.order_id=order.entity_id',
+            '`main_table`.`order_id`=`order`.`entity_id`',
             array(
-                'shipping_method' => 'order.shipping_method',
+                'shipping_method'      => 'order.shipping_method',
                 'shipping_description' => 'order.shipping_description',
             )
         );
@@ -249,7 +249,7 @@ class TIG_PostNL_Model_Adminhtml_ShipmentGridObserver extends Varien_Object
          */
         $select->joinLeft(
             array('shipping_address' => $resource->getTableName('sales/order_address')),
-            "main_table.order_id=shipping_address.parent_id AND shipping_address.address_type='shipping'",
+            "`main_table`.`order_id`=`shipping_address`.`parent_id` AND `shipping_address`.`address_type`='shipping'",
             array(
                 'postcode'   => 'shipping_address.postcode',
                 'country_id' => 'shipping_address.country_id',
@@ -261,10 +261,11 @@ class TIG_PostNL_Model_Adminhtml_ShipmentGridObserver extends Varien_Object
          */
         $select->joinLeft(
             array('postnl_shipment' => $resource->getTableName('postnl/shipment')),
-            'main_table.entity_id=postnl_shipment.shipment_id',
+            '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
             array(
-                'confirm_date' => 'postnl_shipment.confirm_date',
-                'barcode'      => 'postnl_shipment.barcode',
+                'confirm_date'   => 'postnl_shipment.confirm_date',
+                'barcode'        => 'postnl_shipment.barcode',
+                'confirm_status' => 'postnl_shipment.confirm_status',
             )
         );
         
@@ -391,11 +392,12 @@ class TIG_PostNL_Model_Adminhtml_ShipmentGridObserver extends Varien_Object
     protected function _setCollectionOrder($column)
     {
         $collection = $this->getCollection();
-        if ($collection) {
-            $columnIndex = $column->getFilterIndex() ?
-                $column->getFilterIndex() : $column->getIndex();
-            $collection->setOrder($columnIndex, strtoupper($column->getDir()));
+        if (!$collection) {
+            return $this;
         }
+        
+        $columnIndex = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
+        $collection->setOrder($columnIndex, strtoupper($column->getDir()));
         return $this;
     }
 }
