@@ -74,6 +74,13 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const HEADER_SECURITY_NAMESPACE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
     
     /**
+     * CIF error namespace.
+     * 
+     * @var string
+     */
+    const CIF_ERROR_NAMESPACE = 'http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Services.Exception';
+    
+    /**
      * XML paths for config options
      * 
      * @var string
@@ -157,7 +164,6 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * 
      * @return object
      * 
-     * @throws TIG_PostNL_Model_Core_CIF_Exception
      * @throws TIG_PostNL_Exception
      */
     public function call($wsdlType, $method, $soapParams)
@@ -178,7 +184,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 
             $client->__setSoapHeaders($headers);
 
-            @$response = $client->__soapCall(
+            $response = $client->__soapCall(
                 $method,
                 array(
                     $method => $soapParams,
@@ -186,23 +192,11 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             );
             
             return $response;
-        } catch(Exception $e) {
-            $cifHelper = Mage::helper('postnl/cif');
-            
-            if (isset($client)) {
-                $requestXML  = $cifHelper->formatXml($client->__getLastRequest());
-                $responseXML = $cifHelper->formatXml($client->__getLastResponse());
-            }
-
-            $exception = Mage::exception('TIG_PostNL_Model_Core_Cif', $e->getMessage());
-            if (isset($client)) {
-                $exception->setRequestXml($requestXML)
-                          ->setResponseXml($responseXML);
-            }
-                      
-            $cifHelper->logCifException($exception);
-            
-            throw $exception;
+        } catch(SoapFault $e) {
+            /**
+             * Only Soap exceptions are caught. Other exceptions must be caught by the caller
+             */
+            $this->_handleCifException($e, $client);
         }
     }
 
@@ -270,5 +264,63 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $headers[] = new SOAPHeader($namespace, 'Security', $security, false);
 
         return $headers;
+    }
+    
+    /**
+     * Handle a SoapFault caused by CIF
+     * 
+     * @param SoapFault $e
+     * @param SoapClient $client
+     * 
+     * @throws TIG_PostNL_Model_Core_Cif_Exception
+     */
+    protected function _handleCifException($e, $client = null)
+    {
+        $cifHelper = Mage::helper('postnl/cif');
+        
+        /**
+         * Get the request and response XML data
+         */
+        if ($client) {
+            $requestXML  = $cifHelper->formatXml($client->__getLastRequest());
+            $responseXML = $cifHelper->formatXml($client->__getLastResponse());
+        }
+        
+        if ($responseXML) {
+            /**
+             * If we recieved a response, parse it for errors and create an appropriate exception
+             */
+            $errorResponse = new DOMDocument();
+            $errorResponse->loadXML($responseXML);
+            $errors = $errorResponse->getElementsByTagNameNS(self::CIF_ERROR_NAMESPACE, 'ErrorMsg');
+            if ($errors) {
+                $message = '';
+                foreach($errors as $error) {
+                    $message .= $error->nodeValue . '<br/>';
+                }
+                
+                $exception = Mage::exception('TIG_PostNL_Model_Core_Cif', $message);
+            }
+        } else {
+            /**
+             * Create a general exception
+             */
+            $exception = Mage::exception('TIG_PostNL_Model_Core_Cif', $e->getMessage());
+        }
+        
+        /**
+         * Add the response and request data to the exception (to be logged later)
+         */
+        if ($client) {
+            $exception->setRequestXml($requestXML)
+                      ->setResponseXml($responseXML);
+        }
+        
+        /**
+         * Log the exception and throw it
+         */      
+        $cifHelper->logCifException($exception);
+        
+        throw $exception;
     }
 }

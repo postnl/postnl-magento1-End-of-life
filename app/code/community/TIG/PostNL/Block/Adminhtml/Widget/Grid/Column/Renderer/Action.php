@@ -40,11 +40,15 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action extends Mage
 {
     /**
      * Column name containing ther shipment's shipping method
+     * 
+     * @var string
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
     
     /**
      * Code of postnl shipping method
+     * 
+     * @var string
      */
     const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
     
@@ -80,7 +84,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action extends Mage
             }
             
             $i++;
-            if ( is_array($action) ) {
+            if (is_array($action)) {
                 $out .= $this->_toLinkHtml($action, $row);
             }
         }

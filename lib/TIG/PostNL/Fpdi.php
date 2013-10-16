@@ -97,6 +97,12 @@ class TIG_PostNL_Fpdi extends FPDI
             for($n=1;$n<=$nb;$n++)
                 $this->pages[$n]=str_replace($this->AliasNbPages,$nb,$this->pages[$n]);
         }
+        if (!isset($this->DefPageFormat)) {
+            $this->DefPageFormat = array(
+                0 => null,
+                1 => null,
+            );
+        }
         if($this->DefOrientation=='P')
         {
             $wPt=$this->DefPageFormat[0]*$this->k;

@@ -54,7 +54,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
      * 
      * @var string
      */
-    const CONFIRM_STATUS_CONFIRMED = 'confirmed';
+    const CONFIRM_STATUS_CONFIRMED   = 'confirmed';
     const CONFIRM_STATUS_UNCONFIRMED = 'unconfirmed';
     
     public function _construct()
@@ -82,6 +82,45 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         
         $this->setShipment($shipment);
         return $shipment;
+    }
+    
+    /**
+     * Retrieves the linked Shipment's shipping address
+     * 
+     * @return Mage_Sales_Model_Order_Address | null
+     */
+    public function getShippingAddress()
+    {
+        if ($this->getData('shipping_address')) {
+            return $this->getData('shipping_address');
+        }
+        
+        $shipmentId = $this->getShipmentId();
+        if (!$shipmentId) {
+            return null;
+        }
+        
+        $shippingAddress = $this->getShipment()->getShippingAddress();
+        
+        $this->setShippingAddress($shippingAddress);
+        return $shippingAddress;
+    }
+    
+    /**
+     * get PostNL Carrier helper
+     * 
+     * @return TIG_PostNL_Helper_Carrier
+     */
+    public function getHelper()
+    {
+        if ($this->getData('helper')) {
+            return $this->getData('helper');
+        }
+        
+        $helper = Mage::helper('postnl/carrier');
+        
+        $this->setHelper($helper);
+        return $helper;
     }
     
     /**
@@ -161,6 +200,13 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
             throw Mage::exception('TIG_PostNL', 'Unable to generate barcode for this shipment: '. $shipment->getId());
         }
         
+        /**
+         * If the generated barcode already exists a new one needs to be generated.
+         */
+        if (Mage::helper('postnl/cif')->barcodeExists($barcode)) {
+            return $this->generateBarcode();
+        }
+        
         $this->setBarcode($barcode);
         return $this;
     }
@@ -182,7 +228,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         }
         
         $carrierCode = self::POSTNL_CARRIER_CODE;
-        $carrierTitle = Mage::getStoreConfig('carrier/' . $carrierCode . '/name', $shipment->getStoreId());
+        $carrierTitle = Mage::getStoreConfig('carriers/' . $carrierCode . '/name', $shipment->getStoreId());
         
         $data = array(
             'carrier_code' => $carrierCode,
@@ -231,9 +277,16 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
     
+    /**
+     * Updates the shipment's confirm status if it is still null
+     * 
+     * @return Mage_Core_Model_Abstract::_beforeSave
+     */
     protected function _beforeSave()
     {
-        if ($this->getConfirmStatus() === null) {
+        if ($this->getConfirmStatus() === null && $this->getLabel()) {
+            $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
+        } elseif ($this->getConfirmStatus() === null) {
             $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
         }
         

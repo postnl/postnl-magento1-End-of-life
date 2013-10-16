@@ -48,6 +48,23 @@ class TIG_PostNL_Model_Carrier_Postnl
     protected $_isFixed = true;
 
     /**
+     * get PostNL Carrier helper
+     * 
+     * @return TIG_PostNL_Helper_Carrier
+     */
+    public function getHelper()
+    {
+        if ($this->getData('helper')) {
+            return $this->getData('helper');
+        }
+        
+        $helper = Mage::helper('postnl/carrier');
+        
+        $this->setHelper($helper);
+        return $helper;
+    }
+    
+    /**
      * Collect shipping rate
      *
      * @param Mage_Shipping_Model_Rate_Request $data
@@ -117,5 +134,34 @@ class TIG_PostNL_Model_Carrier_Postnl
     public function getAllowedMethods()
     {
         return array('postnl' => $this->getConfigData('name'));
+    }
+
+    public function getTrackingInfo($tracking)
+    {
+        $statusModel = Mage::getModel('shipping/tracking_result_status');
+        $track = $this->_getTrackByNumber($tracking);
+        
+        $statusModel->setCarrier($track->getCarrierCode())
+                    ->setCarrierTitle($this->getConfigData('name'))
+                    ->setTracking($track->getTrackNumber())
+                    ->setPopup(1)
+                    ->setUrl($this->getHelper()->getBarcodeUrl($track->getTrackNumber()));;
+        return $statusModel;
+    }
+
+    protected function _getTrackByNumber($number)
+    {
+        $coreResource = Mage::getSingleton('core/resource');
+        $readConn = $coreResource->getConnection('core_read');
+            
+        $trackSelect = $readConn->select();
+        $trackSelect->from($coreResource->getTableName('sales/shipment_track'), array('entity_id'));
+        $trackSelect->where('track_number = ?', $number);
+        
+        $trackId = $readConn->fetchOne($trackSelect);
+        
+        $track = Mage::getModel('sales/order_shipment_track')->load($trackId);
+        
+        return $track;
     }
 }
