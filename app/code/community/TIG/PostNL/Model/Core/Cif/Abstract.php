@@ -191,6 +191,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 )
             );
             
+            Mage::helper('postnl/cif')->logCifCall($client);
             return $response;
         } catch(SoapFault $e) {
             /**

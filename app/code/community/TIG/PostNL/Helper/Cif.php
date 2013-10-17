@@ -40,7 +40,7 @@
 /**
  * Helper class for CIF operations
  */
-class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
+class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
 {
     /**
      * Log filename to log all CIF exceptions
@@ -50,6 +50,13 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
     const CIF_EXCEPTION_LOG_FILE = 'TIG_PostNL_CIF_Exception.log';
     
     /**
+     * Log filename to log CIF calls
+     * 
+     * @var string
+     */
+    const CIF_DEBUG_LOG_FILE = 'TIG_PostNL_CIF_Debug.log';
+    
+    /**
      * available barcode types
      * 
      * @var string
@@ -57,14 +64,7 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
     const DUTCH_BARCODE_TYPE  = 'NL';
     const EU_BARCODE_TYPE     = 'EU';
     const GLOBAL_BARCODE_TYPE = 'GLOBAL';
-    
-    /**
-     * xml path to eu countries setting
-     * 
-     * @var string
-     */
-    const XML_PATH_EU_COUNTRIES = 'general/country/eu_countries';
-    
+        
     /**
      * xml path to infinite label printiong setting
      * 
@@ -90,31 +90,34 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
      * Possible return values:
      * - NL
      * - EU
-     * - CD (global)
+     * - GLOBAL
      * 
      * @var Mage_Sales_Model_Order_Shipment
      * 
-     * @return string
+     * @return string | TIG_PostNL_Helper_Cif
+     * 
+     * @throws TIG_PostNL_Exception
      */
     public function getBarcodeTypeForShipment($shipment)
     {
-        $shippingDestination = $shipment->getShippingAddress()->getCountry();
-        
-        if ($shippingDestination == 'NL') {
+        if ($shipment->isDutchShipment()){
             $barcodeType = self::DUTCH_BARCODE_TYPE;
             return $barcodeType;
         }
         
-        $euCountries = Mage::getStoreConfig(self::XML_PATH_EU_COUNTRIES, $shipment->getStoreId());
-        $euCountriesArray = explode(',', $euCountries);
-        
-        if (in_array($shippingDestination, $euCountriesArray)) {
+        if ($shipment->isEuShipment()) {
             $barcodeType = self::EU_BARCODE_TYPE;
             return $barcodeType;
         }
         
-        $barcodeType = self::GLOBAL_BARCODE_TYPE;
-        return $barcodeType;
+        if ($shipment->isGlobalShipment()) {
+            $barcodeType = self::GLOBAL_BARCODE_TYPE;
+            return $barcodeType;
+        }
+        
+        throw Mage::exception('TIG_PostNL', 'Unable to get valid barcodetype for postnl shipment id #' . $shipment->getId());
+        
+        return $this;
     }
     
     /**
@@ -172,6 +175,39 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
     }
     
     /**
+     * Logs a CIF request and response for debug purposes.
+     * 
+     * N.B.: if file logging is enabled, the log will be forced
+     * 
+     * @param SoapClient $client
+     * 
+     * @return TIG_PostNL_Helper_Cif
+     * 
+     * @see Mage::log()
+     * 
+     * @todo replace logging check
+     * 
+     */
+    public function logCifCall($client)
+    {
+        if (false) { //TODO replace by configuration value check
+            return $this;
+        }
+        
+        $requestXml = $this->formatXml($client->__getLastRequest());
+        $responseXML = $this->formatXml($client->__getLastResponse());
+        
+        $logMessage = "Request sent:\n"
+                    . $requestXml
+                    . "\nResponse recieved:\n"
+                    . $responseXML;
+                    
+        Mage::log($logMessage, Zend_Log::DEBUG, self::CIF_DEBUG_LOG_FILE, true);
+        
+        return $this;
+    }
+    
+    /**
      * Logs a CIF exception in the database and/or a log file
      * 
      * N.B.: if file logging is enabled, the log will be forced
@@ -182,18 +218,27 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
      * 
      * @see Mage::logException()
      * 
-     * @todo replace logging check on line 189
+     * @todo replace logging check
      */
     public function logCifException($exception)
     {
-        if (true) { //@TODO: replace by configuration value check
-            if ($exception instanceof TIG_PostNL_Model_Core_Cif_Exception) {
-                Mage::log("\nRequest:\n" . $this->formatXml($exception->getRequestXml()), Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);
-                Mage::log("\nResponse:\n" . $this->formatXml($exception->getResponseXml()), Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);
-            }
-            
-            Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);
+        if (false) { //TODO replace by configuration value check
+            return $this;
         }
+        
+        if ($exception instanceof TIG_PostNL_Model_Core_Cif_Exception) {
+            $requestXml = $this->formatXml($exception->getRequestXml());
+            $responseXML = $this->formatXml($exception->getResponseXml());
+            
+            $logMessage = "Request sent:\n"
+                        . $requestXml
+                        . "\nResponse recieved:\n"
+                        . $responseXML;
+                        
+            Mage::log($logMessage, Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);
+        }
+        
+        Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);
         
         return $this;
     }

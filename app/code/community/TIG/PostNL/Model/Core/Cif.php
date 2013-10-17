@@ -74,8 +74,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * 
      * @var string
      */
-    const NL_BARCODE_SERIE_LONG   = '000000000-999999999';
-    const NL_BARCODE_SERIE_SHORT  = '00000000-99999999';
+    const NL_BARCODE_SERIE_LONG   = '0000000000-9999999999';
+    const NL_BARCODE_SERIE_SHORT  = '000000000-999999999';
     const EUR_BARCODE_SERIE_LONG  = '00000000-99999999';
     const EUR_BARCODE_SERIE_SHORT = '0000000-9999999';
     const GLOBAL_BARCODE_SERIE    = '0000-9999';
