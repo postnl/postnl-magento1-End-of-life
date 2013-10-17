@@ -57,6 +57,27 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
     const CONFIRM_STATUS_CONFIRMED   = 'confirmed';
     const CONFIRM_STATUS_UNCONFIRMED = 'unconfirmed';
     
+    /**
+     * XML path to default product options setting
+     * 
+     * @var string
+     */
+    const XML_PATH_DEFAULT_PRODUCT_OPTIONS = 'postnl/cif_product_options/default_product_options';
+    
+    /**
+     * xml path to eu countries setting
+     * 
+     * @var string
+     */
+    const XML_PATH_EU_COUNTRIES = 'general/country/eu_countries';
+    
+    /**
+     * Product code for global shipments
+     * 
+     * @var int
+     */
+    const GLOBAL_SHIPMENT_PRODUCT_CODE = 4945;    
+    
     public function _construct()
     {
         $this->_init('postnl/shipment');
@@ -124,15 +145,74 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
-     * Retrieves the calculated product code for this shipment. If no code is set, it calculates it based on default settings
-     * 
-     * @return string
+     * Get the set store ID. If no store ID is set and a shipment is available, 
+     * that shipment's store ID will be returned. Otherwise the current store 
+     * ID is returned.
      */
-    public function getProductCode()
+    public function getStoreId()
     {
-        //TODO finish method
+        if ($this->getData('store_id')) {
+            return $this->getData('store_id');
+        }
         
-        return '3085';
+        if ($this->getShipment()) {
+            $storeId = $this->getShipment()->getStoreId();
+            
+            $this->setStoreId($storeId);
+            return $storeId;
+        }
+        
+        $storeId = Mage::app()->getStore()->getId();
+        
+        $this->setStoreId($storeId);
+        return $storeId;
+    }
+    
+    /**
+     * Check if the shipping destination of this shipment is NL
+     * 
+     * @return boolean
+     */
+    public function isDutchShipment()
+    {
+        if ($shippingDestination == 'NL') {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Check if the shipping destination of this shipment is a EU country
+     * 
+     * @return boolean
+     */
+    public function isEuShipment()
+    {
+        $shippingDestination = $this->getShippingAddress()->getCountry();
+        
+        $euCountries = Mage::getStoreConfig(self::XML_PATH_EU_COUNTRIES, $this->getStoreId());
+        $euCountriesArray = explode(',', $euCountries);
+        
+        if (in_array($shippingDestination, $euCountriesArray)) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Check if the shipping destination of this shipment is global (not NL or EU)
+     * 
+     * @return boolean
+     */
+    public function isGlobalShipment()
+    {
+        if (!$this->isDutchShipment() && !$this->isEuShipment()) {
+            return true;
+        }
+        
+        return false;
     }
     
     /**
@@ -271,10 +351,54 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         }
         $label = $result->Labels->Label;
         
-        $this->setLabel(base64_encode($label->Content))
+        $labelContent = $label->Content;
+        $labelType = $label->Labeltype;
+        
+        $this->setLabel(base64_encode($labelContent))
+             ->setLabelType($labelType)
              ->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
         
         return $this;
+    }
+    
+    /**
+     * Gets the product code for this shipment. If specific options have been selected
+     * those will be used. Otherwise the default options will be used from system/config
+     * 
+     * @return int
+     * 
+     * @todo implement EU product codes
+     */
+    protected function _getProductCode()
+    {
+        if ($this->isEuShipment()) {
+            $productCode = $this->_getEuProductCode(); //TODO implement this method
+            
+            return $productCode;
+        }
+        
+        
+        if ($this->isGlobalShipment()) {
+            $productCode = self::GLOBAL_SHIPMENT_PRODUCT_CODE;
+            
+            return $productCode;
+        }
+        
+        /**
+         * Product options were set manually by the user
+         */
+        if (Mage::registry('postnl_product_options')) {
+            $productCode = Mage::registry('postnl_product_options');
+            
+            return $productCode;
+        }
+        
+        /**
+         * Use default options
+         */
+        $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PRODUCT_OPTIONS, $this->getStoreId());
+        
+        return $productCode;
     }
     
     /**
@@ -288,6 +412,11 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
             $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
         } elseif ($this->getConfirmStatus() === null) {
             $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
+        }
+        
+        if (!$this->getProductCode()) {
+            $productCode = $this->_getProductCode();
+            $this->setProductCode($productCode);
         }
         
         return parent::_beforeSave();

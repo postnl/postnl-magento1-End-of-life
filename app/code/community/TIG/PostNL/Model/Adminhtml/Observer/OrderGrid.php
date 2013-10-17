@@ -50,6 +50,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
     const SHIPMENT_GRID_BLOCK_NAME = 'adminhtml/sales_order_grid';
     
     /**
+     * XML path to show_grid_options setting
+     * 
+     * @var string
+     */
+    const XML_PATH_SHOW_OPTIONS = 'postnl/cif_product_options/show_grid_options';
+    
+    /**
      * Edits the sales order grid by adding a mass action to create shipments for selected orders
      * 
      * @param Varien_Event_Observer $observer
@@ -79,13 +86,28 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
             return $this;
         }
         
+        $massActionData = array(
+            'label'=> Mage::helper('postnl')->__('Create Shipments'),
+            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massCreateShipments'),
+        );
+        
+        $showOptions = Mage::getStoreConfig(self::XML_PATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($showOptions) {
+            $massActionData ['additional'] = array(
+                'product_options' => array(
+                    'name'   => 'product_options',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => Mage::helper('postnl')->__('Product options'),
+                    'values' => Mage::getModel('postnl_core/system_config_source_productOptions')->toOptionArray()
+                ),
+            );
+        }
+        
         $block->getMassactionBlock()
               ->addItem(
                   'create_shipments', 
-                  array(
-                      'label'=> Mage::helper('postnl')->__('Create Shipments'),
-                      'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massCreateShipments'),
-                  )
+                  $massActionData
               );
              
         return $this;

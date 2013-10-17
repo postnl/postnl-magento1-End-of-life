@@ -379,6 +379,38 @@
                     	</housenr_extension_field>
                    </fields>
 				</cif_address>
+				<cif_product_options translate="label" module="postnl">
+		    		<label>CIF Product Options</label>
+                    <sort_order>300</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                    	<show_grid_options translate="label comment" module="postnl">
+                            <label>Show options in order grid</label>
+                            <comment>This will add a product options field to the create shipments mass action. If disabled, default options will be used.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                    	</show_grid_options>
+                    	<default_product_options translate="label comment" module="postnl">
+                            <label>Default shipping options</label>
+                            <comment>These can be overwritten by manually creating shipments. These options are only applicable to Dutch shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_productOptions</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                            	<show_grid_options>0</show_grid_options>
+                            </depends>
+                    	</default_product_options>
+                    </fields>
+				</cif_product_options>
 				<advanced translate="label" module="postnl">
 		    		<label>Advanced Settings</label>
                     <sort_order>10000</sort_order> <!-- This should always be the last group -->

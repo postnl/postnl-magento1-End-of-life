@@ -50,6 +50,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
      * @observer postnl_shipment_generate_barcode
      * 
      * @todo change confirm date to the correct value, instead of the current timestamp
+     * @todo check if save() is needed on line 72
      */
     public function generateBarcode(Varien_Event_Observer $observer)
     {
@@ -65,10 +66,10 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         //create a new postnl shipment entity
         $postnlShipment = Mage::getModel('postnl/shipment');
         $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmData(Mage::getModel('core/date')->timestamp()) //TODO change this to the actual confirm date
+                       ->setConfirmDate(Mage::getModel('core/date')->timestamp()) //TODO change this to the actual confirm date
                        ->generateBarcode()
                        ->addTrackingCodeToShipment()
-                       ->save();
+                       ->save(); //TODO is this save needed?
         
         return $this;
     }

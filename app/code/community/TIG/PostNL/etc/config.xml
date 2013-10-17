@@ -214,6 +214,10 @@
         		<split_housenr>0</split_housenr> <!-- do not split housenr and extension -->
         		<housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
         	</cif_address>
+        	<cif_product_options>
+        		<show_grid_options>0</show_grid_options> <!-- Do not show product options in the order grid -->
+        		<default_product_options>3085</default_product_options> <!-- standard shipment -->
+        	</cif_product_options>
         	<advanced>
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->

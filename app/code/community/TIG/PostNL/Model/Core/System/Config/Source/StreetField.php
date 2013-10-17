@@ -39,6 +39,11 @@
 
 class TIG_PostNL_Model_Core_System_Config_Source_StreetField
 {
+    /**
+     * XML path to community edition address lines configuration option
+     * 
+     * @var string
+     */
     const XML_PATH_COMMUNITY_STREET_LINES = 'customer/address/street_lines';
     
     /**
@@ -56,12 +61,20 @@ class TIG_PostNL_Model_Core_System_Config_Source_StreetField
         $array = $this->_getCommunityOptions();
         return $array;
     }
-
+    
+    /**
+     * Gets options for community edition shops
+     * 
+     * @return array
+     */
     protected function _getCommunityOptions()
     {
         $request = Mage::app()->getRequest();
         $helper = Mage::helper('postnl');
         
+        /**
+         * Get the allowed number of address lines based on the current scope
+         */
         $scopeData = array();
         if ($request->getParam('store')) {
             $lineCount = Mage::getStoreConfig(self::XML_PATH_COMMUNITY_STREET_LINES, $request->getparam('store'));
@@ -72,6 +85,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_StreetField
             $lineCount = Mage::getStoreConfig(self::XML_PATH_COMMUNITY_STREET_LINES, Mage_Core_Model_App::ADMIN_STORE_ID);
         }
         
+        /**
+         * Build the option array
+         */
         $array = array();
         for ($n = 1; $n <= $lineCount; $n++) {
             $array[] = array(
@@ -83,11 +99,19 @@ class TIG_PostNL_Model_Core_System_Config_Source_StreetField
         return $array;
     }
     
+    /**
+     * Gets options for enterprise edition shops
+     * 
+     * @return array
+     */
     protected function _getEnterpriseOptions()
     {
         $helper = Mage::helper('postnl');
         $lineCount = Mage::helper('customer/address')->getStreetLines();
         
+        /**
+         * Build the option array
+         */
         $array = array();
         for ($n = 1; $n <= $lineCount; $n++) {
             $array[] = array(

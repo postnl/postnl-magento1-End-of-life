@@ -47,9 +47,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     {
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         
-        $label = $this->_getShippingLabel($shipmentId);
-        $labelModel = Mage::getModel('postnl_core/label');
-        $labelModel->createPdf($label);
+        try {
+            $label = $this->_getShippingLabel($shipmentId);
+            
+            $labelModel = Mage::getModel('postnl_core/label');
+            $labelModel->createPdf($label);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+        }
         
         $this->_redirect('adminhtml/sales_shipment/index');
         return $this;
@@ -69,6 +77,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             );
             $this->_redirect('adminhtml/sales_order/index');
             return $this;
+        }
+        
+        if ($this->getRequest()->getParam('product_options')) {
+            Mage::register('postnl_product_options', $this->getRequest()->getParam('product_options'));
         }
         
         try {

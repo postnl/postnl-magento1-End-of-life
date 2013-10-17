@@ -71,6 +71,9 @@ $postnlShipmentTable = $installer->getConnection()
     ->addColumn('label', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
         'unsigned'  => true,
         ), 'Label')
+    ->addColumn('label_type', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+        'unsigned'  => true,
+        ), 'Label Type')
     ->addIndex($installer->getIdxName('postnl/shipment', array('shipment_id'), Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE), 
         array('shipment_id'), 
         array('type' => Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE))

@@ -46,6 +46,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const POSTNL_EXCEPTION_LOG_FILE = 'TIG_PostNL_Exception.log';
     
     /**
+     * Log filename to log all non-specific PostNL debug messages
+     * 
+     * @var string
+     */
+    const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_Debug.log';
+    
+    /**
      * xml path to postnl general active/inactive setting
      * 
      * @var string
@@ -61,9 +68,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         
-        $enabled = Mage::getStoreCOnfig(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
+        $enabled = (bool) Mage::getStoreConfig(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
         
-        return (bool) $enabled;
+        return $enabled;
     }
     
     /**
@@ -97,6 +104,22 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
     
     /**
+     * Logs a debug message. Based on Mage::log
+     * 
+     * @param Exception $exception
+     * 
+     * @return TIG_PostNL_Helper_Data
+     * 
+     * @see Mage::log
+     */
+    public function log($message, $level)
+    {
+        Mage::log($message, Zend_Log::DEBUG, self::POSTNL_DEBUG_LOG_FILE);
+        
+        return $this;
+    }
+    
+    /**
      * Logs a PostNL Exception. Based on Mage::logException
      * 
      * @param Exception $exception
@@ -121,7 +144,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isEnterprise()
     {
-        if (method_exists('Mage', 'getEdition')) { // available since 1.7.0.0 / 1.12.0.0
+        /**
+         * Use Mage::getEdition, which is available since CE 1.7 and EE 1.12
+         */
+        if (method_exists('Mage', 'getEdition')) {
             $edition = Mage::getEdition();
             if ($edition == Mage::EDITION_ENTERPRISE) {
                 return true;
@@ -131,9 +157,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 return false;
             }
             
+            /**
+             * If the edition is not community or enterprise, it is not supported
+             */
             throw Mage::exception('TIG_PostNL', 'Invalid Magento edition detected: ' . $edition);
         }
         
+        /**
+         * Do a version check instead
+         */
         $version = Mage::getVersion();
         if (version_compare($version, '1.9.0.0', '>=')) { //1.9.0.0 was the first Magento Enterprise version
             return true;
