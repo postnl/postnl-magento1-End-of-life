@@ -97,7 +97,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      */
     public function createPdf($labels)
     {
-        Varien_Profiler::start('generate_label');
+        Varien_Profiler::start('tig_postnl_core_label_createpdf');
         
         /**
          * Open a new pdf object and assign some basic values
@@ -138,7 +138,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         $pdf->Output('PostNL Shipping Labels.pdf', 'D');
         
-        Varien_Profiler::stop('generate_label');
+        Varien_Profiler::stop('tig_postnl_core_label_createpdf');
         
         return $this;
     }

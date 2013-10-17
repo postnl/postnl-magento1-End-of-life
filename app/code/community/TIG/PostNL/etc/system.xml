@@ -163,6 +163,7 @@
 		<postnl translate="label" module="postnl">
 			<label>PostNL</label>
 			<tab>sales</tab>
+            <class>postnl-tab</class>
 			<frontend_type>text</frontend_type>
 		    <sort_order>330</sort_order> <!-- After Shipping Methods, before Google API -->
 		    <show_in_default>1</show_in_default>
@@ -238,13 +239,15 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                     	</test_password>
-                    	<customer_code translate="label" module="postnl">
+                    	<customer_code translate="label comment" module="postnl">
                             <label>CIF Customer Code</label>
+                            <comment>Your customer code as supplied by PostNL. Must contain between 3 and 4 leters.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>validate-alpha validate-length minimum-length-3 maximum-length-4</validate>
                     	</customer_code>
                     	<customer_number translate="label" module="postnl">
                             <label>CIF Customer Number</label>
@@ -253,11 +256,32 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>validate-digits</validate>
                     	</customer_number>
+                    	<global_barcode_type translate="label comment" module="postnl">
+                            <label>CIF Global Barcode Type</label>
+                            <comment>The current global barcode type as supplied by PostNL. Must contain 2 leters.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-alpha validate-length minimum-length-2 maximum-length-2</validate>
+                    	</global_barcode_type>
+                    	<global_barcode_range translate="label" module="postnl">
+                            <label>CIF Global Barcode Range</label>
+                            <comment>Your global barcode range as supplied by PostNL. Must contain 4 digits.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-digits validate-length minimum-length-4 maximum-length-4</validate>
+                    	</global_barcode_range>
                     	<company_name translate="label" module="postnl">
                             <label>Company Name</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>80</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -265,7 +289,7 @@
                     	<contact_name translate="label" module="postnl">
                             <label>Contact Name</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>90</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -273,7 +297,7 @@
                     	<contact_email translate="label" module="postnl">
                             <label>Contact Email</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -281,7 +305,7 @@
                     	<collection_location translate="label" module="postnl">
                             <label>Collection Location</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -380,7 +404,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <validate>validate-digits validate-not-negative-number</validate> <!-- not negative integers only -->
+                            <validate>validate-digits validate-greater-than-zero</validate> <!-- not negative integers only -->
                     	</max_temp_file_storage_time>
                 	</fields>
 				</advanced>
