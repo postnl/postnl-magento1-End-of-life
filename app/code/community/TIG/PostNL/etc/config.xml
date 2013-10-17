@@ -44,6 +44,7 @@
 			<version>0.1.0</version>
 		</TIG_PostNL>
 	</modules>
+	
 	<global>
 		<blocks>
         	<!-- Block definitions per submodule -->
@@ -109,15 +110,17 @@
         <events>
         	<sales_order_shipment_save_after>
         		<observers>
+        			<!-- Creates a postnl shipment entity and generates a barcode through CIF-->
         			<postnl_shipment_generate_barcode>
 					    <type>Model</type>
-					    <class>postnl_core/observer</class>
+					    <class>postnl_core/observer_barcode</class>
 					    <method>generateBarcode</method>
         			</postnl_shipment_generate_barcode>
         		</observers>
         	</sales_order_shipment_save_after>
         </events>
 	</global>
+	
     <admin>
         <routers>
             <postnl>
@@ -129,6 +132,7 @@
             </postnl>
         </routers>
     </admin>
+    
     <adminhtml>
 		<events>
 			<adminhtml_block_html_before>
@@ -136,19 +140,35 @@
 			   		<!-- Adds a massaction the grid that allows merchants to create shipments for selected orders-->
 				    <postnl_adminhtml_ordergrid>
 					    <type>Model</type>
-					    <class>postnl_adminhtml/orderGridObserver</class>
+					    <class>postnl_adminhtml/observer_orderGrid</class>
 					    <method>modifyGrid</method>
 				    </postnl_adminhtml_ordergrid>
 					<!-- Adds new columns to the shipment grid and allows these columns to be filtered and sorted properly -->
 					<postnl_adminhtml_shipmentgrid>
 						<type>singleton</type>
-						<class>postnl_adminhtml/shipmentGridObserver</class>
+						<class>postnl_adminhtml/observer_shipmentGrid</class>
 						<method>modifyGrid</method>
 					</postnl_adminhtml_shipmentgrid>
 			    </observers>
 			</adminhtml_block_html_before>
 		</events>
     </adminhtml>
+    
+    <crontab>
+        <jobs>
+        	<!-- remove old temporary label files -->
+            <clean_temp_labels>
+                <schedule>
+                	<cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                </schedule>
+                <run>
+                	<model>postnl_core/observer_cron::cleanTempLabels</model>
+                </run>
+            </clean_temp_labels>
+        </jobs>
+    </crontab>
+    
+    <!-- default values used in system/config -->
     <default>
         <carriers>
             <postnl>
@@ -163,5 +183,34 @@
                 <handling_type>F</handling_type>
             </postnl>
         </carriers>
+        <postnl>
+        	<general>
+        		<active>0</active> <!-- inactive -->
+        	</general>
+        	<cif>
+        		<mode>1</mode> <!-- test mode -->
+        		<live_username></live_username>
+        		<live_password></live_password>
+        		<test_username></test_username>
+        		<test_password></test_password>
+        		<customer_code></customer_code>
+        		<customer_number></customer_number>
+        		<company_name></company_name>
+        		<contact_name></contact_name>
+        		<contact_email></contact_email>
+        		<collection_location></collection_location>
+        	</cif>
+        	<cif_address>
+        		<split_street>1</split_street> <!-- split street -->
+        		<streetname_field>1</streetname_field> <!-- first address line -->
+        		<housenr_field>2</housenr_field> <!-- second address line -->
+        		<split_housenr>0</split_housenr> <!-- do not split housenr and extension -->
+        		<housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
+        	</cif_address>
+        	<advanced>
+        		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
+        		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
+        	</advanced>
+        </postnl>
     </default>
 </config>

@@ -40,7 +40,7 @@
 /**
  * Observer to edit the sales > shipments grid
  */
-class TIG_PostNL_Model_Adminhtml_ShipmentGridObserver extends Varien_Object
+class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 {
     /**
      * The block we want to edit
