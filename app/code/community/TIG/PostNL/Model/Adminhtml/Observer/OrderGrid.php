@@ -36,26 +36,58 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-
-class TIG_PostNL_Model_Core_System_Config_Source_Testlive
+ 
+/**
+ * Observer to edit the sales > order grid
+ */
+class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
 {
     /**
-     * Source model for test / live setting
+     * The block we want to edit
      * 
-     * @return array
+     * @var string
      */
-    public function toOptionArray()
+    const SHIPMENT_GRID_BLOCK_NAME = 'adminhtml/sales_order_grid';
+    
+    /**
+     * Edits the sales order grid by adding a mass action to create shipments for selected orders
+     * 
+     * @param Varien_Event_Observer $observer
+     * 
+     * @return TIG_PostNL_Model_Adminhtml_OrderGridObserver
+     * 
+     * @event adminhtml_block_html_before
+     * 
+     * @observer postnl_adminhtml_ordergrid
+     */
+    public function modifyGrid(Varien_Event_Observer $observer)
     {
-        $array = array(
-             array(
-                'value' => '1', 
-                'label' => Mage::helper('postnl')->__('Test')
-             ),
-             array(
-                'value' => '0', 
-                'label' => Mage::helper('postnl')->__('Live')
-             ),
-        );
-        return $array;
+        //check if the extension is active
+        if (!Mage::helper('postnl')->isEnabled()) {
+            return $this;
+        }
+        
+        /**
+         * Checks if the current block is the one we want to edit.
+         * 
+         * Unfortunately there is no unique event for this block
+         */
+        $block = $observer->getBlock();
+        $orderGridClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_GRID_BLOCK_NAME);
+       
+        if (get_class($block) !== $orderGridClass) {
+            return $this;
+        }
+        
+        $block->getMassactionBlock()
+              ->addItem(
+                  'create_shipments', 
+                  array(
+                      'label'=> Mage::helper('postnl')->__('Create Shipments'),
+                      'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massCreateShipments'),
+                  )
+              );
+             
+        return $this;
     }
 }

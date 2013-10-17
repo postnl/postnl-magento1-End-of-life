@@ -316,7 +316,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             }
         }
         
-        // no shipment could be matched to the supplied barcode
+        /**
+         * no shipment could be matched to the supplied barcode
+         */ 
         throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($reponse, true));
     }
     
@@ -678,6 +680,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $streetname = $address->getStreet($streetnameField);
         $housenumber = $address->getStreet($housenumberField);
         
+        /**
+         * Split the housenumber into a number and an extension
+         */
         $splitHouseNumber = Mage::getStoreConfig(self::XML_PATH_SPLIT_HOUSENUMBER, $storeId);
         if ($splitHouseNumber) {
             $housenumberExtensionField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);

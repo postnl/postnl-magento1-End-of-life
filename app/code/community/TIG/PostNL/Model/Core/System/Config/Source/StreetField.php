@@ -49,15 +49,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_StreetField
     public function toOptionArray()
     {
         if (Mage::helper('postnl')->isEnterprise()) {
-            $array = $this->_getEnterpriseOptions($scopeData);
+            $array = $this->_getEnterpriseOptions();
             return $array;
         }
         
-        $array = $this->_getCommunityOptions($scopeData);
+        $array = $this->_getCommunityOptions();
         return $array;
     }
 
-    protected function _getCommunityOptions($scopeData)
+    protected function _getCommunityOptions()
     {
         $request = Mage::app()->getRequest();
         $helper = Mage::helper('postnl');

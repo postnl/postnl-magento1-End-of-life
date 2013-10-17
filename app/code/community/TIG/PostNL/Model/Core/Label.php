@@ -231,7 +231,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                       . DS
                       . md5($label)
                       . '-'
-                      . microtime(true)
+                      . time()
                       . '-'
                       . self::TEMP_LABEL_FILENAME;
         
