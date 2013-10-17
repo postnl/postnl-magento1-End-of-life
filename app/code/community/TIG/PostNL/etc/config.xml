@@ -152,6 +152,13 @@
 			    </observers>
 			</adminhtml_block_html_before>
 		</events>
+        <layout>
+            <updates>
+                <postnl>
+                    <file>TIG/postnl.xml</file>
+                </postnl>
+            </updates>
+        </layout>
     </adminhtml>
     
     <crontab>
@@ -168,7 +175,7 @@
         </jobs>
     </crontab>
     
-    <!-- default values used in system/config -->
+    <!-- default configuration values. You can edit most of these in system/config -->
     <default>
         <carriers>
             <postnl>

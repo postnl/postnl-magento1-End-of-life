@@ -37,9 +37,9 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
  
- /**
-  * Helper class for CIF operations
-  */
+/**
+ * Helper class for CIF operations
+ */
 class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
 {
     /**
@@ -56,7 +56,7 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
      */
     const DUTCH_BARCODE_TYPE  = 'NL';
     const EU_BARCODE_TYPE     = 'EU';
-    const GLOBAL_BARCODE_TYPE = 'CD';
+    const GLOBAL_BARCODE_TYPE = 'GLOBAL';
     
     /**
      * xml path to eu countries setting
@@ -181,6 +181,8 @@ class TIG_PostNL_Helper_Cif extends Mage_Core_Helper_Abstract
      * @return TIG_PostNL_Helper_Cif
      * 
      * @see Mage::logException()
+     * 
+     * @todo replace logging check on line 189
      */
     public function logCifException($exception)
     {
