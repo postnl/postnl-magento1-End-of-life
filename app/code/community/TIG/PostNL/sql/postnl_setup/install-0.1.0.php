@@ -68,12 +68,6 @@ $postnlShipmentTable = $installer->getConnection()
     ->addColumn('product_code', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
         'unsigned'  => true,
         ), 'Product Code')
-    ->addColumn('label', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
-        'unsigned'  => true,
-        ), 'Label')
-    ->addColumn('label_type', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
-        'unsigned'  => true,
-        ), 'Label Type')
     ->addIndex($installer->getIdxName('postnl/shipment', array('shipment_id'), Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE), 
         array('shipment_id'), 
         array('type' => Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE))
@@ -86,5 +80,32 @@ $postnlShipmentTable = $installer->getConnection()
     ->setComment('TIG PostNL Shipment');
 
 $installer->getConnection()->createTable($postnlShipmentTable);
+
+$postnlShipmentLabelTable = $installer->getConnection()
+    ->newTable($installer->getTable('postnl/shipment_label'))
+    ->addColumn('label_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'identity'  => true,
+        'unsigned'  => true,
+        'nullable'  => false,
+        'primary'   => true,
+        ), 'Label Id')
+    ->addColumn('parent_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'unsigned'  => true,
+        'nullable'  => true,
+        ), 'Parent Id')
+    ->addColumn('label', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+        'unsigned'  => true,
+        ), 'Label')
+    ->addColumn('label_type', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+        'unsigned'  => true,
+        ), 'Label Type')
+    ->addIndex($installer->getIdxName('postnl/shipment_label', array('parent_id')), 
+        array('parent_id'))
+    ->addForeignKey($installer->getFkName('postnl/shipment_label', 'parent_id', 'postnl/shipment', 'entity_id'),
+        'parent_id', $installer->getTable('postnl/shipment'), 'entity_id',
+        Varien_Db_Ddl_Table::ACTION_SET_NULL, Varien_Db_Ddl_Table::ACTION_CASCADE)
+    ->setComment('TIG PostNL Shipment Label');
+
+$installer->getConnection()->createTable($postnlShipmentLabelTable);
 
 $installer->endSetup();

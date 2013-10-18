@@ -48,10 +48,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         
         try {
-            $label = $this->_getShippingLabel($shipmentId);
+            $labels = $this->_getShippingLabels($shipmentId);
             
             $labelModel = Mage::getModel('postnl_core/label');
-            $labelModel->createPdf($label);
+            $labelModel->createPdf($labels);
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
@@ -198,7 +198,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         $labels = array();
         try {
             foreach ($shipmentIds as $shipmentId) {
-                $labels[] = $this->_getShippingLabel($shipmentId);
+                $labels = array_merge($labels, $this->_getShippingLabels($shipmentId));
             }
             
             /**
@@ -228,7 +228,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      * 
      * @throws TIG_PostNL_Exception
      */
-    protected function _getShippingLabel($shipmentId)
+    protected function _getShippingLabels($shipmentId)
     {
         /**
          * Check iof the shipment was shipped with PostNL
@@ -242,8 +242,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          * Load the PostNL shipment and check if it already has a label
          */
         $postnlShipment = Mage::getModel('postnl/shipment')->load($shipmentId, 'shipment_id');
-        if ($postnlShipment->getLabel()) {
-            return $postnlShipment->getlabel();
+        if ($postnlShipment->getLabels()) {
+            return $postnlShipment->getlabels();
         }
         
         /**
@@ -267,7 +267,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         $postnlShipment->confirmAndPrintLabel()
                        ->save();
                        
-        $label = $postnlShipment->getLabel();
-        return $label;
+        $labels = $postnlShipment->getLabels();
+        return $labels;
     }
 }

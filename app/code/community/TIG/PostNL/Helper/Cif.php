@@ -73,6 +73,42 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const XML_PATH_INFINITE_LABEL_PRINTING = 'postnl/advanced/infinite_label_printing';
     
     /**
+     * Array of countries to which PostNL ships using EPS. Other EU countries are shipped to using GlobalPack
+     * 
+     * @var array
+     */
+    protected $_euCountries = array(
+        'BE',
+        'BG',
+        'DK',
+        'DE',
+        'EE',
+        'FI',
+        'FR',
+        'GB',
+        'HU',
+        'IE',
+        'IT',
+        'LV',
+        'LT',
+        'LU',
+        'AT',
+        'PL',
+        'PT',
+        'RO',
+        'SI',
+        'SK',
+        'ES',
+        'CZ',
+        'SE',
+    );
+    
+    public function getEuCountries()
+    {
+        return $this->_euCountries;
+    }
+    
+    /**
      * Checks if infinite label printing is enabled in the module configuration.
      * 
      * @return boolean

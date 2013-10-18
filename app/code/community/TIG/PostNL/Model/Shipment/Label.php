@@ -36,53 +36,37 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Observer_Barcode
+class TIG_PostNL_Model_Shipment_Label extends Mage_Core_Model_Abstract
 {
-    /**
-     * Generates a barcode for the shipment if it is new
-     * 
-     * @param Varien_Event_Observer $observer
-     * 
-     * @return TIG_PostNL_Model_Core_Observer
-     * 
-     * @event sales_order_shipment_save_after
-     * 
-     * @observer postnl_shipment_generate_barcode
-     * 
-     * @todo change confirm date to the correct value, instead of the current timestamp
-     */
-    public function generateBarcode(Varien_Event_Observer $observer)
+    public function _construct()
     {
-        $shipment = $observer->getShipment();
-        
-        /**
-         * Check if a postnl shipment exists for this shipment
-         */
-        if (Mage::helper('postnl/carrier')->postnlShipmentExists($shipment->getId())) {
-            return $this;
+        $this->_init('postnl/shipment_label');
+    }
+    
+    /**
+     * Alias for magic getLabelType()
+     * 
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->getLabelType();
+    }
+    
+    /**
+     * Gets label contents. Optional parameter to base64 decode the content
+     * 
+     * @param boolean $decode
+     * 
+     * @return string
+     */
+    public function getLabel($decode = false)
+    {
+        $label = $this->getData('label');
+        if ($decode && $label) {
+            $label = base64_decode($label);
         }
         
-        /**
-         * create a new postnl shipment entity
-         */
-        $postnlShipment = Mage::getModel('postnl/shipment');
-        $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmDate(Mage::getModel('core/date')->timestamp()); //TODO change this to the actual confirm date
-         
-        /**
-         * Barcode generation needs to be tried seperately. This functionality may throw a valid exception
-         * in which case it needs to be tried again later without preventing the shipment from being
-         * created. This may dor example happen when CIF is overburdoned.
-         */              
-        try {
-            $postnlShipment->generateBarcode()
-                           ->addTrackingCodeToShipment();
-        } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
-        }
-        
-        $postnlShipment->save();
-        
-        return $this;
+        return $label;
     }
 }

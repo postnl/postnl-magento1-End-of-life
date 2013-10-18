@@ -39,12 +39,17 @@
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
 {
     /**
-     * Column name containing ther shipment's shipping method
+     * Additional column names used
+     * 
+     * @var string
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
+    const CONFIRM_STATUS_COLUMN  = 'confirm_status';
     
     /**
      * Code of postnl shipping method
+     * 
+     * @var string
      */
     const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
     
@@ -60,6 +65,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
         if ($shippingMethod != self::POSTNL_SHIPPING_METHOD) {
             return parent::render($row);
+        }
+        
+        $postnlShipmentModel = Mage::app()->getConfig()->getModelClassName('postnl/shipment');
+        if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentModel::CONFIRM_STATUS_CONFIRMED) {
+            return Mage::helper('postnl')->__('Confirmed');
         }
         
         $value = $row->getData($this->getColumn()->getIndex());

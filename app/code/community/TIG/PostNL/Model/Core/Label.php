@@ -52,6 +52,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      */
     protected $_tempFilesSaved = array();
     
+    /**
+     * Counter to determine position of labels
+     * 
+     * @var null | int
+     */
+    protected $_labelCounter = null;
+    
     public function getTempFilesSaved()
     {
         return $this->_tempFilesUsed;
@@ -60,6 +67,47 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     public function setTempFilesSaved($tempFilesUsed)
     {
         $this->_tempFilesUsed = $tempFilesUsed;
+        
+        return $this;
+    }
+    
+    public function getLabelCounter()
+    {
+        return $this->_labelCounter;
+    }
+    
+    public function setLabelCounter($counter)
+    {
+        $this->_labelCounter = $counter;
+        
+        return $this;
+    }
+    
+    /**
+     * Reset the counter to 0
+     * 
+     * @return TIG_PostNL_Model_Core_Label
+     */
+    public function resetLabelCounter()
+    {
+        $this->setLabelCounter(1);
+        
+        return $this;
+    }
+    
+    /**
+     * increase the label counter by a given amount
+     * 
+     * @param int $increase
+     * 
+     * @return TIG_PostNL_Model_Core_Label
+     */
+    public function increaseLabelCounter($increase = 1)
+    {
+        $counter = $this->getLabelCounter();
+        $newCounter = $counter + $increase;
+        
+        $this->setLabelCounter($newCounter);
         
         return $this;
     }
@@ -97,13 +145,14 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      */
     public function createPdf($labels)
     {
-        Varien_Profiler::start('tig_postnl_core_label_createpdf');
+        Varien_Profiler::start('tig::postnl::core::label_createpdf');
         
         /**
          * Open a new pdf object and assign some basic values
          */
         $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
         $pdf->open();
+        $pdf->SetFont('Arial', 'I', 40);
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFillColor(255,255,255);
         $pdf->SetTitle('PostNL Shipping Labels');
@@ -114,7 +163,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             /**
              * Create a pdf containing multiple labels
              */
-            $pdf->addOrientedPage('L', 'A4'); //landscape A4
             $pdf = $this->_createMultiLabelPdf($pdf, $labels);
         } else {
             /**
@@ -124,6 +172,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             if (is_array($labels)) {
                 $labels = current($labels);
             }
+            
             $pdf->addOrientedPage('L', 'A6'); //landscape A6
             $pdf = $this->_addPdfTemplate($pdf, $labels);
         }
@@ -138,7 +187,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         $pdf->Output('PostNL Shipping Labels.pdf', 'D');
         
-        Varien_Profiler::stop('tig_postnl_core_label_createpdf');
+        Varien_Profiler::stop('tig::postnl::core::label_createpdf');
         
         return $this;
     }
@@ -168,20 +217,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             throw Mage::exception('TIG_PostNL', 'Maximum amount of labels exceeded. Maximum allowed: 200. Requested: ' . count($labels));
         }
         
-        /**
-         * Counter used to determine the position of each label on the page
-         */
-        $n = 0;
+        $labels = $this->_sortLabels($labels);
         foreach ($labels as $label) {
-            /**
-             * Add a new page every 4 labels and reset the counter
-             */
-            if (++$n > 4) {
-                $pdf->addOrientedPage('L', 'A4');
-                $n = 1;
-            }
-            
-            $pdf = $this->_addPdfTemplate($pdf, $label, $n);
+            $pdf = $this->_addPdfTemplate($pdf, $label);
         }
 
         return $pdf;
@@ -196,21 +234,103 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * 
      * @return TIG_PostNL_Fpdi $pdf
      */
-    protected function _addPdfTemplate($pdf, $label, $labelCounter = false)
+    protected function _addPdfTemplate($pdf, $label)
     {
         /**
          * Fpdi requires labels to be provided as files. Therefore the label will be saved as a temporary file in var/TIG/PostNL/temp_labels/
          */
-        $tempFilename = $this->_saveTempLabel($label);
+        $tempFilename = $this->_saveTempLabel($label->getLabel());
         
-        /**
-         * Calculate the position of the next label to be printed
-         */
-        $position = $this->_getPosition($labelCounter);
+        switch ($label->getLabelType()) {
+            case 'Label':
+                /**
+                 * If this is the first label, add the first page
+                 */
+                if (!$this->getLabelCounter()) {
+                    $pdf->addOrientedPage('L', 'A4'); //landscape A4
+                    $this->resetLabelCounter();
+                }
+                
+                /**
+                 * Add a new page every 4 labels and reset the counter
+                 */
+                if ($this->getLabelCounter() > 4) {
+                    $pdf->addOrientedPage('L', 'A4');
+                    $this->resetLabelCounter();
+                }
+                
+                /**
+                 * Calculate the position of the next label to be printed
+                 */
+                $position = $this->_getPosition($this->getLabelCounter());
+                $position['w'] = $this->pix2pt(538);
+                
+                $this->increaseLabelCounter();
+                break;
+            case 'CN23':
+            case 'CommercialInvoice':
+                /**
+                 * International shipping labels are larger and need to be printed on seperate pages
+                 */
+                $pdf->addOrientedPage('P', 'A4');
+                
+                /**
+                 * Calculate the position of the next label to be printed
+                 */
+                $position = array(
+                    'x' => $this->pix2pt(15), 
+                    'y' => $this->pix2pt(17), 
+                    'w' => $this->pix2pt(776)
+                );
+                
+                /**
+                 * increase the label counter to above 4. This will prompt the creation of a new page
+                 */
+                $this->setLabelCounter(5);
+                break;
+            case 'CP71':
+                /**
+                 * Calculate the position of the next label to be printed
+                 */
+                $position = array(
+                    'x' => $this->pix2pt(15), 
+                    'y' => $this->pix2pt(578), 
+                    'w' => $this->pix2pt(776)
+                );
+                
+                /**
+                 * increase the label counter to above 4. This will prompt the creation of a new page
+                 */
+                $this->setLabelCounter(5);
+                break;
+            case 'CODcard':
+                /**
+                 * COD cards are larger and need to be printed on seperate pages
+                 */
+                $pdf->addOrientedPage('P', 'A4');
+                
+                /**
+                 * Calculate the position of the next label to be printed
+                 */
+                $position = array(
+                    'x' => $this->pix2pt(15), 
+                    'y' => $this->pix2pt(17), 
+                    'w' => $this->pix2pt(776)
+                );
+                
+                /**
+                 * increase the label counter to above 4. This will prompt the creation of a new page
+                 */
+                $this->setLabelCounter(5);
+                break;
+            default:
+                throw Mage::exception('TIG_PostNL', 'Invalid label type supplied: ' . $label->getLabelType());
+        }
+
         /**
          * Add the next label to the pdf
          */
-        $pdf->insertTemplate($tempFilename, $position['x'], $position['y'], $this->pix2pt(538));
+        $pdf->insertTemplate($tempFilename, $position['x'], $position['y'], $position['w']);
         
         return $pdf;
     }
@@ -268,6 +388,73 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
     
     /**
+     * Sorts labels by label type. First all labels of the 'Label' type. Then all other labels in the 
+     * order of 'CN23' > 'CP71' > 'CommercialInvoice' grouped by shipments
+     * 
+     * @param array $labels
+     * 
+     * @return array
+     * 
+     * @todo expand with cod labels
+     */
+    protected function _sortLabels($labels)
+    {
+        $generalLabels = array();
+        $globalLabels = array();
+        $codCards = array();
+        foreach ($labels as $label) {
+            /**
+             * Seperate general labels from the rest
+             */
+            if ($label->getLabelType() == 'Label') {
+                $generalLabels[] = $label;
+                continue;
+            }
+            
+            /**
+             * Seperate COD cards
+             */
+            if ($label->getLabelType() == 'CODcard') {
+                $codCards[] = $label;
+                continue;
+            }
+            
+            /**
+             * Group other labels by shipment id (parent_id attribute)
+             */
+            if (isset($globalLabels[$label->getParentId()])) {
+                $globalLabels[$label->getParentId()][$label->getLabelType()] = $label;
+            } else {
+                $globalLabels[$label->getParentId()] = array($label->getlabelType() => $label);
+            }
+        }
+        
+        /**
+         * Sort all non-standard labels
+         */
+        $sortedGlobalLabels = array();
+        foreach ($globalLabels as $shipmentLabels) {
+            if (isset($shipmentLabels['CN23'])) {
+                $sortedGlobalLabels[] = $shipmentLabels['CN23'];
+            }
+            
+            if (isset($shipmentLabels['CP71'])) {
+                $sortedGlobalLabels[] = $shipmentLabels['CP71'];
+            }
+            
+            if (isset($shipmentLabels['CommercialInvoice'])) {
+                $sortedGlobalLabels[] = $shipmentLabels['CommercialInvoice'];
+            }
+        }
+        
+        /**
+         * merge all labels back into a single array
+         */
+        $labels = array_merge($generalLabels, $sortedGlobalLabels, $codCards);
+        return $labels;
+    }
+    
+    /**
      * Calculates the position of the requested label using a counter system.
      * The labels will be positioned accordingly:
      * first: top left
@@ -289,19 +476,18 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             return $position;
         }
         
-        switch($counter)
-        {
+        switch($counter) {
             case 1: 
-                $position = array('x' => $this->pix2pt(579), 'y' => $this->pix2pt(0));  
+                $position = array('x' => $this->pix2pt(579), 'y' => $this->pix2pt(15));  
                 break;
             case 2: 
-                $position = array('x' => $this->pix2pt(579), 'y' => $this->pix2pt(379)); 
+                $position = array('x' => $this->pix2pt(579), 'y' => $this->pix2pt(414)); 
                 break;
             case 3: 
-                $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(0));  
+                $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(15));  
                 break; // also used for A6
             case 4: 
-                $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(379)); 
+                $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(414)); 
                 break;
             default: 
                 throw Mage::exception('TIG_PostNL', 'Invalid counter: ' . $counter);
