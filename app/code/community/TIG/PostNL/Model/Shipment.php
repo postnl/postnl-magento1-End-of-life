@@ -236,6 +236,20 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Check if the currrent shipment is a PakjeGemak shipment.
+     * 
+     * PakjeGemak functionality is not yet implemented.
+     * 
+     * @return boolean
+     * 
+     * @todo implement this method
+     */
+    public function isPakjeGemakShipment()
+    {
+        return false; //not yet implemented
+    }
+    
+    /**
      * Check if the shipping destination of this shipment is global (not NL or EU)
      * 
      * @return boolean
@@ -325,12 +339,12 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _getProductCode()
     {
-        
         /**
          * Product options were set manually by the user
          */
         if (Mage::registry('postnl_product_options')) {
             $productCode = Mage::registry('postnl_product_options');
+            $this->_checkProductCodeAllowed($productCode);
             
             return $productCode;
         }
@@ -343,6 +357,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
              * EU default option
              */
             $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS, $this->getStoreId());
+            $this->_checkProductCodeAllowed($productCode);
             
             return $productCode;
         }
@@ -352,6 +367,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
              * Global default option
              */
             $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_GLOBAL_PRODUCT_OPTIONS, $this->getStoreId());
+            $this->_checkProductCodeAllowed($productCode);
             
             return $productCode;
         }
@@ -360,8 +376,48 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
          * standard default option
          */
         $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS, $this->getStoreId());
+        $this->_checkProductCodeAllowed($productCode);
         
         return $productCode;
+    }
+    
+    /**
+     * Checks if a given product code is allowed for the current shipments. Throws an exception if not.
+     * 
+     * @param string $productCode
+     * 
+     * @return boolean
+     * 
+     * @throws TIG_PostNL_Exception
+     * 
+     * @todo implement EU combilabel shipments
+     * @todo implement PakjeGemak product codes
+     */
+    protected function _checkProductCodeAllowed($productCode)
+    {
+        $cifHelper = Mage::helper('postnl/cif');
+        $allowedProductCodes = array();
+        
+        if ($this->isDutchShipment() && !$this->isPakjeGemakShipment()) {
+            $allowedProductCodes = $cifHelper->getStandardProductCodes();
+        }
+        if ($this->isDutchShipment() && $this->isPakjeGemakShipment()) {
+            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes();
+        }
+        
+        if ($this->isEuShipment()) {
+            $allowedProductCodes = $cifHelper->getEuProductCodes();
+        }
+        
+        if ($this->isGlobalShipment()) {
+            $allowedProductCodes = $cifHelper->getGlobalProductCodes();
+        }
+        
+        if (!in_array($productCode, $allowedProductCodes)) {
+            throw Mage::exception('TIG_PostNL', 'Product code ' . $productCode . ' is not allowed for this shipment.');
+        }
+        
+        return true;
     }
     
     /**
@@ -518,7 +574,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
-     * Updates the shiopment's attriobutes if they have not yet been set
+     * Updates the shipment's attributes if they have not yet been set
      * 
      * @return Mage_Core_Model_Abstract::_beforeSave
      */

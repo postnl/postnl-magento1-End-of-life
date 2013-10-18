@@ -103,9 +103,105 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'SE',
     );
     
+    /**
+     * Array of product codes supported for standard domestic shipments
+     * 
+     * @var array
+     */
+    protected $_standardProductCodes = array(
+        '3085',
+        '3086',
+        '3087',
+        '3089',
+        '3090',
+        '3091',
+        '3093',
+        '3094',
+        '3096',
+        '3097',
+        '3189',
+        '3385',
+        '3389',
+        '3390',
+    );
+    
+    /**
+     * Array of product codes supported for domestic PakjeGemak shipments
+     * 
+     * @var array
+     */
+    protected $_pakjeGemakProductCodes = array(
+        '3533',
+        '3534',
+        '3535',
+        '3536',
+        '3543',
+        '3544',
+        '3545',
+        '3546',
+    );
+    
+    /**
+     * Array of product codes supported for EU shipments
+     * 
+     * @var array
+     */
+    protected $_euProductCodes = array(
+        '4940',
+        '4924',
+        '4946',
+        '4944',
+    );
+    
+    /**
+     * Array of product codes supported for EU combilabel shipments
+     * 
+     * @var array
+     */
+    protected $_euCombilabelProductCodes = array(
+        '4950',
+        '4954',
+        '4955',
+        '4952',
+    );
+    
+    /**
+     * Array of product codes supported for global shipments
+     * 
+     * @var array
+     */
+    protected $_globalProductCodes = array(
+        '4945',
+    );
+    
     public function getEuCountries()
     {
         return $this->_euCountries;
+    }
+    
+    public function getStandardProductCodes()
+    {
+        return $this->_standardProductCodes;
+    }
+    
+    public function getPakjeGemakProductCodes()
+    {
+        return $this->_pakjeGemakProductCodes;
+    }
+    
+    public function getEuProductCodes()
+    {
+        return $this->_euProductCodes;
+    }
+    
+    public function getEuCombilabelProductCodes()
+    {
+        return $this->_euCombilabelProductCodes;
+    }
+    
+    public function getGlobalProductCodes()
+    {
+        return $this->_globalProductCodes;
     }
     
     /**
