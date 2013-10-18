@@ -405,9 +405,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends>
-                            	<show_grid_options>0</show_grid_options>
-                            </depends>
                     	</default_product_options>
                     </fields>
 				</cif_product_options>

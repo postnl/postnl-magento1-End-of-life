@@ -169,12 +169,45 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Get this shipment's product code. If no code is available, generate the code.
+     * 
+     * @return int
+     */
+    public function getProductCode()
+    {
+        if ($this->getData('product_code')) {
+            return $this->getData('product_code');
+        }
+        
+        $productCode = $this->_getProductCode();
+        
+        $this->setProductCode($productCode);
+        return $productCode;
+    }
+    
+    /**
+     * gets all shipping labels associated with this shipment
+     * 
+     * @return array Array of TIG_PostNL_Model_Shipment_Label objects
+     */
+    public function getLabels()
+    {
+        $labelCollection = Mage::getResourceModel('postnl/shipment_label_collection');
+        $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
+        
+        $labels = $labelCollection->getItems();
+        return $labels;
+    }
+    
+    /**
      * Check if the shipping destination of this shipment is NL
      * 
      * @return boolean
      */
     public function isDutchShipment()
     {
+        $shippingDestination = $this->getShippingAddress()->getCountry();
+        
         if ($shippingDestination == 'NL') {
             return true;
         }
@@ -191,10 +224,9 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
     {
         $shippingDestination = $this->getShippingAddress()->getCountry();
         
-        $euCountries = Mage::getStoreConfig(self::XML_PATH_EU_COUNTRIES, $this->getStoreId());
-        $euCountriesArray = explode(',', $euCountries);
+        $euCountries = Mage::helper('postnl/cif')->getEuCountries();
         
-        if (in_array($shippingDestination, $euCountriesArray)) {
+        if (in_array($shippingDestination, $euCountries)) {
             return true;
         }
         
@@ -256,6 +288,72 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Check if this shipment has a label of a given type
+     * 
+     * @param string $labelType
+     * 
+     * @return boolean
+     */
+    public function hasLabelType($labelType)
+    {
+        $coreResource = Mage::getSingleton('core/resource');
+        $readConn = $coreResource->getConnection('core/read');
+        
+        $select = $readConn->select();
+        $select->from($coreResource->getTableName('postnl/shipment_label', array('label_id')))
+               ->where('`label_type` = ?', $labelType)
+               ->where('`parent_id` = ?', $this->getId());
+        
+        $label = $readConn->fetchOne($select);
+        
+        if ($label === false) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Gets the product code for this shipment. If specific options have been selected
+     * those will be used. Otherwise the default options will be used from system/config
+     * 
+     * @return int
+     * 
+     * @todo implement EU product codes
+     */
+    protected function _getProductCode()
+    {
+        if ($this->isEuShipment()) {
+            $productCode = $this->_getEuProductCode(); //TODO implement this method
+            
+            return $productCode;
+        }
+        
+        
+        if ($this->isGlobalShipment()) {
+            $productCode = self::GLOBAL_SHIPMENT_PRODUCT_CODE;
+            
+            return $productCode;
+        }
+        
+        /**
+         * Product options were set manually by the user
+         */
+        if (Mage::registry('postnl_product_options')) {
+            $productCode = Mage::registry('postnl_product_options');
+            
+            return $productCode;
+        }
+        
+        /**
+         * Use default options
+         */
+        $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PRODUCT_OPTIONS, $this->getStoreId());
+        
+        return $productCode;
+    }
+    
+    /**
      * Generates a barcode for this postnl shipment.
      * Barcodes are the basis for all CIF functionality and must therefore be generated before any further action is possible.
      * 
@@ -272,7 +370,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         $shipment = $this->getShipment();
         
         $cif = Mage::getModel('postnl_core/cif');
-        $barcodeType = Mage::helper('postnl/cif')->getBarcodeTypeForShipment($shipment);
+        $barcodeType = Mage::helper('postnl/cif')->getBarcodeTypeForShipment($this);
         
         $barcode = $cif->generateBarcode($shipment, $barcodeType);
         
@@ -349,60 +447,67 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         if (!isset($result->Labels) || !isset($result->Labels->Label)) {
             throw Mage::exception('TIG_PostNL', "The confirmAndPrintLabel action returned an invalid response: \n" . var_export($response, true));
         }
-        $label = $result->Labels->Label;
+        $labels = $result->Labels->Label;
         
-        $labelContent = $label->Content;
-        $labelType = $label->Labeltype;
+        $this->addLabels($labels);
         
-        $this->setLabel(base64_encode($labelContent))
-             ->setLabelType($labelType)
-             ->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
+        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
         
         return $this;
     }
     
     /**
-     * Gets the product code for this shipment. If specific options have been selected
-     * those will be used. Otherwise the default options will be used from system/config
+     * Add labels to this shipment
      * 
-     * @return int
+     * @param mixed $labels An array of labels or a single label object
      * 
-     * @todo implement EU product codes
+     * @return TIG_PostNL_Model_Shipment
      */
-    protected function _getProductCode()
+    public function addLabels($labels)
     {
-        if ($this->isEuShipment()) {
-            $productCode = $this->_getEuProductCode(); //TODO implement this method
-            
-            return $productCode;
-        }
-        
-        
-        if ($this->isGlobalShipment()) {
-            $productCode = self::GLOBAL_SHIPMENT_PRODUCT_CODE;
-            
-            return $productCode;
+        if (is_object($labels)) {
+            /**
+             * Add a single label
+             */
+            $this->_addLabel($labels);
+            return $this;
         }
         
         /**
-         * Product options were set manually by the user
+         * Add multiple labels
          */
-        if (Mage::registry('postnl_product_options')) {
-            $productCode = Mage::registry('postnl_product_options');
-            
-            return $productCode;
+        foreach ($labels as $label) {
+            $this->_addLabel($label);
         }
         
-        /**
-         * Use default options
-         */
-        $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PRODUCT_OPTIONS, $this->getStoreId());
-        
-        return $productCode;
+        return $this;
     }
     
     /**
-     * Updates the shipment's confirm status if it is still null
+     * Add a label to this shipment
+     * 
+     * @param stdClass $label
+     * 
+     * @return TIG_PostNL_Model_Shipment
+     */
+    protected function _addLabel($label)
+    {
+        $labelType = $label->Labeltype;
+        if ($this->hasLabelType($labelType)){
+            return $this;
+        }
+        
+        $postnlLabel = Mage::getModel('postnl/shipment_label');
+        $postnlLabel->setParentId($this->getId())
+                    ->setLabel(base64_encode($label->Content))
+                    ->setLabelType($labelType)
+                    ->save();
+              
+        return $this;
+    }
+    
+    /**
+     * Updates the shiopment's attriobutes if they have not yet been set
      * 
      * @return Mage_Core_Model_Abstract::_beforeSave
      */
@@ -417,6 +522,10 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         if (!$this->getProductCode()) {
             $productCode = $this->_getProductCode();
             $this->setProductCode($productCode);
+        }
+        
+        if (!$this->getConfirmDate()) {
+            $this->setConfirmDate(Mage::getModel('core/date')->timestamp());
         }
         
         return parent::_beforeSave();

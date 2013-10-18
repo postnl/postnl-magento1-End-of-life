@@ -83,6 +83,9 @@
                     <shipment>
                         <table>tig_postnl_shipment</table>
                     </shipment>
+                    <shipment_label>
+                        <table>tig_postnl_shipment_label</table>
+                    </shipment_label>
                 </entities>
             </postnl_resource>
         </models>

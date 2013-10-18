@@ -116,4 +116,20 @@ class TIG_PostNL_Model_Core_Observer_Cron
         
         return $this;
     }
+
+    public function getBarcodes()
+    {
+        $postnlShipmentCollection = Mage::getResourceModel('postnl/shipment_collection');
+        $postnlShipmentCollection->addFieldToFilter('barcode', array('null' => true));
+        
+        foreach ($postnlShipmentCollection as $postnlShipment) {
+            try {
+                $postnlShipment->generateBarcode()
+                               ->addTrackingCodeToShipment()
+                               ->save();
+            } catch (Exception $e) {
+                Mage::helper('postnl')->logException($e);
+            }
+        }
+    }
 }
