@@ -47,6 +47,17 @@ class TIG_PostNL_Block_Adminhtml_System_Config_SupportTab
     public $totalEmail           = '<a href="mailto:info@totalinternetgroup.nl">';
     public $buckarooUrl          = '<a href="http://www.buckaroo.nl">Buckaroo</a>';
     
+    protected function _prepareLayout()
+    {
+        /**
+         * Add a new css file to the head. We couldn't do this from layout.xml, because it would have loaded 
+         * for all System > Config pages, instead of just postNL's section
+         */
+        $this->getLayout()->getBlock('head')->addCss('css/TIG/PostNL/system_config_edit_postnl.css');
+        
+        return parent::_prepareLayout();
+    }
+    
     /**
      * Render fieldset html
      *

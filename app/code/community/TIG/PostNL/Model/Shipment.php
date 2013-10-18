@@ -58,7 +58,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
     const CONFIRM_STATUS_UNCONFIRMED = 'unconfirmed';
     
     /**
-     * XML path to default product options settings
+     * XML paths to default product options settings
      * 
      * @var string
      */
@@ -321,7 +321,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
      * 
      * @return int
      * 
-     * @todo implement EU product codes
+     * @todo implement EU combilabel product codes
      */
     protected function _getProductCode()
     {
