@@ -173,6 +173,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $labels = current($labels);
             }
             
+            $this->setLabelCounter(3); //used to calculate the top left position
+            
             $pdf->addOrientedPage('L', 'A6'); //landscape A6
             $pdf = $this->_addPdfTemplate($pdf, $labels);
         }
@@ -485,7 +487,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 break;
             case 3: 
                 $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(15));  
-                break; // also used for A6
+                break;
             case 4: 
                 $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(414)); 
                 break;

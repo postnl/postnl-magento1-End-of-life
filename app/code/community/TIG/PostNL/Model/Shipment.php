@@ -58,11 +58,13 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
     const CONFIRM_STATUS_UNCONFIRMED = 'unconfirmed';
     
     /**
-     * XML path to default product options setting
+     * XML path to default product options settings
      * 
      * @var string
      */
-    const XML_PATH_DEFAULT_PRODUCT_OPTIONS = 'postnl/cif_product_options/default_product_options';
+    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS = 'postnl/cif_product_options/default_product_options';
+    const XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS       = 'postnl/cif_product_options/default_eu_product_options';
+    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS   = 'postnl/cif_product_options/default_global_product_options';
     
     /**
      * xml path to eu countries setting
@@ -323,18 +325,6 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _getProductCode()
     {
-        if ($this->isEuShipment()) {
-            $productCode = $this->_getEuProductCode(); //TODO implement this method
-            
-            return $productCode;
-        }
-        
-        
-        if ($this->isGlobalShipment()) {
-            $productCode = self::GLOBAL_SHIPMENT_PRODUCT_CODE;
-            
-            return $productCode;
-        }
         
         /**
          * Product options were set manually by the user
@@ -348,7 +338,28 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         /**
          * Use default options
          */
-        $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PRODUCT_OPTIONS, $this->getStoreId());
+        if ($this->isEuShipment()) {
+            /**
+             * EU default option
+             */
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS, $this->getStoreId());
+            
+            return $productCode;
+        }
+        
+        if ($this->isGlobalShipment()) {
+            /**
+             * Global default option
+             */
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_GLOBAL_PRODUCT_OPTIONS, $this->getStoreId());
+            
+            return $productCode;
+        }
+        
+        /**
+         * standard default option
+         */
+        $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS, $this->getStoreId());
         
         return $productCode;
     }
