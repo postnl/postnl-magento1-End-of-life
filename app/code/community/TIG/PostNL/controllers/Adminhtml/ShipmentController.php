@@ -79,8 +79,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             return $this;
         }
         
-        if ($this->getRequest()->getParam('product_options')) {
-            Mage::register('postnl_product_options', $this->getRequest()->getParam('product_options'));
+        $chosenOptions = $this->getRequest()->getParam('product_options');
+        if ($chosenOptions && $chosenOptions != 'default') {
+            Mage::register('postnl_product_options', $chosenOptions);
         }
         
         try {
@@ -95,6 +96,53 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             
             $this->_redirect('adminhtml/sales_order/index');
             return $this;
+        }
+        
+        $this->_redirect('adminhtml/sales_shipment/index');
+        return $this;
+    }
+    
+    /**
+     * Prints shipping labels for selected orders.
+     * 
+     * Please note that if you use a different label than the default 'GraphicFile|PDF' you must overload the 'postnl_core/label' model
+     * 
+     * @return TIG_PostNL_Adminhtml_ShipmentController
+     */
+    public function massPrintLabelsAction()
+    {
+        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
+        if (!$shipmentIds) {
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('Please select one or more shipments.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+        
+        if(count($shipmentIds) > 200 && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('You can print a maximum of 200 labels at once.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/index');
+        }
+        
+        $labels = array();
+        try {
+            foreach ($shipmentIds as $shipmentId) {
+                $labels = array_merge($labels, $this->_getShippingLabels($shipmentId));
+            }
+            
+            /**
+             * The label will be a base64 encoded string. Convert this to a pdf
+             */
+            $label = Mage::getModel('postnl_core/label');
+            $label->createPdf($labels);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
         }
         
         $this->_redirect('adminhtml/sales_shipment/index');
@@ -143,7 +191,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         
         $items = $order->getAllVisibleItems();
         foreach ($items as $item) {
-            //the qty to ship is the total remaining (not yet shipped) qty of every item 
+            /**
+             * the qty to ship is the total remaining (not yet shipped) qty of every item 
+             */
             $itemQty = $item->getQtyOrdered() - $item->getQtyShipped();
             
             $itemQtys[$item->getId()] = $itemQty;
@@ -167,53 +217,6 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                                ->addObject($shipment->getOrder())
                                ->save();
 
-        return $this;
-    }
-    
-    /**
-     * Prints shipping labels for selected orders.
-     * 
-     * Please note that if you use a different label than the default 'GraphicFile|PDF' you must overload the 'postnl_core/label' model
-     * 
-     * @return TIG_PostNL_Adminhtml_ShipmentController
-     */
-    public function massPrintLabelsAction()
-    {
-        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
-        if (!$shipmentIds) {
-            Mage::getSingleton('adminhtml/session')->addError(
-                $this->__('Please select one or more shipments.')
-            );
-            $this->_redirect('adminhtml/sales_shipment/index');
-            return $this;
-        }
-        
-        if(count($shipmentIds) > 200 && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
-            Mage::getSingleton('adminhtml/session')->addError(
-                $this->__('You can print a maximum of 200 labels at once.')
-            );
-            $this->_redirect('adminhtml/sales_shipment/index');
-        }
-        
-        $labels = array();
-        try {
-            foreach ($shipmentIds as $shipmentId) {
-                $labels = array_merge($labels, $this->_getShippingLabels($shipmentId));
-            }
-            
-            /**
-             * The label will be a base64 encoded string. Convert this to a pdf
-             */
-            $label = Mage::getModel('postnl_core/label');
-            $label->createPdf($labels);
-        } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
-            Mage::getSingleton('adminhtml/session')->addError(
-                $this->__('An error occurred while processing this action: %s', $e->getMessage())
-            );
-        }
-        
-        $this->_redirect('adminhtml/sales_shipment/index');
         return $this;
     }
     

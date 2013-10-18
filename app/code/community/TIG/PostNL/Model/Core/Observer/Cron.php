@@ -117,12 +117,23 @@ class TIG_PostNL_Model_Core_Observer_Cron
         return $this;
     }
 
+    /**
+     * Retrieve barcodes for postnl shipments that do not have one.
+     * 
+     * @return TIG_PostNL_Exception
+     */
     public function getBarcodes()
     {
+        /**
+         * Get all postnl shipments without a barcode
+         */
         $postnlShipmentCollection = Mage::getResourceModel('postnl/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter('barcode', array('null' => true));
         
         foreach ($postnlShipmentCollection as $postnlShipment) {
+            /**
+             * Attempt to generate a barcode. Continue with the next one if it fails.
+             */
             try {
                 $postnlShipment->generateBarcode()
                                ->addTrackingCodeToShipment()
@@ -131,5 +142,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 Mage::helper('postnl')->logException($e);
             }
         }
+        
+        return $this;
     }
 }

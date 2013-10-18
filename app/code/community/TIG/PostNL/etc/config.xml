@@ -155,13 +155,13 @@
 			    </observers>
 			</adminhtml_block_html_before>
 		</events>
-        <layout>
+		<layout>
             <updates>
                 <postnl>
                     <file>TIG/postnl.xml</file>
                 </postnl>
-            </updates>
-        </layout>
+        	</updates>
+		</layout>
     </adminhtml>
     
     <crontab>
@@ -175,6 +175,15 @@
                 	<model>postnl_core/observer_cron::cleanTempLabels</model>
                 </run>
             </clean_temp_labels>
+        	<!-- get missing barcodes for postnl shipments -->
+            <get_missing_barcodes>
+                <schedule>
+                	<cron_expr>*/30 * * * *</cron_expr> <!-- every 30 minutes -->
+                </schedule>
+                <run>
+                	<model>postnl_core/observer_cron::getBarcodes</model>
+                </run>
+            </get_missing_barcodes>
         </jobs>
     </crontab>
     
@@ -220,6 +229,9 @@
         	<cif_product_options>
         		<show_grid_options>0</show_grid_options> <!-- Do not show product options in the order grid -->
         		<default_product_options>3085</default_product_options> <!-- standard shipment -->
+        		<default_pakjegemak_product_options>3533</default_pakjegemak_product_options> <!-- PakjeGemak + signature on delivery -->
+        		<default_eu_product_options>4944</default_eu_product_options> <!-- EU Pack Special to consumer -->
+        		<default_global_product_options>4945</default_global_product_options> <!-- GlobalPack -->
         	</cif_product_options>
         	<advanced>
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
