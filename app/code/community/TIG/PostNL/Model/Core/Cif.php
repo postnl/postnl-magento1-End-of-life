@@ -70,6 +70,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XML_PATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
     
     /**
+     * XML path to sender address data.
+     * 
+     * N.B. missing last part so this will return an array of all fields.
+     * 
+     * @var string
+     */
+    const XML_PATH_SENDER_ADDRESS = 'postnl/cif_sender_address';
+    
+    /**
      * Possible barcodes series per barcode type
      * 
      * @var string
@@ -310,24 +319,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
     
     /**
-     * @todo implement this method
-     */
-    public function sendConfirmation($shipment)
-    {
-        throw Mage::exception('TIG_PostNL', 'Error: PostNL Confirming method not implemented');
-        /*
-        $response = $this->_soapCall('Confirming', 'Confirming', array(
-            'Message'   => $this->_getMessage(),
-            'Customer'  => $this->_getCustomer(true),
-            'Shipments' => array(
-                'Shipment' => $this->_getShipment($shipment),
-            ),
-        ));
-        throw new Exception("PostNL error: no confirmation success for shipment '" . $shipment->getBarcode() . "'");
-        */
-    }
-    
-    /**
      * Generates shipping labels for the chosen shipment
      * 
      * @param Mage_Sales_Model_Order_Shipment $shipment
@@ -477,13 +468,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             throw Mage::exception('TIG_PostNL', 'Invalid address type supplied: ' . $addressType);
         }
         
-        $addressType  = array(
-            'AddressType' => $availableAddressTypes[$addressType]
-        );
+        /**
+         * Get all cif_sender_address fields as an array and convert that to a Varien_Object
+         * This allows the _prepareAddress method to access this data in the same way as a
+         * conventional Magento address.
+         */
+        $senderAddress = Mage::getStoreConfig(self::XML_PATH_SENDER_ADDRESS, $this->getStoreId());
+        $senderAddress = new Varien_Object($senderAddress);
         
-        $addressArray = $this->_prepareAddressArray($address);
-
-        $addressArray =  array_merge($addressType, $addressArray);
+        $addressArray                = $this->_prepareAddressArray($senderAddress);
+        $addressArray['AddressType'] = $availableAddressTypes[$addressType];
         
         return $addressArray;
     }
@@ -661,7 +655,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          */
         if ($splitStreet) {
             $streetData = $this->_getMultiLineStreetData($address);
-            return $streetData;
+            
+            /**
+             * If $streetData is false it means a required field was missing. In this
+             * case the alternative methods are used to obtain the address data.
+             */
+            if ($streetData !== false) {
+                return $streetData;
+            }
         }
         
         /**
@@ -706,6 +707,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         $streetname = $address->getStreet($streetnameField);
         $housenumber = $address->getStreet($housenumberField);
+        
+        /**
+         * If street or housenr fields are empty, use alternative options to obtain the address data
+         */
+        if (is_null($streetname) || is_null($housenumber)) {
+            return false;
+        }
         
         /**
          * Split the housenumber into a number and an extension

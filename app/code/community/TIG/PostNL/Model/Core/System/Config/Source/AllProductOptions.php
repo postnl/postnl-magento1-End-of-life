@@ -42,6 +42,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
      * Returns an option array for all possible PostNL product options
      * 
      * @return array
+     * 
+     * @todo implement COD and extra cover
      */
     public function toOptionArray()
     {
@@ -58,7 +60,12 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'value' => '3085',
                         'label' => $helper->__('Standard shipment'),
                     ),
-                    array(
+                    /**
+                     * These are not currently implemented
+                     * 
+                     * TODO implement these options
+                     */
+                    /*array(
                         'value' => '3086',
                         'label' => $helper->__('COD'),
                     ),
@@ -81,7 +88,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     array(
                         'value' => '3094',
                         'label' => $helper->__('Extra cover + Return when not home'),
-                    ),
+                    ),*/
                     array(
                         'value' => '3189',
                         'label' => $helper->__('Signature on delivery'),
@@ -115,7 +122,12 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'pakjegemak_options' => array(
                 'label' => $helper->__('PakjeGemak options'),
                 'value' => array(
-                    array(
+                    /**
+                     * These are not currently implemented
+                     * 
+                     * TODO implement these options
+                     */
+                    /*array(
                         'value' => '3535',
                         'label' => $helper->__('PakjeGemak + COD')
                     ),
@@ -138,7 +150,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     array(
                         'value' => '3544',
                         'label' => $helper->__('PakjeGemak + Extra Cover + Notification')
-                    ),
+                    ),*/
                     array(
                         'value' => '3533',
                         'label' => $helper->__('PakjeGemak + Signature on Delivery')
@@ -156,10 +168,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'value' => '4940',
                         'label' => $helper->__('EU Pack Special'),
                     ),
-                    array(
+                    /**
+                     * These are not currently implemented
+                     * 
+                     * TODO implement these options
+                     */
+                    /*array(
                         'value' => '4924',
                         'label' => $helper->__('EU Pack Special COD (Belgium and Luxembourg only)'),
-                    ),
+                    ),*/
                     array(
                         'value' => '4946',
                         'label' => $helper->__('EU Pack Standard (Belgium only)'),

@@ -120,7 +120,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         /**
          * reset the collection as it has previously been loaded and we still need to edit it
          * 
-         * @TODO check if there is no way to avoid having to do this as it constitutes a decent perfomrance hit
+         * TODO check if there is no way to avoid having to do this as it constitutes a decent perfomrance hit
          */
         $collection->clear(); 
         

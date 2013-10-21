@@ -42,6 +42,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
      * Returns an option array for all possible PostNL product options
      * 
      * @return array
+     * 
+     * @todo implement COD and extra cover
      */
     public function toOptionArray()
     {
@@ -51,10 +53,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
                 'value' => '4940',
                 'label' => $helper->__('EU Pack Special'),
             ),
-            array(
+            /**
+             * These are not currently implemented
+             * 
+             * TODO implement these options
+             */
+            /*array(
                 'value' => '4924',
                 'label' => $helper->__('EU Pack Special COD (Belgium and Luxembourg only)'),
-            ),
+            ),*/
             array(
                 'value' => '4946',
                 'label' => $helper->__('EU Pack Standard (Belgium only)'),

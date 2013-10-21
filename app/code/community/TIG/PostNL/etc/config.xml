@@ -166,10 +166,10 @@
     
     <crontab>
         <jobs>
-        	<!-- remove old temporary label files -->
+        	<!-- remove old temporary label files (by default files older than 5 min will be deleted) -->
             <clean_temp_labels>
                 <schedule>
-                	<cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                	<cron_expr>*/5 * * * *</cron_expr> <!-- every 5 minutes -->
                 </schedule>
                 <run>
                 	<model>postnl_core/observer_cron::cleanTempLabels</model>
@@ -226,6 +226,16 @@
         		<split_housenr>0</split_housenr> <!-- do not split housenr and extension -->
         		<housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
         	</cif_address>
+        	<cif_sender_address>
+        		<firstname></firstname>
+        		<lastname></lastname>
+        		<company></company>
+        		<street_full></street_full>
+        		<postcode></postcode>
+        		<city></city>
+        		<region></region>
+        		<country>NL</country> <!-- All sender's must be located in the Netherlands -->
+        	</cif_sender_address>
         	<cif_product_options>
         		<show_grid_options>0</show_grid_options> <!-- Do not show product options in the order grid -->
         		<default_product_options>3085</default_product_options> <!-- standard shipment -->

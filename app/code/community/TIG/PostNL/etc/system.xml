@@ -444,6 +444,72 @@
                     	</default_eu_product_options>
                     </fields>
 				</cif_product_options>
+				<cif_sender_address translate="label" module="postnl">
+		    		<label>CIF Sender Address</label>
+                    <sort_order>500</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                    	<firstname translate="label" module="postnl">
+                            <label>First Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</firstname>
+                    	<lastname translate="label" module="postnl">
+                            <label>Last Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</lastname>
+                    	<company translate="label" module="postnl">
+                            <label>Company</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</company>
+                    	<street_full translate="label comment" module="postnl">
+                            <label>Street</label>
+                            <comment><![CDATA[Please enter as &lt;street name&gt; &lt;house nr.&gt; &lt;house nr. extension&gt;.]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</street_full>
+                    	<postcode translate="label" module="postnl">
+                            <label>Postcode</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</postcode>
+                    	<city translate="label" module="postnl">
+                            <label>City</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</city>
+                    	<region translate="label" module="postnl">
+                            <label>Region</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</region>
+                    </fields>
+                </cif_sender_address>
 				<advanced translate="label" module="postnl">
 		    		<label>Advanced Settings</label>
                     <sort_order>10000</sort_order> <!-- This should always be the last group -->

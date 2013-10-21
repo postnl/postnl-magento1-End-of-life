@@ -71,14 +71,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
      * 
      * @var string
      */
-    const XML_PATH_EU_COUNTRIES = 'general/country/eu_countries';
-    
-    /**
-     * Product code for global shipments
-     * 
-     * @var int
-     */
-    const GLOBAL_SHIPMENT_PRODUCT_CODE = 4945;    
+    const XML_PATH_EU_COUNTRIES = 'general/country/eu_countries'; 
     
     public function _construct()
     {
@@ -119,7 +112,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         }
         
         $shipmentId = $this->getShipmentId();
-        if (!$shipmentId) {
+        if (!$shipmentId && !$this->getShipment()) {
             return null;
         }
         

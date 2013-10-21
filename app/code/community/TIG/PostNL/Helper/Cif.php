@@ -252,6 +252,35 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         return $this;
     }
     
+    public function getProductOptionsForShipment($shipment)
+    {
+        $postnlShipment = Mage::getModel('postnl/shipment');
+        $postnlShipment->setShipment($shipment);
+        
+        if ($postnlShipment->isDutchShipment()) {
+            $options = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
+                           ->toOptionArray();
+                           
+            return $options;
+        }
+        
+        if ($postnlShipment->isEuShipment()) {
+            $options = Mage::getModel('postnl_core/system_config_source_euProductOptions')
+                           ->toOptionArray();
+                           
+            return $options;
+        }
+        
+        if ($postnlShipment->isGlobalShipment()) {
+            $options = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
+                           ->toOptionArray();
+                           
+            return $options;
+        }
+        
+        return null;
+    }
+    
     /**
      * Checks if a given barcode exists using Zend_Validate_Db_RecordExists.
      * 

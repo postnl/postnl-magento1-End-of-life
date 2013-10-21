@@ -42,6 +42,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      * Returns an option array for all possible PostNL product options
      * 
      * @return array
+     * 
+     * @todo implement COD and extra cover
      */
     public function toOptionArray()
     {
@@ -51,7 +53,12 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
                 'value' => '3085',
                 'label' => $helper->__('Standard shipment'),
             ),
-            array(
+            /**
+             * These are not currently implemented
+             * 
+             * TODO implement these options
+             */
+            /*array(
                 'value' => '3086',
                 'label' => $helper->__('COD'),
             ),
@@ -74,7 +81,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             array(
                 'value' => '3094',
                 'label' => $helper->__('Extra cover + Return when not home'),
-            ),
+            ),*/
             array(
                 'value' => '3189',
                 'label' => $helper->__('Signature on delivery'),
