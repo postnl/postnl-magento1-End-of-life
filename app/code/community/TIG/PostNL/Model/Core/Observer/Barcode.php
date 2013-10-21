@@ -53,6 +53,13 @@ class TIG_PostNL_Model_Core_Observer_Barcode
      */
     public function generateBarcode(Varien_Event_Observer $observer)
     {
+        /**
+         * Check if the PostNL module is active
+         */
+        if (!Mage::helper('postnl')->isEnabled()) {
+            return $this;
+        }
+        
         $shipment = $observer->getShipment();
         
         /**

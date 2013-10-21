@@ -74,6 +74,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
     
     /**
+     * Alias for isEnabled()
+     * 
+     * @return bool
+     * 
+     * @see TIG_PostNL_Helper_Data::isEnabled()
+     */
+    public function isActive()
+    {
+        return $this->isEnabled();
+    }
+    
+    /**
      * Returns path to specified directory for specified module.
      * 
      * Based on Mage_Core_Model_Config::getModuleDir()

@@ -61,6 +61,13 @@ class TIG_PostNL_Model_Core_Observer_Cron
     public function cleanTempLabels()
     {
         /**
+         * Check if the PostNL module is active
+         */
+        if (!Mage::helper('postnl')->isEnabled()) {
+            return $this;
+        }
+        
+        /**
          * Directory where all temporary labels are stored. 
          * If this directory does not exist, end the script.
          */
@@ -125,12 +132,28 @@ class TIG_PostNL_Model_Core_Observer_Cron
     public function getBarcodes()
     {
         /**
+         * Check if the PostNL module is active
+         */
+        if (!Mage::helper('postnl')->isEnabled()) {
+            return $this;
+        }
+        
+        /**
          * Get all postnl shipments without a barcode
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter('barcode', array('null' => true));
         
+        $n = 1000;
         foreach ($postnlShipmentCollection as $postnlShipment) {
+            /**
+             * Process a maximum of 1000 shipments (to prevent Cif from being overburdoned).
+             * Only successfull requests count towards this number
+             */
+            if ($n < 1) {
+                break;
+            }
+            
             /**
              * Attempt to generate a barcode. Continue with the next one if it fails.
              */
@@ -138,6 +161,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 $postnlShipment->generateBarcode()
                                ->addTrackingCodeToShipment()
                                ->save();
+                               
+                $n--;
             } catch (Exception $e) {
                 Mage::helper('postnl')->logException($e);
             }
