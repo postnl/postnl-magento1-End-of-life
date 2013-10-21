@@ -246,17 +246,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         switch ($label->getLabelType()) {
             case 'Label':
                 /**
-                 * If this is the first label, add the first page
-                 */
-                if (!$this->getLabelCounter()) {
-                    $pdf->addOrientedPage('L', 'A4'); //landscape A4
-                    $this->resetLabelCounter();
-                }
-                
-                /**
                  * Add a new page every 4 labels and reset the counter
                  */
-                if ($this->getLabelCounter() > 4) {
+                if (!$this->getLabelCounter() || $this->getLabelCounter() > 4) {
                     $pdf->addOrientedPage('L', 'A4');
                     $this->resetLabelCounter();
                 }

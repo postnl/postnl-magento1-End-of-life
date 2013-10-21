@@ -86,9 +86,16 @@ class TIG_PostNL_Model_Core_Observer_Cron
         }
         
         /**
-         * Get all filed in the directory
+         * Get the temporary label filename constant. This is used to construct the fgilename together with
+         * an md5 hash of the content and a timestamp.
          */
-        $files = glob($tempLabelsDirectory . DS . '*');
+        $labelModel = Mage::app()->getConfig->getModelClassName('postnl_core/label');
+        $tempLabelName = $labelModel::TEMP_LABEL_FILENAME;
+        
+        /**
+         * Get all temporary label files in the directory
+         */
+        $files = glob($tempLabelsDirectory . DS . '*' . $tempLabelName);
         
         /**
          * If the directory cannot be read, throw an exception.

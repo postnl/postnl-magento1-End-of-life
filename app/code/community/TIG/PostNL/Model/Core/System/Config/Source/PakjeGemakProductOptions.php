@@ -42,12 +42,19 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
      * Returns an option array for all possible PostNL product options
      * 
      * @return array
+     * 
+     * @todo implement COD and extra cover
      */
     public function toOptionArray()
     {
         $helper = Mage::helper('postnl');
         $availableOptions = array(
-            array(
+            /**
+             * These are not currently implemented
+             * 
+             * TODO implement these options
+             */
+            /*array(
                 'value' => '3535',
                 'label' => $helper->__('PakjeGemak + COD')
             ),
@@ -70,7 +77,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
             array(
                 'value' => '3544',
                 'label' => $helper->__('PakjeGemak + Extra Cover + Notification')
-            ),
+            ),*/
             array(
                 'value' => '3533',
                 'label' => $helper->__('PakjeGemak + Signature on Delivery')
