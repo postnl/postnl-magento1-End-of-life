@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<layout>
+    <adminhtml_system_config_edit>
+        <reference name="head">
+        	<action method="addItem">
+        		<type>skin_css</type>
+        		<name>css/TIG/PostNL/system_config_edit.css</name>
+        	</action>
+        </reference>
+    </adminhtml_system_config_edit>
+    
+    <adminhtml_sales_order_shipment_new>
+    	<reference name="content">
+    		<block type="core/template" name="postnl_shipment_create_product_options" template="TIG/PostNL/sales/order/shipment/create/product_options.phtml"/>
+    	</reference>
+    </adminhtml_sales_order_shipment_new>
+</layout>

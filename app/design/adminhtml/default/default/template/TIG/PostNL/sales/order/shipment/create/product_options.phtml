@@ -1,0 +1,87 @@
+<?php
+/**
+ *                  ___________       __            __   
+ *                  \__    ___/____ _/  |_ _____   |  |  
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/       
+ *          ___          __                                   __   
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
+ *                  \/                           \/               
+ *                  ________       
+ *                 /  _____/_______   ____   __ __ ______  
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/ 
+ *                        \/                       |__|    
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL: 
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+
+<?php if (!Mage::helper('postnl')->isEnabled()): ?>
+    <?php return $this; ?>
+<?php endif; ?>
+
+<?php $_shipment = Mage::registry('current_shipment'); ?>
+<?php if ($_shipment->getOrder()->getShippingMethod() != 'postnl_postnl'): ?>
+    <?php return $this; ?>
+<?php endif; ?>
+
+<?php $_productOptions = Mage::helper('postnl/cif')->getProductOptionsForShipment($_shipment); ?>
+<script type ="text/javascript">
+//<![CDATA[
+    document.observe('dom:loaded', function() {
+        postnlProductOptionsContainer = new Element('p');
+        
+        postnlProductOptionsLabel = new Element('label', {
+            'class': 'normal',
+            'for'  : 'postnl_product_options'
+        });
+        postnlProductOptionsLabel.update('PostNL Shipping Options');
+        
+        postnlProductOptions = new Element('select', {
+           'name' : 'postnl_product_options',
+           'class': 'select required-entry',
+           'id'   : 'postnl_product_options'
+        });
+        
+        
+        <?php foreach($_productOptions as $_option): ?>
+            option = new Element('option', {
+                'value': '<?php echo $_option['value']; ?>'
+            });
+            option.update('<?php echo $_option['label']; ?>');
+            
+            postnlProductOptions.insert(option);
+        <?php endforeach; ?>
+        
+        postnlProductOptionsContainer.insert(postnlProductOptionsLabel);
+        postnlProductOptionsContainer.insert(postnlProductOptions);
+        $$('.order-totals-bottom div.a-right').each(function(element) {
+            element.insert({
+                before: postnlProductOptionsContainer
+            });
+        });
+    });
+//]]>
+</script>
