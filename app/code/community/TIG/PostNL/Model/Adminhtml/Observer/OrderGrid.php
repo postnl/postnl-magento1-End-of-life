@@ -89,7 +89,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
         
         $showOptions = Mage::getStoreConfig(self::XML_PATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($showOptions) {
-            $massActionData ['additional'] = array(
+            $massActionData['additional'] = array(
                 'product_options' => array(
                     'name'   => 'product_options',
                     'type'   => 'select',

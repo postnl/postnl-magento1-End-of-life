@@ -36,11 +36,36 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+ 
+/**
+ * Custom Exception class for CIF exceptions
+ * 
+ * @see TIG_PostNL_Exception
+ * @see Mage_Core_Exception
+ * 
+ * @link http://php.net/manual/en/language.exceptions.extending.php
+ */
 class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
 {
+    /**
+     * XML sent to CIF by the extension
+     * 
+     * @var string The XML string sent to CIF
+     */
     protected $_requestXml;
+    
+    /**
+     * XML recieved in response
+     * 
+     * @var string The XML string CIF returned
+     */
     protected $_responseXml;
     
+    /**
+     * Set $_requestXml to specified value
+     * 
+     * @return TIG_PostNL_Model_Core_Cif_Exception
+     */
     public function setRequestXml($xml)
     {
         $this->_requestXml = $xml;
@@ -48,6 +73,11 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
         return $this;
     }
     
+    /**
+     * Set $_responseXml to specified value
+     * 
+     * @return TIG_PostNL_Model_Core_Cif_Exception
+     */
     public function setResponseXml($xml)
     {
         $this->_responseXml = $xml;
@@ -55,11 +85,21 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
         return $this;
     }
     
+    /**
+     * Get $_requestXml
+     * 
+     * @return string
+     */
     public function getRequestXml()
     {
         return $this->_requestXml;
     }
     
+    /**
+     * Get $_responseXml
+     * 
+     * @return string
+     */
     public function getResponseXml()
     {
         return $this->_responseXml;

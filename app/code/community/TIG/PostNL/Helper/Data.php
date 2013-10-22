@@ -56,13 +56,22 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Determines if the extension has been activated
      * 
+     * @param int | bool $storeId
+     * 
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled($storeId = false)
     {
-        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        if (Mage::registry('postnl_enabled') !== null) {
+            return Mage::registry('postnl_enabled');
+        }
+        
+        if ($storeId === false) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
         
         $enabled = (bool) Mage::getStoreConfig(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
+        Mage::register('postnl_enabled', $enabled);
         
         return $enabled;
     }

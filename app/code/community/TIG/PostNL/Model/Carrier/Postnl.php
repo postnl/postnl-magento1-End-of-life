@@ -39,12 +39,25 @@
  
 /**
  * PostNL shipping method model
+ * 
+ * @todo check code for inconsistency and conventions. Copied from flat_rate method
  */
 class TIG_PostNL_Model_Carrier_Postnl 
     extends Mage_Shipping_Model_Carrier_Abstract
     implements Mage_Shipping_Model_Carrier_Interface
-{    
+{
+    /**
+     * PostNL carrier code
+     * 
+     * @var string
+     */
     protected $_code = 'postnl';
+    
+    /**
+     * Fixed price flag
+     * 
+     * @var boolean
+     */
     protected $_isFixed = true;
 
     /**
@@ -68,6 +81,7 @@ class TIG_PostNL_Model_Carrier_Postnl
      * Collect shipping rate
      *
      * @param Mage_Shipping_Model_Rate_Request $data
+     * 
      * @return Mage_Shipping_Model_Rate_Result
      */
     public function collectRates(Mage_Shipping_Model_Rate_Request $request)
@@ -130,12 +144,26 @@ class TIG_PostNL_Model_Carrier_Postnl
 
         return $result;
     }
-
+    
+    /**
+     * Get array of allowed methods
+     * 
+     * @return array
+     */
     public function getAllowedMethods()
     {
         return array('postnl' => $this->getConfigData('name'));
     }
 
+    /**
+     * Get tracking information
+     * 
+     * @param unknown $tracking
+     * 
+     * @return Mage_Shipping_Model_Tracking_Result_Status
+     * 
+     * @todo check code and docblock
+     */
     public function getTrackingInfo($tracking)
     {
         $statusModel = Mage::getModel('shipping/tracking_result_status');
@@ -146,9 +174,19 @@ class TIG_PostNL_Model_Carrier_Postnl
                     ->setTracking($track->getTrackNumber())
                     ->setPopup(1)
                     ->setUrl($this->getHelper()->getBarcodeUrl($track->getTrackNumber()));;
+                    
         return $statusModel;
     }
-
+    
+    /**
+     * Load track object by tracking number
+     * 
+     * @param unknown $number
+     * 
+     * @return Mage_Sales_Model_Order_Shipment_Track
+     * 
+     * @todo check code and docblock
+     */
     protected function _getTrackByNumber($number)
     {
         $coreResource = Mage::getSingleton('core/resource');

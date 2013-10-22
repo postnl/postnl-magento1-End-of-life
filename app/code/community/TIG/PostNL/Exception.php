@@ -39,6 +39,8 @@
  
 /**
  * General exception class for TIG_PostNL module
+ * 
+ * @see Mage_Core_Exception
  */
 class TIG_PostNL_Exception extends Mage_Core_Exception
 {

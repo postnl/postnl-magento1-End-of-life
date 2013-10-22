@@ -251,7 +251,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
         
-        if (!is_object($response) || !isset($response->Barcode)) {
+        if (!is_object($response) 
+            || !isset($response->Barcode)
+        ) {
             throw Mage::exception('TIG_PostNL', 'Invalid barcode response: ' . "\n" . var_export($reponse, true));
         }
         
@@ -287,12 +289,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
         
-        if (!is_object($response) || !isset($response->Shipments) || !is_array($response->Shipments)) {
+        if (!is_object($response) 
+            || !isset($response->Shipments) 
+            || !is_array($response->Shipments)
+        ) {
             throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($reponse, true));
         }
         
         foreach($response->Shipments as $shipment) {
-            if($shipment->Barcode === $barcode) { // we need the original shipment, not a related shipment (such as a return shipment)
+            if ($shipment->Barcode === $barcode) { // we need the original shipment, not a related shipment (such as a return shipment)
                 return $shipment;
             }
         }
@@ -338,7 +343,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
         
-        if (!is_object($response) || !isset($response->Labels) || !is_object($response->Labels)) {
+        if (!is_object($response) 
+            || !isset($response->Labels) 
+            || !is_object($response->Labels)
+        ) {
             throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($reponse, true));
         }
         
