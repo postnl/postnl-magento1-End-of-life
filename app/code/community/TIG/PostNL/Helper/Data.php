@@ -40,22 +40,16 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 {
     /**
      * Log filename to log all non-specific PostNL exceptions
-     * 
-     * @var string
      */
     const POSTNL_EXCEPTION_LOG_FILE = 'TIG_PostNL_Exception.log';
     
     /**
      * Log filename to log all non-specific PostNL debug messages
-     * 
-     * @var string
      */
     const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_Debug.log';
     
     /**
      * xml path to postnl general active/inactive setting
-     * 
-     * @var string
      */
     const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
     

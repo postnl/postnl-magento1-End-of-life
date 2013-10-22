@@ -44,23 +44,26 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
 {
     /**
      * Carrier code used by postnl
-     * 
-     * @var string
      */
     const POSTNL_CARRIER_CODE = 'postnl';
     
     /**
      * Possible confirm statusses
-     * 
-     * @var string
      */
     const CONFIRM_STATUS_CONFIRMED   = 'confirmed';
     const CONFIRM_STATUS_UNCONFIRMED = 'unconfirmed';
     
     /**
+     * Possible shipping phases
+     */
+    const SHIPPING_PHASE_COLLECTION     = '01';
+    const SHIPPING_PHASE_SORTING        = '02';
+    const SHIPPING_PHASE_DISTRIBUTION   = '03';
+    const SHIPPING_PHASE_DELIVERED      = '04';
+    const SHIPPING_PHASE_NOT_APPLICABLE = '99';
+    
+    /**
      * XML paths to default product options settings
-     * 
-     * @var string
      */
     const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS = 'postnl/cif_product_options/default_product_options';
     const XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS       = 'postnl/cif_product_options/default_eu_product_options';
@@ -68,8 +71,6 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
     
     /**
      * xml path to eu countries setting
-     * 
-     * @var string
      */
     const XML_PATH_EU_COUNTRIES = 'general/country/eu_countries'; 
     
@@ -143,6 +144,8 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
      * Get the set store ID. If no store ID is set and a shipment is available, 
      * that shipment's store ID will be returned. Otherwise the current store 
      * ID is returned.
+     * 
+     * @return int
      */
     public function getStoreId()
     {
@@ -286,6 +289,29 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         }
         
         if (!$this->getShipmentId() && !$this->getShipment()) {
+            return false;
+        }
+        
+        if (!$this->getBarcode()) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Checks if the current shipment is eligible for a shipping status update.
+     * Unconfirmed shipments or shipments that are already delivered are inelligible.
+     * 
+     * @return boolean
+     */
+    public function canUpdateShippingStatus()
+    {
+        if (self::CONFIRM_STATUS_CONFIRMED != $this->getConfirmStatus()) {
+            return false;
+        }
+        
+        if (self::SHIPPING_PHASE_DELIVERED == $this->getShippingPhase()) {
             return false;
         }
         
@@ -514,6 +540,23 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
         
         return $this;
+    }
+    
+    /**
+     * Requests a shipping status update for this shipment
+     * 
+     * @return TIG_PostNL_Model_Shipment
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function updateShippingStatus()
+    {
+        if (!$this->canUpdateShippingStatus()) {
+            throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
+        }
+
+        $cif = Mage::getModel('postnl_core/cif');
+        $result = $cif->getShipmentStatus($this);
     }
     
     /**

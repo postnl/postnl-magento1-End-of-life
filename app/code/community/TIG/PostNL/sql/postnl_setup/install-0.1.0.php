@@ -62,9 +62,9 @@ $postnlShipmentTable = $installer->getConnection()
     ->addColumn('confirm_status', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
         'nullable'  => true,
         ), 'Confirm Status')
-    ->addColumn('shipping_status', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+    ->addColumn('shipping_phase', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
         'nullable'  => true,
-        ), 'Shipping Status')
+        ), 'Shipping Phase')
     ->addColumn('product_code', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
         'unsigned'  => true,
         ), 'Product Code')

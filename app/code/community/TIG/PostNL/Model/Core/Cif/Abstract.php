@@ -44,22 +44,16 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 {
     /**
      * directory containing wsdl files
-     * 
-     * @var string
      */
     const WSDL_DIRECTORY_NAME = 'wsdl';
     
     /**
      * Subdirectory containing test mode wsdl files
-     * 
-     * @var string
      */
     const TEST_WSDL_DIRECTORY_NAME = 'test';
     
     /**
      * available wsdl filenames
-     * 
-     * @var string
      */
     const WSDL_BARCODE_NAME         = 'BarcodeWebService_1.wsdl';
     const WSDL_CONFIRMING_NAME      = 'ConfirmingWebService_1.wsdl';
@@ -68,22 +62,16 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     
     /**
      * header security namespace. Used for constructing the SOAP headers array
-     * 
-     * @var string
      */
     const HEADER_SECURITY_NAMESPACE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
     
     /**
      * CIF error namespace.
-     * 
-     * @var string
      */
     const CIF_ERROR_NAMESPACE = 'http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Services.Exception';
     
     /**
      * XML paths for config options
-     * 
-     * @var string
      */
     const XML_PATH_LIVE_USERNAME = 'postnl/cif/live_username';
     const XML_PATH_LIVE_PASSWORD = 'postnl/cif/live_password';
@@ -208,7 +196,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * - barcode
      * - confirming
      * - labelling
-     * - shipping_status
+     * - shippingstatus
      * 
      * @param string $wsdlType
      * 
@@ -229,7 +217,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             case 'labelling':
                 $wsdlFileName = self::WSDL_LABELLING_NAME;
                 break;
-            case 'shipping_status':
+            case 'shippingstatus':
                 $wsdlFileName = self::WSDL_SHIPPING_STATUS_NAME;
                 break;
             default:

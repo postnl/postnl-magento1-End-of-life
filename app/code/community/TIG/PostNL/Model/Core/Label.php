@@ -40,8 +40,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 {
     /**
      * base name of temporary pdf files. An md5 hash will be prepended to this name in order to make each filename unique
-     * 
-     * @var string
      */
     const TEMP_LABEL_FILENAME = 'TIG_PostNL_temp.pdf';
     

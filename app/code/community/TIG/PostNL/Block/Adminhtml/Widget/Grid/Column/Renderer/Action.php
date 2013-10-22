@@ -39,16 +39,12 @@
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Action
 {
     /**
-     * Column name containing ther shipment's shipping method
-     * 
-     * @var string
+     * Column name containing the shipment's shipping method
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
     
     /**
      * Code of postnl shipping method
-     * 
-     * @var string
      */
     const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
     
@@ -62,7 +58,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action extends Mage
     public function render(Varien_Object $row)
     {
         $actions = $this->getColumn()->getActions();
-        if ( empty($actions) || !is_array($actions) ) {
+        if (empty($actions) || !is_array($actions)) {
             return '&nbsp;';
         }
         

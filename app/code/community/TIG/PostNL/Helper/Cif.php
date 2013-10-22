@@ -44,22 +44,16 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
 {
     /**
      * Log filename to log all CIF exceptions
-     * 
-     * @var string
      */
     const CIF_EXCEPTION_LOG_FILE = 'TIG_PostNL_CIF_Exception.log';
     
     /**
      * Log filename to log CIF calls
-     * 
-     * @var string
      */
     const CIF_DEBUG_LOG_FILE = 'TIG_PostNL_CIF_Debug.log';
     
     /**
      * available barcode types
-     * 
-     * @var string
      */
     const DUTCH_BARCODE_TYPE  = 'NL';
     const EU_BARCODE_TYPE     = 'EU';
@@ -67,8 +61,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         
     /**
      * xml path to infinite label printiong setting
-     * 
-     * @var string
      */
     const XML_PATH_INFINITE_LABEL_PRINTING = 'postnl/advanced/infinite_label_printing';
     
