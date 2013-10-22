@@ -41,8 +41,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_StreetField
 {
     /**
      * XML path to community edition address lines configuration option
-     * 
-     * @var string
      */
     const XML_PATH_COMMUNITY_STREET_LINES = 'customer/address/street_lines';
     

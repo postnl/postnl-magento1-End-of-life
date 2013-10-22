@@ -40,8 +40,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode extends Mag
 {
     /**
      * Additional column names used
-     * 
-     * @var string
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
     const POSTCODE_COLUMN        = 'postcode';
@@ -50,8 +48,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode extends Mag
     
     /**
      * Code of postnl shipping method
-     * 
-     * @var string
      */
     const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
     

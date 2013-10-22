@@ -46,8 +46,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 {
     /**
      * Constants containing xml paths to cif configuration options
-     * 
-     * @var string
      */
     const XML_PATH_CUSTOMER_CODE               = 'postnl/cif/customer_code';
     const XML_PATH_CUSTOMER_NUMBER             = 'postnl/cif/customer_number';
@@ -60,8 +58,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     
     /**
      * Constants containing xml paths to cif address configuration options
-     * 
-     * @var string
      */
     const XML_PATH_SPLIT_STREET                = 'postnl/cif_address/split_street';
     const XML_PATH_STREETNAME_FIELD            = 'postnl/cif_address/streetname_field';
@@ -73,15 +69,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * XML path to sender address data.
      * 
      * N.B. missing last part so this will return an array of all fields.
-     * 
-     * @var string
      */
     const XML_PATH_SENDER_ADDRESS = 'postnl/cif_sender_address';
     
     /**
      * Possible barcodes series per barcode type
-     * 
-     * @var string
      */
     const NL_BARCODE_SERIE_LONG   = '0000000000-9999999999';
     const NL_BARCODE_SERIE_SHORT  = '000000000-999999999';
@@ -93,15 +85,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Regular expression used to split streetname from housenumber. This regex works well for dutch 
      * addresses, but may fail for international addresses. We strongly recommend using split address 
      * lines instead.
-     * 
-     * @var string
      */
     const SPLIT_STREET_REGEX = '#\A(.*?)\s+(\d+[a-zA-Z]{0,1}\s{0,1}[-]{1}\s{0,1}\d*[a-zA-Z]{0,1}|\d+[a-zA-Z-]{0,1}\d*[a-zA-Z]{0,1})#';
     
     /**
      * Regular expression used to split housenumber and housenumber extension
-     * 
-     * @var string
      */
     const SPLIT_HOUSENUMBER_REGEX = '#^([\d]+)(.*)#s';
     
@@ -279,14 +267,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function getShipmentStatus($barcode)
+    public function getShipmentStatus($shipment)
     {
-        if (!$barcode) {
-            throw Mage::exception('TIG_PostNL', 'No barcode supplied for ShippingStatus soap call');
-        }
-        
-        $message = $this->_getMessage();
-        $customer = $this_>_getCustomer();
+        $barcode  = $shipment->getBarcode();
+        $message  = $this->_getMessage();
+        $customer = $this->_getCustomer();
         
         $soapParams = array(
             'Message'  => $message,
@@ -366,12 +351,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param array $extra An array of additional parameters to add
      * 
      * @return array
+     * 
+     * @todo change message ID to truly unique value
      */
     protected function _getMessage($extra = array())
     {
-        $time = Mage::getModel('core/date')->timestamp();
         $message = array(
-            'MessageID'        => $time, // TODO: improve to something unique
+            'MessageID'        => uniqid('postnl_'), //TODO change to truly unique value (based on barcode, perhaps)
             'MessageTimeStamp' => date('d-m-Y H:i:s', $time),
         );
         

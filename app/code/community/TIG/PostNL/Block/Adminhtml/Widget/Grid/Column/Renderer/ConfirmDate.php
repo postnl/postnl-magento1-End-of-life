@@ -40,16 +40,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends
 {
     /**
      * Additional column names used
-     * 
-     * @var string
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
     const CONFIRM_STATUS_COLUMN  = 'confirm_status';
     
     /**
      * Code of postnl shipping method
-     * 
-     * @var string
      */
     const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
     

@@ -44,15 +44,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
 {
     /**
      * The block we want to edit
-     * 
-     * @var string
      */
     const SHIPMENT_GRID_BLOCK_NAME = 'adminhtml/sales_order_grid';
     
     /**
      * XML path to show_grid_options setting
-     * 
-     * @var string
      */
     const XML_PATH_SHOW_OPTIONS = 'postnl/cif_product_options/show_grid_options';
     

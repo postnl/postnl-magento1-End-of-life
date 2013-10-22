@@ -87,7 +87,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         /**
          * Barcode generation needs to be tried seperately. This functionality may throw a valid exception
          * in which case it needs to be tried again later without preventing the shipment from being
-         * created. This may dor example happen when CIF is overburdoned.
+         * created. This may happen when CIF is overburdoned.
          */              
         try {
             $postnlShipment->generateBarcode()

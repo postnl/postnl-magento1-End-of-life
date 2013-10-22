@@ -44,29 +44,21 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 {
     /**
      * The block we want to edit
-     * 
-     * @var string
      */
     const SHIPMENT_GRID_BLOCK_NAME = 'adminhtml/sales_shipment_grid';
     
     /**
      * variable name for shipment grid filter
-     * 
-     * @var string
      */
     const SHIPMENT_GRID_FILTER_VAR_NAME = 'sales_shipment_gridfilter';
     
     /**
      * variable name for shipment grid sorting
-     * 
-     * @var string
      */
     const SHIPMENT_GRID_SORT_VAR_NAME = 'sales_shipment_gridsort';
     
     /**
      * variable name for shipment grid sorting direction
-     * 
-     * @var string
      */
     const SHIPMENT_GRID_DIR_VAR_NAME = 'sales_shipment_griddir';
     

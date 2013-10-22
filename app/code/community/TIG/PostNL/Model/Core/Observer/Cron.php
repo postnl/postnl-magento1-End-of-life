@@ -40,8 +40,6 @@ class TIG_PostNL_Model_Core_Observer_Cron
 {
     /**
      * Xml path to maximum file storage setting in system/config
-     * 
-     * @var string
      */
     const XML_PATH_MAX_FILE_STORAGE  = 'postnl/advanced/max_temp_file_storage_time';
     
@@ -89,7 +87,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Get the temporary label filename constant. This is used to construct the fgilename together with
          * an md5 hash of the content and a timestamp.
          */
-        $labelModel = Mage::app()->getConfig->getModelClassName('postnl_core/label');
+        $labelModel = Mage::app()->getConfig()->getModelClassName('postnl_core/label');
         $tempLabelName = $labelModel::TEMP_LABEL_FILENAME;
         
         /**
@@ -134,7 +132,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Retrieve barcodes for postnl shipments that do not have one.
      * 
-     * @return TIG_PostNL_Exception
+     * @return TIG_PostNL_Model_Core_Observer_Cron
      */
     public function getBarcodes()
     {
@@ -173,6 +171,54 @@ class TIG_PostNL_Model_Core_Observer_Cron
             } catch (Exception $e) {
                 Mage::helper('postnl')->logException($e);
             }
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Update shipping status for all confirmed, but undelivered shipments.
+     * 
+     * @return TIG_PostNL_Model_Core_Observer_Cron
+     */
+    public function updateShippingStatus()
+    {
+        /**
+         * Check if the PostNL module is active
+         */
+        if (!Mage::helper('postnl')->isEnabled()) {
+            return $this;
+        }
+        
+        $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl/shipment');
+        $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
+        $deliveredStatus = $postnlShipmentModelClass::SHIPPING_PHASE_DELIVERED;
+        
+        /**
+         * Get all postnl shipments with a barcode, that are confirmed and are not yet delivered.
+         */
+        $postnlShipmentCollection = Mage::getResourceModel('postnl/shipment_collection');
+        $postnlShipmentCollection->addFieldToFilter(
+                                     'barcode', 
+                                     array('notnull' => true)
+                                 )
+                                 ->addFieldToFilter(
+                                     'confirm_status', 
+                                     array('eq' => $confirmedStatus)
+                                 )
+                                 ->addFieldToFilter(
+                                     'shipping_phase', 
+                                     array(
+                                         array('neq' => $deliveredStatus), 
+                                         array('null' => true)
+                                     )
+                                 );
+        
+        /**
+         * Request a shipping status update
+         */
+        foreach ($postnlShipmentCollection as $postnlShipment) {
+            $postnlShipment->updateShippingStatus();
         }
         
         return $this;

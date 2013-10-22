@@ -40,15 +40,11 @@ class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
 {
     /**
      * Shipping method code used by PostNL
-     * 
-     * @var string
      */
     const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
     
     /**
      * PostNL's track and trace base URL
-     * 
-     * @var string
      */
     const POSTNL_TRACK_AND_TRACE_BASE_URL = 'http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?lang=nl';
     
