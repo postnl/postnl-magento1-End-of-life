@@ -36,7 +36,8 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Action
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action 
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Action
 {
     /**
      * Column name containing the shipment's shipping method
@@ -66,9 +67,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action extends Mage
         
         $out = '';
         $i = 0;
-        foreach ($actions as $action){
-            if (
-                array_key_exists('is_postnl', $action) 
+        foreach ($actions as $action) {
+            if (array_key_exists('is_postnl', $action) 
                 && $action['is_postnl']
                 && $shippingMethod != self::POSTNL_SHIPPING_METHOD
             ) {

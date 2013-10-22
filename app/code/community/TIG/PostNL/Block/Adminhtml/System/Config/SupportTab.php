@@ -40,20 +40,43 @@ class TIG_PostNL_Block_Adminhtml_System_Config_SupportTab
     extends Mage_Adminhtml_Block_Abstract
     implements Varien_Data_Form_Element_Renderer_Interface
 {
+    /**
+     * Css file loaded for PostNL's system > config section
+     */
+    const SYSTEM_CONFIG_EDIT_CSS_FILE = 'css/TIG/PostNL/system_config_edit_postnl.css';
+    
+    /**
+     * Template file used
+     * 
+     * @var string
+     */
     protected $_template = 'TIG/PostNL/system/config/support_tab.phtml';
-
+    
+    /**
+     * Variables used in template.
+     * 
+     * @var string
+     * 
+     * @todo change these to proper PostNL variables
+     */
     public $buckarooSupport      = '<a href="mailto:support@buckaroo.nl">Buckaroo support</a>';
     public $anchorClose          = '</a>';
     public $totalEmail           = '<a href="mailto:info@totalinternetgroup.nl">';
     public $buckarooUrl          = '<a href="http://www.buckaroo.nl">Buckaroo</a>';
     
+    /**
+     * Add a new css file to the head. We couldn't do this from layout.xml, because it would have loaded 
+     * for all System > Config pages, rather than just PostNL's section.
+     * 
+     * @return Mage_Adminhtml_Block_Abstract::_prepareLayout()
+     * 
+     * @see Mage_Adminhtml_Block_Abstract::_prepareLayout()
+     */
     protected function _prepareLayout()
     {
-        /**
-         * Add a new css file to the head. We couldn't do this from layout.xml, because it would have loaded 
-         * for all System > Config pages, instead of just postNL's section
-         */
-        $this->getLayout()->getBlock('head')->addCss('css/TIG/PostNL/system_config_edit_postnl.css');
+        $this->getLayout()
+             ->getBlock('head')
+             ->addCss(self::SYSTEM_CONFIG_EDIT_CSS_FILE);
         
         return parent::_prepareLayout();
     }

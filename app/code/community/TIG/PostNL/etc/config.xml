@@ -208,16 +208,16 @@
         	</general>
         	<cif>
         		<mode>1</mode> <!-- test mode -->
-        		<live_username></live_username>
-        		<live_password></live_password>
-        		<test_username></test_username>
-        		<test_password></test_password>
-        		<customer_code></customer_code>
-        		<customer_number></customer_number>
-        		<company_name></company_name>
-        		<contact_name></contact_name>
-        		<contact_email></contact_email>
-        		<collection_location></collection_location>
+        		<live_username/>
+        		<live_password/>
+        		<test_username/>
+        		<test_password/>
+        		<customer_code/>
+        		<customer_number/>
+        		<company_name/>
+        		<contact_name/>
+        		<contact_email/>
+        		<collection_location/>
         	</cif>
         	<cif_address>
         		<split_street>1</split_street> <!-- split street -->
@@ -227,13 +227,13 @@
         		<housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
         	</cif_address>
         	<cif_sender_address>
-        		<firstname></firstname>
-        		<lastname></lastname>
-        		<company></company>
-        		<street_full></street_full>
-        		<postcode></postcode>
-        		<city></city>
-        		<region></region>
+        		<firstname/>
+        		<lastname/>
+        		<company/>
+        		<street_full/>
+        		<postcode/>
+        		<city/>
+        		<region/>
         		<country>NL</country> <!-- All sender's must be located in the Netherlands -->
         	</cif_sender_address>
         	<cif_product_options>

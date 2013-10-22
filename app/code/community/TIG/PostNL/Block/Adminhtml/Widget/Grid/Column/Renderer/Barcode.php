@@ -36,7 +36,8 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode 
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
 {
     /**
      * Additional column names used
@@ -53,7 +54,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode extends Mag
     
     /**
      * Renders the barcode column. This column will be empty for non-PostNL shipments.
-     * If the shipment has been confirmed, it will be displayed as a track& trace URL. Otherwise the bare code will be displayed.
+     * If the shipment has been confirmed, it will be displayed as a track& trace URL. 
+     * Otherwise the bare code will be displayed.
      *
      * @param Varien_Object $row
      * 

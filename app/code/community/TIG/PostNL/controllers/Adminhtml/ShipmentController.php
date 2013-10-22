@@ -46,6 +46,13 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     public function printLabelAction()
     {
         $shipmentId = $this->getRequest()->getParam('shipment_id');
+        if (!is_int($shipmentId)) {
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('Please select a shipment.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
         
         try {
             $labels = $this->_getShippingLabels($shipmentId);
@@ -71,7 +78,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     public function massCreateShipmentsAction()
     {
         $orderIds = $this->getRequest()->getParam('order_ids');
-        if (!$orderIds) {
+        if (!is_array($orderIds)) {
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('Please select one or more orders.')
             );
@@ -112,7 +119,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     public function massPrintLabelsAction()
     {
         $shipmentIds = $this->getRequest()->getParam('shipment_ids');
-        if (!$shipmentIds) {
+        if (!is_array($shipmentIds)) {
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('Please select one or more shipments.')
             );

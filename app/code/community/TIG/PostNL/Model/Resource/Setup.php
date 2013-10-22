@@ -45,9 +45,27 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
      */
     protected $_callAfterApplyAllUpdates = true;
     
+    /**
+     * Module version as stored in the db at the time of the update
+     * 
+     * @var string
+     */
     protected $_dbVer;
+    
+    /**
+     * Module version as specified in the module's configuration at the time of the update
+     * 
+     * @var string
+     */
     protected $_configVer;
     
+    /**
+     * Set the stored DB version to the specified value
+     * 
+     * @param string $dbVer
+     * 
+     * @return TIG_PostNL_Model_Resource_Setup
+     */
     public function setDbVer($dbVer)
     {
         $this->_dbVer = $dbVer;
@@ -55,6 +73,13 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         return $this;
     }
     
+    /**
+     * Set the stored config version to the specified value
+     * 
+     * @param string $configVer
+     * 
+     * @return TIG_PostNL_Model_Resource_Setup
+     */
     public function setConfigVer($configVer)
     {
         $this->_configVer = $configVer;
@@ -62,11 +87,21 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         return $this;
     }
     
+    /**
+     * Get the stored DB version
+     * 
+     * @return string
+     */
     public function getDbVer()
     {
         return $this->_dbVer;
     }
     
+    /**
+     * get the stored config version
+     * 
+     * @return string
+     */
     public function getConfigVer()
     {
         return $this->_configVer;
