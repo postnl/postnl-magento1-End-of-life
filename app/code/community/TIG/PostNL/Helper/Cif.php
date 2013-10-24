@@ -246,7 +246,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     
     public function getProductOptionsForShipment($shipment)
     {
-        $postnlShipment = Mage::getModel('postnl/shipment');
+        $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipment($shipment);
         
         if ($postnlShipment->isDutchShipment()) {
@@ -291,7 +291,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         
         $validator = Mage::getModel('Zend_Validate_Db_RecordExists', 
             array(
-                'table'   => $coreResource->getTableName('postnl/shipment'),
+                'table'   => $coreResource->getTableName('postnl_core/shipment'),
                 'field'   => 'barcode',
                 'adapter' => $readAdapter,
             )

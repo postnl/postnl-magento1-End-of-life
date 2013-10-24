@@ -36,11 +36,11 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Resource_Shipment_Collection extends Mage_Core_Model_Resource_Db_Collection_Abstract
+class TIG_PostNL_Model_Core_Resource_Shipment_Label_Collection extends Mage_Core_Model_Resource_Db_Collection_Abstract
 {
     public function _construct()
     {    
         parent::_construct();
-        $this->_init('postnl/shipment');
+        $this->_init('postnl_core/shipment_label');
     }
 }

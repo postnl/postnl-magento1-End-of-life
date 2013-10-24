@@ -36,43 +36,41 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
-{
-    /**
-     * Additional column names used
-     */
-    const SHIPPING_METHOD_COLUMN = 'shipping_method';
-    const CONFIRM_STATUS_COLUMN  = 'confirm_status';
-    
-    /**
-     * Code of postnl shipping method
-     */
-    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
-    
-    /**
-     * Renders column.
-     *
-     * @param Varien_Object $row
-     * 
-     * @return string
-     */
-    public function render(Varien_Object $row)
-    {
-        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if ($shippingMethod != self::POSTNL_SHIPPING_METHOD) {
-            return parent::render($row);
-        }
-        
-        $postnlShipmentModel = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
-        if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentModel::CONFIRM_STATUS_CONFIRMED) {
-            return Mage::helper('postnl')->__('Confirmed');
-        }
-        
-        $value = $row->getData($this->getColumn()->getIndex());
-        if (date('Ymd') == date('Ymd', strtotime($value))) { //check if value equals today
-            return Mage::helper('postnl')->__('Today');
-        }
-        
-        return parent::render($row);
-    }
-}
+ 
+$installer = $this;
+
+$installer->startSetup();
+
+$postnlShipmentStatusHistoryTable = $installer->getConnection()
+    ->newTable($installer->getTable('postnl_core/shipment_status_history'))
+    ->addColumn('status_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'identity'  => true,
+        'unsigned'  => true,
+        'nullable'  => false,
+        'primary'   => true,
+        ), 'Status Id')
+    ->addColumn('parent_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'unsigned'  => true,
+        'nullable'  => true,
+        ), 'Parent Id')
+    ->addColumn('code', Varien_Db_Ddl_Table::TYPE_TEXT, 2, array(
+        'nullable'  => false,
+        ), 'Code')
+    ->addColumn('description', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
+        ), 'Description')
+    ->addColumn('phase', Varien_Db_Ddl_Table::TYPE_TEXT, 2, array(
+        'nullable'  => false,
+        ), 'Phase')
+    ->addColumn('timestamp', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
+        'nullable'  => false,
+        ), 'Timestamp')
+    ->addIndex($installer->getIdxName('postnl_core/shipment_status_history', array('parent_id')), 
+        array('parent_id'))
+    ->addForeignKey($installer->getFkName('postnl_core/shipment_status_history', 'parent_id', 'postnl_core/shipment', 'entity_id'),
+        'parent_id', $installer->getTable('postnl_core/shipment'), 'entity_id',
+        Varien_Db_Ddl_Table::ACTION_SET_NULL, Varien_Db_Ddl_Table::ACTION_CASCADE)
+    ->setComment('TIG PostNL Shipment Status History');
+
+$installer->getConnection()->createTable($postnlShipmentStatusHistoryTable);
+
+$installer->endSetup();

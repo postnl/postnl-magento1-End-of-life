@@ -36,37 +36,39 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Shipment_Label extends Mage_Core_Model_Abstract
+class TIG_PostNL_Block_Core_ShippingStatus extends Mage_Core_Block_Template
 {
-    public function _construct()
-    {
-        $this->_init('postnl/shipment_label');
-    }
+    const CLASS_UNCONFIRMED  = '';
+    const CLASS_CONFIRMED    = 'status-confirmed';
+    const CLASS_DISTRIBUTION = 'status-distribution';
+    const CLASS_TRANSIT      = 'status-transit';
+    const CLASS_DELIVERED    = 'status-delivered';
     
-    /**
-     * Alias for magic getLabelType()
-     * 
-     * @return mixed
-     */
-    public function getType()
+    public function getShippingStatus($shipment)
     {
-        return $this->getLabelType();
-    }
-    
-    /**
-     * Gets label contents. Optional parameter to base64 decode the content
-     * 
-     * @param boolean $decode
-     * 
-     * @return string
-     */
-    public function getLabel($decode = false)
-    {
-        $label = $this->getData('label');
-        if ($decode && $label) {
-            $label = base64_decode($label);
+        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
+        if (!$postnlShipment->getId()) {
+            return self::CLASS_UNCONFIRMED;
         }
         
-        return $label;
+        switch ($postnlShipment->getShippingPhase()) {
+            case '1': 
+                $class = self::CLASS_CONFIRMED;
+                break;
+            case '2': 
+                $class = self::CLASS_DISTRIBUTION;
+                break;
+            case '3': 
+                $class = self::CLASS_TRANSIT;
+                break;
+            case '4': 
+                $class = self::CLASS_DELIVERED;
+                break;
+            default:
+                $class = self::CLASS_UNCONFIRMED;
+                break;
+        }
+        
+        return $class;
     }
 }

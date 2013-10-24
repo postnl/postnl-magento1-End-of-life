@@ -36,43 +36,58 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
+class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abstract
 {
-    /**
-     * Additional column names used
-     */
-    const SHIPPING_METHOD_COLUMN = 'shipping_method';
-    const CONFIRM_STATUS_COLUMN  = 'confirm_status';
-    
-    /**
-     * Code of postnl shipping method
-     */
-    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
-    
-    /**
-     * Renders column.
-     *
-     * @param Varien_Object $row
-     * 
-     * @return string
-     */
-    public function render(Varien_Object $row)
+    public function _construct()
     {
-        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if ($shippingMethod != self::POSTNL_SHIPPING_METHOD) {
-            return parent::render($row);
+        $this->_init('postnl_core/shipment_status_history');
+    }
+    
+    /**
+     * Load a history item based on a postnl shipment id and a status code.
+     * 
+     * @param int $shipmentId
+     * @param string $code
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment_Status_History
+     */
+    public function loadShipmentByIdAndCode($shipmentId, $code)
+    {
+        $collection = $this->getCollection();
+        $collection->addFieldToSelect('status_id')
+                   ->addFieldToFilter('parent_id', array('eq' => $shipmentId))
+                   ->addFieldToFilter('code', array('eq' => $code));
+        
+        $collection->getSelect()->limit(1); //we only want 1 item
+        
+        $id = $collection->getFirstItem()->getId();
+        
+        if ($id) {
+            $this->load($id);
         }
         
-        $postnlShipmentModel = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
-        if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentModel::CONFIRM_STATUS_CONFIRMED) {
-            return Mage::helper('postnl')->__('Confirmed');
+        return $this;
+    }
+    
+    /**
+     * Check if a status history item exists for the given postnl shipment and status code
+     * 
+     * @param int $shipmentId
+     * @param string $code
+     * 
+     * @return boolean
+     */
+    public function statusHistoryExists($shipmentId, $code)
+    {
+        $collection = $this->getCollection();
+        $collection->addFieldToSelect('status_id')
+                   ->addFieldToFilter('parent_id', array('eq' => $shipmentId))
+                   ->addFieldToFilter('code', array('eq' => $code));
+                   
+        if ($collection->count() > 0) {
+            return true;
         }
         
-        $value = $row->getData($this->getColumn()->getIndex());
-        if (date('Ymd') == date('Ymd', strtotime($value))) { //check if value equals today
-            return Mage::helper('postnl')->__('Today');
-        }
-        
-        return parent::render($row);
+        return false;
     }
 }

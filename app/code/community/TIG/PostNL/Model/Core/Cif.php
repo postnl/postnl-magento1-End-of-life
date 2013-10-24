@@ -291,7 +291,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         if (!is_object($response) 
             || !isset($response->Shipments) 
-            || !is_array($response->Shipments)
+            || (!is_array($response->Shipments) && !is_object($response->Shipments))
         ) {
             throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($reponse, true));
         }
@@ -366,7 +366,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $message = array(
             'MessageID'        => uniqid('postnl_'), //TODO change to truly unique value (based on barcode, perhaps)
-            'MessageTimeStamp' => date('d-m-Y H:i:s', $time),
+            'MessageTimeStamp' => date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp()),
         );
         
         if ($extra) {
@@ -408,7 +408,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Creates the CIF shipment object based on a PostNL shipment
      * 
-     * @param TIG_PostNL_Model_Shipment $shipment
+     * @param TIG_PostNL_Model_Core_Shipment $shipment
      * 
      * @return array
      * 
@@ -444,6 +444,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                        ),
         );
         
+        if ($postnlShipment->isGlobalShipment()) {
+            $shipmentData['Customs'] = $this->_getCustoms($shipment);
+        }
+        
         return $shipmentData;
     }
     
@@ -470,7 +474,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $senderAddress = Mage::getStoreConfig(self::XML_PATH_SENDER_ADDRESS, $this->getStoreId());
         $senderAddress = new Varien_Object($senderAddress);
         
-        $addressArray                = $this->_prepareAddressArray($senderAddress);
+        $addressArray                = $this->_prepareAddressArray($address);
         $addressArray['AddressType'] = $availableAddressTypes[$addressType];
         
         return $addressArray;
@@ -562,7 +566,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Generates the CIF amount object containing the shipment's insured amount (if any)
      * 
-     * @param TIG_PostNL_Model_Shipment $shipment
+     * @param TIG_PostNL_Model_Core_Shipment $shipment
      * 
      * @return array
      */
@@ -804,6 +808,75 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
         
         return $housenumberParts;
+    }
+    
+    /**
+     * create Customs CIF object
+     * 
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * 
+     * @return array
+     * 
+     * @todo change HSTariffNr, CountryOfOrigin and Value to proper values
+     * @todo make all product attributes used dynamic. Not all shops use the same attributes
+     */
+    protected function _getCustoms($shipment)
+    {
+        $orderId = $shipment->getOrder()->getIncrementId();
+        $customs = array(
+            'ShipmentType'           => 'Commercial Goods', // Gift / Documents / Commercial Goods / Commercial Sample / Returned Goods
+            'HandleAsNonDeliverable' => 'False',
+            'Invoice'                => 'True',
+            'InvoiceNr'              => $orderId,
+            'Certificate'            => 'False',
+            'License'                => 'False',
+            'Currency'               => 'EUR',
+        );
+        
+        /**
+         * Add information about the contents of the shipment
+         */
+        $itemCount = 0;
+        $content = array();
+        foreach ($shipment->getAllItems() as $item) {
+            /**
+             * A maximum of 5 rows are allowed
+             */
+            if (++$itemCount >= 5) {
+                break;
+            }
+            
+            $itemData = array(
+                'Description'     => $item->getOrderItem()->getProduct()->getShortDescription(),
+                'Quantity'        => $item->getQty(),
+                'Weight'          => $item->getWeight(),
+                'Value'           => ($item->getOrderItem()->getProduct()->getPrice() * $item->getQty()), //TODO change this to correct value
+                'HSTariffNr'      => '01', //TODO change this to correct value
+                'CountryOfOrigin' => 'NL', //TODO change this to correct value
+            );
+            
+            $content[] = $itemData;
+        }
+        
+        /**
+         * If no information was present, supply an array of empty lines instead
+         */
+        if (empty($content)) {
+            $content = array(
+                array(
+                    'Description'     => '',
+                    'Quantity'        => '',
+                    'Weight'          => '',
+                    'Value'           => '',
+                    'HSTariffNr'      => '',
+                    'CountryOfOrigin' => '',
+                ),
+            );
+        }
+        
+        $customs['Content'] = $content;
+        
+        return $customs;
     }
     
     /**

@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.1.0</version>
+			<version>0.2.0</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -51,6 +51,9 @@
 			<postnl>
 				<class>TIG_PostNL_Block</class>
 			</postnl>
+			<postnl_core>
+				<class>TIG_PostNL_Block_Core</class>
+			</postnl_core>
 			<postnl_adminhtml>
 				<class>TIG_PostNL_Block_Adminhtml</class>
 			</postnl_adminhtml>
@@ -68,6 +71,7 @@
             </postnl>
             <postnl_core>
                 <class>TIG_PostNL_Model_Core</class>
+                <resourceModel>postnl_core_resource</resourceModel>
             </postnl_core>
             <postnl_carrier>
                 <class>TIG_PostNL_Model_Carrier</class>
@@ -79,6 +83,9 @@
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
                 <class>TIG_PostNL_Model_Resource</class>
+            </postnl_resource>
+            <postnl_core_resource>
+                <class>TIG_PostNL_Model_Core_Resource</class>
                 <entities>
                     <shipment>
                         <table>tig_postnl_shipment</table>
@@ -86,8 +93,11 @@
                     <shipment_label>
                         <table>tig_postnl_shipment_label</table>
                     </shipment_label>
+                    <shipment_status_history>
+                        <table>tig_postnl_shipment_status_history</table>
+                    </shipment_status_history>
                 </entities>
-            </postnl_resource>
+            </postnl_core_resource>
         </models>
         <resources>
             <postnl_setup>
@@ -163,6 +173,16 @@
         	</updates>
 		</layout>
     </adminhtml>
+    
+    <frontend>
+		<layout>
+            <updates>
+                <postnl>
+                    <file>TIG/postnl.xml</file>
+                </postnl>
+        	</updates>
+		</layout>
+    </frontend>
     
     <crontab>
         <jobs>

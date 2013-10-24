@@ -36,43 +36,37 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
+class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
 {
-    /**
-     * Additional column names used
-     */
-    const SHIPPING_METHOD_COLUMN = 'shipping_method';
-    const CONFIRM_STATUS_COLUMN  = 'confirm_status';
+    public function _construct()
+    {
+        $this->_init('postnl_core/shipment_label');
+    }
     
     /**
-     * Code of postnl shipping method
+     * Alias for magic getLabelType()
+     * 
+     * @return mixed
      */
-    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
+    public function getType()
+    {
+        return $this->getLabelType();
+    }
     
     /**
-     * Renders column.
-     *
-     * @param Varien_Object $row
+     * Gets label contents. Optional parameter to base64 decode the content
+     * 
+     * @param boolean $decode
      * 
      * @return string
      */
-    public function render(Varien_Object $row)
+    public function getLabel($decode = false)
     {
-        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if ($shippingMethod != self::POSTNL_SHIPPING_METHOD) {
-            return parent::render($row);
+        $label = $this->getData('label');
+        if ($decode && $label) {
+            $label = base64_decode($label);
         }
         
-        $postnlShipmentModel = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
-        if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentModel::CONFIRM_STATUS_CONFIRMED) {
-            return Mage::helper('postnl')->__('Confirmed');
-        }
-        
-        $value = $row->getData($this->getColumn()->getIndex());
-        if (date('Ymd') == date('Ymd', strtotime($value))) { //check if value equals today
-            return Mage::helper('postnl')->__('Today');
-        }
-        
-        return parent::render($row);
+        return $label;
     }
 }

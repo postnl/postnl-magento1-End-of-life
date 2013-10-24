@@ -76,7 +76,7 @@ class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
         
         $validator = Mage::getModel('Zend_Validate_Db_RecordExists', 
             array(
-                'table'   => $coreResource->getTableName('postnl/shipment'),
+                'table'   => $coreResource->getTableName('postnl_core/shipment'),
                 'field'   => 'shipment_id',
                 'adapter' => $readAdapter,
             )
