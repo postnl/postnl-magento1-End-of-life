@@ -72,7 +72,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         /**
          * create a new postnl shipment entity
          */
-        $postnlShipment = Mage::getModel('postnl/shipment');
+        $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipmentId($shipment->getId())
                        ->setConfirmDate(Mage::getModel('core/date')->timestamp()); //TODO change this to the actual confirm date
         

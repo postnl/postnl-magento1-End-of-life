@@ -46,7 +46,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     public function printLabelAction()
     {
         $shipmentId = $this->getRequest()->getParam('shipment_id');
-        if (!is_int($shipmentId)) {
+        if (is_null($shipmentId)) {
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('Please select a shipment.')
             );
@@ -251,7 +251,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         /**
          * Load the PostNL shipment and check if it already has a label
          */
-        $postnlShipment = Mage::getModel('postnl/shipment')->load($shipmentId, 'shipment_id');
+        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipmentId, 'shipment_id');
         if ($postnlShipment->getLabels()) {
             return $postnlShipment->getlabels();
         }

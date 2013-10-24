@@ -11,7 +11,19 @@
     
     <adminhtml_sales_order_shipment_new>
     	<reference name="content">
-    		<block type="core/template" name="postnl_shipment_create_product_options" template="TIG/PostNL/sales/order/shipment/create/product_options.phtml"/>
+    		<block type="core/template" name="postnl_shipment_create_product_options" template="TIG/PostNL/sales/order/shipment/create/product_options.phtml" />
     	</reference>
     </adminhtml_sales_order_shipment_new>
+    
+    <adminhtml_sales_order_shipment_view>
+    	<reference name="head">
+    		<action method="addItem">
+    			<type>skin_css</type>
+    			<name>css/TIG/PostNL/shipping_status.css</name>
+    		</action>
+    	</reference>
+        <reference name="content">
+            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/view/shipping_status.phtml" before="-"/>
+        </reference>
+    </adminhtml_sales_order_shipment_view>
 </layout>

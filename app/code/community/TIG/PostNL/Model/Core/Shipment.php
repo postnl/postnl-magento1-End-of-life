@@ -40,7 +40,7 @@
 /**
  * PostNL Shipment base class. Contains majority of PostNL shipping functionality
  */
-class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
+class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
     /**
      * Carrier code used by postnl
@@ -76,7 +76,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
     
     public function _construct()
     {
-        $this->_init('postnl/shipment');
+        $this->_init('postnl_core/shipment');
     }
     
     /**
@@ -190,7 +190,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
      */
     public function getLabels()
     {
-        $labelCollection = Mage::getResourceModel('postnl/shipment_label_collection');
+        $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
         
         $labels = $labelCollection->getItems();
@@ -335,7 +335,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
         $readConn = $coreResource->getConnection('core/read');
         
         $select = $readConn->select();
-        $select->from($coreResource->getTableName('postnl/shipment_label', array('label_id')))
+        $select->from($coreResource->getTableName('postnl_core/shipment_label', array('label_id')))
                ->where('`label_type` = ?', $labelType)
                ->where('`parent_id` = ?', $this->getId());
         
@@ -385,7 +385,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
             /**
              * Global default option
              */
-            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_GLOBAL_PRODUCT_OPTIONS, $this->getStoreId());
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS, $this->getStoreId());
             $this->_checkProductCodeAllowed($productCode);
             
             return $productCode;
@@ -557,6 +557,72 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
 
         $cif = Mage::getModel('postnl_core/cif');
         $result = $cif->getShipmentStatus($this);
+        
+        $currentPhase = $result->Status->CurrentPhaseCode;
+        $this->setShippingPhase($currentPhase);
+        
+        $oldStatuses = $result->OldStatuses;
+        if ($oldStatuses) {
+            $this->updateStatusHistory($oldStatuses);
+        }
+        
+        return $this;
+    }
+    
+    public function updateStatusHistory($oldStatuses)
+    {
+        $completeStatusHistory = $oldStatuses->CompleteStatusResponseOldStatus;
+        $completeStatusHistoryArray = $this->_sortStatusResponse($completeStatusHistory);
+        
+        foreach ($completeStatusHistoryArray as $status) {
+            $statusHistory = Mage::getModel('postnl_core/shipment_status_history');
+            /**
+             * Check if a status history item exists for the given code and shipment id.
+             * If not, create a new one
+             */
+            if ($statusHistory->statusHistoryExists($this->getId(), $status->Code)) {
+                continue;
+            }
+            
+            $statusHistory->setParentId($this->getId())
+                          ->setCode($status->Code)
+                          ->setDescription($status->Description)
+                          ->setPhase($status->PhaseCode)
+                          ->setTimestamp(strtotime($status->TimeStamp), Mage::getModel('core/date')->timestamp())
+                          ->save();
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Sorts a status history array on the timestamp of each status item
+     * 
+     * @param array $statusHistory
+     * 
+     * @return array The sorted array
+     * 
+     * @todo filter double occurrences of a status code
+     */
+    protected function _sortStatusResponse($statusHistory)
+    {
+        /**
+         * Temporarily store the statusses in an array with their timestamp as the key
+         */
+        $sortedArray = array();
+        foreach ($statusHistory as $status) {
+            $sortedArray[strtotime($status->TimeStamp)] = $status;
+        }
+        
+        /**
+         * Sort high to low by key
+         */
+        krsort($sortedArray);
+        
+        /**
+         * Return only the values
+         */
+        return array_values($sortedArray);
     }
     
     /**
@@ -600,7 +666,7 @@ class TIG_PostNL_Model_Shipment extends Mage_Core_Model_Abstract
             return $this;
         }
         
-        $postnlLabel = Mage::getModel('postnl/shipment_label');
+        $postnlLabel = Mage::getModel('postnl_core/shipment_label');
         $postnlLabel->setParentId($this->getId())
                     ->setLabel(base64_encode($label->Content))
                     ->setLabelType($labelType)

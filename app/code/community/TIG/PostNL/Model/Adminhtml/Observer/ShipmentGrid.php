@@ -252,7 +252,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * Join tig_postnl_shipment table
          */
         $select->joinLeft(
-            array('postnl_shipment' => $resource->getTableName('postnl/shipment')),
+            array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
             '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
             array(
                 'confirm_date'   => 'postnl_shipment.confirm_date',
