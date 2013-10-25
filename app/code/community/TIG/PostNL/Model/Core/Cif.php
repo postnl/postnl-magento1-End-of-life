@@ -66,6 +66,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XML_PATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
     
     /**
+     * Constants containing xml paths to cif customs configuration options
+     */
+    const XML_PATH_CUSTOMS_USE_HS_TARIFF_ATTRIBUTE     = 'postnl/cif_customs_settings/use_hs_tariff';
+    const XML_PATH_CUSTOMS_HS_TARIFF_ATTRIBUTE         = 'postnl/cif_customs_settings/hs_tariff_attribute';
+    const XML_PATH_CUSTOMS_CUSTOMS_VALUE_ATTRIBUTE     = 'postnl/cif_customs_settings/customs_value_attribute';
+    const XML_PATH_CUSTOMS_COUNTRY_OF_ORIGIN_ATTRIBUTE = 'postnl/cif_customs_settings/country_of_origin_attribute';
+    const XML_PATH_CUSTOMS_DESCRIPTION_ATTRIBUTE       = 'postnl/cif_customs_settings/description_attribute';
+    
+    /**
      * XML path to sender address data.
      * 
      * N.B. missing last part so this will return an array of all fields.
@@ -434,7 +443,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                            'Contact' => $this->_getContact($shippingAddress),
                                        ),
             'Dimension'                => array(
-                                           'Weight' => (int) $shipment->getOrder()->getWeight(),
+                                           'Weight' => (int) Mage::helper('postnl/cif')->standardizeWeight(
+                                                           $shipment->getOrder()->getWeight(), 
+                                                           $this->getStoreId(),
+                                                           true
+                                                        ),
                                        ),
             'Addresses'                => array(
                                            'Address' => $this->_getAddress('Receiver', $shippingAddress),
@@ -454,12 +467,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets an array containing required address data
      * 
-     * @param string $addressType
+     * @param string $shippingAddress
      * @param Mage_Sales_Model_Order_Address $address
      * 
      * @return array
      */
-    protected function _getAddress($addressType, $address)
+    protected function _getAddress($addressType, $shippingAddress)
     {
         $availableAddressTypes = $this->getAddressTypes();
         if (!array_key_exists($addressType, $availableAddressTypes)) {
@@ -467,12 +480,24 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
         
         /**
-         * Get all cif_sender_address fields as an array and convert that to a Varien_Object
-         * This allows the _prepareAddress method to access this data in the same way as a
-         * conventional Magento address.
+         * Determine which address to use. Currently only 'Sender' and 'Reciever' are fully supported.
+         * Other possible address types will use the default 'reciever' address.
          */
-        $senderAddress = Mage::getStoreConfig(self::XML_PATH_SENDER_ADDRESS, $this->getStoreId());
-        $senderAddress = new Varien_Object($senderAddress);
+        switch ($addressType) {
+            case 'Sender':
+                /**
+                 * Get all cif_sender_address fields as an array and convert that to a Varien_Object
+                 * This allows the _prepareAddress method to access this data in the same way as a
+                 * conventional Mage_Sales_Model_Order_Address object.
+                 */
+                $senderAddress = Mage::getStoreConfig(self::XML_PATH_SENDER_ADDRESS, $this->getStoreId());
+                $address = new Varien_Object($senderAddress);
+                break;
+            case 'Reciever': //no break
+            default:
+                $address = $shippingAddress;
+                break;
+        }
         
         $addressArray                = $this->_prepareAddressArray($address);
         $addressArray['AddressType'] = $availableAddressTypes[$addressType];
@@ -604,7 +629,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'ContactType' => '01', // Receiver
             'Email'       => $address->getEmail(),
             'SMSNr'       => '', // never sure if clean 06 number - TODO: check needed for PakjeGemak?
-            'TelNr'       => $address->getPhone(),
+            'TelNr'       => $address->getTelephone(),
         );
         
         return $contact;
@@ -816,20 +841,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param Mage_Sales_Model_Order_Shipment $shipment
      * 
      * @return array
-     * 
-     * @todo change HSTariffNr, CountryOfOrigin and Value to proper values
-     * @todo make all product attributes used dynamic. Not all shops use the same attributes
      */
     protected function _getCustoms($shipment)
     {
         $orderId = $shipment->getOrder()->getIncrementId();
         $customs = array(
             'ShipmentType'           => 'Commercial Goods', // Gift / Documents / Commercial Goods / Commercial Sample / Returned Goods
-            'HandleAsNonDeliverable' => 'False',
-            'Invoice'                => 'True',
+            'HandleAsNonDeliverable' => 'false',
+            'Invoice'                => 'true',
             'InvoiceNr'              => $orderId,
-            'Certificate'            => 'False',
-            'License'                => 'False',
+            'Certificate'            => 'false',
+            'License'                => 'false',
             'Currency'               => 'EUR',
         );
         
@@ -847,12 +869,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             }
             
             $itemData = array(
-                'Description'     => $item->getOrderItem()->getProduct()->getShortDescription(),
+                'Description'     => $this->_getCustomsDescription($item),
                 'Quantity'        => $item->getQty(),
-                'Weight'          => $item->getWeight(),
-                'Value'           => ($item->getOrderItem()->getProduct()->getPrice() * $item->getQty()), //TODO change this to correct value
-                'HSTariffNr'      => '01', //TODO change this to correct value
-                'CountryOfOrigin' => 'NL', //TODO change this to correct value
+                'Weight'          => (int) Mage::helper('postnl/cif')->standardizeWeight(
+                                         $item->getWeight(), 
+                                         $this->getStoreId()
+                                     ),
+                'Value'           => ($this->_getCustomsValue($item) * $item->getQty()),
+                'HSTariffNr'      => $this->_getHSTariff($item),
+                'CountryOfOrigin' => $this->_getCountryOfOrigin($item),
             );
             
             $content[] = $itemData;
@@ -877,6 +902,110 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $customs['Content'] = $content;
         
         return $customs;
+    }
+    
+    /**
+     * Get a shipment item's HS tariff
+     * 
+     * @param Mage_Sales_Model_Order_Shipment_item
+     * 
+     * @return string
+     */
+    protected function _getHSTariff($shipmentItem)
+    {
+        $storeId = $this->getStoreId();
+        
+        /**
+         * HS Tariff is an optional attribute. Check if it's used and if not, return a default value of 000000
+         */
+        if (!Mage::getStoreConfig(self::XML_PATH_CUSTOMS_USE_HS_TARIFF_ATTRIBUTE, $storeId)) {
+            return '000000';
+        }
+        
+        if ($this->getHSTariffAttribute() !== null) {
+            $hsTariffAttribute = $this->getHSTariffAttribute();
+        } else {
+            $hsTariffAttribute = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_HS_TARIFF_ATTRIBUTE, $storeId);
+            $this->setHSTariffAttribute($hsTariffAttribute);
+        }
+        
+        $hsTariff = $shipmentItem->getOrderItem()
+                                 ->getProduct()
+                                 ->getDataUsingMethod($hsTariffAttribute);
+                                    
+        return $customsValueAttribute;
+    }
+    
+    /**
+     * Get a shipment item's country of origin
+     * 
+     * @param Mage_Sales_Model_Order_Shipment_item
+     * 
+     * @return string
+     */
+    protected function _getCountryOfOrigin($shipmentItem)
+    {
+        $storeId = $this->getStoreId();
+        if ($this->getCountryOfOriginAttribute() !== null) {
+            $countryOfOriginAttribute = $this->getCountryOfOriginAttribute();
+        } else {
+            $countryOfOriginAttribute = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_COUNTRY_OF_ORIGIN_ATTRIBUTE, $storeId);
+            $this->setCountryOfOriginAttribute($countryOfOriginAttribute);
+        }
+        
+        $countryOfOrigin = $shipmentItem->getOrderItem()
+                                        ->getProduct()
+                                        ->getDataUsingMethod($countryOfOriginAttribute);
+                                    
+        return $countryOfOrigin;
+    }
+    
+    /**
+     * Get a shipment item's customs value
+     * 
+     * @param Mage_Sales_Model_Order_Shipment_item
+     * 
+     * @return string
+     */
+    protected function _getCustomsValue($shipmentItem)
+    {
+        $storeId = $this->getStoreId();
+        if ($this->getCustomsValueAttribute() !== null) {
+            $customsValueAttribute = $this->getCustomsValueAttribute();
+        } else {
+            $customsValueAttribute = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_CUSTOMS_VALUE_ATTRIBUTE, $storeId);
+            $this->setCustomsValueAttribute($customsValueAttribute);
+        }
+        
+        $customsValue = $shipmentItem->getOrderItem()
+                                     ->getProduct()
+                                     ->getDataUsingMethod($customsValueAttribute);
+        
+        return $customsValue;
+    }
+    
+    /**
+     * Get a shipment item's customs description
+     * 
+     * @param Mage_Sales_Model_Order_Shipment_item
+     * 
+     * @return string
+     */
+    protected function _getCustomsDescription($shipmentItem)
+    {
+        $storeId = $this->getStoreId();
+        if ($this->getCustomsDescriptionAttribute() !== null) {
+            $descriptionAttribute = $this->getCustomsDescriptionAttribute();
+        } else {
+            $descriptionAttribute = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_DESCRIPTION_ATTRIBUTE, $storeId);
+            $this->setCustomsDescriptionAttribute($descriptionAttribute);
+        }
+        
+        $description = $shipmentItem->getOrderItem()
+                                    ->getProduct()
+                                    ->getDataUsingMethod($descriptionAttribute);
+                                    
+        return $description;
     }
     
     /**

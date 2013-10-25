@@ -17,3 +17,5 @@
 .status-delivered .progress-distribution,
 .status-delivered .progress-transit,
 .status-delivered .progress-delivered { color:#fff; }   
+
+.hidden { display:none !important; }

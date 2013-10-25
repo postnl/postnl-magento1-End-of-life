@@ -485,8 +485,8 @@
                             <source_model>postnl_core/system_config_source_standardProductOptions</source_model>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
                     	</default_product_options>
                     	<default_pakjegemak_product_options translate="label comment" module="postnl">
                             <label>Default PakjeGemak shipping options</label>
@@ -495,8 +495,8 @@
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions</source_model>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
                     	</default_pakjegemak_product_options>
                     	<default_eu_product_options translate="label comment" module="postnl">
                             <label>Default EU shipping options</label>
@@ -505,11 +505,83 @@
                             <source_model>postnl_core/system_config_source_euProductOptions</source_model>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
                     	</default_eu_product_options>
+                    	<weight_unit translate="label comment" module="postnl">
+                            <label>Weight unit</label>
+                            <comment>Select the unit in which you've entered product's weight</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_weightUnit</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                    	</weight_unit>
                     </fields>
 				</cif_product_options>
+				<cif_customs_settings translate="label" module="postnl">
+		    		<label>CIF Customs Settings</label>
+                    <sort_order>600</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                    	<use_hs_tariff translate="label comment" module="postnl">
+                            <label>Use HS Tariff</label>
+                            <comment>Enable this field to specify a product attribute to use as the product's HS tariff.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</use_hs_tariff>
+                    	<hs_tariff_attribute translate="label comment" module="postnl">
+                            <label>HS Tariff attribute</label>
+                            <comment>The product attribute used to determine the product's HS tariff.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_attributes</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                            	<use_hs_tariff>1</use_hs_tariff>
+                            </depends>
+                    	</hs_tariff_attribute>
+                    	<customs_value_attribute translate="label comment" module="postnl">
+                            <label>Customs value attribute</label>
+                            <comment>The product attribute used to determine product's customs value.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_attributes</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</customs_value_attribute>
+                    	<country_of_origin_attribute translate="label comment" module="postnl">
+                            <label>Country of origin attribute</label>
+                            <comment>The product attribute used to determine the product's country of origin.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_attributes</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</country_of_origin_attribute>
+                    	<description_attribute translate="label comment" module="postnl">
+                            <label>Product description attribyte</label>
+                            <comment>The product attribute used to supply the product's customs description.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_attributes</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</description_attribute>
+                    </fields>
+				</cif_customs_settings>
 				<advanced translate="label" module="postnl">
 		    		<label>Advanced Settings</label>
                     <sort_order>10000</sort_order> <!-- This should always be the last group -->

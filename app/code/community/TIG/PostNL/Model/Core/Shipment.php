@@ -361,8 +361,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Product options were set manually by the user
          */
-        if (Mage::registry('postnl_product_options')) {
-            $productCode = Mage::registry('postnl_product_options');
+        if (Mage::registry('postnl_product_option')) {
+            $productCode = Mage::registry('postnl_product_option');
             $this->_checkProductCodeAllowed($productCode);
             
             return $productCode;

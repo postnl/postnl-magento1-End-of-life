@@ -45,4 +45,6 @@
 .status-transit .progress-reported .seperator,
 .status-distribution .progress-reported .seperator { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -136px no-repeat; }
 
-.status-delivered .progress-delivered .end { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -238px no-repeat; }  
+.status-delivered .progress-delivered .end { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -238px no-repeat; }
+
+.hidden { display:none !important; }
