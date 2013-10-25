@@ -74,9 +74,36 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     const XML_PATH_EU_COUNTRIES = 'general/country/eu_countries'; 
     
+    /**
+     * Array of product codes that have extra cover
+     * 
+     * @var array
+     */
+    protected $_extraCoverProductCodes = array(
+        '3087',
+        '3094',
+        '3091',
+        '3097',
+        '3536',
+        '3546',
+        '3534',
+        '3544',
+        '4945',
+    );
+    
     public function _construct()
     {
         $this->_init('postnl_core/shipment');
+    }
+    
+    /**
+     * Get all product codes that have extra cover
+     * 
+     * @return array
+     */
+    public function getExtraCoverProductCodes()
+    {
+        return $this->_extraCoverProductCodes;
     }
     
     /**
@@ -198,6 +225,24 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Get the amount of extra cover this shipment has.
+     * 
+     * @return int | float
+     */
+    public function getExtraCoverAmount()
+    {
+        if (!$this->hasExtraCover()) {
+            return 0;
+        }
+        
+        if ($this->getData('extra_cover_amount')) {
+            return $this->getData('extra_cover_amount');
+        }
+        
+        return 0;
+    }
+    
+    /**
      * Check if the shipping destination of this shipment is NL
      * 
      * @return boolean
@@ -275,6 +320,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         return true;
+    }
+    
+    /**
+     * Checks if this shipment has extra cover
+     * 
+     * @return boolean
+     */
+    public function hasExtraCover()
+    {
+        $productCode = $this->getProductCode();
+        $extraCoverProductCodes = $this->getExtraCoverProductCodes();
+        
+        if (in_array($productCode, $extraCoverProductCodes)) {
+            return true;
+        }
+        
+        return false;
     }
     
     /**
@@ -676,6 +738,25 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Stores additionally selected shipping options
+     * 
+     * @return TIG_PostNL_Model_Shipment
+     */
+    protected function _saveAdditionalShippingOptions()
+    {
+        $additionalOptions = Mage::registry('postnl_additional_options');
+        if (!$additionalOptions || !is_array($additionalOptions)) {
+            return $this;
+        }
+        
+        foreach($additionalOptions as $option => $value) {
+            $this->setDataUsingMethod($option, $value);
+        }
+        
+        return $this;
+    }
+    
+    /**
      * Updates the shipment's attributes if they have not yet been set
      * 
      * @return Mage_Core_Model_Abstract::_beforeSave
@@ -695,6 +776,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         if (!$this->getConfirmDate()) {
             $this->setConfirmDate(Mage::getModel('core/date')->timestamp());
+        }
+        
+        if (Mage::registry('postnl_additional_options')) {
+            $this->_saveAdditionalShippingOptions();
         }
         
         return parent::_beforeSave();

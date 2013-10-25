@@ -55,33 +55,76 @@
         
         postnlProductOptionsLabel = new Element('label', {
             'class': 'normal',
-            'for'  : 'postnl_product_options'
+            'for'  : 'postnl_product_option'
         });
         postnlProductOptionsLabel.update('PostNL Shipping Options');
         
-        postnlProductOptions = new Element('select', {
-           'name' : 'postnl_product_options',
+        postnlProductOption = new Element('select', {
+           'name' : 'postnl[product_option]',
            'class': 'select required-entry',
-           'id'   : 'postnl_product_options'
+           'id'   : 'postnl_product_option'
         });
         
         
         <?php foreach($_productOptions as $_option): ?>
             option = new Element('option', {
+                <?php if (isset($_option['isExtraCover']) && $_option['isExtraCover'] === true): ?>
+                    'class': 'extra_cover',
+                <?php endif; ?>
                 'value': '<?php echo $_option['value']; ?>'
             });
             option.update('<?php echo $_option['label']; ?>');
             
-            postnlProductOptions.insert(option);
+            postnlProductOption.insert(option);
         <?php endforeach; ?>
         
         postnlProductOptionsContainer.insert(postnlProductOptionsLabel);
-        postnlProductOptionsContainer.insert(postnlProductOptions);
+        postnlProductOptionsContainer.insert(postnlProductOption);
         $$('.order-totals-bottom div.a-right').each(function(element) {
             element.insert({
                 before: postnlProductOptionsContainer
             });
         });
+        
+        postnlExtraCoverContainer = new Element('p', {
+            'id'   : 'postnl_extra_cover_container',
+            'style': 'display:none;'
+        });
+        postnlExtraCoverLabel = new Element('label', {
+            'class': 'normal',
+            'for'  : 'postnl_extra_cover'
+        });
+        postnlExtraCoverLabel.update('Extra cover amount');
+        
+        postnlExtraCoverField = new Element('input', {
+            'type' : 'text',
+            'name' : 'postnl[extra_cover_amount]',
+            'class': 'input-text required-entry',
+            'id'   : 'postnl_extra_cover_value',
+            'value': '<?php echo number_format($_shipment->getOrder()->getBaseGrandTotal(), 2); ?>',
+        });
+        
+        postnlExtraCoverContainer.insert(postnlExtraCoverLabel);
+        postnlExtraCoverContainer.insert(postnlExtraCoverField);
+        
+        $('postnl_product_option').insert({
+            after: postnlExtraCoverContainer
+        });
+        
+        var productOptions = $('postnl_product_option');
+        productOptions.observe('change', function() {
+            if (productOptions[productOptions.selectedIndex].hasClassName('extra_cover')) {
+                $('postnl_extra_cover_container').show();
+            } else {
+                $('postnl_extra_cover_container').hide();
+            }
+        });
+        
+        if (productOptions[productOptions.selectedIndex].hasClassName('extra_cover')) {
+            $('postnl_extra_cover_container').show();
+        } else {
+            $('postnl_extra_cover_container').hide();
+        }
     });
 //]]>
 </script>

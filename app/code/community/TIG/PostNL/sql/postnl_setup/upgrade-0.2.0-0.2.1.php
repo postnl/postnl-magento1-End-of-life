@@ -36,43 +36,21 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Observer_SaveShipment
-{
-    /**
-     * Registers a chosen product option
-     * 
-     * @param Varien_Event_Observer $observer
-     * 
-     * @return TIG_PostNL_Model_Core_Observer
-     * 
-     * @event controller_action_predispatch_adminhtml_sales_order_shipment_save
-     * 
-     * @observer postnl_core_shipment_save
-     */
-    public function registerProductOption(Varien_Event_Observer $observer)
-    {
-        /**
-         * Check if the PostNL module is active
-         */
-        if (!Mage::helper('postnl')->isEnabled()) {
-            return $this;
-        }
-        
-        /**
-         * retrieve and register the chosen option, if any
-         */
-        $controller = $observer->getControllerAction();
-        $productOption = $controller->getRequest()->getParam('postnl');
-        
-        if ($productOption && isset($productOption['product_option'])) {
-            Mage::register('postnl_product_option', $productOption['product_option']);
-            unset($productOption['product_option']);
-        }
-        
-        if ($productOption && !empty($productOption)) {
-            Mage::register('postnl_additional_options', $productOption);
-        }
-        
-        return $this;
-    }
-}
+ 
+$installer = $this;
+
+$installer->startSetup();
+
+$installer->getConnection()
+          ->addColumn(
+               $installer->getTable('postnl_core/shipment'),
+               'extra_cover_amount',
+               array(
+                   'nullable' => true,
+                   'length'   => 12,
+                   'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL, 
+                   'comment'  => 'Extra Cover Amount',
+               )
+          );
+
+$installer->endSetup();
