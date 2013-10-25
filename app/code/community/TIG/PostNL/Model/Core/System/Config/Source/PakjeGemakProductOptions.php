@@ -43,7 +43,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
      * 
      * @return array
      * 
-     * @todo implement COD and extra cover
+     * @todo implement COD
      */
     public function toOptionArray()
     {
@@ -69,15 +69,17 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
             array(
                 'value' => '3546',
                 'label' => $helper->__('PakjeGemak + COD + Extra Cover + Notification')
-            ),
-            array(
-                'value' => '3534',
-                'label' => $helper->__('PakjeGemak + Extra Cover')
-            ),
-            array(
-                'value' => '3544',
-                'label' => $helper->__('PakjeGemak + Extra Cover + Notification')
             ),*/
+            array(
+                'value'        => '3534',
+                'label'        => $helper->__('PakjeGemak + Extra Cover'),
+                'isExtraCover' => true,
+            ),
+            array(
+                'value'        => '3544',
+                'label'        => $helper->__('PakjeGemak + Extra Cover + Notification'),
+                'isExtraCover' => true,
+            ),
             array(
                 'value' => '3533',
                 'label' => $helper->__('PakjeGemak + Signature on Delivery')

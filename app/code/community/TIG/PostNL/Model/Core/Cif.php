@@ -594,14 +594,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param TIG_PostNL_Model_Core_Shipment $shipment
      * 
      * @return array
+     * 
+     * @todo implement COD
      */
     protected function _getAmount($postnlShipment)
     {
-        $insuredAmount = $postnlShipment->getInsuredAmount();
-        if (!$insuredAmount) {
+        if (!$postnlShipment->hasExtraCover()) {
             return array();
         }
         
+        $extraCover = number_format($postnlShipment->getExtraCoverAmount(), 2);
         $amount = array(
             'AccountName'       => '',
             'AccountNr'         => '',
@@ -609,8 +611,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Currency'          => 'EUR',
             'Reference'         => '',
             'TransactionNumber' => '',
-            'Value'             => $insuredAmount,
+            'Value'             => $extraCover,
         );
+        
         return $amount;
     }
     
