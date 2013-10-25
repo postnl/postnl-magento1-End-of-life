@@ -164,6 +164,16 @@
 					</postnl_adminhtml_shipmentgrid>
 			    </observers>
 			</adminhtml_block_html_before>
+			<controller_action_predispatch_adminhtml_sales_order_shipment_save>
+                <observers>
+                    <!-- Registers the product option the user selected on the sales_order_shipment_new page -->
+                    <postnl_core_shipment_save>
+                        <type>Model</type>
+                        <class>postnl_core/observer_saveShipment</class>
+                        <method>registerProductOption</method>
+                    </postnl_core_shipment_save>
+                </observers>
+			</controller_action_predispatch_adminhtml_sales_order_shipment_save>
 		</events>
 		<layout>
             <updates>
@@ -204,6 +214,15 @@
                 	<model>postnl_core/observer_cron::getBarcodes</model>
                 </run>
             </get_missing_barcodes>
+            <!-- Update the shipping status for all undelivered PostNL shipments -->
+            <update_shipping_status>
+            	<schedule>
+            		<cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+            	</schedule>
+            	<run>
+            		<model>postnl_core/observer_cron::updateShippingStatus</model>
+            	</run>
+            </update_shipping_status>
         </jobs>
     </crontab>
     
@@ -262,7 +281,15 @@
         		<default_pakjegemak_product_options>3533</default_pakjegemak_product_options> <!-- PakjeGemak + signature on delivery -->
         		<default_eu_product_options>4944</default_eu_product_options> <!-- EU Pack Special to consumer -->
         		<default_global_product_options>4945</default_global_product_options> <!-- GlobalPack -->
+        		<weight_unit>gram</weight_unit> <!-- gram -->
         	</cif_product_options>
+        	<cif_customs_settings>
+        		<use_hs_tariff>0</use_hs_tariff> <!-- Do not use a specific HS tariff -->
+        		<hs_tariff_attribute/>
+        		<customs_value_attribute>price</customs_value_attribute> <!-- price attribute -->
+        		<country_of_origin_attribute>country_of_manufacture</country_of_origin_attribute> <!-- country of manufacture attribute -->
+        		<description_attribute>short_description</description_attribute> <!-- short description attribute -->
+        	</cif_customs_settings>
         	<advanced>
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
