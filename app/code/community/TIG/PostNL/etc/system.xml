@@ -335,6 +335,13 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
+                        <split_address_check>
+                            <frontend_model>postnl_adminhtml/system_config_splitAddressCheck</frontend_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </split_address_check>
                     	<split_street translate="label" module="postnl">
                             <label>Split street parts</label>
                             <frontend_type>select</frontend_type>
