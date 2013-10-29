@@ -66,6 +66,16 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             );
         }
         
+        $warnings = Mage::registry('postnl_cif_warnings');
+        if ($warnings !== null && is_array($warnings)) {
+            $warningMessage = $this->__('PostNL replied with the following warnings:');
+            foreach ($warnings as $warning) {
+                $warningMessage .= '<br />' . $this->__('Error code %s: %s', $warning['code'], $warning['description']);
+            }
+
+            Mage::getSingleton('adminhtml/session')->addNotice($warningMessage);
+        }
+        
         $this->_redirect('adminhtml/sales_shipment/index');
         return $this;
     }
@@ -176,8 +186,6 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         
         $shipment = Mage::getModel('sales/service_order', $order)
                         ->prepareShipment($this->_getItemQtys($order));
-                        
-        Mage::register('current_shipment', $shipment);
         
         $shipment->register();
         $this->_saveShipment($shipment);

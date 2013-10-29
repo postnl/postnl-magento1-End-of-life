@@ -41,6 +41,8 @@
  * Class containing all default methods used for CIF communication by this extension.
  * 
  * If you wish to add new methods you can etxend this class or create a new class that extends TIG_PostNL_Model_Core_Cif_Abstract
+ * 
+ * @todo implement warning processing
  */
 class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 {

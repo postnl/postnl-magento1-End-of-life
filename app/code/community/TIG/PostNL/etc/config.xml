@@ -279,7 +279,7 @@
         		<show_grid_options>0</show_grid_options> <!-- Do not show product options in the order grid -->
         		<default_product_options>3085</default_product_options> <!-- standard shipment -->
         		<default_pakjegemak_product_options>3533</default_pakjegemak_product_options> <!-- PakjeGemak + signature on delivery -->
-        		<default_eu_product_options>4944</default_eu_product_options> <!-- EU Pack Special to consumer -->
+        		<default_eu_product_options>4952</default_eu_product_options> <!-- EU Pack Special to consumer (combilabel) -->
         		<default_global_product_options>4945</default_global_product_options> <!-- GlobalPack -->
         		<weight_unit>gram</weight_unit> <!-- gram -->
         	</cif_product_options>

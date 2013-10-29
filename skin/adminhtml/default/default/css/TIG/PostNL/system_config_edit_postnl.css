@@ -36,5 +36,3 @@
 .module-message.error { background:#fff url(../../../images/TIG/PostNL/glyph_error.gif) 9px 9px no-repeat;  }
 
 .content-header h3 { background:transparent url(../../../images/TIG/PostNL/logo_postnl.png) 0 0 no-repeat !important; height:25px; padding-left:31px; line-height:24px; }
-
-input.postnl-required { border:1px solid #ffd700; }

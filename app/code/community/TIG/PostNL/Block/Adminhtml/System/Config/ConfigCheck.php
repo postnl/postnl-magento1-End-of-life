@@ -36,54 +36,23 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_SplitAddressCheck
+
+class TIG_PostNL_Block_Adminhtml_System_Config_ConfigCheck
     extends Mage_Adminhtml_Block_Abstract
     implements Varien_Data_Form_Element_Renderer_Interface
 {
-    /**
-     * XML path to split street configuration option
-     */
-    const XML_PATH_SPLIT_STREET = 'postnl/cif_address/split_street';
     
     /**
-     * Template file used
+     * Render the element
      * 
-     * @var string
-     */
-    protected $_template = 'TIG/PostNL/system/config/split_address_check.phtml';
-    
-    /**
-     * Get if the split_street field is enabled
-     * 
-     * @return boolean
-     */
-    public function getIsAddressSplit()
-    {
-        $request = Mage::app()->getRequest();
-
-        /**
-         * Check if the split_street field is enabled based on the current scope
-         */
-        if ($request->getParam('store')) {
-            $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, $request->getparam('store'));
-        } elseif ($request->getParam('website')) {
-            $website = Mage::getModel('core/website')->load($request->getparam('website'), 'name');
-            $splitStreet = (bool) $website->getConfig(self::XML_PATH_SPLIT_STREET, $website->getId());
-        } else {
-            $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, Mage_Core_Model_App::ADMIN_STORE_ID);
-        }
-        
-        return $splitStreet;
-    }
-    
-    /**
-     * Render fieldset html
-     *
      * @param Varien_Data_Form_Element_Abstract $element
+     * 
      * @return string
+     * 
+     * @todo implement this method so that it renders a warning if the module has not yet been fully configured
      */
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
-        return $this->toHtml();
+        return '';
     }
 }

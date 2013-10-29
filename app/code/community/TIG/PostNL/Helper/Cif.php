@@ -58,7 +58,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const DUTCH_BARCODE_TYPE  = 'NL';
     const EU_BARCODE_TYPE     = 'EU';
     const GLOBAL_BARCODE_TYPE = 'GLOBAL';
-        
+    
     /**
      * XML path to infinite label printiong setting
      */
@@ -148,6 +148,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         '4924',
         '4946',
         '4944',
+        '4950',
+        '4954',
+        '4955',
+        '4952',
     );
     
     /**

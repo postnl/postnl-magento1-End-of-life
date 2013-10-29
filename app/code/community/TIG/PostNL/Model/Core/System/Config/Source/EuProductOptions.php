@@ -50,8 +50,12 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         $helper = Mage::helper('postnl');
         $availableOptions = array(
             array(
-                'value' => '4940',
+                'value' => '4950',
                 'label' => $helper->__('EU Pack Special'),
+            ),
+            array(
+                'value' => '4952',
+                'label' => $helper->__('EU Pack Special to consumer'),
             ),
             /**
              * These are not currently implemented
@@ -59,17 +63,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
              * TODO implement these options
              */
             /*array(
-                'value' => '4924',
+                'value' => '4954',
                 'label' => $helper->__('EU Pack Special COD (Belgium and Luxembourg only)'),
             ),*/
             array(
-                'value' => '4946',
+                'value' => '4955',
                 'label' => $helper->__('EU Pack Standard (Belgium only)'),
             ),
-            array(
-                'value' => '4944',
-                'label' => $helper->__('EU Pack Special to consumer'),
-            )
         );
         
         return $availableOptions;
