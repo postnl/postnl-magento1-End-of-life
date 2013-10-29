@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -37,86 +37,57 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
-class TIG_PostNL_Model_Core_System_Config_Source_StreetField
+/**
+ * @todo check if the interface is really needed
+ */
+class TIG_PostNL_Block_Adminhtml_System_Config_SplitAddressCheck
+    extends Mage_Adminhtml_Block_Abstract
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
     /**
-     * XML path to community edition address lines configuration option
+     * XML path to split street configuration option
      */
-    const XML_PATH_COMMUNITY_STREET_LINES = 'customer/address/street_lines';
+    const XML_PATH_SPLIT_STREET = 'postnl/cif_address/split_street';
     
     /**
-     * Source model for street line settings
+     * Template file used
      * 
-     * @return array
+     * @var string
      */
-    public function toOptionArray()
-    {
-        if (Mage::helper('postnl')->isEnterprise()) {
-            $array = $this->_getEnterpriseOptions();
-            return $array;
-        }
-        
-        $array = $this->_getCommunityOptions();
-        return $array;
-    }
+    protected $_template = 'TIG/PostNL/system/config/split_address_check.phtml';
     
     /**
-     * Gets options for community edition shops
+     * Get if the split_street field is enabled
      * 
-     * @return array
+     * @return boolean
      */
-    protected function _getCommunityOptions()
+    public function getIsAddressSplit()
     {
         $request = Mage::app()->getRequest();
-        $helper = Mage::helper('postnl');
-        
+
         /**
-         * Get the allowed number of address lines based on the current scope
+         * Check if the split_street field is enabled based on the current scope
          */
         if ($request->getParam('store')) {
-            $lineCount = Mage::getStoreConfig(self::XML_PATH_COMMUNITY_STREET_LINES, $request->getparam('store'));
+            $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, $request->getparam('store'));
         } elseif ($request->getParam('website')) {
             $website = Mage::getModel('core/website')->load($request->getparam('website'), 'name');
-            $lineCount = $website->getConfig(self::XML_PATH_COMMUNITY_STREET_LINES, $website->getId());
+            $splitStreet = (bool) $website->getConfig(self::XML_PATH_SPLIT_STREET, $website->getId());
         } else {
-            $lineCount = Mage::getStoreConfig(self::XML_PATH_COMMUNITY_STREET_LINES, Mage_Core_Model_App::ADMIN_STORE_ID);
+            $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, Mage_Core_Model_App::ADMIN_STORE_ID);
         }
         
-        /**
-         * Build the option array
-         */
-        $array = array();
-        for ($n = 1; $n <= $lineCount; $n++) {
-            $array[] = array(
-                'value' => $n,
-                'label' => $helper->__('Street line #%s', $n),
-            );
-        }
-        
-        return $array;
+        return $splitStreet;
     }
     
     /**
-     * Gets options for enterprise edition shops
-     * 
-     * @return array
+     * Render fieldset html
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @return string
      */
-    protected function _getEnterpriseOptions()
+    public function render(Varien_Data_Form_Element_Abstract $element)
     {
-        $helper = Mage::helper('postnl');
-        $lineCount = Mage::helper('customer/address')->getStreetLines();
-        
-        /**
-         * Build the option array
-         */
-        $array = array();
-        for ($n = 1; $n <= $lineCount; $n++) {
-            $array[] = array(
-                'value' => $n,
-                'label' => $helper->__('Street line #%s', $n),
-            );
-        }
-        
-        return $array;
+        return $this->toHtml();
     }
 }
