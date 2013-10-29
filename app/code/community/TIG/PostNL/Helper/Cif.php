@@ -253,6 +253,13 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         return $this;
     }
     
+    /**
+     * Get a list of available product options for a specified shipment
+     * 
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * 
+     * @return array | null
+     */
     public function getProductOptionsForShipment($shipment)
     {
         $postnlShipment = Mage::getModel('postnl_core/shipment');
@@ -260,21 +267,21 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         
         if ($postnlShipment->isDutchShipment()) {
             $options = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
-                           ->toOptionArray();
+                           ->getAvailableOptions();
                            
             return $options;
         }
         
         if ($postnlShipment->isEuShipment()) {
             $options = Mage::getModel('postnl_core/system_config_source_euProductOptions')
-                           ->toOptionArray();
+                           ->getAvailableOptions();
                            
             return $options;
         }
         
         if ($postnlShipment->isGlobalShipment()) {
             $options = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
-                           ->toOptionArray();
+                           ->getAvailableOptions();
                            
             return $options;
         }
