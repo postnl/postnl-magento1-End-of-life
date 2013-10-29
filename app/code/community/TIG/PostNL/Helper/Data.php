@@ -49,9 +49,102 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_Debug.log';
     
     /**
-     * xml path to postnl general active/inactive setting
+     * XML path to postnl general active/inactive setting
      */
     const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
+    
+    /**
+     * XML path to test/live mode config option
+     */
+    const XML_PATH_TEST_MODE = 'postnl/cif/mode';
+    
+    /**
+     * Required configuration fields
+     * 
+     * @var array
+     */
+    protected $_requiredFields = array(
+        'postnl/cif/customer_code',
+        'postnl/cif/customer_number',
+        'postnl/cif_sender_address/firstname',
+        'postnl/cif_sender_address/lastname',
+        'postnl/cif_sender_address/street_full',
+        'postnl/cif_sender_address/postcode',
+        'postnl/cif_sender_address/city',
+    );
+    
+    /**
+     * Required configuration fields for live mode
+     * 
+     * @var array
+     */
+    protected $_liveModeRequiredFields = array(
+        'postnl/cif/live_username',
+        'postnl/cif/live_password',
+    );
+    
+    /**
+     * Required configuration fields for test mode
+     * 
+     * @var array
+     */
+    protected $_testModeRequiredFields = array(
+        'postnl/cif/test_username',
+        'postnl/cif/test_password',
+    );
+    
+    /**
+     * Required configuration fields when using global shipments
+     * 
+     * @var array
+     */
+    protected $_globalShipmentRequiredFields = array(
+        'postnl/cif/global_barcode_type',
+        'postnl/cif/global_barcode_range',
+        'postnl/cif_customs_settings/customs_value_attribute',
+        'postnl/cif_customs_settings/country_of_origin_attribute',
+        'postnl/cif_customs_settings/description_attribute',
+    );
+    
+    /**
+     * Get required fields array
+     * 
+     * @return array
+     */
+    public function getRequiredFields()
+    {
+        return $this->_requiredFields;
+    }
+    
+    /**
+     * Get required fields for live mode array
+     * 
+     * @return array
+     */
+    public function getLiveModeRequiredFields()
+    {
+        return $this->_liveModeRequiredFields;
+    }
+    
+    /**
+     * Get required fields for test mode array
+     * 
+     * @return array
+     */
+    public function getTestModeRequiredFields()
+    {
+        return $this->_testModeRequiredFields;
+    }
+    
+    /**
+     * Get required fields for global shipments array
+     * 
+     * @return array
+     */
+    public function getGlobalShipmentsRequiredFields()
+    {
+        return $this->_globalShipmentRequiredFields;
+    }
     
     /**
      * Determines if the extension has been activated
@@ -60,7 +153,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * 
      * @return bool
      */
-    public function isEnabled($storeId = false)
+    public function isEnabled($storeId = false, $checkGlobal = false)
     {
         if (Mage::registry('postnl_enabled') !== null) {
             return Mage::registry('postnl_enabled');
@@ -71,9 +164,19 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         
         $enabled = (bool) Mage::getStoreConfig(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
-        Mage::register('postnl_enabled', $enabled);
+        if ($enabled === false) {
+            Mage::register('postnl_enabled', false);
+            return false;
+        }
         
-        return $enabled;
+        $isConfigured = $this->isConfigured($storeId, $checkGlobal);
+        if ($isConfigured === false) {
+            Mage::register('postnl_enabled', false);
+            return false;
+        }
+        
+        Mage::register('postnl_enabled', true);
+        return true;
     }
     
     /**
@@ -86,6 +189,87 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function isActive()
     {
         return $this->isEnabled();
+    }
+    
+    /**
+     * Check if the module is set to test mode
+     * 
+     * @return boolean
+     */
+    public function isTestMode($storeId = false)
+    {
+        if (Mage::registry('postnl_test_mode') !== null) {
+            return Mage::registry('postnl_test_mode');
+        }
+        
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $testMode = (bool) Mage::getStoreConfig(self::XML_PATH_TEST_MODE, $storeId);
+        
+        Mage::register('postnl_test_mode', $testMode);
+        return $testMode;
+    }
+    
+    /**
+     * Check if the modules has been confgured.
+     * The required fields will only be checked to see if they're not empty. The values entered will not be validated
+     * 
+     * @param int | boolean $storeId
+     * @param boolean $checkGlobal
+     * 
+     * @return boolean
+     * 
+     * @todo properly implement global check
+     */
+    public function isConfigured($storeId = false, $checkGlobal = false)
+    {
+        if (Mage::registry('postnl_is_configured') !== null) {
+            return Mage::registry('postnl_is_configured');
+        }
+        
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        /**
+         * Get the bse required fields. These are always required.
+         */
+        $baseFields = $this->getRequiredFields();
+        
+        /**
+         * Get either the live mode or test mode required fields
+         */
+        if ($this->isTestMode($storeId)) {
+            $modeFields = $this->getTestModeRequiredFields();
+        } else {
+            $modeFields = $this->getLiveModeRequiredFields();
+        }
+        $requiredFields = array_merge($baseFields, $modeFields);
+        
+        /**
+         * If this check pertains to a global shipment, get the global shipments required fields as well
+         */
+        if ($checkGlobal !== false) {
+            $globalFields = $this->getGlobalShipmentsRequiredFields();
+            $requiredFields = array_merge($requiredFields, $globalFields);
+        }
+        
+        /**
+         * Check if each required field is filled. If not, return false
+         */
+        foreach ($requiredFields as $requiredField) {
+            $value = Mage::getStoreConfig($requiredField, $storeId);
+            
+            if ($value === null || $value === '') {
+                Mage::register('postnl_is_configured', false);
+                return false;
+            }
+        }
+        
+        Mage::register('postnl_is_configured', true);
+        return true;
     }
     
     /**

@@ -170,9 +170,16 @@
 		    <show_in_website>1</show_in_website>
 		    <show_in_store>1</show_in_store>
 		    <groups>
+                <config_check>
+                    <frontend_model>postnl_adminhtml/system_config_configCheck</frontend_model>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </config_check>
 		    	<support>
 		    		<label>Version &amp; Support</label>
-                    <sort_order>0</sort_order> <!-- This should always be the first tab -->
+                    <sort_order>100</sort_order> <!-- This should always be the first tab -->
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -188,7 +195,7 @@
 		    	</support>
 		    	<general translate="label" module="postnl">
 		    		<label>General Settings</label>
-                    <sort_order>100</sort_order>
+                    <sort_order>200</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
@@ -202,12 +209,13 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
                     	</active>
                    </fields>
 				</general>
 				<cif translate="label" module="postnl">
-		    		<label>CIF Settings</label>
-                    <sort_order>200</sort_order>
+		    		<label>Account Settings</label>
+                    <sort_order>300</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -220,9 +228,10 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
                     	</mode>
                     	<live_username translate="label" module="postnl">
-                            <label>CIF Live Username</label>
+                            <label>Live Username</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
@@ -230,7 +239,7 @@
                             <show_in_store>1</show_in_store>
                     	</live_username>
                     	<live_password translate="label" module="postnl">
-                            <label>CIF Live Password</label>
+                            <label>Live Password</label>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>30</sort_order>
@@ -239,7 +248,7 @@
                             <show_in_store>1</show_in_store>
                     	</live_password>
                     	<test_username translate="label" module="postnl">
-                            <label>CIF Test Username</label>
+                            <label>Test Username</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
@@ -247,7 +256,7 @@
                             <show_in_store>1</show_in_store>
                     	</test_username>
                     	<test_password translate="label" module="postnl">
-                            <label>CIF Test Password</label>
+                            <label>Test Password</label>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>50</sort_order>
@@ -256,7 +265,7 @@
                             <show_in_store>1</show_in_store>
                     	</test_password>
                     	<customer_code translate="label comment" module="postnl">
-                            <label>CIF Customer Code</label>
+                            <label>Customer Code</label>
                             <comment>Your customer code as supplied by PostNL. Must contain between 3 and 4 leters.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>60</sort_order>
@@ -266,7 +275,7 @@
                             <validate>validate-alpha validate-length minimum-length-3 maximum-length-4</validate>
                     	</customer_code>
                     	<customer_number translate="label" module="postnl">
-                            <label>CIF Customer Number</label>
+                            <label>Customer Number</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
@@ -275,7 +284,7 @@
                             <validate>validate-digits</validate>
                     	</customer_number>
                     	<global_barcode_type translate="label comment" module="postnl">
-                            <label>CIF Global Barcode Type</label>
+                            <label>Global Barcode Type</label>
                             <comment>The current global barcode type as supplied by PostNL. Must contain 2 leters.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>80</sort_order>
@@ -285,7 +294,7 @@
                             <validate>validate-alpha validate-length minimum-length-2 maximum-length-2</validate>
                     	</global_barcode_type>
                     	<global_barcode_range translate="label" module="postnl">
-                            <label>CIF Global Barcode Range</label>
+                            <label>Global Barcode Range</label>
                             <comment>Your global barcode range as supplied by PostNL. Must contain 4 digits.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>90</sort_order>
@@ -317,6 +326,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>validate-email</validate>
                     	</contact_email>
                     	<collection_location translate="label" module="postnl">
                             <label>Collection Location</label>
@@ -329,8 +339,8 @@
                    </fields>
 				</cif>
 				<cif_address translate="label" module="postnl">
-		    		<label>CIF Address Settings</label>
-                    <sort_order>300</sort_order>
+		    		<label>Address Settings</label>
+                    <sort_order>400</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -350,6 +360,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
                     	</split_street>
                     	<streetname_field translate="label" module="postnl">
                             <label>Streetname field</label>
@@ -362,6 +373,7 @@
                             <depends>
                             	<split_street>1</split_street>
                             </depends>
+                            <validate>validate-select</validate>
                     	</streetname_field>
                     	<housenr_field translate="label" module="postnl">
                             <label>Housenr. field</label>
@@ -374,6 +386,7 @@
                             <depends>
                             	<split_street>1</split_street>
                             </depends>
+                            <validate>validate-select</validate>
                     	</housenr_field>
                     	<split_housenr translate="label" module="postnl">
                             <label>Split house number parts</label>
@@ -386,6 +399,7 @@
                             <depends>
                             	<split_street>1</split_street>
                             </depends>
+                            <validate>validate-select</validate>
                     	</split_housenr>
                     	<housenr_extension_field translate="label" module="postnl">
                             <label>Housenr. extension field</label>
@@ -399,12 +413,13 @@
                             	<split_street>1</split_street>
                             	<split_housenr>1</split_housenr>
                             </depends>
+                            <validate>validate-select</validate>
                     	</housenr_extension_field>
                    </fields>
 				</cif_address>
 				<cif_sender_address translate="label" module="postnl">
-		    		<label>CIF Sender Address</label>
-                    <sort_order>400</sort_order>
+		    		<label>Sender Address</label>
+                    <sort_order>500</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -469,8 +484,8 @@
                     </fields>
                 </cif_sender_address>
 				<cif_product_options translate="label" module="postnl">
-		    		<label>CIF Product Options</label>
-                    <sort_order>500</sort_order>
+		    		<label>Product Options</label>
+                    <sort_order>600</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -494,6 +509,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
                     	</default_product_options>
                     	<default_pakjegemak_product_options translate="label comment" module="postnl">
                             <label>Default PakjeGemak shipping options</label>
@@ -504,6 +520,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
                     	</default_pakjegemak_product_options>
                     	<default_eu_product_options translate="label comment" module="postnl">
                             <label>Default EU shipping options</label>
@@ -514,6 +531,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
                     	</default_eu_product_options>
                     	<weight_unit translate="label comment" module="postnl">
                             <label>Weight unit</label>
@@ -524,12 +542,13 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
                     	</weight_unit>
                     </fields>
 				</cif_product_options>
 				<cif_customs_settings translate="label" module="postnl">
-		    		<label>CIF Customs Settings</label>
-                    <sort_order>600</sort_order>
+		    		<label>Customs Settings</label>
+                    <sort_order>700</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -543,6 +562,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
                     	</use_hs_tariff>
                     	<hs_tariff_attribute translate="label comment" module="postnl">
                             <label>HS Tariff attribute</label>
@@ -556,6 +576,7 @@
                             <depends>
                             	<use_hs_tariff>1</use_hs_tariff>
                             </depends>
+                            <validate>validate-select</validate>
                     	</hs_tariff_attribute>
                     	<customs_value_attribute translate="label comment" module="postnl">
                             <label>Customs value attribute</label>
@@ -566,6 +587,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
                     	</customs_value_attribute>
                     	<country_of_origin_attribute translate="label comment" module="postnl">
                             <label>Country of origin attribute</label>
@@ -576,6 +598,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
                     	</country_of_origin_attribute>
                     	<description_attribute translate="label comment" module="postnl">
                             <label>Product description attribyte</label>
@@ -586,6 +609,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
                     	</description_attribute>
                     </fields>
 				</cif_customs_settings>
@@ -605,6 +629,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
                     	</infinite_label_printing>
                     	<max_temp_file_storage_time translate="label comment" module="postnl">
                             <label>Maximum temporary file storage time</label>

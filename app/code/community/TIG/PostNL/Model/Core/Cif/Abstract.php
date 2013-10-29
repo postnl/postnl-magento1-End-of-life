@@ -77,24 +77,6 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const XML_PATH_LIVE_PASSWORD = 'postnl/cif/live_password';
     const XML_PATH_TEST_USERNAME = 'postnl/cif/test_username';
     const XML_PATH_TEST_PASSWORD = 'postnl/cif/test_password';
-    const XML_PATH_TEST_MODE     = 'postnl/cif/mode';
-    
-    /**
-     * Checks if the module is set to testmode
-     * 
-     * @return boolean
-     */
-    public function getTestMode()
-    {
-        if ($this->getData('test_mode')) {
-            return $this->getData('test_mode');
-        }
-        
-        $testMode = (bool) Mage::getStoreConfig(self::XML_PATH_TEST_MODE, 0);
-        
-        $this->setData('test_mode', $testMode);
-        return $testMode;
-    }
     
     /**
      * Gets the username from system/config. Test mode determines if live or test username is used.
@@ -132,15 +114,17 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     }
     
     /**
-     * Alias for getTestMode()
+     * Check if the module is set to test mode
      * 
-     * @see getTestMode()
+     * @see TIG_PostNL_Helper_Data::isTestMode()
      * 
      * @return boolean
      */
-    public function isTestMode()
+    public function isTestMode($storeId = false)
     {
-        return $this->getTestMode();
+        $testMode = Mage::helper('postnl')->isTestMode($storeId);
+        
+        return $testMode;
     }
 
     /**
@@ -178,6 +162,8 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                     $method => $soapParams,
                 )
             );
+            
+            $this->_processWarnings($client);
             
             Mage::helper('postnl/cif')->logCifCall($client);
             return $response;
@@ -253,6 +239,64 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $headers[] = new SOAPHeader($namespace, 'Security', $security, false);
 
         return $headers;
+    }
+    
+    /**
+     * Check if warnings occurred while processing the CIF request. If so, parse and register them
+     * 
+     * @param SoapClient $client
+     * 
+     * @return TIG_PostNL_Model_Core_Cif_Abstract
+     */
+    protected function _processWarnings($client)
+    {
+        $responseXML = $client->__getLastResponse();
+        $responseDOMDoc = new DOMDocument();
+        $responseDOMDoc->loadXML($responseXML);
+        
+        /**
+         * Search the CIF response for warnings
+         */
+        $warnings = $responseDOMDoc->getElementsByTagName('Warning');
+        
+        if (!$warnings || $warnings->length < 1) {
+            return $this;
+        }
+        
+        /**
+         * add all warning codes and descriptions to an array
+         */
+        $n = 0;
+        $responseWarnings = array();
+        foreach ($warnings as $warning) {
+            foreach ($warning->getElementsByTagName('Code') as $code) {
+                $responseWarnings[$n]['code'] = $code->nodeValue;
+            }
+            foreach ($warning->getElementsByTagName('Description') as $description) {
+                $responseWarnings[$n]['description'] = $description->nodeValue;
+            }
+            $n++;
+        }
+        
+        /**
+         * Check if old warnings are still present in the registry. If so, merge these with the new warnings
+         */
+        if (Mage::registry('postnl_cif_warnings') !== null) {
+            $existingWarnings = (array) Mage::registry('postnl_cif_warnings');
+            $responseWarnings = array_merge($responseWarnings, $existingWarnings);
+            
+            /**
+             * Remove the old warnings from the registry
+             */
+            Mage::unRegister('postnl_cif_warnings');
+        }
+        
+        /**
+         * Register the warnings
+         */
+        Mage::register('postnl_cif_warnings', $responseWarnings);
+        
+        return $this;
     }
     
     /**
