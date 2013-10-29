@@ -39,6 +39,11 @@
 class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
 {
     /**
+     * XML path to supported options configuration setting
+     */
+    const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+    
+    /**
      * Returns an option array for all possible PostNL product options
      * 
      * @return array
@@ -49,10 +54,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     {
         $helper = Mage::helper('postnl');
         $availableOptions = array(
-            array(
-                'value' => 'default',
-                'label' => $helper->__('Use default'),
-            ),
             'standard_options' => array(
                 'label' => $helper->__('Standard options'),
                 'value' => array(
@@ -203,6 +204,102 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 ),
             ),
         );
+        
+        return $availableOptions;
+    }
+    
+    /**
+     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
+     * 
+     * @param boolean $withDefault Determines whether or not a 'default' option is prepended to the array
+     * 
+     * @return array
+     */
+    public function getAvailableOptions($withDefault = false)
+    {
+        $helper = Mage::helper('postnl');
+        $options = $this->toOptionArray();
+        
+        /**
+         * Get a list of all possible options
+         */
+        $availableOptions = array();
+        
+        /**
+         * prepend the 'default' option
+         */
+        if ($withDefault === true) {
+            $availableOptions[] =  array(
+                'value' => 'default',
+                'label' => $helper->__('Use default'),
+            );
+        }
+        
+        /**
+         * Get the list of supported product options from the shop's configuration
+         */
+        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $supportedOptionsArray = explode(',', $supportedOptions);
+        
+        /**
+         * Check each standard option to see if it's supprted
+         */
+        $availableStandardOptions = array();
+        foreach ($options['standard_options']['value'] as $option) {
+            if (!in_array($option['value'], $supportedOptionsArray)) {
+                continue;
+            }
+            
+            $availableStandardOptions[] = $option;
+        }
+        
+        /**
+         * Check each eu option to see if it's supprted
+         */
+        $availableEuOptions = array();
+        foreach ($options['eu_options']['value'] as $option) {
+            if (!in_array($option['value'], $supportedOptionsArray)) {
+                continue;
+            }
+            
+            $availableEuOptions[] = $option;
+        }
+        
+        /**
+         * Check each eu option to see if it's supprted
+         */
+        $availableGlobalOptions = array();
+        foreach ($options['global_options']['value'] as $option) {
+            if (!in_array($option['value'], $supportedOptionsArray)) {
+                continue;
+            }
+            
+            $availableGlobalOptions[] = $option;
+        }
+        
+        /**
+         * group all available options
+         */
+        if (!empty($availableStandardOptions)) {
+            $availableOptions['standard_options'] = array(
+                'label' => $helper->__('Standard options'),
+                'value' => $availableStandardOptions,
+            );
+        }
+        
+        if (!empty($availableEuOptions)) {
+            $availableOptions['eu_options'] = array(
+                'label' => $helper->__('Eu options'),
+                'value' => $availableEuOptions,
+            );
+        }
+        
+        if (!empty($availableGlobalOptions)) {
+            $availableOptions['global_options'] = array(
+                'label' => $helper->__('Global options'),
+                'value' => $availableGlobalOptions,
+            );
+        }
         
         return $availableOptions;
     }

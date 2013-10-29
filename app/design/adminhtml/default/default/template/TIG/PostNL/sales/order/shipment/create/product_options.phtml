@@ -48,6 +48,10 @@
 <?php endif; ?>
 
 <?php $_productOptions = Mage::helper('postnl/cif')->getProductOptionsForShipment($_shipment); ?>
+<?php if ($_productOptions === null || empty($_productOptions)): ?>
+    <?php return $this; ?>
+<?php endif; ?>
+
 <script type ="text/javascript">
 //<![CDATA[
     document.observe('dom:loaded', function() {
