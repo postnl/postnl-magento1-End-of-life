@@ -230,12 +230,12 @@
     <default>
         <carriers>
             <postnl>
-                <active>1</active>
-                <sallowspecific>0</sallowspecific>
-                <model>postnl_carrier/postnl</model>
-                <name>PostNL</name>
-                <price>5.00</price>
-                <title>PostNL</title>
+                <active>0</active> <!-- disabled -->
+                <sallowspecific>0</sallowspecific> <!-- Allow all countried -->
+                <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
+                <name>PostNL</name> <!-- PostNL -->
+                <price>5.00</price> <!-- 5 EUR -->
+                <title>PostNL</title> <!-- PostNL -->
                 <type>I</type>
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
                 <handling_type>F</handling_type>

@@ -340,6 +340,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Checks if this shipment is a COD shipment
+     * 
+     * @return boolean
+     * 
+     * @todo implement this method
+     */
+    public function isCod()
+    {
+        return false; //TODO implement this method
+    }
+    
+    /**
      * Checks if the current entity can be confirmed.
      * 
      * @return boolean
@@ -463,45 +475,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
-     * Checks if a given product code is allowed for the current shipments. Throws an exception if not.
-     * 
-     * @param string $productCode
-     * 
-     * @return boolean
-     * 
-     * @throws TIG_PostNL_Exception
-     * 
-     * @todo implement EU combilabel shipments
-     * @todo implement PakjeGemak product codes
-     */
-    protected function _checkProductCodeAllowed($productCode)
-    {
-        $cifHelper = Mage::helper('postnl/cif');
-        $allowedProductCodes = array();
-        
-        if ($this->isDutchShipment() && !$this->isPakjeGemakShipment()) {
-            $allowedProductCodes = $cifHelper->getStandardProductCodes();
-        }
-        if ($this->isDutchShipment() && $this->isPakjeGemakShipment()) {
-            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes();
-        }
-        
-        if ($this->isEuShipment()) {
-            $allowedProductCodes = $cifHelper->getEuProductCodes();
-        }
-        
-        if ($this->isGlobalShipment()) {
-            $allowedProductCodes = $cifHelper->getGlobalProductCodes();
-        }
-        
-        if (!in_array($productCode, $allowedProductCodes)) {
-            throw Mage::exception('TIG_PostNL', 'Product code ' . $productCode . ' is not allowed for this shipment.');
-        }
-        
-        return true;
-    }
-    
-    /**
      * Generates a barcode for this postnl shipment.
      * Barcodes are the basis for all CIF functionality and must therefore be generated before any further action is possible.
      * 
@@ -583,7 +556,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function confirmAndPrintLabel()
+    public function confirmAndGenerateLabel()
     {
         if (!$this->canConfirm()) {
             throw Mage::exception('TIG_PostNL', 'The confirmAndPrintLabel action is currently unavailable.');
@@ -598,6 +571,57 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $labels = $result->Labels->Label;
         
         $this->addLabels($labels);
+        
+        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
+        
+        return $this;
+    }
+    
+    /**
+     * Generates a shipping label without confirming the shipment with postNL.
+     * 
+     * @return TIG_PostNL_Model_Shipment
+     * 
+     * @throws TIG_PostNL_Exception
+     * 
+     * @todo fully implement this method
+     */
+    public function generateLabel()
+    {
+        $cif = Mage::getModel('postnl_core/cif');
+        $result = $cif->generateLabelsWithoutConfirm($this);
+        
+        if (!isset($result->Labels) || !isset($result->Labels->Label)) {
+            throw Mage::exception('TIG_PostNL', "The confirmAndPrintLabel action returned an invalid response: \n" . var_export($response, true));
+        }
+        $labels = $result->Labels->Label;
+        
+        $this->addLabels($labels);
+        
+        return $this;
+    }
+    
+    /**
+     * Confirm the shipment with PosTNL without generating new labels
+     * 
+     * @return TIG_PostNL_Model_Shipment
+     * 
+     * @throws TIG_PostNL_Exception
+     * 
+     * @todo fully implement this method
+     */
+    public function confirm()
+    {
+        $cif = Mage::getModel('postnl_core/cif');
+        $result = $cif->confirmShipment($this);
+        
+        if (
+            !isset($result->ConfirmingResponseShipment) 
+            || !isset($result->ConfirmingResponseShipment->Barcode)
+            || $result->ConfirmingResponseShipment->Barcode != $this->getBarcode()
+        ) {
+            throw Mage::exception('TIG_PostNL', "The confirmAndPrintLabel action returned an invalid response: \n" . var_export($response, true));
+        }
         
         $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
         
@@ -655,6 +679,44 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         return $this;
+    }
+    
+    /**
+     * Checks if a given product code is allowed for the current shipments. Throws an exception if not.
+     * 
+     * @param string $productCode
+     * 
+     * @return boolean
+     * 
+     * @throws TIG_PostNL_Exception
+     * 
+     * @todo implement PakjeGemak product codes
+     */
+    protected function _checkProductCodeAllowed($productCode)
+    {
+        $cifHelper = Mage::helper('postnl/cif');
+        $allowedProductCodes = array();
+        
+        if ($this->isDutchShipment() && !$this->isPakjeGemakShipment()) {
+            $allowedProductCodes = $cifHelper->getStandardProductCodes();
+        }
+        if ($this->isDutchShipment() && $this->isPakjeGemakShipment()) {
+            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes();
+        }
+        
+        if ($this->isEuShipment()) {
+            $allowedProductCodes = $cifHelper->getEuProductCodes();
+        }
+        
+        if ($this->isGlobalShipment()) {
+            $allowedProductCodes = $cifHelper->getGlobalProductCodes();
+        }
+        
+        if (!in_array($productCode, $allowedProductCodes)) {
+            throw Mage::exception('TIG_PostNL', 'Product code ' . $productCode . ' is not allowed for this shipment.');
+        }
+        
+        return true;
     }
     
     /**

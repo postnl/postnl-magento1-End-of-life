@@ -40,7 +40,7 @@
 <?php foreach (Mage::registry('current_order')->getShipmentsCollection() as $_shipment): ?>
     <?php $_progressStatus = $this->getShippingStatus($_shipment) ?>
 
-    <div id="postnl_status_bar-<?php echo $_shipment->getId(); ?>" class="progress-wrapper <?php echo $progressStatus ?>">
+    <div id="postnl_status_bar-<?php echo $_shipment->getId(); ?>" class="progress-wrapper <?php echo $_progressStatus ?>">
         <div class="progress progress-reported">
             <strong><?php echo $this->__('Confirmed') ?></strong>
         </div>
