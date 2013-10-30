@@ -294,6 +294,7 @@
         		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
         	</cif_customs_settings>
         	<advanced>
+        	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
         	</advanced>

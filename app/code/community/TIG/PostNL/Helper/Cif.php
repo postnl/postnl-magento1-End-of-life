@@ -449,12 +449,12 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * 
      * @see Mage::log()
      * 
-     * @todo replace logging check
+     * @todo add additional debug options
      * 
      */
     public function logCifCall($client)
     {
-        if (false) { //TODO replace by configuration value check
+        if (!$this->isLoggingEnabled()) { 
             return $this;
         }
         
@@ -482,11 +482,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * 
      * @see Mage::logException()
      * 
-     * @todo replace logging check
+     * @todo add additional debug options
      */
     public function logCifException($exception)
     {
-        if (false) { //TODO replace by configuration value check
+        if (!$this->isExceptionLoggingEnabled()) {
             return $this;
         }
         
