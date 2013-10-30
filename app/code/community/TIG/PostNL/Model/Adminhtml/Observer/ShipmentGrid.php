@@ -231,6 +231,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             )
         );
         
+        $massactionBlock->addItem(
+            'postnl_confirm_shipments',
+            array(
+                'label'=> Mage::helper('postnl')->__('PostNL - Confirm shipments'),
+                'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massConfirm'),
+            )
+        );
+        
         // /**
          // * get the default print_shipping_label massaction then remove it
          // */
