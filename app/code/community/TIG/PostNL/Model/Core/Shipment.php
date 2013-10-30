@@ -340,6 +340,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Checks if this shipment is a COD shipment
+     * 
+     * @return boolean
+     * 
+     * @todo implement this method
+     */
+    public function isCod()
+    {
+        return false; //TODO implement this method
+    }
+    
+    /**
      * Checks if the current entity can be confirmed.
      * 
      * @return boolean
@@ -460,45 +472,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $this->_checkProductCodeAllowed($productCode);
         
         return $productCode;
-    }
-    
-    /**
-     * Checks if a given product code is allowed for the current shipments. Throws an exception if not.
-     * 
-     * @param string $productCode
-     * 
-     * @return boolean
-     * 
-     * @throws TIG_PostNL_Exception
-     * 
-     * @todo implement EU combilabel shipments
-     * @todo implement PakjeGemak product codes
-     */
-    protected function _checkProductCodeAllowed($productCode)
-    {
-        $cifHelper = Mage::helper('postnl/cif');
-        $allowedProductCodes = array();
-        
-        if ($this->isDutchShipment() && !$this->isPakjeGemakShipment()) {
-            $allowedProductCodes = $cifHelper->getStandardProductCodes();
-        }
-        if ($this->isDutchShipment() && $this->isPakjeGemakShipment()) {
-            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes();
-        }
-        
-        if ($this->isEuShipment()) {
-            $allowedProductCodes = $cifHelper->getEuProductCodes();
-        }
-        
-        if ($this->isGlobalShipment()) {
-            $allowedProductCodes = $cifHelper->getGlobalProductCodes();
-        }
-        
-        if (!in_array($productCode, $allowedProductCodes)) {
-            throw Mage::exception('TIG_PostNL', 'Product code ' . $productCode . ' is not allowed for this shipment.');
-        }
-        
-        return true;
     }
     
     /**
@@ -706,6 +679,44 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         return $this;
+    }
+    
+    /**
+     * Checks if a given product code is allowed for the current shipments. Throws an exception if not.
+     * 
+     * @param string $productCode
+     * 
+     * @return boolean
+     * 
+     * @throws TIG_PostNL_Exception
+     * 
+     * @todo implement PakjeGemak product codes
+     */
+    protected function _checkProductCodeAllowed($productCode)
+    {
+        $cifHelper = Mage::helper('postnl/cif');
+        $allowedProductCodes = array();
+        
+        if ($this->isDutchShipment() && !$this->isPakjeGemakShipment()) {
+            $allowedProductCodes = $cifHelper->getStandardProductCodes();
+        }
+        if ($this->isDutchShipment() && $this->isPakjeGemakShipment()) {
+            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes();
+        }
+        
+        if ($this->isEuShipment()) {
+            $allowedProductCodes = $cifHelper->getEuProductCodes();
+        }
+        
+        if ($this->isGlobalShipment()) {
+            $allowedProductCodes = $cifHelper->getGlobalProductCodes();
+        }
+        
+        if (!in_array($productCode, $allowedProductCodes)) {
+            throw Mage::exception('TIG_PostNL', 'Product code ' . $productCode . ' is not allowed for this shipment.');
+        }
+        
+        return true;
     }
     
     /**

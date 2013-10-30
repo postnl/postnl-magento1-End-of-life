@@ -96,7 +96,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     
     /**
      * Gets the password from system/config. Test mode determines if live or test password is used.
-     * Passwords will be decrypted using Magento's encryption key and then re-encrypted using sha1
+     * Passwords will be decrypted using Magento's encryption key and then hashed using sha1
      * 
      * @return string
      */
@@ -237,7 +237,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $token     = new SoapVar(array($node1, $node2), SOAP_ENC_OBJECT, null, null, 'UsernameToken', $namespace);
         $security  = new SoapVar(array($token),         SOAP_ENC_OBJECT, null, null, 'Security',      $namespace);
         $headers[] = new SOAPHeader($namespace, 'Security', $security, false);
-
+        
         return $headers;
     }
     

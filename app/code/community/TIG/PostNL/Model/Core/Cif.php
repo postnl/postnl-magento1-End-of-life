@@ -529,25 +529,27 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'ProductCodeDelivery'      => $postnlShipment->getProductCode(),
             'Reference'                => $shipment->getReference(),
             'Groups'                   => array(
-                                           'Group' => $this->_getGroup(),
+                                           'Group'   => $this->_getGroup(),
                                        ),
             'Contacts'                 => array(
                                            'Contact' => $this->_getContact($shippingAddress),
                                        ),
             'Dimension'                => array(
-                                           'Weight' => (int) Mage::helper('postnl/cif')->standardizeWeight(
-                                                           $shipment->getOrder()->getWeight(), 
-                                                           $this->getStoreId(),
-                                                           true
+                                           'Weight'  => (int) Mage::helper('postnl/cif')->standardizeWeight(
+                                                            $shipment->getOrder()->getWeight(), 
+                                                            $this->getStoreId(),
+                                                            true //convert the weight to grams instead of kilograms
                                                         ),
                                        ),
             'Addresses'                => array(
                                            'Address' => $this->_getAddress('Receiver', $shippingAddress),
                                        ),
-            'Amounts'                  => array(
-                                           'Amount' => $this->_getAmount($postnlShipment),
-                                       ),
+            'Reference'                => $shipment->getIncrementId(),
         );
+        
+        if ($postnlShipment->hasExtraCover() || $postnlShipment->isCod()) {
+            $shipmentData['Amounts'] = array($this->_getAmount($postnlShipment));
+        }
         
         if ($postnlShipment->isGlobalShipment()) {
             $shipmentData['Customs'] = $this->_getCustoms($shipment);
@@ -691,7 +693,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getAmount($postnlShipment)
     {
-        if (!$postnlShipment->hasExtraCover()) {
+        if (!$postnlShipment->hasExtraCover() && !$postnlShipment->isCod()) {
             return array();
         }
         
@@ -966,7 +968,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $itemData = array(
                 'Description'     => $this->_getCustomsDescription($item),
                 'Quantity'        => $item->getQty(),
-                'Weight'          => (int) Mage::helper('postnl/cif')->standardizeWeight(
+                'Weight'          => Mage::helper('postnl/cif')->standardizeWeight(
                                          $item->getWeight(), 
                                          $this->getStoreId()
                                      ),
