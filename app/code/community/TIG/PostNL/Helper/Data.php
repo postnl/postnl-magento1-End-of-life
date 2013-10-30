@@ -158,13 +158,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getDebugMode()
     {
-        if ($this->getData('debug_mode')) {
-            return $this->getData('debug_mode');
+        if (Mage::registry('postnl_debug_mode') !== null) {
+            return Mage::registry('postnl_debug_mode');
         }
         
         $debugMode = (int) Mage::getStoreConfig(self::XML_PATH_DEBUG_MODE, Mage_Core_Model_App::ADMIN_STORE_ID);
         
-        $this->setDebugMode($debugMode);
+        Mage::register('postnl_debug_mode', $debugMode);
         return $debugMode;
     }
     
@@ -299,7 +299,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * 
      * @return boolean
      */
-    public function isLogggingEnabled()
+    public function isLoggingEnabled()
     {
         $debugMode = $this->getDebugMode();
         if ($debugMode > 1) {
