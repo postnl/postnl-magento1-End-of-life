@@ -290,6 +290,8 @@
         		<customs_value_attribute>price</customs_value_attribute> <!-- price attribute -->
         		<country_of_origin_attribute>country_of_manufacture</country_of_origin_attribute> <!-- country of manufacture attribute -->
         		<description_attribute>short_description</description_attribute> <!-- short description attribute -->
+        		<product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
+        		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
         	</cif_customs_settings>
         	<advanced>
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->

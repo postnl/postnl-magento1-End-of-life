@@ -125,6 +125,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             Mage::getSingleton('adminhtml/session')->addNotice($warningMessage);
         }
         
+        Mage::getSingleton('adminhtml/session')->addSuccess(
+            $this->__('The shipment has been successfully confirmed')
+        );
+        
         $this->_redirect('adminhtml/sales_shipment/index');
         return $this;
     }
