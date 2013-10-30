@@ -75,6 +75,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XML_PATH_CUSTOMS_CUSTOMS_VALUE_ATTRIBUTE     = 'postnl/cif_customs_settings/customs_value_attribute';
     const XML_PATH_CUSTOMS_COUNTRY_OF_ORIGIN_ATTRIBUTE = 'postnl/cif_customs_settings/country_of_origin_attribute';
     const XML_PATH_CUSTOMS_DESCRIPTION_ATTRIBUTE       = 'postnl/cif_customs_settings/description_attribute';
+    const XML_PATH_CUSTOMS_PRODUCT_SORTING_ATTRIBUTE   = 'postnl/cif_customs_settings/product_sorting_attribute';
+    const XML_PATH_CUSTOMS_PRODUCT_SORTING_DIRECTION   = 'postnl/cif_customs_settings/product_sorting_direction';
     
     /**
      * XML path to sender address data.
@@ -520,6 +522,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $shipment        = $postnlShipment->getShipment();
         $shippingAddress = $shipment->getShippingAddress();
         
+        $shipmentWeight = Mage::helper('postnl/cif')->standardizeWeight(
+            $shipment->getOrder()->getWeight(), 
+            $this->getStoreId(),
+            true //convert the weight to grams instead of kilograms
+        );
+        
         $shipmentData = array(
             'Barcode'                  => $postnlShipment->getBarcode(),
             'CollectionTimeStampEnd'   => '',
@@ -535,11 +543,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                            'Contact' => $this->_getContact($shippingAddress),
                                        ),
             'Dimension'                => array(
-                                           'Weight'  => (int) Mage::helper('postnl/cif')->standardizeWeight(
-                                                            $shipment->getOrder()->getWeight(), 
-                                                            $this->getStoreId(),
-                                                            true //convert the weight to grams instead of kilograms
-                                                        ),
+                                           'Weight'  => round($shipmentWeight),
                                        ),
             'Addresses'                => array(
                                            'Address' => $this->_getAddress('Receiver', $shippingAddress),
@@ -957,7 +961,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          */
         $itemCount = 0;
         $content = array();
-        foreach ($shipment->getAllItems() as $item) {
+        $items = $this->_sortCustomsItems($shipment->getAllItems());
+        
+        foreach ($items as $item) {
             /**
              * A maximum of 5 rows are allowed
              */
@@ -999,6 +1005,51 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $customs['Content'] = $content;
         
         return $customs;
+    }
+    
+    /**
+     * Sorts an array of shipment items based on a product attribute that is defined in the module configuration
+     * 
+     * @param array $items
+     * 
+     * @return array
+     */
+    protected function _sortCustomsItems($items)
+    {
+        /**
+         * Get the attribute and direction used for sorting
+         */
+        $sortingAttribute = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_PRODUCT_SORTING_ATTRIBUTE, $this->getStoreId());
+        $sortingDirection = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_PRODUCT_SORTING_DIRECTION, $this->getStoreId());
+        
+        /**
+         * Place the item's sorting value in a temporary array where the key is the item's ID
+         */
+        $sortingValue = array();
+        foreach ($items as $item) {
+            $product = $item->getOrderItem()->getProduct();
+            $sortingAttributeValue = $product->getDataUsingMethod($sortingAttribute);
+            $sortedItems[$item->getId()] = $sortingAttributeValue;
+        }
+        
+        /**
+         * Sort the array in the specified direction using 'natural' sorting
+         * 
+         * @link http://us1.php.net/manual/en/function.natsort.php
+         */
+        natsort($sortedItems);
+        if ($sortingDirection == 'asc') {
+            $sortedItems = array_reverse($sortedItems, true); //keep key-value associations
+        }
+        
+        /**
+         * Switch the sorting values with the items
+         */
+        foreach ($items as $item) {
+            $sortedItems[$item->getId()] = $item;
+        }
+        
+        return $sortedItems;
     }
     
     /**

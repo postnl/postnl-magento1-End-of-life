@@ -215,7 +215,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
      * 
      * @return array
      */
-    public function getAvailableOptions($withDefault = false)
+    public function getAvailableOptions($withDefault = false, $withExtraCover = true)
     {
         $helper = Mage::helper('postnl');
         $options = $this->toOptionArray();
@@ -250,6 +250,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
             
+            if (isset($option['isExtraCover']) && $withExtraCover !== true) {
+                continue;
+            }
+            
             $availableStandardOptions[] = $option;
         }
         
@@ -262,6 +266,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
             
+            if (isset($option['isExtraCover']) && $withExtraCover !== true) {
+                continue;
+            }
+            
             $availableEuOptions[] = $option;
         }
         
@@ -271,6 +279,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         $availableGlobalOptions = array();
         foreach ($options['global_options']['value'] as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
+                continue;
+            }
+            
+            if (isset($option['isExtraCover']) && $withExtraCover !== true) {
                 continue;
             }
             
