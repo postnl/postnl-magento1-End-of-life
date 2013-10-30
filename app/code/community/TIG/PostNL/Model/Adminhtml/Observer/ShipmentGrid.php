@@ -73,6 +73,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         'barcode',
     );
     
+    /**
+     * Get the array of postnl columns
+     * 
+     * @return array
+     */
     public function getPostnlColumns()
     {
         return $this->_postnlColumns;
@@ -88,6 +93,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * @event adminhtml_block_html_before
      * 
      * @observer postnl_adminhtml_shipmentgrid
+     * 
+     * @todo see if $collection->clear() can be avoided
      */
     public function modifyGrid(Varien_Event_Observer $observer)
     {
@@ -112,7 +119,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         /**
          * reset the collection as it has previously been loaded and we still need to edit it
          * 
-         * TODO check if there is no way to avoid having to do this as it constitutes a decent perfomrance hit
+         * TODO check if there is no way to avoid having to do this as it causes a decent perfromance hit
          */
         $collection->clear(); 
         
@@ -181,6 +188,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'is_postnl' => true, //custom flag for renderer
         );
         
+        $actions[] = array(
+            'caption'   => $helper->__('Confirm'),
+            'url'       => array('base' => 'postnl/adminhtml_shipment/confirm'),
+            'field'     => 'shipment_id',
+            'is_postnl' => true, //custom flag for renderer
+        );
+        
         $actionColumn->setActions($actions)
                      ->unsWidth()
                      ->setData('renderer', 'postnl_adminhtml/widget_grid_column_renderer_action');
@@ -199,15 +213,36 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     protected function _addMassaction($block)
     {
-        $block->getMassactionBlock()
-              ->addItem(
-                  'print_labels', 
-                  array(
-                      'label'=> Mage::helper('postnl')->__('Print shipping labels & confirm shipment'),
-                      'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
-                  )
-              );
-              
+        $massactionBlock = $block->getMassactionBlock();
+        
+        $massactionBlock->addItem(
+            'postnl_print_labels_and_confirm',
+            array(
+                'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels & confirm shipment'),
+                'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
+            )
+        );
+        
+        $massactionBlock->addItem(
+            'postnl_print_labels',
+            array(
+                'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels'),
+                'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
+            )
+        );
+        
+        // /**
+         // * get the default print_shipping_label massaction then remove it
+         // */
+        // $printShippingLabel = $block->getMassactionBlock()->getItem('print_shipping_label');
+        // $massactionBlock->removeItem('print_shipping_label');
+//         
+        // /**
+         // * Change the mass action's url so it triggers our own massaction, rather than the default and add it again to the block
+         // */
+        // $printShippingLabel->setUrl(Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabels'));
+        // $massactionBlock->addItem('print_shipping_label', $printShippingLabel->toArray());
+        
         return $this;
     }
     

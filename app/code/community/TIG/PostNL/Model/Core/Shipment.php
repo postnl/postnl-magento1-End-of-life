@@ -583,7 +583,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function confirmAndPrintLabel()
+    public function confirmAndGenerateLabel()
     {
         if (!$this->canConfirm()) {
             throw Mage::exception('TIG_PostNL', 'The confirmAndPrintLabel action is currently unavailable.');
@@ -598,6 +598,57 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $labels = $result->Labels->Label;
         
         $this->addLabels($labels);
+        
+        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
+        
+        return $this;
+    }
+    
+    /**
+     * Generates a shipping label without confirming the shipment with postNL.
+     * 
+     * @return TIG_PostNL_Model_Shipment
+     * 
+     * @throws TIG_PostNL_Exception
+     * 
+     * @todo fully implement this method
+     */
+    public function generateLabel()
+    {
+        $cif = Mage::getModel('postnl_core/cif');
+        $result = $cif->generateLabelsWithoutConfirm($this);
+        
+        if (!isset($result->Labels) || !isset($result->Labels->Label)) {
+            throw Mage::exception('TIG_PostNL', "The confirmAndPrintLabel action returned an invalid response: \n" . var_export($response, true));
+        }
+        $labels = $result->Labels->Label;
+        
+        $this->addLabels($labels);
+        
+        return $this;
+    }
+    
+    /**
+     * Confirm the shipment with PosTNL without generating new labels
+     * 
+     * @return TIG_PostNL_Model_Shipment
+     * 
+     * @throws TIG_PostNL_Exception
+     * 
+     * @todo fully implement this method
+     */
+    public function confirm()
+    {
+        $cif = Mage::getModel('postnl_core/cif');
+        $result = $cif->confirmShipment($this);
+        
+        if (
+            !isset($result->ConfirmingResponseShipment) 
+            || !isset($result->ConfirmingResponseShipment->Barcode)
+            || $result->ConfirmingResponseShipment->Barcode != $this->getBarcode()
+        ) {
+            throw Mage::exception('TIG_PostNL', "The confirmAndPrintLabel action returned an invalid response: \n" . var_export($response, true));
+        }
         
         $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
         

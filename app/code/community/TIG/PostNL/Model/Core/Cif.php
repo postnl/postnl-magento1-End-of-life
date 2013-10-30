@@ -242,7 +242,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         $message  = $this->_getMessage();
         $customer = $this->_getCustomer();
-        $range    = $this->_getCustomerCode();
+        $range    = $barcode['range'];
         $type     = $barcode['type'];
         $serie    = $barcode['serie'];
         
@@ -320,6 +320,51 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
     
     /**
+     * Confirms the choen shipment without generating labels
+     * 
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param string $printerType The printertype used. Currently only 'GraphicFile|PDF' is fully supported
+     * 
+     * @return array
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function confirmShipment($postnlShipment, $printerType = 'GraphicFile|PDF')
+    {
+        $shipment = $postnlShipment->getShipment();
+        
+        $availablePrinterTypes = $this->_printerTypes;
+        if (!in_array($printerType, $availablePrinterTypes)) {
+            throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
+        }
+        
+        $message     = $this->_getMessage(array('Printertype' => $printerType));
+        $customer    = $this->_getCustomer($shipment);
+        $cifShipment = $this->_getShipment($postnlShipment);
+        
+        $soapParams =  array(
+            'Message'   => $message,
+            'Customer'  => $customer,
+            'Shipments' => array('Shipment' => $cifShipment),
+        );
+        
+        $response = $this->call(
+            'Confirming', 
+            'Confirming', 
+            $soapParams
+        );
+        
+        if (!is_object($response) 
+            || !isset($response->ConfirmingResponseShipment) 
+            || !is_object($response->ConfirmingResponseShipment)
+        ) {
+            throw Mage::exception('TIG_PostNL', 'Invalid confirmShipment response: ' . "\n" . var_export($response, true));
+        }
+        
+        return $response;
+    }
+    
+    /**
      * Generates shipping labels for the chosen shipment
      * 
      * @param Mage_Sales_Model_Order_Shipment $shipment
@@ -351,6 +396,51 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $response = $this->call(
             'Labelling', 
             'GenerateLabel', 
+            $soapParams
+        );
+        
+        if (!is_object($response) 
+            || !isset($response->Labels) 
+            || !is_object($response->Labels)
+        ) {
+            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($reponse, true));
+        }
+        
+        return $response;
+    }
+    
+    /**
+     * Generates shipping labels for the chosen shipment without confirming it
+     * 
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param string $printerType The printertype used. Currently only 'GraphicFile|PDF' is fully supported
+     * 
+     * @return array
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function generateLabelsWithoutConfirm($postnlShipment, $printerType = 'GraphicFile|PDF')
+    {
+        $shipment = $postnlShipment->getShipment();
+        
+        $availablePrinterTypes = $this->_printerTypes;
+        if (!in_array($printerType, $availablePrinterTypes)) {
+            throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
+        }
+        
+        $message     = $this->_getMessage(array('Printertype' => $printerType));
+        $customer    = $this->_getCustomer($shipment);
+        $cifShipment = $this->_getShipment($postnlShipment);
+        
+        $soapParams =  array(
+            'Message'  => $message,
+            'Customer' => $customer,
+            'Shipment' => $cifShipment,
+        );
+        
+        $response = $this->call(
+            'Labelling', 
+            'GenerateLabelWithoutConfirm', 
             $soapParams
         );
         
