@@ -59,6 +59,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_TEST_MODE = 'postnl/cif/mode';
     
     /**
+     * XML path to debug mode config option
+     */
+    const XML_PATH_DEBUG_MODE = 'postnl/advanced/debug_mode';
+    
+    /**
      * Required configuration fields
      * 
      * @var array
@@ -144,6 +149,23 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function getGlobalShipmentsRequiredFields()
     {
         return $this->_globalShipmentRequiredFields;
+    }
+    
+    /**
+     * Get debug mode config setting
+     * 
+     * @return int
+     */
+    public function getDebugMode()
+    {
+        if ($this->getData('debug_mode')) {
+            return $this->getData('debug_mode');
+        }
+        
+        $debugMode = (int) Mage::getStoreConfig(self::XML_PATH_DEBUG_MODE, Mage_Core_Model_App::ADMIN_STORE_ID);
+        
+        $this->setDebugMode($debugMode);
+        return $debugMode;
     }
     
     /**
@@ -273,6 +295,36 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
     
     /**
+     * Check if debug logging is enabled
+     * 
+     * @return boolean
+     */
+    public function isLogggingEnabled()
+    {
+        $debugMode = $this->getDebugMode();
+        if ($debugMode > 1) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Check if exception logging is enabled
+     * 
+     * @return boolean
+     */
+    public function isExceptionLogggingEnabled()
+    {
+        $debugMode = $this->getDebugMode();
+        if ($debugMode > 0) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * Returns path to specified directory for specified module.
      * 
      * Based on Mage_Core_Model_Config::getModuleDir()
@@ -313,6 +365,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function log($message, $level)
     {
+        if (!$this->isLoggingEnabled()) {
+            return $this;
+        }
+        
         Mage::log($message, Zend_Log::DEBUG, self::POSTNL_DEBUG_LOG_FILE);
         
         return $this;
@@ -329,6 +385,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function logException($exception)
     {
+        if (!$this->isExceptionLogggingEnabled()) {
+            return $this;
+        }
+        
         Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::POSTNL_EXCEPTION_LOG_FILE);
         
         return $this;
