@@ -38,20 +38,9 @@
  */
 ?>
 
-<?php if (!Mage::helper('postnl')->isEnabled()): ?>
-    <?php return $this; ?>
-<?php endif; ?>
-
-<?php $_shipment = Mage::registry('current_shipment'); ?>
-<?php if ($_shipment->getOrder()->getShippingMethod() != 'postnl_postnl'): ?>
-    <?php return $this; ?>
-<?php endif; ?>
-
-<?php $_productOptions = Mage::helper('postnl/cif')->getProductOptionsForShipment($_shipment); ?>
-<?php if ($_productOptions === null || empty($_productOptions)): ?>
-    <?php return $this; ?>
-<?php endif; ?>
-
+<?php $_shipment = $this->getShipment(); ?>
+<?php $_productOptions = $this->getProductOptions(); ?>
+<?php $_defaultProductOption = $this->getDefaultProductOption(); ?>
 <script type ="text/javascript">
 //<![CDATA[
     document.observe('dom:loaded', function() {
@@ -74,6 +63,9 @@
             option = new Element('option', {
                 <?php if (isset($_option['isExtraCover']) && $_option['isExtraCover'] === true): ?>
                     'class': 'extra_cover',
+                <?php endif; ?>
+                <?php if ($_option['value'] == $_defaultProductOption): ?>
+                    'selected': 'selected',
                 <?php endif; ?>
                 'value': '<?php echo $_option['value']; ?>'
             });

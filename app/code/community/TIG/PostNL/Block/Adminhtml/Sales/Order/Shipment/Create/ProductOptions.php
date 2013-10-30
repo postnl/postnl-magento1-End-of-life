@@ -1,0 +1,121 @@
+<?php
+/**
+ *                  ___________       __            __   
+ *                  \__    ___/____ _/  |_ _____   |  |  
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/       
+ *          ___          __                                   __   
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
+ *                  \/                           \/               
+ *                  ________       
+ *                 /  _____/_______   ____   __ __ ______  
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/ 
+ *                        \/                       |__|    
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL: 
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ProductOptions extends Mage_Adminhtml_Block_Abstract
+{
+    /**
+     * Get current shipment
+     * 
+     * @return Mage_Sales_Model_Order_Shipment
+     */
+    public function getShipment()
+    {
+        if ($this->getData('shipment')) {
+            return $this->getData('shipment');
+        }
+        
+        $shipment = Mage::registry('current_shipment'); 
+        
+        $this->setShipment($shipment);
+        return $shipment;
+    }
+    
+    /**
+     * Get available product options for the current shipment
+     * 
+     * @return array
+     */
+    public function getProductOptions()
+    {
+        if ($this->getData('product_options')) {
+            return $this->getData('product_options');
+        }
+        
+        $shipment = $this->getShipment();
+        
+        $productOptions = Mage::helper('postnl/cif')->getProductOptionsForShipment($shipment);
+        
+        $this->setProductOptions($productOptions);
+        return $productOptions;
+    }
+    
+    /**
+     * Get the default product option for the current shipment
+     * 
+     * @return string
+     */
+    public function getDefaultProductOption()
+    {
+        if ($this->getData('default_product_option')) {
+            return $this->getData('default_product_option');
+        }
+        
+        $shipment = $this->getShipment();
+        
+        $productOption = Mage::helper('postnl/cif')->getDefaultProductOptionForShipment($shipment);
+        
+        $this->setDefaultProductOption($productOption);
+        return $productOption;
+    }
+    
+    /**
+     * Do a few checks to see if the template should be rendered before actually rendering it
+     * 
+     * @return string | parent::_toHtml()
+     * 
+     * @see Mage_Adminhtml_Block_Abstract::_toHtml()
+     */
+    protected function _toHtml()
+    {     
+        if (!Mage::helper('postnl')->isEnabled()) { 
+            return ''; 
+        } 
+        
+        $shipment = $this->getShipment(); 
+        if ($shipment->getOrder()->getShippingMethod() != 'postnl_postnl') { 
+            return ''; 
+        } 
+        
+        $productOptions = $this->getProductOptions(); 
+        if ($productOptions === null || empty($productOptions)) { 
+            return ''; 
+        }
+        
+        return parent::_toHtml();
+    }
+}

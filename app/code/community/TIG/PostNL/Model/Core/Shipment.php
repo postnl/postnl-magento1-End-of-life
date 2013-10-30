@@ -243,6 +243,42 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Gets the default product code for this shipment from the module's configuration
+     * 
+     * @return string
+     */
+    public function getDefaultProductCode()
+    {
+        if ($this->isEuShipment()) {
+            /**
+             * EU default option
+             */
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS, $this->getStoreId());
+            $this->_checkProductCodeAllowed($productCode);
+            
+            return $productCode;
+        }
+        
+        if ($this->isGlobalShipment()) {
+            /**
+             * Global default option
+             */
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS, $this->getStoreId());
+            $this->_checkProductCodeAllowed($productCode);
+            
+            return $productCode;
+        }
+        
+        /**
+         * standard default option
+         */
+        $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS, $this->getStoreId());
+        $this->_checkProductCodeAllowed($productCode);
+        
+        return $productCode;
+    }
+    
+    /**
      * Check if the shipping destination of this shipment is NL
      * 
      * @return boolean
@@ -427,8 +463,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * those will be used. Otherwise the default options will be used from system/config
      * 
      * @return int
-     * 
-     * @todo implement EU combilabel product codes
      */
     protected function _getProductCode()
     {
@@ -445,31 +479,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Use default options
          */
-        if ($this->isEuShipment()) {
-            /**
-             * EU default option
-             */
-            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS, $this->getStoreId());
-            $this->_checkProductCodeAllowed($productCode);
-            
-            return $productCode;
-        }
-        
-        if ($this->isGlobalShipment()) {
-            /**
-             * Global default option
-             */
-            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS, $this->getStoreId());
-            $this->_checkProductCodeAllowed($productCode);
-            
-            return $productCode;
-        }
-        
-        /**
-         * standard default option
-         */
-        $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS, $this->getStoreId());
-        $this->_checkProductCodeAllowed($productCode);
+        $productCode = $this->getDefaultProductCode();
         
         return $productCode;
     }

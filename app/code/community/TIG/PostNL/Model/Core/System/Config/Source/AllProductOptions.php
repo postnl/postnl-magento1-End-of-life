@@ -117,7 +117,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'label' => $helper->__('Deliver to stated address only'),
                     ),
                     array(
-                        'value' => '3094',
+                        'value' => '3390',
                         'label' => $helper->__('Deliver to stated address only + Return when not home'),
                     ),
                 ),
