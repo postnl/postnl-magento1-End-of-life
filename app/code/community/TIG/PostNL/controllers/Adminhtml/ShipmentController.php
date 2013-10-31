@@ -174,6 +174,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             Mage::register('postnl_product_option', $chosenOptions);
         }
         
+        /**
+         * Check if an extra cover amount was entered
+         */
+        $extraCoverValue = $this->getRequest()->getParam('extra_cover_value');
+        if ($extraCoverValue) {
+            Mage::register('postnl_additional_options', array('extra_cover_amount' => $extraCoverValue));
+        }
+        
         try {
             /**
              * Create the shipments

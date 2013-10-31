@@ -96,7 +96,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
                     'class'  => 'required-entry',
                     'label'  => Mage::helper('postnl')->__('Product options'),
                     'values' => Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                                    ->getAvailableOptions(true, false)
+                                    ->getAvailableOptions(true, true),
                 ),
             );
         }

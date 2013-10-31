@@ -265,6 +265,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipment($shipment);
         
+        /**
+         * Dutch product options
+         */
         if ($postnlShipment->isDutchShipment()) {
             $options = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
                            ->getAvailableOptions();
@@ -272,6 +275,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $options;
         }
         
+        /**
+         * EU product options
+         */
         if ($postnlShipment->isEuShipment()) {
             $options = Mage::getModel('postnl_core/system_config_source_euProductOptions')
                            ->getAvailableOptions();
@@ -279,6 +285,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $options;
         }
         
+        /**
+         * Global product options
+         */
         if ($postnlShipment->isGlobalShipment()) {
             $options = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
                            ->getAvailableOptions();
@@ -287,6 +296,23 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         }
         
         return null;
+    }
+    
+    /**
+     * Gets the default product option for a shipment
+     * 
+     * @param Mage_Sales_Model_Order_Shipment
+     * 
+     * @return string
+     */
+    public function getDefaultProductOptionForShipment($shipment)
+    {
+        $postnlShipment = Mage::getModel('postnl_core/shipment');
+        $postnlShipment->setShipment($shipment);
+        
+        $productOption = $postnlShipment->getDefaultProductCode();
+        
+        return $productOption;
     }
     
     /**
