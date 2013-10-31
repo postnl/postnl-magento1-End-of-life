@@ -225,6 +225,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Check if the shipment has any associated labels
+     * 
+     * @return boolean
+     */
+    public function hasLabels()
+    {
+        $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
+        $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
+        
+        if ($labelCollection->getSize() > 0) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * Get the amount of extra cover this shipment has.
      * 
      * @return int | float
@@ -839,6 +856,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
         } elseif ($this->getConfirmStatus() === null) {
             $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
+        }
+        
+        if ($this->getlabelsPrinted() == 0 && $this->hasLabels()) {
+            $this->setLabelsPrinted(1);
         }
         
         if (!$this->getProductCode()) {

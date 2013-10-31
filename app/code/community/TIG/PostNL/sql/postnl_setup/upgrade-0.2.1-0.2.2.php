@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,11 +36,23 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Resource_Shipment_Status_History_Collection extends TIG_PostNL_Model_Resource_Db_Collection_Postnl
-{
-    public function _construct()
-    {    
-        parent::_construct();
-        $this->_init('postnl_core/shipment_status_history');
-    }
-}
+ 
+$installer = $this;
+
+$installer->startSetup();
+
+$installer->getConnection()
+          ->addColumn(
+               $installer->getTable('postnl_core/shipment'),
+               'labels_printed',
+               array(
+                   'nullable' => true,
+                   'length'   => 1,
+                   'type'     => Varien_Db_Ddl_Table::TYPE_INTEGER,
+                   'unsigned' => true,
+                   'comment'  => 'Labels Printed',
+                   'default'  => 0,
+               )
+          );
+
+$installer->endSetup();

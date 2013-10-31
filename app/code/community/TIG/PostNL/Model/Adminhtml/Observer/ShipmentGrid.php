@@ -63,24 +63,24 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     const SHIPMENT_GRID_DIR_VAR_NAME = 'sales_shipment_griddir';
     
     /**
-     * array of column indices added by this module
-     * 
-     * @var array
+     * XML path to 'show printed column' setting
      */
-    protected $_postnlColumns = array(
-        'shipping_description',
-        'confirm_date',
-        'barcode',
-    );
+    const XML_PATH_SHOW_PRINTED_COLUMN = 'postnl/cif_labels_and_confirming/show_printed_column';
+    
     
     /**
-     * Get the array of postnl columns
+     * Checks if the merchant has enabled the 'labels printed' column
      * 
-     * @return array
+     * @return boolean
      */
-    public function getPostnlColumns()
+    public function showPrintedColumn()
     {
-        return $this->_postnlColumns;
+        $showPrintedColumn = (bool) Mage::getStoreConfig(
+                                        self::XML_PATH_SHOW_PRINTED_COLUMN, 
+                                        Mage_Core_Model_App::ADMIN_STORE_ID
+                                    );
+        
+        return $showPrintedColumn;
     }
     
     /**
@@ -94,11 +94,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * 
      * @observer postnl_adminhtml_shipmentgrid
      * 
-     * @todo see if $collection->clear() can be avoided
+     * @todo see if replacing the collection can be avoided
      */
     public function modifyGrid(Varien_Event_Observer $observer)
     {
-        //check if the extension is active
+        /**
+         * check if the extension is active
+         */
         if (!Mage::helper('postnl')->isEnabled()) {
             return $this;
         }
@@ -115,21 +117,24 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $this;
         }
         
-        $collection = $block->getCollection();
+        
         /**
-         * reset the collection as it has previously been loaded and we still need to edit it
+         * replace the collection as the default collection has a bug preventing it from being reset.
+         * Without being able to reset it, we can't edit it. Therefore we are forced to replace it altogether
          * 
-         * TODO check if there is no way to avoid having to do this as it causes a decent perfromance hit
+         * TODO see if this can be avoided in any way
          */
-        $collection->clear(); 
+        $collection = Mage::getResourceModel('postnl/order_shipment_grid_collection');
         
         $this->setCollection($collection);
         $this->setBlock($block);
         
+        $this->_joinCollection($collection);
         $this->_addColumns($block);
         $this->_addMassaction($block);
-        $this->_joinCollection($collection);
         $this->_applySortAndFilter($collection);
+        
+        $block->setCollection($this->getCollection());
         
         return $this;
     }
@@ -177,6 +182,24 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             ),
             'confirm_date'
         );
+        
+        if ($this->showPrintedColumn()) {
+            $block->addColumnAfter(
+                'labels_printed',
+                array(
+                    'header'   => $helper->__('Labels printed'),
+                    'align'    => 'left',
+                    'type'     => 'options',
+                    'index'    => 'labels_printed',
+                    'options'  => array(
+                        1 => Mage::helper('postnl')->__('Yes'),
+                        0 => Mage::helper('postnl')->__('No'),
+                    ),
+                    'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_yesNo',
+                ),
+                'confirm_date'
+            );
+        }
         
         $actionColumn = $block->getColumn('action');
         $actions = $actionColumn->getActions();
@@ -301,6 +324,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'confirm_date'   => 'postnl_shipment.confirm_date',
                 'barcode'        => 'postnl_shipment.barcode',
                 'confirm_status' => 'postnl_shipment.confirm_status',
+                'labels_printed' => 'postnl_shipment.labels_printed',
             )
         );
         
@@ -325,10 +349,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $this->_filterCollection($collection, $filter);
         }
         
-        $postnlColumns = $this->getPostnlColumns();
         $sort = $session->getData(self::SHIPMENT_GRID_SORT_VAR_NAME);
         
-        if ($sort && in_array($sort, $postnlColumns)) {
+        if ($sort) {
             $dir = $session->getData(self::SHIPMENT_GRID_DIR_VAR_NAME);
             
             $this->_sortCollection($collection, $sort, $dir);
@@ -347,15 +370,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     protected function _filterCollection($collection, $filter)
     {
-        $postnlColumns = $this->getPostnlColumns();
         $block = $this->getBlock();
         
-        foreach ($filter as $columnName => $value) {
-            if (!in_array($columnName, $postnlColumns)) {
-                continue;
-            }
-            
-            $column = $block->getColumn($columnName);
+        foreach ($filter as $columnName => $value) {$column = $block->getColumn($columnName);
             
             $column->getFilter()->setValue($value);
             $this->_addColumnFilterToCollection($column);

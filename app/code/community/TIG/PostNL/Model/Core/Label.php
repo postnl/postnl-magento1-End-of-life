@@ -48,7 +48,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * 
      * This setting is ignored for GlobalPack labels and single Dutch or EPS labels
      */
-    const XML_PATH_LABEL_SIZE = 'postnl/cif/label_size';
+    const XML_PATH_LABEL_SIZE = 'postnl/cif_labels_and_confirming/label_size';
     
     /**
      * An array of temporary files that have been created. these files will be destroyed at the end of the script.

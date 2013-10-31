@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,11 +36,47 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Resource_Shipment_Status_History_Collection extends TIG_PostNL_Model_Resource_Db_Collection_Postnl
+class TIG_PostNL_Model_Resource_Db_Collection_Postnl extends Mage_Core_Model_Resource_Db_Collection_Abstract
 {
-    public function _construct()
-    {    
-        parent::_construct();
-        $this->_init('postnl_core/shipment_status_history');
+    /**
+     * Fix for grid pager count believing there is only 1 item when $collection->getSelect()->groupBy() has been used
+     * 
+     * @see Mage_Core_Model_Resource_Db_Collection_Abstract::getSelectCountSql()
+     * 
+     * @return Zend_Db_Select
+     */
+    public function getSelectCountSql()
+    {
+        $this->_renderFilters();
+
+        $countSelect = clone $this->getSelect();
+        $countSelect->reset(Zend_Db_Select::ORDER);
+        $countSelect->reset(Zend_Db_Select::LIMIT_COUNT);
+        $countSelect->reset(Zend_Db_Select::LIMIT_OFFSET);
+        $countSelect->reset(Zend_Db_Select::COLUMNS);
+
+        if(count($this->getSelect()->getPart(Zend_Db_Select::GROUP)) > 0) {
+            $countSelect->reset(Zend_Db_Select::GROUP);
+            $countSelect->distinct(true);
+            $group = $this->getSelect()->getPart(Zend_Db_Select::GROUP);
+            $countSelect->columns("COUNT(DISTINCT ".implode(", ", $group).")");
+        } else {
+            $countSelect->columns('COUNT(*)');
+        }
+        return $countSelect;
+    }
+    
+    /**
+     * Fix for getSize not re-counting the number of records in a collection after clear() had been called
+     * 
+     * @return Varien_Data_Collection
+     */
+    public function clear()
+    {
+        $this->_setIsLoaded(false);
+        $this->_totalRecords = null;
+        
+        $this->_items = array();
+        return $this;
     }
 }

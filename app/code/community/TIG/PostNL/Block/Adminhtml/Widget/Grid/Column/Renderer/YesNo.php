@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,11 +36,47 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Resource_Shipment_Status_History_Collection extends TIG_PostNL_Model_Resource_Db_Collection_Postnl
-{
-    public function _construct()
-    {    
-        parent::_construct();
-        $this->_init('postnl_core/shipment_status_history');
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_YesNo 
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
+{    
+    /**
+     * Additional column names used
+     */
+    const SHIPPING_METHOD_COLUMN = 'shipping_method';
+    
+    /**
+     * Code of postnl shipping method
+     */
+    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
+    
+    /**
+     * Renders the column value as a Yes or No value
+     *
+     * @param Varien_Object $row
+     * 
+     * @return string
+     */
+    public function render(Varien_Object $row)
+    {
+        /**
+         * The shipment was not shipped using PostNL
+         */
+        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
+        if ($shippingMethod != self::POSTNL_SHIPPING_METHOD) {
+            return parent::render($row);
+        }
+        
+        /**
+         * Check if any data is available
+         */
+        $value = $row->getData($this->getColumn()->getIndex());
+        if (!$value) {
+            $value = Mage::helper('postnl')->__('No');
+            return $value;
+        }
+        
+        $value = Mage::helper('postnl')->__('Yes');
+        
+        return $value;
     }
 }
