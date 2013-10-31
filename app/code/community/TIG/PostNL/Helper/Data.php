@@ -314,7 +314,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * 
      * @return boolean
      */
-    public function isExceptionLogggingEnabled()
+    public function isExceptionLoggingEnabled()
     {
         $debugMode = $this->getDebugMode();
         if ($debugMode > 0) {
@@ -385,7 +385,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function logException($exception)
     {
-        if (!$this->isExceptionLogggingEnabled()) {
+        if (!$this->isExceptionLoggingEnabled()) {
             return $this;
         }
         

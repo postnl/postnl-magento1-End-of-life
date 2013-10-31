@@ -90,7 +90,7 @@
             'class': 'normal',
             'for'  : 'postnl_extra_cover'
         });
-        postnlExtraCoverLabel.update('Extra cover amount (in increments of 500)');
+        postnlExtraCoverLabel.update('<?php echo $this->__('Extra cover amount (in increments of 500)'); ?>');
         
         postnlExtraCoverField = new Element('input', {
             'type' : 'text',

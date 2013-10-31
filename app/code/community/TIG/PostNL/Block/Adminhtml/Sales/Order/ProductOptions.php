@@ -1,3 +1,4 @@
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -34,19 +35,40 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
  */
-function increment(value, incrementStep) {
-    if (value > 0) {
-        return Math.ceil(value/incrementStep) * incrementStep;
+class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends Mage_Adminhtml_Block_Abstract
+{    
+    /**
+     * Get available product options
+     * 
+     * @return array
+     */
+    public function getProductOptions()
+    {
+        if ($this->getData('product_options')) {
+            return $this->getData('product_options');
+        }
+        
+        $productOptions = Mage::getModel('postnl_core/system_config_source_allProductOptions')
+                              ->getExtraCoverOptions(true);
+        
+        $this->setProductOptions($productOptions);
+        return $productOptions;
     }
     
-    return incrementStep;
-}
-
-Validation.add('validate-increment-500', 'The given value must be a multiple of 500.', function(value) {
-    if (value % 500 == 0) {
-        return true;
+    /**
+     * Check if the PostNL module is enabled before rendering
+     * 
+     * @return string | parent::_toHtml()
+     * 
+     * @see Mage_Adminhtml_Block_Abstract::_toHtml()
+     */
+    protected function _toHtml()
+    {     
+        if (!Mage::helper('postnl')->isEnabled()) { 
+            return ''; 
+        }
+        
+        return parent::_toHtml();
     }
-    return false;
-});
+}

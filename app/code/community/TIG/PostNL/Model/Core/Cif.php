@@ -552,7 +552,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
         
         if ($postnlShipment->hasExtraCover() || $postnlShipment->isCod()) {
-            $shipmentData['Amounts'] = array($this->_getAmount($postnlShipment));
+            $shipmentData['Amounts'] = $this->_getAmount($postnlShipment);
         }
         
         if ($postnlShipment->isGlobalShipment()) {
@@ -697,20 +697,27 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getAmount($postnlShipment)
     {
+        $amount = array();
         if (!$postnlShipment->hasExtraCover() && !$postnlShipment->isCod()) {
-            return array();
+            return $amount;
         }
         
-        $extraCover = number_format($postnlShipment->getExtraCoverAmount(), 2);
-        $amount = array(
-            'AccountName'       => '',
-            'AccountNr'         => '',
-            'AmountType'        => '02', // 01 = COD, 02 = Insured
-            'Currency'          => 'EUR',
-            'Reference'         => '',
-            'TransactionNumber' => '',
-            'Value'             => $extraCover,
-        );
+        if ($postnlShipment->hasExtraCover()) {
+            $extraCover = number_format($postnlShipment->getExtraCoverAmount(), 2, '.', '');
+            $amount[] = array(
+                'AccountName'       => '',
+                'AccountNr'         => '',
+                'AmountType'        => '02', // 01 = COD, 02 = Insured
+                'Currency'          => 'EUR',
+                'Reference'         => '',
+                'TransactionNumber' => '',
+                'Value'             => $extraCover,
+            );
+        }
+        
+        if ($postnlShipment->isCod()) {
+            //TODO implement COD here
+        }
         
         return $amount;
     }

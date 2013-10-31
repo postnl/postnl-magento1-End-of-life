@@ -315,4 +315,52 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         
         return $availableOptions;
     }
+    
+    /**
+     * Get the list of available product options that have extra cover
+     * 
+     * @return array
+     */
+    public function getExtraCoverOptions($valuesOnly = false)
+    {
+        /**
+         * Get all available options
+         */
+        $availableOptions = $this->getAvailableOptions(false, true);
+        
+        /**
+         * Loop through each optGroup and then each option to see if any of them have the isExtraCover flag.
+         * Add these to the array of extra cover options.
+         */
+        $extraCoverOptions = array();
+        foreach ($availableOptions as $optionGroup) {
+            foreach ($optionGroup['value'] as $option) {
+                /**
+                 * Add the whole option (value, label and flags)
+                 */
+                if (isset($option['isExtraCover']) 
+                    && $option['isExtraCover']
+                    && $valuesOnly !== true
+                ) {
+                    $extraCoverOptions[] = $option;
+                    continue;
+                }
+                
+                /**
+                 * Only add the value
+                 */
+                if (isset($option['isExtraCover']) 
+                    && $option['isExtraCover']
+                    && $valuesOnly === true
+                ) {
+                    $extraCoverOptions[] = $option['value'];
+                    continue;
+                }
+                
+                continue;
+            }
+        }
+        
+        return $extraCoverOptions;
+    }
 }
