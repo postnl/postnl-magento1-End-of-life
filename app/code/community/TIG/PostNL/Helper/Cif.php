@@ -70,6 +70,13 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const XML_PATH_WEIGHT_UNIT = 'postnl/cif_product_options/weight_unit';
     
     /**
+     * XML paths to default product options settings
+     */
+    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS = 'postnl/cif_product_options/default_product_options';
+    const XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS       = 'postnl/cif_product_options/default_eu_product_options';
+    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS   = 'postnl/cif_product_options/default_global_product_options';
+    
+    /**
      * Array of countries to which PostNL ships using EPS. Other EU countries are shipped to using GlobalPack
      * 
      * @var array
@@ -313,6 +320,28 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $productOption = $postnlShipment->getDefaultProductCode();
         
         return $productOption;
+    }
+    
+    /**
+     * Get an array of all default product options
+     * 
+     * @return array
+     */
+    public function getDefaultProductOptions()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+        
+        $defaultDutchOption  = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS, $storeId);
+        $defaultEuOption     = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS, $storeId);
+        $defaultGlobalOption = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS, $storeId);
+        
+        $defaultOptions = array(
+            'dutch'  => $defaultDutchOption,
+            'eu'     => $defaultEuOption,
+            'global' => $defaultGlobalOption,
+        );
+        
+        return $defaultOptions;
     }
     
     /**
