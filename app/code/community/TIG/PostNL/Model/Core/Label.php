@@ -44,6 +44,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     const TEMP_LABEL_FILENAME = 'TIG_PostNL_temp.pdf';
     
     /**
+     * XML path to label size setting
+     * 
+     * This setting is ignored for GlobalPack labels and single Dutch or EPS labels
+     */
+    const XML_PATH_LABEL_SIZE = 'postnl/cif/label_size';
+    
+    /**
      * An array of temporary files that have been created. these files will be destroyed at the end of the script.
      * 
      * @var array
@@ -57,11 +64,23 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      */
     protected $_labelCounter = null;
     
+    /**
+     * Get the array of saved temporary labels
+     * 
+     * @return array
+     */
     public function getTempFilesSaved()
     {
         return $this->_tempFilesUsed;
     }
     
+    /**
+     * Set the array of saved temporary labels
+     * 
+     * @param array $tempFilesUsed
+     * 
+     * @return TIG_PostNL_Model_Core_Label
+     */
     public function setTempFilesSaved($tempFilesUsed)
     {
         $this->_tempFilesUsed = $tempFilesUsed;
@@ -69,16 +88,45 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         return $this;
     }
     
+    /**
+     * Get the current label counter
+     * 
+     * @return null | int
+     */
     public function getLabelCounter()
     {
         return $this->_labelCounter;
     }
     
+    /**
+     * Set the current label counter
+     * 
+     * @param int $counter
+     * 
+     * @return TIG_PostNL_Model_Core_Label
+     */
     public function setLabelCounter($counter)
     {
         $this->_labelCounter = $counter;
         
         return $this;
+    }
+    
+    /**
+     * get the configured label size
+     * 
+     * @return string
+     */
+    public function getLabelSize()
+    {
+        if ($this->getData('label_size')) {
+            return $this->getData('label_size');
+        }
+        
+        $labelSize = Mage::getStoreConfig(self::XML_PATH_LABEL_SIZE, Mage_Core_Model_App::ADMIN_STORE_ID);
+        
+        $this->setLabelSeize($labelSize);
+        return $labelSize;
     }
     
     /**
@@ -171,9 +219,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $labels = current($labels);
             }
             
-            $this->setLabelCounter(3); //used to calculate the top left position
-            
-            $pdf->addOrientedPage('L', 'A6'); //landscape A6
+            $this->setLabelSize('A6'); //single Dutch labels always use A6
             $pdf = $this->_addPdfTemplate($pdf, $labels);
         }
         
@@ -244,11 +290,21 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         switch ($label->getLabelType()) {
             case 'Label':
                 /**
-                 * Add a new page every 4 labels and reset the counter
+                 * If the configured label size is A4, add a new page every 4 labels and reset the counter
                  */
-                if (!$this->getLabelCounter() || $this->getLabelCounter() > 4) {
+                if ($this->getLabelSize() == 'A4'
+                    && (!$this->getLabelCounter() || $this->getLabelCounter() > 4)
+                ) {
                     $pdf->addOrientedPage('L', 'A4');
                     $this->resetLabelCounter();
+                }
+                
+                /**
+                 * If the configured label size is A6, add a new page every label
+                 */
+                if($this->getLabelSize() == 'A6') {
+                    $this->setLabelCounter(3); //used to calculate the top left position
+                    $pdf->addOrientedPage('L', 'A6');
                 }
                 
                 /**
