@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.2.1</version>
+			<version>0.2.2</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -257,8 +257,11 @@
         		<contact_name/>
         		<contact_email/>
         		<collection_location/>
-        		<label_size>A4</label_size> <!-- A4 size labels -->
         	</cif>
+        	<cif_labels_and_confirming>
+                <label_size>A4</label_size> <!-- A4 size labels -->
+                <show_printed_column>1</show_printed_column> <!-- show the 'labels printed column' in the shipment grid -->
+        	</cif_labels_and_confirming>
         	<cif_address>
         		<split_street>1</split_street> <!-- split street -->
         		<streetname_field>1</streetname_field> <!-- first address line -->
