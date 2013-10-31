@@ -90,14 +90,14 @@
             'class': 'normal',
             'for'  : 'postnl_extra_cover'
         });
-        postnlExtraCoverLabel.update('Extra cover amount');
+        postnlExtraCoverLabel.update('Extra cover amount (in increments of 500)');
         
         postnlExtraCoverField = new Element('input', {
             'type' : 'text',
             'name' : 'postnl[extra_cover_amount]',
-            'class': 'input-text required-entry',
+            'class': 'input-text required-entry validate-increment-500 validate-not-negative-number',
             'id'   : 'postnl_extra_cover_value',
-            'value': '<?php echo number_format($_shipment->getOrder()->getBaseGrandTotal(), 2); ?>',
+            'value': increment(<?php echo $_shipment->getOrder()->getBaseGrandTotal(); ?>, 500),
         });
         
         postnlExtraCoverContainer.insert(postnlExtraCoverLabel);
