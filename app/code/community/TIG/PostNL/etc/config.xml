@@ -257,6 +257,7 @@
         		<contact_name/>
         		<contact_email/>
         		<collection_location/>
+        		<label_size>A4</label_size> <!-- A4 size labels -->
         	</cif>
         	<cif_address>
         		<split_street>1</split_street> <!-- split street -->
