@@ -367,6 +367,15 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_printed_column>
+                        <weight_per_parcel translate="label comment" module="postnl">
+                            <label>Maximum weight per parcel (in kg)</label>
+                            <comment>Determine the maximum weight of each parcel. if a shipment's total weight exceeds this, another parcel is added to the shipment.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </weight_per_parcel>
                     </fields>
 				</cif_labels_and_confirming>
 				<cif_address translate="label" module="postnl">

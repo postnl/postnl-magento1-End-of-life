@@ -360,9 +360,29 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $coreResource = Mage::getSingleton('core/resource');
         $readAdapter = $coreResource->getConnection('core_read');
         
+        /**
+         * Check if the barcode exists as a main barcode
+         */
         $validator = Mage::getModel('Zend_Validate_Db_RecordExists', 
             array(
                 'table'   => $coreResource->getTableName('postnl_core/shipment'),
+                'field'   => 'main_barcode',
+                'adapter' => $readAdapter,
+            )
+        );
+        
+        $barcodeExists = $validator->isValid($barcode);
+        
+        if ($barcodeExists) {
+            return true;
+        }
+        
+        /**
+         * Check if the barcode exists as a secondary barcode
+         */
+        $validator = Mage::getModel('Zend_Validate_Db_RecordExists', 
+            array(
+                'table'   => $coreResource->getTableName('postnl_core/shipment_barcode'),
                 'field'   => 'barcode',
                 'adapter' => $readAdapter,
             )

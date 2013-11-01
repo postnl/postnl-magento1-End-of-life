@@ -74,7 +74,8 @@ class TIG_PostNL_Model_Core_Observer_Barcode
          */
         $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmDate(Mage::getModel('core/date')->timestamp()); //TODO change this to the actual confirm date
+                       ->setConfirmDate(Mage::getModel('core/date')->timestamp()) //TODO change this to the actual confirm date
+                       ->save();
         
         /**
          * If a product code has been posted by a form, set it in the registry. The shipment will use this, rather
@@ -90,7 +91,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
          * created. This may happen when CIF is overburdoned.
          */              
         try {
-            $postnlShipment->generateBarcode()
+            $postnlShipment->generateBarcodes()
                            ->addTrackingCodeToShipment();
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);

@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.2.2</version>
+			<version>0.2.4</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -93,6 +93,9 @@
                     <shipment_label>
                         <table>tig_postnl_shipment_label</table>
                     </shipment_label>
+                    <shipment_barcode>
+                        <table>tig_postnl_shipment_barcode</table>
+                    </shipment_barcode>
                     <shipment_status_history>
                         <table>tig_postnl_shipment_status_history</table>
                     </shipment_status_history>
@@ -267,6 +270,7 @@
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
                 <show_printed_column>1</show_printed_column> <!-- show the 'labels printed column' in the shipment grid -->
+                <weight_per_parcel>20</weight_per_parcel> <!-- 20 kg -->
         	</cif_labels_and_confirming>
         	<cif_address>
         		<split_street>1</split_street> <!-- split street -->
