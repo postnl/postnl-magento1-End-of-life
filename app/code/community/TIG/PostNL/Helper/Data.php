@@ -71,7 +71,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_requiredFields = array(
         'postnl/cif/customer_code',
         'postnl/cif/customer_number',
-        'postnl/cif/label_size',
+        'postnl/cif_labels_and_confirming/label_size',
         'postnl/cif_sender_address/firstname',
         'postnl/cif_sender_address/lastname',
         'postnl/cif_sender_address/street_full',
