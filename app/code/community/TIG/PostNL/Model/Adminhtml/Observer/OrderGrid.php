@@ -65,7 +65,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
      */
     public function modifyGrid(Varien_Event_Observer $observer)
     {
-        //check if the extension is active
+        /**
+         * check if the extension is active
+         */
         if (!Mage::helper('postnl')->isEnabled()) {
             return $this;
         }
@@ -83,12 +85,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
         }
         
         $massActionData = array(
-            'label'=> Mage::helper('postnl')->__('Create Shipments'),
+            'label'=> Mage::helper('postnl')->__('PostNL - Create Shipments'),
             'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massCreateShipments'),
         );
         
         $showOptions = Mage::getStoreConfig(self::XML_PATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($showOptions) {
+            /**
+             * Add another dropdown containing the possible product options
+             */
             $massActionData['additional'] = array(
                 'product_options' => array(
                     'name'   => 'product_options',
@@ -101,6 +106,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
             );
         }
         
+        /**
+         * Add the massaction
+         */
         $block->getMassactionBlock()
               ->addItem(
                   'create_shipments', 
