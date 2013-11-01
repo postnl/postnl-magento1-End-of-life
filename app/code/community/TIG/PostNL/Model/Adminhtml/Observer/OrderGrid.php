@@ -84,6 +84,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
             return $this;
         }
         
+        /**
+         * Build an array of options for the massaction item
+         */
         $massActionData = array(
             'label'=> Mage::helper('postnl')->__('PostNL - Create Shipments'),
             'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massCreateShipments'),
