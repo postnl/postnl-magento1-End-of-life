@@ -38,32 +38,27 @@
  */
  
 /**
- * Observer to edit the sales > order grid
+ * Observer to edit the shipment view
  */
-class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
 {
     /**
      * The block we want to edit
      */
-    const SHIPMENT_GRID_BLOCK_NAME = 'adminhtml/sales_order_grid';
+    const SHIPMENT_VIEW_BLOCK_NAME = 'adminhtml/sales_order_shipment_view';
     
     /**
-     * XML path to show_grid_options setting
-     */
-    const XML_PATH_SHOW_OPTIONS = 'postnl/cif_product_options/show_grid_options';
-    
-    /**
-     * Edits the sales order grid by adding a mass action to create shipments for selected orders
+     * Observer that adds a print label button to the shipment view page
      * 
      * @param Varien_Event_Observer $observer
      * 
-     * @return TIG_PostNL_Model_Adminhtml_OrderGridObserver
+     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      * 
      * @event adminhtml_block_html_before
      * 
-     * @observer postnl_adminhtml_ordergrid
+     * @observer postnl_adminhtml_shipmentview
      */
-    public function modifyGrid(Varien_Event_Observer $observer)
+    public function addPrintLabelButton(Varien_Event_Observer $observer)
     {
         /**
          * check if the extension is active
@@ -78,46 +73,44 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
          * Unfortunately there is no unique event for this block
          */
         $block = $observer->getBlock();
-        $orderGridClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_GRID_BLOCK_NAME);
-       
-        if (get_class($block) !== $orderGridClass) {
+        $shipmentViewClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_VIEW_BLOCK_NAME);
+        
+        if (get_class($block) !== $shipmentViewClass) {
             return $this;
         }
         
         /**
-         * Build an array of options for the massaction item
+         * Check if the current shipment was placed with PostNL
          */
-        $massActionData = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Create Shipments'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massCreateShipments'),
+        $shipment = Mage::registry('current_shipment');
+        if ($shipment->getOrder()->getShippingMethod() != 'postnl_postnl') { 
+            return $this; 
+        } 
+        
+        $printShippingLabelUrl = $this->getPrintShippingLabelUrl($shipment->getId());
+        $block->addButton('print_shipping_label', array(
+            'label'   => Mage::helper('postnl')->__('PostNL - Print shipping label'),
+            'onclick' => "setLocation('{$printShippingLabelUrl}')",
+            'class'   => 'save',
+        ));
+                
+        return $this;
+    }
+    
+    /**
+     * Get adminhtml url for PostNL print shipping label action
+     * 
+     * @param int $shipmentId The ID of the current shipment
+     * 
+     * @return string
+     */
+    public function getPrintShippingLabelUrl($shipmentId)
+    {
+        $url = Mage::helper('adminhtml')->getUrl(
+            'postnl/adminhtml_shipment/printLabel', 
+            array('shipment_id' => $shipmentId)
         );
         
-        $showOptions = Mage::getStoreConfig(self::XML_PATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
-        if ($showOptions) {
-            /**
-             * Add another dropdown containing the possible product options
-             */
-            $massActionData['additional'] = array(
-                'product_options' => array(
-                    'name'   => 'product_options',
-                    'type'   => 'select',
-                    'class'  => 'required-entry',
-                    'label'  => Mage::helper('postnl')->__('Product options'),
-                    'values' => Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                                    ->getAvailableOptions(true, true),
-                ),
-            );
-        }
-        
-        /**
-         * Add the massaction
-         */
-        $block->getMassactionBlock()
-              ->addItem(
-                  'create_shipments', 
-                  $massActionData
-              );
-             
-        return $this;
+        return $url;
     }
 }
