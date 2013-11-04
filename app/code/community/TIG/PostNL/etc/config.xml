@@ -152,23 +152,29 @@
 			    <observers>
 			   		<!-- Adds a massaction the grid that allows merchants to create shipments for selected orders-->
 				    <postnl_adminhtml_ordergrid>
-					    <type>Model</type>
+					    <type>model</type>
 					    <class>postnl_adminhtml/observer_orderGrid</class>
 					    <method>modifyGrid</method>
 				    </postnl_adminhtml_ordergrid>
 					<!-- Adds new columns to the shipment grid and allows these columns to be filtered and sorted properly -->
 					<postnl_adminhtml_shipmentgrid>
-						<type>singleton</type>
+						<type>model</type>
 						<class>postnl_adminhtml/observer_shipmentGrid</class>
 						<method>modifyGrid</method>
 					</postnl_adminhtml_shipmentgrid>
+                    <!-- Adds a new print shipping label button to the shipment view page -->
+                    <postnl_adminhtml_shipmentview>
+                        <type>model</type>
+                        <class>postnl_adminhtml/observer_shipmentView</class>
+                        <method>addPrintLabelButton</method>
+                    </postnl_adminhtml_shipmentview>
 			    </observers>
 			</adminhtml_block_html_before>
 			<controller_action_predispatch_adminhtml_sales_order_shipment_save>
                 <observers>
                     <!-- Registers the product option the user selected on the sales_order_shipment_new page -->
                     <postnl_core_shipment_save>
-                        <type>Model</type>
+                        <type>model</type>
                         <class>postnl_core/observer_saveShipment</class>
                         <method>registerProductOption</method>
                     </postnl_core_shipment_save>
