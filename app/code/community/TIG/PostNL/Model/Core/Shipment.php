@@ -75,6 +75,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XML_PATH_EU_COUNTRIES = 'general/country/eu_countries'; 
     
     /**
+     * CIF warning code returned when an EPS combi label is not available
+     */
+    const EPS_COMBI_LABEL_WARNING_CODE = 'LIRS_0';
+    
+    /**
      * Array of product codes that have extra cover
      * 
      * @var array
@@ -817,6 +822,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this;
         }
         
+        if ($this->_isCombiLabel($label)) {
+            $labelType = 'Label-combi';
+        }
+        
         $postnlLabel = Mage::getModel('postnl_core/shipment_label');
         $postnlLabel->setParentId($this->getId())
                     ->setLabel(base64_encode($label->Content))
@@ -824,6 +833,40 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                     ->save();
               
         return $this;
+    }
+    
+    /**
+     * Check if the returned label is a combi-label
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment_label
+     * 
+     * @return boolean
+     */
+    protected function _isCombiLabel($label)
+    {
+        if (!$this->isEuShipment()) {
+            return false;
+        }
+        
+        /**
+         * All EU shipments will by default request a combi label. If no warnings were sent by CIF it means everything
+         * went as expected and a combi-label was returned.
+         */
+        $warnings = Mage::registry('postnl_cif_warnings');
+        if (!$warnings) {
+            return true;
+        }
+        
+        /**
+         * Check each warning if the code matches the EPS combi label warning code
+         */
+        foreach ($warnings as $warning) {
+            if (isset($warning['code']) && $warning['code'] === self::EPS_COMBI_LABEL_WARNING_CODE) {
+                return false;
+            }
+        }
+        
+        return true;
     }
     
     /**

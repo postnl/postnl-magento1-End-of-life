@@ -974,7 +974,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             /**
              * A maximum of 5 rows are allowed
              */
-            if (++$itemCount >= 5) {
+            if (++$itemCount > 5) {
                 break;
             }
             
@@ -1045,7 +1045,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * @link http://us1.php.net/manual/en/function.natsort.php
          */
         natsort($sortedItems);
-        if ($sortingDirection == 'asc') {
+        if ($sortingDirection == 'desc') {
             $sortedItems = array_reverse($sortedItems, true); //keep key-value associations
         }
         
