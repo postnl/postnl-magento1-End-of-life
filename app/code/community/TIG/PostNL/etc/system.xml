@@ -283,11 +283,21 @@
                             <show_in_store>1</show_in_store>
                             <validate>validate-digits</validate>
                     	</customer_number>
+                        <collection_location translate="label" module="postnl">
+                            <label>Collection Location</label>
+                            <comment>Your collection location. Must contain 6 numbers.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-digits validate-length minimum-length-6 maximum-length-6</validate>
+                        </collection_location>
                     	<global_barcode_type translate="label comment" module="postnl">
                             <label>Global Barcode Type</label>
                             <comment>The current global barcode type as supplied by PostNL. Must contain 2 leters.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -297,7 +307,7 @@
                             <label>Global Barcode Range</label>
                             <comment>Your global barcode range as supplied by PostNL. Must contain 4 digits.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -306,7 +316,7 @@
                     	<company_name translate="label" module="postnl">
                             <label>Company Name</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -314,7 +324,7 @@
                     	<contact_name translate="label" module="postnl">
                             <label>Contact Name</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -322,20 +332,12 @@
                     	<contact_email translate="label" module="postnl">
                             <label>Contact Email</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <validate>validate-email</validate>
                     	</contact_email>
-                    	<collection_location translate="label" module="postnl">
-                            <label>Collection Location</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>130</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                    	</collection_location>
                    </fields>
 				</cif>
 				<cif_labels_and_confirming translate="label" module="postnl">
@@ -489,19 +491,36 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                     	</company>
-                    	<street_full translate="label comment" module="postnl">
+                    	<streetname translate="label comment" module="postnl">
                             <label>Street</label>
-                            <comment><![CDATA[Please enter as &lt;street name&gt; &lt;house nr.&gt; &lt;house nr. extension&gt;.]]></comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                    	</street_full>
+                            <validate>validate-alphanum-with-spaces</validate>
+                    	</streetname>
+                        <housenumber translate="label comment" module="postnl">
+                            <label>House Nr.</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-digits</validate>
+                        </housenumber>
+                        <housenumber_extension translate="label comment" module="postnl">
+                            <label>House Nr. Extension</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </housenumber_extension>
                     	<postcode translate="label" module="postnl">
                             <label>Postcode</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -509,7 +528,7 @@
                     	<city translate="label" module="postnl">
                             <label>City</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>60</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -517,16 +536,136 @@
                     	<region translate="label" module="postnl">
                             <label>Region</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                     	</region>
                     </fields>
                 </cif_sender_address>
+                <cif_return_address translate="label" module="postnl">
+                    <label>Return Address</label>
+                    <sort_order>700</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <use_sender_address translate="label comment" module="postnl">
+                            <label>Use the sender address as the return adress</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                        </use_sender_address>
+                        <firstname translate="label" module="postnl">
+                            <label>First Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </firstname>
+                        <lastname translate="label" module="postnl">
+                            <label>Last Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </lastname>
+                        <company translate="label" module="postnl">
+                            <label>Company</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </company>
+                        <streetname translate="label comment" module="postnl">
+                            <label>Street</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-alphanum-with-spaces</validate>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </streetname>
+                        <housenumber translate="label comment" module="postnl">
+                            <label>House Nr.</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-digits</validate>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </housenumber>
+                        <housenumber_extension translate="label comment" module="postnl">
+                            <label>House Nr. Extension</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </housenumber_extension>
+                        <postcode translate="label" module="postnl">
+                            <label>Postcode</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </postcode>
+                        <city translate="label" module="postnl">
+                            <label>City</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </city>
+                        <region translate="label" module="postnl">
+                            <label>Region</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </region>
+                    </fields>
+                </cif_return_address>
 				<cif_product_options translate="label" module="postnl">
 		    		<label>Product Options</label>
-                    <sort_order>700</sort_order>
+                    <sort_order>800</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -599,7 +738,7 @@
 				</cif_product_options>
 				<cif_customs_settings translate="label" module="postnl">
 		    		<label>Customs Settings</label>
-                    <sort_order>800</sort_order>
+                    <sort_order>900</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
