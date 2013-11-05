@@ -41,18 +41,32 @@ $installer = $this;
 
 $installer->startSetup();
 
-$installer->getConnection()
-          ->addColumn(
-               $installer->getTable('postnl_core/shipment'),
-               'parcel_count',
-               array(
-                   'nullable' => true,
-                   'length'   => 5,
-                   'type'     => Varien_Db_Ddl_Table::TYPE_INTEGER,
-                   'unsigned' => true,
-                   'comment'  => 'Parcel Count',
-                   'default'  => 1,
-               )
-          );
+$postnlShipmentBarcodeTable = $installer->getConnection()
+    ->newTable($installer->getTable('postnl_core/shipment_barcode'))
+    ->addColumn('barcode_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'identity'  => true,
+        'unsigned'  => true,
+        'nullable'  => false,
+        'primary'   => true,
+        ), 'Barcode Id')
+    ->addColumn('parent_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'unsigned'  => true,
+        'nullable'  => true,
+        ), 'Parent Id')
+    ->addColumn('barcode_number', Varien_Db_Ddl_Table::TYPE_INTEGER, 5, array(
+        'unsigned'  => true,
+        'nullable'  => false,
+        ), 'Barcode Number')
+    ->addColumn('barcode', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+        'nullable'  => false,
+        ), 'Barcode')
+    ->addIndex($installer->getIdxName('postnl_core/shipment_barcode', array('parent_id')), 
+        array('parent_id'))
+    ->addForeignKey($installer->getFkName('postnl_core/shipment_barcode', 'parent_id', 'postnl_core/shipment', 'entity_id'),
+        'parent_id', $installer->getTable('postnl_core/shipment'), 'entity_id',
+        Varien_Db_Ddl_Table::ACTION_SET_NULL, Varien_Db_Ddl_Table::ACTION_CASCADE)
+    ->setComment('TIG PostNL Shipment Barcode');
+
+$installer->getConnection()->createTable($postnlShipmentBarcodeTable);
 
 $installer->endSetup();
