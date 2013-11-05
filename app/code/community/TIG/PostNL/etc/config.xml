@@ -267,6 +267,7 @@
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
                 <show_printed_column>1</show_printed_column> <!-- show the 'labels printed column' in the shipment grid -->
+                <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
         	</cif_labels_and_confirming>
         	<cif_address>
         		<split_street>1</split_street> <!-- split street -->
