@@ -44,6 +44,11 @@ class TIG_PostNL_Model_Core_Observer_Cron
     const XML_PATH_MAX_FILE_STORAGE  = 'postnl/advanced/max_temp_file_storage_time';
     
     /**
+     * XML path to confirmation expire time setting
+     */
+    const XML_PATH_CONFIRM_EXPIRE_DAYS = 'postnl/advanced/confirm_expire_days';
+    
+    /**
      * Method to destroy temporary label files that have been stored for too long.
      * 
      * By default the PostNL module creates temporary label files in order to merge them into
@@ -223,6 +228,80 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             try{
                 $postnlShipment->updateShippingStatus()
+                               ->save();
+            } catch (Exception $e) {
+                Mage::helper('postnl')->logException($e);
+            }
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Removes expired confirmations by resetting the postnl shipment to a pre-confirm state
+     * 
+     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * 
+     * @todo Check if shipments need a new barcode before they can be re-confirmed
+     */
+    public function expireConfirmation()
+    {
+        /**
+         * Check if the PostNL module is active
+         */
+        if (!Mage::helper('postnl')->isEnabled()) {
+            return $this;
+        }
+        
+        $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
+        $collectionPhase = $postnlShipmentModelClass::SHIPPING_PHASE_COLLECTION;
+        
+        $confirmationExpireDays = Mage::getStoreConfig(self::XML_PATH_CONFIRM_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $expireTimestamp = strtotime("-{$confirmationExpireDays} days", Mage::getModel('core/date')->timestamp());
+        $expireDate = date('Y-m-d H:i:s', $expireTimestamp);
+        
+        
+        /**
+         * Get all postnl shipments that have been confirmed over X days ago and who have not yet been shipped (shipping_phase
+         * other than 'collection')
+         */
+        $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        $postnlShipmentCollection->addFieldToFilter(
+                                     'confirm_status', 
+                                     array('eq' => $confirmedStatus)
+                                 )
+                                 ->addFieldToFilter(
+                                     'shipping_phase', 
+                                     array(
+                                         array('eq' => $collectionPhase), 
+                                         array('null' => true)
+                                     )
+                                 )
+                                 ->addFieldToFilter(
+                                     'confirmed_at', 
+                                     array(
+                                         array('lt' => $expireDate), 
+                                         array('null' => true)
+                                     )
+                                 );
+        
+        /**
+         * Check to see if there are any results
+         */
+        if (!$postnlShipmentCollection->getSize()) {
+            return $this;
+        }
+        
+        /**
+         * Reset the shipments to 'unconfirmed' status
+         */
+        foreach ($postnlShipmentCollection as $postnlShipment) {
+            /**
+             * Attempt to reset the shipment to a pre-confirmed status
+             */
+            try{
+                $postnlShipment->resetConfirmation()
                                ->save();
             } catch (Exception $e) {
                 Mage::helper('postnl')->logException($e);
