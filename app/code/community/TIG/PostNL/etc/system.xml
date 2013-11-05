@@ -864,6 +864,16 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-digits validate-greater-than-zero</validate> <!-- not negative integers only -->
                     	</max_temp_file_storage_time>
+                        <confirm_expire_days translate="label comment" module="postnl">
+                            <label>Number of days before a confirmation expires</label>
+                            <comment>If a confirmed shipment has not bee shipped after this amount of days it's confirmation will expire.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-digits validate-greater-than-zero</validate> <!-- not negative integers only -->
+                        </confirm_expire_days>
                 	</fields>
 				</advanced>
 			</groups>

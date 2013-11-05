@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.2.2</version>
+			<version>0.2.3</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -223,12 +223,21 @@
             <!-- Update the shipping status for all undelivered PostNL shipments -->
             <update_shipping_status>
             	<schedule>
-            		<cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+            		<cron_expr>*/15 10-12,14-16 * * *</cron_expr> <!-- every 15 minutes every day between 10 and 12 AM, and 2 and 4 PM -->
             	</schedule>
             	<run>
             		<model>postnl_core/observer_cron::updateShippingStatus</model>
             	</run>
             </update_shipping_status>
+            <!-- Expire confirmations of shipments that have been confirmed, but have not been shipped within the maximum number of days -->
+            <expire_confirmation>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::expireConfirmation</model>
+                </run>
+            </expire_confirmation>
         </jobs>
     </crontab>
     
@@ -323,6 +332,7 @@
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
+        		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
         	</advanced>
         </postnl>
     </default>
