@@ -225,9 +225,7 @@
             </postnl_get_missing_barcodes>
             <!-- Update the shipping status for all undelivered PostNL shipments -->
             <postnl_update_shipping_status>
-            	<schedule>
-            		<cron_expr>*/15 10-12,14-16 * * *</cron_expr> <!-- every 15 minutes every day between 10 and 12 AM, and 2 and 4 PM -->
-            	</schedule>
+                <!-- No cron expr. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
             	<run>
             		<model>postnl_core/observer_cron::updateShippingStatus</model>
             	</run>
