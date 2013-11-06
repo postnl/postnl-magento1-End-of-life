@@ -72,7 +72,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             return $this;
         }
         
-        $helper->cronLog('cleanTempLabels cron starting...');
+        $helper->cronLog('CleanTempLabels cron starting...');
         
         /**
          * Directory where all temporary labels are stored. 
@@ -110,11 +110,17 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * If the directory cannot be read, throw an exception.
          */
         if ($files === false) {
-            $helper->cronLog('No temporary labels found. Exiting cron.');
+            $helper->cronLog('Temporary label storage is unreadable. Exiting cron.');
             throw Mage::exception('TIG_PostNL', 'Unable to read directory: ' . $tempLabelsDirectory);
         }
         
-        $helper->cronLog("{count($files)} temporary labels found.");
+        $fileCount = count($files);
+        if ($fileCount < 1) {
+            $helper->cronLog('No temporary labels found. Exiting cron.');
+            return $this;
+        }
+        
+        $helper->cronLog("{$fileCount} temporary labels found.");
         foreach ($files as $path) {
             /**
              * Get the name of the file. This should contain a timestamp after the first '-'
@@ -141,7 +147,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             unlink($path);
         }
         
-        $helper->cronLog('cleanTempLabels cron has finished.');
+        $helper->cronLog('CleanTempLabels cron has finished.');
         return $this;
     }
 
@@ -170,7 +176,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $postnlShipmentCollection->addFieldToFilter('main_barcode', array('null' => true));
         
         if ($postnlShipmentCollection->getSize() < 1) {
-            $helper->cronLog('no valid shipments found. Exiting cron.');
+            $helper->cronLog('No valid shipments found. Exiting cron.');
             return $this;
         }
         
@@ -222,7 +228,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
             return $this;
         }
         
-        $helper->cronLog('updateShippingStatus cron starting...');
+        $helper->cronLog('UpdateShippingStatus cron starting...');
         
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;

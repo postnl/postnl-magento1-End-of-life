@@ -385,7 +385,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $file = self::POSTNL_DEBUG_LOG_FILE;
         }
         
-        Mage::log($message, $level, self::POSTNL_DEBUG_LOG_FILE);
+        Mage::log($message, $level, $file);
         
         return $this;
     }
