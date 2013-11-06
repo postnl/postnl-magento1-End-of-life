@@ -50,8 +50,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Possible confirm statusses
      */
-    const CONFIRM_STATUS_CONFIRMED   = 'confirmed';
-    const CONFIRM_STATUS_UNCONFIRMED = 'unconfirmed';
+    const CONFIRM_STATUS_CONFIRMED       = 'confirmed';
+    const CONFIRM_STATUS_UNCONFIRMED     = 'unconfirmed';
+    const CONFIRM_STATUS_CONFIRM_EXPIRED = 'confirm_expired';
     
     /**
      * Possible shipping phases
@@ -403,9 +404,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Get all barcodes associated with this shipment
      * 
+     * @param $asObject boolean Optional value to get the barcodes as entities, rather than an array of values
+     * 
      * @return array
      */
-    public function getBarcodes()
+    public function getBarcodes($asObject = false)
     {
         $barcodeCollection = Mage::getResourceModel('postnl_core/shipment_barcode_collection');
         $barcodeCollection->addFieldToSelect(array('barcode', 'barcode_number'))
@@ -413,16 +416,24 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $barcodeCollection->getSelect()->order('barcode_number ASC');
         
-        $barcodeNumbers = $barcodeCollection->getColumnValues('barcode_number');
-        $barcodes       = $barcodeCollection->getColumnValues('barcode');
+        if ($asObject === false) {
+            $barcodeNumbers = $barcodeCollection->getColumnValues('barcode_number');
+            $barcodes       = $barcodeCollection->getColumnValues('barcode');
+            
+            /**
+             * Combine the arrays so that the barcode numbers are the keys and the barcodes themselves are the values
+             */
+            $barcodeArray = array_combine($barcodeNumbers, $barcodes);
+            $barcodeArray[0] = $this->getMainBarcode();
+            
+            return $barcodeArray;
+        }
         
         /**
-         * Combine the arrays so that the barcode numbers are the keys and the barcodes themselves are the values
+         * Return all barcode entities.
+         * N.B. Does not contain the main barcode as it is not part of the collection
          */
-        $barcodeArray = array_combine($barcodeNumbers, $barcodes);
-        $barcodeArray[0] = $this->getMainBarcode();
-        
-        return $barcodeArray;
+        return $barcodeCollection->getItems();
     }
     
     /****************************************************************************************************************************
@@ -1112,16 +1123,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
-     * Resets this shipment to a pre-confirmed status
+     * Resets this shipment to a pre-confirmed state
      * 
      * @return TIG_PostNL_Model_Shipment
      */
     public function resetConfirmation()
     {
-        $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED)
-             ->setShippingPhase(false)
-             ->setConfirmedAt(false)
-             ->deleteLabels();
+        $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED) //set status to unconfirmed
+             ->setShippingPhase(false) //delete current shipping phase
+             ->setConfirmedAt(false) //delete 'confirmed at' date
+             ->setlabelsPrinted(0) //labels have not been printed
+             ->deleteLabels() //delete all associated labels
+             ->deleteBarcodes(); //delete all associated barcodes
              
         return $this;
     }
@@ -1258,6 +1271,25 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $label->delete()
                   ->save();
         }
+        
+        return $this;
+    }
+    
+    /**
+     * Removes all barcodes associated with this shipment
+     * 
+     * @return TIG_PostNL_Model_Shipment
+     */
+    public function deleteBarcodes()
+    {
+        $barcodes = $this->getBarcodes(true);
+        
+        foreach ($barcodes as $barcode) {
+            $barcode->delete()
+                    ->save();
+        }
+        
+        $this->setMainBarcode(false);
         
         return $this;
     }

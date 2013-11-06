@@ -49,6 +49,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_Debug.log';
     
     /**
+     * Log filename to log all cron log messages
+     */
+    const POSTNL_CRON_DEBUG_LOG_FILE = 'TIG_PostNL_Cron_Debug.log';
+    
+    /**
      * XML path to postnl general active/inactive setting
      */
     const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
@@ -358,25 +363,54 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Logs a debug message. Based on Mage::log
      * 
-     * @param Exception $exception
+     * @param string $message
+     * @param int | null $level
+     * @param string | null $file
      * 
      * @return TIG_PostNL_Helper_Data
      * 
      * @see Mage::log
      */
-    public function log($message, $level)
+    public function log($message, $level = null, $file = null)
     {
         if (!$this->isLoggingEnabled()) {
             return $this;
         }
         
-        Mage::log($message, Zend_Log::DEBUG, self::POSTNL_DEBUG_LOG_FILE);
+        if (is_null($level)) {
+            $level = Zend_Log::DEBUG;
+        }
+        
+        if (is_null($file)) {
+            $file = self::POSTNL_DEBUG_LOG_FILE;
+        }
+        
+        Mage::log($message, $level, self::POSTNL_DEBUG_LOG_FILE);
         
         return $this;
     }
     
     /**
+     * Logs a cron debug messageto a seperate file in order to differentiate it from other debug messages
+     * 
+     * @param string $message
+     * @param int | int $level
+     * 
+     * @return TIG_PostNL_Helper_Data
+     * 
+     * @see Mage::log
+     */
+    public function cronLog($message, $level = null)
+    {
+        $file = self::POSTNL_CRON_DEBUG_LOG_FILE;
+        
+        return $this->log($message, $level, $file);
+    }
+    
+    /**
      * Logs a PostNL Exception. Based on Mage::logException
+     * 
+     * N.B. this uses forced logging
      * 
      * @param Exception $exception
      * 
@@ -390,7 +424,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $this;
         }
         
-        Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::POSTNL_EXCEPTION_LOG_FILE);
+        Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::POSTNL_EXCEPTION_LOG_FILE, true);
         
         return $this;
     }

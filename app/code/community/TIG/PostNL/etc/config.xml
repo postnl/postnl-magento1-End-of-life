@@ -206,41 +206,41 @@
     <crontab>
         <jobs>
         	<!-- remove old temporary label files (by default files older than 5 min will be deleted) -->
-            <clean_temp_labels>
+            <postnl_clean_temp_labels>
                 <schedule>
                 	<cron_expr>*/5 * * * *</cron_expr> <!-- every 5 minutes -->
                 </schedule>
                 <run>
                 	<model>postnl_core/observer_cron::cleanTempLabels</model>
                 </run>
-            </clean_temp_labels>
+            </postnl_clean_temp_labels>
         	<!-- get missing barcodes for postnl shipments -->
-            <get_missing_barcodes>
+            <postnl_get_missing_barcodes>
                 <schedule>
                 	<cron_expr>*/30 * * * *</cron_expr> <!-- every 30 minutes -->
                 </schedule>
                 <run>
                 	<model>postnl_core/observer_cron::getBarcodes</model>
                 </run>
-            </get_missing_barcodes>
+            </postnl_get_missing_barcodes>
             <!-- Update the shipping status for all undelivered PostNL shipments -->
-            <update_shipping_status>
+            <postnl_update_shipping_status>
             	<schedule>
             		<cron_expr>*/15 10-12,14-16 * * *</cron_expr> <!-- every 15 minutes every day between 10 and 12 AM, and 2 and 4 PM -->
             	</schedule>
             	<run>
             		<model>postnl_core/observer_cron::updateShippingStatus</model>
             	</run>
-            </update_shipping_status>
+            </postnl_update_shipping_status>
             <!-- Expire confirmations of shipments that have been confirmed, but have not been shipped within the maximum number of days -->
-            <expire_confirmation>
+            <postnl_expire_confirmation>
                 <schedule>
                     <cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
                 </schedule>
                 <run>
                     <model>postnl_core/observer_cron::expireConfirmation</model>
                 </run>
-            </expire_confirmation>
+            </postnl_expire_confirmation>
         </jobs>
     </crontab>
     

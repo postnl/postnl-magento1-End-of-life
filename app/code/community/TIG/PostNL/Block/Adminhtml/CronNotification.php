@@ -39,8 +39,13 @@
 class TIG_PostNL_Block_Adminhtml_CronNotification extends Mage_Adminhtml_Block_Abstract
 {
     /**
+     * Cron expression for cronjobs working in 'always' cron mode
+     */
+    const ALWAYS_CRON_EXPR = 'always';
+    
+    /**
      * Check to see if the cron is running. This is done by checking if the last executed cron task
-     * was executed less than 4 hours ago.
+     * was executed less than 1 hour ago.
      * 
      * @return boolean
      */
@@ -52,9 +57,41 @@ class TIG_PostNL_Block_Adminhtml_CronNotification extends Mage_Adminhtml_Block_A
         $coreResource = Mage::getSingleton('core/resource');
         $readConnection = $coreResource->getConnection('core_read');
         
+        /**
+         * Create an array of cronjobs that need to be ignored
+         */
+        $cronjobs = Mage::getConfig()->getNode('crontab/jobs')->asArray();
+        $ignoreCronjobs = array();
+        foreach ($cronjobs as $cronjob => $cronData) {
+            if (!isset($cronData['schedule']) || !isset($cronData['schedule']['cron_expr'])) {
+                continue;
+            }
+            
+            /**
+             * Cron jobs with the cron_expr 'always' work on a different cron mode
+             */
+            if($cronData['schedule']['cron_expr'] == self::ALWAYS_CRON_EXPR) {
+                $ignoreCronjobs[] = $cronjob;
+            }
+        }
+        
+        /**
+         * Select the last executed cronjob
+         */
         $select = $readConnection->select();
         $select->from($coreResource->getTablename('cron/schedule'), array('MAX(executed_at)'));
         
+        /**
+         * Filter out the invalid cronjobs
+         */
+        if (!empty($ignoreCronjobs)) {
+            $ignoreCronjobs = implode(',', $ignoreCronjobs);
+            $select->where('job_code NOT IN (?)', $ignoreCronjobs);
+        }
+        
+        /**
+         * Get the last execution time of a PostNL cronjob
+         */
         $lastExecutionTime = $readConnection->fetchOne($select);
         
         /**
@@ -65,11 +102,11 @@ class TIG_PostNL_Block_Adminhtml_CronNotification extends Mage_Adminhtml_Block_A
         }
         
         /**
-         * Check if the last execution time was more than 4 hours ago.
-         * If no crontask has been executed in 4 hours it's likely that something is wrong.
+         * Check if the last execution time was more than an hour ago.
+         * If no crontask has been executed in an hour it's likely that something is wrong.
          */
-        $currentTimestamp       = Mage::getModel('core/date')->timestamp();
-        $oneHourAgoTimestamp    = strtotime('-4 hours', $currentTimestamp);
+        $currentTimestamp       = Mage::getModel('core/date')->gmtTimestamp();
+        $oneHourAgoTimestamp    = strtotime('-1 hour', $currentTimestamp);
         $lastExecutionTimestamp = strtotime($lastExecutionTime);
         
         if ($lastExecutionTimestamp < $oneHourAgoTimestamp) {
