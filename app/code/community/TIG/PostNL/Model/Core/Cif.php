@@ -107,6 +107,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const GLOBAL_BARCODE_SERIE    = '0000-9999';
     
     /**
+     * XML path to weight per parcel config setting
+     */
+    const XML_PATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel'; 
+    
+    /**
      * Regular expression used to split streetname from housenumber. This regex works well for dutch 
      * addresses, but may fail for international addresses. We strongly recommend using split address 
      * lines instead.
@@ -254,7 +259,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         $barcode = $this->_getBarcodeData($barcodeType);
         
-        $message  = $this->_getMessage();
+        $message  = $this->_getMessage('');
         $customer = $this->_getCustomer();
         $range    = $barcode['range'];
         $type     = $barcode['type'];
@@ -296,8 +301,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     public function getShipmentStatus($shipment)
     {
-        $barcode  = $shipment->getBarcode();
-        $message  = $this->_getMessage();
+        $barcode  = $shipment->getMainBarcode();
+        $message  = $this->_getMessage($shipment->getMainBarcode());
         $customer = $this->_getCustomer();
         
         $soapParams = array(
@@ -352,14 +357,41 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
         }
         
-        $message     = $this->_getMessage(array('Printertype' => $printerType));
+        $parcelCount = $postnlShipment->getParcelCount();
+        $mainBarcode = $postnlShipment->getMainBarcode();
+        
+        $message     = $this->_getMessage($mainBarcode, array('Printertype' => $printerType));
         $customer    = $this->_getCustomer($shipment);
-        $cifShipment = $this->_getShipment($postnlShipment);
+        
+        if ($parcelCount < 2) {
+            /**
+             * Create a single shipment object
+             */
+            $cifShipment = array(
+                'Shipment' => $this->_getShipment($postnlShipment, $mainBarcode)
+            );
+        } else {
+            /**
+             * Create a shipment object for each parcel
+             */
+            $shipments = array();
+            for ($i = 0; $i < $parcelCount; $i++) {
+                $barcode = $postnlShipment->getBarcode($i);
+                $shipments[] = $this->_getShipment(
+                                   $postnlShipment, 
+                                   $barcode, 
+                                   $mainBarcode,
+                                   $i
+                               );
+            }
+            
+            $cifShipment = array('Shipment' => $shipments);
+        }
         
         $soapParams =  array(
             'Message'   => $message,
             'Customer'  => $customer,
-            'Shipments' => array('Shipment' => $cifShipment),
+            'Shipments' => $cifShipment,
         );
         
         $response = $this->call(
@@ -368,14 +400,19 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $soapParams
         );
         
-        if (!is_object($response) 
-            || !isset($response->ConfirmingResponseShipment) 
-            || !is_object($response->ConfirmingResponseShipment)
-        ) {
+        if (!is_object($response)) {
             throw Mage::exception('TIG_PostNL', 'Invalid confirmShipment response: ' . "\n" . var_export($response, true));
         }
         
-        return $response;
+        if (isset($response->ConfirmingResponseShipment) 
+            && (is_object($response->ConfirmingResponseShipment)
+                || is_array($response->ConfirmingResponseShipment)
+            )
+        ) {
+            return $response;
+        }
+        
+        throw Mage::exception('TIG_PostNL', 'Invalid confirmShipment response: ' . "\n" . var_export($response, true));
     }
     
     /**
@@ -388,7 +425,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function generateLabels($postnlShipment, $printerType = 'GraphicFile|PDF')
+    public function generateLabels($postnlShipment, $barcodeNumber = null, $printerType = 'GraphicFile|PDF')
     {
         $shipment = $postnlShipment->getShipment();
         
@@ -397,9 +434,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
         }
         
-        $message     = $this->_getMessage(array('Printertype' => $printerType));
+        $barcode = $postnlShipment->getBarcode($barcodeNumber);
+        
+        $message     = $this->_getMessage($barcode, array('Printertype' => $printerType));
         $customer    = $this->_getCustomer($shipment);
-        $cifShipment = $this->_getShipment($postnlShipment);
+        $cifShipment = $this->_getShipment($postnlShipment, $barcode);
         
         $soapParams =  array(
             'Message'  => $message,
@@ -433,7 +472,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function generateLabelsWithoutConfirm($postnlShipment, $printerType = 'GraphicFile|PDF')
+    public function generateLabelsWithoutConfirm($postnlShipment, $barcodeNumber = null, $printerType = 'GraphicFile|PDF')
     {
         $shipment = $postnlShipment->getShipment();
         
@@ -442,9 +481,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
         }
         
-        $message     = $this->_getMessage(array('Printertype' => $printerType));
+        $barcode = $postnlShipment->getBarcode($barcodeNumber);
+        
+        $message     = $this->_getMessage($barcode, array('Printertype' => $printerType));
         $customer    = $this->_getCustomer($shipment);
-        $cifShipment = $this->_getShipment($postnlShipment);
+        $cifShipment = $this->_getShipment($postnlShipment, $barcode);
         
         $soapParams =  array(
             'Message'  => $message,
@@ -477,10 +518,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * 
      * @todo change message ID to truly unique value
      */
-    protected function _getMessage($extra = array())
+    protected function _getMessage($barcode, $extra = array())
     {
         $message = array(
-            'MessageID'        => uniqid('postnl_'), //TODO change to truly unique value (based on barcode, perhaps)
+            'MessageID'        => md5(uniqid('postnl_') .  md5($barcode)), //TODO change to truly unique value (based on barcode, perhaps)
             'MessageTimeStamp' => date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp()),
         );
         
@@ -529,16 +570,31 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * 
      * @todo modify to support OVM and PostNL checkout shipments
      */
-    protected function _getShipment($postnlShipment)
+    protected function _getShipment($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false)
     {
         $shipment        = $postnlShipment->getShipment();
         $shippingAddress = $shipment->getShippingAddress();
         
-        $shipmentWeight = Mage::helper('postnl/cif')->standardizeWeight(
-            $shipment->getOrder()->getWeight(), 
-            $this->getStoreId(),
-            true //convert the weight to grams instead of kilograms
-        );
+        $parcelCount = $postnlShipment->getParcelCount();
+        $shipmentWeight = $postnlShipment->getTotalWeight(true, true);
+        
+        /**
+         * If a shipmentNumber is provided it means that this is not a single shipment and the weight of the shipment
+         * needs to be calculated
+         */
+        if ($shipmentNumber !== false) {
+            $parcelWeight = Mage::getStoreConfig(self::XML_PATH_WEIGHT_PER_PARCEL, $postnlShipment->getStoreId());
+            $parcelWeight *= 1000; //convert the parcelweight to grams
+            
+            /**
+             * All parcels except for the last one weigh a configured amount. The last parcel weighs the remainder
+             */
+            if ($shipmentNumber < $parcelCount) {
+                $shipmentWeight = $parcelWeight;
+            } else {
+                $shipmentWeight = $shipmentWeight % $parcelWeight;
+            }
+        }
         
         /**
          * Shipment weight may not be less than 1 gram
@@ -548,7 +604,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
         
         $shipmentData = array(
-            'Barcode'                  => $postnlShipment->getBarcode(),
+            'Barcode'                  => $barcode,
             'CollectionTimeStampEnd'   => '',
             'CollectionTimeStampStart' => '',
             'DownPartnerBarcode'       => '',
@@ -556,7 +612,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'ProductCodeDelivery'      => $postnlShipment->getProductCode(),
             'Reference'                => $shipment->getReference(),
             'Groups'                   => array(
-                                           'Group'   => $this->_getGroup(),
+                                           'Group'   => $this->_getGroup(
+                                                            $parcelCount, 
+                                                            $mainBarcode, 
+                                                            $shipmentNumber
+                                                        ),
                                        ),
             'Contacts'                 => array(
                                            'Contact' => $this->_getContact($shippingAddress),
@@ -825,13 +885,23 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * 
      * @return array
      */
-    protected function _getGroup()
+    protected function _getGroup($groupCount = 1, $mainBarcode = false, $shipmentNumber = false)
     {
         /**
-         * NOTE: extra fields can be used to group multi collo shipments (GroupType 03)
+         * If $groupCount is 1, this is a single shipment (groupType 1)
          */
-        $group =  array(
-            'GroupType' => '01',
+        if ($groupCount < 2) {
+            $group =  array(
+                'GroupType' => '01',
+            );
+            return $group;
+        }
+        
+        $group = array(
+            'GroupCount'    => $groupCount,
+            'GroupSequence' => $shipmentNumber,
+            'GroupType'     => '03',
+            'MainBarcode'   => $mainBarcode,
         );
         
         return $group;

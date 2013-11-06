@@ -53,8 +53,8 @@ $postnlShipmentTable = $installer->getConnection()
         'unsigned'  => true,
         'nullable'  => true,
         ), 'Shipment Id')
-    ->addColumn('barcode', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
-        ), 'Barcode')
+    ->addColumn('main_barcode', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+        ), 'Main Barcode')
     ->addColumn('confirm_date', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
         'nullable'  => false,
         ), 'Confirm Date')
@@ -67,8 +67,8 @@ $postnlShipmentTable = $installer->getConnection()
     ->addIndex($installer->getIdxName('postnl_core/shipment', array('shipment_id'), Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE), 
         array('shipment_id'), 
         array('type' => Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE))
-    ->addIndex($installer->getIdxName('postnl_core/shipment', array('barcode'), Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE), 
-        array('barcode'), 
+    ->addIndex($installer->getIdxName('postnl_core/shipment', array('main_barcode'), Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE), 
+        array('main_barcode'), 
         array('type' => Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE))
     ->addForeignKey($installer->getFkName('postnl_core/shipment', 'shipment_id', 'sales/shipment', 'entity_id'),
         'shipment_id', $installer->getTable('sales/shipment'), 'entity_id',

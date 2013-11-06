@@ -181,7 +181,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             array(
                 'header'   => $helper->__('Track & Trace'),
                 'align'    => 'left',
-                'index'    => 'barcode',
+                'index'    => 'main_barcode',
                 'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_barcode',
             ),
             'confirm_date'
@@ -350,7 +350,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
             array(
                 'confirm_date'   => 'postnl_shipment.confirm_date',
-                'barcode'        => 'postnl_shipment.barcode',
+                'main_barcode'   => 'postnl_shipment.main_barcode',
                 'confirm_status' => 'postnl_shipment.confirm_status',
                 'labels_printed' => 'postnl_shipment.labels_printed',
             )
