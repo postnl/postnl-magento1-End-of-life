@@ -36,31 +36,20 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_DebugMode
-{
-    /**
-     * Returns an option array for debug mode options
-     * 
-     * @return array
-     */
-    public function toOptionArray()
-    {
-        $helper = Mage::helper('postnl');
-        $options = array(
-            array(
-                'value' => '0',
-                'label' => $helper->__('Disabled'),
-            ),
-            array(
-                'value' => '1',
-                'label' => $helper->__('Errors only'),
-            ),
-            array(
-                'value' => '2',
-                'label' => $helper->__('Full'),
-            ),
-        );
-        
-        return $options;
-    }
-}
+ 
+$installer = $this;
+
+$installer->startSetup();
+
+$installer->getConnection()
+          ->addColumn(
+               $installer->getTable('postnl_core/shipment'),
+               'confirmed_at',
+               array(
+                   'nullable' => true,
+                   'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
+                   'comment'  => 'Confirmed At',
+               )
+          );
+
+$installer->endSetup();

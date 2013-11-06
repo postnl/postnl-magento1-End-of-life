@@ -36,10 +36,10 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_DebugMode
+class TIG_PostNL_Model_Core_System_Config_Source_ShipmentGridMassAction
 {
     /**
-     * Returns an option array for debug mode options
+     * Returns an option array for available shipment grid mass actions
      * 
      * @return array
      */
@@ -48,16 +48,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_DebugMode
         $helper = Mage::helper('postnl');
         $options = array(
             array(
-                'value' => '0',
-                'label' => $helper->__('Disabled'),
+                'value' => 'postnl_print_labels_and_confirm',
+                'label' => $helper->__('Print shipping labels & confirm shipment'),
             ),
             array(
-                'value' => '1',
-                'label' => $helper->__('Errors only'),
+                'value' => 'postnl_print_labels',
+                'label' => $helper->__('Print shipping labels'),
             ),
             array(
-                'value' => '2',
-                'label' => $helper->__('Full'),
+                'value' => 'postnl_confirm_shipments',
+                'label' => $helper->__('Confirm shipments'),
             ),
         );
         

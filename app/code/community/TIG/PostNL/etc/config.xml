@@ -226,12 +226,21 @@
             <!-- Update the shipping status for all undelivered PostNL shipments -->
             <update_shipping_status>
             	<schedule>
-            		<cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+            		<cron_expr>*/15 10-12,14-16 * * *</cron_expr> <!-- every 15 minutes every day between 10 and 12 AM, and 2 and 4 PM -->
             	</schedule>
             	<run>
             		<model>postnl_core/observer_cron::updateShippingStatus</model>
             	</run>
             </update_shipping_status>
+            <!-- Expire confirmations of shipments that have been confirmed, but have not been shipped within the maximum number of days -->
+            <expire_confirmation>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::expireConfirmation</model>
+                </run>
+            </expire_confirmation>
         </jobs>
     </crontab>
     
@@ -270,6 +279,7 @@
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
                 <show_printed_column>1</show_printed_column> <!-- show the 'labels printed column' in the shipment grid -->
+                <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <weight_per_parcel>20</weight_per_parcel> <!-- 20 kg -->
         	</cif_labels_and_confirming>
         	<cif_address>
@@ -283,12 +293,27 @@
         		<firstname/>
         		<lastname/>
         		<company/>
-        		<street_full/>
+        		<streetname/>
+                <housenumber/>
+                <housenumber_extension/>
         		<postcode/>
         		<city/>
         		<region/>
         		<country>NL</country> <!-- All sender's must be located in the Netherlands -->
         	</cif_sender_address>
+        	<cif_return_address>
+        	    <use_sender_address>1</use_sender_address> <!-- use the sender address as the return address -->
+                <firstname/>
+                <lastname/>
+                <company/>
+                <streetname/>
+                <housenumber/>
+                <housenumber_extension/>
+                <postcode/>
+                <city/>
+                <region/>
+                <country>NL</country> <!-- All return addresses must be located in the Netherlands -->
+        	</cif_return_address>
         	<cif_product_options>
         		<show_grid_options>0</show_grid_options> <!-- Do not show product options in the order grid -->
         		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4950,4952,4954,4955,4945</supported_product_options> <!-- all possible options -->
@@ -311,6 +336,7 @@
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
+        		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
         	</advanced>
         </postnl>
     </default>

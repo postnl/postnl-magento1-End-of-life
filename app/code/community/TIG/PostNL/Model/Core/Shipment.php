@@ -75,6 +75,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XML_PATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel'; 
     
     /**
+     * CIF warning code returned when an EPS combi label is not available
+     */
+    const EPS_COMBI_LABEL_WARNING_CODE = 'LIRS_0';
+    
+    /**
      * Array of product codes that have extra cover
      * 
      * @var array
@@ -314,6 +319,29 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         );
         
         return $weight;
+    }
+    
+    /**
+     * Set an extra cover amount
+     * 
+     * @param int $amount
+     * 
+     * @return TIG_PostNL_Model_Shipment
+     */
+    public function setExtraCoverAmount($amount)
+    {
+        /**
+         * Check if extra cover is allowed for this shipment
+         */
+        $productCode = $this->getProductCode();
+        $extraCoverProductCodes = $this->getExtraCoverProductCodes();
+        if (!in_array($productCode, $extraCoverProductCodes)) {
+            return $this;
+        }
+        
+        $this->setData('extra_cover_amount', $amount);
+        
+        return $this;
     }
     
     /**
@@ -679,7 +707,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->addLabels($labels);
         }
         
-        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
+        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
+             ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+                 
         $this->_saveLabels();
         
         return $this;
@@ -721,6 +751,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $this->_saveLabels();
         
+        /**
+         * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated
+         */
+        if ($this->isEuShipment() && !$this->_isCombiLabel()) {
+            $this->setProductCode($result->ProductCodeDelivery);
+        }
+             
         return $this;
     }
     
@@ -746,7 +783,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             && isset($responseShipment->Barcode)
             && $responseShipment->Barcode == $this->getMainBarcode()
         ) {
-            $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
+            $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
+                 ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
             
             return $this;
         }
@@ -769,7 +807,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             }
         }
     
-        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
+        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
+             ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
         
         return $this;
     }
@@ -801,6 +840,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
     
+    /**
+     * Update this shipment's status history
+     * 
+     * @param StdClass $oldStatuses
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
     public function updateStatusHistory($oldStatuses)
     {
         $completeStatusHistory = $oldStatuses->CompleteStatusResponseOldStatus;
@@ -983,6 +1029,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $labelType = $label->Labeltype;
         
+        if ($this->_isCombiLabel()) {
+            $labelType = 'Label-combi';
+        }
+        
         $postnlLabel = Mage::getModel('postnl_core/shipment_label');
         $postnlLabel->setParentId($this->getId())
                     ->setLabel(base64_encode($label->Content))
@@ -1059,6 +1109,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $productCode = $this->getDefaultProductCode();
         
         return $productCode;
+    }
+    
+    /**
+     * Resets this shipment to a pre-confirmed status
+     * 
+     * @return TIG_PostNL_Model_Shipment
+     */
+    public function resetConfirmation()
+    {
+        $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED)
+             ->setShippingPhase(false)
+             ->setConfirmedAt(false)
+             ->deleteLabels();
+             
+        return $this;
     }
     
     /**
@@ -1181,6 +1246,57 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Removes all labels associated with this shipment
+     * 
+     * @return TIG_PostNL_Model_Shipment
+     */
+    public function deleteLabels()
+    {
+        $labels = $this->getLabels();
+        
+        foreach ($labels as $label) {
+            $label->delete()
+                  ->save();
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Check if the returned label is a combi-label
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment_label
+     * 
+     * @return boolean
+     */
+    protected function _isCombiLabel()
+    {
+        if (!$this->isEuShipment()) {
+            return false;
+        }
+        
+        /**
+         * All EU shipments will by default request a combi label. If no warnings were sent by CIF it means everything
+         * went as expected and a combi-label was returned.
+         */
+        $warnings = Mage::registry('postnl_cif_warnings');
+        if (!$warnings) {
+            return true;
+        }
+        
+        /**
+         * Check each warning if the code matches the EPS combi label warning code
+         */
+        foreach ($warnings as $warning) {
+            if (isset($warning['code']) && $warning['code'] === self::EPS_COMBI_LABEL_WARNING_CODE) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
      * Updates the shipment's attributes if they have not yet been set
      * 
      * @return Mage_Core_Model_Abstract::_beforeSave
@@ -1194,19 +1310,17 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->_saveAdditionalShippingOptions();
         }
         
-        /**
-         * Set the shipment's confirm status
-         */
-        if ($this->getConfirmStatus() === null && $this->getLabel()) {
-            $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED);
-        } elseif ($this->getConfirmStatus() === null) {
+        if ($this->getConfirmStatus() === null) {
             $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
         }
         
-        /**
-         * Check if the shipment has already printed labels
-         */
-        if ($this->getLabelsPrinted() == 0 && $this->hasLabels()) {
+        if ($this->getConfirmedStatus() == self::CONFIRM_STATUS_CONFIRMED
+            && $this->getConfirmedAt() === null
+        ) {
+            $this->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+        }
+        
+        if ($this->getlabelsPrinted() == 0 && $this->hasLabels()) {
             $this->setLabelsPrinted(1);
         }
         

@@ -36,31 +36,46 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_DebugMode
+class TIG_PostNL_Block_Adminhtml_CronNotification extends Mage_Adminhtml_Block_Abstract
 {
     /**
-     * Returns an option array for debug mode options
+     * Check to see if the cron is running. This is done by checking if the last executed cron task
+     * was executed less than 4 hours ago.
      * 
-     * @return array
+     * @return boolean
      */
-    public function toOptionArray()
+    public function isCronActive()
     {
-        $helper = Mage::helper('postnl');
-        $options = array(
-            array(
-                'value' => '0',
-                'label' => $helper->__('Disabled'),
-            ),
-            array(
-                'value' => '1',
-                'label' => $helper->__('Errors only'),
-            ),
-            array(
-                'value' => '2',
-                'label' => $helper->__('Full'),
-            ),
-        );
+        /**
+         * Get the last execution time from the cron_schedule table
+         */
+        $coreResource = Mage::getSingleton('core/resource');
+        $readConnection = $coreResource->getConnection('core_read');
         
-        return $options;
+        $select = $readConnection->select();
+        $select->from($coreResource->getTablename('cron/schedule'), array('MAX(executed_at)'));
+        
+        $lastExecutionTime = $readConnection->fetchOne($select);
+        
+        /**
+         * If no execution time was found it means the cron has never run before
+         */
+        if (!$lastExecutionTime) {
+            return false;
+        }
+        
+        /**
+         * Check if the last execution time was more than 4 hours ago.
+         * If no crontask has been executed in 4 hours it's likely that something is wrong.
+         */
+        $currentTimestamp       = Mage::getModel('core/date')->timestamp();
+        $oneHourAgoTimestamp    = strtotime('-4 hours', $currentTimestamp);
+        $lastExecutionTimestamp = strtotime($lastExecutionTime);
+        
+        if ($lastExecutionTimestamp < $oneHourAgoTimestamp) {
+            return false;
+        }
+        
+        return true;
     }
 }

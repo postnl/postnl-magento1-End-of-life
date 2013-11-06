@@ -67,6 +67,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     const XML_PATH_SHOW_PRINTED_COLUMN = 'postnl/cif_labels_and_confirming/show_printed_column';
     
+    /**
+     * XML path to default selected mass action setting
+     */
+    const XML_PATH_SHIPPING_GRID_MASSACTION_DEFAULT = 'postnl/cif_labels_and_confirming/shipping_grid_massaction_default';
     
     /**
      * Checks if the merchant has enabled the 'labels printed' column
@@ -238,41 +242,65 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     {
         $massactionBlock = $block->getMassactionBlock();
         
+        /**
+         * Build all the mass action option arrays
+         */
+        $printAndConfirmOptions = array(
+            'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels & confirm shipment'),
+            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
+        );
+        
+        $printOptions = array(
+            'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels'),
+            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
+        );
+        
+        $confirmOptions = array(
+            'label'=> Mage::helper('postnl')->__('PostNL - Confirm shipments'),
+            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massConfirm'),
+        );
+        
+        /**
+         * Check which mass action should be selected by default
+         */
+        $defaultSelectedOption = Mage::getStoreConfig(
+            self::XML_PATH_SHIPPING_GRID_MASSACTION_DEFAULT, 
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+        
+        /**
+         * Add the additional 'selected' parameter to the chosen mass action
+         */
+        switch ($defaultSelectedOption) {
+            case 'postnl_print_labels_and_confirm':
+                $printAndConfirmOptions['selected'] = true;
+                break;
+            case 'postnl_print_labels':
+                $printOptions['selected'] = true;
+                break;
+            case 'postnl_confirm_shipments':
+                $confirmOptions['selected'] = true;
+                break;
+            // no default
+        }
+        
+        /**
+         * Add the mass actions to the grid
+         */
         $massactionBlock->addItem(
             'postnl_print_labels_and_confirm',
-            array(
-                'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels & confirm shipment'),
-                'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
-            )
+            $printAndConfirmOptions
         );
         
         $massactionBlock->addItem(
             'postnl_print_labels',
-            array(
-                'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels'),
-                'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
-            )
+            $printOptions
         );
         
         $massactionBlock->addItem(
             'postnl_confirm_shipments',
-            array(
-                'label'=> Mage::helper('postnl')->__('PostNL - Confirm shipments'),
-                'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massConfirm'),
-            )
+            $confirmOptions
         );
-        
-        // /**
-         // * get the default print_shipping_label massaction then remove it
-         // */
-        // $printShippingLabel = $block->getMassactionBlock()->getItem('print_shipping_label');
-        // $massactionBlock->removeItem('print_shipping_label');
-//         
-        // /**
-         // * Change the mass action's url so it triggers our own massaction, rather than the default and add it again to the block
-         // */
-        // $printShippingLabel->setUrl(Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabels'));
-        // $massactionBlock->addItem('print_shipping_label', $printShippingLabel->toArray());
         
         return $this;
     }

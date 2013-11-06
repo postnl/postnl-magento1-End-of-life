@@ -79,11 +79,23 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XML_PATH_CUSTOMS_PRODUCT_SORTING_DIRECTION   = 'postnl/cif_customs_settings/product_sorting_direction';
     
     /**
+     * XML path to setting that dtermines whether to use a seperate return address
+     */
+    const XML_PATH_USE_SENDER_ADDRESS_AS_RETURN = 'postnl/cif_return_address/use_sender_address';
+    
+    /**
      * XML path to sender address data.
      * 
      * N.B. missing last part so this will return an array of all fields.
      */
     const XML_PATH_SENDER_ADDRESS = 'postnl/cif_sender_address';
+    
+    /**
+     * XML path to return address data.
+     * 
+     * N.B. missing last part so this will return an array of all fields.
+     */
+    const XML_PATH_RETURN_ADDRESS = 'postnl/cif_return_address';
     
     /**
      * Possible barcodes series per barcode type
@@ -536,7 +548,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         if ($shipment) {
             $additionalCustomerData = array(
-                'Address'            => $this->_getAddress('Sender', $shipment->getShippingAddress()),
+                'Address'            => $this->_getAddress('Sender'),
                 'CollectionLocation' => $this->_getCollectionLocation(),
                 'ContactPerson'      => $this->_getContactName(),
                 'Email'              => $this->_getContactEmail(),
@@ -584,6 +596,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             }
         }
         
+        /**
+         * Shipment weight may not be less than 1 gram
+         */
+        if ($shipmentWeight < 1) {
+            $shipmentWeight = 1;
+        }
+        
         $shipmentData = array(
             'Barcode'                  => $barcode,
             'CollectionTimeStampEnd'   => '',
@@ -605,16 +624,37 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Dimension'                => array(
                                            'Weight'  => round($shipmentWeight),
                                        ),
-            'Addresses'                => array(
-                                           'Address' => $this->_getAddress('Receiver', $shippingAddress),
-                                       ),
             'Reference'                => $shipment->getIncrementId(),
         );
         
+        /**
+         * Add address data
+         */
+        $useSenderAddressAsReturn = Mage::getStoreConfig(self::XML_PATH_USE_SENDER_ADDRESS_AS_RETURN, $this->getStoreId());
+        if ($useSenderAddressAsReturn) {
+            $addresses = array(
+                'Address' => $this->_getAddress('Receiver', $shippingAddress),
+            );
+        } else {
+            $addresses = array(
+                'Address' => array(
+                    $this->_getAddress('Receiver', $shippingAddress),
+                    $this->_getAddress('Return'),
+                ),
+            );
+        }
+        $shipmentData['Addresses'] = $addresses;
+        
+        /**
+         * Add extra cover data
+         */
         if ($postnlShipment->hasExtraCover() || $postnlShipment->isCod()) {
             $shipmentData['Amounts'] = $this->_getAmount($postnlShipment);
         }
         
+        /**
+         * Add customs data
+         */
         if ($postnlShipment->isGlobalShipment()) {
             $shipmentData['Customs'] = $this->_getCustoms($shipment);
         }
@@ -630,7 +670,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * 
      * @return array
      */
-    protected function _getAddress($addressType, $shippingAddress)
+    protected function _getAddress($addressType, $shippingAddress= false)
     {
         $availableAddressTypes = $this->getAddressTypes();
         if (!array_key_exists($addressType, $availableAddressTypes)) {
@@ -641,6 +681,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * Determine which address to use. Currently only 'Sender' and 'Reciever' are fully supported.
          * Other possible address types will use the default 'reciever' address.
          */
+        $streetData = false;
         switch ($addressType) {
             case 'Sender':
                 /**
@@ -649,7 +690,40 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                  * conventional Mage_Sales_Model_Order_Address object.
                  */
                 $senderAddress = Mage::getStoreConfig(self::XML_PATH_SENDER_ADDRESS, $this->getStoreId());
+                
+                $streetData = array(
+                    'streetname'           => $senderAddress['streetname'],
+                    'housenumber'          => $senderAddress['housenumber'],
+                    'housenumberExtension' => $senderAddress['housenumber_extension'],
+                    'fullStreet'           => '',
+                );
+                
                 $address = new Varien_Object($senderAddress);
+                break;
+            case 'Return':
+                /**
+                 * Check if the return address is the same as the sender address. If so, no address is returned
+                 */
+                $useSenderAddress = Mage::getStoreConfig(self::XML_PATH_USE_SENDER_ADDRESS_AS_RETURN, $this->getStoreId());
+                if ($useSenderAddress) {
+                    return false;
+                }
+                
+                /**
+                 * Get all cif_return_address fields as an array and convert that to a Varien_Object
+                 * This allows the _prepareAddress method to access this data in the same way as a
+                 * conventional Mage_Sales_Model_Order_Address object.
+                 */
+                $returnAddress = Mage::getStoreConfig(self::XML_PATH_RETURN_ADDRESS, $this->getStoreId());
+                
+                $streetData = array(
+                    'streetname'           => $returnAddress['streetname'],
+                    'housenumber'          => $returnAddress['housenumber'],
+                    'housenumberExtension' => $returnAddress['housenumber_extension'],
+                    'fullStreet'           => '',
+                );
+                
+                $address = new Varien_Object($returnAddress);
                 break;
             case 'Reciever': //no break
             default:
@@ -657,7 +731,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 break;
         }
         
-        $addressArray                = $this->_prepareAddressArray($address);
+        $addressArray                = $this->_prepareAddressArray($address, $streetData);
         $addressArray['AddressType'] = $availableAddressTypes[$addressType];
         
         return $addressArray;
@@ -667,12 +741,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Forms an array of address data compatible with CIF
      * 
      * @param Mage_Sales_Model_Order_Address $address
+     * @param array | boolean $streetData Optional parameter containing streetname, housenr, housenr extension and fullStreet values.
      * 
      * @return array
      */
-    protected function _prepareAddressArray($address)
+    protected function _prepareAddressArray($address, $streetData = false)
     {
-        $streetData = $this->_getStreetData($address);
+        if ($streetData === false) {
+            $streetData = $this->_getStreetData($address);
+        }
         
         $addressArray = array(
             'FirstName'        => $address->getFirstname(),
@@ -1044,17 +1121,26 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             /**
              * A maximum of 5 rows are allowed
              */
-            if (++$itemCount >= 5) {
+            if (++$itemCount > 5) {
                 break;
+            }
+            
+            $itemWeight = Mage::helper('postnl/cif')->standardizeWeight(
+                $item->getWeight(), 
+                $this->getStoreId()
+            );
+            
+            /**
+             * Item weight may not be less than 1 gram
+             */
+            if ($itemWeight < 0.01) {
+                $itemWeight = 0.01;
             }
             
             $itemData = array(
                 'Description'     => $this->_getCustomsDescription($item),
                 'Quantity'        => $item->getQty(),
-                'Weight'          => Mage::helper('postnl/cif')->standardizeWeight(
-                                         $item->getWeight(), 
-                                         $this->getStoreId()
-                                     ),
+                'Weight'          => $itemWeight,
                 'Value'           => ($this->_getCustomsValue($item) * $item->getQty()),
                 'HSTariffNr'      => $this->_getHSTariff($item),
                 'CountryOfOrigin' => $this->_getCountryOfOrigin($item),
@@ -1115,7 +1201,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * @link http://us1.php.net/manual/en/function.natsort.php
          */
         natsort($sortedItems);
-        if ($sortingDirection == 'asc') {
+        if ($sortingDirection == 'desc') {
             $sortedItems = array_reverse($sortedItems, true); //keep key-value associations
         }
         
