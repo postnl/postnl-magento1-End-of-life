@@ -36,11 +36,23 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_isCronActive = $this->isCronActive(); ?>
-<?php if ($_isCronActive === false):?>
-    <div class="notification-global">
-        <strong><?php echo $this->__('It appears that your cron is not working properly.'); ?></strong>
-        <?php echo $this->__('PostNL requires the cron to be active in order to function.') ?>
-    </div>
-<?php endif;?>
+ 
+$installer = $this;
+
+$installer->startSetup();
+
+$installer->getConnection()
+          ->addColumn(
+               $installer->getTable('postnl_core/shipment'),
+               'parcel_count',
+               array(
+                   'nullable' => true,
+                   'length'   => 5,
+                   'type'     => Varien_Db_Ddl_Table::TYPE_INTEGER,
+                   'unsigned' => true,
+                   'comment'  => 'Parcel Count',
+                   'default'  => 1,
+               )
+          );
+
+$installer->endSetup();

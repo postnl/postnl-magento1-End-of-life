@@ -89,7 +89,7 @@ $postnlShipmentLabelTable = $installer->getConnection()
         'unsigned'  => true,
         'nullable'  => true,
         ), 'Parent Id')
-    ->addColumn('label', Varien_Db_Ddl_Table::TYPE_BLOB, null, array(
+    ->addColumn('label', Varien_Db_Ddl_Table::TYPE_BLOB, 16777216 /* 2^24 (medium blob) */, array(
         'nullable'  => false,
         ), 'Label')
     ->addColumn('label_type', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(

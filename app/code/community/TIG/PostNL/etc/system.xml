@@ -745,22 +745,40 @@
                     	</weight_unit>
                     </fields>
 				</cif_product_options>
-				<cif_customs_settings translate="label" module="postnl">
-		    		<label>Customs Settings</label>
+				<cif_globalpack_settings translate="label" module="postnl">
+		    		<label>GlobalPack Settings</label>
                     <sort_order>900</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
+                    <show_in_store>0</show_in_store>
                     <fields>
+                        <customs_license_number translate="label comment" module="postnl">
+                            <label>Customs license number</label>
+                            <comment>If you do not own a customs license, leave this field empty.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </customs_license_number>
+                        <customs_certificate_number translate="label comment" module="postnl">
+                            <label>Customs certificate number</label>
+                            <comment>If you do not own a customs certificate, leave this field empty.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </customs_certificate_number>
                     	<use_hs_tariff translate="label comment" module="postnl">
                             <label>Use HS Tariff</label>
                             <comment>Enable this field to specify a product attribute to use as the product's HS tariff.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>10</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</use_hs_tariff>
                     	<hs_tariff_attribute translate="label comment" module="postnl">
@@ -768,10 +786,10 @@
                             <comment>The product attribute used to determine the product's HS tariff.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>20</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <depends>
                             	<use_hs_tariff>1</use_hs_tariff>
                             </depends>
@@ -782,10 +800,10 @@
                             <comment>The product attribute used to determine product's customs value.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</customs_value_attribute>
                     	<country_of_origin_attribute translate="label comment" module="postnl">
@@ -793,10 +811,10 @@
                             <comment>The product attribute used to determine the product's country of origin.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</country_of_origin_attribute>
                     	<description_attribute translate="label comment" module="postnl">
@@ -804,10 +822,10 @@
                             <comment>The product attribute used to supply the product's customs description.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</description_attribute>
                         <product_sorting_attribute translate="label comment" module="postnl">
@@ -815,24 +833,24 @@
                             <comment>Global shipping labels can only contain 5 products. This attribute will determine how these are sorted so taht only the top 5 will be printed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </product_sorting_attribute>
                         <product_sorting_direction translate="label comment" module="postnl">
                             <label>Product sorting direction</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_direction</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </product_sorting_direction>
                     </fields>
-				</cif_customs_settings>
+				</cif_globalpack_settings>
 				<advanced translate="label" module="postnl">
 		    		<label>Advanced Settings</label>
                     <sort_order>10000</sort_order> <!-- This should always be the last group -->
