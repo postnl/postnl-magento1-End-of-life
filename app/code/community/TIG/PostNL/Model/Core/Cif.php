@@ -70,13 +70,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Constants containing xml paths to cif customs configuration options
      */
-    const XML_PATH_CUSTOMS_USE_HS_TARIFF_ATTRIBUTE     = 'postnl/cif_customs_settings/use_hs_tariff';
-    const XML_PATH_CUSTOMS_HS_TARIFF_ATTRIBUTE         = 'postnl/cif_customs_settings/hs_tariff_attribute';
-    const XML_PATH_CUSTOMS_CUSTOMS_VALUE_ATTRIBUTE     = 'postnl/cif_customs_settings/customs_value_attribute';
-    const XML_PATH_CUSTOMS_COUNTRY_OF_ORIGIN_ATTRIBUTE = 'postnl/cif_customs_settings/country_of_origin_attribute';
-    const XML_PATH_CUSTOMS_DESCRIPTION_ATTRIBUTE       = 'postnl/cif_customs_settings/description_attribute';
-    const XML_PATH_CUSTOMS_PRODUCT_SORTING_ATTRIBUTE   = 'postnl/cif_customs_settings/product_sorting_attribute';
-    const XML_PATH_CUSTOMS_PRODUCT_SORTING_DIRECTION   = 'postnl/cif_customs_settings/product_sorting_direction';
+    const XML_PATH_GLOBALPACK_CUSTOMS_LICENSE_NUMBER      = 'postnl/cif_globalpack_settings/customs_license_number';
+    const XML_PATH_GLOBALPACK_CUSTOMS_CERTIFICATE_NUMBER  = 'postnl/cif_globalpack_settings/customs_certificate_number';
+    const XML_PATH_GLOBALPACK_USE_HS_TARIFF_ATTRIBUTE     = 'postnl/cif_globalpack_settings/use_hs_tariff';
+    const XML_PATH_GLOBALPACK_HS_TARIFF_ATTRIBUTE         = 'postnl/cif_globalpack_settings/hs_tariff_attribute';
+    const XML_PATH_GLOBALPACK_CUSTOMS_VALUE_ATTRIBUTE     = 'postnl/cif_globalpack_settings/customs_value_attribute';
+    const XML_PATH_GLOBALPACK_COUNTRY_OF_ORIGIN_ATTRIBUTE = 'postnl/cif_globalpack_settings/country_of_origin_attribute';
+    const XML_PATH_GLOBALPACK_DESCRIPTION_ATTRIBUTE       = 'postnl/cif_globalpack_settings/description_attribute';
+    const XML_PATH_GLOBALPACK_PRODUCT_SORTING_ATTRIBUTE   = 'postnl/cif_globalpack_settings/product_sorting_attribute';
+    const XML_PATH_GLOBALPACK_PRODUCT_SORTING_DIRECTION   = 'postnl/cif_globalpack_settings/product_sorting_direction';
     
     /**
      * XML path to setting that dtermines whether to use a seperate return address
@@ -133,7 +135,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         'Sender'      => '02',
         'Return'      => '03',
         'Collection'  => '04',
-        'Alternative' => '08', // alternative sender
+        'Alternative' => '08', // alternative sender. Parcels that cannot be delivered will be returned here
         'Delivery'    => '09', // for use with PakjeGemak
     );
     
@@ -639,7 +641,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $addresses = array(
                 'Address' => array(
                     $this->_getAddress('Receiver', $shippingAddress),
-                    $this->_getAddress('Return'),
+                    $this->_getAddress('Alternative'),
                 ),
             );
         }
@@ -700,7 +702,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 
                 $address = new Varien_Object($senderAddress);
                 break;
-            case 'Return':
+            case 'Alternative':
                 /**
                  * Check if the return address is the same as the sender address. If so, no address is returned
                  */
@@ -1111,6 +1113,22 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
         
         /**
+         * Add license info
+         */
+        if ($this->_getCustomsLicense()) {
+            $customs['License'] = 'true';
+            $customs['LicenseNr'] = $this->_getCustomsLicense();
+        }
+        
+        /**
+         * Add certificate info
+         */
+        if ($this->_getCustomsCertificate()) {
+            $customs['Certificate'] = 'true';
+            $customs['CertificateNr'] = $this->_getCustomsCertificate();
+        }
+        
+        /**
          * Add information about the contents of the shipment
          */
         $itemCount = 0;
@@ -1182,8 +1200,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Get the attribute and direction used for sorting
          */
-        $sortingAttribute = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_PRODUCT_SORTING_ATTRIBUTE, $this->getStoreId());
-        $sortingDirection = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_PRODUCT_SORTING_DIRECTION, $this->getStoreId());
+        $sortingAttribute = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_PRODUCT_SORTING_ATTRIBUTE, $this->getStoreId());
+        $sortingDirection = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_PRODUCT_SORTING_DIRECTION, $this->getStoreId());
         
         /**
          * Place the item's sorting value in a temporary array where the key is the item's ID
@@ -1229,14 +1247,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * HS Tariff is an optional attribute. Check if it's used and if not, return a default value of 000000
          */
-        if (!Mage::getStoreConfig(self::XML_PATH_CUSTOMS_USE_HS_TARIFF_ATTRIBUTE, $storeId)) {
+        if (!Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_USE_HS_TARIFF_ATTRIBUTE, $storeId)) {
             return '000000';
         }
         
         if ($this->getHSTariffAttribute() !== null) {
             $hsTariffAttribute = $this->getHSTariffAttribute();
         } else {
-            $hsTariffAttribute = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_HS_TARIFF_ATTRIBUTE, $storeId);
+            $hsTariffAttribute = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_HS_TARIFF_ATTRIBUTE, $storeId);
             $this->setHSTariffAttribute($hsTariffAttribute);
         }
         
@@ -1260,7 +1278,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if ($this->getCountryOfOriginAttribute() !== null) {
             $countryOfOriginAttribute = $this->getCountryOfOriginAttribute();
         } else {
-            $countryOfOriginAttribute = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_COUNTRY_OF_ORIGIN_ATTRIBUTE, $storeId);
+            $countryOfOriginAttribute = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_COUNTRY_OF_ORIGIN_ATTRIBUTE, $storeId);
             $this->setCountryOfOriginAttribute($countryOfOriginAttribute);
         }
         
@@ -1284,7 +1302,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if ($this->getCustomsValueAttribute() !== null) {
             $customsValueAttribute = $this->getCustomsValueAttribute();
         } else {
-            $customsValueAttribute = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_CUSTOMS_VALUE_ATTRIBUTE, $storeId);
+            $customsValueAttribute = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_CUSTOMS_VALUE_ATTRIBUTE, $storeId);
             $this->setCustomsValueAttribute($customsValueAttribute);
         }
         
@@ -1308,7 +1326,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if ($this->getCustomsDescriptionAttribute() !== null) {
             $descriptionAttribute = $this->getCustomsDescriptionAttribute();
         } else {
-            $descriptionAttribute = Mage::getStoreConfig(self::XML_PATH_CUSTOMS_DESCRIPTION_ATTRIBUTE, $storeId);
+            $descriptionAttribute = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_DESCRIPTION_ATTRIBUTE, $storeId);
             $this->setCustomsDescriptionAttribute($descriptionAttribute);
         }
         
@@ -1421,5 +1439,39 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $barcodeRange = (string) Mage::getStoreConfig(self::XML_PATH_GLOBAL_BARCODE_RANGE, $storeId);
         
         return $barcodeRange;
+    }
+    
+    /**
+     * Gets the customs license from system/config
+     * 
+     * @return string
+     */
+    protected function _getCustomsLicense()
+    {
+        $storeId = $this->getStoreId();
+        $customsLicense = (string) Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_CUSTOMS_LICENSE_NUMBER, $storeId);
+        
+        if (empty($customsLicense)) {
+            return false;
+        }
+        
+        return $customsLicense;
+    }
+    
+    /**
+     * Gets the customs certificate from system/config
+     * 
+     * @return string
+     */
+    protected function _getCustomsCertificate()
+    {
+        $storeId = $this->getStoreId();
+        $customsCertificate = (string) Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_CUSTOMS_CERTIFICATE_NUMBER, $storeId);
+        
+        if (empty($customsCertificate)) {
+            return false;
+        }
+        
+        return $customsCertificate;
     }
 }

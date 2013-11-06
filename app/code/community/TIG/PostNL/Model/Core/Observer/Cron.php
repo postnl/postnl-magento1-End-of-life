@@ -152,7 +152,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Get all postnl shipments without a barcode
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
-        $postnlShipmentCollection->addFieldToFilter('barcode', array('null' => true));
+        $postnlShipmentCollection->addFieldToFilter('main_barcode', array('null' => true));
         
         $n = 1000;
         foreach ($postnlShipmentCollection as $postnlShipment) {
@@ -204,7 +204,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter(
-                                     'barcode', 
+                                     'main_barcode', 
                                      array('notnull' => true)
                                  )
                                  ->addFieldToFilter(

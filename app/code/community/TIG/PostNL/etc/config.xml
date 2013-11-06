@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.2.5</version>
+			<version>0.2.6</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -323,7 +323,9 @@
         		<default_global_product_options>4945</default_global_product_options> <!-- GlobalPack -->
         		<weight_unit>gram</weight_unit> <!-- gram -->
         	</cif_product_options>
-        	<cif_customs_settings>
+        	<cif_globalpack_settings>
+        	    <customs_license_number/>
+        	    <customs_certificate_number/>
         		<use_hs_tariff>0</use_hs_tariff> <!-- Do not use a specific HS tariff -->
         		<hs_tariff_attribute/>
         		<customs_value_attribute>price</customs_value_attribute> <!-- price attribute -->
@@ -331,7 +333,7 @@
         		<description_attribute>short_description</description_attribute> <!-- short description attribute -->
         		<product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
         		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
-        	</cif_customs_settings>
+        	</cif_globalpack_settings>
         	<advanced>
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
