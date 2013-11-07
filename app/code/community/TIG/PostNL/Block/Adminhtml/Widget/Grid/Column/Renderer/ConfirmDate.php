@@ -73,7 +73,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends
         }
         
         $value = $row->getData($this->getColumn()->getIndex());
-        if (date('Ymd') == date('Ymd', strtotime($value))) { //check if value equals today
+        if (date('Ymd', Mage::getModel('core/date')->timestamp()) == date('Ymd', strtotime($value))) { //check if value equals today
             return Mage::helper('postnl')->__('Today');
         }
         
