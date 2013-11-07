@@ -47,7 +47,7 @@
         addProductOptions();
         addExtraCover();
         
-        <?php if (Mage::helper('postnl/cif')->isGlobalShipment($_shipment) || true): ?>
+        <?php if (Mage::helper('postnl/cif')->isGlobalShipment($_shipment)): ?>
             addShipmentType();
         <?php endif; ?>
         
