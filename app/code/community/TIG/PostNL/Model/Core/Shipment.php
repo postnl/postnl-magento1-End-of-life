@@ -859,20 +859,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function updateShippingStatus()
     {
-        if (!$this->canUpdateShippingStatus()) {
-            throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
-        }
+        // if (!$this->canUpdateShippingStatus()) {
+            // throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
+        // }
         
         $cif = Mage::getModel('postnl_core/cif');
         $result = $cif->getShipmentStatus($this);
         
         $currentPhase = $result->Status->CurrentPhaseCode;
         $this->setShippingPhase($currentPhase);
-        
-        $oldStatuses = $result->OldStatuses;
-        if ($oldStatuses) {
-            $this->updateStatusHistory($oldStatuses);
-        }
         
         return $this;
     }
@@ -884,29 +879,39 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * 
      * @return TIG_PostNL_Model_Core_Shipment
      */
-    public function updateStatusHistory($oldStatuses)
+    public function updateCompleteShippingStatus()
     {
-        $completeStatusHistory = $oldStatuses->CompleteStatusResponseOldStatus;
-        $completeStatusHistoryArray = $this->_sortStatusResponse($completeStatusHistory);
+        // if (!$this->canUpdateShippingStatus()) {
+            // throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
+        // }
         
-        foreach ($completeStatusHistoryArray as $status) {
+        $cif = Mage::getModel('postnl_core/cif');
+        $result = $cif->getCompleteShipmentStatus($this);
+        
+        $currentPhase = $result->Status->CurrentPhaseCode;
+        $this->setShippingPhase($currentPhase);
+        
+        $completeStatusHistory = $result->Events->CompleteStatusResponseEvent;
+        echo '<pre>';
+        foreach ($completeStatusHistory as $status) {
+            var_dump($status);
             $statusHistory = Mage::getModel('postnl_core/shipment_status_history');
-            /**
-             * Check if a status history item exists for the given code and shipment id.
-             * If not, create a new one
-             */
-            if ($statusHistory->statusHistoryExists($this->getId(), $status->Code)) {
-                continue;
-            }
-            
-            $statusHistory->setParentId($this->getId())
-                          ->setCode($status->Code)
-                          ->setDescription($status->Description)
-                          ->setPhase($status->PhaseCode)
-                          ->setTimestamp(strtotime($status->TimeStamp), Mage::getModel('core/date')->timestamp())
-                          ->save();
+            // /**
+             // * Check if a status history item exists for the given code and shipment id.
+             // * If not, create a new one
+             // */
+            // if ($statusHistory->statusHistoryExists($this->getId(), $status->Code)) {
+                // continue;
+            // }
+//             
+            // $statusHistory->setParentId($this->getId())
+                          // ->setCode($status->Code)
+                          // ->setDescription($status->Description)
+                          // ->setPhase($status->PhaseCode)
+                          // ->setTimestamp(strtotime($status->TimeStamp), Mage::getModel('core/date')->timestamp())
+                          // ->save();
         }
-        
+        exit;
         return $this;
     }
 
@@ -1201,36 +1206,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         return true;
-    }
-    
-    /**
-     * Sorts a status history array on the timestamp of each status item
-     * 
-     * @param array $statusHistory
-     * 
-     * @return array The sorted array
-     * 
-     * @todo filter double occurrences of a status code
-     */
-    protected function _sortStatusResponse($statusHistory)
-    {
-        /**
-         * Temporarily store the statusses in an array with their timestamp as the key
-         */
-        $sortedArray = array();
-        foreach ($statusHistory as $status) {
-            $sortedArray[strtotime($status->TimeStamp)] = $status;
-        }
-        
-        /**
-         * Sort high to low by key
-         */
-        krsort($sortedArray);
-        
-        /**
-         * Return only the values
-         */
-        return array_values($sortedArray);
     }
     
     /**
