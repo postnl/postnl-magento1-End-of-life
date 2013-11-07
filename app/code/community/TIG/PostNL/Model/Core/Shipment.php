@@ -272,10 +272,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getExtraCoverAmount()
     {
-        if (!$this->hasExtraCover()) {
-            return 0;
-        }
-        
         if ($this->getData('extra_cover_amount')) {
             return $this->getData('extra_cover_amount');
         }
@@ -327,7 +323,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * 
      * @param int $amount
      * 
-     * @return TIG_PostNL_Model_Shipment
+     * @return TIG_PostNL_Model_Core_Shipment
      */
     public function setExtraCoverAmount($amount)
     {
@@ -342,6 +338,32 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $this->setData('extra_cover_amount', $amount);
         
+        return $this;
+    }
+    
+    /**
+     * Sets a shipment's shipment type. This is required for GlobalPack shipments
+     * 
+     * @param string $type
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setShipmentType($type)
+    {
+        /**
+         * Only global shipments have a shipment type
+         */
+        if (!$this->isGlobalShipment()) {
+            return $this;
+        }
+        
+        /**
+         * Convert shipment type to CIF-compatible version
+         */
+        $shipmentType = str_replace('_', ' ', $type);
+        $shipmentType = ucwords($shipmentType);
+        
+        $this->setData('shipment_type', $shipmentType);
         return $this;
     }
     
@@ -600,11 +622,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $productCode = $this->getProductCode();
         $extraCoverProductCodes = $this->getExtraCoverProductCodes();
         
-        if (in_array($productCode, $extraCoverProductCodes)) {
-            return true;
+        if (!in_array($productCode, $extraCoverProductCodes)) {
+            return false;
         }
         
-        return false;
+        if ($this->getExtraCoverAmount() < 1) {
+            return false;
+        }
+        
+        return true;
     }
     
     /**
@@ -836,7 +862,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (!$this->canUpdateShippingStatus()) {
             throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
         }
-
+        
         $cif = Mage::getModel('postnl_core/cif');
         $result = $cif->getShipmentStatus($this);
         
@@ -1125,7 +1151,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Resets this shipment to a pre-confirmed state
      * 
-     * @return TIG_PostNL_Model_Shipment
+     * @return TIG_PostNL_Model_Core_Shipment
      */
     public function resetConfirmation()
     {
@@ -1261,7 +1287,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Removes all labels associated with this shipment
      * 
-     * @return TIG_PostNL_Model_Shipment
+     * @return TIG_PostNL_Model_Core_Shipment
      */
     public function deleteLabels()
     {
@@ -1278,7 +1304,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Removes all barcodes associated with this shipment
      * 
-     * @return TIG_PostNL_Model_Shipment
+     * @return TIG_PostNL_Model_Core_Shipment
      */
     public function deleteBarcodes()
     {
@@ -1342,16 +1368,25 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->_saveAdditionalShippingOptions();
         }
         
+        /**
+         * Set confirm status
+         */
         if ($this->getConfirmStatus() === null) {
             $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
         }
         
+        /**
+         * Set confrirmed at
+         */
         if ($this->getConfirmedStatus() == self::CONFIRM_STATUS_CONFIRMED
             && $this->getConfirmedAt() === null
         ) {
             $this->setConfirmedAt(Mage::getModel('core/date')->timestamp());
         }
         
+        /**
+         * Set whether labels have printed or not
+         */
         if ($this->getlabelsPrinted() == 0 && $this->hasLabels()) {
             $this->setLabelsPrinted(1);
         }

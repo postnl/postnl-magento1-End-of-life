@@ -166,6 +166,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             return $this;
         }
         
+        $extraOptions = array();
+        
         /**
          * Check if any options were selected. If not, the default will be used
          */
@@ -179,9 +181,24 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          */
         $extraCoverValue = $this->getRequest()->getParam('extra_cover_value');
         if ($extraCoverValue) {
-            Mage::register('postnl_additional_options', array('extra_cover_amount' => $extraCoverValue));
+            $extraOptions['extra_cover_amount'] = $extraCoverValue;
         }
         
+        /**
+         * Check if a shipment type was specified
+         */
+        $shipmentType = $this->getRequest()->getParam('globalpack_shipment_type');
+        if ($shipmentType) {
+            $extraOptions['shipment_type'] = $shipmentType;
+        }
+        
+        /**
+         * Register the extra options
+         */
+        if (!empty($extraOptions)) {
+            Mage::register('postnl_additional_options', $extraOptions);
+            
+        }
         try {
             /**
              * Create the shipments
@@ -506,7 +523,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $postnlShipment->generateLabel()
                            ->save();
         }
-                       
+                   
         $labels = $postnlShipment->getLabels();
         return $labels;
     }

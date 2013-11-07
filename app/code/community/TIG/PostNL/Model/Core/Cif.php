@@ -213,19 +213,57 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         'BE'
     );
     
+    /**
+     * These shipment types require an invoice in the customs declaration. Other possible shipment types are:
+     * - Gift
+     * - Documents
+     * 
+     * @var array
+     */
+    protected $_invoiceRequiredShipmentTypes = array(
+        'Commercial Goods',
+        'Commercial Sample',
+        'Returned Goods',
+    );
+    
+    /**
+     * Get possible address types
+     * 
+     * @return array
+     */
     public function getAddressTypes()
     {
         return $this->_addressTypes;
     }
     
+    /**
+     * Get possible printer types
+     * 
+     * @return array
+     */
     public function getPrinterTypes()
     {
         return $this->_printerTypes;
     }
     
+    /**
+     * Get country IDs that allow fullstreet usage
+     * 
+     * @return array
+     */
     public function getAllowedFullStreetCountries()
     {
         return $this->_allowedFullStreetCountries;
+    }
+    
+    /**
+     * Get shipment types that require an invoice number
+     * 
+     * @return array
+     */
+    public function getInvoiceRequiredShipmentTypes()
+    {
+        return $this->_invoiceRequiredShipmentTypes;
     }
     
     /**
@@ -658,7 +696,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * Add customs data
          */
         if ($postnlShipment->isGlobalShipment()) {
-            $shipmentData['Customs'] = $this->_getCustoms($shipment);
+            $shipmentData['Customs'] = $this->_getCustoms($postnlShipment);
         }
         
         return $shipmentData;
@@ -841,7 +879,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             return $amount;
         }
         
-        if ($postnlShipment->hasExtraCover()) {
+        if ($postnlShipment->hasExtraCover() && $postnlShipment->getExtraCoverAmount() > 0) {
             $extraCover = number_format($postnlShipment->getExtraCoverAmount(), 2, '.', '');
             $amount[] = array(
                 'AccountName'       => '',
@@ -1095,18 +1133,19 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * create Customs CIF object
      * 
-     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      * 
      * @return array
      */
-    protected function _getCustoms($shipment)
+    protected function _getCustoms($postnlShipment)
     {
-        $orderId = $shipment->getOrder()->getIncrementId();
+        $shipment = $postnlShipment->getShipment();
+        $shipmentType = $postnlShipment->getShipmentType();
+        
         $customs = array(
-            'ShipmentType'           => 'Commercial Goods', // Gift / Documents / Commercial Goods / Commercial Sample / Returned Goods
+            'ShipmentType'           => $shipmentType, // Gift / Documents / Commercial Goods / Commercial Sample / Returned Goods
             'HandleAsNonDeliverable' => 'false',
-            'Invoice'                => 'true',
-            'InvoiceNr'              => $orderId,
+            'Invoice'                => 'false',
             'Certificate'            => 'false',
             'License'                => 'false',
             'Currency'               => 'EUR',
@@ -1129,6 +1168,22 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
         
         /**
+         * Add invoice info
+         * 
+         * This is mandatory for certain shipment types as well as when neither a certificate nor a license is available
+         */
+        $invoiceRequiredShipmentTypes = $this->getInvoiceRequiredShipmentTypes();
+        if (in_array($shipmentType, $invoiceRequiredShipmentTypes)
+            || ($customs['License'] == 'false'
+                && $customs['Certificate'] == 'false'
+            )
+        ) {
+            $shipmentId = $shipment->getIncrementId();
+            $customs['Invoice'] = 'true';
+            $customs['InvoiceNr'] = $shipmentId;
+        }
+        
+        /**
          * Add information about the contents of the shipment
          */
         $itemCount = 0;
@@ -1143,6 +1198,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 break;
             }
             
+            /**
+             * Calculate the item's weight in kg
+             */
             $itemWeight = Mage::helper('postnl/cif')->standardizeWeight(
                 $item->getWeight(), 
                 $this->getStoreId()
@@ -1158,7 +1216,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $itemData = array(
                 'Description'     => $this->_getCustomsDescription($item),
                 'Quantity'        => $item->getQty(),
-                'Weight'          => $itemWeight,
+                'Weight'          => $itemWeight * $item->getQty(),
                 'Value'           => ($this->_getCustomsValue($item) * $item->getQty()),
                 'HSTariffNr'      => $this->_getHSTariff($item),
                 'CountryOfOrigin' => $this->_getCountryOfOrigin($item),
