@@ -182,34 +182,87 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         '4945',
     );
     
+    /**
+     * Array of supported shipment types
+     * 
+     * @var array
+     */
+    protected $_shipmentTypes = array(
+        'gift'              => 'Gift',
+        'documents'         => 'Documents',
+        'commercial_goods'  => 'Commercial Goods',
+        'commercial_sample' => 'Commercial Sample',
+        'returned_goods'    => 'Returned Goods',
+    );
+    
+    /**
+     * Get an array of EU countries
+     * 
+     * @return array
+     */
     public function getEuCountries()
     {
         return $this->_euCountries;
     }
     
+    /**
+     * Get an array of standard product codes
+     * 
+     * @return array
+     */
     public function getStandardProductCodes()
     {
         return $this->_standardProductCodes;
     }
     
+    /**
+     * Get an array of pakjegemak product codes
+     * 
+     * @return array
+     */
     public function getPakjeGemakProductCodes()
     {
         return $this->_pakjeGemakProductCodes;
     }
     
+    /**
+     * Get an array of eu product codes
+     * 
+     * @return array
+     */
     public function getEuProductCodes()
     {
         return $this->_euProductCodes;
     }
     
+    /**
+     * Get an array of eu combi-label product codes
+     * 
+     * @return array
+     */
     public function getEuCombilabelProductCodes()
     {
         return $this->_euCombilabelProductCodes;
     }
     
+    /**
+     * Get an array of global product codes
+     * 
+     * @return array
+     */
     public function getGlobalProductCodes()
     {
         return $this->_globalProductCodes;
+    }
+    
+    /**
+     * Get an array of possible shipment types
+     * 
+     * @return array
+     */
+    public function getShipmentTypes()
+    {
+        return $this->_shipmentTypes;
     }
     
     /**
@@ -269,13 +322,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getProductOptionsForShipment($shipment)
     {
-        $postnlShipment = Mage::getModel('postnl_core/shipment');
-        $postnlShipment->setShipment($shipment);
-        
         /**
          * Dutch product options
          */
-        if ($postnlShipment->isDutchShipment()) {
+        if ($this->isDutchShipment($shipment)) {
             $options = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
                            ->getAvailableOptions();
                            
@@ -285,7 +335,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /**
          * EU product options
          */
-        if ($postnlShipment->isEuShipment()) {
+        if ($this->isEuShipment($shipment)) {
             $options = Mage::getModel('postnl_core/system_config_source_euProductOptions')
                            ->getAvailableOptions();
                            
@@ -295,7 +345,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /**
          * Global product options
          */
-        if ($postnlShipment->isGlobalShipment()) {
+        if ($this->isGlobalShipment($shipment)) {
             $options = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
                            ->getAvailableOptions();
                            
@@ -303,6 +353,72 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         }
         
         return null;
+    }
+    
+    /**
+     * Check if a given shipment is dutch
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment | Mage_Sales_Model_Order_Shipment $shipment
+     * 
+     * @return boolean
+     * 
+     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     */
+    public function isDutchShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            return $shipment->isDutchShipment();
+        }
+        
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+        
+        return $tempPostnlShipment->isDutchShipment();
+    }
+    
+    /**
+     * Check if a given shipment has an EU destination
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment | Mage_Sales_Model_Order_Shipment $shipment
+     * 
+     * @return boolean
+     * 
+     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     */
+    public function isEuShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            return $shipment->isEuShipment();
+        }
+        
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+        
+        return $tempPostnlShipment->isEuShipment();
+    }
+    
+    /**
+     * Check if a given shipment has a global destination
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment | Mage_Sales_Model_Order_Shipment $shipment
+     * 
+     * @return boolean
+     * 
+     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     */
+    public function isGlobalShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            return $shipment->isGlobalShipment();
+        }
+        
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+        
+        return $tempPostnlShipment->isGlobalShipment();
     }
     
     /**

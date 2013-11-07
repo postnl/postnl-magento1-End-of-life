@@ -94,6 +94,18 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ProductOptions exte
     }
     
     /**
+     * Gets an array of shipment types for use with GlobalPack shipments
+     * 
+     * @return array
+     */
+    public function getShipmentTypes()
+    {
+        $shipmentTypes = Mage::helper('postnl/cif')->getShipmentTypes();
+        
+        return $shipmentTypes;
+    }
+    
+    /**
      * Do a few checks to see if the template should be rendered before actually rendering it
      * 
      * @return string | parent::_toHtml()

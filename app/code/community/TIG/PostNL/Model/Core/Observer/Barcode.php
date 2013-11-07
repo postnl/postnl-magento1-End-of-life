@@ -78,14 +78,6 @@ class TIG_PostNL_Model_Core_Observer_Barcode
                        ->save();
         
         /**
-         * If a product code has been posted by a form, set it in the registry. The shipment will use this, rather
-         * than using default settings.
-         */
-        if (Mage::app()->getRequest()->getParam('postnl_product_options')) {
-            Mage::register('postnl_product_options', Mage::app()->getRequest()->getParam('postnl_product_options'));
-        }
-        
-        /**
          * Barcode generation needs to be tried seperately. This functionality may throw a valid exception
          * in which case it needs to be tried again later without preventing the shipment from being
          * created. This may happen when CIF is overburdoned.

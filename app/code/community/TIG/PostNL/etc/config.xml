@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.2.6</version>
+			<version>0.2.7</version>
 		</TIG_PostNL>
 	</modules>
 	

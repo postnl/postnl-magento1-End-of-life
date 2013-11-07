@@ -38,17 +38,13 @@
  */
 ?>
 
-<?php $_productOptions = $this->getProductOptions(); ?>
-<p id="postnl_extra_cover_field">
-    <form id="postnl_extra_cover_form" name="postnl_extra_cover_form" style="display:none;">
-        <label for="postnl_extra_cover_value"><?php echo $this->__('Extra cover amount (in increments of 500)'); ?></label>
-        <input id="postnl_extra_cover_value" type="text" name="postnl[extra_cover_amount]" class="input-text required-entry validate-increment-500 validate-not-negative-number"></input>
-    </form>
-</p>
+<?php $_extraCoverProductOptions = $this->getExtraCoverProductOptions(); ?>
+<?php $_globalPackOption = $this->getGlobalPackProductOption(); ?>
 <script type ="text/javascript">
 //<![CDATA[
     document.observe('dom:loaded', function() {
-        var productOptions = '<?php echo json_encode($_productOptions); ?>';
+        var productOptions = '<?php echo json_encode($_extraCoverProductOptions); ?>';
+        var globalPackOption = '<?php echo $_globalPackOption; ?>';
         
         Object.extend(sales_order_grid_massactionJsObject, {
             apply: function(skipPostNLCheck) {
@@ -116,10 +112,20 @@
             overlayShowEffectOptions : null,
             overlayHideEffectOptions : null,
             open : function() {
-                content = "<form id='postnl_extra_cover_form' name='postnl_extra_cover_form'>"
-                        + "<label for='extra_cover_value'><?php echo $this->__('Extra cover amount (in increments of 500)'); ?></label>"
-                        + "<input id='extra_cover_value' type='text' name='extra_cover_value' class='input-text required-entry validate-increment-500 validate-not-negative-number'></input>"
-                        + "</form>";
+                content = "<form id='postnl_extra_cover_form' name='postnl_extra_cover_form'>"; //form element is only to enable Varien form validation
+                content += "<label for='extra_cover_value'><?php echo $this->__('Extra cover amount (in increments of 500)'); ?></label>"
+                        + "<input id='extra_cover_value'type='text' name='extra_cover_value' class='input-text required-entry validate-increment-500 validate-not-negative-number' value='0'/>";
+                
+                if (selectedProductOption.value == globalPackOption) {
+                   content += "<label for='globalpack_shipment_type'><?php echo $this->__('Shipment type'); ?></label>"
+                           + "<select id='globalpack_shipment_type' type='text' name='globalpack_shipment_type' class='validate-select required-field'>"
+                   <?php foreach ($this->getShipmentTypes() as $type => $label): ?>
+                           + "<option value='<?php echo $type; ?>'><?php echo $this->__($label); ?></option>"
+                   <?php endforeach; ?>
+                           + "</select>";
+                }
+                
+                content += "</form>";
                 this.openDialogWindow(content);
             },
             openDialogWindow : function(content) {
@@ -141,7 +147,7 @@
                     recenterAuto:true,
                     hideEffect:Element.hide,
                     showEffect:Element.show,
-                    id:"extra-cover-dialog",
+                    id:"extra-options-dialog",
                     buttonClass:"form-button",
                     okLabel:"Submit",
                     ok: this.okDialogWindow.bind(this),
@@ -155,9 +161,15 @@
                     return false;
                 }
                 
-                $('extra-cover-dialog').hide();
                 $('extra_cover_value').hide();
                 $('sales_order_grid_massaction-form').insert($('extra_cover_value'));
+                
+                if ($('globalpack_shipment_type')) {
+                    $('globalpack_shipment_type').hide();
+                    $('sales_order_grid_massaction-form').insert($('globalpack_shipment_type'));
+                }
+                
+                $('extra-options-dialog').hide();
                 sales_order_grid_massactionJsObject.apply(true);
             },
             closeDialogWindow : function(dialogWindow) {

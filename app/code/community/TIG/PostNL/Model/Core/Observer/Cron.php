@@ -270,6 +270,11 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             try{
                 $helper->cronLog("Updating shipping status for shipment #{$postnlShipment->getId()}");
+                
+                if (!$postnlShipment->canUpdateShippingStatus()) {
+                    continue;
+                }
+                
                 $postnlShipment->updateShippingStatus()
                                ->save();
             } catch (Exception $e) {

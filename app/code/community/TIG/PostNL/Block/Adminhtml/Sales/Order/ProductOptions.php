@@ -43,17 +43,52 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends Mage_Adminht
      * 
      * @return array
      */
-    public function getProductOptions()
+    public function getExtraCoverProductOptions()
     {
-        if ($this->getData('product_options')) {
-            return $this->getData('product_options');
+        if ($this->getData('extra_cover_product_options')) {
+            return $this->getData('extra_cover_product_options');
         }
         
         $productOptions = Mage::getModel('postnl_core/system_config_source_allProductOptions')
                               ->getExtraCoverOptions(true);
         
-        $this->setProductOptions($productOptions);
+        $this->setExtraCoverProductOptions($productOptions);
         return $productOptions;
+    }
+    
+    /**
+     * Get available GlobalPack product option
+     * 
+     * @return string
+     */
+    public function getGlobalPackProductOption()
+    {
+        if ($this->getData('globalpack_product_option')) {
+            return $this->getData('globalpack_product_option');
+        }
+        
+        $globalPackProductOption = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
+                                       ->getAvailableOptions();
+        
+        if (empty($globalPackProductOption)) {
+            return '';
+        }
+        
+        $optionValue = $globalPackProductOption[0]['value'];
+        $this->setGlobalpackProductOption($optionValue);
+        return $optionValue;
+    }
+    
+    /**
+     * Gets an array of shipment types for use with GlobalPack shipments
+     * 
+     * @return array
+     */
+    public function getShipmentTypes()
+    {
+        $shipmentTypes = Mage::helper('postnl/cif')->getShipmentTypes();
+        
+        return $shipmentTypes;
     }
     
     /**
