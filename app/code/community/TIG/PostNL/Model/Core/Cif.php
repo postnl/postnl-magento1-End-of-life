@@ -382,50 +382,30 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Confirms the choen shipment without generating labels
      * 
      * @param Mage_Sales_Model_Order_Shipment $shipment
-     * @param string $printerType The printertype used. Currently only 'GraphicFile|PDF' is fully supported
+     * @param string $barcode
      * 
      * @return array
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function confirmShipment($postnlShipment, $printerType = 'GraphicFile|PDF')
+    public function confirmShipment($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false)
     {
         $shipment = $postnlShipment->getShipment();
-        
-        $availablePrinterTypes = $this->_printerTypes;
-        if (!in_array($printerType, $availablePrinterTypes)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
-        }
-        
-        $parcelCount = $postnlShipment->getParcelCount();
-        $mainBarcode = $postnlShipment->getMainBarcode();
-        
-        $message     = $this->_getMessage($mainBarcode, array('Printertype' => $printerType));
+                
+        $message     = $this->_getMessage($mainBarcode);
         $customer    = $this->_getCustomer($shipment);
         
-        if ($parcelCount < 2) {
-            /**
-             * Create a single shipment object
-             */
+        /**
+         * Create a single shipment object
+         */
+        if ($mainBarcode === false || $shipmentNumber === false) {
             $cifShipment = array(
-                'Shipment' => $this->_getShipment($postnlShipment, $mainBarcode)
+                'Shipment' => $this->_getShipment($postnlShipment, $barcode)
             );
         } else {
-            /**
-             * Create a shipment object for each parcel
-             */
-            $shipments = array();
-            for ($i = 0; $i < $parcelCount; $i++) {
-                $barcode = $postnlShipment->getBarcode($i);
-                $shipments[] = $this->_getShipment(
-                                   $postnlShipment, 
-                                   $barcode, 
-                                   $mainBarcode,
-                                   $i
-                               );
-            }
-            
-            $cifShipment = array('Shipment' => $shipments);
+             $cifShipment = array(
+                'Shipment' => $this->_getShipment($postnlShipment, $barcode, $mainBarcode,$shipmentNumber)
+            );
         }
         
         $soapParams =  array(

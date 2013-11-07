@@ -807,8 +807,49 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function confirm()
     {
+        $parcelCount = $this->getparcelCount();
+        if (!$parcelCount) {
+            $parcelCount = $this->_calculateParcelCount();
+        }
+        
+        /**
+         * Only confirm the main shipment
+         */
+        if ($parcelCount < 2) {
+            $this->_confirm();
+
+            $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
+                 ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+            
+            return $this;
+        }
+        
+        /**
+         * onfirm each parcel in the shipment seperately
+         */
+        for ($i = 0; $i < $parcelCount; $i++) {
+            $this->_confirm($i);
+        }
+
+        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
+             ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+        
+        return $this;
+    }
+    
+    protected function _confirm($barcodeNumber = false)
+    {
+        $mainBarcode = $this->getMainBarcode();
+        if ($barcodeNumber === false) {
+            $barcode = $mainBarcode;
+            $mainbarcode = false;
+        } else {
+            $barcode = $this->getBarcode($barcodeNumber);
+            $barcodeNumber++; //while barcode numbers start at 0, shipment numbers start at 1
+        }
+        
         $cif = Mage::getModel('postnl_core/cif');
-        $result = $cif->confirmShipment($this);
+        $result = $cif->confirmShipment($this, $barcode, $mainBarcode, $barcodeNumber);
         
         $responseShipment = $result->ConfirmingResponseShipment;
         
@@ -818,7 +859,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         if (is_object($responseShipment) 
             && isset($responseShipment->Barcode)
-            && $responseShipment->Barcode == $this->getMainBarcode()
+            && $responseShipment->Barcode == $barcode
         ) {
             $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
                  ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
@@ -826,28 +867,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this;
         }
         
-        /**
-         * If the ConfirmingResponseShipment is not an object and not an array, something has gone wrong so we throw an exception
-         */
-        if (!is_array($responseShipment)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid confirm response recieved: ' . var_export($response, true));
-        }
-        
-        /**
-         * If the ConfirmingResponseShipment is an array it means that multiple parcels were confirmed. Check to see if each
-         * returned barcode is linked to this shipment. If not, throw an exception
-         */
-        $barcodes = $this->getBarcodes();
-        foreach ($responseShipment as $key => $barcodeResponse) {
-            if (!in_array($barcodeResponse->Barcode, $barcodes)) {
-                throw Mage::exception('TIG_PostNL', 'Invalid barcodes returned by confirm action.');
-            }
-        }
-    
-        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-             ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
-        
-        return $this;
+        throw Mage::exception('TIG_PostNL', 'Invalid confirm response recieved: ' . var_export($result, true));
     }
     
     /**
