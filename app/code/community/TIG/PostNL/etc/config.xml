@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.2.7</version>
+			<version>0.2.8</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -135,6 +135,15 @@
         		</observers>
         	</sales_order_shipment_save_after>
         </events>
+        <template>
+            <email>
+                <track_and_trace translate="label" module="postnl">
+                    <label>PostNL Track &amp; Trace Email</label>
+                    <file>TIG/PostNL/track_and_trace.html</file>
+                    <type>html</type>
+                </track_and_trace>
+            </email>
+        </template>
 	</global>
 	
     <admin>
@@ -225,7 +234,7 @@
             </postnl_get_missing_barcodes>
             <!-- Update the shipping status for all undelivered PostNL shipments -->
             <postnl_update_shipping_status>
-                <!-- No cron expr. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
+                <!-- No cron expression. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
             	<run>
             		<model>postnl_core/observer_cron::updateShippingStatus</model>
             	</run>
@@ -239,6 +248,15 @@
                     <model>postnl_core/observer_cron::expireConfirmation</model>
                 </run>
             </postnl_expire_confirmation>
+            <!-- Sends track and trace emails for all shipments that have been confirmed -->
+            <postnl_send_track_and_trace_email>
+                <schedule>
+                    <cron_expr>*/15 * * * *</cron_expr> <!-- every 15 minutes -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::postnl_send_track_and_trace_email</model>
+                </run>
+            </postnl_send_track_and_trace_email>
         </jobs>
     </crontab>
     
@@ -279,6 +297,8 @@
                 <shipping_grid_columns>shipping_description,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show all optional columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <weight_per_parcel>20</weight_per_parcel> <!-- 20 kg -->
+                <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
+                <track_and_trace_email_template/>
         	</cif_labels_and_confirming>
         	<cif_address>
         		<split_street>1</split_street> <!-- split street -->
