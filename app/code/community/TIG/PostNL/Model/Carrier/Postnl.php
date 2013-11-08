@@ -158,7 +158,7 @@ class TIG_PostNL_Model_Carrier_Postnl
     /**
      * Get tracking information
      * 
-     * @param unknown $tracking
+     * @param string $tracking
      * 
      * @return Mage_Shipping_Model_Tracking_Result_Status
      * 
@@ -169,11 +169,13 @@ class TIG_PostNL_Model_Carrier_Postnl
         $statusModel = Mage::getModel('shipping/tracking_result_status');
         $track = $this->_getTrackByNumber($tracking);
         
+        $shippingAddress = $track->getShipment()->getShippingAddress();
+        
         $statusModel->setCarrier($track->getCarrierCode())
                     ->setCarrierTitle($this->getConfigData('name'))
                     ->setTracking($track->getTrackNumber())
                     ->setPopup(1)
-                    ->setUrl($this->getHelper()->getBarcodeUrl($track->getTrackNumber()));;
+                    ->setUrl($this->getHelper()->getBarcodeUrl($track->getTrackNumber(), $shippingAddress));
                     
         return $statusModel;
     }
@@ -181,7 +183,7 @@ class TIG_PostNL_Model_Carrier_Postnl
     /**
      * Load track object by tracking number
      * 
-     * @param unknown $number
+     * @param string $number
      * 
      * @return Mage_Sales_Model_Order_Shipment_Track
      * 
@@ -191,7 +193,7 @@ class TIG_PostNL_Model_Carrier_Postnl
     {
         $coreResource = Mage::getSingleton('core/resource');
         $readConn = $coreResource->getConnection('core_read');
-            
+        
         $trackSelect = $readConn->select();
         $trackSelect->from($coreResource->getTableName('sales/shipment_track'), array('entity_id'));
         $trackSelect->where('track_number = ?', $number);
