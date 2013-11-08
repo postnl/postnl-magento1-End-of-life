@@ -68,8 +68,7 @@
         <reference name="left">
             <!-- Tabs container -->
             <block type="postnl_adminhtml/sales_order_shipment_view_tabs" name="sales_shipment_view_tabs">
-                <!-- Changed block type as it requires Mage_Adminhtml_Block_Widget_Tab_Interface interface -->
-                <block type="postnl_adminhtml/sales_order_shipment_view_form" name="sales_shipment_view_info" template="sales/order/shipment/view/form.phtml">
+                <block type="adminhtml/sales_order_shipment_view_form" name="form" template="sales/order/shipment/view/form.phtml">
                     <block type="adminhtml/sales_order_view_info" name="order_info" template="sales/order/view/info.phtml"></block>
                     <block type="adminhtml/sales_order_payment" name="order_payment"></block>
                     <block type="adminhtml/sales_order_shipment_view_tracking" name="shipment_tracking" template="sales/order/shipment/view/tracking.phtml"></block>
@@ -86,8 +85,18 @@
                     <block type="adminhtml/sales_order_shipment_packaging" name="shipment_packaging" template="sales/order/shipment/packaging/popup.phtml" />
                     <block type="adminhtml/sales_order_shipment_packaging" name="shipment_packed" template="sales/order/shipment/packaging/packed.phtml"/>
                 </block>
-                <action method="addTab"><name>shipment_info</name><block>sales_shipment_view_info</block></action>
             </block>
         </reference>
     </adminhtml_sales_order_shipment_view>
+    
+    <postnl_adminhtml_shipment_statushistory>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="postnl_adminhtml/sales_order_shipment_view_tab_statusHistory" name="sales_order_shipment_status_history"/>
+        </block>
+    </postnl_adminhtml_shipment_statushistory>
+
+    <postnl_adminhtml_shipment_statushistorygrid>
+        <update handle="formkey"/>
+        <block type="postnl_adminhtml/sales_order_shipment_view_tab_statusHistory" name="sales_order_shipment_status_history" output="toHtml"/>
+    </postnl_adminhtml_shipment_statushistorygrid>
 </layout>

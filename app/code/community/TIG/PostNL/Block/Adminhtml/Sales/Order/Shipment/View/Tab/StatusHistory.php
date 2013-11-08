@@ -36,27 +36,46 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Form
-    extends Mage_Adminhtml_Block_Sales_Order_Shipment_View_Form
-    implements Mage_Adminhtml_Block_Widget_Tab_Interface
+ 
+/**
+ * @todo implement this class fully
+ */
+class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory extends Mage_Adminhtml_Block_Widget_Grid
 {
-    public function getTabLabel()
+    public function __construct()
     {
-        return Mage::helper('sales')->__('Information');
+        parent::__construct();
+        $this->setId('sales_order_shipment_status_history_grid');
+        $this->setDefaultSort('entity_id');
+        $this->setUseAjax(true);
+    }
+    
+    protected function _prepareCollection()
+    {
+        $collection = Mage::getResourceModel('postnl_core/shipment_collection');
+        
+        $this->setCollection($collection);
+
+        parent::_prepareCollection();
+        return $this;
     }
 
-    public function getTabTitle()
+    protected function _prepareColumns()
     {
-        return Mage::helper('sales')->__('Shipment Information');
-    }
+        $this->addColumn('entity_id',
+            array(
+                'header'=> Mage::helper('postnl')->__('ID'),
+                'width' => '50px',
+                'type'  => 'number',
+                'index' => 'entity_id',
+        ));
+        
+        $this->addColumn('main_barcode',
+            array(
+                'header'=> Mage::helper('postnl')->__('Name'),
+                'index' => 'main_barcode',
+        ));
 
-    public function canShowTab()
-    {
-        return true;
-    }
-
-    public function isHidden()
-    {
-        return false;
+        return parent::_prepareColumns();
     }
 }

@@ -66,9 +66,9 @@
 //<![CDATA[
     document.observe('dom:loaded', function() {
         statusBar = $('postnl_status_bar');
-        //insert the status bar after the first child element of '#page:main-container' to match 'div.content-header'
-        $('page:main-container').down('div.content-header').insert({
-            after: statusBar
+        //insert the status bar at the top of the information tab
+        $('sales_shipment_view_tabs_shipment_info_content').insert({
+            top: statusBar
         });
     });
 //]]>
