@@ -344,8 +344,8 @@
                     <label>Confirming &amp; Label Printing Settings</label>
                     <sort_order>400</sort_order>
                     <show_in_default>1</show_in_default>
-                    <show_in_website>0</show_in_website>
-                    <show_in_store>0</show_in_store>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
                     <fields>
                         <label_size translate="label comment" module="postnl">
                             <label>Label size</label>
@@ -389,6 +389,30 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-greater-than-zero validate-number</validate>
                         </weight_per_parcel>
+                        <send_track_and_trace_email translate="label comment" module="postnl">
+                            <label>Send track &amp; trace e-mail to customer</label>
+                            <comment>If enabled, a track &amp; trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                        </send_track_and_trace_email>
+                        <track_and_trace_email_template translate="label" module="postnl">
+                            <label>Track &amp; trace e-mail template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                            <depends>
+                                <send_track_and_trace_email>1</send_track_and_trace_email>
+                            </depends>
+                        </track_and_trace_email_template>
                     </fields>
 				</cif_labels_and_confirming>
 				<cif_address translate="label" module="postnl">

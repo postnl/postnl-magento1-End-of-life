@@ -76,6 +76,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XML_PATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel'; 
     
     /**
+     * XML path to setting that determines whether or not to send track and trace emails
+     */
+    const XML_PATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
+    
+    /**
+     * XML path to track and trace email template setting
+     */
+    const XML_PATH_TRACK_AND_TRACE_EMAIL_TEMPLATE = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
+    
+    /**
      * CIF warning code returned when an EPS combi label is not available
      */
     const EPS_COMBI_LABEL_WARNING_CODE = 'LIRS_0';
@@ -596,6 +606,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Checks if the current shipment can send a track & trace email to the customer.
+     * 
+     * @return boolean
+     */
+    public function canSendTrackAndTraceEmail()
+    {
+        if ($this->getTrackAndTraceEmailSent()) {
+            return false;
+        }
+        
+        $storeId = $this->getStoreId();
+        $canSendTrackAndTrace = Mage::getStoreConfig(self::XML_PATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId);
+        if (!$canSendTrackAndTrace) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
      * Check if the shipment has any associated labels
      * 
      * @return boolean
@@ -928,6 +958,50 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         return $this;
+    }
+    
+    /**
+     * Send a track & trace email to the customer containing a link to the 'mijnpakket' environment where they
+     * can track their shipment.
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function sendTrackAndTraceEmail()
+    {
+        if (!$this->canSendTrackAndTraceEmail()) {
+            throw Mage::exception('TIG_PostNL', 'The sendTrackAndTraceEmail action is currently unavailable.');
+        }
+        
+        $storeId = $this->getStoreId();
+        $template = Mage::getStoreConfig(self::XML_PATH_TRACK_AND_TRACE_EMAIL_TEMPLATE, $storeId);
+        $mailTemplate = Mage::getModel('core/email_template');
+        
+        $shippingAddress = $this->getShippingAddress();
+        $recipient = array(
+            'email' => $shippingAddress->getEmail(),
+            'name'  => $shippingAddress->getFirstname() . ' ' . $shippingAddress->getLastname(),
+        );
+        
+        $mailTemplate->setDesignConfig(
+            array(
+                'area'  => 'frontend', 
+                'store' => $storeId
+            )
+        );
+        
+        $orderModel = Mage::getConfig()->getModelClassName('sales/order');
+        $mailTemplate->sendTransactional(
+            $template,
+            Mage::getStoreConfig($orderModel::XML_PATH_EMAIL_IDENTITY, $storeId),
+            $recipient['email'],
+            $recipient['name'],
+            array(
+                'customer' => $customer,
+                'quote'    => $quote
+            )
+       );
+       
+       return $this;
     }
 
     /**
