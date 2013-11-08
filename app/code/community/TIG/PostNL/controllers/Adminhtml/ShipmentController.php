@@ -147,6 +147,32 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     }
     
     /**
+     * Loads the status history tab on the shipment view page
+     * 
+     * @return TIG_PostNL_Adminhtml_ShipmentController
+     */
+    public function statusHistoryAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+             
+        return $this;
+    }
+    
+    /**
+     * Refreshes the status history grid after a filter or sorting request
+     * 
+     * @return TIG_PostNL_Adminhtml_ShipmentController
+     */
+    public function statusHistoryGridAction()
+    {
+        $this->loadLayout(false);
+        $this->renderLayout();
+        
+        return $this;
+    }
+    
+    /**
      * Creates shipments for a supplied array of orders. This action is triggered by a massaction in the sales > order grid
      * 
      * @return TIG_PostNL_Adminhtml_ShipmentController

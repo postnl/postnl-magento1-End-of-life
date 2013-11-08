@@ -38,11 +38,47 @@
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tabs extends Mage_Adminhtml_Block_Widget_Tabs
 {
+    /**
+     * Constructor for the tabs container
+     * 
+     * @return null
+     * 
+     * @see Mage_Adminhtml_Block_Widget_Tabs::__construct()
+     */
     public function __construct()
     {
         parent::__construct();
         $this->setId('sales_shipment_view_tabs');
         $this->setDestElementId('sales_order_shipment_view');
         $this->setTitle(Mage::helper('sales')->__('Shipment View'));
+    }
+    
+    /**
+     * Add the main tabs to the page. Layout XML may be used to add more if desired
+     * 
+     * @return Mage_Adminhtml_Block_Widget_Tabs::_prepareLayout()
+     */
+    protected function _prepareLayout()
+    {
+        /**
+         * Add the 'information' tab. this contains all default features of the shipment view page and is selected by default
+         */
+        $this->addTab('shipment_info', array(
+            'label'     => Mage::helper('sales')->__('Information'),
+            'content'   => $this->getLayout()
+                                ->getBlock('form')
+                                ->toHtml(),
+        ));
+        
+        /**
+         * Add the status history tab. This is added by PostNL
+         */
+        $this->addTab('shipment_status_history', array(
+            'label'     => Mage::helper('postnl')->__('Shipping status history'),
+            'url'       => $this->getUrl('postnl/adminhtml_shipment/statusHistory', array('_current' => true)),
+            'class'     => 'ajax',
+        ));
+        
+        return parent::_prepareLayout();
     }
 }
