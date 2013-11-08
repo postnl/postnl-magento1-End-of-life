@@ -277,6 +277,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 
                 $postnlShipment->updateShippingStatus()
                                ->save();
+            } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                $this->_parseErrorCodes($e, $postnlShipment);
             } catch (Exception $e) {
                 Mage::helper('postnl')->logException($e);
             }
@@ -288,11 +290,71 @@ class TIG_PostNL_Model_Core_Observer_Cron
     }
     
     /**
+     * Parses an TIG_PostNL_Model_Core_Cif_Exception exception in order to process cpecific error codes
+     * 
+     * @param TIG_PostNL_Model_Core_Cif_Exception $e
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * 
+     * @return TIG_PostNL_Model_Core_Observer_Cron
+     */
+    protected function _parseErrorCodes($e, $postnlShipment)
+    {
+        $helper = Mage::helper('postnl');
+        
+        /**
+         * Certain error numbers are processed differently
+         */
+        $errorNumbers = $e->getErrorNumbers();
+        
+        if (!$errorNumbers) {
+            $helper->logException($e); 
+            return $this;
+        }
+        
+        foreach ($errorNumbers as $errorNumber) {
+            if ($errorNumber != '13') { // Collo not found error
+                $helper->logException($e); 
+                return $this;
+            }
+            
+            /**
+             * If the shipment's shipping phase has already been set to 'shipment not found' there is no need to proceed
+             */
+            if ($postnlShipment->getShippingPhase() == $postnlShipment::SHIPPING_PHASE_NOT_APPLICABLE) {
+                return $this;
+            }
+            
+            /**
+             * Check if the shipment was confirmed more than a day ago
+             */
+            $confirmedAt = strtotime($postnlShipment->getConfirmedAt());
+            $now = Mage::getModel('core/date')->timestamp();
+            $yesterday = strtotime('-1 day', $now);
+            
+            if ($confirmedAt > $yesterday) {
+                return $this;
+            }
+            
+            /**
+             * Set 'shipment not found' status
+             */
+            $helper->cronLog(
+                "Shipment #{$postnlShipment->getId()} could not be found by CIF and was confirmed more than 1 day ago!"
+            );
+            $postnlShipment->setShippingPhase($postnlShipment::SHIPPING_PHASE_NOT_APPLICABLE)
+                           ->save();
+                           
+            return $this;
+        }
+        
+        $helper->logException($e);
+        return $this;
+    }
+    
+    /**
      * Removes expired confirmations by resetting the postnl shipment to a pre-confirm state
      * 
      * @return TIG_PostNL_Model_Core_Observer_Cron
-     * 
-     * @todo Check if shipments need a new barcode before they can be re-confirmed
      */
     public function expireConfirmation()
     {

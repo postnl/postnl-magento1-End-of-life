@@ -196,6 +196,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     );
     
     /**
+     * Array of possible shipping phases
+     * 
+     * @var array
+     */
+    protected $_shippingPhases = array(
+        '01' => 'Collection',
+        '02' => 'Sorting',
+        '03' => 'Distribution',
+        '04' => 'Delivered',
+        '99' => 'Shipment not found',
+    );
+    
+    /**
      * Get an array of EU countries
      * 
      * @return array
@@ -263,6 +276,16 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     public function getShipmentTypes()
     {
         return $this->_shipmentTypes;
+    }
+    
+    /**
+     * Get an array of possible shipping phases
+     * 
+     * @return array
+     */
+    public function getShippingPhases()
+    {
+        return $this->_shippingPhases;
     }
     
     /**
@@ -685,9 +708,17 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             $requestXml = $this->formatXml($exception->getRequestXml());
             $responseXML = $this->formatXml($exception->getResponseXml());
             
-            $logMessage = "Request sent:\n"
+            $logMessage = '';
+            
+            $errorNumbers = $exception->getErrorNumbers();
+            if (!empty($errorNumbers)) {
+                $errorNumbers = implode(', ', $errorNumbers);
+                $logMessage .= "Error numbers recieved: {$errorNumbers}\n";
+            }
+            
+            $logMessage .= "<<< REQUEST SENT >>>\n"
                         . $requestXml
-                        . "\nResponse recieved:\n"
+                        . "\n<<< RESPONSE RECIEVED >>>\n"
                         . $responseXML;
                         
             Mage::log($logMessage, Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);

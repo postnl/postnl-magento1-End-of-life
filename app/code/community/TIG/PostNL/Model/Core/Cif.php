@@ -666,9 +666,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $shipmentData['Addresses'] = $addresses;
         
         /**
-         * Add extra cover data
+         * Add extra cover data and COD data
+         * In the case of a multi-collo shipment this is only added to the first parcel
          */
-        if ($postnlShipment->hasExtraCover() || $postnlShipment->isCod()) {
+        if (($shipmentNumber === false || $shipmentNumber == 1)
+            && ($postnlShipment->hasExtraCover() || $postnlShipment->isCod())
+        ) {
             $shipmentData['Amounts'] = $this->_getAmount($postnlShipment);
         }
         

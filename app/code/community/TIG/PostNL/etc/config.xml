@@ -252,7 +252,7 @@
                 <name>PostNL</name> <!-- PostNL -->
                 <price>5.00</price> <!-- 5 EUR -->
                 <title>PostNL</title> <!-- PostNL -->
-                <type>I</type>
+                <type>I</type> <!-- Price is calculated per item -->
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
                 <handling_type>F</handling_type>
             </postnl>
@@ -276,7 +276,7 @@
         	</cif>
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
-                <show_printed_column>1</show_printed_column> <!-- show the 'labels printed column' in the shipment grid -->
+                <shipping_grid_columns>shipping_description,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show all optional columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <weight_per_parcel>20</weight_per_parcel> <!-- 20 kg -->
         	</cif_labels_and_confirming>

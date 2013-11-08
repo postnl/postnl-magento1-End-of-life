@@ -334,6 +334,13 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 
                 $exception = Mage::exception('TIG_PostNL_Model_Core_Cif', $message);
             }
+                
+            $errorNumbers = $errorResponse->getElementsByTagNameNS(self::CIF_ERROR_NAMESPACE, 'ErrorNumber');
+            if ($exception && $errorNumbers) {
+                foreach ($errorNumbers as $errorNumber) {
+                    $exception->addErrorNumber($errorNumber->nodeValue);
+                }
+            }
         } else {
             /**
              * Create a general exception

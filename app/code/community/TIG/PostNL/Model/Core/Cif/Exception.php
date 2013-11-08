@@ -62,6 +62,13 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
     protected $_responseXml;
     
     /**
+     * Array of error numbers
+     * 
+     * @var array
+     */
+    protected $_errorNumbers = array();
+    
+    /**
      * Set $_requestXml to specified value
      * 
      * @return TIG_PostNL_Model_Core_Cif_Exception
@@ -86,6 +93,20 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
     }
     
     /**
+     * Set the error numbers array
+     * 
+     * @param array $errorNumbers
+     * 
+     * @return TIG_PostNL_Model_Core_Cif_Exception
+     */
+    public function setErrorNumbers($errorNumbers)
+    {
+        $this->_errorNumbers = $errorNumbers;
+        
+        return $this;
+    }
+    
+    /**
      * Get $_requestXml
      * 
      * @return string
@@ -103,5 +124,32 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
     public function getResponseXml()
     {
         return $this->_responseXml;
+    }
+    
+    /**
+     * get the error numbers array
+     * 
+     * @return array
+     */
+    public function getErrorNumbers()
+    {
+        return $this->_errorNumbers;
+    }
+    
+    /**
+     * Add an error number to the error numbers array
+     * 
+     * @param int $errorNumber
+     * 
+     * @return TIG_PostNL_Model_Core_Cif_Exception
+     */
+    public function addErrorNumber($errorNumber)
+    {
+        $errorNumbers = $this->getErrorNumbers();
+        $errorNumbers[] = $errorNumber;
+        
+        $this->setErrorNumbers($errorNumbers);
+        
+        return $this;
     }
 }
