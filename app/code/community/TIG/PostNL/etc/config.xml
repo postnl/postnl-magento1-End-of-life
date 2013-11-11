@@ -306,6 +306,12 @@
         		<housenr_field>2</housenr_field> <!-- second address line -->
         		<split_housenr>0</split_housenr> <!-- do not split housenr and extension -->
         		<housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
+        	    <area_field/>
+        	    <building_name_field/>
+        	    <department_field/>
+        	    <doorcode_field/>
+        	    <floor_field/>
+        	    <remark_field/>
         	</cif_address>
         	<cif_sender_address>
         		<firstname/>

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,55 +36,71 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_SplitAddressCheck
+class TIG_PostNL_Block_Adminhtml_System_Config_OptionalStreetFieldsbanner 
     extends Mage_Adminhtml_Block_Abstract
     implements Varien_Data_Form_Element_Renderer_Interface
 {
-    /**
-     * XML path to split street configuration option
-     */
-    const XML_PATH_SPLIT_STREET = 'postnl/cif_address/split_street';
-    
     /**
      * Template file used
      * 
      * @var string
      */
-    protected $_template = 'TIG/PostNL/system/config/split_address_check.phtml';
+    protected $_template = 'TIG/PostNL/system/config/optional_street_fields_banner.phtml';
     
     /**
-     * Get if the split_street field is enabled
+     * Get the element's HTML ID
      * 
-     * @return boolean
+     * @return string
      */
-    public function getIsAddressSplit()
+    public function getHtmlId()
     {
-        $request = Mage::app()->getRequest();
-
-        /**
-         * Check if the split_street field is enabled based on the current scope
-         */
-        if ($request->getParam('store')) {
-            $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, $request->getparam('store'));
-        } elseif ($request->getParam('website')) {
-            $website = Mage::getModel('core/website')->load($request->getparam('website'), 'name');
-            $splitStreet = (bool) $website->getConfig(self::XML_PATH_SPLIT_STREET, $website->getId());
-        } else {
-            $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($this->getData('html_id')) {
+            return $this->getData('html_id');
         }
         
-        return $splitStreet;
+        if (!$this->getElement()) {
+            return '';
+        }
+        
+        $element = $this->getElement();
+        $id = $element->getHtmlId();
+        
+        $this->setHtmlId($id);
+        return $id;
+    }
+    
+    /**
+     * Get the element's label
+     * 
+     * @return string
+     */
+    public function getLabel()
+    {
+        if ($this->getData('label')) {
+            return $this->getData('label');
+        }
+        
+        if (!$this->getElement()) {
+            return '';
+        }
+        
+        $element = $this->getElement();
+        $label = $element->getLabel();
+        
+        $this->setLabel($label);
+        return $label;
     }
     
     /**
      * Render fieldset html
      *
      * @param Varien_Data_Form_Element_Abstract $element
-     * 
      * @return string
      */
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
+        $this->setElement($element);
+        
         return $this->toHtml();
     }
 }
