@@ -58,7 +58,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
          */
         $this->setEmptyText(Mage::helper('postnl')->__('No status history available.'));
         $this->setId('sales_order_shipment_status_history_grid');
-        $this->setDefaultSort('status_id');
+        $this->setDefaultSort('timestamp');
+        $this->setDefaultDir('DESC');
         $this->setUseAjax(true);
         
         $postnlShipment = Mage::registry('current_postnl_shipment');
@@ -98,25 +99,19 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
     {
         $helper = Mage::helper('postnl');
         
-        $this->addColumn('status_id',
-            array(
-                'header' => $helper->__('ID'),
-                'width'  => '50px',
-                'type'   => 'number',
-                'index'  => 'status_id',
-        ));
-        
         $this->addColumn('code',
             array(
                 'header' => $helper->__('Status Code'),
                 'index'  => 'code',
+                'width'  => '100px',
         ));
         
         $this->addColumn('description',
             array(
-                'header' => $helper->__('Description'),
-                'index'  => 'description',
-                'align'  => 'left',
+                'header'   => $helper->__('Description'),
+                'index'    => 'description',
+                'align'    => 'left',
+                'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_translate',
         ));
         
         $this->addColumn('phase',
@@ -131,10 +126,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
         
         $this->addColumn('timestamp',
             array(
-                'header'   => $helper->__('Date'),
-                'index'    => 'timestamp',
-                'type'     => 'date',
-                'align'    => 'left',
+                'header' => $helper->__('Date'),
+                'index'  => 'timestamp',
+                'type'   => 'datetime',
+                'align'  => 'left',
+                'width'  => '150px',
         ));
 
         return parent::_prepareColumns();

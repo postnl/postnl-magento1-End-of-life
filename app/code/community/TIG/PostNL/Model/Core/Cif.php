@@ -339,24 +339,86 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Retrieves the latest shipping status of a shipment from CIF
      * 
-     * @param $barcode The barcode of the shipment
+     * @param TIG_PostNL_Model_Core_Shipment $shipment
      * 
      * @return StdClass 
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function getShipmentStatus($shipment)
+    public function getShipmentStatus($postnlShipment)
     {
-        $barcode  = $shipment->getMainBarcode();
-        $message  = $this->_getMessage($shipment->getMainBarcode());
+        $shipment = $postnlShipment->getShipment();
+        
+        $barcode  = $postnlShipment->getMainBarcode();
+        $message  = $this->_getMessage($barcode);
         $customer = $this->_getCustomer();
         
         $soapParams = array(
             'Message'  => $message,
             'Customer' => $customer,
             'Shipment' => array(
-                'Barcode' => $barcode,
+                'Barcode'   => $barcode,
+                // 'Reference' => $shipment->getIncrementId(),
+                // 'Zipcode'   => $shipment->getShippingAddress()->getPostcode(),
             ),
+        );
+        
+        $response = $this->call(
+            'ShippingStatus', 
+            'CurrentStatus', 
+            $soapParams
+        );
+        
+        if (!is_object($response) 
+            || !isset($response->Shipments) 
+            || (!is_array($response->Shipments) && !is_object($response->Shipments))
+        ) {
+            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($reponse, true));
+        }
+        
+        foreach($response->Shipments as $shipment) {
+            if ($shipment->Barcode === $barcode) { // we need the original shipment, not a related shipment (such as a return shipment)
+                return $shipment;
+            }
+        }
+        
+        /**
+         * no shipment could be matched to the supplied barcode
+         */ 
+        throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($reponse, true));
+    }
+    
+    /**
+     * Retrieves the latest shipping status of a shipment from CIF including full status history
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment $shipment
+     * 
+     * @return StdClass 
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function getCompleteShipmentStatus($postnlShipment)
+    {
+        $shipment = $postnlShipment->getShipment();
+        
+        $barcode  = $postnlShipment->getMainBarcode();
+        $message  = $this->_getMessage($barcode);
+        $customer = $this->_getCustomer();
+        
+        $soapParams = array(
+            'Message'  => $message,
+            'Customer' => $customer,
+            'Shipment' => array(
+                'Barcode'   => $barcode,
+                // 'Reference' => $shipment->getIncrementId(),
+                // 'Zipcode'   => $shipment->getShippingAddress()->getPostcode(),
+            ),
+        );
+        
+        $response = $this->call(
+            'ShippingStatus', 
+            'CurrentStatus', 
+            $soapParams
         );
         
         $response = $this->call(

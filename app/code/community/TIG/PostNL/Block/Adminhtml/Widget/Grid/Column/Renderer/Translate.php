@@ -36,40 +36,21 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_shipment = Mage::registry('current_shipment'); ?>
-<?php $_progressStatus = $this->getShippingStatus($_shipment) ?>
-<div id="postnl_status_bar" class="progress-wrapper <?php echo $_progressStatus; ?>">
-    <div class="progress progress-collection">
-        <span class="begin"></span>
-        <strong><?php echo $this->__('Collection') ?></strong>
-        <span class="seperator"></span>
-    </div>
-    
-    <div class="progress progress-distribution">
-        <strong><?php echo $this->__('Distribution Center') ?></strong>
-        <span class="seperator"></span>
-    </div>
-    
-    <div class="progress progress-transit">
-        <strong><?php echo $this->__('In Transit') ?></strong>
-        <span class="seperator"></span>
-    </div>
-
-    <div class="progress progress-delivered">
-        <strong><?php echo $this->__('Delivered') ?></strong>
-        <span class="end"></span>
-    </div>
-</div>
-
-<script type="text/javascript">
-//<![CDATA[
-    document.observe('dom:loaded', function() {
-        statusBar = $('postnl_status_bar');
-        //insert the status bar at the top of the information tab
-        $('sales_shipment_view_tabs_shipment_info_content').insert({
-            top: statusBar
-        });
-    });
-//]]>
-</script>
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Translate
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
+{       
+    /**
+     * Translate the column's value before rendering it
+     *
+     * @param Varien_Object $row
+     * 
+     * @return string
+     */
+    public function render(Varien_Object $row)
+    {
+        $helper = Mage::helper('postnl');
+        $value = $row->getData($this->getColumn()->getIndex());
+        
+        return $helper->__($value);
+    }
+}
