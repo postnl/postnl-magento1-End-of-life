@@ -172,7 +172,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                 || strtotime($statusHistoryUpdatedAt) < $fifteenMinutesAgo
             )
         ) {
-            $postnlShipment->updateStatusHistory();
+            $postnlShipment->updateCompleteShippingStatus();
         }
         
         $this->loadLayout();
@@ -192,7 +192,6 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     {
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipmentId, 'shipment_id');
         
-        $this->setPostnlShipment($postnlShipment);
         return $postnlShipment;
     }
     

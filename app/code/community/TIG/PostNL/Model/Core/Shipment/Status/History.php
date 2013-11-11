@@ -44,6 +44,23 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
     }
     
     /**
+     * Set the 'phase' attribute. The phase must be formatted as a 2 digit number (i.e. 01, 04, 12, 99 etc.)
+     * 
+     * @param string | int $phase
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment_Status_History
+     */
+    public function setPhase($phase)
+    {
+        if (strlen($phase) < 2) {
+            $phase = '0' . $phase;
+        }
+        
+        $this->setData('phase', $phase);
+        return $this;
+    }
+    
+    /**
      * Load a history item based on a postnl shipment id and a status code.
      * 
      * @param int $shipmentId
@@ -51,7 +68,7 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
      * 
      * @return TIG_PostNL_Model_Core_Shipment_Status_History
      */
-    public function loadShipmentByIdAndCode($shipmentId, $code)
+    public function loadByShipmentIdAndCode($shipmentId, $code)
     {
         $collection = $this->getCollection();
         $collection->addFieldToSelect('status_id')
@@ -70,21 +87,37 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
     }
     
     /**
-     * Check if a status history item exists for the given postnl shipment and status code
+     * Check if a status history item exists for the given postnl shipment and status code and if the provided status is newer
      * 
      * @param int $shipmentId
-     * @param string $code
+     * @param StdClass $code
      * 
      * @return boolean
      */
-    public function statusHistoryExists($shipmentId, $code)
+    public function statusHistoryIsNew($shipmentId, $status)
     {
         $collection = $this->getCollection();
         $collection->addFieldToSelect('status_id')
                    ->addFieldToFilter('parent_id', array('eq' => $shipmentId))
-                   ->addFieldToFilter('code', array('eq' => $code));
+                   ->addFieldToFilter('code', array('eq' => $status->Code));
                    
         if ($collection->count() > 0) {
+            return true;
+        }
+        
+        /**
+         * If a given code already exists for this shipment, get both the existing status's and the new status's timestamps so we
+         * can check which one is newer.
+         */
+        $existingStatus = $collection->getFirstItem();
+        $existingStatusTime = $existingStatus->getTimestamp();
+        
+        $statusTime = $status->TimeStamp;
+        
+        /**
+         * Compare both timestamps
+         */
+        if (strtotime($statusTime) > strtotime($existingStatusTime)) {
             return true;
         }
         
