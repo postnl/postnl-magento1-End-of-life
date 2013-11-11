@@ -541,6 +541,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Confirm the shipment and request a new label
              */
             $postnlShipment->confirmAndGenerateLabel()
+                           ->addTrackingCodeToShipment()
                            ->save();
         } else {
             /**
@@ -600,6 +601,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          * Confirm the shipment
          */
         $postnlShipment->confirm()
+                       ->addTrackingCodeToShipment()
                        ->save();
         
         $labels = $postnlShipment->getLabels();
@@ -643,16 +645,35 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     protected function _checkForWarnings()
     {
+        /**
+         * Check if any warnings were registered
+         */
         $warnings = Mage::registry('postnl_cif_warnings');
-        if ($warnings !== null && is_array($warnings)) {
-            $warningMessage = $this->__('PostNL replied with the following warnings:');
-            foreach ($warnings as $warning) {
-                $warningMessage .= '<br />' . $this->__('Error code %s: %s', $warning['code'], $warning['description']);
-            }
-
-            Mage::getSingleton('adminhtml/session')->addNotice($warningMessage);
+        
+        if (!is_array($warnings)) {
+            return $this;
         }
         
+        /**
+         * Create a warning message to display to the merchant
+         */
+        $warningMessage = $this->__('PostNL replied with the following warnings:');
+        $warningMessage .= '<ul>';
+        
+        /**
+         * Add each warning to the message
+         */
+        foreach ($warnings as $warning) {
+            $warningMessage .= '<li>' . $this->__('Error code %s: %s', $warning['code'], $warning['description']) . '</li>';
+        }
+        
+        $warningMessage .= '</ul>';
+        
+        /**
+         * Add the warnings to the session
+         */
+        Mage::getSingleton('adminhtml/session')->addNotice($warningMessage);
+            
         return $this;
     }
 }
