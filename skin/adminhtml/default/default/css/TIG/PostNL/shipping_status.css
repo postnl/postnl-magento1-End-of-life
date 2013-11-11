@@ -7,43 +7,43 @@
 .progress-wrapper .progress .begin { width:18px; height:34px; background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -170px no-repeat; left:0; }
 .progress-wrapper .progress .end { width:18px; height:34px; background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -272px no-repeat; right:0; }
 
-.status-delivered .progress-reported,
+.status-delivered .progress-collection,
 .status-delivered .progress-distribution,
 .status-delivered .progress-transit,
 .status-delivered .progress-delivered,
-.status-transit .progress-reported,
+.status-transit .progress-collection,
 .status-transit .progress-distribution,
 .status-transit .progress-transit, 
-.status-distribution .progress-reported, 
+.status-distribution .progress-collection, 
 .status-distribution .progress-distribution,
-.status-reported .progress-reported { color:#fff; } 
+.status-collection .progress-collection { color:#fff; } 
 
 .status-delivered .progress-delivered,
 .status-delivered .progress-transit,
 .status-delivered .progress-distribution,
-.status-delivered .progress-reported,
+.status-delivered .progress-collection,
 .status-transit .progress-transit,
 .status-transit .progress-distribution,
-.status-transit .progress-reported,
+.status-transit .progress-collection,
 .status-distribution .progress-distribution,
-.status-distribution .progress-reported,
-.status-reported .progress-reported { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -34px repeat-x; }
+.status-distribution .progress-collection,
+.status-collection .progress-collection { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -34px repeat-x; }
 
-.status-delivered .progress-reported .begin,
-.status-transit .progress-reported .begin,
-.status-distribution .progress-reported .begin,
-.status-reported .progress-reported .begin { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -204px no-repeat; }
+.status-delivered .progress-collection .begin,
+.status-transit .progress-collection .begin,
+.status-distribution .progress-collection .begin,
+.status-collection .progress-collection .begin { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -204px no-repeat; }
     
 .status-transit .progress-transit .seperator,
 .status-distribution .progress-distribution .seperator,
-.status-reported .progress-reported .seperator { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -102px no-repeat; }  
+.status-collection .progress-collection .seperator { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -102px no-repeat; }  
 
 .status-delivered .progress-transit .seperator,
 .status-delivered .progress-distribution .seperator,
-.status-delivered .progress-reported .seperator,
+.status-delivered .progress-collection .seperator,
 .status-transit .progress-distribution .seperator, 
-.status-transit .progress-reported .seperator,
-.status-distribution .progress-reported .seperator { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -136px no-repeat; }
+.status-transit .progress-collection .seperator,
+.status-distribution .progress-collection .seperator { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -136px no-repeat; }
 
 .status-delivered .progress-delivered .end { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -238px no-repeat; }
 

@@ -1526,12 +1526,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
-     * Updates the shipment's attributes if they have not yet been set
+     * Updates the shipment's attributes before saving this shipment
      * 
      * @return Mage_Core_Model_Abstract::_beforeSave
      */
     protected function _beforeSave()
     {
+        $currentTimestamp = Mage::getModel('core/date')->timestamp();
+        
         /**
          * Store any shipment options that have been saved in the registry
          */
@@ -1552,7 +1554,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if ($this->getConfirmedStatus() == self::CONFIRM_STATUS_CONFIRMED
             && $this->getConfirmedAt() === null
         ) {
-            $this->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+            $this->setConfirmedAt($currentTimestamp);
         }
         
         /**
@@ -1582,8 +1584,20 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Set the confirm date
          */
         if (!$this->getConfirmDate()) {
-            $this->setConfirmDate(Mage::getModel('core/date')->timestamp());
+            $this->setConfirmDate($currentTimestamp);
         }
+        
+        /**
+         * If this shiopment is new, set it's created at date to the current timestamp
+         */
+        if (!$this->getId()) {
+            $this->setCreatedAt($currentTimestamp);
+        }
+        
+        /**
+         * Always update the updated at timestamp to the current timestamp
+         */
+        $this->setUpdatedAt($currentTimestamp);
         
         return parent::_beforeSave();
     }

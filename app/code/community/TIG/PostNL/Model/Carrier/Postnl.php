@@ -76,6 +76,16 @@ class TIG_PostNL_Model_Carrier_Postnl
         $this->setHelper($helper);
         return $helper;
     }
+
+    /**
+     * Check if carrier has shipping tracking option available
+     *
+     * @return boolean
+     */
+    public function isTrackingAvailable()
+    {
+        return true;
+    }
     
     /**
      * Collect shipping rate
