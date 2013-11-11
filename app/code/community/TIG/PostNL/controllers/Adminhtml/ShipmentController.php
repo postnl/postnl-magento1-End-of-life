@@ -147,6 +147,69 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     }
     
     /**
+     * Loads the status history tab on the shipment view page
+     * 
+     * @return TIG_PostNL_Adminhtml_ShipmentController
+     */
+    public function statusHistoryAction()
+    {
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        $postnlShipment = $this->_getPostnlShipment($shipmentId);
+        Mage::register('current_postnl_shipment', $postnlShipment);
+        
+        /**
+         * Get the postnl shipments' status history updated at timestamp and a reference timestamp of 15 minutes ago
+         */
+        $currentTimestamp = Mage::getModel('core/date')->timestamp();
+        $fifteenMinutesAgo = strtotime("-15 minutes", $currentTimestamp);
+        $statusHistoryUpdatedAt = $postnlShipment->getStatusUpdatedAt();
+        
+        /**
+         * If this shipment's status history has not been updated in the last 15 minutes (if ever) update it
+         */
+        if ($postnlShipment->getId()
+            && ($postnlShipment->getStatusUpdatedAt() === null
+                || strtotime($statusHistoryUpdatedAt) < $fifteenMinutesAgo
+            )
+        ) {
+            $postnlShipment->updateStatusHistory();
+        }
+        
+        $this->loadLayout();
+        $this->renderLayout();
+             
+        return $this;
+    }
+    
+    /**
+     * Gets the postnl shipment associated with a shipment
+     * 
+     * @param int $shipmentId
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    protected function _getPostnlShipment($shipmentId)
+    {
+        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipmentId, 'shipment_id');
+        
+        $this->setPostnlShipment($postnlShipment);
+        return $postnlShipment;
+    }
+    
+    /**
+     * Refreshes the status history grid after a filter or sorting request
+     * 
+     * @return TIG_PostNL_Adminhtml_ShipmentController
+     */
+    public function statusHistoryGridAction()
+    {
+        $this->loadLayout(false);
+        $this->renderLayout();
+        
+        return $this;
+    }
+    
+    /**
      * Creates shipments for a supplied array of orders. This action is triggered by a massaction in the sales > order grid
      * 
      * @return TIG_PostNL_Adminhtml_ShipmentController
@@ -515,6 +578,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Confirm the shipment and request a new label
              */
             $postnlShipment->confirmAndGenerateLabel()
+                           ->addTrackingCodeToShipment()
                            ->save();
         } else {
             /**
@@ -574,6 +638,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          * Confirm the shipment
          */
         $postnlShipment->confirm()
+                       ->addTrackingCodeToShipment()
                        ->save();
         
         $labels = $postnlShipment->getLabels();
@@ -617,16 +682,35 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     protected function _checkForWarnings()
     {
+        /**
+         * Check if any warnings were registered
+         */
         $warnings = Mage::registry('postnl_cif_warnings');
-        if ($warnings !== null && is_array($warnings)) {
-            $warningMessage = $this->__('PostNL replied with the following warnings:');
-            foreach ($warnings as $warning) {
-                $warningMessage .= '<br />' . $this->__('Error code %s: %s', $warning['code'], $warning['description']);
-            }
-
-            Mage::getSingleton('adminhtml/session')->addNotice($warningMessage);
+        
+        if (!is_array($warnings)) {
+            return $this;
         }
         
+        /**
+         * Create a warning message to display to the merchant
+         */
+        $warningMessage = $this->__('PostNL replied with the following warnings:');
+        $warningMessage .= '<ul>';
+        
+        /**
+         * Add each warning to the message
+         */
+        foreach ($warnings as $warning) {
+            $warningMessage .= '<li>' . $this->__('Error code %s: %s', $warning['code'], $warning['description']) . '</li>';
+        }
+        
+        $warningMessage .= '</ul>';
+        
+        /**
+         * Add the warnings to the session
+         */
+        Mage::getSingleton('adminhtml/session')->addNotice($warningMessage);
+            
         return $this;
     }
 }

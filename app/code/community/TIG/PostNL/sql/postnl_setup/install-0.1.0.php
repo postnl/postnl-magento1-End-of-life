@@ -53,6 +53,12 @@ $postnlShipmentTable = $installer->getConnection()
         'unsigned'  => true,
         'nullable'  => true,
         ), 'Shipment Id')
+    ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
+        'nullable'  => false,
+        ), 'Created At')
+    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
+        'nullable'  => true,
+        ), 'Updated At')
     ->addColumn('main_barcode', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
         ), 'Main Barcode')
     ->addColumn('confirm_date', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(

@@ -72,9 +72,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * XML paths to default product options settings
      */
-    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS = 'postnl/cif_product_options/default_product_options';
-    const XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS       = 'postnl/cif_product_options/default_eu_product_options';
-    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS   = 'postnl/cif_product_options/default_global_product_options';
+    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION = 'postnl/cif_product_options/default_product_option';
+    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION       = 'postnl/cif_product_options/default_eu_product_option';
+    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION   = 'postnl/cif_product_options/default_global_product_option';
     
     /**
      * Array of countries to which PostNL ships using EPS. Other EU countries are shipped to using GlobalPack
@@ -196,6 +196,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     );
     
     /**
+     * Array of possible shipping phases
+     * 
+     * @var array
+     */
+    protected $_shippingPhases = array(
+        '01' => 'Collection',
+        '02' => 'Sorting',
+        '03' => 'Distribution',
+        '04' => 'Delivered',
+        '99' => 'Shipment not found',
+    );
+    
+    /**
      * Get an array of EU countries
      * 
      * @return array
@@ -263,6 +276,16 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     public function getShipmentTypes()
     {
         return $this->_shipmentTypes;
+    }
+    
+    /**
+     * Get an array of possible shipping phases
+     * 
+     * @return array
+     */
+    public function getShippingPhases()
+    {
+        return $this->_shippingPhases;
     }
     
     /**
@@ -439,7 +462,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
     
     /**
-     * Get an array of all default product options
+     * Get an array of all default product options. This is a simple method to quickly get a list of default options based on
+     * the current storeview.
+     * 
+     * This does not take into account the possible use of an alternative default for dutch shipments. For that you need to use
+     * TIG_PostNL_Model_Core_Shipment::getDefaultProductCode() which is more precise.
      * 
      * @return array
      */
@@ -447,9 +474,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $storeId = Mage::app()->getStore()->getId();
         
-        $defaultDutchOption  = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS, $storeId);
-        $defaultEuOption     = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS, $storeId);
-        $defaultGlobalOption = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS, $storeId);
+        $defaultDutchOption  = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
+        $defaultEuOption     = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTION, $storeId);
+        $defaultGlobalOption = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION, $storeId);
         
         $defaultOptions = array(
             'dutch'  => $defaultDutchOption,
@@ -685,9 +712,17 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             $requestXml = $this->formatXml($exception->getRequestXml());
             $responseXML = $this->formatXml($exception->getResponseXml());
             
-            $logMessage = "Request sent:\n"
+            $logMessage = '';
+            
+            $errorNumbers = $exception->getErrorNumbers();
+            if (!empty($errorNumbers)) {
+                $errorNumbers = implode(', ', $errorNumbers);
+                $logMessage .= "Error numbers recieved: {$errorNumbers}\n";
+            }
+            
+            $logMessage .= "<<< REQUEST SENT >>>\n"
                         . $requestXml
-                        . "\nResponse recieved:\n"
+                        . "\n<<< RESPONSE RECIEVED >>>\n"
                         . $responseXML;
                         
             Mage::log($logMessage, Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);

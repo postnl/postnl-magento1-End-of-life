@@ -36,69 +36,29 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Core_ShippingStatus extends Mage_Core_Block_Template
-{
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingPhase
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
+{       
     /**
-     * Available status classes for the status bar html element
-     */   
-    const CLASS_UNCONFIRMED  = '';
-    const CLASS_COLLECTION   = 'status-collection';
-    const CLASS_DISTRIBUTION = 'status-distribution';
-    const CLASS_TRANSIT      = 'status-transit';
-    const CLASS_DELIVERED    = 'status-delivered';
-    const CLASS_NOT_POSTNL   = 'hidden';
-    
-    /**
-     * Get the current shipping status for a shipment
-     * 
-     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * Renders the column value as a human readable value
+     *
+     * @param Varien_Object $row
      * 
      * @return string
      */
-    public function getShippingStatus($shipment)
+    public function render(Varien_Object $row)
     {
-        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
+        $value = $row->getData($this->getColumn()->getIndex());
         
-        /**
-         * Check if the postnl shipment exists. Otherwise it was probably not shipped using PostNL.
-         * Even if it was, we would not be able to check the status of it anyway.
-         */
-        if (!$postnlShipment->getId()) {
-            return self::CLASS_NOT_POSTNL;
-        }
-        
-        switch ($postnlShipment->getShippingPhase()) {
-            case '1': 
-                $class = self::CLASS_CONFIRMED;
-                break;
-            case '2': 
-                $class = self::CLASS_DISTRIBUTION;
-                break;
-            case '3': 
-                $class = self::CLASS_TRANSIT;
-                break;
-            case '4': 
-                $class = self::CLASS_DELIVERED;
-                break;
-            default:
-                $class = self::CLASS_UNCONFIRMED;
-                break;
-        }
-        
-        return $class;
-    }
-    
-    /**
-     * Check if the PostNL module is enabled. Otherwise return an empty string.
-     * 
-     * @return string | Mage_Core_Block_Template::_toHtml()
-     */
-    protected function _toHtml()
-    {
-        if (!Mage::helper('postnl')->isEnabled()) {
+        if (empty($value)) {
             return '';
         }
         
-        return parent::_toHtml();
+        $shippingPhases = Mage::helper('postnl/cif')->getShippingPhases();
+        if (array_key_exists($value, $shippingPhases)) {
+            $value = $shippingPhases[$value];
+        }
+        
+        return Mage::helper('postnl')->__($value);
     }
 }

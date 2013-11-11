@@ -175,7 +175,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
     
     /**
-     * Determines if the extension has been activated
+     * Determines if the extension is active
      * 
      * @param int | bool $storeId
      * 
@@ -191,12 +191,26 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
         
+        /**
+         * Check if the module has been enabled
+         */
         $enabled = (bool) Mage::getStoreConfig(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
         if ($enabled === false) {
             Mage::register('postnl_enabled', false);
             return false;
         }
         
+        /**
+         * The PostNL module only works with EUR as the shop's base currency
+         */
+        $baseCurrencyCode = Mage::getModel('core/store')->load($storeId)->getBaseCurrencyCode();
+        if ($baseCurrencyCode != 'EUR') {
+            return false;
+        }
+        
+        /**
+         * Check if the module's required configuration options have been filled
+         */
         $isConfigured = $this->isConfigured($storeId, $checkGlobal);
         if ($isConfigured === false) {
             Mage::register('postnl_enabled', false);

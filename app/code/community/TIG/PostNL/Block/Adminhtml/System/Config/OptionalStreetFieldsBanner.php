@@ -36,69 +36,71 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Core_ShippingStatus extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Adminhtml_System_Config_OptionalStreetFieldsbanner 
+    extends Mage_Adminhtml_Block_Abstract
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
     /**
-     * Available status classes for the status bar html element
-     */   
-    const CLASS_UNCONFIRMED  = '';
-    const CLASS_COLLECTION   = 'status-collection';
-    const CLASS_DISTRIBUTION = 'status-distribution';
-    const CLASS_TRANSIT      = 'status-transit';
-    const CLASS_DELIVERED    = 'status-delivered';
-    const CLASS_NOT_POSTNL   = 'hidden';
+     * Template file used
+     * 
+     * @var string
+     */
+    protected $_template = 'TIG/PostNL/system/config/optional_street_fields_banner.phtml';
     
     /**
-     * Get the current shipping status for a shipment
-     * 
-     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * Get the element's HTML ID
      * 
      * @return string
      */
-    public function getShippingStatus($shipment)
+    public function getHtmlId()
     {
-        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
-        
-        /**
-         * Check if the postnl shipment exists. Otherwise it was probably not shipped using PostNL.
-         * Even if it was, we would not be able to check the status of it anyway.
-         */
-        if (!$postnlShipment->getId()) {
-            return self::CLASS_NOT_POSTNL;
+        if ($this->getData('html_id')) {
+            return $this->getData('html_id');
         }
         
-        switch ($postnlShipment->getShippingPhase()) {
-            case '1': 
-                $class = self::CLASS_CONFIRMED;
-                break;
-            case '2': 
-                $class = self::CLASS_DISTRIBUTION;
-                break;
-            case '3': 
-                $class = self::CLASS_TRANSIT;
-                break;
-            case '4': 
-                $class = self::CLASS_DELIVERED;
-                break;
-            default:
-                $class = self::CLASS_UNCONFIRMED;
-                break;
-        }
-        
-        return $class;
-    }
-    
-    /**
-     * Check if the PostNL module is enabled. Otherwise return an empty string.
-     * 
-     * @return string | Mage_Core_Block_Template::_toHtml()
-     */
-    protected function _toHtml()
-    {
-        if (!Mage::helper('postnl')->isEnabled()) {
+        if (!$this->getElement()) {
             return '';
         }
         
-        return parent::_toHtml();
+        $element = $this->getElement();
+        $id = $element->getHtmlId();
+        
+        $this->setHtmlId($id);
+        return $id;
+    }
+    
+    /**
+     * Get the element's label
+     * 
+     * @return string
+     */
+    public function getLabel()
+    {
+        if ($this->getData('label')) {
+            return $this->getData('label');
+        }
+        
+        if (!$this->getElement()) {
+            return '';
+        }
+        
+        $element = $this->getElement();
+        $label = $element->getLabel();
+        
+        $this->setLabel($label);
+        return $label;
+    }
+    
+    /**
+     * Render fieldset html
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @return string
+     */
+    public function render(Varien_Data_Form_Element_Abstract $element)
+    {
+        $this->setElement($element);
+        
+        return $this->toHtml();
     }
 }

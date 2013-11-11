@@ -66,6 +66,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XML_PATH_HOUSENUMBER_FIELD           = 'postnl/cif_address/housenr_field';
     const XML_PATH_SPLIT_HOUSENUMBER           = 'postnl/cif_address/split_housenr';
     const XML_PATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
+    const XML_PATH_AREA_FIELD                  = 'postnl/cif_address/area_field';
+    const XML_PATH_BUILDING_NAME_FIELD         = 'postnl/cif_address/building_name_field';
+    const XML_PATH_DEPARTMENT_FIELD            = 'postnl/cif_address/department_field';
+    const XML_PATH_DOORCODE_FIELD              = 'postnl/cif_address/doorcode_field';
+    const XML_PATH_FLOOR_FIELD                 = 'postnl/cif_address/floor_field';
+    const XML_PATH_REMARK_FIELD                = 'postnl/cif_address/remark_field';
     
     /**
      * Constants containing xml paths to cif customs configuration options
@@ -444,50 +450,30 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Confirms the choen shipment without generating labels
      * 
      * @param Mage_Sales_Model_Order_Shipment $shipment
-     * @param string $printerType The printertype used. Currently only 'GraphicFile|PDF' is fully supported
+     * @param string $barcode
      * 
      * @return array
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function confirmShipment($postnlShipment, $printerType = 'GraphicFile|PDF')
+    public function confirmShipment($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false)
     {
         $shipment = $postnlShipment->getShipment();
-        
-        $availablePrinterTypes = $this->_printerTypes;
-        if (!in_array($printerType, $availablePrinterTypes)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
-        }
-        
-        $parcelCount = $postnlShipment->getParcelCount();
-        $mainBarcode = $postnlShipment->getMainBarcode();
-        
-        $message     = $this->_getMessage($mainBarcode, array('Printertype' => $printerType));
+                
+        $message     = $this->_getMessage($mainBarcode);
         $customer    = $this->_getCustomer($shipment);
         
-        if ($parcelCount < 2) {
-            /**
-             * Create a single shipment object
-             */
+        /**
+         * Create a single shipment object
+         */
+        if ($mainBarcode === false || $shipmentNumber === false) {
             $cifShipment = array(
-                'Shipment' => $this->_getShipment($postnlShipment, $mainBarcode)
+                'Shipment' => $this->_getShipment($postnlShipment, $barcode)
             );
         } else {
-            /**
-             * Create a shipment object for each parcel
-             */
-            $shipments = array();
-            for ($i = 0; $i < $parcelCount; $i++) {
-                $barcode = $postnlShipment->getBarcode($i);
-                $shipments[] = $this->_getShipment(
-                                   $postnlShipment, 
-                                   $barcode, 
-                                   $mainBarcode,
-                                   $i
-                               );
-            }
-            
-            $cifShipment = array('Shipment' => $shipments);
+             $cifShipment = array(
+                'Shipment' => $this->_getShipment($postnlShipment, $barcode, $mainBarcode,$shipmentNumber)
+            );
         }
         
         $soapParams =  array(
@@ -713,13 +699,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'DownPartnerID'            => '',
             'ProductCodeDelivery'      => $postnlShipment->getProductCode(),
             'Reference'                => $shipment->getReference(),
-            'Groups'                   => array(
-                                           'Group'   => $this->_getGroup(
-                                                            $parcelCount, 
-                                                            $mainBarcode, 
-                                                            $shipmentNumber
-                                                        ),
-                                       ),
             'Contacts'                 => array(
                                            'Contact' => $this->_getContact($shippingAddress),
                                        ),
@@ -728,6 +707,21 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                        ),
             'Reference'                => $shipment->getIncrementId(),
         );
+        
+        /**
+         * Add group data (for multi-collo shipments)
+         */
+        if ($parcelCount > 1) {
+            $groups = array(
+                'Group' => $this->_getGroup(
+                               $parcelCount, 
+                               $mainBarcode, 
+                               $shipmentNumber
+                           ),
+            );
+            
+            $shipmentData['Groups'] = $groups;
+        }
         
         /**
          * Add address data
@@ -748,9 +742,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $shipmentData['Addresses'] = $addresses;
         
         /**
-         * Add extra cover data
+         * Add extra cover data and COD data
+         * In the case of a multi-collo shipment this is only added to the first parcel
          */
-        if ($postnlShipment->hasExtraCover() || $postnlShipment->isCod()) {
+        if (($shipmentNumber === false || $shipmentNumber == 1)
+            && ($postnlShipment->hasExtraCover() || $postnlShipment->isCod())
+        ) {
             $shipmentData['Amounts'] = $this->_getAmount($postnlShipment);
         }
         
@@ -865,12 +862,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'City'             => $address->getCity(),
             'Region'           => $address->getRegion(),
             'Countrycode'      => $address->getCountry(),
-            'Area'             => '',
-            'Buildingname'     => '',
-            'Department'       => '',
-            'Doorcode'         => '',
-            'Floor'            => '',
-            'Remark'           => '',
+            'Area'             => $this->_getArea($address),
+            'Buildingname'     => $this->_getBuildingName($address),
+            'Department'       => $this->_getDepartment($address),
+            'Doorcode'         => $this->_getDoorcode($address),
+            'Floor'            => $this->_getFloor($address),
+            'Remark'           => $this->_getRemark($address),
         );
         
         return $addressArray;
@@ -1593,5 +1590,113 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
         
         return $customsCertificate;
+    }     
+    
+    /**
+     * Get the area field from an address if enabled
+     * 
+     * @return string
+     */
+    protected function _getArea($address)
+    {
+        $storeId = $this->getStoreId();
+        $areaField = (string) Mage::getStoreConfig(self::XML_PATH_AREA_FIELD, $storeId);
+        if (!$areaField) {
+            return '';
+        }
+        
+        $area = $address->getStreet($areaField);
+        
+        return $area;
+    }
+    
+    /**
+     * Get the area building name from an address if enabled
+     * 
+     * @return string
+     */
+    protected function _getBuildingName($address)
+    {
+        $storeId = $this->getStoreId();
+        $buildingNameField = (string) Mage::getStoreConfig(self::XML_PATH_BUILDING_NAME_FIELD, $storeId);
+        if (!$buildingNameField) {
+            return '';
+        }
+        
+        $buildingName = $address->getStreet($buildingNameField);
+        
+        return $buildingName;
+    }
+    
+    /**
+     * Get the department field from an address if enabled
+     * 
+     * @return string
+     */
+    protected function _getDepartment($address)
+    {
+        $storeId = $this->getStoreId();
+        $departmentField = (string) Mage::getStoreConfig(self::XML_PATH_DEPARTMENT_FIELD, $storeId);
+        if (!$departmentField) {
+            return '';
+        }
+        
+        $department = $address->getStreet($departmentField);
+        
+        return $department;
+    }
+    
+    /**
+     * Get the doorcode field from an address if enabled
+     * 
+     * @return string
+     */
+    protected function _getDoorcode($address)
+    {
+        $storeId = $this->getStoreId();
+        $doorcodeField = (string) Mage::getStoreConfig(self::XML_PATH_DOORCODE_FIELD, $storeId);
+        if (!$doorcodeField) {
+            return '';
+        }
+        
+        $doorcode = $address->getStreet($doorcodeField);
+        
+        return $doorcode;
+    }
+    
+    /**
+     * Get the floor field from an address if enabled
+     * 
+     * @return string
+     */
+    protected function _getFloor($address)
+    {
+        $storeId = $this->getStoreId();
+        $floorField = (string) Mage::getStoreConfig(self::XML_PATH_FLOOR_FIELD, $storeId);
+        if (!$floorField) {
+            return '';
+        }
+        
+        $floor = $address->getStreet($floorField);
+        
+        return $floor;
+    }
+    
+    /**
+     * Get the remark field from an address if enabled
+     * 
+     * @return string
+     */
+    protected function _getRemark($address)
+    {
+        $storeId = $this->getStoreId();
+        $remarkField = (string) Mage::getStoreConfig(self::XML_PATH_REMARK_FIELD, $storeId);
+        if (!$remarkField) {
+            return '';
+        }
+        
+        $remark = $address->getStreet($remarkField);
+        
+        return $remark;
     }
 }

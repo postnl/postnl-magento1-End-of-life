@@ -63,9 +63,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     const SHIPMENT_GRID_DIR_VAR_NAME = 'sales_shipment_griddir';
     
     /**
-     * XML path to 'show printed column' setting
+     * XML path to 'shipping grid columns' setting
      */
-    const XML_PATH_SHOW_PRINTED_COLUMN = 'postnl/cif_labels_and_confirming/show_printed_column';
+    const XML_PATH_SHIPPING_GRID_COLUMNS = 'postnl/cif_labels_and_confirming/shipping_grid_columns';
     
     /**
      * XML path to default selected mass action setting
@@ -73,18 +73,20 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     const XML_PATH_SHIPPING_GRID_MASSACTION_DEFAULT = 'postnl/cif_labels_and_confirming/shipping_grid_massaction_default';
     
     /**
-     * Checks if the merchant has enabled the 'labels printed' column
+     * get an array of optional columns to display
      * 
      * @return boolean
      */
-    public function showPrintedColumn()
+    public function getOptionalColumnsToDisplay()
     {
-        $showPrintedColumn = (bool) Mage::getStoreConfig(
-                                        self::XML_PATH_SHOW_PRINTED_COLUMN, 
+        $columnsToDisplay = Mage::getStoreConfig(
+                                        self::XML_PATH_SHIPPING_GRID_COLUMNS, 
                                         Mage_Core_Model_App::ADMIN_STORE_ID
                                     );
         
-        return $showPrintedColumn;
+        $columnsToDisplay = explode(',', $columnsToDisplay);
+        
+        return $columnsToDisplay;
     }
     
     /**
@@ -121,6 +123,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $this;
         }
         
+        $currentCollection = $block->getCollection();
+        $select = $currentCollection->getSelect();
         
         /**
          * replace the collection as the default collection has a bug preventing it from being reset.
@@ -129,6 +133,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * TODO see if this can be avoided in any way
          */
         $collection = Mage::getResourceModel('postnl/order_shipment_grid_collection');
+        $collection->setSelect($select)
+                   ->setPageSize($currentCollection->getPageSize())
+                   ->setCurPage($currentCollection->getCurPage());
         
         $this->setCollection($collection);
         $this->setBlock($block);
@@ -139,7 +146,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $this->_applySortAndFilter($collection);
         
         $block->setCollection($this->getCollection());
-        
         return $this;
     }
     
@@ -154,15 +160,30 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     {
         $helper = Mage::helper('postnl');
         
-        $block->addColumnAfter(
-            'shipping_description',
-            array(
-                'header'    => $helper->__('Shipping Method'),
-                'align'     => 'left',
-                'index'     => 'shipping_description',
-            ),
-            'total_qty'
-        );
+        /**
+         * Get an array of which optional columns should be shown
+         */
+        $columnsToDisplay = $this->getOptionalColumnsToDisplay();
+        
+        /**
+         * This variable is the column ID of each column that the next column will follow.
+         * By changing this variable after each column is added we guarantee the correct
+         * column order will be followed regardless of which optional columns are shown
+         */
+        $after = 'total_qty';
+        if (in_array('shipping_description', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'shipping_description',
+                array(
+                    'header'    => $helper->__('Shipping Method'),
+                    'align'     => 'left',
+                    'index'     => 'shipping_description',
+                ),
+                $after
+            );
+            
+            $after = 'shipping_description';
+        }
         
         $block->addColumnAfter(
             'confirm_date',
@@ -172,22 +193,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'align'    => 'left',
                 'index'    => 'confirm_date',
                 'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_confirmDate',
+                'frame_callback' => array($this, 'decorateConfirmDate'),
             ),
-            'shipping_description'
+            $after
         );
         
-        $block->addColumnAfter(
-            'barcode',
-            array(
-                'header'   => $helper->__('Track & Trace'),
-                'align'    => 'left',
-                'index'    => 'main_barcode',
-                'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_barcode',
-            ),
-            'confirm_date'
-        );
+        $after = 'confirm_date';
         
-        if ($this->showPrintedColumn()) {
+        if (in_array('labels_printed', $columnsToDisplay)) {
             $block->addColumnAfter(
                 'labels_printed',
                 array(
@@ -199,10 +212,44 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                         1 => Mage::helper('postnl')->__('Yes'),
                         0 => Mage::helper('postnl')->__('No'),
                     ),
-                    'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_yesNo',
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_yesNo',
+                    'frame_callback' => array($this, 'decorateLabelsPrinted'),
                 ),
-                'confirm_date'
+                $after
             );
+            
+            $after = 'labels_printed';
+        }
+        
+        $block->addColumnAfter(
+            'barcode',
+            array(
+                'header'   => $helper->__('Track & Trace'),
+                'align'    => 'left',
+                'index'    => 'main_barcode',
+                'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_barcode',
+            ),
+            $after
+        );
+        
+        $after = 'barcode';
+        
+        if (in_array('shipping_phase', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'shipping_phase',
+                array(
+                    'header'   => $helper->__('Shipping Phase'),
+                    'align'    => 'left',
+                    'index'    => 'shipping_phase',
+                    'type'     => 'options',
+                    'options'  => Mage::helper('postnl/cif')->getShippingPhases(),
+                    'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_shippingPhase',
+                    'frame_callback' => array($this, 'decorateShippingPhase'),
+                ),
+                $after
+            );
+            
+            $after = 'shipping_phase';
         }
         
         $actionColumn = $block->getColumn('action');
@@ -223,12 +270,110 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         );
         
         $actionColumn->setActions($actions)
-                     ->unsWidth()
+                     ->setWidth('150px')
                      ->setData('renderer', 'postnl_adminhtml/widget_grid_column_renderer_action');
         
         $block->sortColumnsByOrder();
         
         return $this;
+    }
+
+    /**
+     * Decorates the confirm_sate column
+     * 
+     * @param string | null $value
+     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     * @param boolean $isExport
+     * 
+     * @return string
+     */
+    public function decorateConfirmDate($value, $row, $column, $isExport)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        
+        $class = '';
+        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
+            $class = 'grid-severity-notice';
+        }
+        
+        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED) {
+            $class = 'grid-severity-critical';
+        }
+        
+        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
+            && date('Ymd', Mage::getModel('core/date')->timestamp()) == date('Ymd', strtotime($value))
+        ) {
+            $class = 'grid-severity-major';
+        } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
+            $class = 'grid-severity-minor';
+        }
+        
+        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
+    }
+    
+    /**
+     * Decorates the labels_printed column
+     * 
+     * @param string | null $value
+     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     * @param boolean $isExport
+     * 
+     * @return string
+     */
+    public function decorateLabelsPrinted($value, $row, $column, $isExport)
+    {
+        switch ($row->getData($column->getIndex())) {
+            case null: //rows with no value (non-PostNL shipments)
+                $class = '';
+                break;
+            case 0:
+                $class = 'grid-severity-critical';
+                break;
+            case 1:
+                $class = 'grid-severity-notice';
+                break;
+            default:
+                $class = '';
+                break;
+        }
+        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
+    }
+    
+    /**
+     * Decorates the shipping_phase column
+     * 
+     * @param string | null $value
+     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     * @param boolean $isExport
+     * 
+     * @return string
+     */
+    public function decorateShippingPhase($value, $row, $column, $isExport)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        
+        $class = '';
+        switch ($row->getData($column->getIndex())) {
+            case null: //rows with no value (non-PostNL shipments) or unconfirmed shipments
+                $class = '';
+                break;
+            case $postnlShipmentClass::SHIPPING_PHASE_COLLECTION:   //no break
+            case $postnlShipmentClass::SHIPPING_PHASE_SORTING:      //no break;
+            case $postnlShipmentClass::SHIPPING_PHASE_DISTRIBUTION: //no break;
+            case $postnlShipmentClass::SHIPPING_PHASE_DELIVERED:
+                $class = 'grid-severity-notice';
+                break;
+            case $postnlShipmentClass::SHIPPING_PHASE_NOT_APPLICABLE:
+                $class = 'grid-severity-critical';
+                break;
+            default:
+                $class = '';
+                break;
+        }
+        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
     }
 
     /**
@@ -353,6 +498,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'main_barcode'   => 'postnl_shipment.main_barcode',
                 'confirm_status' => 'postnl_shipment.confirm_status',
                 'labels_printed' => 'postnl_shipment.labels_printed',
+                'shipping_phase' => 'postnl_shipment.shipping_phase',
             )
         );
         

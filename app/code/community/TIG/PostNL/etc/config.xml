@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.2.7</version>
+			<version>0.2.9</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -135,6 +135,15 @@
         		</observers>
         	</sales_order_shipment_save_after>
         </events>
+        <template>
+            <email>
+                <track_and_trace translate="label" module="postnl">
+                    <label>PostNL Track &amp; Trace Email</label>
+                    <file>TIG/PostNL/track_and_trace.html</file>
+                    <type>html</type>
+                </track_and_trace>
+            </email>
+        </template>
 	</global>
 	
     <admin>
@@ -225,7 +234,7 @@
             </postnl_get_missing_barcodes>
             <!-- Update the shipping status for all undelivered PostNL shipments -->
             <postnl_update_shipping_status>
-                <!-- No cron expr. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
+                <!-- No cron expression. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
             	<run>
             		<model>postnl_core/observer_cron::updateShippingStatus</model>
             	</run>
@@ -239,6 +248,15 @@
                     <model>postnl_core/observer_cron::expireConfirmation</model>
                 </run>
             </postnl_expire_confirmation>
+            <!-- Sends track and trace emails for all shipments that have been confirmed -->
+            <postnl_send_track_and_trace_email>
+                <schedule>
+                    <cron_expr>*/15 * * * *</cron_expr> <!-- every 15 minutes -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::sendTrackAndTraceEmail</model>
+                </run>
+            </postnl_send_track_and_trace_email>
         </jobs>
     </crontab>
     
@@ -252,7 +270,7 @@
                 <name>PostNL</name> <!-- PostNL -->
                 <price>5.00</price> <!-- 5 EUR -->
                 <title>PostNL</title> <!-- PostNL -->
-                <type>I</type>
+                <type>I</type> <!-- Price is calculated per item -->
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
                 <handling_type>F</handling_type>
             </postnl>
@@ -276,9 +294,11 @@
         	</cif>
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
-                <show_printed_column>1</show_printed_column> <!-- show the 'labels printed column' in the shipment grid -->
+                <shipping_grid_columns>shipping_description,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show all optional columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <weight_per_parcel>20</weight_per_parcel> <!-- 20 kg -->
+                <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
+                <track_and_trace_email_template/>
         	</cif_labels_and_confirming>
         	<cif_address>
         		<split_street>1</split_street> <!-- split street -->
@@ -286,6 +306,12 @@
         		<housenr_field>2</housenr_field> <!-- second address line -->
         		<split_housenr>0</split_housenr> <!-- do not split housenr and extension -->
         		<housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
+        	    <area_field/>
+        	    <building_name_field/>
+        	    <department_field/>
+        	    <doorcode_field/>
+        	    <floor_field/>
+        	    <remark_field/>
         	</cif_address>
         	<cif_sender_address>
         		<firstname/>
@@ -315,10 +341,13 @@
         	<cif_product_options>
         		<show_grid_options>0</show_grid_options> <!-- Do not show product options in the order grid -->
         		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4950,4952,4954,4955,4945</supported_product_options> <!-- all possible options -->
-        		<default_product_options>3085</default_product_options> <!-- standard shipment -->
-        		<default_pakjegemak_product_options>3533</default_pakjegemak_product_options> <!-- PakjeGemak + signature on delivery -->
-        		<default_eu_product_options>4952</default_eu_product_options> <!-- EU Pack Special to consumer (combilabel) -->
-        		<default_global_product_options>4945</default_global_product_options> <!-- GlobalPack -->
+        		<default_product_option>3085</default_product_option> <!-- standard shipment -->
+        		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
+        		<alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
+        		<alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
+        		<default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- PakjeGemak + signature on delivery -->
+        		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
+        		<default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
         		<weight_unit>gram</weight_unit> <!-- gram -->
         	</cif_product_options>
         	<cif_globalpack_settings>

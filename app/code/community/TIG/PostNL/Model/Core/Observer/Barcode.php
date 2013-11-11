@@ -83,8 +83,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
          * created. This may happen when CIF is overburdoned.
          */              
         try {
-            $postnlShipment->generateBarcodes()
-                           ->addTrackingCodeToShipment();
+            $postnlShipment->generateBarcodes();
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
         }

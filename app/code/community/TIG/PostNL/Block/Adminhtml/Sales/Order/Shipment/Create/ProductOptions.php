@@ -106,6 +106,21 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ProductOptions exte
     }
     
     /**
+     * Check if the current shipment is belgian
+     * 
+     * @return boolean
+     */
+    public function isBelgium()
+    {
+        $shipment = $this->getShipment();
+        if ($shipment->getShippingAddress()->getCountry() == 'BE') {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * Do a few checks to see if the template should be rendered before actually rendering it
      * 
      * @return string | parent::_toHtml()
