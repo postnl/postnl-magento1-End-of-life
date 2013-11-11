@@ -42,38 +42,99 @@
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory extends Mage_Adminhtml_Block_Widget_Grid
 {
+    /**
+     * Class constructor
+     * 
+     * @return TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory
+     * 
+     * @see Mage_Adminhtml_Block_Widget_Grid::__construct()
+     */
     public function __construct()
     {
         parent::__construct();
+        
+        /**
+         * Set some base variables for this grid
+         */
+        $this->setEmptyText(Mage::helper('postnl')->__('No status history available.'));
         $this->setId('sales_order_shipment_status_history_grid');
-        $this->setDefaultSort('entity_id');
+        $this->setDefaultSort('status_id');
         $this->setUseAjax(true);
+        
+        $postnlShipment = Mage::registry('current_postnl_shipment');
+        $this->setPostnlShipment($postnlShipment);
+        
+        return $this;
     }
     
+    /**
+     * Get the basic collection for this grid
+     * 
+     * @return TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory
+     * 
+     * @see Mage_Adminhtml_Block_Widget_Grid::_prepareCollection
+     */
     protected function _prepareCollection()
     {
-        $collection = Mage::getResourceModel('postnl_core/shipment_collection');
+        $postnlShipmentId = $this->getPostnlShipment()->getId();
+        
+        $collection = Mage::getResourceModel('postnl_core/shipment_status_history_collection');
+        $collection->addFieldToFilter('parent_id', array('eq' => $postnlShipmentId));
         
         $this->setCollection($collection);
 
         parent::_prepareCollection();
         return $this;
     }
-
+    
+    /**
+     * Prepares the grid's columns for rendering
+     * 
+     * @return Mage_Adminhtml_Block_Widget_Grid::_prepareColumns
+     * 
+     * @see Mage_Adminhtml_Block_Widget_Grid::addColumn()
+     */
     protected function _prepareColumns()
     {
-        $this->addColumn('entity_id',
+        $helper = Mage::helper('postnl');
+        
+        $this->addColumn('status_id',
             array(
-                'header'=> Mage::helper('postnl')->__('ID'),
-                'width' => '50px',
-                'type'  => 'number',
-                'index' => 'entity_id',
+                'header' => $helper->__('ID'),
+                'width'  => '50px',
+                'type'   => 'number',
+                'index'  => 'status_id',
         ));
         
-        $this->addColumn('main_barcode',
+        $this->addColumn('code',
             array(
-                'header'=> Mage::helper('postnl')->__('Name'),
-                'index' => 'main_barcode',
+                'header' => $helper->__('Status Code'),
+                'index'  => 'code',
+        ));
+        
+        $this->addColumn('description',
+            array(
+                'header' => $helper->__('Description'),
+                'index'  => 'description',
+                'align'  => 'left',
+        ));
+        
+        $this->addColumn('phase',
+            array(
+                'header'   => $helper->__('Phase'),
+                'index'    => 'phase',
+                'align'    => 'left',
+                'type'     => 'options',
+                'options'  => Mage::helper('postnl/cif')->getShippingPhases(),
+                'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_shippingPhase',
+        ));
+        
+        $this->addColumn('timestamp',
+            array(
+                'header'   => $helper->__('Date'),
+                'index'    => 'timestamp',
+                'type'     => 'date',
+                'align'    => 'left',
         ));
 
         return parent::_prepareColumns();

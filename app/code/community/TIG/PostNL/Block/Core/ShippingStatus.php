@@ -42,7 +42,7 @@ class TIG_PostNL_Block_Core_ShippingStatus extends Mage_Core_Block_Template
      * Available status classes for the status bar html element
      */   
     const CLASS_UNCONFIRMED  = '';
-    const CLASS_CONFIRMED    = 'status-confirmed';
+    const CLASS_COLLECTION   = 'status-collection';
     const CLASS_DISTRIBUTION = 'status-distribution';
     const CLASS_TRANSIT      = 'status-transit';
     const CLASS_DELIVERED    = 'status-delivered';

@@ -71,13 +71,30 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tabs extends Mage_Adm
         ));
         
         /**
-         * Add the status history tab. This is added by PostNL
+         * Get the current shipment's ID and attempt to load a corresponding postnl shipment
          */
-        $this->addTab('shipment_status_history', array(
-            'label'     => Mage::helper('postnl')->__('Shipping status history'),
-            'url'       => $this->getUrl('postnl/adminhtml_shipment/statusHistory', array('_current' => true)),
-            'class'     => 'ajax',
-        ));
+        $shipmentId = Mage::registry('current_shipment')->getId();
+        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipmentId, 'shipment_id');
+        
+        /**
+         * Only show the status history tab if a postnl shipment entity was found for the current shipment
+         */
+        if ($postnlShipment->getId()) {
+            /**
+             * Add the status history tab. This is added by PostNL
+             */
+            $this->addTab('shipment_status_history', array(
+                'label'     => Mage::helper('postnl')->__('Shipping status history'),
+                'url'       => $this->getUrl(
+                                   'postnl/adminhtml_shipment/statusHistory', 
+                                   array(
+                                       '_current' => true, 
+                                       'shipment_id' => $shipmentId
+                                   )
+                               ),
+                'class'     => 'ajax',
+            ));
+        }
         
         return parent::_prepareLayout();
     }

@@ -153,10 +153,47 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function statusHistoryAction()
     {
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        $postnlShipment = $this->_getPostnlShipment($shipmentId);
+        Mage::register('current_postnl_shipment', $postnlShipment);
+        
+        /**
+         * Get the postnl shipments' status history updated at timestamp and a reference timestamp of 15 minutes ago
+         */
+        $currentTimestamp = Mage::getModel('core/date')->timestamp();
+        $fifteenMinutesAgo = strtotime("-15 minutes", $currentTimestamp);
+        $statusHistoryUpdatedAt = $postnlShipment->getStatusUpdatedAt();
+        
+        /**
+         * If this shipment's status history has not been updated in the last 15 minutes (if ever) update it
+         */
+        if ($postnlShipment->getId()
+            && ($postnlShipment->getStatusUpdatedAt() === null
+                || strtotime($statusHistoryUpdatedAt) < $fifteenMinutesAgo
+            )
+        ) {
+            $postnlShipment->updateStatusHistory();
+        }
+        
         $this->loadLayout();
         $this->renderLayout();
              
         return $this;
+    }
+    
+    /**
+     * Gets the postnl shipment associated with a shipment
+     * 
+     * @param int $shipmentId
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    protected function _getPostnlShipment($shipmentId)
+    {
+        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipmentId, 'shipment_id');
+        
+        $this->setPostnlShipment($postnlShipment);
+        return $postnlShipment;
     }
     
     /**
