@@ -41,6 +41,7 @@
 <?php $_shipment = $this->getShipment(); ?>
 <?php $_productOptions = $this->getProductOptions(); ?>
 <?php $_defaultProductOption = $this->getDefaultProductOption(); ?>
+<?php $_isBelgium = $this->isBelgium(); ?>
 <script type ="text/javascript">
 //<![CDATA[
     document.observe('dom:loaded', function() {
@@ -85,6 +86,9 @@
         });
         
         <?php foreach($_productOptions as $_option): ?>
+            <?php if (isset($_option['isBelgiumOnly']) && $_isBelgium === false): ?>
+                <?php continue; ?>
+            <?php endif; ?>
             option = new Element('option', {
                 <?php if (isset($_option['isExtraCover']) && $_option['isExtraCover'] === true): ?>
                     'class': 'extra_cover',

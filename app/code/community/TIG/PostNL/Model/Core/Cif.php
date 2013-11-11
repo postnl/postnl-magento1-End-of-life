@@ -631,13 +631,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'DownPartnerID'            => '',
             'ProductCodeDelivery'      => $postnlShipment->getProductCode(),
             'Reference'                => $shipment->getReference(),
-            'Groups'                   => array(
-                                           'Group'   => $this->_getGroup(
-                                                            $parcelCount, 
-                                                            $mainBarcode, 
-                                                            $shipmentNumber
-                                                        ),
-                                       ),
             'Contacts'                 => array(
                                            'Contact' => $this->_getContact($shippingAddress),
                                        ),
@@ -646,6 +639,21 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                        ),
             'Reference'                => $shipment->getIncrementId(),
         );
+        
+        /**
+         * Add group data (for multi-collo shipments)
+         */
+        if ($parcelCount > 1) {
+            $groups = array(
+                'Group' => $this->_getGroup(
+                               $parcelCount, 
+                               $mainBarcode, 
+                               $shipmentNumber
+                           ),
+            );
+            
+            $shipmentData['Groups'] = $groups;
+        }
         
         /**
          * Add address data
