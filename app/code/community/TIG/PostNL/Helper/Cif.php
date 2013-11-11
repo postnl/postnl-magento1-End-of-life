@@ -72,9 +72,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * XML paths to default product options settings
      */
-    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS = 'postnl/cif_product_options/default_product_options';
-    const XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS       = 'postnl/cif_product_options/default_eu_product_options';
-    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS   = 'postnl/cif_product_options/default_global_product_options';
+    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION = 'postnl/cif_product_options/default_product_option';
+    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION       = 'postnl/cif_product_options/default_eu_product_option';
+    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION   = 'postnl/cif_product_options/default_global_product_option';
     
     /**
      * Array of countries to which PostNL ships using EPS. Other EU countries are shipped to using GlobalPack
@@ -462,7 +462,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
     
     /**
-     * Get an array of all default product options
+     * Get an array of all default product options. This is a simple method to quickly get a list of default options based on
+     * the current storeview.
+     * 
+     * This does not take into account the possible use of an alternative default for dutch shipments. For that you need to use
+     * TIG_PostNL_Model_Core_Shipment::getDefaultProductCode() which is more precise.
      * 
      * @return array
      */
@@ -470,9 +474,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $storeId = Mage::app()->getStore()->getId();
         
-        $defaultDutchOption  = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS, $storeId);
-        $defaultEuOption     = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS, $storeId);
-        $defaultGlobalOption = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS, $storeId);
+        $defaultDutchOption  = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
+        $defaultEuOption     = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTION, $storeId);
+        $defaultGlobalOption = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION, $storeId);
         
         $defaultOptions = array(
             'dutch'  => $defaultDutchOption,

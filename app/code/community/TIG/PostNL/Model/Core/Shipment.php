@@ -66,9 +66,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * XML paths to default product options settings
      */
-    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS = 'postnl/cif_product_options/default_product_options';
-    const XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS       = 'postnl/cif_product_options/default_eu_product_options';
-    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS   = 'postnl/cif_product_options/default_global_product_options';
+    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION = 'postnl/cif_product_options/default_product_option';
+    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION       = 'postnl/cif_product_options/default_eu_product_option';
+    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION   = 'postnl/cif_product_options/default_global_product_option';
+    const XML_PATH_USE_ALTERNATIVE_DEFAULT         = 'postnl/cif_product_options/use_alternative_default';
+    const XML_PATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT  = 'postnl/cif_product_options/alternative_default_max_amount';
+    const XML_PATH_ALTERNATIVE_DEFAULT_OPTION      = 'postnl/cif_product_options/alternative_default_option';
     
     /**
      * XML path to weight per parcel config setting
@@ -329,6 +332,48 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Calculates a shipment's base grand total based on it's shipment items
+     * 
+     * @return float | null
+     */
+    public function getShipmentBaseGrandTotal()
+    {
+        if ($this->getData('shipment_base_grand_total')) {
+            return $this->getData('shipment_base_grand_total');
+        }
+        
+        /**
+         * Check if this PostNL shipment has a linked Mage_Sales_Model_Order_Shipment object
+         */
+        $shipment = $this->getShipment();
+        if (!$shipment) {
+            return null;
+        }
+        
+        /**
+         * Loop through all associated shipment items and add each item's row total to the shipment's total
+         */
+        $baseGrandTotal = 0;
+        $shipmentItems = $shipment->getAllItems();
+        foreach ($shipmentItems as $shipmentItem) {
+            $qty = $shipmentItem->getQty();
+            /**
+             * The base price of a shipment item is only available through it's associated order item
+             */
+            $basePrice = $shipmentItem->getOrderItem()->getBasePrice();
+            
+            /**
+             * Calculate and add the shipment item's row total
+             */
+            $totalBasePrice = $basePrice * $qty;
+            $baseGrandTotal += $totalBasePrice;
+        }
+
+        $this->setShipmentBaseGrandTotal($baseGrandTotal);
+        return $baseGrandTotal;
+    }
+    
+    /**
      * Set an extra cover amount
      * 
      * @param int $amount
@@ -381,14 +426,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Gets the default product code for this shipment from the module's configuration
      * 
      * @return string
+     * 
+     * @todo implement pakjegemak
      */
     public function getDefaultProductCode()
     {
+        $storeId = $this->getStoreId();
+        
         if ($this->isEuShipment()) {
             /**
              * EU default option
              */
-            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS, $this->getStoreId());
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTION, $storeId);
             $this->_checkProductCodeAllowed($productCode);
             
             return $productCode;
@@ -398,16 +447,40 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             /**
              * Global default option
              */
-            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS, $this->getStoreId());
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION, $storeId);
             $this->_checkProductCodeAllowed($productCode);
             
             return $productCode;
         }
         
         /**
+         * If the shipment is not EU or global, it's dutch (AKA a 'standard' shipment)
+         */
+        
+        /**
+         * Dutch shipments may use an alternative default option when the shipment's base grandtotal exceeds a specified amount
+         */
+        $useAlternativeDefault = Mage::getStoreConfig(self::XML_PATH_USE_ALTERNATIVE_DEFAULT, $storeId);
+        if ($useAlternativeDefault) {
+            /**
+             * Alternative default option usage is enabled
+             */
+            $maxShipmentAmount = Mage::getStoreConfig(self::XML_PATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT, $storeId);
+            if ($this->getShipmentBaseGrandTotal() > $maxShipmentAmount) {
+                /**
+                 * The shipment's base GT exceeds the specified amount; use the alternative default
+                 */
+                $productCode = Mage::getStoreConfig(self::XML_PATH_ALTERNATIVE_DEFAULT_OPTION, $storeId);
+                $this->_checkProductCodeAllowed($productCode);
+                
+                return $productCode;
+            }
+        }
+        
+        /**
          * standard default option
          */
-        $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS, $this->getStoreId());
+        $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
         $this->_checkProductCodeAllowed($productCode);
         
         return $productCode;
@@ -870,6 +943,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected function _confirm($barcodeNumber = false)
     {
         $mainBarcode = $this->getMainBarcode();
+        
+        /**
+         * if $barcodeNumber is false, this is a single parcel shipment
+         */
         if ($barcodeNumber === false) {
             $barcode = $mainBarcode;
             $mainbarcode = false;
