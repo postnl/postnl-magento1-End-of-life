@@ -676,8 +676,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $this;
         }
         
-        $requestXml = $this->formatXml($client->__getLastRequest());
-        $responseXML = $this->formatXml($client->__getLastResponse());
+        $requestXml = $this->formatXml($client->getLastRequest());
+        $responseXML = $this->formatXml($client->getLastResponse());
         
         $logMessage = "Request sent:\n"
                     . $requestXml

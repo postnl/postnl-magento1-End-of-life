@@ -492,14 +492,14 @@
                             </depends>
                             <validate>validate-select</validate>
                     	</housenr_extension_field>
-                    	<optional_street_fields_banner translate="label" module="postnl">
+                    	<optional_street_fields_header translate="label" module="postnl">
                     	    <label>The following fields are optional and should remain empty, unless you specifically use these fields in your checkout configuration.</label>
-                    	    <frontend_model>postnl_adminhtml/system_config_optionalStreetFieldsBanner</frontend_model>
+                    	    <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                    	</optional_street_fields_banner>
+                    	</optional_street_fields_header>
                         <area_field translate="label" module="postnl">
                             <label>Area field</label>
                             <frontend_type>select</frontend_type>
@@ -1026,6 +1026,46 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-digits validate-greater-than-zero</validate> <!-- not negative integers only -->
                         </confirm_expire_days>
+                        <cif_versions_header translate="label" module="postnl">
+                            <label>The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the module altogether.</label>
+                            <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_versions_header>
+                        <cif_version_shippingstatus>
+                            <label>ShippingStatus Webservice version</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_version_shippingstatus>
+                        <cif_version_confirming>
+                            <label>Confirming Webservice version</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_version_confirming>
+                        <cif_version_labelling>
+                            <label>Labelling Webservice version</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_version_labelling>
+                        <cif_version_barcode>
+                            <label>Barcode Webservice version</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_version_barcode>
                 	</fields>
 				</advanced>
 			</groups>

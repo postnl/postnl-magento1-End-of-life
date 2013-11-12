@@ -366,6 +366,10 @@
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
         		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
+        		<cif_version_shippingstatus>1_2</cif_version_shippingstatus> <!-- v1.2 -->
+        		<cif_version_confirming>1_3</cif_version_confirming> <!-- v1.3 -->
+        		<cif_version_labelling>1_4</cif_version_labelling> <!-- v1.4 -->
+        		<cif_version_barcode>1_0</cif_version_barcode> <!-- v1.0 -->
         	</advanced>
         </postnl>
     </default>
