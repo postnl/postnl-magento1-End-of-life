@@ -968,12 +968,27 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             && isset($responseShipment->Barcode)
             && $responseShipment->Barcode == $barcode
         ) {
-            $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-                 ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
-            
             return $this;
         }
         
+        /**
+         * If the ConfirmingResponseShipment is an array, it may indicate multiple shipments were confirmed. We need to check the
+         * first shipment's barcode to see if it matches the main bartcode.
+         */
+        if (is_array($responseShipment)) {
+            $mainResponseShipment = $responseShipment[0];
+            
+            if (is_object($mainResponseShipment) 
+                && isset($mainResponseShipment->Barcode)
+                && $mainResponseShipment->Barcode == $barcode
+            ) {
+                return $this;
+            }
+        }
+        
+        /**
+         * The response was not valid; throw an exception
+         */
         throw Mage::exception('TIG_PostNL', 'Invalid confirm response recieved: ' . var_export($result, true));
     }
     

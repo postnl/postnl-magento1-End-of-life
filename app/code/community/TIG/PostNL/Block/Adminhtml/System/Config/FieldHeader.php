@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_OptionalStreetFieldsbanner 
+class TIG_PostNL_Block_Adminhtml_System_Config_FieldHeader
     extends Mage_Adminhtml_Block_Abstract
     implements Varien_Data_Form_Element_Renderer_Interface
 {
@@ -45,7 +45,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_OptionalStreetFieldsbanner
      * 
      * @var string
      */
-    protected $_template = 'TIG/PostNL/system/config/optional_street_fields_banner.phtml';
+    protected $_template = 'TIG/PostNL/system/config/field_header.phtml';
     
     /**
      * Get the element's HTML ID
@@ -54,10 +54,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_OptionalStreetFieldsbanner
      */
     public function getHtmlId()
     {
-        if ($this->getData('html_id')) {
-            return $this->getData('html_id');
-        }
-        
         if (!$this->getElement()) {
             return '';
         }
@@ -76,10 +72,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_OptionalStreetFieldsbanner
      */
     public function getLabel()
     {
-        if ($this->getData('label')) {
-            return $this->getData('label');
-        }
-        
         if (!$this->getElement()) {
             return '';
         }

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema elementFormDefault="qualified" targetNamespace="http://postnl.nl/cif/services/ShippingStatusWebService/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://postnl.nl/cif/services/ShippingStatusWebService/">
-  <xs:import schemaLocation="ShippingStatusWebService_1.xsd" namespace="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Domain.ShippingStatusService"/>
-  <xs:element name="CurrentStatus" nillable="true" type="q1:CurrentStatusRequest" xmlns:q1="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Domain.ShippingStatusService"/>
-  <xs:element name="CurrentStatusResponse" nillable="true" type="q2:CurrentStatusResponse" xmlns:q2="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Domain.ShippingStatusService"/>
-  <xs:element name="CompleteStatus" nillable="true" type="q3:CompleteStatusRequest" xmlns:q3="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Domain.ShippingStatusService"/>
-  <xs:element name="CompleteStatusResponse" nillable="true" type="q4:CompleteStatusResponse" xmlns:q4="http://schemas.datacontract.org/2004/07/Tpp.Cif.Services.Domain.ShippingStatusService"/>
-</xs:schema>
