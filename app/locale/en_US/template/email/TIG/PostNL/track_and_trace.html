@@ -1,13 +1,44 @@
-<!--@subject postNL - Track & trace information for your shipment {{var shipment.increment_id}} @-->
+<!--@subject PostNL - Track & trace information for your shipment {{var shipment.increment_id}} @-->
 <!--@vars
 {"store url=\"\"":"Store Url",
 "var logo_url":"Email Logo Image Url",
 "var logo_alt":"Email Logo Image Alt",
+"var barcode":"Barcode",
+"var barcode_url":"Barcode URL",
 "store url=\"customer/account/\"":"Customer Account Url",
 "var shipment.increment_id":"Shipment Id"}
 @-->
+<!--@styles
+body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif; }
+@-->
 <body style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
     <div style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
-        test
+        <table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+                <td align="center" valign="top" style="padding:20px 0 20px 0">
+                    <table bgcolor="#FFFFFF" cellspacing="0" cellpadding="10" border="0" width="650" style="border:1px solid #E0E0E0;">
+                        <!-- [ header starts here] -->
+                        <tr>
+                            <td valign="top"><a href="{{store url=""}}"><img src="{{var logo_url}}" alt="{{var logo_alt}}" style="margin-bottom:10px;" border="0"/></a></td>
+                        </tr>
+                        <!-- [ middle starts here] -->
+                        <tr>
+                            <td valign="top">
+                                <p style="font-size:12px; line-height:16px; margin:0;">Beste {{htmlescape var=$order.getCustomerName()}}</p>
+                                <p style="font-size:12px; line-height:16px; margin:0;">
+                                    Uw bestelling van {{var store.getFrontendName()}}, met barcode {{var barcode}} wordt vandaag verzonden.
+                                    Kijk op <a href="{{var barcode_url}}">www.mijnpakket.nl</a> om te zien
+                                    wanneer het pakket wordt bezorgd.
+                                </p>
+                        </tr>
+                        <tr>
+                            <td bgcolor="#EAEAEA" align="center" style="background:#EAEAEA; text-align:center;">
+                                <center><p style="font-size:12px; margin:0;">Met vriendelijke groet, <strong>{{var store.getFrontendName()}}</strong></p></center>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>

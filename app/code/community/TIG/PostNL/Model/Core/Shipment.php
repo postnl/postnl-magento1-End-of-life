@@ -1090,16 +1090,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             )
         );
         
+        $templateVariables = array(
+            'customer'       => $customer,
+            'quote'          => $quote,
+            'shipment'       => $this->getShipment(),
+            'order'          => $this->getShipment()->getOrder(),
+            'postnlshipment' => $this,
+            'barcode'        => $this->getMainBarcode(),
+            'barcode_url'    => Mage::helper('postnl/carrier')->getBarcodeUrl(
+                                    $this->getMainBarcode(), 
+                                    $this->getShippingAddress()
+                                ),
+        );
+        
         $orderModel = Mage::getConfig()->getModelClassName('sales/order');
         $mailTemplate->sendTransactional(
             $template,
             Mage::getStoreConfig($orderModel::XML_PATH_EMAIL_IDENTITY, $storeId),
             $recipient['email'],
             $recipient['name'],
-            array(
-                'customer' => $customer,
-                'quote'    => $quote
-            )
+            $templateVariables
        );
        
        return $this;
