@@ -375,6 +375,27 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
     
     /**
+     * formats input XML string to improve readability
+     * 
+     * @param string $xml
+     * 
+     * @return string
+     */
+    public function formatXML($xml)
+    {
+        if (empty($xml)) {
+            return '';
+        }
+        
+        $dom = new DOMDocument();
+        $dom->loadXML($xml);
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
+
+        return $dom->saveXML();
+    }
+    
+    /**
      * Logs a debug message. Based on Mage::log
      * 
      * @param string $message
