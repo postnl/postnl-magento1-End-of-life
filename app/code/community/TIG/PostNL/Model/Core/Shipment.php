@@ -638,7 +638,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * 
      * @return boolean
      */
-    public function canConfirm()
+    public function canConfirm($skipEuCheck = false)
     {
         if ($this->getConfirmStatus() == self::CONFIRM_STATUS_CONFIRMED) {
             return false;
@@ -649,6 +649,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         if (!$this->getMainBarcode()) {
+            return false;
+        }
+        
+        if ($skipEuCheck === false
+            && $this->isEuShipment() 
+            && !$this->getLabelsPrinted()
+        ) {
             return false;
         }
         
@@ -668,6 +675,25 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         if (self::SHIPPING_PHASE_DELIVERED == $this->getShippingPhase()) {
+            return false;
+        }
+        
+        if (!$this->getMainBarcode()) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Checks if the current shipment is eligible for a complete shipping status update.
+     * Unconfirmed shipments are inelligible.
+     * 
+     * @return boolean
+     */
+    public function canUpdateCompleteShippingStatus()
+    {
+        if (self::CONFIRM_STATUS_CONFIRMED != $this->getConfirmStatus()) {
             return false;
         }
         
@@ -763,7 +789,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /****************************************************************************************************************************
-     * CORE FUNCTIONALITY METHODS
+     * CIF FUNCTIONALITY METHODS
      ***************************************************************************************************************************/
         
     /**
@@ -841,52 +867,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         return $barcode;
-    }
-    
-    /**
-     * Generates a shipping label and confirms the shipment with postNL.
-     * 
-     * @return TIG_PostNL_Model_Core_Shipment
-     * 
-     * @throws TIG_PostNL_Exception
-     */
-    public function confirmAndGenerateLabel()
-    {
-        if (!$this->canConfirm()) {
-            throw Mage::exception('TIG_PostNL', 'The confirmAndPrintLabel action is currently unavailable.');
-        }
-        
-        $parcelCount = $this->getparcelCount();
-        if (!$parcelCount) {
-            $parcelCount = $this->_calculateParcelCount();
-        }
-        
-        /**
-         * Confirm and generate labels purely for the main shipment
-         */
-        if ($parcelCount < 2) {
-            $labels = $this->_generateLabel(true);
-            $this->addLabels($labels);
-            
-            $this->_saveLabels();
-            
-            return $this;
-        }
-        
-        /**
-         * Confirm and generate labels for each parcel in the shipment
-         */
-        for ($i = 0; $i < $parcelCount; $i++) {
-            $labels = $this->_generateLabel(true, $i);
-            $this->addLabels($labels);
-        }
-        
-        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-             ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
-                 
-        $this->_saveLabels();
-        
-        return $this;
     }
     
     /**
@@ -983,6 +963,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function confirm()
     {
+        if (!$this->canConfirm()) {
+            throw Mage::exception('TIG_PostNL', 'The confirm action is currently unavailable.');
+        }
+        
         $parcelCount = $this->getparcelCount();
         if (!$parcelCount) {
             $parcelCount = $this->_calculateParcelCount();
@@ -1013,6 +997,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
     
+    /**
+     * Confirms the shipment using CIF
+     * 
+     * @param int | null $barcodeNumber
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     * 
+     * @throws TIG_PostNL_Exception
+     */
     protected function _confirm($barcodeNumber = false)
     {
         $mainBarcode = $this->getMainBarcode();
@@ -1066,6 +1059,52 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Generates a shipping label and confirms the shipment with postNL.
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function confirmAndGenerateLabel()
+    {
+        if (!$this->canConfirm(true)) {
+            throw Mage::exception('TIG_PostNL', 'The confirmAndGenerateLabel action is currently unavailable.');
+        }
+        
+        $parcelCount = $this->getparcelCount();
+        if (!$parcelCount) {
+            $parcelCount = $this->_calculateParcelCount();
+        }
+        
+        /**
+         * Confirm and generate labels purely for the main shipment
+         */
+        if ($parcelCount < 2) {
+            $labels = $this->_generateLabel(true);
+            $this->addLabels($labels);
+            
+            $this->_saveLabels();
+            
+            return $this;
+        }
+        
+        /**
+         * Confirm and generate labels for each parcel in the shipment
+         */
+        for ($i = 0; $i < $parcelCount; $i++) {
+            $labels = $this->_generateLabel(true, $i);
+            $this->addLabels($labels);
+        }
+        
+        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
+             ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+                 
+        $this->_saveLabels();
+        
+        return $this;
+    }
+    
+    /**
      * Requests a shipping status update for this shipment
      * 
      * @return TIG_PostNL_Model_Core_Shipment
@@ -1074,9 +1113,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function updateShippingStatus()
     {
-        // if (!$this->canUpdateShippingStatus()) {
-            // throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
-        // }
+        if (!$this->canUpdateShippingStatus()) {
+            throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
+        }
         
         $cif = Mage::getModel('postnl_core/cif');
         $result = $cif->getShipmentStatus($this);
@@ -1096,9 +1135,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function updateCompleteShippingStatus()
     {
-        // if (!$this->canUpdateShippingStatus()) {
-            // throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
-        // }
+        if (!$this->canUpdateCompleteShippingStatus()) {
+            throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
+        }
         
         $cif = Mage::getModel('postnl_core/cif');
         $result = $cif->getCompleteShipmentStatus($this);
@@ -1134,6 +1173,49 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
     
+    /****************************************************************************************************************************
+     * TRACKING METHODS
+     ***************************************************************************************************************************/
+    
+    /**
+     * Adds Magento tracking information to the order containing the previously retrieved barcode
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function addTrackingCodeToShipment()
+    {
+        $shipment = $this->getShipment();
+        $barcode = $this->getMainBarcode();
+        
+        if (!$shipment || !$barcode) {
+            throw Mage::exception('TIG_PostNL', 'Unable to add tracking info: no barcode or shipment available.');
+        }
+        
+        $carrierCode = self::POSTNL_CARRIER_CODE;
+        $carrierTitle = Mage::getStoreConfig('carriers/' . $carrierCode . '/name', $shipment->getStoreId());
+        
+        $data = array(
+            'carrier_code' => $carrierCode,
+            'title'        => $carrierTitle,
+            'number'       => $barcode,
+        );
+        
+        $track = Mage::getModel('sales/order_shipment_track')->addData($data);
+        $shipment->addTrack($track);
+                 
+        /**
+         * Save the Mage_Sales_Order_Shipment object and the TIG_PostNL_Model_Core_Shipment objects simultaneously
+         */
+        $transactionSave = Mage::getModel('core/resource_transaction')
+                               ->addObject($this)
+                               ->addObject($shipment)
+                               ->save();
+        
+        return $this;
+    }
+
     /**
      * Send a track & trace email to the customer containing a link to the 'mijnpakket' environment where they
      * can track their shipment.
@@ -1187,45 +1269,33 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
        
        return $this;
     }
-
+    
+    /****************************************************************************************************************************
+     * BARCOCDE PROCESSING METHODS
+     ***************************************************************************************************************************/
+    
     /**
-     * Adds Magento tracking information to the order containing the previously retrieved barcode
+     * Add a barcode to this shipment's barcode collection
+     * 
+     * @param string $barcode The barcode to add
+     * @param int $barcodeNumber The number of this barcode
      * 
      * @return TIG_PostNL_Model_Core_Shipment
-     * 
-     * @throws TIG_PostNL_Exception
      */
-    public function addTrackingCodeToShipment()
+    protected function _addBarcode($barcode, $barcodeNumber)
     {
-        $shipment = $this->getShipment();
-        $barcode = $this->getMainBarcode();
-        
-        if (!$shipment || !$barcode) {
-            throw Mage::exception('TIG_PostNL', 'Unable to add tracking info: no barcode or shipment available.');
-        }
-        
-        $carrierCode = self::POSTNL_CARRIER_CODE;
-        $carrierTitle = Mage::getStoreConfig('carriers/' . $carrierCode . '/name', $shipment->getStoreId());
-        
-        $data = array(
-            'carrier_code' => $carrierCode,
-            'title'        => $carrierTitle,
-            'number'       => $barcode,
-        );
-        
-        $track = Mage::getModel('sales/order_shipment_track')->addData($data);
-        $shipment->addTrack($track);
-                 
-        /**
-         * Save the Mage_Sales_Order_Shipment object and the TIG_PostNL_Model_Core_Shipment objects simultaneously
-         */
-        $transactionSave = Mage::getModel('core/resource_transaction')
-                               ->addObject($this)
-                               ->addObject($shipment)
-                               ->save();
-        
+        $barcodeModel = Mage::getModel('postnl_core/shipment_barcode');
+        $barcodeModel->setParentId($this->getId())
+                     ->setBarcode($barcode)
+                     ->setBarcodeNumber($barcodeNumber)
+                     ->save();
+                     
         return $this;
     }
+    
+    /****************************************************************************************************************************
+     * LABEL PROCESSING METHODS
+     ***************************************************************************************************************************/
     
     /**
      * Add labels to this shipment
@@ -1251,25 +1321,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->_addLabel($label);
         }
         
-        return $this;
-    }
-    
-    /**
-     * Add a barcode to this shipment's barcode collection
-     * 
-     * @param string $barcode The barcode to add
-     * @param int $barcodeNumber The number of this barcode
-     * 
-     * @return TIG_PostNL_Model_Core_Shipment
-     */
-    protected function _addBarcode($barcode, $barcodeNumber)
-    {
-        $barcodeModel = Mage::getModel('postnl_core/shipment_barcode');
-        $barcodeModel->setParentId($this->getId())
-                     ->setBarcode($barcode)
-                     ->setBarcodeNumber($barcodeNumber)
-                     ->save();
-                     
         return $this;
     }
     
@@ -1341,6 +1392,44 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Check if the returned label is a combi-label
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment_label
+     * 
+     * @return boolean
+     */
+    protected function _isCombiLabel()
+    {
+        if (!$this->isEuShipment()) {
+            return false;
+        }
+        
+        /**
+         * All EU shipments will by default request a combi label. If no warnings were sent by CIF it means everything
+         * went as expected and a combi-label was returned.
+         */
+        $warnings = Mage::registry('postnl_cif_warnings');
+        if (!$warnings) {
+            return true;
+        }
+        
+        /**
+         * Check each warning if the code matches the EPS combi label warning code
+         */
+        foreach ($warnings as $warning) {
+            if (isset($warning['code']) && $warning['code'] === self::EPS_COMBI_LABEL_WARNING_CODE) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    /****************************************************************************************************************************
+     * STATUS PROCESSING METHODS
+     ***************************************************************************************************************************/
+    
+    /**
      * Sort a status history array based on the time the status was assigned
      * 
      * @param array $statusHistory
@@ -1370,6 +1459,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         return array_values($sortedHistory);
     }
+    
+    /****************************************************************************************************************************
+     * PRODUCT CODE METHODS
+     ***************************************************************************************************************************/
 
     /**
      * Gets the product code for this shipment. If specific options have been selected
@@ -1395,23 +1488,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $productCode = $this->getDefaultProductCode();
         
         return $productCode;
-    }
-    
-    /**
-     * Resets this shipment to a pre-confirmed state
-     * 
-     * @return TIG_PostNL_Model_Core_Shipment
-     */
-    public function resetConfirmation()
-    {
-        $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED) //set status to unconfirmed
-             ->setShippingPhase(false) //delete current shipping phase
-             ->setConfirmedAt(false) //delete 'confirmed at' date
-             ->setlabelsPrinted(0) //labels have not been printed
-             ->deleteLabels() //delete all associated labels
-             ->deleteBarcodes(); //delete all associated barcodes
-             
-        return $this;
     }
     
     /**
@@ -1451,6 +1527,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         return true;
     }
+    
+    /****************************************************************************************************************************
+     * ADDITIONAL SHIPMENT OPTIONS
+     ***************************************************************************************************************************/
     
     /**
      * Stores additionally selected shipping options
@@ -1503,6 +1583,27 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $parcelCount;
     }
     
+    /****************************************************************************************************************************
+     * RESET AND DELETE METHODS
+     ***************************************************************************************************************************/
+    
+    /**
+     * Resets this shipment to a pre-confirmed state
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function resetConfirmation()
+    {
+        $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED) //set status to unconfirmed
+             ->setShippingPhase(false) //delete current shipping phase
+             ->setConfirmedAt(false) //delete 'confirmed at' date
+             ->setlabelsPrinted(0) //labels have not been printed
+             ->deleteLabels() //delete all associated labels
+             ->deleteBarcodes(); //delete all associated barcodes
+             
+        return $this;
+    }
+    
     /**
      * Removes all labels associated with this shipment
      * 
@@ -1537,40 +1638,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $this->setMainBarcode(false);
         
         return $this;
-    }
-    
-    /**
-     * Check if the returned label is a combi-label
-     * 
-     * @param TIG_PostNL_Model_Core_Shipment_label
-     * 
-     * @return boolean
-     */
-    protected function _isCombiLabel()
-    {
-        if (!$this->isEuShipment()) {
-            return false;
-        }
-        
-        /**
-         * All EU shipments will by default request a combi label. If no warnings were sent by CIF it means everything
-         * went as expected and a combi-label was returned.
-         */
-        $warnings = Mage::registry('postnl_cif_warnings');
-        if (!$warnings) {
-            return true;
-        }
-        
-        /**
-         * Check each warning if the code matches the EPS combi label warning code
-         */
-        foreach ($warnings as $warning) {
-            if (isset($warning['code']) && $warning['code'] === self::EPS_COMBI_LABEL_WARNING_CODE) {
-                return false;
-            }
-        }
-        
-        return true;
     }
     
     /**
