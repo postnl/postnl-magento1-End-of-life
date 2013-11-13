@@ -431,6 +431,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
         
         foreach($response->Shipments as $shipment) {
+            $shipment = $shipment[0];
             if ($shipment->Barcode === $barcode) { // we need the original shipment, not a related shipment (such as a return shipment)
                 return $shipment;
             }

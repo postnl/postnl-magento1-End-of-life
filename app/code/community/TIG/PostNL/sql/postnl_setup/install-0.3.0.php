@@ -255,7 +255,7 @@ $postnlShipmentStatusHistoryTable = $installer->getConnection()
     /**
      * The status's code (an internal PostNL identifier)
      */
-    ->addColumn('code', Varien_Db_Ddl_Table::TYPE_TEXT, 2, array(
+    ->addColumn('code', Varien_Db_Ddl_Table::TYPE_TEXT, 4, array(
         'nullable'  => false,
         ), 'Code')
     /**
@@ -264,11 +264,29 @@ $postnlShipmentStatusHistoryTable = $installer->getConnection()
     ->addColumn('description', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
         ), 'Description')
     /**
-     * The status's shipping phase
+     * The status's location code
      */
-    ->addColumn('phase', Varien_Db_Ddl_Table::TYPE_TEXT, 2, array(
-        'nullable'  => false,
-        ), 'Phase')
+    ->addColumn('location_code', Varien_Db_Ddl_Table::TYPE_TEXT, 6, array(
+        'nullable'  => true,
+        ), 'Location Code')
+    /**
+     * The status's destination location code
+     */
+    ->addColumn('destination_location_code', Varien_Db_Ddl_Table::TYPE_TEXT, 6, array(
+        'nullable'  => true,
+        ), 'Destination Location Code')
+    /**
+     * The status's route code
+     */
+    ->addColumn('route_code', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
+        'nullable'  => true,
+        ), 'Route Code')
+    /**
+     * The status's route name
+     */
+    ->addColumn('route_name', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
+        'nullable'  => true,
+        ), 'Route Name')
     /**
      * When the status was assigned by PostNL
      */

@@ -87,7 +87,7 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
     }
     
     /**
-     * Check if a status history item exists for the given postnl shipment and status code and if the provided status is newer
+     * Check if a status history item exists for the given postnl shipment and status
      * 
      * @param int $shipmentId
      * @param StdClass $code
@@ -100,24 +100,24 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
         $collection->addFieldToSelect('status_id')
                    ->addFieldToFilter('parent_id', array('eq' => $shipmentId))
                    ->addFieldToFilter('code', array('eq' => $status->Code));
-                   
-        if ($collection->count() > 0) {
-            return true;
+        
+        if ($status->LocationCode !== '') {
+            $collection->addFieldToFilter('location_code', array('eq' => $status->LocationCode));
         }
         
-        /**
-         * If a given code already exists for this shipment, get both the existing status's and the new status's timestamps so we
-         * can check which one is newer.
-         */
-        $existingStatus = $collection->getFirstItem();
-        $existingStatusTime = $existingStatus->getTimestamp();
+        if ($status->DestinationLocationCode !== '') {
+            $collection->addFieldToFilter('destination_location_code', array('eq' => $status->DestinationLocationCode));
+        }
         
-        $statusTime = $status->TimeStamp;
+        if ($status->RouteCode !== '') {
+            $collection->addFieldToFilter('route_code', array('eq' => $status->RouteCode));
+        }
         
-        /**
-         * Compare both timestamps
-         */
-        if (strtotime($statusTime) > strtotime($existingStatusTime)) {
+        if ($status->RouteName !== '') {
+            $collection->addFieldToFilter('route_name', array('eq' => $status->RouteName));
+        }
+                
+        if ($collection->getSize() < 1) {
             return true;
         }
         
