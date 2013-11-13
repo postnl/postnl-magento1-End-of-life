@@ -79,6 +79,9 @@
             <postnl_adminhtml>
             	<class>TIG_PostNL_Model_Adminhtml</class>
             </postnl_adminhtml>
+            <postnl_extensioncontrol>
+                <class>TIG_PostNL_Model_ExtensionControl</class>
+            </postnl_extensioncontrol>
             
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
@@ -257,6 +260,13 @@
                     <model>postnl_core/observer_cron::sendTrackAndTraceEmail</model>
                 </run>
             </postnl_send_track_and_trace_email>
+            <!-- Update the shop's statistics with the extension control system -->
+            <postnl_update_statistics>
+                <!-- No cron expression. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
+                <run>
+                    <model>postnl_extensioncontrol/observer_cron::updateStatistics</model>
+                </run>
+            </postnl_update_statistics>
         </jobs>
     </crontab>
     
@@ -278,6 +288,9 @@
         <postnl>
         	<general>
         		<active>0</active> <!-- inactive -->
+        		<email/>
+                <unique_key/>
+        		<private_key/>
         	</general>
         	<cif>
         		<mode>1</mode> <!-- test mode -->
@@ -366,6 +379,7 @@
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
         		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
+        		<send_statistics>1</send_statistics> <!-- Send extension usga estatistics to PostNL -->
         		<cif_version_shippingstatus>1_2</cif_version_shippingstatus> <!-- v1.2 -->
         		<cif_version_confirming>1_3</cif_version_confirming> <!-- v1.3 -->
         		<cif_version_labelling>1_4</cif_version_labelling> <!-- v1.4 -->

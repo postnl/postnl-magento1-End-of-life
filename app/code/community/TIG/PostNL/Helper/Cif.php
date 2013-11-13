@@ -636,27 +636,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
     
     /**
-     * formats input XML string to improve readability
-     * 
-     * @param string $xml
-     * 
-     * @return string
-     */
-    public function formatXML($xml)
-    {
-        if (empty($xml)) {
-            return '';
-        }
-        
-        $dom = new DOMDocument();
-        $dom->loadXML($xml);
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-
-        return $dom->saveXML();
-    }
-    
-    /**
      * Logs a CIF request and response for debug purposes.
      * 
      * N.B.: if file logging is enabled, the log will be forced

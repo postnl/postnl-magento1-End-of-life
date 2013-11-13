@@ -36,12 +36,47 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
- 
-$installer = $this;
-
-$installer->startSetup();
-
-$installer->generateShippingStatusCronExpr();
-$installer->generateUpdateStatisticsCronExpr();
-
-$installer->endSetup();
+class TIG_PostNL_Model_ExtensionControl_Observer_Cron
+{
+    /**
+     * updates the shop's statistics with the extension control system.
+     * 
+     * @return TIG_PostNL_Model_ExtensionControl_Observer_Cron
+     */
+    public function updateStatistics()
+    {
+        $helper = Mage::helper('postnl');
+        
+        /**
+         * Check if the PostNL module is active
+         */
+        if (!$helper->isEnabled()) {
+            return $this;
+        }
+        
+        /**
+         * Check if the extension may send statistics to the extension control system
+         */
+        if (!Mage::helper('postnl/webservices')->canSendStatistics()) {
+            return $this;
+        }
+               
+        $helper->cronLog('UpdateStatistics cron starting...');
+        
+        /**
+         * Attempt to update the shop's statistics
+         */
+        try {
+            $helper->cronLog('Updating shop statistics.');
+            
+            $webservices = Mage::getModel('postnl_extensioncontrol/webservices');
+            $webservices->updateStatistics();
+        } catch (Exception $e) {
+            $helper->cronLog('An error occurred: ' . $e->getMessage());
+            $helper->logException($e);
+        }
+        
+        $helper->cronLog('UpdateStatistics has finished.');
+        return $this;
+    }
+}

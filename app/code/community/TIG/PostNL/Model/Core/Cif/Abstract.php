@@ -90,11 +90,11 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     protected function _getUsername()
     {
         if ($this->isTestMode()) {
-            $username = Mage::getStoreConfig(self::XML_PATH_TEST_USERNAME, 0);
+            $username = Mage::getStoreConfig(self::XML_PATH_TEST_USERNAME, Mage_Core_Model_App::ADMIN_STORE_ID);
             return $username;
         }
         
-        $username = Mage::getStoreConfig(self::XML_PATH_LIVE_USERNAME, 0);
+        $username = Mage::getStoreConfig(self::XML_PATH_LIVE_USERNAME, Mage_Core_Model_App::ADMIN_STORE_ID);
         return $username;
     }
     
@@ -107,12 +107,12 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     protected function _getPassword()
     {
         if ($this->isTestMode()) {
-            $password = Mage::getStoreConfig(self::XML_PATH_TEST_PASSWORD, 0);
+            $password = Mage::getStoreConfig(self::XML_PATH_TEST_PASSWORD, Mage_Core_Model_App::ADMIN_STORE_ID);
             $password = sha1(Mage::helper('core')->decrypt($password));
             return $password;
         }
         
-        $password = Mage::getStoreConfig(self::XML_PATH_LIVE_PASSWORD, 0);
+        $password = Mage::getStoreConfig(self::XML_PATH_LIVE_PASSWORD, Mage_Core_Model_App::ADMIN_STORE_ID);
         $password = sha1(Mage::helper('core')->decrypt($password));
         return $password;
     }
@@ -160,7 +160,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             );
             
             /**
-             * try to create a new SoapClient instance based on the supplied wsdl. if it fails, try again without using the
+             * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without using the
              * wsdl cache.
              */
             try {
@@ -181,11 +181,10 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             }
             
             /**
-             * Set SOAP headers
+             * Add SOAP header
              */
-            $headers = $this->_getSoapHeaders();
-
-            $client->addSoapInputHeader($headers, true);
+            $header = $this->_getSoapHeader();
+            $client->addSoapInputHeader($header, true); //permanent header
             
             /**
              * Call the SOAP method
@@ -289,16 +288,16 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * 
      * @return array
      */
-    protected function _getSoapHeaders()
+    protected function _getSoapHeader()
     {
         $namespace = self::HEADER_SECURITY_NAMESPACE;
         $node1     = new SoapVar($this->_getUserName(), XSD_STRING,      null, null, 'Username',      $namespace);
         $node2     = new SoapVar($this->_getPassWord(), XSD_STRING,      null, null, 'Password',      $namespace);
         $token     = new SoapVar(array($node1, $node2), SOAP_ENC_OBJECT, null, null, 'UsernameToken', $namespace);
         $security  = new SoapVar(array($token),         SOAP_ENC_OBJECT, null, null, 'Security',      $namespace);
-        $headers = new SOAPHeader($namespace, 'Security', $security, false);
+        $header   = new SOAPHeader($namespace, 'Security', $security, false);
         
-        return $headers;
+        return $header;
     }
     
     /**

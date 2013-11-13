@@ -74,9 +74,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_StreetField
          * Get the allowed number of address lines based on the current scope
          */
         if ($request->getParam('store')) {
-            $lineCount = Mage::getStoreConfig(self::XML_PATH_COMMUNITY_STREET_LINES, $request->getparam('store'));
+            $lineCount = Mage::getStoreConfig(self::XML_PATH_COMMUNITY_STREET_LINES, $request->getParam('store'));
         } elseif ($request->getParam('website')) {
-            $website = Mage::getModel('core/website')->load($request->getparam('website'), 'name');
+            $website = Mage::getModel('core/website')->load($request->getParam('website'), 'code');
             $lineCount = $website->getConfig(self::XML_PATH_COMMUNITY_STREET_LINES, $website->getId());
         } else {
             $lineCount = Mage::getStoreConfig(self::XML_PATH_COMMUNITY_STREET_LINES, Mage_Core_Model_App::ADMIN_STORE_ID);
