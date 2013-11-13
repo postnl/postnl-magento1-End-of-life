@@ -605,6 +605,13 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
         
         /**
+         * Prevent EU shipments from being confirmed if their labels are not yet printed
+         */
+        if ($postnlShipment->isEuShipment() && !$postnlShipment->getLabelsPrinted()) {
+            throw Mage::exception('TIG_PostNL', 'For EU shipments you may only confirm a shipment after it\'s labels have been printed.');
+        }
+        
+        /**
          * If the PostNL shipment is new, set the magento shipment ID
          */
         if (!$postnlShipment->getShipmentId()) {
