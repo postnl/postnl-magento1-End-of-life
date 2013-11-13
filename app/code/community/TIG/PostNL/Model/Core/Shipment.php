@@ -810,6 +810,40 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Generates a single barcode for this postnl shipment.
+     * 
+     * @return string
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _generateBarcode()
+    {
+        if (!$this->canGenerateBarcode()) {
+            throw Mage::exception('TIG_PostNL', 'The generateBarcode action is currently unavailable.');
+        }
+        
+        $shipment = $this->getShipment();
+        
+        $cif = Mage::getModel('postnl_core/cif');
+        $barcodeType = Mage::helper('postnl/cif')->getBarcodeTypeForShipment($this);
+        
+        $barcode = $cif->generateBarcode($shipment, $barcodeType);
+        
+        if (!$barcode) {
+            throw Mage::exception('TIG_PostNL', 'Unable to generate barcode for this shipment: '. $shipment->getId());
+        }
+        
+        /**
+         * If the generated barcode already exists a new one needs to be generated.
+         */
+        if (Mage::helper('postnl/cif')->barcodeExists($barcode)) {
+            return $this->_generateBarcode();
+        }
+        
+        return $barcode;
+    }
+    
+    /**
      * Generates a shipping label and confirms the shipment with postNL.
      * 
      * @return TIG_PostNL_Model_Core_Shipment
@@ -899,6 +933,45 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
              
         return $this;
+    }
+    
+    /**
+     * Get a shipping label from PostNL for a single parcel or a whole shipment
+     * 
+     * @param boolean $confirm Whether or not to also confirm the shipment
+     * @param int | null $barcodeNumber An optional barcode number. If this parameter is null, the main barcode will be used
+     * 
+     * @return array
+     */
+    protected function _generateLabel($confirm = false, $barcodeNumber = false)
+    {
+        $mainBarcode = $this->getMainBarcode();
+        
+        /**
+         * if $barcodeNumber is false, this is a single parcel shipment
+         */
+        if ($barcodeNumber === false) {
+            $barcode = $mainBarcode;
+            $mainbarcode = false;
+        } else {
+            $barcode = $this->getBarcode($barcodeNumber);
+            $barcodeNumber++; //while barcode numbers start at 0, shipment numbers start at 1
+        }
+        
+        $cif = Mage::getModel('postnl_core/cif');
+        
+        if ($confirm === false) {
+            $result = $cif->generateLabelsWithoutConfirm($this, $barcode, $mainBarcode, $barcodeNumber);
+        } else {
+            $result = $cif->generateLabels($this, $barcode, $mainBarcode, $barcodeNumber);
+        }
+        
+        if (!isset($result->Labels) || !isset($result->Labels->Label)) {
+            throw Mage::exception('TIG_PostNL', "The confirmAndPrintLabel action returned an invalid response: \n" . var_export($response, true));
+        }
+        $labels = $result->Labels->Label;
+        
+        return $labels;
     }
     
     /**
@@ -1179,66 +1252,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         return $this;
-    }
-    
-    /**
-     * Get a shipping label from PostNL for a single parcel or a whole shipment
-     * 
-     * @param boolean $confirm Whether or not to also confirm the shipment
-     * @param int | null $barcodeNumber An optional barcode number. If this parameter is null, the main barcode will be used
-     * 
-     * @return array
-     */
-    protected function _generateLabel($confirm = false, $barcodeNumber = null)
-    {
-        $cif = Mage::getModel('postnl_core/cif');
-        
-        if ($confirm === false) {
-            $result = $cif->generateLabelsWithoutConfirm($this, $barcodeNumber);
-        } else {
-            $result = $cif->generateLabels($this, $barcodeNumber);
-        }
-        
-        if (!isset($result->Labels) || !isset($result->Labels->Label)) {
-            throw Mage::exception('TIG_PostNL', "The confirmAndPrintLabel action returned an invalid response: \n" . var_export($response, true));
-        }
-        $labels = $result->Labels->Label;
-        
-        return $labels;
-    }
-    
-    /**
-     * Generates a single barcode for this postnl shipment.
-     * 
-     * @return string
-     * 
-     * @throws TIG_PostNL_Exception
-     */
-    protected function _generateBarcode()
-    {
-        if (!$this->canGenerateBarcode()) {
-            throw Mage::exception('TIG_PostNL', 'The generateBarcode action is currently unavailable.');
-        }
-        
-        $shipment = $this->getShipment();
-        
-        $cif = Mage::getModel('postnl_core/cif');
-        $barcodeType = Mage::helper('postnl/cif')->getBarcodeTypeForShipment($this);
-        
-        $barcode = $cif->generateBarcode($shipment, $barcodeType);
-        
-        if (!$barcode) {
-            throw Mage::exception('TIG_PostNL', 'Unable to generate barcode for this shipment: '. $shipment->getId());
-        }
-        
-        /**
-         * If the generated barcode already exists a new one needs to be generated.
-         */
-        if (Mage::helper('postnl/cif')->barcodeExists($barcode)) {
-            return $this->_generateBarcode();
-        }
-        
-        return $barcode;
     }
     
     /**

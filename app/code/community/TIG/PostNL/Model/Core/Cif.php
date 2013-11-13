@@ -358,8 +358,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Customer' => $customer,
             'Shipment' => array(
                 'Barcode'   => $barcode,
-                // 'Reference' => $shipment->getIncrementId(),
-                // 'Zipcode'   => $shipment->getShippingAddress()->getPostcode(),
             ),
         );
         
@@ -410,8 +408,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Customer' => $customer,
             'Shipment' => array(
                 'Barcode'   => $barcode,
-                // 'Reference' => $shipment->getIncrementId(),
-                // 'Zipcode'   => $shipment->getShippingAddress()->getPostcode(),
             ),
         );
         
@@ -460,7 +456,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $shipment = $postnlShipment->getShipment();
                 
-        $message     = $this->_getMessage($mainBarcode);
+        $message     = $this->_getMessage($barcode);
         $customer    = $this->_getCustomer($shipment);
         
         /**
@@ -471,7 +467,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 'Shipment' => $this->_getShipment($postnlShipment, $barcode)
             );
         } else {
-             $cifShipment = array(
+            $cifShipment = array(
                 'Shipment' => $this->_getShipment($postnlShipment, $barcode, $mainBarcode,$shipmentNumber)
             );
         }
@@ -513,7 +509,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function generateLabels($postnlShipment, $barcodeNumber = null, $printerType = 'GraphicFile|PDF')
+    public function generateLabels($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false, $printerType = 'GraphicFile|PDF')
     {
         $shipment = $postnlShipment->getShipment();
         
@@ -522,11 +518,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
         }
         
-        $barcode = $postnlShipment->getBarcode($barcodeNumber);
+        /**
+         * Create a single shipment object
+         */
+        if ($mainBarcode === false || $shipmentNumber === false) {
+            $cifShipment = $this->_getShipment($postnlShipment, $barcode);
+        } else {
+            $cifShipment = $this->_getShipment($postnlShipment, $barcode, $mainBarcode, $shipmentNumber);
+        }
         
         $message     = $this->_getMessage($barcode, array('Printertype' => $printerType));
         $customer    = $this->_getCustomer($shipment);
-        $cifShipment = $this->_getShipment($postnlShipment, $barcode);
         
         $soapParams =  array(
             'Message'  => $message,
@@ -560,7 +562,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function generateLabelsWithoutConfirm($postnlShipment, $barcodeNumber = null, $printerType = 'GraphicFile|PDF')
+    public function generateLabelsWithoutConfirm($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false, $printerType = 'GraphicFile|PDF')
     {
         $shipment = $postnlShipment->getShipment();
         
@@ -569,11 +571,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
         }
         
-        $barcode = $postnlShipment->getBarcode($barcodeNumber);
+        /**
+         * Create a single shipment object
+         */
+        if ($mainBarcode === false || $shipmentNumber === false) {
+            $cifShipment = $this->_getShipment($postnlShipment, $barcode);
+        } else {
+            $cifShipment = $this->_getShipment($postnlShipment, $barcode, $mainBarcode, $shipmentNumber);
+        }
         
         $message     = $this->_getMessage($barcode, array('Printertype' => $printerType));
         $customer    = $this->_getCustomer($shipment);
-        $cifShipment = $this->_getShipment($postnlShipment, $barcode);
         
         $soapParams =  array(
             'Message'  => $message,
