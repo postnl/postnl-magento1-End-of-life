@@ -114,14 +114,32 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
                 'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_translate',
         ));
         
-        $this->addColumn('phase',
+        $this->addColumn('location_code',
             array(
-                'header'   => $helper->__('Phase'),
-                'index'    => 'phase',
-                'align'    => 'left',
-                'type'     => 'options',
-                'options'  => Mage::helper('postnl/cif')->getShippingPhases(),
-                'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_shippingPhase',
+                'header' => $helper->__('Location Code'),
+                'index'  => 'location_code',
+                'align'  => 'left',
+        ));
+        
+        $this->addColumn('destination_location_code',
+            array(
+                'header' => $helper->__('Destination Location Code'),
+                'index'  => 'destination_location_code',
+                'align'  => 'left',
+        ));
+        
+        $this->addColumn('route_code',
+            array(
+                'header' => $helper->__('Route Code'),
+                'index'  => 'route_code',
+                'align'  => 'left',
+        ));
+        
+        $this->addColumn('route_name',
+            array(
+                'header' => $helper->__('Route Name'),
+                'index'  => 'route_name',
+                'align'  => 'left',
         ));
         
         $this->addColumn('timestamp',

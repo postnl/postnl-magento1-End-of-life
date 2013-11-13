@@ -1142,12 +1142,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $cif = Mage::getModel('postnl_core/cif');
         $result = $cif->getCompleteShipmentStatus($this);
         
+        /**
+         * Update the shipment's shipping phase
+         */
         $currentPhase = $result->Status->CurrentPhaseCode;
         $this->setShippingPhase($currentPhase);
         
-        $completeStatusHistory = $result->OldStatuses->CompleteStatusResponseOldStatus;
+        /**
+         * get the complete event history
+         */
+        $completeStatusHistory = $result->Events->CompleteStatusResponseEvent;
         $completeStatusHistory = $this->_sortStatusHistory($completeStatusHistory);
         
+        /**
+         * Update the shipments status history
+         */
         foreach ($completeStatusHistory as $status) {
             $statusHistory = Mage::getModel('postnl_core/shipment_status_history');
             
@@ -1159,16 +1168,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 continue;
             }
             
-            $statusHistory->loadByShipmentIdAndCode($this->getId(), $status->Code)
-                          ->setParentId($this->getId())
+            $statusHistory->setParentId($this->getId())
                           ->setCode($status->Code)
                           ->setDescription($status->Description)
-                          ->setPhase($status->PhaseCode)
+                          ->setLocationCode($status->LocationCode)
+                          ->setDestinationLocationCode($status->DestinationLocationCode)
+                          ->setRouteCode($status->RouteCode)
+                          ->setRouteName($status->RouteName)
                           ->setTimestamp(strtotime($status->TimeStamp))
                           ->save();
         }
         
-        $this->setShippingStatusUpdatedAt(Mage::getModel('core/date')->timestamp());
+        $this->setStatusHistoryUpdatedAt(Mage::getModel('core/date')->timestamp());
         
         return $this;
     }

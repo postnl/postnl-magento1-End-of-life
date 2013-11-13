@@ -162,17 +162,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          */
         $currentTimestamp = Mage::getModel('core/date')->timestamp();
         $fifteenMinutesAgo = strtotime("-15 minutes", $currentTimestamp);
-        $statusHistoryUpdatedAt = $postnlShipment->getStatusUpdatedAt();
+        $statusHistoryUpdatedAt = $postnlShipment->getStatusHistoryUpdatedAt();
         
         /**
          * If this shipment's status history has not been updated in the last 15 minutes (if ever) update it
          */
         if ($postnlShipment->getId()
-            && ($postnlShipment->getStatusUpdatedAt() === null
+            && ($postnlShipment->getStatusHistoryUpdatedAt() === null
                 || strtotime($statusHistoryUpdatedAt) < $fifteenMinutesAgo
             )
         ) {
-            $postnlShipment->updateCompleteShippingStatus();
+            $postnlShipment->updateCompleteShippingStatus()
+                           ->save();
         }
         
         $this->loadLayout();
