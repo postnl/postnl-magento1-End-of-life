@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,18 +35,11 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
--->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Shipping/>
-                <Mage_Adminhtml/>
-            </depends>
-        </TIG_PostNL>
-    </modules>
-</config>
+ */
+?>
+<?php if($this->getIsAddressSplit()): ?>
+    <?php return $this; ?>
+<?php endif; ?>
+<div class="module-message warning">
+    <h4><?php echo $this->__('You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.') ?></h4>
+</div>

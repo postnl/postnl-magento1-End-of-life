@@ -36,18 +36,21 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
+ */	
 -->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Shipping/>
-                <Mage_Adminhtml/>
-            </depends>
-        </TIG_PostNL>
-    </modules>
-</config>
+<layout version="0.1.0">
+    
+    <!-- Uncomment this in order to show the current shipping phase of a customer's shipments on their acount page -->
+    <!-- <sales_order_shipment>
+    	<reference name="head">
+    		<action method="addItem">
+    			<type>skin_css</type>
+    			<name>css/TIG/PostNL/shipping_status.css</name>
+    		</action>
+    	</reference>
+        <reference name="my.account.wrapper">
+            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
+        </reference>
+    </sales_order_shipment> -->
+    
+</layout>

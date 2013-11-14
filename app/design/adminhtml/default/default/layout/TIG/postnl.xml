@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<layout>
+    <default>
+        <reference name="notifications">
+            <block type="postnl/adminhtml_cronNotification" name="postnl_cron_notification" template="TIG/PostNL/cron_notification.phtml"></block>
+        </reference>
+    </default>
+    
+    <adminhtml_system_config_edit>
+        <reference name="head">
+        	<action method="addItem">
+        		<type>skin_css</type>
+        		<name>css/TIG/PostNL/system_config_edit.css</name>
+        	</action>
+        </reference>
+    </adminhtml_system_config_edit>
+    
+    <adminhtml_sales_order_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>js_css</type>
+                <name>prototype/windows/themes/default.css</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/TIG/PostNL/extra_cover.js</name>
+            </action>
+            <action method="addCss">
+                <name>lib/prototype/windows/themes/magento.css</name>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="postnl_adminhtml/sales_order_productOptions" name="postnl_order_product_options" template="TIG/PostNL/sales/order/product_options.phtml" />
+        </reference>
+    </adminhtml_sales_order_index>
+    
+    <adminhtml_sales_order_shipment_new>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/TIG/PostNL/extra_cover.js</name>
+            </action>
+        </reference>
+    	<reference name="content">
+    		<block type="postnl_adminhtml/sales_order_shipment_create_productOptions" name="postnl_shipment_create_product_options" template="TIG/PostNL/sales/order/shipment/create/product_options.phtml" />
+    	</reference>
+    </adminhtml_sales_order_shipment_new>
+    
+    <!-- Add a shipping status bar to the shipment view page as well as adding tabs to the page -->
+    <adminhtml_sales_order_shipment_view>
+    	<reference name="head">
+    	    <!-- CSS for the shipping status bar -->
+    		<action method="addItem">
+    			<type>skin_css</type>
+    			<name>css/TIG/PostNL/shipping_status.css</name>
+    		</action>
+    	</reference>
+    	<reference name="sales_shipment_view">
+    	    <!-- All children have been moved to the tabs -->
+            <action method="unsetChildren"/>
+            <!-- Change template to contain a unique div where the tab contents will be loaded later -->
+            <action method="setTemplate"><template>TIG/PostNL/sales/order/shipment/view.phtml</template></action>
+    	</reference>
+        <reference name="content">
+            <!-- Contains some javascript and html to add a shipping status bar -->
+            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/view/shipping_status.phtml" before="-"/>
+        </reference>
+        <reference name="left">
+            <!-- Tabs container -->
+            <block type="postnl_adminhtml/sales_order_shipment_view_tabs" name="sales_shipment_view_tabs">
+                <block type="adminhtml/sales_order_shipment_view_form" name="form" template="sales/order/shipment/view/form.phtml">
+                    <block type="adminhtml/sales_order_view_info" name="order_info" template="sales/order/view/info.phtml"></block>
+                    <block type="adminhtml/sales_order_payment" name="order_payment"></block>
+                    <block type="adminhtml/sales_order_shipment_view_tracking" name="shipment_tracking" template="sales/order/shipment/view/tracking.phtml"></block>
+                    <block type="adminhtml/sales_order_shipment_view_items" name="shipment_items" template="sales/order/shipment/view/items.phtml">
+                        <action method="addItemRender"><type>default</type><block>adminhtml/sales_items_renderer_default</block><template>sales/order/shipment/view/items/renderer/default.phtml</template></action>
+                        <action method="addColumnRender"><column>qty</column><block>adminhtml/sales_items_column_qty</block><template>sales/items/column/qty.phtml</template></action>
+                        <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>sales/items/column/name.phtml</template></action>
+                        <block type="core/text_list" name="order_item_extra_info"></block>
+                    </block>
+                    <block type="adminhtml/sales_order_invoice_create_tracking" name="invoice_tracking" template="sales/order/shipment/create/tracking.phtml"></block>
+                    <block type="adminhtml/sales_order_comments_view"  name="order_comments" template="sales/order/comments/view.phtml">
+                        <action method="setParentType"><type>shipment</type></action>
+                    </block>
+                    <block type="adminhtml/sales_order_shipment_packaging" name="shipment_packaging" template="sales/order/shipment/packaging/popup.phtml" />
+                    <block type="adminhtml/sales_order_shipment_packaging" name="shipment_packed" template="sales/order/shipment/packaging/packed.phtml"/>
+                </block>
+            </block>
+        </reference>
+    </adminhtml_sales_order_shipment_view>
+    
+    <postnl_adminhtml_shipment_statushistory>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="postnl_adminhtml/sales_order_shipment_view_tab_statusHistory" name="sales_order_shipment_status_history"/>
+        </block>
+    </postnl_adminhtml_shipment_statushistory>
+
+    <postnl_adminhtml_shipment_statushistorygrid>
+        <update handle="formkey"/>
+        <block type="postnl_adminhtml/sales_order_shipment_view_tab_statusHistory" name="sales_order_shipment_status_history" output="toHtml"/>
+    </postnl_adminhtml_shipment_statushistorygrid>
+</layout>

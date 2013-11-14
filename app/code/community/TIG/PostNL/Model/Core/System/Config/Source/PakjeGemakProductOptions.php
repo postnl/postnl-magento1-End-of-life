@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,18 +35,61 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
--->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Shipping/>
-                <Mage_Adminhtml/>
-            </depends>
-        </TIG_PostNL>
-    </modules>
-</config>
+ */
+class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
+{
+    /**
+     * Returns an option array for all possible PostNL product options
+     * 
+     * @return array
+     * 
+     * @todo implement COD
+     */
+    public function toOptionArray()
+    {
+        $helper = Mage::helper('postnl');
+        $availableOptions = array(
+            /**
+             * These are not currently implemented
+             * 
+             * TODO implement these options
+             */
+            /*array(
+                'value' => '3535',
+                'label' => $helper->__('PakjeGemak + COD')
+            ),
+            array(
+                'value' => '3545',
+                'label' => $helper->__('PakjeGemak + COD + Notification')
+            ),
+            array(
+                'value' => '3536',
+                'label' => $helper->__('PakjeGemak + COD + Extra Cover')
+            ),
+            array(
+                'value' => '3546',
+                'label' => $helper->__('PakjeGemak + COD + Extra Cover + Notification')
+            ),*/
+            array(
+                'value'        => '3534',
+                'label'        => $helper->__('PakjeGemak + Extra Cover'),
+                'isExtraCover' => true,
+            ),
+            array(
+                'value'        => '3544',
+                'label'        => $helper->__('PakjeGemak + Extra Cover + Notification'),
+                'isExtraCover' => true,
+            ),
+            array(
+                'value' => '3533',
+                'label' => $helper->__('PakjeGemak + Signature on Delivery')
+            ),
+            array(
+                'value' => '3543',
+                'label' => $helper->__('PakjeGemak + Signature on Delivery + Notification')
+            ),
+        );
+        
+        return $availableOptions;
+    }
+}

@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,18 +35,48 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
--->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Shipping/>
-                <Mage_Adminhtml/>
-            </depends>
-        </TIG_PostNL>
-    </modules>
-</config>
+ */
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
+{
+    /**
+     * Additional column names used
+     */
+    const SHIPPING_METHOD_COLUMN = 'shipping_method';
+    const CONFIRM_STATUS_COLUMN  = 'confirm_status';
+    
+    /**
+     * Code of postnl shipping method
+     */
+    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
+    
+    /**
+     * Renders column.
+     *
+     * @param Varien_Object $row
+     * 
+     * @return string
+     */
+    public function render(Varien_Object $row)
+    {
+        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
+        if ($shippingMethod != self::POSTNL_SHIPPING_METHOD) {
+            return parent::render($row);
+        }
+        
+        $postnlShipmentModel = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
+        if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentModel::CONFIRM_STATUS_CONFIRMED) {
+            return Mage::helper('postnl')->__('Confirmed');
+        }
+        
+        if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentModel::CONFIRM_STATUS_CONFIRM_EXPIRED) {
+            return Mage::helper('postnl')->__('Confirmation expired');
+        }
+        
+        $value = $row->getData($this->getColumn()->getIndex());
+        if (date('Ymd', Mage::getModel('core/date')->timestamp()) == date('Ymd', strtotime($value))) { //check if value equals today
+            return Mage::helper('postnl')->__('Today');
+        }
+        
+        return parent::render($row);
+    }
+}

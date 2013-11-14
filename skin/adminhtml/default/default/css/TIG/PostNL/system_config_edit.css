@@ -1,0 +1,5 @@
+#system_config_tabs .postnl-tab { background:transparent url(../../../images/TIG/PostNL/logo_postnl.png) 18px 3px no-repeat !important; display:block; height:33px; }
+#system_config_tabs .postnl-tab:hover { background-color:#d8e6e6 !important; border-right:1px solid #8aa5a6; }
+#system_config_tabs .postnl-tab.active { background-color:#fff !important; border-right:none !important; } 
+#system_config_tabs .postnl-tab span { padding:7px 0 1px 47px; display:block; height:25px; }
+#system_config_tabs .postnl-tab.active span { background:none; }

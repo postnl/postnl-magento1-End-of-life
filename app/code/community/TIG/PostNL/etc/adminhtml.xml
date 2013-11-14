@@ -36,18 +36,27 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
+ */	
 -->
 <config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Shipping/>
-                <Mage_Adminhtml/>
-            </depends>
-        </TIG_PostNL>
-    </modules>
+    <acl>
+    	<resources>
+            <admin>
+            	<children>
+                    <system>
+                    	<children>
+                    		<config>
+                    			<children>
+									<postnl translate="title" module="postnl">
+										<title>PostNL</title>
+										<sort_order>330</sort_order>
+									</postnl>
+								</children>
+							</config>
+						</children>
+					</system>
+				</children>
+			</admin>
+        </resources>
+    </acl>
 </config>

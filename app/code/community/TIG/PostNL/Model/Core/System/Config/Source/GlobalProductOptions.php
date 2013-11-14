@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,18 +35,66 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
--->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Shipping/>
-                <Mage_Adminhtml/>
-            </depends>
-        </TIG_PostNL>
-    </modules>
-</config>
+ */
+class TIG_PostNL_Model_Core_System_Config_Source_GlobalProductOptions
+{
+    /**
+     * XML path to supported options configuration setting
+     */
+    const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+    
+    /**
+     * Returns an option array for all possible PostNL product options
+     * 
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        $helper = Mage::helper('postnl');
+        $availableOptions = array(
+            array(
+                'value'        => '4945',
+                'label'        => $helper->__('GlobalPack'),
+                'isExtraCover' => true,
+            ),
+        );
+        
+        return $availableOptions;
+    }
+    
+    /**
+     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
+     * 
+     * @return array
+     */
+    public function getAvailableOptions()
+    {
+        $helper = Mage::helper('postnl');
+        $options = $this->toOptionArray();
+        
+        /**
+         * Get a list of all possible options
+         */
+        $availableOptions = array();
+        
+        /**
+         * Get the list of supported product options from the shop's configuration
+         */
+        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $supportedOptionsArray = explode(',', $supportedOptions);
+        
+        /**
+         * Check each standard option to see if it's supprted
+         */
+        $availableStandardOptions = array();
+        foreach ($options as $option) {
+            if (!in_array($option['value'], $supportedOptionsArray)) {
+                continue;
+            }
+            
+            $availableOptions[] = $option;
+        }
+        
+        return $availableOptions;
+    }
+}
