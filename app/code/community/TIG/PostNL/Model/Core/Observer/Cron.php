@@ -142,6 +142,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             $time = $nameParts[1];
             if ((time() - $time) < $maxFileStorageTime) {
+                $helper->cronLog("File {$filename} is less than {$maxFileStorageTime}s old. Continuing with the next file.");
                 continue;
             }
             

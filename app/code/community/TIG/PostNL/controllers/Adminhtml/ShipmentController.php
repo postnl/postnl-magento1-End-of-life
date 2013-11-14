@@ -172,8 +172,15 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                 || strtotime($statusHistoryUpdatedAt) < $fifteenMinutesAgo
             )
         ) {
-            $postnlShipment->updateCompleteShippingStatus()
-                           ->save();
+            try {
+                $postnlShipment->updateCompleteShippingStatus()
+                               ->save();
+            } catch (Exception $e) {
+                /**
+                 * This request may return a valid exception when the shipment could not be found
+                 */
+                Mage::helper('postnl')->logException($e);
+            }
         }
         
         $this->loadLayout();

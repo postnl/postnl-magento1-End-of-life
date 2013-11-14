@@ -69,7 +69,7 @@ class TIG_PostNL_Block_Core_ShippingStatus extends Mage_Core_Block_Template
         
         switch ($postnlShipment->getShippingPhase()) {
             case '1': 
-                $class = self::CLASS_CONFIRMED;
+                $class = self::CLASS_COLLECTION;
                 break;
             case '2': 
                 $class = self::CLASS_DISTRIBUTION;
