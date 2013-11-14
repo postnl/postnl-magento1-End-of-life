@@ -74,15 +74,8 @@ class TIG_PostNL_Model_Core_Observer_Barcode
          */
         $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmDate(Mage::getModel('core/date')->timestamp()); //TODO change this to the actual confirm date
-        
-        /**
-         * If a product code has been posted by a form, set it in the registry. The shipment will use this, rather
-         * than using default settings.
-         */
-        if (Mage::app()->getRequest()->getParam('postnl_product_options')) {
-            Mage::register('postnl_product_options', Mage::app()->getRequest()->getParam('postnl_product_options'));
-        }
+                       ->setConfirmDate(Mage::getModel('core/date')->timestamp()) //TODO change this to the actual confirm date
+                       ->save();
         
         /**
          * Barcode generation needs to be tried seperately. This functionality may throw a valid exception
@@ -90,8 +83,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
          * created. This may happen when CIF is overburdoned.
          */              
         try {
-            $postnlShipment->generateBarcode()
-                           ->addTrackingCodeToShipment();
+            $postnlShipment->generateBarcodes();
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
         }

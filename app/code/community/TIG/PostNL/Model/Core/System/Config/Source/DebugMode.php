@@ -39,7 +39,7 @@
 class TIG_PostNL_Model_Core_System_Config_Source_DebugMode
 {
     /**
-     * Returns an option array for sorting direction options
+     * Returns an option array for debug mode options
      * 
      * @return array
      */

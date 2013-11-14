@@ -39,6 +39,18 @@
 class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
 {
     /**
+     * Cron expression and cron model definitions for shipping_status cron
+     */
+    const SHIPPING_STATUS_CRON_STRING_PATH = 'crontab/jobs/postnl_update_shipping_status/schedule/cron_expr';
+    const SHIPPING_STATUS_CRON_MODEL_PATH  = 'crontab/jobs/postnl_update_shipping_status/run/model';
+    
+    /**
+     * Cron expression and cron model definitions for statistics update cron
+     */
+    const UPDATE_STATISTICS_CRON_STRING_PATH = 'crontab/jobs/postnl_update_statistics/schedule/cron_expr';
+    const UPDATE_STATISTICS_CRON_MODEL_PATH  = 'crontab/jobs/postnl_update_statistics/run/model';
+    
+    /**
      * callAfterApplyAllUpdates flag. Causes applyAFterUpdates() to be called.
      * 
      * @var boolean
@@ -150,6 +162,87 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
               )
               ->save();
               
+        return $this;
+    }
+    
+    /**
+     * generate a random cron expression for the status update cron for this merchant and store it in the database
+     * 
+     * @return TIG_PostNL_Model_Resource_Setup
+     */
+    public function generateShippingStatusCronExpr()
+    {
+        /**
+         * Generate random values for the cron expression
+         */
+        $cronMorningHour   = mt_rand(10, 12);
+        $cronAfternoonHour = mt_rand(14, 16);
+        $cronMinute        = mt_rand(0, 59);
+        
+        /**
+         * Generate a cron expr that runs on a specified minute on a specified hour between 10 and 12 AM, and between 14 and 16 PM.
+         */
+        $cronExpr = "{$cronMinute} {$cronMorningHour},{$cronAfternoonHour} * * *";
+        
+        /**
+         * Store the cron expression in core_config_data
+         */
+        try {
+            Mage::getModel('core/config_data')
+                ->load(self::SHIPPING_STATUS_CRON_STRING_PATH, 'path')
+                ->setValue($cronExpr)
+                ->setPath(self::SHIPPING_STATUS_CRON_STRING_PATH)
+                ->save();
+            Mage::getModel('core/config_data')
+                ->load(self::SHIPPING_STATUS_CRON_MODEL_PATH, 'path')
+                ->setValue((string) Mage::getConfig()->getNode(self::SHIPPING_STATUS_CRON_MODEL_PATH))
+                ->setPath(self::SHIPPING_STATUS_CRON_MODEL_PATH)
+                ->save();
+        } catch (Exception $e) {
+            throw Mage::exception('TIG_PostNL', 'Unable to save shipping_status cron expression: ' . $cronExpr);
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Generates a semi-random cron expression for the update statistics cron. This is done to spread out the number of calls
+     * across each day.
+     * 
+     * @return TIG_PostNL_Model_Resource_Setup
+     */
+    public function generateUpdateStatisticsCronExpr()
+    {
+        /**
+         * Generate random values for the cron expression
+         */
+        $cronMorningHour   = mt_rand(0, 11);
+        $cronAfternoonHour = $cronMorningHour + 12; //half a day after the morning update
+        $cronMinute        = mt_rand(0, 59);
+        
+        /**
+         * Generate a cron expr that runs on a specified minute on a specified hour.
+         */
+        $cronExpr = "{$cronMinute} {$cronMorningHour},{$cronAfternoonHour} * * *";
+        
+        /**
+         * Store the cron expression in core_config_data
+         */
+        try {
+            Mage::getModel('core/config_data')
+                ->load(self::UPDATE_STATISTICS_CRON_STRING_PATH, 'path')
+                ->setValue($cronExpr)
+                ->setPath(self::UPDATE_STATISTICS_CRON_STRING_PATH)
+                ->save();
+            Mage::getModel('core/config_data')
+                ->load(self::UPDATE_STATISTICS_CRON_MODEL_PATH, 'path')
+                ->setValue((string) Mage::getConfig()->getNode(self::UPDATE_STATISTICS_CRON_MODEL_PATH))
+                ->setPath(self::UPDATE_STATISTICS_CRON_MODEL_PATH)
+                ->save();
+        } catch (Exception $e) {
+            throw Mage::exception('TIG_PostNL', 'Unable to save update_statistics cron expression: ' . $cronExpr);
+        }
+        
         return $this;
     }
 }

@@ -45,6 +45,16 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
     
     /**
+     * Column name containing the shipment's destination
+     */
+    const COUNTRY_ID_COLUMN = 'country_id';
+    
+    /**
+     * Column name containing labels_printed flag
+     */
+    const LABELS_PRINTED_COLUMN = 'labels_printed';
+    
+    /**
      * Code of postnl shipping method
      */
     const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
@@ -73,6 +83,20 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
                 && $shippingMethod != self::POSTNL_SHIPPING_METHOD
             ) {
                 continue;
+            }
+            
+            /**
+             * EU shipments can only be confirmed once their labels are printed
+             */
+            if ($action['caption'] == Mage::helper('postnl')->__('Confirm')) {
+                $euCountries = Mage::helper('postnl/cif')->getEuCountries();
+                $countryId = $row->getData(self::COUNTRY_ID_COLUMN);
+                
+                if (in_array($countryId, $euCountries)
+                    && !$row->getData(self::LABELS_PRINTED_COLUMN)
+                ){
+                    continue;
+                }
             }
             
             if ($i > 0) {

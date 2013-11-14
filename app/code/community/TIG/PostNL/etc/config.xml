@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.2.2</version>
+			<version>0.2.9</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -79,6 +79,9 @@
             <postnl_adminhtml>
             	<class>TIG_PostNL_Model_Adminhtml</class>
             </postnl_adminhtml>
+            <postnl_extensioncontrol>
+                <class>TIG_PostNL_Model_ExtensionControl</class>
+            </postnl_extensioncontrol>
             
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
@@ -93,6 +96,9 @@
                     <shipment_label>
                         <table>tig_postnl_shipment_label</table>
                     </shipment_label>
+                    <shipment_barcode>
+                        <table>tig_postnl_shipment_barcode</table>
+                    </shipment_barcode>
                     <shipment_status_history>
                         <table>tig_postnl_shipment_status_history</table>
                     </shipment_status_history>
@@ -132,6 +138,15 @@
         		</observers>
         	</sales_order_shipment_save_after>
         </events>
+        <template>
+            <email>
+                <track_and_trace translate="label" module="postnl">
+                    <label>PostNL Track &amp; Trace Email</label>
+                    <file>TIG/PostNL/track_and_trace.html</file>
+                    <type>html</type>
+                </track_and_trace>
+            </email>
+        </template>
 	</global>
 	
     <admin>
@@ -203,32 +218,55 @@
     <crontab>
         <jobs>
         	<!-- remove old temporary label files (by default files older than 5 min will be deleted) -->
-            <clean_temp_labels>
+            <postnl_clean_temp_labels>
                 <schedule>
                 	<cron_expr>*/5 * * * *</cron_expr> <!-- every 5 minutes -->
                 </schedule>
                 <run>
                 	<model>postnl_core/observer_cron::cleanTempLabels</model>
                 </run>
-            </clean_temp_labels>
+            </postnl_clean_temp_labels>
         	<!-- get missing barcodes for postnl shipments -->
-            <get_missing_barcodes>
+            <postnl_get_missing_barcodes>
                 <schedule>
                 	<cron_expr>*/30 * * * *</cron_expr> <!-- every 30 minutes -->
                 </schedule>
                 <run>
                 	<model>postnl_core/observer_cron::getBarcodes</model>
                 </run>
-            </get_missing_barcodes>
+            </postnl_get_missing_barcodes>
             <!-- Update the shipping status for all undelivered PostNL shipments -->
-            <update_shipping_status>
-            	<schedule>
-            		<cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
-            	</schedule>
+            <postnl_update_shipping_status>
+                <!-- No cron expression. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
             	<run>
             		<model>postnl_core/observer_cron::updateShippingStatus</model>
             	</run>
-            </update_shipping_status>
+            </postnl_update_shipping_status>
+            <!-- Expire confirmations of shipments that have been confirmed, but have not been shipped within the maximum number of days -->
+            <postnl_expire_confirmation>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::expireConfirmation</model>
+                </run>
+            </postnl_expire_confirmation>
+            <!-- Sends track and trace emails for all shipments that have been confirmed -->
+            <postnl_send_track_and_trace_email>
+                <schedule>
+                    <cron_expr>*/15 * * * *</cron_expr> <!-- every 15 minutes -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::sendTrackAndTraceEmail</model>
+                </run>
+            </postnl_send_track_and_trace_email>
+            <!-- Update the shop's statistics with the extension control system -->
+            <postnl_update_statistics>
+                <!-- No cron expression. A semi-random cron expression is generated when the module first is installed. It's stored in the core_config_data table. -->
+                <run>
+                    <model>postnl_extensioncontrol/observer_cron::updateStatistics</model>
+                </run>
+            </postnl_update_statistics>
         </jobs>
     </crontab>
     
@@ -242,7 +280,7 @@
                 <name>PostNL</name> <!-- PostNL -->
                 <price>5.00</price> <!-- 5 EUR -->
                 <title>PostNL</title> <!-- PostNL -->
-                <type>I</type>
+                <type>I</type> <!-- Price is calculated per item -->
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
                 <handling_type>F</handling_type>
             </postnl>
@@ -250,6 +288,9 @@
         <postnl>
         	<general>
         		<active>0</active> <!-- inactive -->
+        		<email/>
+                <unique_key/>
+        		<private_key/>
         	</general>
         	<cif>
         		<mode>1</mode> <!-- test mode -->
@@ -266,7 +307,11 @@
         	</cif>
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
-                <show_printed_column>1</show_printed_column> <!-- show the 'labels printed column' in the shipment grid -->
+                <shipping_grid_columns>shipping_description,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show all optional columns -->
+                <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
+                <weight_per_parcel>20</weight_per_parcel> <!-- 20 kg -->
+                <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
+                <track_and_trace_email_template/>
         	</cif_labels_and_confirming>
         	<cif_address>
         		<split_street>1</split_street> <!-- split street -->
@@ -274,27 +319,53 @@
         		<housenr_field>2</housenr_field> <!-- second address line -->
         		<split_housenr>0</split_housenr> <!-- do not split housenr and extension -->
         		<housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
+        	    <area_field/>
+        	    <building_name_field/>
+        	    <department_field/>
+        	    <doorcode_field/>
+        	    <floor_field/>
+        	    <remark_field/>
         	</cif_address>
         	<cif_sender_address>
         		<firstname/>
         		<lastname/>
         		<company/>
-        		<street_full/>
+        		<streetname/>
+                <housenumber/>
+                <housenumber_extension/>
         		<postcode/>
         		<city/>
         		<region/>
         		<country>NL</country> <!-- All sender's must be located in the Netherlands -->
         	</cif_sender_address>
+        	<cif_return_address>
+        	    <use_sender_address>1</use_sender_address> <!-- use the sender address as the return address -->
+                <firstname/>
+                <lastname/>
+                <company/>
+                <streetname/>
+                <housenumber/>
+                <housenumber_extension/>
+                <postcode/>
+                <city/>
+                <region/>
+                <country>NL</country> <!-- All return addresses must be located in the Netherlands -->
+        	</cif_return_address>
         	<cif_product_options>
         		<show_grid_options>0</show_grid_options> <!-- Do not show product options in the order grid -->
         		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4950,4952,4954,4955,4945</supported_product_options> <!-- all possible options -->
-        		<default_product_options>3085</default_product_options> <!-- standard shipment -->
-        		<default_pakjegemak_product_options>3533</default_pakjegemak_product_options> <!-- PakjeGemak + signature on delivery -->
-        		<default_eu_product_options>4952</default_eu_product_options> <!-- EU Pack Special to consumer (combilabel) -->
-        		<default_global_product_options>4945</default_global_product_options> <!-- GlobalPack -->
+        		<default_product_option>3085</default_product_option> <!-- standard shipment -->
+        		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
+        		<alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
+        		<alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
+        		<default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- PakjeGemak + signature on delivery -->
+        		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
+        		<default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
         		<weight_unit>gram</weight_unit> <!-- gram -->
         	</cif_product_options>
-        	<cif_customs_settings>
+        	<cif_globalpack_settings>
+        	    <customs_license_number/>
+        	    <customs_certificate_number/>
         		<use_hs_tariff>0</use_hs_tariff> <!-- Do not use a specific HS tariff -->
         		<hs_tariff_attribute/>
         		<customs_value_attribute>price</customs_value_attribute> <!-- price attribute -->
@@ -302,11 +373,17 @@
         		<description_attribute>short_description</description_attribute> <!-- short description attribute -->
         		<product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
         		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
-        	</cif_customs_settings>
+        	</cif_globalpack_settings>
         	<advanced>
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
+        		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
+        		<send_statistics>1</send_statistics> <!-- Send extension usga estatistics to PostNL -->
+        		<cif_version_shippingstatus>1_2</cif_version_shippingstatus> <!-- v1.2 -->
+        		<cif_version_confirming>1_3</cif_version_confirming> <!-- v1.3 -->
+        		<cif_version_labelling>1_4</cif_version_labelling> <!-- v1.4 -->
+        		<cif_version_barcode>1_0</cif_version_barcode> <!-- v1.0 -->
         	</advanced>
         </postnl>
     </default>

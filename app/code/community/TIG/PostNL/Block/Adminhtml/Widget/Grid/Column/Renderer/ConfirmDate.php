@@ -68,8 +68,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends
             return Mage::helper('postnl')->__('Confirmed');
         }
         
+        if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentModel::CONFIRM_STATUS_CONFIRM_EXPIRED) {
+            return Mage::helper('postnl')->__('Confirmation expired');
+        }
+        
         $value = $row->getData($this->getColumn()->getIndex());
-        if (date('Ymd') == date('Ymd', strtotime($value))) { //check if value equals today
+        if (date('Ymd', Mage::getModel('core/date')->timestamp()) == date('Ymd', strtotime($value))) { //check if value equals today
             return Mage::helper('postnl')->__('Today');
         }
         

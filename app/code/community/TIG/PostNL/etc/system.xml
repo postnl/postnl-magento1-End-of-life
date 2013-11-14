@@ -197,7 +197,7 @@
 		    		<label>General Settings</label>
                     <sort_order>200</sort_order>
                     <show_in_default>1</show_in_default>
-                    <show_in_website>0</show_in_website>
+                    <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
                     	<active translate="label comment" module="postnl">
@@ -207,10 +207,44 @@
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</active>
+                    	<activate_button>
+                            <sort_order>20</sort_order>
+                            <frontend_model>postnl_adminhtml/system_config_activateButton</frontend_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                    	</activate_button>
+                        <email translate="label comment" module="postnl">
+                            <label>Email</label>
+                            <comment>During activation 2 secure keys will be sent to this email address.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </email>
+                        <unique_key translate="label" module="postnl">
+                            <label>Unique key</label>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </unique_key>
+                        <private_key translate="label" module="postnl">
+                            <label>Private key</label>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </private_key>
                    </fields>
 				</general>
 				<cif translate="label" module="postnl">
@@ -218,7 +252,7 @@
                     <sort_order>300</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
+                    <show_in_store>0</show_in_store>
                     <fields>
                     	<mode translate="label" module="postnl">
                             <label>Mode</label>
@@ -227,7 +261,7 @@
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</mode>
                     	<live_username translate="label" module="postnl">
@@ -236,7 +270,7 @@
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                     	</live_username>
                     	<live_password translate="label" module="postnl">
                             <label>Live Password</label>
@@ -245,7 +279,7 @@
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                     	</live_password>
                     	<test_username translate="label" module="postnl">
                             <label>Test Username</label>
@@ -253,7 +287,7 @@
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                     	</test_username>
                     	<test_password translate="label" module="postnl">
                             <label>Test Password</label>
@@ -262,7 +296,7 @@
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                     	</test_password>
                     	<customer_code translate="label comment" module="postnl">
                             <label>Customer Code</label>
@@ -271,7 +305,7 @@
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-alpha validate-length minimum-length-3 maximum-length-4</validate>
                     	</customer_code>
                     	<customer_number translate="label" module="postnl">
@@ -280,70 +314,72 @@
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-digits</validate>
                     	</customer_number>
-                    	<global_barcode_type translate="label comment" module="postnl">
-                            <label>Global Barcode Type</label>
-                            <comment>The current global barcode type as supplied by PostNL. Must contain 2 leters.</comment>
+                        <collection_location translate="label" module="postnl">
+                            <label>Collection Location</label>
+                            <comment>Your collection location. Must contain 6 numbers.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-digits validate-length minimum-length-6 maximum-length-6</validate>
+                        </collection_location>
+                    	<global_barcode_type translate="label comment" module="postnl">
+                            <label>Global Barcode Type</label>
+                            <comment>The current global barcode type as supplied by PostNL. Must contain 2 leters.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-alpha validate-length minimum-length-2 maximum-length-2</validate>
                     	</global_barcode_type>
                     	<global_barcode_range translate="label" module="postnl">
                             <label>Global Barcode Range</label>
                             <comment>Your global barcode range as supplied by PostNL. Must contain 4 digits.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-digits validate-length minimum-length-4 maximum-length-4</validate>
                     	</global_barcode_range>
                     	<company_name translate="label" module="postnl">
                             <label>Company Name</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                     	</company_name>
                     	<contact_name translate="label" module="postnl">
                             <label>Contact Name</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                     	</contact_name>
                     	<contact_email translate="label" module="postnl">
                             <label>Contact Email</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>120</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-email</validate>
-                    	</contact_email>
-                    	<collection_location translate="label" module="postnl">
-                            <label>Collection Location</label>
-                            <frontend_type>text</frontend_type>
                             <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                    	</collection_location>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-email</validate>
+                    	</contact_email>
                    </fields>
 				</cif>
 				<cif_labels_and_confirming translate="label" module="postnl">
                     <label>Confirming &amp; Label Printing Settings</label>
                     <sort_order>400</sort_order>
                     <show_in_default>1</show_in_default>
-                    <show_in_website>0</show_in_website>
-                    <show_in_store>0</show_in_store>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
                     <fields>
                         <label_size translate="label comment" module="postnl">
                             <label>Label size</label>
@@ -356,17 +392,61 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </label_size>
-                        <show_printed_column translate="label comment" module="postnl">
-                            <label>Show 'labels printed' column</label>
-                            <comment>Enable this to display the 'labels printed' column in the shipment grid.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                        <shipping_grid_columns translate="label comment" module="postnl">
+                            <label>Optional Shipment grid columns</label>
+                            <comment>Select which optional columns to show in the shipment grid.</comment>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>postnl_adminhtml/system_config_source_shipmentGridColumns</source_model>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                        </shipping_grid_columns>
+                        <shipping_grid_massaction_default translate="label" module="postnl">
+                            <label>Select a default option for the shipment grid mass action</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_shipmentGridMassaction</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
-                        </show_printed_column>
+                        </shipping_grid_massaction_default>
+                        <weight_per_parcel translate="label comment" module="postnl">
+                            <label>Maximum weight per parcel (in kg)</label>
+                            <comment>Determine the maximum weight of each parcel. if a shipment's total weight exceeds this, another parcel is added to the shipment.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-greater-than-zero validate-number</validate>
+                        </weight_per_parcel>
+                        <send_track_and_trace_email translate="label comment" module="postnl">
+                            <label>Send track &amp; trace e-mail to customer</label>
+                            <comment>If enabled, a track &amp; trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                        </send_track_and_trace_email>
+                        <track_and_trace_email_template translate="label" module="postnl">
+                            <label>Track &amp; trace e-mail template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                            <depends>
+                                <send_track_and_trace_email>1</send_track_and_trace_email>
+                            </depends>
+                        </track_and_trace_email_template>
                     </fields>
 				</cif_labels_and_confirming>
 				<cif_address translate="label" module="postnl">
@@ -374,14 +454,14 @@
                     <sort_order>500</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
+                    <show_in_store>0</show_in_store>
                     <fields>
                         <split_address_check>
                             <frontend_model>postnl_adminhtml/system_config_splitAddressCheck</frontend_model>
                             <sort_order>0</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                         </split_address_check>
                     	<split_street translate="label" module="postnl">
                             <label>Split street parts</label>
@@ -390,7 +470,7 @@
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</split_street>
                     	<streetname_field translate="label" module="postnl">
@@ -400,7 +480,7 @@
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <depends>
                             	<split_street>1</split_street>
                             </depends>
@@ -413,7 +493,7 @@
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <depends>
                             	<split_street>1</split_street>
                             </depends>
@@ -426,7 +506,7 @@
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <depends>
                             	<split_street>1</split_street>
                             </depends>
@@ -439,13 +519,75 @@
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <depends>
                             	<split_street>1</split_street>
                             	<split_housenr>1</split_housenr>
                             </depends>
                             <validate>validate-select</validate>
                     	</housenr_extension_field>
+                    	<optional_street_fields_header translate="label" module="postnl">
+                    	    <label>The following fields are optional and should remain empty, unless you specifically use these fields in your checkout configuration.</label>
+                    	    <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                    	</optional_street_fields_header>
+                        <area_field translate="label" module="postnl">
+                            <label>Area field</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </area_field>
+                        <building_name_field translate="label" module="postnl">
+                            <label>Building name field</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </building_name_field>
+                        <department_field translate="label" module="postnl">
+                            <label>Department field</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </department_field>
+                        <doorcode_field translate="label" module="postnl">
+                            <label>Doorcode field</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </doorcode_field>
+                        <floor_field translate="label" module="postnl">
+                            <label>Floor field</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
+                            <sort_order>110</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </floor_field>
+                        <remark_field translate="label" module="postnl">
+                            <label>Remark field</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
+                            <sort_order>120</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </remark_field>
                    </fields>
 				</cif_address>
 				<cif_sender_address translate="label" module="postnl">
@@ -479,19 +621,36 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                     	</company>
-                    	<street_full translate="label comment" module="postnl">
+                    	<streetname translate="label comment" module="postnl">
                             <label>Street</label>
-                            <comment><![CDATA[Please enter as &lt;street name&gt; &lt;house nr.&gt; &lt;house nr. extension&gt;.]]></comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                    	</street_full>
+                            <validate>validate-alphanum-with-spaces</validate>
+                    	</streetname>
+                        <housenumber translate="label comment" module="postnl">
+                            <label>House Nr.</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-digits</validate>
+                        </housenumber>
+                        <housenumber_extension translate="label comment" module="postnl">
+                            <label>House Nr. Extension</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </housenumber_extension>
                     	<postcode translate="label" module="postnl">
                             <label>Postcode</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -499,7 +658,7 @@
                     	<city translate="label" module="postnl">
                             <label>City</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>60</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -507,16 +666,136 @@
                     	<region translate="label" module="postnl">
                             <label>Region</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                     	</region>
                     </fields>
                 </cif_sender_address>
+                <cif_return_address translate="label" module="postnl">
+                    <label>Return Address</label>
+                    <sort_order>700</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <use_sender_address translate="label comment" module="postnl">
+                            <label>Use the sender address as the return adress</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                        </use_sender_address>
+                        <firstname translate="label" module="postnl">
+                            <label>First Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </firstname>
+                        <lastname translate="label" module="postnl">
+                            <label>Last Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </lastname>
+                        <company translate="label" module="postnl">
+                            <label>Company</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </company>
+                        <streetname translate="label comment" module="postnl">
+                            <label>Street</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-alphanum-with-spaces</validate>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </streetname>
+                        <housenumber translate="label comment" module="postnl">
+                            <label>House Nr.</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-digits</validate>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </housenumber>
+                        <housenumber_extension translate="label comment" module="postnl">
+                            <label>House Nr. Extension</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </housenumber_extension>
+                        <postcode translate="label" module="postnl">
+                            <label>Postcode</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </postcode>
+                        <city translate="label" module="postnl">
+                            <label>City</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </city>
+                        <region translate="label" module="postnl">
+                            <label>Region</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <use_sender_address>0</use_sender_address>
+                            </depends>
+                        </region>
+                    </fields>
+                </cif_return_address>
 				<cif_product_options translate="label" module="postnl">
 		    		<label>Product Options</label>
-                    <sort_order>700</sort_order>
+                    <sort_order>800</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -540,8 +819,9 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <can_be_empty>0</can_be_empty>
                     	</supported_product_options>
-                    	<default_product_options translate="label comment" module="postnl">
+                    	<default_product_option translate="label comment" module="postnl">
                             <label>Default shipping options</label>
                             <comment>These can be overwritten by manually creating shipments. These options are only applicable to Dutch shipments.</comment>
                             <frontend_type>select</frontend_type>
@@ -551,58 +831,113 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
-                    	</default_product_options>
-                    	<default_pakjegemak_product_options translate="label comment" module="postnl">
-                            <label>Default PakjeGemak shipping options</label>
-                            <comment>These can be overwritten by manually creating shipments. These options are only applicable to Dutch PakjeGemak shipments.</comment>
+                    	</default_product_option>
+                    	<use_alternative_default>
+                            <label>Use an alternative default option</label>
+                            <comment>Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions</source_model>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <validate>validate-select</validate>
-                    	</default_pakjegemak_product_options>
-                    	<default_eu_product_options translate="label comment" module="postnl">
-                            <label>Default EU shipping options</label>
-                            <comment>These can be overwritten by manually creating shipments. These options are only applicable to EU shipments.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_euProductOptions</source_model>
+                    	</use_alternative_default>
+                        <alternative_default_max_amount translate="label comment" module="postnl">
+                            <label>Maximum amount</label>
+                            <comment>The alternative default option will be used when the shipment's total amount exceeds this value.</comment>
+                            <frontend_type>text</frontend_type>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <depends>
+                                <use_alternative_default>1</use_alternative_default>
+                            </depends>
+                            <validate>validate-digits validate-greater-than-zero</validate> <!-- not negative integers only -->
+                        </alternative_default_max_amount>
+                        <alternative_default_option translate="label comment" module="postnl">
+                            <label>Alternative default shipping options</label>
+                            <comment>This option will be used as default when the shipment's total value exceeds the given amount.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_standardProductOptions</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <use_alternative_default>1</use_alternative_default>
+                            </depends>
                             <validate>validate-select</validate>
-                    	</default_eu_product_options>
+                        </alternative_default_option>
+                    	<default_pakjegemak_product_option translate="label comment" module="postnl">
+                            <label>Default PakjeGemak shipping options</label>
+                            <comment>These can be overwritten by manually creating shipments. These options are only applicable to Dutch PakjeGemak shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                    	</default_pakjegemak_product_option>
+                    	<default_eu_product_option translate="label comment" module="postnl">
+                            <label>Default EU shipping options</label>
+                            <comment>These can be overwritten by manually creating shipments. These options are only applicable to EU shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_euProductOptions</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                    	</default_eu_product_option>
                     	<weight_unit translate="label comment" module="postnl">
                             <label>Weight unit</label>
                             <comment>Select the unit in which you've entered product's weight</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_weightUnit</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                             <validate>validate-select</validate>
                     	</weight_unit>
                     </fields>
 				</cif_product_options>
-				<cif_customs_settings translate="label" module="postnl">
-		    		<label>Customs Settings</label>
-                    <sort_order>800</sort_order>
+				<cif_globalpack_settings translate="label" module="postnl">
+		    		<label>GlobalPack Settings</label>
+                    <sort_order>900</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
+                    <show_in_store>0</show_in_store>
                     <fields>
+                        <customs_license_number translate="label comment" module="postnl">
+                            <label>Customs license number</label>
+                            <comment>If you do not own a customs license, leave this field empty.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </customs_license_number>
+                        <customs_certificate_number translate="label comment" module="postnl">
+                            <label>Customs certificate number</label>
+                            <comment>If you do not own a customs certificate, leave this field empty.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </customs_certificate_number>
                     	<use_hs_tariff translate="label comment" module="postnl">
                             <label>Use HS Tariff</label>
                             <comment>Enable this field to specify a product attribute to use as the product's HS tariff.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>10</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</use_hs_tariff>
                     	<hs_tariff_attribute translate="label comment" module="postnl">
@@ -610,10 +945,10 @@
                             <comment>The product attribute used to determine the product's HS tariff.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>20</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <depends>
                             	<use_hs_tariff>1</use_hs_tariff>
                             </depends>
@@ -624,10 +959,10 @@
                             <comment>The product attribute used to determine product's customs value.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</customs_value_attribute>
                     	<country_of_origin_attribute translate="label comment" module="postnl">
@@ -635,10 +970,10 @@
                             <comment>The product attribute used to determine the product's country of origin.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</country_of_origin_attribute>
                     	<description_attribute translate="label comment" module="postnl">
@@ -646,10 +981,10 @@
                             <comment>The product attribute used to supply the product's customs description.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</description_attribute>
                         <product_sorting_attribute translate="label comment" module="postnl">
@@ -657,29 +992,29 @@
                             <comment>Global shipping labels can only contain 5 products. This attribute will determine how these are sorted so taht only the top 5 will be printed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </product_sorting_attribute>
                         <product_sorting_direction translate="label comment" module="postnl">
                             <label>Product sorting direction</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_direction</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </product_sorting_direction>
                     </fields>
-				</cif_customs_settings>
+				</cif_globalpack_settings>
 				<advanced translate="label" module="postnl">
 		    		<label>Advanced Settings</label>
                     <sort_order>10000</sort_order> <!-- This should always be the last group -->
                     <show_in_default>1</show_in_default>
-                    <show_in_website>0</show_in_website>
+                    <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
 					<fields>
                         <debug_mode translate="label comment tooltip">
@@ -715,6 +1050,66 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-digits validate-greater-than-zero</validate> <!-- not negative integers only -->
                     	</max_temp_file_storage_time>
+                        <confirm_expire_days translate="label comment" module="postnl">
+                            <label>Number of days before a confirmation expires</label>
+                            <comment>If a confirmed shipment has not been shipped after this amount of days it's confirmation will expire.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-digits validate-greater-than-zero</validate> <!-- not negative integers only -->
+                        </confirm_expire_days>
+                        <send_statistics translate="label" module="postnl">
+                            <label>Send extension usage statistics to PostNL</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                        </send_statistics>
+                        <cif_versions_header translate="label" module="postnl">
+                            <label>The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the module altogether.</label>
+                            <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_versions_header>
+                        <cif_version_shippingstatus>
+                            <label>ShippingStatus Webservice version</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_version_shippingstatus>
+                        <cif_version_confirming>
+                            <label>Confirming Webservice version</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_version_confirming>
+                        <cif_version_labelling>
+                            <label>Labelling Webservice version</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_version_labelling>
+                        <cif_version_barcode>
+                            <label>Barcode Webservice version</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_version_barcode>
                 	</fields>
 				</advanced>
 			</groups>

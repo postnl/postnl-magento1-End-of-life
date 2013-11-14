@@ -56,11 +56,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         $availableOptions = array(
             array(
                 'value' => '4950',
-                'label' => $helper->__('EU Pack Special'),
+                'label' => $helper->__('EU Pack Special (B2B)'),
             ),
             array(
                 'value' => '4952',
-                'label' => $helper->__('EU Pack Special to consumer'),
+                'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
             ),
             /**
              * These are not currently implemented
@@ -73,7 +73,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
             ),*/
             array(
                 'value' => '4955',
-                'label' => $helper->__('EU Pack Standard (Belgium only)'),
+                'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                'isBelgiumOnly' => true,
             ),
         );
         

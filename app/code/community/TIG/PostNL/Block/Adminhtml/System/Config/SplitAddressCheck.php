@@ -80,6 +80,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_SplitAddressCheck
      * Render fieldset html
      *
      * @param Varien_Data_Form_Element_Abstract $element
+     * 
      * @return string
      */
     public function render(Varien_Data_Form_Element_Abstract $element)

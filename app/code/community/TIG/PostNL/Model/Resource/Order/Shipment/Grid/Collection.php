@@ -79,4 +79,19 @@ class TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection extends Mage_Sale
         $this->_items = array();
         return $this;
     }
+    
+    /**
+     * Replace the select by a given select object.
+     * This effectively copies another collection (not entirely, but close enough for our purposes).
+     * 
+     * @param Varien_db_Select $select
+     * 
+     * @return TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection
+     */
+    public function setSelect($select)
+    {
+        $this->_select = $select;
+        
+        return $this;
+    }
 }

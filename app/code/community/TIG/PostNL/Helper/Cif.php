@@ -72,9 +72,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * XML paths to default product options settings
      */
-    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS = 'postnl/cif_product_options/default_product_options';
-    const XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS       = 'postnl/cif_product_options/default_eu_product_options';
-    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS   = 'postnl/cif_product_options/default_global_product_options';
+    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION = 'postnl/cif_product_options/default_product_option';
+    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION       = 'postnl/cif_product_options/default_eu_product_option';
+    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION   = 'postnl/cif_product_options/default_global_product_option';
     
     /**
      * Array of countries to which PostNL ships using EPS. Other EU countries are shipped to using GlobalPack
@@ -182,34 +182,110 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         '4945',
     );
     
+    /**
+     * Array of supported shipment types
+     * 
+     * @var array
+     */
+    protected $_shipmentTypes = array(
+        'gift'              => 'Gift',
+        'documents'         => 'Documents',
+        'commercial_goods'  => 'Commercial Goods',
+        'commercial_sample' => 'Commercial Sample',
+        'returned_goods'    => 'Returned Goods',
+    );
+    
+    /**
+     * Array of possible shipping phases
+     * 
+     * @var array
+     */
+    protected $_shippingPhases = array(
+        '01' => 'Collection',
+        '02' => 'Sorting',
+        '03' => 'Distribution',
+        '04' => 'Delivered',
+        '99' => 'Shipment not found',
+    );
+    
+    /**
+     * Get an array of EU countries
+     * 
+     * @return array
+     */
     public function getEuCountries()
     {
         return $this->_euCountries;
     }
     
+    /**
+     * Get an array of standard product codes
+     * 
+     * @return array
+     */
     public function getStandardProductCodes()
     {
         return $this->_standardProductCodes;
     }
     
+    /**
+     * Get an array of pakjegemak product codes
+     * 
+     * @return array
+     */
     public function getPakjeGemakProductCodes()
     {
         return $this->_pakjeGemakProductCodes;
     }
     
+    /**
+     * Get an array of eu product codes
+     * 
+     * @return array
+     */
     public function getEuProductCodes()
     {
         return $this->_euProductCodes;
     }
     
+    /**
+     * Get an array of eu combi-label product codes
+     * 
+     * @return array
+     */
     public function getEuCombilabelProductCodes()
     {
         return $this->_euCombilabelProductCodes;
     }
     
+    /**
+     * Get an array of global product codes
+     * 
+     * @return array
+     */
     public function getGlobalProductCodes()
     {
         return $this->_globalProductCodes;
+    }
+    
+    /**
+     * Get an array of possible shipment types
+     * 
+     * @return array
+     */
+    public function getShipmentTypes()
+    {
+        return $this->_shipmentTypes;
+    }
+    
+    /**
+     * Get an array of possible shipping phases
+     * 
+     * @return array
+     */
+    public function getShippingPhases()
+    {
+        return $this->_shippingPhases;
     }
     
     /**
@@ -269,13 +345,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getProductOptionsForShipment($shipment)
     {
-        $postnlShipment = Mage::getModel('postnl_core/shipment');
-        $postnlShipment->setShipment($shipment);
-        
         /**
          * Dutch product options
          */
-        if ($postnlShipment->isDutchShipment()) {
+        if ($this->isDutchShipment($shipment)) {
             $options = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
                            ->getAvailableOptions();
                            
@@ -285,7 +358,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /**
          * EU product options
          */
-        if ($postnlShipment->isEuShipment()) {
+        if ($this->isEuShipment($shipment)) {
             $options = Mage::getModel('postnl_core/system_config_source_euProductOptions')
                            ->getAvailableOptions();
                            
@@ -295,7 +368,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /**
          * Global product options
          */
-        if ($postnlShipment->isGlobalShipment()) {
+        if ($this->isGlobalShipment($shipment)) {
             $options = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
                            ->getAvailableOptions();
                            
@@ -303,6 +376,72 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         }
         
         return null;
+    }
+    
+    /**
+     * Check if a given shipment is dutch
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment | Mage_Sales_Model_Order_Shipment $shipment
+     * 
+     * @return boolean
+     * 
+     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     */
+    public function isDutchShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            return $shipment->isDutchShipment();
+        }
+        
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+        
+        return $tempPostnlShipment->isDutchShipment();
+    }
+    
+    /**
+     * Check if a given shipment has an EU destination
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment | Mage_Sales_Model_Order_Shipment $shipment
+     * 
+     * @return boolean
+     * 
+     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     */
+    public function isEuShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            return $shipment->isEuShipment();
+        }
+        
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+        
+        return $tempPostnlShipment->isEuShipment();
+    }
+    
+    /**
+     * Check if a given shipment has a global destination
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment | Mage_Sales_Model_Order_Shipment $shipment
+     * 
+     * @return boolean
+     * 
+     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     */
+    public function isGlobalShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            return $shipment->isGlobalShipment();
+        }
+        
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+        
+        return $tempPostnlShipment->isGlobalShipment();
     }
     
     /**
@@ -323,7 +462,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
     
     /**
-     * Get an array of all default product options
+     * Get an array of all default product options. This is a simple method to quickly get a list of default options based on
+     * the current storeview.
+     * 
+     * This does not take into account the possible use of an alternative default for dutch shipments. For that you need to use
+     * TIG_PostNL_Model_Core_Shipment::getDefaultProductCode() which is more precise.
      * 
      * @return array
      */
@@ -331,9 +474,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $storeId = Mage::app()->getStore()->getId();
         
-        $defaultDutchOption  = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTIONS, $storeId);
-        $defaultEuOption     = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTIONS, $storeId);
-        $defaultGlobalOption = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTIONS, $storeId);
+        $defaultDutchOption  = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
+        $defaultEuOption     = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTION, $storeId);
+        $defaultGlobalOption = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION, $storeId);
         
         $defaultOptions = array(
             'dutch'  => $defaultDutchOption,
@@ -360,9 +503,29 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $coreResource = Mage::getSingleton('core/resource');
         $readAdapter = $coreResource->getConnection('core_read');
         
+        /**
+         * Check if the barcode exists as a main barcode
+         */
         $validator = Mage::getModel('Zend_Validate_Db_RecordExists', 
             array(
                 'table'   => $coreResource->getTableName('postnl_core/shipment'),
+                'field'   => 'main_barcode',
+                'adapter' => $readAdapter,
+            )
+        );
+        
+        $barcodeExists = $validator->isValid($barcode);
+        
+        if ($barcodeExists) {
+            return true;
+        }
+        
+        /**
+         * Check if the barcode exists as a secondary barcode
+         */
+        $validator = Mage::getModel('Zend_Validate_Db_RecordExists', 
+            array(
+                'table'   => $coreResource->getTableName('postnl_core/shipment_barcode'),
                 'field'   => 'barcode',
                 'adapter' => $readAdapter,
             )
@@ -473,27 +636,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
     
     /**
-     * formats input XML string to improve readability
-     * 
-     * @param string $xml
-     * 
-     * @return string
-     */
-    public function formatXML($xml)
-    {
-        if (empty($xml)) {
-            return '';
-        }
-        
-        $dom = new DOMDocument();
-        $dom->loadXML($xml);
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-
-        return $dom->saveXML();
-    }
-    
-    /**
      * Logs a CIF request and response for debug purposes.
      * 
      * N.B.: if file logging is enabled, the log will be forced
@@ -513,8 +655,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $this;
         }
         
-        $requestXml = $this->formatXml($client->__getLastRequest());
-        $responseXML = $this->formatXml($client->__getLastResponse());
+        $requestXml = $this->formatXml($client->getLastRequest());
+        $responseXML = $this->formatXml($client->getLastResponse());
         
         $logMessage = "Request sent:\n"
                     . $requestXml
@@ -549,9 +691,17 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             $requestXml = $this->formatXml($exception->getRequestXml());
             $responseXML = $this->formatXml($exception->getResponseXml());
             
-            $logMessage = "Request sent:\n"
+            $logMessage = '';
+            
+            $errorNumbers = $exception->getErrorNumbers();
+            if (!empty($errorNumbers)) {
+                $errorNumbers = implode(', ', $errorNumbers);
+                $logMessage .= "Error numbers recieved: {$errorNumbers}\n";
+            }
+            
+            $logMessage .= "<<< REQUEST SENT >>>\n"
                         . $requestXml
-                        . "\nResponse recieved:\n"
+                        . "\n<<< RESPONSE RECIEVED >>>\n"
                         . $responseXML;
                         
             Mage::log($logMessage, Zend_Log::ERR, self::CIF_EXCEPTION_LOG_FILE, true);

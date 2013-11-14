@@ -41,9 +41,36 @@
 <?php $_shipment = $this->getShipment(); ?>
 <?php $_productOptions = $this->getProductOptions(); ?>
 <?php $_defaultProductOption = $this->getDefaultProductOption(); ?>
+<?php $_isBelgium = $this->isBelgium(); ?>
 <script type ="text/javascript">
 //<![CDATA[
     document.observe('dom:loaded', function() {
+        addProductOptions();
+        addExtraCover();
+        
+        <?php if (Mage::helper('postnl/cif')->isGlobalShipment($_shipment)): ?>
+            addShipmentType();
+        <?php endif; ?>
+        
+        var productOptions = $('postnl_product_option');
+        productOptions.observe('change', function() {
+            showOrHideExtraOptions(productOptions);
+        });
+        
+        showOrHideExtraOptions(productOptions);
+    });
+        
+    function showOrHideExtraOptions(productOptions) {
+        if (productOptions[productOptions.selectedIndex].hasClassName('extra_cover')) {
+            $('postnl_extra_cover_container').show();
+            $('postnl_shipment_type_container').show();
+        } else {
+            $('postnl_extra_cover_container').hide();
+            $('postnl_shipment_type_container').hide();
+        }
+    }
+    
+    function addProductOptions() {
         postnlProductOptionsContainer = new Element('p');
         
         postnlProductOptionsLabel = new Element('label', {
@@ -58,8 +85,10 @@
            'id'   : 'postnl_product_option'
         });
         
-        
         <?php foreach($_productOptions as $_option): ?>
+            <?php if (isset($_option['isBelgiumOnly']) && $_isBelgium === false): ?>
+                <?php continue; ?>
+            <?php endif; ?>
             option = new Element('option', {
                 <?php if (isset($_option['isExtraCover']) && $_option['isExtraCover'] === true): ?>
                     'class': 'extra_cover',
@@ -81,7 +110,9 @@
                 before: postnlProductOptionsContainer
             });
         });
-        
+    }
+    
+    function addExtraCover() {
         postnlExtraCoverContainer = new Element('p', {
             'id'   : 'postnl_extra_cover_container',
             'style': 'display:none;'
@@ -106,21 +137,40 @@
         $('postnl_product_option').insert({
             after: postnlExtraCoverContainer
         });
+    }
+    
+    function addShipmentType() {
+        postnlShipmentTypeContainer = new Element('p', {
+            'id'   : 'postnl_shipment_type_container',
+            'style': 'display:none;'
+        });
+        postnlShipmentTypeLabel = new Element('label', {
+            'class': 'normal',
+            'for'  : 'postnl_shipment_type'
+        });
+        postnlShipmentTypeLabel.update('<?php echo $this->__('Shipment type'); ?>');
         
-        var productOptions = $('postnl_product_option');
-        productOptions.observe('change', function() {
-            if (productOptions[productOptions.selectedIndex].hasClassName('extra_cover')) {
-                $('postnl_extra_cover_container').show();
-            } else {
-                $('postnl_extra_cover_container').hide();
-            }
+        postnlShipmentTypeField = new Element('select', {
+            'name' : 'postnl[shipment_type]',
+            'class': 'validate-select required-field',
+            'id'   : 'postnl_shipment_type',
         });
         
-        if (productOptions[productOptions.selectedIndex].hasClassName('extra_cover')) {
-            $('postnl_extra_cover_container').show();
-        } else {
-            $('postnl_extra_cover_container').hide();
-        }
-    });
+        <?php foreach ($this->getShipmentTypes() as $type => $label): ?>
+            option = new Element('option', {
+                'value': '<?php echo $type; ?>'
+            });
+            option.update('<?php echo $this->__($label); ?>');
+        
+            postnlShipmentTypeField.insert(option);
+        <?php endforeach; ?>
+        
+        postnlShipmentTypeContainer.insert(postnlShipmentTypeLabel);
+        postnlShipmentTypeContainer.insert(postnlShipmentTypeField);
+        
+        $('postnl_extra_cover_container').insert({
+            after: postnlShipmentTypeContainer
+        });
+    }
 //]]>
 </script>

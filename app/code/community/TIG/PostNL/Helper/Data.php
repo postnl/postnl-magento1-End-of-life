@@ -49,6 +49,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_Debug.log';
     
     /**
+     * Log filename to log all cron log messages
+     */
+    const POSTNL_CRON_DEBUG_LOG_FILE = 'TIG_PostNL_Cron_Debug.log';
+    
+    /**
      * XML path to postnl general active/inactive setting
      */
     const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
@@ -107,9 +112,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_globalShipmentRequiredFields = array(
         'postnl/cif/global_barcode_type',
         'postnl/cif/global_barcode_range',
-        'postnl/cif_customs_settings/customs_value_attribute',
-        'postnl/cif_customs_settings/country_of_origin_attribute',
-        'postnl/cif_customs_settings/description_attribute',
+        'postnl/cif_globalpack_settings/customs_value_attribute',
+        'postnl/cif_globalpack_settings/country_of_origin_attribute',
+        'postnl/cif_globalpack_settings/description_attribute',
     );
     
     /**
@@ -170,7 +175,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
     
     /**
-     * Determines if the extension has been activated
+     * Determines if the extension is active
      * 
      * @param int | bool $storeId
      * 
@@ -186,12 +191,26 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
         
+        /**
+         * Check if the module has been enabled
+         */
         $enabled = (bool) Mage::getStoreConfig(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
         if ($enabled === false) {
             Mage::register('postnl_enabled', false);
             return false;
         }
         
+        /**
+         * The PostNL module only works with EUR as the shop's base currency
+         */
+        $baseCurrencyCode = Mage::getModel('core/store')->load($storeId)->getBaseCurrencyCode();
+        if ($baseCurrencyCode != 'EUR') {
+            return false;
+        }
+        
+        /**
+         * Check if the module's required configuration options have been filled
+         */
         $isConfigured = $this->isConfigured($storeId, $checkGlobal);
         if ($isConfigured === false) {
             Mage::register('postnl_enabled', false);
@@ -356,27 +375,77 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
     
     /**
+     * formats input XML string to improve readability
+     * 
+     * @param string $xml
+     * 
+     * @return string
+     */
+    public function formatXML($xml)
+    {
+        if (empty($xml)) {
+            return '';
+        }
+        
+        $dom = new DOMDocument();
+        $dom->loadXML($xml);
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
+
+        return $dom->saveXML();
+    }
+    
+    /**
      * Logs a debug message. Based on Mage::log
      * 
-     * @param Exception $exception
+     * @param string $message
+     * @param int | null $level
+     * @param string | null $file
      * 
      * @return TIG_PostNL_Helper_Data
      * 
      * @see Mage::log
      */
-    public function log($message, $level)
+    public function log($message, $level = null, $file = null)
     {
         if (!$this->isLoggingEnabled()) {
             return $this;
         }
         
-        Mage::log($message, Zend_Log::DEBUG, self::POSTNL_DEBUG_LOG_FILE);
+        if (is_null($level)) {
+            $level = Zend_Log::DEBUG;
+        }
+        
+        if (is_null($file)) {
+            $file = self::POSTNL_DEBUG_LOG_FILE;
+        }
+        
+        Mage::log($message, $level, $file);
         
         return $this;
     }
     
     /**
+     * Logs a cron debug messageto a seperate file in order to differentiate it from other debug messages
+     * 
+     * @param string $message
+     * @param int | int $level
+     * 
+     * @return TIG_PostNL_Helper_Data
+     * 
+     * @see Mage::log
+     */
+    public function cronLog($message, $level = null)
+    {
+        $file = self::POSTNL_CRON_DEBUG_LOG_FILE;
+        
+        return $this->log($message, $level, $file);
+    }
+    
+    /**
      * Logs a PostNL Exception. Based on Mage::logException
+     * 
+     * N.B. this uses forced logging
      * 
      * @param Exception $exception
      * 
@@ -390,7 +459,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $this;
         }
         
-        Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::POSTNL_EXCEPTION_LOG_FILE);
+        Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::POSTNL_EXCEPTION_LOG_FILE, true);
         
         return $this;
     }

@@ -29,7 +29,7 @@
  *
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade this module to newer
+advanced * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
@@ -43,22 +43,22 @@
 class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 {
     /**
-     * directory containing wsdl files
+     * Base URL of wsdl files
      */
-    const WSDL_DIRECTORY_NAME = 'wsdl';
+    const WSDL_BASE_URL = 'https://service.postnl.com/CIF/';
     
     /**
-     * Subdirectory containing test mode wsdl files
+     * Base URL of sandbox wsdl files
      */
-    const TEST_WSDL_DIRECTORY_NAME = 'test';
+    const TEST_WSDL_BASE_URL = 'https://testservice.postnl.com/CIF_SB/';
     
     /**
      * available wsdl filenames
      */
-    const WSDL_BARCODE_NAME         = 'BarcodeWebService_1.wsdl';
-    const WSDL_CONFIRMING_NAME      = 'ConfirmingWebService_1.wsdl';
-    const WSDL_LABELLING_NAME       = 'LabellingWebService_1.wsdl';
-    const WSDL_SHIPPING_STATUS_NAME = 'ShippingStatusWebService_1.wsdl';
+    const WSDL_BARCODE_NAME         = 'BarcodeWebService';
+    const WSDL_CONFIRMING_NAME      = 'ConfirmingWebService';
+    const WSDL_LABELLING_NAME       = 'LabellingWebService';
+    const WSDL_SHIPPING_STATUS_NAME = 'ShippingStatusWebService';
     
     /**
      * header security namespace. Used for constructing the SOAP headers array
@@ -73,10 +73,14 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * XML paths for config options
      */
-    const XML_PATH_LIVE_USERNAME = 'postnl/cif/live_username';
-    const XML_PATH_LIVE_PASSWORD = 'postnl/cif/live_password';
-    const XML_PATH_TEST_USERNAME = 'postnl/cif/test_username';
-    const XML_PATH_TEST_PASSWORD = 'postnl/cif/test_password';
+    const XML_PATH_LIVE_USERNAME              = 'postnl/cif/live_username';
+    const XML_PATH_LIVE_PASSWORD              = 'postnl/cif/live_password';
+    const XML_PATH_TEST_USERNAME              = 'postnl/cif/test_username';
+    const XML_PATH_TEST_PASSWORD              = 'postnl/cif/test_password';
+    const XML_PATH_CIF_VERSION_BARCODE        = 'postnl/advanced/cif_version_barcode';
+    const XML_PATH_CIF_VERSION_LABELLING      = 'postnl/advanced/cif_version_labelling';
+    const XML_PATH_CIF_VERSION_CONFIRMING     = 'postnl/advanced/cif_version_confirming';
+    const XML_PATH_CIF_VERSION_SHIPPINGSTATUS = 'postnl/advanced/cif_version_shippingstatus';
     
     /**
      * Gets the username from system/config. Test mode determines if live or test username is used.
@@ -86,11 +90,11 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     protected function _getUsername()
     {
         if ($this->isTestMode()) {
-            $username = Mage::getStoreConfig(self::XML_PATH_TEST_USERNAME, 0);
+            $username = Mage::getStoreConfig(self::XML_PATH_TEST_USERNAME, Mage_Core_Model_App::ADMIN_STORE_ID);
             return $username;
         }
         
-        $username = Mage::getStoreConfig(self::XML_PATH_LIVE_USERNAME, 0);
+        $username = Mage::getStoreConfig(self::XML_PATH_LIVE_USERNAME, Mage_Core_Model_App::ADMIN_STORE_ID);
         return $username;
     }
     
@@ -103,12 +107,12 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     protected function _getPassword()
     {
         if ($this->isTestMode()) {
-            $password = Mage::getStoreConfig(self::XML_PATH_TEST_PASSWORD, 0);
+            $password = Mage::getStoreConfig(self::XML_PATH_TEST_PASSWORD, Mage_Core_Model_App::ADMIN_STORE_ID);
             $password = sha1(Mage::helper('core')->decrypt($password));
             return $password;
         }
         
-        $password = Mage::getStoreConfig(self::XML_PATH_LIVE_PASSWORD, 0);
+        $password = Mage::getStoreConfig(self::XML_PATH_LIVE_PASSWORD, Mage_Core_Model_App::ADMIN_STORE_ID);
         $password = sha1(Mage::helper('core')->decrypt($password));
         return $password;
     }
@@ -146,23 +150,55 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             }
             
             $wsdlFile = $this->_getWsdl($wsdlType);
-            $client  = new SoapClient(
-                $wsdlFile, 
-                array(
-                    'trace' => 1,
-                )
+            
+            /**
+             * Array of soap options used when connecting to CIF
+             */
+            $soapOptions = array(
+                'soap_version' => SOAP_1_1,
+                'features'     => SOAP_SINGLE_ELEMENT_ARRAYS,
             );
-            $headers = $this->_getSoapHeaders();
-
-            $client->__setSoapHeaders($headers);
-
-            $response = $client->__soapCall(
+            
+            /**
+             * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without using the
+             * wsdl cache.
+             */
+            try {
+                $client  = new Zend_Soap_Client(
+                    $wsdlFile, 
+                    $soapOptions
+                );
+            } catch (Exception $e) {
+                /**
+                 * Disable wsdl cache and try again
+                 */
+                $soapOptions['cache_wsdl'] = WSDL_CACHE_NONE;
+                
+                $client  = new Zend_Soap_Client(
+                    $wsdlFile, 
+                    $soapOptions
+                );
+            }
+            
+            /**
+             * Add SOAP header
+             */
+            $header = $this->_getSoapHeader();
+            $client->addSoapInputHeader($header, true); //permanent header
+            
+            /**
+             * Call the SOAP method
+             */
+            $response = $client->__call(
                 $method,
                 array(
                     $method => $soapParams,
                 )
             );
             
+            /**
+             * Parse any warnings that may have occurred
+             */
             $this->_processWarnings($client);
             
             Mage::helper('postnl/cif')->logCifCall($client);
@@ -176,7 +212,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     }
 
     /**
-     * returns the path to the chosen wsdl file based on a wsdl type.
+     * returns the URL of the chosen wsdl file based on a wsdl type.
      * 
      * available types are:
      * - barcode
@@ -192,34 +228,59 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      */
     protected function _getWsdl($wsdlType)
     {
+        $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        
+        /**
+         * Check which wsdl file we need for each wsdl type
+         * Als get the wsdl version to get
+         */
         $wsdlType = strtolower($wsdlType);
         switch ($wsdlType) {
             case 'barcode':
+                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_BARCODE, $adminStoreId);
                 $wsdlFileName = self::WSDL_BARCODE_NAME;
                 break;
             case 'confirming':
+                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_CONFIRMING, $adminStoreId);
                 $wsdlFileName = self::WSDL_CONFIRMING_NAME;
                 break;
             case 'labelling':
+                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_LABELLING, $adminStoreId);
                 $wsdlFileName = self::WSDL_LABELLING_NAME;
                 break;
             case 'shippingstatus':
+                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_SHIPPINGSTATUS, $adminStoreId);
                 $wsdlFileName = self::WSDL_SHIPPING_STATUS_NAME;
                 break;
             default:
                 throw Mage::exception('TIG_PostNL', 'Chosen wsdl type is not supported: ' . $wsdlType);
         }
         
-        $wsdlPath = Mage::helper('postnl')->getModuleDir(self::WSDL_DIRECTORY_NAME, 'TIG_PostNL');
+        /**
+         * Wsdl version numbers are formatted using an underscore instead of a period. Since many people would use a period, we
+         * convert it to CIF specifications.
+         */
+        $wsdlversion = str_replace('.', '_', $wsdlversion);
         
+        /**
+         * Check if we need the live or the sandbox wsdl
+         */
         if ($this->isTestMode()) {
-            $wsdlPath .= DS . self::TEST_WSDL_DIRECTORY_NAME;
+            $wsdlUrl = self::TEST_WSDL_BASE_URL;
+        } else {
+            $wsdlUrl =self::WSDL_BASE_URL;
         }
         
-        $wsdlPath .= DS . $wsdlFileName;
+        /**
+         * Format the final wsdl URL
+         */
+        $wsdlUrl .= $wsdlFileName
+                   . DS
+                   . $wsdlversion
+                   . DS
+                   . '?wsdl';
         
-        
-        return $wsdlPath;
+        return $wsdlUrl;
     }
     
     /**
@@ -227,18 +288,16 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * 
      * @return array
      */
-    protected function _getSoapHeaders()
+    protected function _getSoapHeader()
     {
-        $headers = array();
-
         $namespace = self::HEADER_SECURITY_NAMESPACE;
         $node1     = new SoapVar($this->_getUserName(), XSD_STRING,      null, null, 'Username',      $namespace);
         $node2     = new SoapVar($this->_getPassWord(), XSD_STRING,      null, null, 'Password',      $namespace);
         $token     = new SoapVar(array($node1, $node2), SOAP_ENC_OBJECT, null, null, 'UsernameToken', $namespace);
         $security  = new SoapVar(array($token),         SOAP_ENC_OBJECT, null, null, 'Security',      $namespace);
-        $headers[] = new SOAPHeader($namespace, 'Security', $security, false);
+        $header   = new SOAPHeader($namespace, 'Security', $security, false);
         
-        return $headers;
+        return $header;
     }
     
     /**
@@ -250,7 +309,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      */
     protected function _processWarnings($client)
     {
-        $responseXML = $client->__getLastResponse();
+        $responseXML = $client->getLastResponse();
         $responseDOMDoc = new DOMDocument();
         $responseDOMDoc->loadXML($responseXML);
         
@@ -315,8 +374,8 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
          * Get the request and response XML data
          */
         if ($client) {
-            $requestXML  = $cifHelper->formatXml($client->__getLastRequest());
-            $responseXML = $cifHelper->formatXml($client->__getLastResponse());
+            $requestXML  = $cifHelper->formatXml($client->getLastRequest());
+            $responseXML = $cifHelper->formatXml($client->getLastResponse());
         }
         
         if ($responseXML) {
@@ -333,6 +392,13 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 }
                 
                 $exception = Mage::exception('TIG_PostNL_Model_Core_Cif', $message);
+            }
+                
+            $errorNumbers = $errorResponse->getElementsByTagNameNS(self::CIF_ERROR_NAMESPACE, 'ErrorNumber');
+            if ($exception && $errorNumbers) {
+                foreach ($errorNumbers as $errorNumber) {
+                    $exception->addErrorNumber($errorNumber->nodeValue);
+                }
             }
         } else {
             /**

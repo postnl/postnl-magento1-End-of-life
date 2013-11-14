@@ -44,6 +44,23 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
     }
     
     /**
+     * Set the 'phase' attribute. The phase must be formatted as a 2 digit number (i.e. 01, 04, 12, 99 etc.)
+     * 
+     * @param string | int $phase
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment_Status_History
+     */
+    public function setPhase($phase)
+    {
+        if (strlen($phase) < 2) {
+            $phase = '0' . $phase;
+        }
+        
+        $this->setData('phase', $phase);
+        return $this;
+    }
+    
+    /**
      * Load a history item based on a postnl shipment id and a status code.
      * 
      * @param int $shipmentId
@@ -51,7 +68,7 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
      * 
      * @return TIG_PostNL_Model_Core_Shipment_Status_History
      */
-    public function loadShipmentByIdAndCode($shipmentId, $code)
+    public function loadByShipmentIdAndCode($shipmentId, $code)
     {
         $collection = $this->getCollection();
         $collection->addFieldToSelect('status_id')
@@ -70,21 +87,37 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
     }
     
     /**
-     * Check if a status history item exists for the given postnl shipment and status code
+     * Check if a status history item exists for the given postnl shipment and status
      * 
      * @param int $shipmentId
-     * @param string $code
+     * @param StdClass $code
      * 
      * @return boolean
      */
-    public function statusHistoryExists($shipmentId, $code)
+    public function statusHistoryIsNew($shipmentId, $status)
     {
         $collection = $this->getCollection();
         $collection->addFieldToSelect('status_id')
                    ->addFieldToFilter('parent_id', array('eq' => $shipmentId))
-                   ->addFieldToFilter('code', array('eq' => $code));
-                   
-        if ($collection->count() > 0) {
+                   ->addFieldToFilter('code', array('eq' => $status->Code));
+        
+        if ($status->LocationCode !== '') {
+            $collection->addFieldToFilter('location_code', array('eq' => $status->LocationCode));
+        }
+        
+        if ($status->DestinationLocationCode !== '') {
+            $collection->addFieldToFilter('destination_location_code', array('eq' => $status->DestinationLocationCode));
+        }
+        
+        if ($status->RouteCode !== '') {
+            $collection->addFieldToFilter('route_code', array('eq' => $status->RouteCode));
+        }
+        
+        if ($status->RouteName !== '') {
+            $collection->addFieldToFilter('route_name', array('eq' => $status->RouteName));
+        }
+                
+        if ($collection->getSize() < 1) {
             return true;
         }
         
