@@ -125,9 +125,16 @@ $postnlShipmentTable = $installer->getConnection()
     /**
      * The optional amount of extra cover this shipment has
      */
-    ->addColumn('extra_cover_amount', Varien_Db_Ddl_Table::TYPE_DECIMAL, 12, array(
+    ->addColumn('extra_cover_amount', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
         'nullable' => true,
         ), 'Extra Cover Amount')
+    /**
+     * The optional treat_as_abandoned flag. This is only used for international shipments
+     */
+    ->addColumn('treat_as_abandoned', Varien_Db_Ddl_Table::TYPE_BOOLEAN, false, array(
+        'unsigned' => true,
+        'default'  => 0,
+        ), 'Treat As Abandoned')
     /**
      * Whether or not this shipment's labels have been printed
      */

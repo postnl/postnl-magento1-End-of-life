@@ -263,6 +263,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         }
         
         /**
+         * Check if a shipment should be treated as abandoned when it can't be delivered
+         */
+        $treatAsAbandoned = $this->getRequest()->getParam('globalpack_treat_as_abandoned');
+        if ($treatAsAbandoned) {
+            $extraOptions['treat_as_abandoned'] = $treatAsAbandoned;
+        }
+        
+        /**
          * Register the extra options
          */
         if (!empty($extraOptions)) {

@@ -375,6 +375,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
         
         foreach($response->Shipments as $shipment) {
+            /**
+             * If $shipment is an array, we need the first item
+             */
+            if (is_array($shipment)) {
+                $shipment = $shipment[0];
+            }
+            
             if ($shipment->Barcode === $barcode) { // we need the original shipment, not a related shipment (such as a return shipment)
                 return $shipment;
             }
@@ -1218,6 +1225,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'License'                => 'false',
             'Currency'               => 'EUR',
         );
+        
+        /**
+         * Check if the shipment should be treated as abandoned when it can't be delivered or if it should be returned to the sender
+         */
+        if ($postnlShipment->getTreatAsAbandoned()) {
+            $customs['HandleAsNonDeliverable'] = 'true';
+        }
         
         /**
          * Add license info
