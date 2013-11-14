@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,18 +35,32 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
--->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Shipping/>
-                <Mage_Adminhtml/>
-            </depends>
-        </TIG_PostNL>
-    </modules>
-</config>
+ */
+class TIG_PostNL_Model_Core_System_Config_Source_ShipmentGridMassAction
+{
+    /**
+     * Returns an option array for available shipment grid mass actions
+     * 
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        $helper = Mage::helper('postnl');
+        $options = array(
+            array(
+                'value' => 'postnl_print_labels_and_confirm',
+                'label' => $helper->__('Print shipping labels & confirm shipment'),
+            ),
+            array(
+                'value' => 'postnl_print_labels',
+                'label' => $helper->__('Print shipping labels'),
+            ),
+            array(
+                'value' => 'postnl_confirm_shipments',
+                'label' => $helper->__('Confirm shipments'),
+            ),
+        );
+        
+        return $options;
+    }
+}

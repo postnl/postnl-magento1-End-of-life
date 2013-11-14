@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,18 +35,38 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
--->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Shipping/>
-                <Mage_Adminhtml/>
-            </depends>
-        </TIG_PostNL>
-    </modules>
-</config>
+ */
+class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
+{
+    public function _construct()
+    {
+        $this->_init('postnl_core/shipment_label');
+    }
+    
+    /**
+     * Alias for magic getLabelType()
+     * 
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->getLabelType();
+    }
+    
+    /**
+     * Gets label contents. Optional parameter to base64 decode the content
+     * 
+     * @param boolean $decode
+     * 
+     * @return string
+     */
+    public function getLabel($decode = false)
+    {
+        $label = $this->getData('label');
+        if ($decode && $label) {
+            $label = base64_decode($label);
+        }
+        
+        return $label;
+    }
+}

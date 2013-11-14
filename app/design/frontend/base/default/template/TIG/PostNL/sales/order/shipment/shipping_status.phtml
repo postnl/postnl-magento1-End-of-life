@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,18 +35,43 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
--->
-<config>
-    <modules>
-        <TIG_PostNL>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Shipping/>
-                <Mage_Adminhtml/>
-            </depends>
-        </TIG_PostNL>
-    </modules>
-</config>
+ */
+?>
+<?php foreach (Mage::registry('current_order')->getShipmentsCollection() as $_shipment): ?>
+    <?php $_progressStatus = $this->getShippingStatus($_shipment) ?>
+
+    <div id="postnl_status_bar-<?php echo $_shipment->getId(); ?>" class="progress-wrapper <?php echo $_progressStatus ?>">
+        <div class="progress progress-reported">
+            <strong><?php echo $this->__('Collection') ?></strong>
+        </div>
+        
+        <div class="progress progress-distribution">
+            <strong><?php echo $this->__('Distribution Center') ?></strong>
+        </div>
+        
+        <div class="progress progress-transit">
+            <strong><?php echo $this->__('In Transit') ?></strong>
+        </div>
+        
+        <div class="progress progress-delivered">
+            <strong><?php echo $this->__('Delivered') ?></strong>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+    //<![CDATA[
+        document.observe('dom:loaded', function() {
+            statusBar<?php echo $_shipment->getId(); ?> = $('postnl_status_bar-<?php echo $_shipment->getId(); ?>');
+            if ($('my-tracking-table-<?php echo $_shipment->getId(); ?>')) {
+                $('my-tracking-table-<?php echo $_shipment->getId(); ?>').insert({
+                    before: statusBar<?php echo $_shipment->getId(); ?>
+                });
+            } else {
+                $('my-shipment-table-<?php echo $_shipment->getId(); ?>').previous().insert({
+                    before: statusBar<?php echo $_shipment->getId(); ?>
+                });
+            }
+        });
+    //]]>
+    </script>
+<?php endforeach; ?>

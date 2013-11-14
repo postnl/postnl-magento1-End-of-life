@@ -1,0 +1,21 @@
+.progress-wrapper { color:#555; height:34px; width:715px; margin-bottom:19px; background:url(../../../images/TIG/PostNL/bkg_progress_small.png) 0 0 no-repeat; }
+.progress-wrapper .progress { width:25%; float:left; text-align:center; }
+.progress-wrapper .progress strong { display:inline-block; padding-top:8px; }
+
+.status-collection { background-position:0 -34px; }
+.status-distribution { background-position:0 -68px; }
+.status-transit { background-position:0 -102px; }
+.status-delivered { background-position:0 -136px; }
+
+.status-collection .progress-collection, 
+.status-distribution .progress-collection, 
+.status-distribution .progress-distribution ,
+.status-transit .progress-collection,
+.status-transit .progress-distribution,
+.status-transit .progress-transit,
+.status-delivered .progress-collection,
+.status-delivered .progress-distribution,
+.status-delivered .progress-transit,
+.status-delivered .progress-delivered { color:#fff; }   
+
+.hidden { display:none !important; }
