@@ -374,6 +374,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Gets the shipment's shipment type for intrnational shipments.
+     * If no shipment type is defined, use the default 'commercial goods'.
+     * 
+     * @return string | null
+     */
+    public function getShipmentType()
+    {
+        if ($this->getData('shipment_type')) {
+            return $this->getData('shipment_type');
+        }
+        
+        if (!$this->isGlobalShipment()) {
+            return null;
+        }
+        
+        $shipmentType = 'Commercial Goods';
+        return $shipmentType;
+    }
+    
+    /**
      * Set an extra cover amount
      * 
      * @param int $amount
