@@ -127,40 +127,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      ***************************************************************************************************************************/
     
     /**
-     * Get an array of labels that have to be saved together
-     * 
-     * @return array
-     */
-    public function getlabelsToSave()
-    {
-        return $this->_labelsToSave;
-    }
-    
-    /**
-     * Set an array of labels that are to be saved together
-     * 
-     * @param array $labels
-     * 
-     * @return TIG_PostNL_Model_Core_Shipment
-     */
-    public function setLabelsToSave($labels)
-    {
-        $this->_labelsToSave = $labels;
-        
-        return $this;
-    }
-    
-    /**
-     * Get all product codes that have extra cover
-     * 
-     * @return array
-     */
-    public function getExtraCoverProductCodes()
-    {
-        return $this->_extraCoverProductCodes;
-    }
-    
-    /**
      * Retrieves a Mage_Sales_Model_Order_Shipment entity linked to the postnl shipment.
      * 
      * @return Mage_Sales_Model_Order_Shipment | null
@@ -245,6 +211,40 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $this->setStoreId($storeId);
         return $storeId;
+    }
+    
+    /**
+     * Get an array of labels that have to be saved together
+     * 
+     * @return array
+     */
+    public function getlabelsToSave()
+    {
+        return $this->_labelsToSave;
+    }
+    
+    /**
+     * Set an array of labels that are to be saved together
+     * 
+     * @param array $labels
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setLabelsToSave($labels)
+    {
+        $this->_labelsToSave = $labels;
+        
+        return $this;
+    }
+    
+    /**
+     * Get all product codes that have extra cover
+     * 
+     * @return array
+     */
+    public function getExtraCoverProductCodes()
+    {
+        return $this->_extraCoverProductCodes;
     }
     
     /**
@@ -1097,6 +1097,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if ($parcelCount < 2) {
             $labels = $this->_generateLabel(true);
             $this->addLabels($labels);
+        
+            $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
+                 ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
             
             $this->_saveLabels();
             
@@ -1136,6 +1139,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $result = $cif->getShipmentStatus($this);
         
         $currentPhase = $result->Status->CurrentPhaseCode;
+        
+        if (!$currentPhase) {
+            return $this;
+        }
+        
         $this->setShippingPhase($currentPhase);
         
         return $this;
