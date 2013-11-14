@@ -423,6 +423,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Sets the shipment's current shipping phase. Forces the phase to a 2-digit string if a single digit string is provided
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setShippingPhase($phase)
+    {
+        if (strlen($phase < 2)) {
+            $phase = '0' . $phase;
+        }
+        
+        $this->setData('shipping_phase', $phase);
+        return $this;
+    }
+    
+    /**
      * Gets the default product code for this shipment from the module's configuration
      * 
      * @return string
@@ -1148,6 +1163,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $currentPhase = $result->Status->CurrentPhaseCode;
         $this->setShippingPhase($currentPhase);
         
+        if (!isset($result->Events->CompleteStatusResponseEvent)) {
+            return $this;
+        }
+         
         /**
          * get the complete event history
          */

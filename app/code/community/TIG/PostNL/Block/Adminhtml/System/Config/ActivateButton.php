@@ -49,12 +49,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ActivateButton
     {
         $this->setElement($element);
         
-        $websiteName = Mage::app()->getRequest()->getParam('website');
-        if ($websiteName) {
-            $url = $this->getUrl('postnl/adminhtml_extensionControl/activate', array('website' => $websiteName));
-        } else {
-            $url = $this->getUrl('postnl/adminhtml_extensionControl/activate');
-        }
+        $url = $this->getUrl('postnl/adminhtml_extensionControl/activate');
         
         $html = $this->getLayout()->createBlock('adminhtml/widget_button')
                     ->setType('button')
@@ -64,5 +59,18 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ActivateButton
                     ->toHtml();
 
         return $html;
+    }
+    
+    /**
+     * Render the element without a scope label
+     * 
+     * @return string
+     * 
+     * @see parent::render()
+     */
+    public function render(Varien_Data_Form_Element_Abstract $element)
+    {
+        $element->setScopeLabel('');
+        return parent::render($element);
     }
 }
