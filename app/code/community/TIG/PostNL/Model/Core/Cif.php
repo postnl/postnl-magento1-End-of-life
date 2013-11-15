@@ -106,6 +106,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XML_PATH_RETURN_ADDRESS = 'postnl/cif_return_address';
     
     /**
+     * XML paths for shipment reference info
+     */
+    const XML_PATH_SHIPMENT_REFERENCE_TYPE   = 'postnl/cif_labels_and_confirming/shipment_reference_type';
+    const XML_PATH_CUSTOM_SHIPMENT_REFERENCE = 'postnl/cif_labels_and_confirming/custom_shipment_reference';
+    
+    /**
      * Possible barcodes series per barcode type
      */
     const NL_BARCODE_SERIE_LONG   = '0000000000-9999999999';
@@ -721,7 +727,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Dimension'                => array(
                                            'Weight'  => round($shipmentWeight),
                                        ),
-            'Reference'                => $shipment->getIncrementId(),
+            'Reference'                => $this->_getReference($shipment),
         );
         
         /**
@@ -1401,8 +1407,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $hsTariff = $shipmentItem->getOrderItem()
                                  ->getProduct()
                                  ->getDataUsingMethod($hsTariffAttribute);
-                                    
-        return $customsValueAttribute;
+        
+        if (empty($hsTariff)) {
+            $hsTariff = '000000'; 
+        }
+        
+        return $hsTariff;
     }
     
     /**
@@ -1722,4 +1732,53 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         return $remark;
     }
+    
+    /**
+     * Get a shipment's reference. By default this will be the shipment's increment ID
+     * 
+     * @param Mage_Sales_Model_Order_Shipment
+     * 
+     * @return string
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+     protected function _getReference($shipment)
+     {
+         $storeId = $this->getStoreId();
+         $referenceType = Mage::getStoreConfig(self::XML_PATH_SHIPMENT_REFERENCE_TYPE, $storeId);
+         
+         /**
+          * Parse the reference type
+          */
+         switch ($referenceType) {
+             case '': //no break
+             case 'none':
+                 $reference = '';
+                 break;
+             case 'shipment_increment_id':
+                 $reference = $shipment->getIncrementId();
+                 break;
+             case 'order_increment_id':
+                 $reference = $shipment->getOrder()->getIncrementId();
+                 break;
+             case 'custom':
+                 $reference = Mage::getStoreConfig(self::XML_PATH_CUSTOM_SHIPMENT_REFERENCE, $storeId);
+                 break;
+             default:
+                 throw Mage::exception('TIG_PostNL', 'Invalid reference type requested: ' . $referenceType);
+         }
+         
+         /**
+          * For custom references we need to replace several optional variables
+          */
+         if ($referenceType == 'custom') {
+             $reference = str_replace('{{var shipment_increment_id}}', $shipment->getIncrementId(), $reference);
+             $reference = str_replace('{{var order_increment_id}}', $shipment->getOrder()->getIncrementId(), $reference);
+             
+             $store = Mage::getModel('core/store')->load($storeId);
+             $reference = str_replace('{{var store_frontend_name}}', $store->getFrontendName(), $reference);
+         }
+         
+         return $reference;
+     }
 }
