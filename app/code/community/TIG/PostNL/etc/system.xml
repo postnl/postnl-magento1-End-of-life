@@ -413,10 +413,34 @@
                             <show_in_store>1</show_in_store>
                             <validate>validate-select</validate>
                         </weight_unit>
+                        <shipment_reference_type translate="label comment" module="postnl">
+                            <label>Shipment reference type</label>
+                            <comment>Select what to use as a shipment's reference. This will be printed on the shipping label</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_referenceType</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                        </shipment_reference_type>
+                        <custom_shipment_reference translate="label" module="postnl">
+                            <label>Custom reference value</label>
+                            <comment>You can use the following variables: {{var shipment_increment_id}}, {{var order_increment_id}} and {{var store_frontend_name}} (max 28 characters).</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <shipment_reference_type>custom</shipment_reference_type>
+                            </depends>
+                            <validate>validate-length maximum-length-28</validate>
+                        </custom_shipment_reference>
                         <grid_header translate="label" module="postnl">
                             <label>These fields allow you to alter the way the order and shipment grids are displayed.</label>
                             <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -426,7 +450,7 @@
                             <comment>This will add a product options field to the create shipments mass action in the order grid. If disabled, default options will be used. N.B. Not applicable to global shipments.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -436,7 +460,7 @@
                             <comment>Select which optional columns to show in the shipment grid.</comment>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_shipmentGridColumns</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -446,7 +470,7 @@
                             <label>Select a default option for the shipment grid mass action</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_shipmentGridMassaction</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -455,7 +479,7 @@
                         <email_header translate="label" module="postnl">
                             <label>These fields are used to configure the track &amp; trace email that may be automatically emailed to customers after a shipment has been confirmed.</label>
                             <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -465,7 +489,7 @@
                             <comment>If enabled, a track &amp; trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -475,7 +499,7 @@
                             <label>Track &amp; trace e-mail template</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_template</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1039,8 +1063,8 @@
                     <show_in_store>0</show_in_store>
 					<fields>
                         <debug_mode translate="label comment tooltip">
-                            <label>Enable debugging</label>
-                            <comment>If enabled, debug logs will be created in the var/logs folder</comment>
+                            <label>Debug mode</label>
+                            <comment>If enabled, debug logs will be created in the var/logs folder.</comment>
                             <tooltip>Full logging will log various debugging messages as well as errors.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_debugMode</source_model>

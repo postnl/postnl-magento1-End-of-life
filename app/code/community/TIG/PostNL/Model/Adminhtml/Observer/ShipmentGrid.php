@@ -189,7 +189,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'confirm_date',
             array(
                 'type'     => 'date',
-                'header'   => $helper->__('Confirm Date'),
+                'header'   => $helper->__('Send Date'),
                 'align'    => 'left',
                 'index'    => 'confirm_date',
                 'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_confirmDate',
