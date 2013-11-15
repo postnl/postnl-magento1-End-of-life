@@ -102,7 +102,8 @@ $postnlShipmentTable = $installer->getConnection()
     /**
      * The shipment's current shipping phase
      */
-    ->addColumn('shipping_phase', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+    ->addColumn('shipping_phase', Varien_Db_Ddl_Table::TYPE_INTEGER, 2, array(
+        'unsigned' => true,
         ), 'Shipping Phase')
     /**
      * The shipment's product code - used to determine a shipment's option's such as extra cover, signature required etc.
