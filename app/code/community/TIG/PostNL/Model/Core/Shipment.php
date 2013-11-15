@@ -57,10 +57,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Possible shipping phases
      */
-    const SHIPPING_PHASE_COLLECTION     = '01';
-    const SHIPPING_PHASE_SORTING        = '02';
-    const SHIPPING_PHASE_DISTRIBUTION   = '03';
-    const SHIPPING_PHASE_DELIVERED      = '04';
+    const SHIPPING_PHASE_COLLECTION     = '1';
+    const SHIPPING_PHASE_SORTING        = '2';
+    const SHIPPING_PHASE_DISTRIBUTION   = '3';
+    const SHIPPING_PHASE_DELIVERED      = '4';
     const SHIPPING_PHASE_NOT_APPLICABLE = '99';
     
     /**
@@ -274,6 +274,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
         
+        /**
+         * If the 'labels_printed' flag is false, yet there are labels present something has gone wrong.
+         * Delete the labels so the module will generate new ones.
+         */
+        if (!$this->getLabelsPrinted() && $labelCollection->getSize() > 0) {
+            $this->deleteLabels();
+            return array();
+        }
+        
         $labels = $labelCollection->getItems();
         return $labels;
     }
@@ -439,21 +448,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shipmentType = ucwords($shipmentType);
         
         $this->setData('shipment_type', $shipmentType);
-        return $this;
-    }
-    
-    /**
-     * Sets the shipment's current shipping phase. Forces the phase to a 2-digit string if a single digit string is provided
-     * 
-     * @return TIG_PostNL_Model_Core_Shipment
-     */
-    public function setShippingPhase($phase)
-    {
-        if (strlen($phase < 2)) {
-            $phase = '0' . $phase;
-        }
-        
-        $this->setData('shipping_phase', $phase);
         return $this;
     }
     
@@ -939,13 +933,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         $this->_saveLabels();
-        
-        /**
-         * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated
-         */
-        if ($this->isEuShipment() && !$this->_isCombiLabel()) {
-            $this->setProductCode($result->ProductCodeDelivery);
-        }
              
         return $this;
     }
@@ -985,6 +972,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             throw Mage::exception('TIG_PostNL', "The confirmAndPrintLabel action returned an invalid response: \n" . var_export($response, true));
         }
         $labels = $result->Labels->Label;
+        
+        /**
+         * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated
+         */
+        if ($this->isEuShipment() && !$this->_isCombiLabel()) {
+            $this->setProductCode($result->ProductCodeDelivery);
+        }
         
         return $labels;
     }
@@ -1669,7 +1663,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function deleteLabels()
     {
-        $labels = $this->getLabels();
+        $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
+        $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
+        
+        $labels = $labelCollection->getItems();
         
         foreach ($labels as $label) {
             $label->delete()

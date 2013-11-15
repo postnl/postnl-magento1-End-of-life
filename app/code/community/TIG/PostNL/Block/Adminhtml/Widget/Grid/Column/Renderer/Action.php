@@ -40,19 +40,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Action
 {
     /**
-     * Column name containing the shipment's shipping method
+     * Additional column names used
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
-    
-    /**
-     * Column name containing the shipment's destination
-     */
-    const COUNTRY_ID_COLUMN = 'country_id';
-    
-    /**
-     * Column name containing labels_printed flag
-     */
-    const LABELS_PRINTED_COLUMN = 'labels_printed';
+    const COUNTRY_ID_COLUMN      = 'country_id';
+    const LABELS_PRINTED_COLUMN  = 'labels_printed';
+    const CONFIRM_STATUS_COLUMN  = 'confirm_status';
     
     /**
      * Code of postnl shipping method
@@ -73,42 +66,98 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
             return '&nbsp;';
         }
         
-        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        
-        $out = '';
-        $i = 0;
+        $actionLinks = array();
         foreach ($actions as $action) {
-            if (array_key_exists('is_postnl', $action) 
-                && $action['is_postnl']
-                && $shippingMethod != self::POSTNL_SHIPPING_METHOD
-            ) {
-                continue;
-            }
-            
             /**
-             * EU shipments can only be confirmed once their labels are printed
+             * Check if this action is allowed. 
              */
-            if ($action['caption'] == Mage::helper('postnl')->__('Confirm')) {
-                $euCountries = Mage::helper('postnl/cif')->getEuCountries();
-                $countryId = $row->getData(self::COUNTRY_ID_COLUMN);
-                
-                if (in_array($countryId, $euCountries)
-                    && !$row->getData(self::LABELS_PRINTED_COLUMN)
-                ){
-                    continue;
-                }
+            if (!$this->_isActionAllowed($row, $action)) {
             }
             
-            if ($i > 0) {
-                $out .= ' / ';
-            }
+            $action = $this->_disableAction($row, $action);
             
-            $i++;
             if (is_array($action)) {
-                $out .= $this->_toLinkHtml($action, $row);
+                $actionLinks[] = $this->_toLinkHtml($action, $row);
             }
         }
         
-        return $out;
+        $output = implode(' / ', $actionLinks);
+        
+        return $output;
+    }
+    
+    /**
+     * Checks if a certain action is allowed for this row
+     * 
+     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param array $action
+     * 
+     * @return boolean
+     */
+    protected function _isActionAllowed($row, $action)
+    {
+        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
+        
+        /**
+         * If this is a PostNL action, but this shipment was not shipped using PosTNL, skip it
+         */
+        if (array_key_exists('is_postnl', $action) 
+            && $action['is_postnl']
+            && $shippingMethod != self::POSTNL_SHIPPING_METHOD
+        ) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * In some cases an action must be disabled
+     * 
+     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param array $action
+     * 
+     * @return array
+     */
+    protected function _disableAction($row, $action)
+    {
+        $helper = Mage::helper('postnl');
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
+        
+        $euCountries = Mage::helper('postnl/cif')->getEuCountries();
+        $countryId = $row->getData(self::COUNTRY_ID_COLUMN);
+        $confirmStatus = $row->getData(self::CONFIRM_STATUS_COLUMN);
+        
+        /**
+         * Right now only the confirm action needs to be disabled in certain instances
+         */
+        if ($action['caption'] != $helper->__('Confirm')) {
+            return $action;
+        }
+        
+        /**
+         * If the shipment is confirmed, we can't confirm it again
+         */
+        if ($confirmStatus == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
+            $action['style'] = 'color:gray; cursor:default;';
+            $action['onClick'] = 'return false;';
+            $action['title'] = $helper->__('This shipment has already been confirmed.');
+            return $action;
+        }
+        
+        /**
+         * EU shipments can only confirm after their labels have been printed
+         */
+        if (in_array($countryId, $euCountries)
+            && !$row->getData(self::LABELS_PRINTED_COLUMN)
+        ){
+            $action['style'] = 'color:gray; cursor:default;';
+            $action['onClick'] = 'return false;';
+            $action['title'] = $helper->__("You must first print a shipping label for this shipment.");
+            return $action;
+        }
+        
+        return $action;
     }
 }

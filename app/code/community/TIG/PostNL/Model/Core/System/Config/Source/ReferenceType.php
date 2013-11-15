@@ -36,51 +36,35 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_YesNo 
-    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
-{    
+class TIG_PostNL_Model_Core_System_Config_Source_ReferenceType
+{
     /**
-     * Additional column names used
-     */
-    const SHIPPING_METHOD_COLUMN = 'shipping_method';
-    
-    /**
-     * Code of postnl shipping method
-     */
-    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
-    
-    /**
-     * Renders the column value as a Yes or No value
-     *
-     * @param Varien_Object $row
+     * Returns an option array for possible shipment references
      * 
-     * @return string
+     * @return array
      */
-    public function render(Varien_Object $row)
+    public function toOptionArray()
     {
-        /**
-         * The shipment was not shipped using PostNL
-         */
-        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if ($shippingMethod != self::POSTNL_SHIPPING_METHOD) {
-            return parent::render($row);
-        }
+        $helper = Mage::helper('postnl');
+        $options = array(
+            array(
+                'value' => 'none',
+                'label' => $helper->__('None'),
+            ),
+            array(
+                'value' => 'shipment_increment_id',
+                'label' => $helper->__('Shipment Increment ID'),
+            ),
+            array(
+                'value' => 'order_increment_id',
+                'label' => $helper->__('Order Increment ID'),
+            ),
+            array(
+                'value' => 'custom',
+                'label' => $helper->__('Use a custom value'),
+            ),
+        );
         
-        /**
-         * Check if any data is available
-         */
-        $value = $row->getData($this->getColumn()->getIndex());
-        if (is_null($value) || $value === '') {
-            return parent::render($row);
-        }
-        
-        if ($value == 0) {
-            $value = Mage::helper('postnl')->__('No');
-            return $value;
-        }
-        
-        $value = Mage::helper('postnl')->__('Yes');
-        
-        return $value;
+        return $options;
     }
 }
