@@ -1008,7 +1008,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->_confirm();
 
             $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-                 ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+                 ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
             
             return $this;
         }
@@ -1021,7 +1021,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-             ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+             ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
         
         return $this;
     }
@@ -1113,7 +1113,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->addLabels($labels);
         
             $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-                 ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+                 ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
             
             $this->_saveLabels();
             
@@ -1129,7 +1129,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-             ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+             ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
                  
         $this->_saveLabels();
         
@@ -1209,6 +1209,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 continue;
             }
             
+            $timestamp = Mage::getModel('core/date')->gmtTimestamp($status->TimeStamp);
             $statusHistory->setParentId($this->getId())
                           ->setCode($status->Code)
                           ->setDescription($status->Description)
@@ -1216,11 +1217,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                           ->setDestinationLocationCode($status->DestinationLocationCode)
                           ->setRouteCode($status->RouteCode)
                           ->setRouteName($status->RouteName)
-                          ->setTimestamp(strtotime($status->TimeStamp))
+                          ->setTimestamp($timestamp)
                           ->save();
         }
         
-        $this->setStatusHistoryUpdatedAt(Mage::getModel('core/date')->timestamp());
+        $this->setStatusHistoryUpdatedAt(Mage::getModel('core/date')->gmtTimestamp());
         
         return $this;
     }
@@ -1626,6 +1627,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * get the weight per parcel
          */
         $weightPerParcel = Mage::getStoreConfig(self::XML_PATH_WEIGHT_PER_PARCEL, $this->getStoreId());
+        $weightPerParcel = Mage::helper('postnl/cif')->standardizeWeight($weightPerParcel, $this->getStoreId());
         
         /**
          * calculate the number of parcels needed to ship the total weight of this shipment
@@ -1702,7 +1704,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _beforeSave()
     {
-        $currentTimestamp = Mage::getModel('core/date')->timestamp();
+        $currentTimestamp = Mage::getModel('core/date')->gmtTimestamp();
         
         /**
          * Store any shipment options that have been saved in the registry

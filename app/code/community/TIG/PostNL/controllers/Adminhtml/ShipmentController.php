@@ -160,7 +160,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         /**
          * Get the postnl shipments' status history updated at timestamp and a reference timestamp of 15 minutes ago
          */
-        $currentTimestamp = Mage::getModel('core/date')->timestamp();
+        $currentTimestamp = Mage::getModel('core/date')->gmtTimestamp();
         $fifteenMinutesAgo = strtotime("-15 minutes", $currentTimestamp);
         $statusHistoryUpdatedAt = $postnlShipment->getStatusHistoryUpdatedAt();
         
