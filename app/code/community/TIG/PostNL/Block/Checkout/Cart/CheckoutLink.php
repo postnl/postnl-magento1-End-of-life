@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,27 +35,46 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */	
--->
-<layout version="0.1.0">
+ */
+class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Template
+{
+    /**
+     * Gets the checkout URL
+     * 
+     * @return string
+     * 
+     * @todo rewrite this so it's more dynamic
+     */
+    public function getCheckoutUrl()
+    {
+        $url = Mage::helper('checkout/url')->getCheckoutUrl();
+        $url .= '/postnl_checkout/true';
+        
+        return $url;
+    }
     
-    <!-- Uncomment this in order to show the current shipping phase of a customer's shipments on their acount page -->
-    <!-- <sales_order_shipment>
-    	<reference name="head">
-    		<action method="addItem">
-    			<type>skin_css</type>
-    			<name>css/TIG/PostNL/shipping_status.css</name>
-    		</action>
-    	</reference>
-        <reference name="my.account.wrapper">
-            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
-        </reference>
-    </sales_order_shipment> -->
-    
-    <checkout_cart_index>
-        <reference name="checkout.cart.methods">
-            <block type="postnl_checkout/cart_checkoutLink" name="checkout.cart.methods.postnlcheckout" template="TIG/PostNL/checkout/cart/link.phtml" before="checkout.cart.methods.multishipping"/>
-        </reference>
-    </checkout_cart_index>
-    
-</layout>
+    /**
+     * Check if the button should be disabled
+     * 
+     * @return boolean
+     */
+    public function isDisabled()
+    {
+        $isDisabled = !Mage::getSingleton('checkout/session')->getQuote()->validateMinimumAmount();
+        
+        return $isDisabled;
+    }
+
+    /**
+     * Check if the button should be displayed
+     * 
+     * @return boolean
+     */
+    public function canUsePostnlCheckout()
+    {
+        $checkoutEnabled = Mage::helper('postnl/checkout')->isCheckoutEnabled();
+        
+        return $checkoutEnabled;
+    }
+}
+ 

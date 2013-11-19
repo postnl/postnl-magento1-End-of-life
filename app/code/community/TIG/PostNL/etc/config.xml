@@ -57,6 +57,9 @@
 			<postnl_adminhtml>
 				<class>TIG_PostNL_Block_Adminhtml</class>
 			</postnl_adminhtml>
+            <postnl_checkout>
+                <class>TIG_PostNL_Block_Checkout</class>
+            </postnl_checkout>
 		</blocks>
 		<helpers>
 			<postnl>
@@ -82,6 +85,9 @@
             <postnl_extensioncontrol>
                 <class>TIG_PostNL_Model_ExtensionControl</class>
             </postnl_extensioncontrol>
+            <postnl_checkout>
+                <class>TIG_PostNL_Model_Checkout</class>
+            </postnl_checkout>
             
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
