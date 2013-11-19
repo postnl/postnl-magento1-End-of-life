@@ -267,6 +267,15 @@
                     <model>postnl_extensioncontrol/observer_cron::updateStatistics</model>
                 </run>
             </postnl_update_statistics>
+            <!-- Update the shop's statistics with the extension control system -->
+            <postnl_update_notification_feed>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                </schedule>
+                <run>
+                    <model>postnl_extensioncontrol/observer_cron::checkFeedUpdate</model>
+                </run>
+            </postnl_update_notification_feed>
         </jobs>
     </crontab>
     
@@ -363,7 +372,7 @@
         		<alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
         		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
         		<default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- PakjeGemak + signature on delivery (Not currently used) -->
-                <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack (Not currenlt used)-->
+                <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
         	</cif_product_options>
         	<cif_globalpack_settings>
         	    <customs_license_number/>
@@ -382,6 +391,9 @@
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
         		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
         		<send_statistics>1</send_statistics> <!-- Send extension usga estatistics to PostNL -->
+        		<recieve_updates>1</recieve_updates> <!-- Automatically recieve updates regarding the PostNL extension -->
+        		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
+        		<feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates -->
         		<cif_version_shippingstatus>1_2</cif_version_shippingstatus> <!-- v1.2 -->
         		<cif_version_confirming>1_3</cif_version_confirming> <!-- v1.3 -->
         		<cif_version_labelling>1_4</cif_version_labelling> <!-- v1.4 -->
