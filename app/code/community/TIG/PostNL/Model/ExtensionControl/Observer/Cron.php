@@ -79,4 +79,70 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         $helper->cronLog('UpdateStatistics has finished.');
         return $this;
     }
+
+    /**
+     * Check feed for modification
+     *
+     * @return TIG_PostNL_Model_ExtensionControl_Observer_Cron
+     */
+    public function checkFeedUpdate()
+    {
+        $helper = Mage::helper('postnl');
+        
+        /**
+         * Check if the PostNL module is active
+         */
+        if (!$helper->isEnabled()) {
+            return $this;
+        }
+        
+        /**
+         * Check if the extension may send statistics to the extension control system
+         */
+        if (!Mage::helper('postnl/webservices')->canRecieveUpdates()) {
+            return $this;
+        }
+               
+        $helper->cronLog('CheckFeedUpdate cron starting...');
+
+        $feedData = array();
+        
+        /**
+         * Get the feed
+         */
+        $feed = Mage::getModel('postnl_extensioncontrol/feed');
+        $feedXml = $feed->getFeedData();
+        
+        /**
+         * Parse the feed
+         */
+        if ($feedXml && $feedXml->channel && $feedXml->channel->item) {
+            foreach ($feedXml->channel->item as $item) {
+                $severity = (int) $item->severity;
+                if ($severity < 1 || $severity > 4) {
+                    $severity = 4;
+                }
+                
+                /**
+                 * Add a notification for each item that is new
+                 */
+                $feedData[] = array(
+                    'severity'      => $severity,
+                    'date_added'    => $feed->getDate((string) $item->pubDate),
+                    'title'         => (string) $item->title,
+                    'description'   => (string) $item->description,
+                    'url'           => (string) $item->link,
+                );
+            }
+
+            $helper->cronLog('Parsing retrieved data.');
+            if ($feedData) {
+                Mage::getModel('adminnotification/inbox')->parse(array_reverse($feedData));
+            }
+
+        }
+
+        $helper->cronLog('CheckFeedUpdate chas finished.');
+        return $this;
+    }
 }

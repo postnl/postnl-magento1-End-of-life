@@ -36,60 +36,45 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Observer_Barcode
+class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Model_Feed
 {
+    const XML_PATH_SEND_STATISTICS = 'postnl/advanced/send_statistics';
+    const XML_PATH_FEED_USE_HTTPS  = 'postnl/advanced/feed_use_https';
+    const XML_PATH_FEED_URL        = 'postnl/advanced/feed_url';
+
     /**
-     * Generates a barcode for the shipment if it is new
-     * 
-     * @param Varien_Event_Observer $observer
-     * 
-     * @return TIG_PostNL_Model_Core_Observer
-     * 
-     * @event sales_order_shipment_save_after
-     * 
-     * @observer postnl_shipment_generate_barcode
-     * 
-     * @todo change confirm date to the correct value, instead of the current timestamp
+     * Retrieve feed url
+     *
+     * @return string
      */
-    public function generateBarcode(Varien_Event_Observer $observer)
+    public function getFeedUrl()
     {
-        /**
-         * Check if the PostNL module is active
-         */
-        if (!Mage::helper('postnl')->isEnabled()) {
-            return $this;
+        if (!is_null($this->_feedUrl)) {
+            return $this->_feedUrl;
         }
         
-        $shipment = $observer->getShipment();
+        $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
         
-        /**
-         * Check if a postnl shipment exists for this shipment
-         */
-        if (Mage::helper('postnl/carrier')->postnlShipmentExists($shipment->getId())) {
-            return $this;
+        $scheme = 'http://';
+        $useHttps = Mage::getStoreConfigFlag(self::XML_PATH_FEED_USE_HTTPS, $adminStoreId);
+        if ($useHttps) {
+            $scheme = 'https://';
         }
         
-        /**
-         * create a new postnl shipment entity
-         */
-        $postnlShipment = Mage::getModel('postnl_core/shipment');
-        $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmDate(Mage::getModel('core/date')->gmtTimestamp()) //TODO change this to the actual confirm date
-                       ->save();
+        $feedUrl = $scheme . Mage::getStoreConfig(self::XML_PATH_FEED_URL, $adminStoreId);
         
-        /**
-         * Barcode generation needs to be tried seperately. This functionality may throw a valid exception
-         * in which case it needs to be tried again later without preventing the shipment from being
-         * created. This may happen when CIF is overburdoned.
-         */              
-        try {
-            $postnlShipment->generateBarcodes();
-        } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
-        }
-        
-        $postnlShipment->save();
-        
+        $this->setFeedurl($feedUrl);        
+        return $feedUrl;
+    }
+    
+    /**
+     * Set the feed url
+     * 
+     * @return TIG_PostNL_Model_ExtensionControl_Feed
+     */
+    public function setFeedUrl($feedUrl)
+    {
+        $this->_feedUrl = $feedurl;
         return $this;
     }
 }
