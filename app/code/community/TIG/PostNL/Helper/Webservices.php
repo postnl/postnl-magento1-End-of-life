@@ -54,6 +54,11 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     const XML_PATH_SEND_STATISTICS = 'postnl/advanced/send_statistics';
     
     /**
+     * XML path to recieveUpdates on/off switch
+     */
+    const XML_PATH_RECIEVE_UPDATES = 'postnl/advanced/recieve_updates';
+    
+    /**
      * Log filename to log all webservices exceptions
      */
     const WEBSERVICES_EXCEPTION_LOG_FILE = 'TIG_PostNL_Webservices_Exception.log';
@@ -87,7 +92,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
             /**
              * otherwise, check if ending statistics was enabled in default settings
              */
-            $sendStatistics = Mage::getStoreConfig(self::XML_PATH_SEND_STATISTICS, $storeId);
+            $sendStatistics = Mage::getStoreConfigFlag(self::XML_PATH_SEND_STATISTICS, $storeId);
         }
         
         if (!$sendStatistics) {
@@ -101,6 +106,23 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
         $uniqueKey  = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, $storeId);
         
         if (empty($privateKey) || empty($uniqueKey)) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Checks whether the module may automatically recieve updates regarding the module or promotions
+     * 
+     * @return boolean
+     */
+    public function canRecieveUpdates()
+    {
+        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        
+        $recieveUpdates =  Mage::getStoreConfigFlag(self::XML_PATH_RECIEVE_UPDATES);
+        if (!$recieveUpdates) {
             return false;
         }
         
