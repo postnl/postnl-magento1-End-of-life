@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.3.1</version>
+			<version>0.4.0</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -87,6 +87,7 @@
             </postnl_extensioncontrol>
             <postnl_checkout>
                 <class>TIG_PostNL_Model_Checkout</class>
+                <resourceModel>postnl_checkout_resource</resourceModel>
             </postnl_checkout>
             
             <!-- Resource model definitions per submodule -->
@@ -110,6 +111,14 @@
                     </shipment_status_history>
                 </entities>
             </postnl_core_resource>
+            <postnl_checkout_resource>
+                <class>TIG_PostNL_Model_Checkout_Resource</class>
+                <entities>
+                    <order>
+                        <table>tig_postnl_order</table>
+                    </order>
+                </entities>
+            </postnl_checkout_resource>
         </models>
         <resources>
             <postnl_setup>
@@ -391,6 +400,47 @@
         		<product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
         		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
         	</cif_globalpack_settings>
+        	<checkout>
+        	    <active>0</active> <!-- PostNL Checkout is inactive -->
+        	    <mode>1</mode> <!-- Test mode -->
+        	    <webshop_id/>
+        	    <public_webshop_id/>
+        	    <show_summary_page>1</show_summary_page> <!-- Show an order summary page before finalizing the order -->
+        	    <newsletter_subscription>0</newsletter_subscription> <!--Do not show the option to subscribe to the webshop's newsletter -->
+        	    <remark>0</remark> <!-- Do not allow the customer to enter a remark for the webshop -->
+        	    <contact_url/>
+        	    <allow_retail_location>1</allow_retail_location> <!-- Customers may have their goods delivered at a retail location -->
+        	    <allow_foreign_address>1</allow_foreign_address> <!-- Customers may have their goods shipped to a foreign address -->
+        	   <allow_price_overview>1</allow_price_overview> <!-- Customer's will see a price overview -->
+        	   <agree_conditions>1</agree_conditions> <!-- Customers must first agree to the webshop's terms and conditions -->
+        	   <service_url/>
+        	</checkout>
+        	<checkout_payment_methods>
+        	    <ideal/>
+        	    <ideal_method/>
+        	    <ideal_bank_field/>
+        	    <creditcard/>
+                <creditcard_method/>
+                <creditcard_type_field/>
+                <checkpay/>
+                <checkpay_method/>
+                <paypal/>
+                <paypal_method/>
+                <directdebit/>
+                <directdebit_method/>
+                <acceptgiro/>
+                <acceptgiro_method/>
+                <vooraf_betalen/>
+                <vooraf_betalen_method/>
+                <termijnen/>
+                <termijnen_method/>
+                <giftcard/>
+                <giftcard_method/>
+                <rabobank_internetkassa/>
+                <rabobank_internetkassa_method/>
+                <afterpay/>
+                <afterpay_method/>
+        	</checkout_payment_methods>
         	<advanced>
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
@@ -404,6 +454,7 @@
         		<cif_version_confirming>1_3</cif_version_confirming> <!-- v1.3 -->
         		<cif_version_labelling>1_4</cif_version_labelling> <!-- v1.4 -->
         		<cif_version_barcode>1_0</cif_version_barcode> <!-- v1.0 -->
+                <cif_version_checkout>2_1</cif_version_checkout> <!-- v2.1 -->
         	</advanced>
         </postnl>
     </default>

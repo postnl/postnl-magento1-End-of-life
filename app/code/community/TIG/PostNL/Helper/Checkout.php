@@ -39,20 +39,66 @@
 class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
 {
     /**
+     * XML path to checkout on/off switch
+     */
+    const XML_PATH_CHECKOUT_ACTIVE = 'postnl/checkout/active';
+    
+    /**
+     * Array of payment methods supported by PostNL Checkout. 
+     * Keys are the names used in system.xml, values are codes used by PostNL Checkout.
+     * 
+     * @var array
+     */
+    protected $_checkoutPaymentMethods = array(
+        'ideal'                  => 'IDEAL',
+        'creditcard'             => 'CREDITCARD',
+        'checkpay'               => 'CHECKPAY',
+        'paypal'                 => 'PAYPAL',
+        'directdebit'            => 'MACHTIGING',
+        'acceptgiro'             => 'ACCEPTGIRO',
+        'vooraf_betalen'         => 'VOORAF',
+        'termijnen'              => 'TERMIJNEN',
+        'giftcard'               => 'KADOBON',
+        'rabobank_internetkassa' => 'RABOINTKASSA', 
+        'afterpay'               => 'AFTERPAY',
+    );
+    
+    /**
+     * Gets a list of payment methods supported by PostNL Checkout
+     * 
+     * @return array
+     */
+    public function getCheckoutPaymentMethods()
+    {
+        $paymentMethods = $this->_checkoutPaymentMethods;
+        return $paymentMethods;
+    }
+    
+    /**
      * Check if PostNL checkout is enabled
      * 
-     * @return boolean
+     * @param null | int $storeId
      * 
-     * @todo check if postnl checkout is enabled and not just the entire module
+     * @return boolean
      */
-    public function isCheckoutEnabled()
+    public function isCheckoutEnabled($storeId = null)
     {
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
         $isPostnlEnabled = $this->isEnabled();
         if ($isPostnlEnabled === false) {
             return false;
         }
         
-        //TODO check if the checkout component is disabled
+        $checkoutEnabled = Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ACTIVE, $storeId);
+        if (!$checkoutEnabled) {
+            return false;
+        }
+        
         return true;
     }
+    
+    
 }

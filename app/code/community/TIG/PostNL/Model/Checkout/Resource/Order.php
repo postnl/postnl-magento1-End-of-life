@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,56 +36,10 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Template
+class TIG_PostNL_Model_Checkout_Resource_Order extends Mage_Core_Model_Resource_Db_Abstract
 {
-    /**
-     * Gets the checkout URL
-     * 
-     * @return string
-     */
-    public function getCheckoutUrl()
-    {
-        $url = Mage::helper('checkout/url')->getCheckoutUrl();
-        
-        return $url;
-    }
-    
-    /**
-     * Check if the button should be disabled
-     * 
-     * @return boolean
-     */
-    public function isDisabled()
-    {
-        $isDisabled = !Mage::getSingleton('checkout/session')->getQuote()->validateMinimumAmount();
-        
-        return $isDisabled;
-    }
-
-    /**
-     * Check if the button should be displayed
-     * 
-     * @return boolean
-     */
-    public function canUsePostnlCheckout()
-    {
-        $checkoutEnabled = Mage::helper('postnl/checkout')->isCheckoutEnabled();
-        
-        return $checkoutEnabled;
-    }
-    
-    /**
-     * Returns the block's html. Checks if the 'use_postnl_checkout' param is set. If not, returns and empty string
-     * 
-     * @return string
-     */
-    protected function _toHtml()
-    {
-        if (!$this->canUsePostnlCheckout()) {
-            return '';
-        }
-        
-        return parent::_toHtml();
+    public function _construct()
+    {    
+        $this->_init('postnl_checkout/order', 'entity_id');
     }
 }
- 

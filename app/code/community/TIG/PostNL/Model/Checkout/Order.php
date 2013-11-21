@@ -36,56 +36,64 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Template
+class TIG_PostNL_Model_Checkout_Order extends Mage_Core_Model_Abstract
 {
-    /**
-     * Gets the checkout URL
-     * 
-     * @return string
-     */
-    public function getCheckoutUrl()
+    public function _construct()
     {
-        $url = Mage::helper('checkout/url')->getCheckoutUrl();
-        
-        return $url;
+        $this->_init('postnl_checkout/order');
     }
     
     /**
-     * Check if the button should be disabled
+     * Gets the order associated with this PostNL Checkout Order
      * 
-     * @return boolean
+     * @return Mage_Sales_Model_Order | null
      */
-    public function isDisabled()
+    public function getOrder()
     {
-        $isDisabled = !Mage::getSingleton('checkout/session')->getQuote()->validateMinimumAmount();
-        
-        return $isDisabled;
-    }
-
-    /**
-     * Check if the button should be displayed
-     * 
-     * @return boolean
-     */
-    public function canUsePostnlCheckout()
-    {
-        $checkoutEnabled = Mage::helper('postnl/checkout')->isCheckoutEnabled();
-        
-        return $checkoutEnabled;
-    }
-    
-    /**
-     * Returns the block's html. Checks if the 'use_postnl_checkout' param is set. If not, returns and empty string
-     * 
-     * @return string
-     */
-    protected function _toHtml()
-    {
-        if (!$this->canUsePostnlCheckout()) {
-            return '';
+        if ($this->getData('order')) {
+            return $this->getData('order');
         }
         
-        return parent::_toHtml();
+        if (!$this->getOrderId()) {
+            return null;
+        }
+        
+        $order = Mage::getModel('sales/order')->load($this->getOrderId());
+        
+        $this->setOrder($order);
+        return $order;
+    }
+    
+    /**
+     * Gets the quote associated with this PostNL Checkout Order
+     * 
+     * @return Mage_Sales_Model_Quote | null
+     */
+    public function getQuote()
+    {
+        if ($this->getData('quote')) {
+            return $this->getData('quote');
+        }
+        
+        if (!$this-getQuoteId()) {
+            return null;
+        }
+        
+        $order = Mage::getModel('sales/quote')->load($this->getQuoteId());
+        
+        $this->setQuote($order);
+        return $order;
+    }
+    
+    /**
+     * Alias for getQuoteId()
+     * 
+     * @return int
+     * 
+     * @see TIG_PostNL_Model_Checkout_Order::getQuoteId()
+     */
+    public function getExtRef()
+    {
+        return $this->getQuoteId();
     }
 }
- 

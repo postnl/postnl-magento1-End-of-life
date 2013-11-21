@@ -336,7 +336,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if (!is_object($response) 
             || !isset($response->Barcode)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid barcode response: ' . "\n" . var_export($reponse, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid barcode response: ' . "\n" . var_export($response, true));
         }
         
         return $response->Barcode;
@@ -377,7 +377,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Shipments) 
             || (!is_array($response->Shipments) && !is_object($response->Shipments))
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($reponse, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($response, true));
         }
         
         foreach($response->Shipments as $shipment) {
@@ -396,7 +396,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * no shipment could be matched to the supplied barcode
          */ 
-        throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($reponse, true));
+        throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($response, true));
     }
     
     /**
@@ -440,7 +440,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Shipments) 
             || (!is_array($response->Shipments) && !is_object($response->Shipments))
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($reponse, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($response, true));
         }
         
         foreach($response->Shipments as $shipment) {
@@ -453,7 +453,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * no shipment could be matched to the supplied barcode
          */ 
-        throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($reponse, true));
+        throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($response, true));
     }
     
     /**
@@ -560,7 +560,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Labels) 
             || !is_object($response->Labels)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($reponse, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($response, true));
         }
         
         return $response;
@@ -613,7 +613,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Labels) 
             || !is_object($response->Labels)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($reponse, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($response, true));
         }
         
         return $response;

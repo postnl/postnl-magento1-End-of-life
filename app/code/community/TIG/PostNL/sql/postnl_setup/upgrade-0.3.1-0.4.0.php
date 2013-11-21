@@ -36,56 +36,42 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Template
-{
-    /**
-     * Gets the checkout URL
-     * 
-     * @return string
-     */
-    public function getCheckoutUrl()
-    {
-        $url = Mage::helper('checkout/url')->getCheckoutUrl();
-        
-        return $url;
-    }
-    
-    /**
-     * Check if the button should be disabled
-     * 
-     * @return boolean
-     */
-    public function isDisabled()
-    {
-        $isDisabled = !Mage::getSingleton('checkout/session')->getQuote()->validateMinimumAmount();
-        
-        return $isDisabled;
-    }
-
-    /**
-     * Check if the button should be displayed
-     * 
-     * @return boolean
-     */
-    public function canUsePostnlCheckout()
-    {
-        $checkoutEnabled = Mage::helper('postnl/checkout')->isCheckoutEnabled();
-        
-        return $checkoutEnabled;
-    }
-    
-    /**
-     * Returns the block's html. Checks if the 'use_postnl_checkout' param is set. If not, returns and empty string
-     * 
-     * @return string
-     */
-    protected function _toHtml()
-    {
-        if (!$this->canUsePostnlCheckout()) {
-            return '';
-        }
-        
-        return parent::_toHtml();
-    }
-}
  
+$installer = $this;
+
+$installer->startSetup();
+
+$postnlOrderTable = $installer->getConnection()
+    ->newTable($installer->getTable('postnl_checkout/order'))
+    ->addColumn('entity_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'identity'  => true,
+        'unsigned'  => true,
+        'nullable'  => false,
+        'primary'   => true,
+        ), 'Entity Id')
+    ->addColumn('order_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'unsigned'  => true,
+        'nullable'  => true,
+        ), 'Order Id')
+    ->addColumn('quote_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'unsigned'  => true,
+        'nullable'  => true,
+        ), 'Quote Id')
+    ->addColumn('token', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
+        'nullable'  => false,
+        ), 'Token')
+    ->addIndex($installer->getIdxName('postnl_checkout/order', array('order_id')), 
+        array('order_id'))
+    ->addIndex($installer->getIdxName('postnl_checkout/order', array('quote_id')), 
+        array('quote_id'))
+    ->addForeignKey($installer->getFkName('postnl_checkout/order', 'order_id', 'sales/order', 'entity_id'),
+        'order_id', $installer->getTable('sales/order'), 'entity_id',
+        Varien_Db_Ddl_Table::ACTION_SET_NULL, Varien_Db_Ddl_Table::ACTION_CASCADE)
+    ->addForeignKey($installer->getFkName('postnl_checkout/order', 'quote_id', 'sales/quote', 'entity_id'),
+        'quote_id', $installer->getTable('sales/quote'), 'entity_id',
+        Varien_Db_Ddl_Table::ACTION_SET_NULL, Varien_Db_Ddl_Table::ACTION_CASCADE)
+    ->setComment('TIG PostNL Order');
+
+$installer->getConnection()->createTable($postnlOrderTable);
+
+$installer->endSetup();

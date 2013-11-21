@@ -59,4 +59,9 @@
         </reference>
     </checkout_cart_index>
     
+    <checkout_onepage_index>
+        <reference name="head">
+            <block type="postnl_checkout/onepage_js" name="postnl_checkout_js" template="TIG/PostNL/checkout/onepage/js.phtml"/>
+        </reference>
+    </checkout_onepage_index>
 </layout>
