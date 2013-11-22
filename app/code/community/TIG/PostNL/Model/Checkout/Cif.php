@@ -223,14 +223,9 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'ReadOrder',
             $soapParams
         );
-        echo '<pre>';var_dump($response);exit;
         
-        if (!is_object($response) 
-            || !isset($response->Checkout)
-            || !is_object($response->Checkout)
-            || !isset($response->Checkout->OrderToken)
-        ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid PrepareOrder response: ' . "\n" . var_export($response, true));
+        if (!is_object($response)) {
+            throw Mage::exception('TIG_PostNL', 'Invalid ReadOrder response: ' . "\n" . var_export($response, true));
         }
         
         return $response;
@@ -357,9 +352,9 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $order = array(
             'ExtRef'        => $extRef,
             'OrderDatum'    => $orderDate,
-            'Subtotaal'     => number_format($subtotal, 2),
+            'Subtotaal'     => number_format($subtotal, 2, '.', ''),
             'VerzendDatum'  => $shippingDate,
-            'VerzendKosten' => number_format($shippingCosts, 2),
+            'VerzendKosten' => number_format($shippingCosts, 2, '.', ''),
         );
         
         return $order;
