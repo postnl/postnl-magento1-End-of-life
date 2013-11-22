@@ -84,7 +84,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tabs extends Mage_Adm
              * Add the status history tab. This is added by PostNL
              */
             $this->addTab('shipment_status_history', array(
-                'label'     => Mage::helper('postnl')->__('Shipping status history'),
+                'label'     => Mage::helper('postnl')->__('Shipping event history'),
                 'url'       => $this->getUrl(
                                    'postnl/adminhtml_shipment/statusHistory', 
                                    array(

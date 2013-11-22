@@ -160,7 +160,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         /**
          * Get the postnl shipments' status history updated at timestamp and a reference timestamp of 15 minutes ago
          */
-        $currentTimestamp = Mage::getModel('core/date')->timestamp();
+        $currentTimestamp = Mage::getModel('core/date')->gmtTimestamp();
         $fifteenMinutesAgo = strtotime("-15 minutes", $currentTimestamp);
         $statusHistoryUpdatedAt = $postnlShipment->getStatusHistoryUpdatedAt();
         
@@ -172,8 +172,15 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                 || strtotime($statusHistoryUpdatedAt) < $fifteenMinutesAgo
             )
         ) {
-            $postnlShipment->updateCompleteShippingStatus()
-                           ->save();
+            try {
+                $postnlShipment->updateCompleteShippingStatus()
+                               ->save();
+            } catch (Exception $e) {
+                /**
+                 * This request may return a valid exception when the shipment could not be found
+                 */
+                Mage::helper('postnl')->logException($e);
+            }
         }
         
         $this->loadLayout();
@@ -253,6 +260,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         $shipmentType = $this->getRequest()->getParam('globalpack_shipment_type');
         if ($shipmentType) {
             $extraOptions['shipment_type'] = $shipmentType;
+        }
+        
+        /**
+         * Check if a shipment should be treated as abandoned when it can't be delivered
+         */
+        $treatAsAbandoned = $this->getRequest()->getParam('globalpack_treat_as_abandoned');
+        if ($treatAsAbandoned) {
+            $extraOptions['treat_as_abandoned'] = $treatAsAbandoned;
         }
         
         /**

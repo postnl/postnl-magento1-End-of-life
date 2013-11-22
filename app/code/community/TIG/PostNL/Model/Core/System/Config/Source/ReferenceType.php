@@ -36,13 +36,35 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_htmlId = $this->getHtmlId(); ?>
-<?php $_label = $this->getLabel(); ?>
-<tr class='system-fieldset-sub-head' id='row-<?php echo $_htmlId; ?>'>
-    <td colspan='4'>
-        <h4 id='<?php echo $_htmlId; ?>'>
-            <?php echo $_label; ?>
-        </h4>
-    </td>
-</tr>
+class TIG_PostNL_Model_Core_System_Config_Source_ReferenceType
+{
+    /**
+     * Returns an option array for possible shipment references
+     * 
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        $helper = Mage::helper('postnl');
+        $options = array(
+            array(
+                'value' => 'none',
+                'label' => $helper->__('None'),
+            ),
+            array(
+                'value' => 'shipment_increment_id',
+                'label' => $helper->__('Shipment Increment ID'),
+            ),
+            array(
+                'value' => 'order_increment_id',
+                'label' => $helper->__('Order Increment ID'),
+            ),
+            array(
+                'value' => 'custom',
+                'label' => $helper->__('Use a custom value'),
+            ),
+        );
+        
+        return $options;
+    }
+}

@@ -392,12 +392,75 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </label_size>
+                        <weight_per_parcel translate="label comment" module="postnl">
+                            <label>Maximum weight per parcel</label>
+                            <comment>Determine the maximum weight of each parcel. if a shipment's total weight exceeds this, another parcel is added to the shipment.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-greater-than-zero validate-number</validate>
+                        </weight_per_parcel>
+                        <weight_unit translate="label comment" module="postnl">
+                            <label>Weight unit</label>
+                            <comment>Select the unit in which you've entered products' weight</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_weightUnit</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                        </weight_unit>
+                        <shipment_reference_type translate="label comment" module="postnl">
+                            <label>Shipment reference type</label>
+                            <comment>Select what to use as a shipment's reference. This will be printed on the shipping label</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_referenceType</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                        </shipment_reference_type>
+                        <custom_shipment_reference translate="label" module="postnl">
+                            <label>Custom reference value</label>
+                            <comment>You can use the following variables: {{var shipment_increment_id}}, {{var order_increment_id}} and {{var store_frontend_name}} (max 28 characters).</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <shipment_reference_type>custom</shipment_reference_type>
+                            </depends>
+                            <validate>validate-length maximum-length-28</validate>
+                        </custom_shipment_reference>
+                        <grid_header translate="label" module="postnl">
+                            <label>These fields allow you to alter the way the order and shipment grids are displayed.</label>
+                            <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </grid_header>
+                        <show_grid_options translate="label comment" module="postnl">
+                            <label>Show product options in order grid</label>
+                            <comment>This will add a product options field to the create shipments mass action in the order grid. If disabled, default options will be used. N.B. Not applicable to global shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_grid_options>
                         <shipping_grid_columns translate="label comment" module="postnl">
                             <label>Optional Shipment grid columns</label>
                             <comment>Select which optional columns to show in the shipment grid.</comment>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_shipmentGridColumns</source_model>
-                            <sort_order>20</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -407,28 +470,26 @@
                             <label>Select a default option for the shipment grid mass action</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_shipmentGridMassaction</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </shipping_grid_massaction_default>
-                        <weight_per_parcel translate="label comment" module="postnl">
-                            <label>Maximum weight per parcel (in kg)</label>
-                            <comment>Determine the maximum weight of each parcel. if a shipment's total weight exceeds this, another parcel is added to the shipment.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
+                        <email_header translate="label" module="postnl">
+                            <label>These fields are used to configure the track &amp; trace email that may be automatically emailed to customers after a shipment has been confirmed.</label>
+                            <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <validate>validate-greater-than-zero validate-number</validate>
-                        </weight_per_parcel>
+                        </email_header>
                         <send_track_and_trace_email translate="label comment" module="postnl">
                             <label>Send track &amp; trace e-mail to customer</label>
                             <comment>If enabled, a track &amp; trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -438,7 +499,7 @@
                             <label>Track &amp; trace e-mail template</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_template</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -800,22 +861,12 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                    	<show_grid_options translate="label comment" module="postnl">
-                            <label>Show options in order grid</label>
-                            <comment>This will add a product options field to the create shipments mass action. If disabled, default options will be used. N.B. Not applicable to global shipments.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                    	</show_grid_options>
                     	<supported_product_options translate="label comment" module="postnl">
                             <label>Select supported options</label>
                             <comment>Only the selected options will be available.</comment>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>postnl_core/system_config_source_allProductOptions</source_model>
-                            <sort_order>20</sort_order>
+                            <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -826,7 +877,7 @@
                             <comment>These can be overwritten by manually creating shipments. These options are only applicable to Dutch shipments.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_standardProductOptions</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -837,7 +888,7 @@
                             <comment>Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -846,7 +897,7 @@
                             <label>Maximum amount</label>
                             <comment>The alternative default option will be used when the shipment's total amount exceeds this value.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -860,7 +911,7 @@
                             <comment>This option will be used as default when the shipment's total value exceeds the given amount.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_standardProductOptions</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -869,39 +920,17 @@
                             </depends>
                             <validate>validate-select</validate>
                         </alternative_default_option>
-                    	<default_pakjegemak_product_option translate="label comment" module="postnl">
-                            <label>Default PakjeGemak shipping options</label>
-                            <comment>These can be overwritten by manually creating shipments. These options are only applicable to Dutch PakjeGemak shipments.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions</source_model>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <validate>validate-select</validate>
-                    	</default_pakjegemak_product_option>
                     	<default_eu_product_option translate="label comment" module="postnl">
                             <label>Default EU shipping options</label>
                             <comment>These can be overwritten by manually creating shipments. These options are only applicable to EU shipments.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_euProductOptions</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</default_eu_product_option>
-                    	<weight_unit translate="label comment" module="postnl">
-                            <label>Weight unit</label>
-                            <comment>Select the unit in which you've entered product's weight</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_weightUnit</source_model>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-select</validate>
-                    	</weight_unit>
                     </fields>
 				</cif_product_options>
 				<cif_globalpack_settings translate="label" module="postnl">
@@ -929,12 +958,20 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </customs_certificate_number>
+                        <customs_attributes_header translate="label" module="postnl">
+                            <label>The following fields are used to determine several product attributes which are required for international shipping.</label>
+                            <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </customs_attributes_header>
                     	<use_hs_tariff translate="label comment" module="postnl">
                             <label>Use HS Tariff</label>
                             <comment>Enable this field to specify a product attribute to use as the product's HS tariff.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -945,7 +982,7 @@
                             <comment>The product attribute used to determine the product's HS tariff.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -959,7 +996,7 @@
                             <comment>The product attribute used to determine product's customs value.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -970,7 +1007,7 @@
                             <comment>The product attribute used to determine the product's country of origin.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -981,18 +1018,26 @@
                             <comment>The product attribute used to supply the product's customs description.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</description_attribute>
+                        <customs_sorting_header translate="label" module="postnl">
+                            <label>The following fields determine which products are displayed on international shipping labels and how.</label>
+                            <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </customs_sorting_header>
                         <product_sorting_attribute translate="label comment" module="postnl">
                             <label>Product sorting attribute</label>
-                            <comment>Global shipping labels can only contain 5 products. This attribute will determine how these are sorted so taht only the top 5 will be printed.</comment>
+                            <comment>Global shipping labels can only contain 5 products. This attribute will determine how these are sorted so that only the top 5 will be printed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1002,7 +1047,7 @@
                             <label>Product sorting direction</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_direction</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1018,8 +1063,8 @@
                     <show_in_store>0</show_in_store>
 					<fields>
                         <debug_mode translate="label comment tooltip">
-                            <label>Enable debugging</label>
-                            <comment>If enabled, debug logs will be created in the var/logs folder</comment>
+                            <label>Debug mode</label>
+                            <comment>If enabled, debug logs will be created in the var/logs folder.</comment>
                             <tooltip>Full logging will log various debugging messages as well as errors.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_debugMode</source_model>
@@ -1070,10 +1115,20 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </send_statistics>
+                        <recieve_updates translate="label" module="postnl">
+                            <label>Recieve notifications from PostNL regarding updates and promotions</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                        </recieve_updates>
                         <cif_versions_header translate="label" module="postnl">
                             <label>The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the module altogether.</label>
                             <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1081,7 +1136,7 @@
                         <cif_version_shippingstatus>
                             <label>ShippingStatus Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1089,7 +1144,7 @@
                         <cif_version_confirming>
                             <label>Confirming Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1097,7 +1152,7 @@
                         <cif_version_labelling>
                             <label>Labelling Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1105,7 +1160,7 @@
                         <cif_version_barcode>
                             <label>Barcode Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>

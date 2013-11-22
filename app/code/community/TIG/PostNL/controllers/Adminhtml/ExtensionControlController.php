@@ -45,28 +45,16 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
      */
     public function activateAction()
     {
-        $websiteCode = $this->getRequest()->getParam('website');
-        
         $webservice = Mage::getModel('postnl_extensioncontrol/webservices');
-        if (!$websiteCode) {
-            Mage::getSingleton('adminhtml/session')->addError(
-                Mage::helper('postnl')->__('Please activate the extension from the website level in system > config.')
-            );
-            
-            $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
-            return $this;
-        }
-        
-        $website = Mage::getModel('core/website')->load($websiteCode, 'code');
         
         try {
-            $webservice->activateWebshop($website->getId());
+            $webservice->activateWebshop();
         } catch (Exception $e) {
             Mage::getSingleton('adminhtml/session')->addError(
                 Mage::helper('postnl')->__('An error occurred while activating the extension: ' . $e->getMessage())
             );
             
-            $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl', 'website' => $websiteCode));
+            $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
             return $this;
         }
         
@@ -78,7 +66,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             Mage::helper('postnl')->__($successMessage)
         );
         
-        $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl', 'website' => $websiteCode));
+        $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
     }
 }

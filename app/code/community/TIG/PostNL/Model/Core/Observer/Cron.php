@@ -142,6 +142,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             $time = $nameParts[1];
             if ((time() - $time) < $maxFileStorageTime) {
+                $helper->cronLog("File {$filename} is less than {$maxFileStorageTime}s old. Continuing with the next file.");
                 continue;
             }
             
@@ -274,9 +275,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
              * Attempt to update the shipping status. Continue with the next one if it fails.
              */
             try{
-                $helper->cronLog("Updating shipping status for shipment #{$postnlShipment->getId()}");
+                $helper->cronLog("Updating shipping status for shipment #{$postnlShipment->getShipment()->getId()}");
                 
                 if (!$postnlShipment->canUpdateShippingStatus()) {
+                    $helper->cronLog("Updating shipment #{$postnlShipment->getShipment()->getId()} is not allowed. Continuing with next shipment.");
                     continue;
                 }
                 
@@ -333,7 +335,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
              * Check if the shipment was confirmed more than a day ago
              */
             $confirmedAt = strtotime($postnlShipment->getConfirmedAt());
-            $now = Mage::getModel('core/date')->timestamp();
+            $now = Mage::getModel('core/date')->gmtTimestamp();
             $yesterday = strtotime('-1 day', $now);
             
             if ($confirmedAt > $yesterday) {
@@ -379,7 +381,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $collectionPhase = $postnlShipmentModelClass::SHIPPING_PHASE_COLLECTION;
         
         $confirmationExpireDays = Mage::getStoreConfig(self::XML_PATH_CONFIRM_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
-        $expireTimestamp = strtotime("-{$confirmationExpireDays} days", Mage::getModel('core/date')->timestamp());
+        $expireTimestamp = strtotime("-{$confirmationExpireDays} days", Mage::getModel('core/date')->gmtTimestamp());
         $expireDate = date('Y-m-d H:i:s', $expireTimestamp);
         
         $helper->cronLog("All confirmation placed before {$expireDate} will be expired.");
@@ -476,7 +478,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
         
-        $twentyMinutesAgo = strtotime("-20 minutes", Mage::getModel('core/date')->timestamp());
+        $twentyMinutesAgo = strtotime("-20 minutes", Mage::getModel('core/date')->gmtTimestamp());
         $twentyMinutesAgo = date('Y-m-d H:i:s', $twentyMinutesAgo);
         
         $helper->cronLog("Track and trace email will be sent for all shipments that were confirmed at or before {$twentyMinutesAgo}.");

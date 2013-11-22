@@ -189,7 +189,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'confirm_date',
             array(
                 'type'     => 'date',
-                'header'   => $helper->__('Confirm Date'),
+                'header'   => $helper->__('Send Date'),
                 'align'    => 'left',
                 'index'    => 'confirm_date',
                 'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_confirmDate',
@@ -302,7 +302,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
         
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && date('Ymd', Mage::getModel('core/date')->timestamp()) == date('Ymd', strtotime($value))
+            && date('Ymd', Mage::getModel('core/date')->gmtTimestamp()) == date('Ymd', strtotime($value))
         ) {
             $class = 'grid-severity-major';
         } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {

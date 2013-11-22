@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.2.9</version>
+			<version>0.3.1</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -140,11 +140,11 @@
         </events>
         <template>
             <email>
-                <track_and_trace translate="label" module="postnl">
+                <postnl_cif_labels_and_confirming_track_and_trace_email_template translate="label" module="postnl">
                     <label>PostNL Track &amp; Trace Email</label>
                     <file>TIG/PostNL/track_and_trace.html</file>
                     <type>html</type>
-                </track_and_trace>
+                </postnl_cif_labels_and_confirming_track_and_trace_email_template>
             </email>
         </template>
 	</global>
@@ -267,6 +267,15 @@
                     <model>postnl_extensioncontrol/observer_cron::updateStatistics</model>
                 </run>
             </postnl_update_statistics>
+            <!-- Update the shop's statistics with the extension control system -->
+            <postnl_update_notification_feed>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                </schedule>
+                <run>
+                    <model>postnl_extensioncontrol/observer_cron::checkFeedUpdate</model>
+                </run>
+            </postnl_update_notification_feed>
         </jobs>
     </crontab>
     
@@ -307,11 +316,15 @@
         	</cif>
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
+                <weight_per_parcel>20000</weight_per_parcel> <!-- 20 kg -->
+                <weight_unit>gram</weight_unit> <!-- gram -->
+                <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
+                <custom_shipment_reference/>
+                <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
                 <shipping_grid_columns>shipping_description,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show all optional columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
-                <weight_per_parcel>20</weight_per_parcel> <!-- 20 kg -->
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
-                <track_and_trace_email_template/>
+                <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
         	</cif_labels_and_confirming>
         	<cif_address>
         		<split_street>1</split_street> <!-- split street -->
@@ -352,16 +365,14 @@
                 <country>NL</country> <!-- All return addresses must be located in the Netherlands -->
         	</cif_return_address>
         	<cif_product_options>
-        		<show_grid_options>0</show_grid_options> <!-- Do not show product options in the order grid -->
         		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4950,4952,4954,4955,4945</supported_product_options> <!-- all possible options -->
         		<default_product_option>3085</default_product_option> <!-- standard shipment -->
         		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
         		<alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
         		<alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
-        		<default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- PakjeGemak + signature on delivery -->
         		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
-        		<default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
-        		<weight_unit>gram</weight_unit> <!-- gram -->
+        		<default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- PakjeGemak + signature on delivery (Not currently used) -->
+                <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
         	</cif_product_options>
         	<cif_globalpack_settings>
         	    <customs_license_number/>
@@ -380,6 +391,9 @@
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
         		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
         		<send_statistics>1</send_statistics> <!-- Send extension usga estatistics to PostNL -->
+        		<recieve_updates>1</recieve_updates> <!-- Automatically recieve updates regarding the PostNL extension -->
+        		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
+        		<feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates -->
         		<cif_version_shippingstatus>1_2</cif_version_shippingstatus> <!-- v1.2 -->
         		<cif_version_confirming>1_3</cif_version_confirming> <!-- v1.3 -->
         		<cif_version_labelling>1_4</cif_version_labelling> <!-- v1.4 -->

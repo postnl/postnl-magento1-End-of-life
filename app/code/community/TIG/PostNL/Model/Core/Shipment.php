@@ -57,10 +57,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Possible shipping phases
      */
-    const SHIPPING_PHASE_COLLECTION     = '01';
-    const SHIPPING_PHASE_SORTING        = '02';
-    const SHIPPING_PHASE_DISTRIBUTION   = '03';
-    const SHIPPING_PHASE_DELIVERED      = '04';
+    const SHIPPING_PHASE_COLLECTION     = '1';
+    const SHIPPING_PHASE_SORTING        = '2';
+    const SHIPPING_PHASE_DISTRIBUTION   = '3';
+    const SHIPPING_PHASE_DELIVERED      = '4';
     const SHIPPING_PHASE_NOT_APPLICABLE = '99';
     
     /**
@@ -117,6 +117,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected $_labelsToSave = array();
     
+    /**
+     * Contains an instance of TIG_PostNL_Model_Core_Shipment_Process which locks a shipment and prevents it from being modified
+     * 
+     * @var void | TIG_PostNL_Model_Core_Shipment_Process
+     */
+    protected $_process;
+    
+    /**
+     * Initialize the shipment
+     */
     public function _construct()
     {
         $this->_init('postnl_core/shipment');
@@ -125,40 +135,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /****************************************************************************************************************************
      * GETTER AND SETTER METHODS
      ***************************************************************************************************************************/
-    
-    /**
-     * Get an array of labels that have to be saved together
-     * 
-     * @return array
-     */
-    public function getlabelsToSave()
-    {
-        return $this->_labelsToSave;
-    }
-    
-    /**
-     * Set an array of labels that are to be saved together
-     * 
-     * @param array $labels
-     * 
-     * @return TIG_PostNL_Model_Core_Shipment
-     */
-    public function setLabelsToSave($labels)
-    {
-        $this->_labelsToSave = $labels;
-        
-        return $this;
-    }
-    
-    /**
-     * Get all product codes that have extra cover
-     * 
-     * @return array
-     */
-    public function getExtraCoverProductCodes()
-    {
-        return $this->_extraCoverProductCodes;
-    }
     
     /**
      * Retrieves a Mage_Sales_Model_Order_Shipment entity linked to the postnl shipment.
@@ -222,6 +198,37 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Gets the process used for locking and unlocking this shipment
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment_Process
+     */
+    public function getProcess()
+    {
+        $process = $this->_process;
+        if (is_null($process)) {
+            $process = Mage::getModel('postnl_core/shipment_process')
+                           ->setId($this->getId());
+            $this->setProcess($process);
+        }
+
+        return $process;
+    }
+    
+    /**
+     * Sets the process used for locking and unlocking this shipment
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment_Process
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setProcess(TIG_PostNL_Model_Core_Shipment_Process $process)
+    {
+        $this->_process = $process;
+        
+        return $this;
+    }
+    
+    /**
      * Get the set store ID. If no store ID is set and a shipment is available, 
      * that shipment's store ID will be returned. Otherwise the current store 
      * ID is returned.
@@ -245,6 +252,40 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $this->setStoreId($storeId);
         return $storeId;
+    }
+    
+    /**
+     * Get an array of labels that have to be saved together
+     * 
+     * @return array
+     */
+    public function getlabelsToSave()
+    {
+        return $this->_labelsToSave;
+    }
+    
+    /**
+     * Set an array of labels that are to be saved together
+     * 
+     * @param array $labels
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setLabelsToSave($labels)
+    {
+        $this->_labelsToSave = $labels;
+        
+        return $this;
+    }
+    
+    /**
+     * Get all product codes that have extra cover
+     * 
+     * @return array
+     */
+    public function getExtraCoverProductCodes()
+    {
+        return $this->_extraCoverProductCodes;
     }
     
     /**
@@ -273,6 +314,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
+        
+        /**
+         * If the 'labels_printed' flag is false, yet there are labels present something has gone wrong.
+         * Delete the labels so the module will generate new ones.
+         */
+        if (!$this->getLabelsPrinted() && $labelCollection->getSize() > 0) {
+            $this->deleteLabels();
+            return array();
+        }
         
         $labels = $labelCollection->getItems();
         return $labels;
@@ -371,6 +421,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setShipmentBaseGrandTotal($baseGrandTotal);
         return $baseGrandTotal;
+    }
+    
+    /**
+     * Gets the shipment's shipment type for intrnational shipments.
+     * If no shipment type is defined, use the default 'commercial goods'.
+     * 
+     * @return string | null
+     */
+    public function getShipmentType()
+    {
+        if ($this->getData('shipment_type')) {
+            return $this->getData('shipment_type');
+        }
+        
+        if (!$this->isGlobalShipment()) {
+            return null;
+        }
+        
+        $shipmentType = 'Commercial Goods';
+        return $shipmentType;
     }
     
     /**
@@ -540,6 +610,49 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         return $barcodeCollection->getItems();
     }
+
+    /****************************************************************************************************************************
+     * SHIPMENT LOCKING AND UNLOCKING FUNCTIONS
+     ***************************************************************************************************************************/
+    
+    /**
+     * Lock this shipment to prevent simultaneous execution
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function lock()
+    {
+        $process = $this->getProcess();
+        $process->lockAndBlock();
+        
+        return $this;
+    }
+    
+    /**
+     * Unlock this shipment
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function unlock()
+    {
+        $process = $this->getProcess();
+        $process->unlock();
+        
+        return $this;
+    }
+    
+    /**
+     * Check if this shipment is locked
+     * 
+     * @return boolean
+     */
+    public function isLocked()
+    {
+        $process = $this->getProcess();
+        $isLocked = $process->isLocked();
+        
+        return $isLocked;
+    }
     
     /****************************************************************************************************************************
      * IS / CAN / HAS METHODS
@@ -640,6 +753,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canConfirm($skipEuCheck = false)
     {
+        if ($this->isLocked()) {
+            return false;
+        }
+        
         if ($this->getConfirmStatus() == self::CONFIRM_STATUS_CONFIRMED) {
             return false;
         }
@@ -670,6 +787,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canUpdateShippingStatus()
     {
+        if ($this->isLocked()) {
+            return false;
+        }
+        
         if (self::CONFIRM_STATUS_CONFIRMED != $this->getConfirmStatus()) {
             return false;
         }
@@ -693,6 +814,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canUpdateCompleteShippingStatus()
     {
+        if ($this->isLocked()) {
+            return false;
+        }
+        
         if (self::CONFIRM_STATUS_CONFIRMED != $this->getConfirmStatus()) {
             return false;
         }
@@ -711,6 +836,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canSendTrackAndTraceEmail()
     {
+        if ($this->isLocked()) {
+            return false;
+        }
+        
         if ($this->getTrackAndTraceEmailSent()) {
             return false;
         }
@@ -806,6 +935,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             throw Mage::exception('TIG_PostNL', 'The generateBarcodes action is currently unavailable.');
         }
         
+        $this->lock();
+        
         /**
          * Generate and save the main barcode
          */
@@ -821,6 +952,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If this shipment consists of a single parcel or if it's an international shipment we only need the main barcode
          */
         if ($parcelCount < 2 || $this->isGlobalShipment()) {
+            $this->unlock();
             return $this;
         }
         
@@ -832,6 +964,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->_addBarcode($barcode, $i);
         }
         
+        $this->unlock();
         return $this;
     }
     
@@ -844,10 +977,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _generateBarcode()
     {
-        if (!$this->canGenerateBarcode()) {
-            throw Mage::exception('TIG_PostNL', 'The generateBarcode action is currently unavailable.');
-        }
-        
         $shipment = $this->getShipment();
         
         $cif = Mage::getModel('postnl_core/cif');
@@ -878,6 +1007,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function generateLabel()
     {
+        $this->lock();
+        
         $parcelCount = $this->getparcelCount();
         if (!$parcelCount) {
             $parcelCount = $this->_calculateParcelCount();
@@ -892,6 +1023,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             
             $this->_saveLabels();
             
+            $this->unlock();
             return $this;
         }
         
@@ -904,14 +1036,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         $this->_saveLabels();
-        
-        /**
-         * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated
-         */
-        if ($this->isEuShipment() && !$this->_isCombiLabel()) {
-            $this->setProductCode($result->ProductCodeDelivery);
-        }
              
+        $this->unlock();
         return $this;
     }
     
@@ -951,6 +1077,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         $labels = $result->Labels->Label;
         
+        /**
+         * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated
+         */
+        if ($this->isEuShipment() && !$this->_isCombiLabel()) {
+            $this->setProductCode($result->ProductCodeDelivery);
+        }
+        
         return $labels;
     }
     
@@ -967,6 +1100,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             throw Mage::exception('TIG_PostNL', 'The confirm action is currently unavailable.');
         }
         
+        $this->lock();
+        
         $parcelCount = $this->getparcelCount();
         if (!$parcelCount) {
             $parcelCount = $this->_calculateParcelCount();
@@ -979,8 +1114,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->_confirm();
 
             $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-                 ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+                 ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
             
+            $this->unlock();
             return $this;
         }
         
@@ -992,8 +1128,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-             ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+             ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
         
+        $this->unlock();
         return $this;
     }
     
@@ -1071,6 +1208,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             throw Mage::exception('TIG_PostNL', 'The confirmAndGenerateLabel action is currently unavailable.');
         }
         
+        $this->lock();
+        
         $parcelCount = $this->getparcelCount();
         if (!$parcelCount) {
             $parcelCount = $this->_calculateParcelCount();
@@ -1082,9 +1221,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if ($parcelCount < 2) {
             $labels = $this->_generateLabel(true);
             $this->addLabels($labels);
+        
+            $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
+                 ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
             
             $this->_saveLabels();
             
+            $this->unlock();
             return $this;
         }
         
@@ -1097,10 +1240,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-             ->setConfirmedAt(Mage::getModel('core/date')->timestamp());
+             ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
                  
         $this->_saveLabels();
         
+        $this->unlock();
         return $this;
     }
     
@@ -1117,12 +1261,20 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
         }
         
+        $this->lock();
+        
         $cif = Mage::getModel('postnl_core/cif');
         $result = $cif->getShipmentStatus($this);
         
         $currentPhase = $result->Status->CurrentPhaseCode;
+        
+        if (!$currentPhase) {
+            return $this;
+        }
+        
         $this->setShippingPhase($currentPhase);
         
+        $this->unlock();
         return $this;
     }
     
@@ -1139,6 +1291,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
         }
         
+        $this->lock();
+        
         $cif = Mage::getModel('postnl_core/cif');
         $result = $cif->getCompleteShipmentStatus($this);
         
@@ -1148,6 +1302,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $currentPhase = $result->Status->CurrentPhaseCode;
         $this->setShippingPhase($currentPhase);
         
+        if (!isset($result->Events->CompleteStatusResponseEvent)) {
+            $this->unlock();
+            return $this;
+        }
+         
         /**
          * get the complete event history
          */
@@ -1168,6 +1327,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 continue;
             }
             
+            $timestamp = Mage::getModel('core/date')->gmtTimestamp($status->TimeStamp);
             $statusHistory->setParentId($this->getId())
                           ->setCode($status->Code)
                           ->setDescription($status->Description)
@@ -1175,11 +1335,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                           ->setDestinationLocationCode($status->DestinationLocationCode)
                           ->setRouteCode($status->RouteCode)
                           ->setRouteName($status->RouteName)
-                          ->setTimestamp(strtotime($status->TimeStamp))
+                          ->setTimestamp($timestamp)
                           ->save();
         }
         
-        $this->setStatusHistoryUpdatedAt(Mage::getModel('core/date')->timestamp());
+        $this->setStatusHistoryUpdatedAt(Mage::getModel('core/date')->gmtTimestamp());
+        
+        $this->unlock();
         
         return $this;
     }
@@ -1585,6 +1747,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * get the weight per parcel
          */
         $weightPerParcel = Mage::getStoreConfig(self::XML_PATH_WEIGHT_PER_PARCEL, $this->getStoreId());
+        $weightPerParcel = Mage::helper('postnl/cif')->standardizeWeight($weightPerParcel, $this->getStoreId());
         
         /**
          * calculate the number of parcels needed to ship the total weight of this shipment
@@ -1622,7 +1785,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function deleteLabels()
     {
-        $labels = $this->getLabels();
+        $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
+        $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
+        
+        $labels = $labelCollection->getItems();
         
         foreach ($labels as $label) {
             $label->delete()
@@ -1658,7 +1824,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _beforeSave()
     {
-        $currentTimestamp = Mage::getModel('core/date')->timestamp();
+        $currentTimestamp = Mage::getModel('core/date')->gmtTimestamp();
         
         /**
          * Store any shipment options that have been saved in the registry

@@ -70,7 +70,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_YesNo
          * Check if any data is available
          */
         $value = $row->getData($this->getColumn()->getIndex());
-        if (!$value) {
+        if (is_null($value) || $value === '') {
+            return parent::render($row);
+        }
+        
+        if ($value == 0) {
             $value = Mage::helper('postnl')->__('No');
             return $value;
         }
