@@ -39,9 +39,15 @@
 class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
 {
     /**
-     * Shipping method code used by PostNL
+     * Shipping carrier code used by PostNL
      */
-    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
+    const POSTNL_CARRIER = 'postnl';
+    
+    /**
+     * PostNL shipping methods
+     */
+    const POSTNL_FLATRATE_METHOD  = 'flatrate';
+    const POSTNL_TABLERATE_METHOD = 'tablerate';
     
     /**
      * PostNL's track and trace base URL
@@ -49,13 +55,77 @@ class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
     const POSTNL_TRACK_AND_TRACE_BASE_URL = 'http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?lang=nl';
     
     /**
+     * XML path to rate type setting
+     */
+    const XML_PATH_RATE_TYPE = 'carriers/postnl/rate_type';
+    
+    /**
+     * Array of possible PostNL shipping methods
+     * 
+     * @var array
+     */
+    protected $_postnlShippingMethods = array(
+        'postnl_postnl',    //deprecated
+        'postnl_flatrate',
+        'postnl_tablerate',
+    );
+    
+    /**
+     * Gets an array of possible PostNL shipping methods
+     * 
+     * @return array
+     */
+    public function getPostnlShippingMethods()
+    {
+        $shippingMethods = $this->_postnlShippingMethods;
+        return $shippingMethods;
+    }
+    
+    /**
+     * Alias for getCurrentPostnlShippingMethod()
+     * 
+     * @return string
+     * 
+     * @see TIG_PostNL_Helper_Carrier::getCurrentPostnlShippingMethod()
+     * 
+     * @deprecated
+     */
+    public function getPostnlShippingMethod()
+    {
+        return $this->getCurrentPostnlShippingMethod();
+    }
+    
+    /**
      * Returns the PostNL shipping method
      * 
      * @return string
      */
-    public function getPostnlShippingMethod()
+    public function getCurrentPostnlShippingMethod($storeId = null)
     {
-        return self::POSTNL_SHIPPING_METHOD;
+        if (Mage::registry('current_postnl_shipping_method') !== null) {
+            return Mage::registry('current_postnl_shipping_method');
+        }
+        
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $rateType = Mage::getStoreConfig(self::XML_PATH_RATE_TYPE, $storeId);
+        
+        $carrier = self::POSTNL_CARRIER;
+        switch ($rateType) {
+            case 'flat':
+                $shippingMethod = $carrier . '_' . self::POSTNL_FLATRATE_METHOD;
+                break;
+            case 'table':
+                $shippingMethod = $carrier . '_' . self::POSTNL_TABLERATE_METHOD;
+                break;
+            default:
+                throw Mage::exception('TIG_PostNL', 'Invalid rate type requested: ' . $rateType);
+        }
+        
+        Mage::register('current_postnl_shipping_method', $shippingMethod);
+        return $shippingMethod;
     }
     
     /**

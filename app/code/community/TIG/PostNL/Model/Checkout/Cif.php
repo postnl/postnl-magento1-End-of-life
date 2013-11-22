@@ -62,11 +62,6 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XML_PATH_CHECKOUT_PAYMENT_METHODS = 'postnl/checkout_payment_methods';
     
     /**
-     * PostNL shipping method
-     */
-    const SHIPPING_METHOD = 'postnl_postnl';
-    
-    /**
      * Gets the current store Id
      * 
      * @return integer
@@ -124,11 +119,12 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Set the quote's shipping method and collect it's totals
          */
+        $shippingMethod = Mage::helper('postnl/carrier')->getCurrentPostnlShippingMethod();
         $shippingAddress = $quote->getShippingAddress();
         if (!$shippingAddress->getShippingMethod()) {
             $shippingAddress->setCountryId('NL')
                             ->setCollectShippingRates(true)
-                            ->setShippingMethod(self::SHIPPING_METHOD);
+                            ->setShippingMethod($shippingMethod);
         }
               
         $quote->collectTotals()

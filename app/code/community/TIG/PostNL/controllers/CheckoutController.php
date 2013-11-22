@@ -125,6 +125,10 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function finishCheckoutAction()
     {
+        $cif = Mage::getModel('postnl_checkout/cif');
+        $orderDetails = $cif->readOrder();
         
+        $service = Mage::getModel('postnl_checkout/service');
+        $service->updateQuote($orderDetails);
     }
 }
