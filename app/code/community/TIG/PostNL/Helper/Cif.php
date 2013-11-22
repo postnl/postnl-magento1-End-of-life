@@ -295,7 +295,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function allowInfinitePrinting()
     {
-        $storeId = Mage_Core_Mode_App::ADMIN_STORE_ID;
+        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         $enabled = Mage::getStoreConfig(self::XML_PATH_INFINITE_LABEL_PRINTING, $storeId);
         
         return (bool) $enabled;
