@@ -40,17 +40,10 @@
 -->
 <layout version="0.1.0">
     
-    <!-- Uncomment this in order to show the current shipping phase of a customer's shipments on their acount page -->
-    <!-- <sales_order_shipment>
-    	<reference name="head">
-    		<action method="addItem">
-    			<type>skin_css</type>
-    			<name>css/TIG/PostNL/shipping_status.css</name>
-    		</action>
-    	</reference>
+    <sales_order_shipment>
         <reference name="my.account.wrapper">
             <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
         </reference>
-    </sales_order_shipment> -->
+    </sales_order_shipment>
     
 </layout>
