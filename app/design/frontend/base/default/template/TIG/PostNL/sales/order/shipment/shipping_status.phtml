@@ -38,30 +38,21 @@
  */
 ?>
 <?php foreach (Mage::registry('current_order')->getShipmentsCollection() as $_shipment): ?>
-    <?php $_progressStatus = $this->getShippingStatus($_shipment) ?>
+    <?php $_isConfirmed = $this->isConfirmed($_shipment); ?>
+    <?php if(!$_isConfirmed): ?>
+        <?php continue; ?>
+    <?php endif; ?>
 
-    <div id="postnl_status_bar-<?php echo $_shipment->getId(); ?>" class="progress-wrapper <?php echo $_progressStatus ?>">
-        <div class="progress progress-reported">
-            <strong><?php echo $this->__('Collection') ?></strong>
-        </div>
-        
-        <div class="progress progress-distribution">
-            <strong><?php echo $this->__('Distribution Center') ?></strong>
-        </div>
-        
-        <div class="progress progress-transit">
-            <strong><?php echo $this->__('In Transit') ?></strong>
-        </div>
-        
-        <div class="progress progress-delivered">
-            <strong><?php echo $this->__('Delivered') ?></strong>
-        </div>
+    <?php $_confirmedAt = $this->getConfirmedAt($_shipment); ?>
+    <?php $_trackingUrl = $this->getTrackingUrl($_shipment); ?>
+    <div id="postnl_status-<?php echo $_shipment->getId(); ?>">
+        <p><?php echo $this->__('Your shipment has been shipped on %s. Click %s to track your shipment.', $_confirmedAt, $_trackingUrl); ?></p>
     </div>
     
     <script type="text/javascript">
     //<![CDATA[
         document.observe('dom:loaded', function() {
-            statusBar<?php echo $_shipment->getId(); ?> = $('postnl_status_bar-<?php echo $_shipment->getId(); ?>');
+            statusBar<?php echo $_shipment->getId(); ?> = $('postnl_status-<?php echo $_shipment->getId(); ?>');
             if ($('my-tracking-table-<?php echo $_shipment->getId(); ?>')) {
                 $('my-tracking-table-<?php echo $_shipment->getId(); ?>').insert({
                     before: statusBar<?php echo $_shipment->getId(); ?>
