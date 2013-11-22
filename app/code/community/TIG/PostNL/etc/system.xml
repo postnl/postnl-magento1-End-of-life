@@ -1284,7 +1284,7 @@
                                 <ideal>1</ideal>
                             </depends>
                         </ideal_method>
-                        <ideal_bank_field translation="label comment" module="postnl">
+                        <ideal_option_field translation="label comment" module="postnl">
                             <label>iDeal Bank Field</label>
                             <comment>Enter the field name used by the selected payment method for the 'bank' field.</comment>
                             <frontend_type>text</frontend_type>
@@ -1295,7 +1295,7 @@
                             <depends>
                                 <ideal>1</ideal>
                             </depends>
-                        </ideal_bank_field>
+                        </ideal_option_field>
                         <!-- Creditcard -->
                         <creditcard translate="label" module="postnl">
                             <label>Use creditcard</label>
@@ -1318,7 +1318,7 @@
                                 <creditcard>1</creditcard>
                             </depends>
                         </creditcard_method>
-                        <creditcard_type_field translation="label comment" module="postnl">
+                        <creditcard_option_field translation="label comment" module="postnl">
                             <label>Creditcard card type field</label>
                             <comment>Enter the field name used by the selected payment method for the 'creditcard type' field.</comment>
                             <frontend_type>text</frontend_type>
@@ -1329,7 +1329,7 @@
                             <depends>
                                 <creditcard>1</creditcard>
                             </depends>
-                        </creditcard_type_field>
+                        </creditcard_option_field>
                         <!-- Checkpay -->
                         <checkpay translate="label" module="postnl">
                             <label>Use CheckPay</label>

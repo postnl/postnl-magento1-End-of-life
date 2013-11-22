@@ -421,10 +421,10 @@
         	<checkout_payment_methods>
         	    <ideal/>
         	    <ideal_method/>
-        	    <ideal_bank_field/>
+        	    <ideal_option_field/>
         	    <creditcard/>
                 <creditcard_method/>
-                <creditcard_type_field/>
+                <creditcard_option_field/>
                 <checkpay/>
                 <checkpay_method/>
                 <paypal/>

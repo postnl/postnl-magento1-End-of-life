@@ -39,6 +39,37 @@
 class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
 {
     /**
+     * Order class variable
+     * 
+     * @var Mage_Sales_Model_Order | void
+     */
+    protected $_order;
+    
+    /**
+     * Gets the stored order object
+     * 
+     * @return Mage_Sales_Model_Order
+     */
+    public function getOrder()
+    {
+        $order = $this->_order;
+        return $order;
+    }
+    
+    /**
+     * Sets an order object
+     * 
+     * @param Mage_Sales_Model_Order $order
+     * 
+     * @return TIG_PostNL_CheckoutController
+     */
+    public function setOrder($order)
+    {
+        $this->_order = $order;
+        return $this;
+    }
+    
+    /**
      * Checks if the PostNL webservice is available for the current account
      * 
      * @return TIG_PostNL_CheckoutController
@@ -115,7 +146,10 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         $orderDetails = $cif->readOrder();
         
         $service = Mage::getModel('postnl_checkout/service');
-        $service->updateQuote($orderDetails);
+        $service->updateQuoteAddresses($orderDetails);
+        
+        $this->loadLayout()->renderLayout();
+        return $this;
     }
     
     /**
@@ -125,10 +159,142 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function finishCheckoutAction()
     {
-        $cif = Mage::getModel('postnl_checkout/cif');
-        $orderDetails = $cif->readOrder();
+        try {
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            
+            $cif = Mage::getModel('postnl_checkout/cif');
+            $orderDetails = $cif->readOrder($quote);
+            
+            $service = Mage::getModel('postnl_checkout/service');
+            $service->setQuote($quote)
+                    ->updateQuoteAddresses($orderDetails)
+                    ->updateQuotePayment($orderDetails)
+                    ->updatePostnlOrder($orderDetails)
+                    ->confirmPostnlOrder();
+            
+            /**
+             * Create the order
+             */
+            $order = $service->saveOrder();
+            
+            $this->setOrder($order);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('checkout/session')->addError(
+                $this->__('An error occurred while processing your order. Please try again. if this problem persists, please contact the webshop owner.')
+            );
+            
+            Mage::helper('postnl/checkout')->restoreQuote($quote);
+            
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
+
+        /**
+         * Parse any possible communication options
+         */
+        $this->_parseCommunicationOptions($orderDetails);
         
-        $service = Mage::getModel('postnl_checkout/service');
-        $service->updateQuote($orderDetails);
+        /**
+         * Get the redirect URL from the payment method. If none exists, redirect to the order success page
+         */
+        $paymentMethod = $order->getPayment()->getMethodInstance();
+        
+        $redirectUrl = $paymentMethod->getCheckoutRedirectUrl();
+        if(empty($redirectUrl)) {
+            $redirectUrl = $paymentMethod->getOrderPlaceRedirectUrl();
+        }
+        
+        if(empty($redirectUrl)) {
+            $redirectUrl = 'checkout/onepage/success';
+        }
+        
+        $this->_redirect($redirectUrl);
+        return $this;
+    }
+    
+    /**
+     * Parses any communication options that may have been selected
+     * 
+     * @param StdClass $orderDetails
+     * 
+     * @return TIG_PostNL_CheckoutController
+     */
+    protected function _parseCommunicationOptions($orderDetails)
+    {
+        if (!isset($orderDetails->CommunicatieOpties)
+            || !is_object($orderDetails->CommunicatieOpties)
+            || !isset($orderDetails->CommunicatieOpties->ReadOrderResponseCommunicatieOptie)
+        ) {
+            return $this;
+        }
+        
+        /**
+         * Get the selected communication options and process them
+         */
+        $communicationOptions = $orderDetails->CommunicatieOpties->ReadOrderResponseCommunicatieOptie;
+        
+        foreach ($communicationOptions as $option) {
+            $this->_processCommunicationOption($option);
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Processes selected communication options
+     * 
+     * @param StdClass $option
+     * 
+     * @return TIG_PostNL_CheckoutController
+     */
+    protected function _processCommunicationOption($option)
+    {
+        $order = $this->getOrder();
+        $code = $option->Code;
+        
+        /**
+         * If a remark has been entered, add it as a history comment to the order
+         */
+        if ($code == 'REMARK') {
+            $remark = $this->__(
+                'The customer left the following remark: %s', 
+                Mage::helper('core')->escapeHtml($option->Text)
+            );
+            
+            $order->addStatusHistoryComment($remark)
+                  ->save();
+                  
+            return $this;
+        }
+        
+        /**
+         * If the customer has checked the subscrive to newsletter checkbox, subscribe him to the newsletter
+         */
+        if ($code == 'NEWS') {
+            $customerEmail = $order->getCustomerEmail();
+            
+            /**
+             * Attempt to load the subscriber if he exists
+             */
+            $newsletter = Mage::getModel('newsletter/subscriber');
+            $newsletter->loadByEmail($customerEmail);
+            
+            /**
+             * If the customer is already subscribed we don't need to do anything
+             */
+            if ($newsletter->isSubscribed()) {
+                return $this;
+            }
+            
+            /**
+             * Subscribe the customer
+             */
+            $newsletter->subscribe($customerEmail);
+            
+            return $this;
+        }
+        
+        return $this;
     }
 }

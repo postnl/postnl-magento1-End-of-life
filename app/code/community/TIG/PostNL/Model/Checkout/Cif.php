@@ -57,7 +57,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     
     /**
      * XML path to available payment methods.
-     * N.B. missing lst part os it will return an array of settings
+     * N.B. missing last part os it will return an array of settings
      */
     const XML_PATH_CHECKOUT_PAYMENT_METHODS = 'postnl/checkout_payment_methods';
     
@@ -193,9 +193,18 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         return $response;
     }
 
-    public function readOrder()
+    /**
+     * Retrieves the data the customer entered for this quote
+     * 
+     * @param Mage_Sales_Model_Quote $quote
+     * 
+     * @return StdClass
+     */
+    public function readOrder($quote =  null)
     {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        if (is_null($quote)) {
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+        }
         
         if (!$quote) {
             throw Mage::exception('TIG_PostNL', 'No quote available to initiate PostNL Checkout.');
@@ -222,6 +231,41 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         if (!is_object($response)) {
             throw Mage::exception('TIG_PostNL', 'Invalid ReadOrder response: ' . "\n" . var_export($response, true));
+        }
+        
+        return $response;
+    }
+    
+    /**
+     * Confirms the PostNL order.
+     * 
+     * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * 
+     * @return StdClass
+     */
+    public function confirmOrder($postnlOrder)
+    {
+        $checkout = $this->_getCheckout($postnlOrder);
+        $order    = $this->_getConfirmOrder($postnlOrder);
+        $webshop  = $this->_getWebshop();
+        
+        $soapParams = array(
+            'Checkout' => $checkout,
+            'Order'    => $order,
+            'Webshop'  => $webshop,
+        );
+        
+        /**
+         * Send the SOAP request
+         */
+        $response = $this->call(
+            'checkout', 
+            'ConfirmOrder',
+            $soapParams
+        );
+        
+        if (!is_object($response)) {
+            throw Mage::exception('TIG_PostNL', 'Invalid ConfirmOrder response: ' . "\n" . var_export($response, true));
         }
         
         return $response;
@@ -357,6 +401,30 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
     
     /**
+     * Builds the confirmOrder Order soap object based on the current postnl order.
+     * 
+     * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * 
+     * @return array
+     */
+    protected function _getConfirmOrder($postnlOrder)
+    {
+        $order = $postnlOrder->getOrder();
+        
+        $paymentTotal      = round($order->getBaseGrandTotal());
+        $extRef            = $postnlOrder->getQuoteId();
+        $paymentMethodName = $order->getPayment()->getMethodInstance()->getTitle();
+        
+        $confirmOrder = array(
+            'PaymentTotal'      => number_format($paymentTotal, 2, '.', ''),
+            'ExtRef'            => $extRef,
+            'PaymentMethodName' => $paymentMethodName,
+        );
+        
+        return $confirmOrder;
+    }
+    
+    /**
      * Builds the Restrictions soap object based on cofig settings
      * 
      * @return array
@@ -415,17 +483,25 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets the order token used to identify a PostNL order
      * 
+     * @param Mage_Sales_Model_Quote | TIG_PostNL_Model_Checkout_Order $object
+     * 
      * @return array
      * 
      * @throws TIG_PostNL_Exception
      */
-    protected function _getCheckout(Mage_Sales_Model_Quote $quote)
+    protected function _getCheckout($object)
     {
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        if ($object instanceof Mage_Sales_Model_Quote) {
+            $postnlOrder = Mage::getModel('postnl_checkout/order')->load($object->getId(), 'quote_id');
+        } elseif ($object instanceof TIG_PostNL_Model_Checkout_Order) {
+            $postnlOrder = $object;
+        } else {
+            throw Mage::exception('TIG_PostNL', 'Invalid object specified: ' . get_class($object));
+        }
         
         $orderToken = $postnlOrder->getToken();
         if (!$orderToken) {
-            throw Mage::exception('TIG_PostNL', 'OrderToken missing for order #' . $postnlOrder->getId());
+            throw Mage::exception('TIG_PostNL', 'OrderToken missing for quote #' . $postnlOrder->getQuoteId());
         }
         
         $checkout = array(

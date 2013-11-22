@@ -75,6 +75,21 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     }
     
     /**
+     * Restores a quote to working order
+     * 
+     * @param Mage_Sales_Model_Quote $quote
+     * 
+     * @return Mage_Sales_Model_Quote
+     */
+    public function restoreQuote(Mage_Sales_Model_Quote $quote)
+    {
+        $quote->setIsActive(true)
+              ->save();
+        
+        return $quote;
+    }
+    
+    /**
      * Check if PostNL checkout is enabled
      * 
      * @param null | int $storeId
