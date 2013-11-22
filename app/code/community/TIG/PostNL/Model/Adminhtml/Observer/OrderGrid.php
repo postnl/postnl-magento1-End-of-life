@@ -50,7 +50,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
     /**
      * XML path to show_grid_options setting
      */
-    const XML_PATH_SHOW_OPTIONS = 'postnl/cif_product_options/show_grid_options';
+    const XML_PATH_SHOW_OPTIONS = 'postnl/cif_labels_and_confirming/show_grid_options';
     
     /**
      * Edits the sales order grid by adding a mass action to create shipments for selected orders
@@ -93,6 +93,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
         );
         
         $showOptions = Mage::getStoreConfig(self::XML_PATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        
         if ($showOptions) {
             /**
              * Add another dropdown containing the possible product options

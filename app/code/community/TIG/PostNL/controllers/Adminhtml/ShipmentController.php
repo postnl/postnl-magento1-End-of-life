@@ -568,7 +568,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         /**
          * Load the PostNL shipment and check if it already has a label
          */
-        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
+       $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
         if ($postnlShipment->getLabels()) {
             return $postnlShipment->getlabels();
         }
@@ -588,11 +588,23 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                            ->addTrackingCodeToShipment();
         }
         
-        if ($confirm === true) {
+        if ($confirm === true 
+            && !$postnlShipment->hasLabels()
+            && $postnlShipment->getConfirmStatus() != $postnlShipment::CONFIRM_STATUS_CONFIRMED
+        ) {
             /**
              * Confirm the shipment and request a new label
              */
             $postnlShipment->confirmAndGenerateLabel()
+                           ->addTrackingCodeToShipment()
+                           ->save();
+        } elseif ($confirm === true
+            && $postnlShipment->getConfirmStatus() != $postnlShipment::CONFIRM_STATUS_CONFIRMED
+        ) {
+            /**
+             * Confirm the shipment
+             */
+            $postnlShipment->confirm()
                            ->addTrackingCodeToShipment()
                            ->save();
         } else {

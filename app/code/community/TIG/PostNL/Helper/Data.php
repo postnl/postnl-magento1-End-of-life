@@ -79,7 +79,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         'postnl/cif_labels_and_confirming/label_size',
         'postnl/cif_sender_address/firstname',
         'postnl/cif_sender_address/lastname',
-        'postnl/cif_sender_address/street_full',
+        'postnl/cif_sender_address/streetname',
+        'postnl/cif_sender_address/housenumber',
         'postnl/cif_sender_address/postcode',
         'postnl/cif_sender_address/city',
     );
