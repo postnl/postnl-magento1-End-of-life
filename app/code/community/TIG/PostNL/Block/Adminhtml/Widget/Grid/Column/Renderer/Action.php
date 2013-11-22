@@ -48,11 +48,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
     const CONFIRM_STATUS_COLUMN  = 'confirm_status';
     
     /**
-     * Code of postnl shipping method
-     */
-    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
-    
-    /**
      * Renders column
      *
      * @param Varien_Object $row
@@ -98,12 +93,14 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
     {
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
         
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        
         /**
          * If this is a PostNL action, but this shipment was not shipped using PosTNL, skip it
          */
         if (array_key_exists('is_postnl', $action) 
             && $action['is_postnl']
-            && $shippingMethod != self::POSTNL_SHIPPING_METHOD
+            && !in_array($shippingMethod, $postnlShippingMethods)
         ) {
             return false;
         }
