@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,32 +35,43 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */	
--->
-<layout version="0.1.0">
-    
-    <!-- Uncomment this in order to show the current shipping phase of a customer's shipments on their acount page -->
-    <!-- <sales_order_shipment>
-    	<reference name="head">
-    		<action method="addItem">
-    			<type>skin_css</type>
-    			<name>css/TIG/PostNL/shipping_status.css</name>
-    		</action>
-    	</reference>
-        <reference name="my.account.wrapper">
-            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
-        </reference>
-    </sales_order_shipment> -->
-    
-    <checkout_cart_index>
-        <reference name="checkout.cart.methods">
-            <block type="postnl_checkout/cart_checkoutLink" name="checkout.cart.methods.postnlcheckout" template="TIG/PostNL/checkout/cart/link.phtml" before="checkout.cart.methods.multishipping"/>
-        </reference>
-    </checkout_cart_index>
-    
-    <checkout_onepage_index>
-        <reference name="head">
-            <block type="postnl_checkout/onepage_js" name="postnl_checkout_js" template="TIG/PostNL/checkout/onepage/js.phtml"/>
-        </reference>
-    </checkout_onepage_index>
-</layout>
+ */
+ 
+$installer = $this;
+
+$installer->startSetup();
+
+$postnlOrderTable = $installer->getConnection()
+    ->newTable($installer->getTable('postnl_checkout/order'))
+    ->addColumn('entity_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'identity'  => true,
+        'unsigned'  => true,
+        'nullable'  => false,
+        'primary'   => true,
+        ), 'Entity Id')
+    ->addColumn('order_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'unsigned'  => true,
+        'nullable'  => true,
+        ), 'Order Id')
+    ->addColumn('quote_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+        'unsigned'  => true,
+        'nullable'  => true,
+        ), 'Quote Id')
+    ->addColumn('token', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
+        'nullable'  => false,
+        ), 'Token')
+    ->addIndex($installer->getIdxName('postnl_checkout/order', array('order_id')), 
+        array('order_id'))
+    ->addIndex($installer->getIdxName('postnl_checkout/order', array('quote_id')), 
+        array('quote_id'))
+    ->addForeignKey($installer->getFkName('postnl_checkout/order', 'order_id', 'sales/order', 'entity_id'),
+        'order_id', $installer->getTable('sales/order'), 'entity_id',
+        Varien_Db_Ddl_Table::ACTION_SET_NULL, Varien_Db_Ddl_Table::ACTION_CASCADE)
+    ->addForeignKey($installer->getFkName('postnl_checkout/order', 'quote_id', 'sales/quote', 'entity_id'),
+        'quote_id', $installer->getTable('sales/quote'), 'entity_id',
+        Varien_Db_Ddl_Table::ACTION_SET_NULL, Varien_Db_Ddl_Table::ACTION_CASCADE)
+    ->setComment('TIG PostNL Order');
+
+$installer->getConnection()->createTable($postnlOrderTable);
+
+$installer->endSetup();

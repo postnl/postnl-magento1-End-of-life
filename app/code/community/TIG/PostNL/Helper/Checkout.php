@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,32 +35,70 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */	
--->
-<layout version="0.1.0">
+ */
+class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
+{
+    /**
+     * XML path to checkout on/off switch
+     */
+    const XML_PATH_CHECKOUT_ACTIVE = 'postnl/checkout/active';
     
-    <!-- Uncomment this in order to show the current shipping phase of a customer's shipments on their acount page -->
-    <!-- <sales_order_shipment>
-    	<reference name="head">
-    		<action method="addItem">
-    			<type>skin_css</type>
-    			<name>css/TIG/PostNL/shipping_status.css</name>
-    		</action>
-    	</reference>
-        <reference name="my.account.wrapper">
-            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
-        </reference>
-    </sales_order_shipment> -->
+    /**
+     * Array of payment methods supported by PostNL Checkout. 
+     * Keys are the names used in system.xml, values are codes used by PostNL Checkout.
+     * 
+     * @var array
+     */
+    protected $_checkoutPaymentMethods = array(
+        'ideal'                  => 'IDEAL',
+        'creditcard'             => 'CREDITCARD',
+        'checkpay'               => 'CHECKPAY',
+        'paypal'                 => 'PAYPAL',
+        'directdebit'            => 'MACHTIGING',
+        'acceptgiro'             => 'ACCEPTGIRO',
+        'vooraf_betalen'         => 'VOORAF',
+        'termijnen'              => 'TERMIJNEN',
+        'giftcard'               => 'KADOBON',
+        'rabobank_internetkassa' => 'RABOINTKASSA', 
+        'afterpay'               => 'AFTERPAY',
+    );
     
-    <checkout_cart_index>
-        <reference name="checkout.cart.methods">
-            <block type="postnl_checkout/cart_checkoutLink" name="checkout.cart.methods.postnlcheckout" template="TIG/PostNL/checkout/cart/link.phtml" before="checkout.cart.methods.multishipping"/>
-        </reference>
-    </checkout_cart_index>
+    /**
+     * Gets a list of payment methods supported by PostNL Checkout
+     * 
+     * @return array
+     */
+    public function getCheckoutPaymentMethods()
+    {
+        $paymentMethods = $this->_checkoutPaymentMethods;
+        return $paymentMethods;
+    }
     
-    <checkout_onepage_index>
-        <reference name="head">
-            <block type="postnl_checkout/onepage_js" name="postnl_checkout_js" template="TIG/PostNL/checkout/onepage/js.phtml"/>
-        </reference>
-    </checkout_onepage_index>
-</layout>
+    /**
+     * Check if PostNL checkout is enabled
+     * 
+     * @param null | int $storeId
+     * 
+     * @return boolean
+     */
+    public function isCheckoutEnabled($storeId = null)
+    {
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $isPostnlEnabled = $this->isEnabled();
+        if ($isPostnlEnabled === false) {
+            return false;
+        }
+        
+        $checkoutEnabled = Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ACTIVE, $storeId);
+        if (!$checkoutEnabled) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    
+}

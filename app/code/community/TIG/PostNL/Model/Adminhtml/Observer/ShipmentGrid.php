@@ -360,11 +360,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case null: //rows with no value (non-PostNL shipments) or unconfirmed shipments
                 $class = '';
                 break;
-            case $postnlShipmentClass::SHIPPING_PHASE_COLLECTION:   //no break
             case $postnlShipmentClass::SHIPPING_PHASE_SORTING:      //no break;
             case $postnlShipmentClass::SHIPPING_PHASE_DISTRIBUTION: //no break;
             case $postnlShipmentClass::SHIPPING_PHASE_DELIVERED:
                 $class = 'grid-severity-notice';
+                break;
+            case $postnlShipmentClass::SHIPPING_PHASE_COLLECTION:
+                $class = 'grid-severity-minor';
                 break;
             case $postnlShipmentClass::SHIPPING_PHASE_NOT_APPLICABLE:
                 $class = 'grid-severity-critical';

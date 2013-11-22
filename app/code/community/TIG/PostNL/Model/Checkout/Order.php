@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,32 +35,65 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */	
--->
-<layout version="0.1.0">
+ */
+class TIG_PostNL_Model_Checkout_Order extends Mage_Core_Model_Abstract
+{
+    public function _construct()
+    {
+        $this->_init('postnl_checkout/order');
+    }
     
-    <!-- Uncomment this in order to show the current shipping phase of a customer's shipments on their acount page -->
-    <!-- <sales_order_shipment>
-    	<reference name="head">
-    		<action method="addItem">
-    			<type>skin_css</type>
-    			<name>css/TIG/PostNL/shipping_status.css</name>
-    		</action>
-    	</reference>
-        <reference name="my.account.wrapper">
-            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
-        </reference>
-    </sales_order_shipment> -->
+    /**
+     * Gets the order associated with this PostNL Checkout Order
+     * 
+     * @return Mage_Sales_Model_Order | null
+     */
+    public function getOrder()
+    {
+        if ($this->getData('order')) {
+            return $this->getData('order');
+        }
+        
+        if (!$this->getOrderId()) {
+            return null;
+        }
+        
+        $order = Mage::getModel('sales/order')->load($this->getOrderId());
+        
+        $this->setOrder($order);
+        return $order;
+    }
     
-    <checkout_cart_index>
-        <reference name="checkout.cart.methods">
-            <block type="postnl_checkout/cart_checkoutLink" name="checkout.cart.methods.postnlcheckout" template="TIG/PostNL/checkout/cart/link.phtml" before="checkout.cart.methods.multishipping"/>
-        </reference>
-    </checkout_cart_index>
+    /**
+     * Gets the quote associated with this PostNL Checkout Order
+     * 
+     * @return Mage_Sales_Model_Quote | null
+     */
+    public function getQuote()
+    {
+        if ($this->getData('quote')) {
+            return $this->getData('quote');
+        }
+        
+        if (!$this-getQuoteId()) {
+            return null;
+        }
+        
+        $order = Mage::getModel('sales/quote')->load($this->getQuoteId());
+        
+        $this->setQuote($order);
+        return $order;
+    }
     
-    <checkout_onepage_index>
-        <reference name="head">
-            <block type="postnl_checkout/onepage_js" name="postnl_checkout_js" template="TIG/PostNL/checkout/onepage/js.phtml"/>
-        </reference>
-    </checkout_onepage_index>
-</layout>
+    /**
+     * Alias for getQuoteId()
+     * 
+     * @return int
+     * 
+     * @see TIG_PostNL_Model_Checkout_Order::getQuoteId()
+     */
+    public function getExtRef()
+    {
+        return $this->getQuoteId();
+    }
+}

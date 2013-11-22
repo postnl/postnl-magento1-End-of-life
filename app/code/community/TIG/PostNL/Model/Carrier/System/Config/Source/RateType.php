@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!-- 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,32 +35,28 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */	
--->
-<layout version="0.1.0">
-    
-    <!-- Uncomment this in order to show the current shipping phase of a customer's shipments on their acount page -->
-    <!-- <sales_order_shipment>
-    	<reference name="head">
-    		<action method="addItem">
-    			<type>skin_css</type>
-    			<name>css/TIG/PostNL/shipping_status.css</name>
-    		</action>
-    	</reference>
-        <reference name="my.account.wrapper">
-            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
-        </reference>
-    </sales_order_shipment> -->
-    
-    <checkout_cart_index>
-        <reference name="checkout.cart.methods">
-            <block type="postnl_checkout/cart_checkoutLink" name="checkout.cart.methods.postnlcheckout" template="TIG/PostNL/checkout/cart/link.phtml" before="checkout.cart.methods.multishipping"/>
-        </reference>
-    </checkout_cart_index>
-    
-    <checkout_onepage_index>
-        <reference name="head">
-            <block type="postnl_checkout/onepage_js" name="postnl_checkout_js" template="TIG/PostNL/checkout/onepage/js.phtml"/>
-        </reference>
-    </checkout_onepage_index>
-</layout>
+ */
+class TIG_PostNL_Model_Carrier_System_Config_Source_RateType
+{
+    /**
+     * Returns an option array for rate type options
+     * 
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        $helper = Mage::helper('postnl');
+        $options = array(
+            array(
+                'value' => 'flat',
+                'label' => $helper->__('Flat'),
+            ),
+            array(
+                'value' => 'table',
+                'label' => $helper->__('Table'),
+            ),
+        );
+        
+        return $options;
+    }
+}
