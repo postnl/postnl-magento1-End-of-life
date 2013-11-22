@@ -294,7 +294,8 @@
         </jobs>
     </crontab>
     
-    <!-- default configuration values. You can edit most of these in system/config -->
+    <!-- Default configuration values. You can edit most of these in system/config -->
+    <!-- If a setting is specified here it does not guarantee it's availability in system/config. It does mean you can override it by creating an entry in the core_config_data table -->
     <default>
         <carriers>
             <postnl>
@@ -303,10 +304,12 @@
                 <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
                 <name>PostNL</name> <!-- PostNL -->
                 <price>5.00</price> <!-- 5 EUR -->
-                <title>PostNL</title> <!-- PostNL -->
+                <title>Flat Rate</title> <!-- PostNL -->
                 <type>I</type> <!-- Price is calculated per item -->
-                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
-                <handling_type>F</handling_type>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
+                <handling_type>F</handling_type> <!-- Fixed -->
+                <condition_name>package_weight</condition_name>
+                <include_virtual_price>1</include_virtual_price>
             </postnl>
         </carriers>
         <postnl>
