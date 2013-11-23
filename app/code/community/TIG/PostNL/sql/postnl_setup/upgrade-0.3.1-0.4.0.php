@@ -57,10 +57,12 @@ $postnlOrderTable = $installer->getConnection()
         'unsigned'  => true,
         ), 'Quote Id')
     ->addColumn('token', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
-        'nullable'  => false,
         ), 'Token')
+    ->addColumn('product_code', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+        'nullable' => true,
+        ), 'Product Code')
     ->addColumn('confirm_date', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
-        'nullable'  => false,
+        'nullable'  => true,
         ), 'Confirm Date')
     ->addIndex($installer->getIdxName('postnl_checkout/order', array('order_id')), 
         array('order_id'))

@@ -169,8 +169,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $service->setQuote($quote)
                     ->updateQuoteAddresses($orderDetails)
                     ->updateQuotePayment($orderDetails)
-                    ->updatePostnlOrder($orderDetails)
-                    ->confirmPostnlOrder();
+                    ->updatePostnlOrder($orderDetails);
             
             /**
              * Create the order
@@ -178,6 +177,8 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $order = $service->saveOrder();
             
             $this->setOrder($order);
+            
+            $service->confirmPostnlOrder();
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('checkout/session')->addError(
