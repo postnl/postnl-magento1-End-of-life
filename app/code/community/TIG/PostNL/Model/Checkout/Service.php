@@ -108,9 +108,15 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * Parse the shipping and billing addresses
          */
-        $shippingAddressData = $data->Bezorging->Geadresseerde;
+        $delivery = $data->Bezorging;
+        $shippingAddressData = $delivery->Geadresseerde;
         $shippingAddress = $quote->getShippingAddress();
         $shippingAddress = $this->_parseAddress($shippingAddress, $shippingAddressData);
+        
+        if (isset($delivery->ServicePunt)) {
+            $serviceLocationData = $delivery->ServicePunt;
+            $shippingAddress = $this->_addServiceLocationData($shippingAddress, $serviceLocationData);
+        }
         
         $billingAddressData = $data->Facturatie->Adres;
         $billingAddress = $quote->getBillingAddress();
@@ -300,21 +306,33 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $this->setStoreId($quote->getStoreId());
         
         $this->_verifyData($data, $quote);
-        
-        if (!isset($data->Voorkeuren)
-            || !is_object($data->Voorkeuren)
-            || !isset($data->Voorkeuren->VerzendDatum)
-        ) {
-            return $this;
-        }
+                
+        $postnlOrder = Mage::getModel('postnl_checkout/order');
+        $postnlOrder->load($quote->getId(), 'quote_id');
         
         /**
          * If a confirm date has been specified, save it with the PostNL Order object so we can reference it later
          */
-        $postnlOrder = Mage::getModel('postnl_checkout/order');
-        $postnlOrder->load($quote->getId(), 'quote_id')
-                    ->setConfirmDate($orderDetails->Voorkeuren->VerzendDatum)
-                    ->save();
+        if (isset($data->Voorkeuren)
+            && is_object($data->Voorkeuren)
+            && isset($data->Voorkeuren->Bezorging)
+            && is_object($data->Voorkeuren->Bezorging)
+            && isset($data->Voorkeuren->Bezorging->VerzendDatum)
+        ) {
+            $postnlOrder->setConfirmDate($data->Voorkeuren->Bezorging->VerzendDatum);
+        }
+        
+        /**
+         * If a specific product code is needed to ship this order, save it as well
+         */
+        if (isset($data->Bezorging)
+            && is_object($data->Bezorging)
+            && isset($data->Bezorging->ProductCode)
+        ) {
+            $postnlOrder->setProductCode($data->Bezorging->ProductCode);
+        }
+        
+        $postnlOrder->save();
         
         return $this;
     }
@@ -347,9 +365,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     /**
      * Parses a PostNL Checkout address into a varien object that can be used by Magento
      * 
+     * @param Mage_Sales_Model_Quote_Address $address
      * @param StdClass $addressData
      * 
-     * @return Varien_Object
+     * @return Mage_Sales_Model_Quote_Address
      */
     protected function _parseAddress($address, $addressData)
     {
@@ -357,49 +376,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         
         /**
          * First parse the street data (streetname, house nr. house nr. ext.)
-         */
-        $splitStreet = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_STREET, $storeId);
-        $splitHousenumber = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_HOUSENUMBER, $storeId);
-        
-        if ($splitStreet) {
-            $streetData = array();
-            
-            /**
-             * If the store uses multiple address lines, check which part of the address goes where
-             */
-            $streetnameField = Mage::getStoreConfig(self::XML_PATH_STREETNAME_FIELD, $storeId);
-            $housenumberField = Mage::getStoreCOnfig(self::XML_PATH_HOUSENUMBER_FIELD, $storeId);
-            
-            /**
-             * Set the streetname to the appropriate field
-             */
-            $streetData[$streetnameField] = $addressData->Straat;
-            
-            /**
-             * Check if the store splits housenumber and housenumber extensions as well. Place them in appriopriate fields
-             */
-            if (!$splitHousenumber) {
-                $housenumber = $addressData->Huisnummer . ' ' . $addressData->HuisnummerExt;
-                $streetData[$housenumberField] = $housenumber;
-            } else {
-                $housenumberExtensionField = Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);
-                $streetData[$housenumberField] = $addressData->Huisnummer;
-                $streetData[$housenumberExtensionField] = $addressData->HuisnummerExt;
-            }
-            
-            /**
-             * Sort the street data according to the field numbers and set it
-             */
-            ksort($streetData);
-            $address->setStreet($streetData);
-        } else {
-            /**
-             * If the store uses single line addresses, merge the street fields
-             */
-            $streetData = $addressData->Straat . PHP_EOL . $addressData->Huisnummer . PHP_EOL . $addressData->HuisnummerExt;
-            
-            $address->setStreet($streetData);
-        }
+         */        
+        $address = $this->_parseStreetData($address, $addressData);
         
         /**
          * Parse optional address fields
@@ -447,6 +425,91 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                 ->setCity($city)
                 ->setPostcode($postcode);
                 
+        return $address;
+    }
+    
+    /**
+     * Add optional service location data to the shipping address. This ovverrides the previously set address data.
+     * nto a varien object that can be used by Magento
+     * 
+     * @param Mage_Sales_Model_Quote_Address $address
+     * @param StdClass $addressData
+     * 
+     * @return Mage_Sales_Model_Quote_Address
+     */
+    protected function _addServiceLocationData($address, $serviceLocationData)
+    {
+        $storeId = $this->getStoreId();
+        
+        /**
+         * First parse the street data (streetname, house nr. house nr. ext.)
+         */        
+        $address = $this->_parseStreetData($address, $serviceLocationData);
+        
+        /**
+         * Remove any company data that may have been set, this could cause confusion when delivering the package to a service
+         * location with a different company name
+         */
+        $address->setCompany(false);
+        
+        return $address;
+    }
+
+    /**
+     * Parses street data and returns an address object containing properly formatted street lines.
+     * 
+     * @param Mage_Sales_Model_Quote_Address $address
+     * @param StdClass $addressData
+     * 
+     * @return Mage_Sales_Model_Quote_Address
+     */
+    protected function _parseStreetData($address, $addressData)
+    {
+        $storeId = $this->getStoreId();
+        $splitStreet = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_STREET, $storeId);
+        
+        if (!$splitStreet) {
+            /**
+             * If the store uses single line addresses, merge the street fields
+             */
+            $streetData = $addressData->Straat . PHP_EOL . $addressData->Huisnummer . PHP_EOL . $addressData->HuisnummerExt;
+            
+            $address->setStreet($streetData);
+            return $address;
+        }
+        
+        $streetData = array();
+        
+        /**
+         * If the store uses multiple address lines, check which part of the address goes where
+         */
+        $streetnameField = Mage::getStoreConfig(self::XML_PATH_STREETNAME_FIELD, $storeId);
+        $housenumberField = Mage::getStoreCOnfig(self::XML_PATH_HOUSENUMBER_FIELD, $storeId);
+        
+        /**
+         * Set the streetname to the appropriate field
+         */
+        $streetData[$streetnameField] = $addressData->Straat;
+        
+        /**
+         * Check if the store splits housenumber and housenumber extensions as well. Place them in appriopriate fields
+         */
+        $splitHousenumber = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_HOUSENUMBER, $storeId);
+        if (!$splitHousenumber) {
+            $housenumber = $addressData->Huisnummer . ' ' . $addressData->HuisnummerExt;
+            $streetData[$housenumberField] = $housenumber;
+        } else {
+            $housenumberExtensionField = Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);
+            $streetData[$housenumberField] = $addressData->Huisnummer;
+            $streetData[$housenumberExtensionField] = $addressData->HuisnummerExt;
+        }
+        
+        /**
+         * Sort the street data according to the field numbers and set it
+         */
+        ksort($streetData);
+        $address->setStreet($streetData);
+        
         return $address;
     }
     
