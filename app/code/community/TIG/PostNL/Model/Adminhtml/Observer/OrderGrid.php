@@ -68,6 +68,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     const XML_PATH_SHOW_OPTIONS = 'postnl/cif_labels_and_confirming/show_grid_options';
     
     /**
+     * XML path to show shipment type column setting
+     */
+    const XML_PATH_SHOW_SHIPMENT_TYPE_COLUMN = 'postnl/cif_labels_and_confirming/show_shipment_type_column';
+    
+    /**
      * Edits the sales order grid by adding a mass action to create shipments for selected orders
      * 
      * @param Varien_Event_Observer $observer
@@ -100,6 +105,20 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
         
         $currentCollection = $block->getCollection();
+        
+        $showShipmentTypeColumn = Mage::getStoreConfigFlag(
+            self::XML_PATH_SHOW_SHIPMENT_TYPE_COLUMN, 
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+        
+        /**
+         * If we don't need to display the shipment type column, we only need to add the massaction and we're done
+         */
+        if (!$showShipmentTypeColumn) {
+            $this->_addMassaction($block);
+            return $this;
+        }
+        
         $select = $currentCollection->getSelect();
         
         /**

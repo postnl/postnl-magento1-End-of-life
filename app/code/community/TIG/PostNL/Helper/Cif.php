@@ -70,6 +70,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const XML_PATH_WEIGHT_UNIT = 'postnl/cif_product_options/weight_unit';
     
     /**
+     * XML path to weight per parcel config setting
+     */
+    const XML_PATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel'; 
+    
+    /**
      * XML paths to default product options settings
      */
     const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION = 'postnl/cif_product_options/default_product_option';
@@ -485,6 +490,77 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         );
         
         return $defaultOptions;
+    }
+    
+    /**
+     * Gets the number of parcels in this shipment based on it's weight
+     * 
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * 
+     * @return int
+     */
+    public function getParcelCount($shipment)
+    {
+        $postnlShipment = Mage::getModel('postnl_core/shipment');
+        $postnlShipment->setShipment($shipment);
+        
+        /**
+         * Only NL shipments support multi-colli shipments
+         */
+        if (!$postnlShipment->isDutchShipment()) {
+            return 1;
+        }
+        
+        /**
+         * get this shipment's total weight
+         */
+        $weight = $postnlShipment->getTotalWeight(true);
+        
+        /**
+         * get the weight per parcel
+         */
+        $weightPerParcel = Mage::getStoreConfig(self::XML_PATH_WEIGHT_PER_PARCEL, $shipment->getStoreId());
+        $weightPerParcel = $this->standardizeWeight($weightPerParcel, $shipment->getStoreId());
+        
+        /**
+         * calculate the number of parcels needed to ship the total weight of this shipment
+         */
+        $parcelCount = ceil($weight / $weightPerParcel);
+        
+        return $parcelCount;
+    }
+    
+    /**
+     * Checks if a given postnl shipment exists using Zend_Validate_Db_RecordExists.
+     * 
+     * @param string $shipmentId
+     * 
+     * @return boolean
+     * 
+     * @see Zend_Validate_Db_RecordExists
+     * 
+     * @link http://framework.zend.com/manual/1.12/en/zend.validate.set.html#zend.validate.Db
+     */
+    public function postnlShipmentExists($shipmentId)
+    {
+        $coreResource = Mage::getSingleton('core/resource');
+        $readAdapter = $coreResource->getConnection('core_read');
+        
+        $validator = Mage::getModel('Zend_Validate_Db_RecordExists', 
+            array(
+                'table'   => $coreResource->getTableName('postnl_core/shipment'),
+                'field'   => 'shipment_id',
+                'adapter' => $readAdapter,
+            )
+        );
+        
+        $postnlShipmentExists = $validator->isValid($shipmentId);
+        
+        if ($postnlShipmentExists) {
+            return true;
+        }
+        
+        return false;
     }
     
     /**

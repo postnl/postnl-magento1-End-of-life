@@ -44,9 +44,73 @@ function increment(value, incrementStep) {
     return incrementStep;
 }
 
+function addProductOptions() {
+    postnlProductOptionsContainer = $('postnl_product_option_container');
+    $$('.order-totals-bottom div.a-right').each(function(element) {
+        element.insert({
+            before: postnlProductOptionsContainer
+        });
+    });
+}
+
+function addExtraCover() {
+    postnlExtraCoverValue = $('postnl_extra_cover');
+    postnlExtraCoverValue.value = increment(extraCoverValue, 500);
+    
+    postnlExtraCoverContainer = $('postnl_extra_cover_container');
+    $('postnl_product_option_container').insert({
+        after: postnlExtraCoverContainer
+    });
+}
+
+function addParcelCount() {        
+    postnlParcelCountContainer = $('postnl_parcel_count_container');
+    $('postnl_extra_cover_container').insert({
+        after: postnlParcelCountContainer
+    });
+}
+
+function addGlobalPackFields() {
+    postnlShipmentTypeContainer = $('postnl_shipment_type_container');
+    postnlTreatAsAbandonedContainer = $('postnl_treat_as_abandoned_container');
+    
+    $('postnl_extra_cover_container').insert({
+        after: postnlShipmentTypeContainer
+    });
+    
+    $('postnl_shipment_type_container').insert({
+        after: postnlTreatAsAbandonedContainer
+    });
+}
+    
+function showOrHideExtraOptions(productOptions) {
+    if (productOptions[productOptions.selectedIndex].hasClassName('extra_cover')) {
+        $('postnl_extra_cover_container').show();
+    } else {
+        $('postnl_extra_cover_container').hide();
+    }
+}
+
 Validation.add('validate-increment-500', 'The given value must be a multiple of 500.', function(value) {
     if (value % 500 == 0) {
         return true;
     }
     return false;
+});
+
+document.observe('dom:loaded', function() {
+    addProductOptions();
+    addExtraCover();
+    addParcelCount();
+    
+    if (isGlobalPackShipment) {
+        addGlobalPackFields();
+    }
+    
+    var productOptions = $('postnl_product_option');
+    productOptions.observe('change', function() {
+        showOrHideExtraOptions(productOptions);
+    });
+    
+    showOrHideExtraOptions(productOptions);
 });

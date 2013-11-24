@@ -38,11 +38,11 @@
         <reference name="head">
             <action method="addItem">
                 <type>skin_js</type>
-                <name>js/TIG/PostNL/extra_cover.js</name>
+                <name>js/TIG/PostNL/shipment_options.js</name>
             </action>
         </reference>
-    	<reference name="content">
-    		<block type="postnl_adminhtml/sales_order_shipment_create_productOptions" name="postnl_shipment_create_product_options" template="TIG/PostNL/sales/order/shipment/create/product_options.phtml" />
+    	<reference name="before_body_end">
+    		<block type="postnl_adminhtml/sales_order_shipment_create_shipmentOptions" name="postnl_shipment_create_shipment_options" template="TIG/PostNL/sales/order/shipment/create/shipment_options.phtml" />
     	</reference>
     </adminhtml_sales_order_shipment_new>
     

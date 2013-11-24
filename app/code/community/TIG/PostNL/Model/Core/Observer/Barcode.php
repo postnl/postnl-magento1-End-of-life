@@ -65,7 +65,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         /**
          * Check if a postnl shipment exists for this shipment
          */
-        if (Mage::helper('postnl/carrier')->postnlShipmentExists($shipment->getId())) {
+        if (Mage::helper('postnl/cif')->postnlShipmentExists($shipment->getId())) {
             return $this;
         }
         
@@ -91,12 +91,18 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         }
         
         /**
+         * We need an ID in order to save the barcodes
+         */
+        $postnlShipment->save();
+        
+        /**
          * Barcode generation needs to be tried seperately. This functionality may throw a valid exception
          * in which case it needs to be tried again later without preventing the shipment from being
          * created. This may happen when CIF is overburdoned.
          */              
         try {
-            $postnlShipment->generateBarcodes();
+            $postnlShipment->saveAdditionalShippingOptions()
+                           ->generateBarcodes();
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
         }

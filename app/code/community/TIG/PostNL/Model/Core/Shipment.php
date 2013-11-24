@@ -96,6 +96,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XML_PATH_TRACK_AND_TRACE_EMAIL_TEMPLATE = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
     
     /**
+     * XML path to maximum allowed parcel count settings
+     */
+    const XML_PATH_MAX_PARCEL_COUNT = 'postnl/advanced/max_parcel_count';
+    
+    /**
      * CIF warning code returned when an EPS combi label is not available
      */
     const EPS_COMBI_LABEL_WARNING_CODE = 'LIRS_0';
@@ -496,6 +501,29 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shipmentType = ucwords($shipmentType);
         
         $this->setData('shipment_type', $shipmentType);
+        return $this;
+    }
+    
+    /**
+     * Set this shipment's parcel count. Verifies that the requested amount does not exceed the maximum allowed.
+     * 
+     * @param int $count
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setParcelCount($count)
+    {
+        $maxParcelCount = Mage::getStoreConfig(self::XML_PATH_MAX_PARCEL_COUNT, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if (!$maxParcelCount) {
+            $this->setData('parcel_count', $count);
+            return $this;
+        }
+        
+        if ($count > $maxParcelCount) {
+            throw Mage::exception("Number of parcels not allowed. Amount requested: {$count}, maximum allowed: {$maxParcelCount}.");
+        }
+        
+        $this->setData('parcel_count', $count);
         return $this;
     }
     
@@ -1482,7 +1510,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /****************************************************************************************************************************
-     * BARCOCDE PROCESSING METHODS
+     * BARCODE PROCESSING METHODS
      ***************************************************************************************************************************/
     
     /**
@@ -1750,6 +1778,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      ***************************************************************************************************************************/
     
     /**
+     * Public alias for _saveAdditionalShippingOptions()
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     * 
+     * @see TIG_PostNL_Model_Core_Shipment::_saveAdditionalShippingOptions()
+     */
+    public function saveAdditionalShippingOptions()
+    {
+        return $this->_saveAdditionalShippingOptions();
+    }
+    
+    /**
      * Stores additionally selected shipping options
      * 
      * @return TIG_PostNL_Model_Core_Shipment
@@ -1772,6 +1812,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 'options' => $additionalOptions
             )
         );
+        
+        Mage::unRegister('postnl_additional_options');
+        
         return $this;
     }
     
@@ -1931,7 +1974,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         /**
-         * If this shiopment is new, set it's created at date to the current timestamp
+         * If this shipment is new, set it's created at date to the current timestamp
          */
         if (!$this->getId()) {
             $this->setCreatedAt($currentTimestamp);
