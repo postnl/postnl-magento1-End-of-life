@@ -43,6 +43,13 @@
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
     /**
+     * Prefix of model events names
+     *
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_shipment';
+    
+    /**
      * Carrier code used by postnl
      */
     const POSTNL_CARRIER_CODE = 'postnl';
@@ -937,6 +944,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $this->lock();
         
+        Mage::dispatchEvent('postnl_shipment_generatebarcode_before', array('shipment' => $this));
+        
         /**
          * Generate and save the main barcode
          */
@@ -952,7 +961,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If this shipment consists of a single parcel or if it's an international shipment we only need the main barcode
          */
         if ($parcelCount < 2 || $this->isGlobalShipment()) {
+            Mage::dispatchEvent('postnl_shipment_generatebarcode_after', array('shipment' => $this));
             $this->unlock();
+            
             return $this;
         }
         
@@ -964,6 +975,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->_addBarcode($barcode, $i);
         }
         
+        Mage::dispatchEvent('postnl_shipment_generatebarcode_after', array('shipment' => $this));
         $this->unlock();
         return $this;
     }
@@ -1009,6 +1021,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $this->lock();
         
+        Mage::dispatchEvent('postnl_shipment_generatelabel_before', array('shipment' => $this));
+        
         $parcelCount = $this->getparcelCount();
         if (!$parcelCount) {
             $parcelCount = $this->_calculateParcelCount();
@@ -1022,6 +1036,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->addLabels($labels);
             
             $this->_saveLabels();
+            
+            Mage::dispatchEvent('postnl_shipment_generatelabel_after', array('shipment' => $this));
             
             $this->unlock();
             return $this;
@@ -1037,6 +1053,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $this->_saveLabels();
              
+        Mage::dispatchEvent('postnl_shipment_generatelabel_after', array('shipment' => $this));
+        
         $this->unlock();
         return $this;
     }
@@ -1102,6 +1120,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $this->lock();
         
+        Mage::dispatchEvent('postnl_shipment_confirm_before', array('shipment' => $this));
+        
         $parcelCount = $this->getparcelCount();
         if (!$parcelCount) {
             $parcelCount = $this->_calculateParcelCount();
@@ -1116,6 +1136,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
                  ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
             
+            Mage::dispatchEvent('postnl_shipment_confirm_after', array('shipment' => $this));
+            
             $this->unlock();
             return $this;
         }
@@ -1129,6 +1151,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
              ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
+        
+        Mage::dispatchEvent('postnl_shipment_confirm_after', array('shipment' => $this));
         
         $this->unlock();
         return $this;
@@ -1210,6 +1234,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $this->lock();
         
+        Mage::dispatchEvent('postnl_shipment_confirmandgeneratelabel_before', array('shipment' => $this));
+        
         $parcelCount = $this->getparcelCount();
         if (!$parcelCount) {
             $parcelCount = $this->_calculateParcelCount();
@@ -1227,6 +1253,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             
             $this->_saveLabels();
             
+            Mage::dispatchEvent('postnl_shipment_confirmandgeneratelabel_after', array('shipment' => $this));
+            
             $this->unlock();
             return $this;
         }
@@ -1243,6 +1271,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
              ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
                  
         $this->_saveLabels();
+        
+        Mage::dispatchEvent('postnl_shipment_confirmandgeneratelabel_after', array('shipment' => $this));
         
         $this->unlock();
         return $this;
@@ -1263,6 +1293,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $this->lock();
         
+        Mage::dispatchEvent('postnl_shipment_updateshippingstatus_before', array('shipment' => $this));
+        
         $cif = Mage::getModel('postnl_core/cif');
         $result = $cif->getShipmentStatus($this);
         
@@ -1273,6 +1305,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         $this->setShippingPhase($currentPhase);
+        
+        Mage::dispatchEvent('postnl_shipment_updateshippingstatus_after', array('shipment' => $this));
         
         $this->unlock();
         return $this;
@@ -1292,6 +1326,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         $this->lock();
+        
+        Mage::dispatchEvent('postnl_shipment_updatecompleteshippingstatus_before', array('shipment' => $this));
         
         $cif = Mage::getModel('postnl_core/cif');
         $result = $cif->getCompleteShipmentStatus($this);
@@ -1340,6 +1376,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         $this->setStatusHistoryUpdatedAt(Mage::getModel('core/date')->gmtTimestamp());
+        
+        Mage::dispatchEvent('postnl_shipment_updatecompleteshippingstatus_after', array('shipment' => $this));
         
         $this->unlock();
         
@@ -1554,6 +1592,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $labelsToSave = $this->getLabelsToSave();
         
+        Mage::dispatchEvent('postnl_shipment_savelabels_before', array('shipment' => $this, 'labels' => $labelsToSave));
+        
         foreach ($labelsToSave as $label) {
             $transactionSave->addObject($label);
         }
@@ -1562,6 +1602,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Save the transaction
          */
         $transactionSave->save();
+        
+        Mage::dispatchEvent('postnl_shipment_savelabels_after', array('shipment' => $this, 'labels' => $labelsToSave));
+        
+        return $this;
     }
     
     /**
@@ -1721,6 +1765,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->setDataUsingMethod($option, $value);
         }
         
+        Mage::dispatchEvent(
+            'postnl_shipment_saveadditionaloptions_after', 
+            array(
+                'shipment' => $this, 
+                'options' => $additionalOptions
+            )
+        );
         return $this;
     }
     

@@ -38,6 +38,13 @@
  */
 class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abstract
 {
+    /**
+     * Prefix of model events names
+     *
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_shipment_status_history';
+    
     public function _construct()
     {
         $this->_init('postnl_core/shipment_status_history');

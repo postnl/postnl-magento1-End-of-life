@@ -38,6 +38,13 @@
  */
 class TIG_PostNL_Model_Checkout_Order extends Mage_Core_Model_Abstract
 {
+    /**
+     * Prefix of model events names
+     *
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_order';
+    
     public function _construct()
     {
         $this->_init('postnl_checkout/order');
@@ -86,11 +93,9 @@ class TIG_PostNL_Model_Checkout_Order extends Mage_Core_Model_Abstract
     }
     
     /**
-     * Alias for getQuoteId()
+     * Alias for magic getQuoteId()
      * 
      * @return int
-     * 
-     * @see TIG_PostNL_Model_Checkout_Order::getQuoteId()
      */
     public function getExtRef()
     {

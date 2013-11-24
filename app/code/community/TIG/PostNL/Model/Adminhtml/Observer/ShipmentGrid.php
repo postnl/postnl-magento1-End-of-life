@@ -142,10 +142,65 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         
         $this->_joinCollection($collection);
         $this->_addColumns($block);
-        $this->_addMassaction($block);
         $this->_applySortAndFilter($collection);
+        $this->_addMassaction($block);
         
         $block->setCollection($this->getCollection());
+        return $this;
+    }
+    
+    /**
+     * Adds additional joins to the collection that will be used by newly added columns
+     * 
+     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * 
+     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     */
+    protected function _joinCollection($collection)
+    {
+        $resource = Mage::getSingleton('core/resource');
+        
+        $select = $collection->getSelect();
+        
+        /**
+         * Join sales_flat_order table
+         */
+        $select->joinInner(
+            array('order' => $resource->getTableName('sales/order')),
+            '`main_table`.`order_id`=`order`.`entity_id`',
+            array(
+                'shipping_method'      => 'order.shipping_method',
+                'shipping_description' => 'order.shipping_description',
+            )
+        );
+        
+        /**
+         * join sales_flat_order_address table
+         */
+        $select->joinLeft(
+            array('shipping_address' => $resource->getTableName('sales/order_address')),
+            "`main_table`.`order_id`=`shipping_address`.`parent_id` AND `shipping_address`.`address_type`='shipping'",
+            array(
+                'postcode'   => 'shipping_address.postcode',
+                'country_id' => 'shipping_address.country_id',
+            )
+        );
+        
+        /**
+         * Join tig_postnl_shipment table
+         */
+        $select->joinLeft(
+            array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
+            '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
+            array(
+                'confirm_date'   => 'postnl_shipment.confirm_date',
+                'main_barcode'   => 'postnl_shipment.main_barcode',
+                'confirm_status' => 'postnl_shipment.confirm_status',
+                'labels_printed' => 'postnl_shipment.labels_printed',
+                'shipping_phase' => 'postnl_shipment.shipping_phase',
+            )
+        );
+        
         return $this;
     }
     
@@ -290,6 +345,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     public function decorateConfirmDate($value, $row, $column, $isExport)
     {
+        if ($isExport) {
+            return $value;
+        }
+        
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         
         $class = '';
@@ -305,6 +364,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             && date('Ymd', Mage::getModel('core/date')->gmtTimestamp()) == date('Ymd', strtotime($value))
         ) {
             $class = 'grid-severity-major';
+        } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
+            && Mage::getModel('core/date')->gmtTimestamp() > strtotime($value)
+        ) {
+            $class = 'grid-severity-critical';
         } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
             $class = 'grid-severity-minor';
         }
@@ -324,6 +387,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     public function decorateLabelsPrinted($value, $row, $column, $isExport)
     {
+        if ($isExport) {
+            return $value;
+        }
+        
         switch ($row->getData($column->getIndex())) {
             case null: //rows with no value (non-PostNL shipments)
                 $class = '';
@@ -353,6 +420,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     public function decorateShippingPhase($value, $row, $column, $isExport)
     {
+        if ($isExport) {
+            return $value;
+        }
+        
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         
         $class = '';
@@ -453,64 +524,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     }
     
     /**
-     * Adds additional joins to the collection that will be used by newly added columns
-     * 
-     * @param Mage_Sales_Model_Resource_Order_Shipment_Grid_Collection $collection
-     * 
-     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
-     */
-    protected function _joinCollection($collection)
-    {
-        $resource = Mage::getSingleton('core/resource');
-        
-        $select = $collection->getSelect();
-        
-        /**
-         * Join sales_flat_order table
-         */
-        $select->joinInner(
-            array('order' => $resource->getTableName('sales/order')),
-            '`main_table`.`order_id`=`order`.`entity_id`',
-            array(
-                'shipping_method'      => 'order.shipping_method',
-                'shipping_description' => 'order.shipping_description',
-            )
-        );
-        
-        /**
-         * join sales_flat_order_address table
-         */
-        $select->joinLeft(
-            array('shipping_address' => $resource->getTableName('sales/order_address')),
-            "`main_table`.`order_id`=`shipping_address`.`parent_id` AND `shipping_address`.`address_type`='shipping'",
-            array(
-                'postcode'   => 'shipping_address.postcode',
-                'country_id' => 'shipping_address.country_id',
-            )
-        );
-        
-        /**
-         * Join tig_postnl_shipment table
-         */
-        $select->joinLeft(
-            array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
-            '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
-            array(
-                'confirm_date'   => 'postnl_shipment.confirm_date',
-                'main_barcode'   => 'postnl_shipment.main_barcode',
-                'confirm_status' => 'postnl_shipment.confirm_status',
-                'labels_printed' => 'postnl_shipment.labels_printed',
-                'shipping_phase' => 'postnl_shipment.shipping_phase',
-            )
-        );
-        
-        return $this;
-    }
-    
-    /**
      * Applies sorting and filtering to the collection
      * 
-     * @param Mage_Sales_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      * 
      * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
      */
@@ -539,7 +555,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Adds new filters to the collection if these filters are based on columns added by this observer
      * 
-     * @param Mage_Sales_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      * @param array $filter Array of filters to be added
      * 
      * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
@@ -548,7 +564,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     {
         $block = $this->getBlock();
         
-        foreach ($filter as $columnName => $value) {$column = $block->getColumn($columnName);
+        foreach ($filter as $columnName => $value) {
+            $column = $block->getColumn($columnName);
             
             $column->getFilter()->setValue($value);
             $this->_addColumnFilterToCollection($column);
@@ -560,7 +577,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Based on Mage_Adminhtml_Block_Widget_Grid::_addColumnFilterToCollection()
      * 
-     * Adds a filter condition tot eh collection for a specified column
+     * Adds a filter condition to the collection for a specified column
      * 
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      * 
@@ -590,7 +607,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Sorts the collection by a specified column in a specified direction
      * 
-     * @param Mage_Sales_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      * @param string $sort The column that the collection is sorted by
      * @param string $dir The direction that is used to sort the collection
      * 

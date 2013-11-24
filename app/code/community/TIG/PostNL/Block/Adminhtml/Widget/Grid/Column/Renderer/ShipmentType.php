@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,25 +36,62 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Resource_Shipment_Barcode_Collection extends TIG_PostNL_Model_Resource_Db_Collection_Postnl
-{
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType 
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
+{    
     /**
-     * Event prefix
-     *
-     * @var string
+     * Additional column names used
      */
-    protected $_eventPrefix = 'postnl_shipment_barcode_collection';
-
-    /**
-     * Event object
-     *
-     * @var string
-     */
-    protected $_eventObject = 'postnl_shipment_barcode_collection';
+    const SHIPPING_METHOD_COLUMN = 'shipping_method';
     
-    public function _construct()
-    {    
-        parent::_construct();
-        $this->_init('postnl_core/shipment_barcode');
+    /**
+     * Renders the column value as a shipment type value (Domestic, EPS or GlobalPack)
+     *
+     * @param Varien_Object $row
+     * 
+     * @return string
+     */
+    public function render(Varien_Object $row)
+    {
+        /**
+         * The shipment was not shipped using PostNL
+         */
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
+        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+            return '';
+        }
+        
+        /**
+         * Check if any data is available
+         */
+        $value = $row->getData($this->getColumn()->getIndex());
+        if (is_null($value) || $value === '') {
+            return '';
+        }
+        
+        /**
+         * Check if this order is domestic
+         */
+        if ($value == 'NL') {
+            $renderedValue = Mage::helper('postnl')->__('Domestic');
+            return $renderedValue;
+        }
+        
+        /**
+         * Check if this order's shipping address is in an EU country
+         */
+        $euCountries = Mage::helper('postnl/cif')->getEuCountries();
+        if (in_array($value, $euCountries)) {
+            $renderedValue = Mage::helper('postnl')->__('EPS');
+            return $renderedValue;
+        }
+        
+        /**
+         * If none of the above, it's an international order
+         */
+        $renderedValue = Mage::helper('postnl')->__('GlobalPack');
+        
+        return $renderedValue;
     }
 }

@@ -55,7 +55,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         $helper = Mage::helper('postnl');
         $availableOptions = array(
             'standard_options' => array(
-                'label' => $helper->__('Standard options'),
+                'label' => $helper->__('Domestic options'),
                 'value' => array(
                     '3085' => array(
                         'value' => '3085',
@@ -387,19 +387,22 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         /**
          * Mark each default option as default if it is present in the available options array
          */
-        if (isset($options['standard_options']) 
+        if (isset($options['standard_options'])
+            && isset($options['standard_options']['value'])
             && isset($options['standard_options']['value'][$defaultOptions['dutch']])
         ) {
             $options['standard_options']['value'][$defaultOptions['dutch']]['label'] .= ' ' . $helper->__('(default)');
         }
         
         if (isset($options['eu_options']) 
+            && isset($options['eu_options']['value'])
             && isset($options['eu_options']['value'][$defaultOptions['eu']])
         ) {
             $options['eu_options']['value'][$defaultOptions['eu']]['label'] .= ' ' . $helper->__('(default)');
         }
         
         if (isset($options['global_options']) 
+            && isset($options['global_options']['value'])
             && isset($options['global_options']['value'][$defaultOptions['global']])
         ) {
             $options['global_options']['value'][$defaultOptions['global']]['label'] .= ' ' . $helper->__('(default)');

@@ -74,8 +74,21 @@ class TIG_PostNL_Model_Core_Observer_Barcode
          */
         $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmDate(Mage::getModel('core/date')->gmtTimestamp()) //TODO change this to the actual confirm date
-                       ->save();
+                       ->setConfirmDate(Mage::getModel('core/date')->gmtTimestamp());
+        
+        /**
+         * Check if this shipment has an associated PostNL Order. If so, copy it's data.
+         */
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($shipment->getOrderId(), 'order_id');
+        if ($postnlOrder->getId()) {
+            if ($postnlOrder->getConfirmDate()) {
+                $postnlShipment->setConfirmDate(strtotime($postnlOrder->getConfirmDate()));
+            }
+            
+            if ($postnlOrder->getProductCode()) {
+                $postnlShipment->setProductCode($postnlOrder->getProductCode());
+            }
+        }
         
         /**
          * Barcode generation needs to be tried seperately. This functionality may throw a valid exception

@@ -39,22 +39,28 @@
 ?>
 <?php $_checkoutJsUrl = $this->getCheckoutJsUrl(); ?>
 <?php $_continueUrl = $this->getContinueUrl(); ?>
+<?php $_environment = $this->getEnvironment(); ?>
 <script type="text/javascript" src="<?php echo $_checkoutJsUrl; ?>"></script>
 <script type="text/javascript">
     document.observe('dom:loaded', function() {
         var PostNLCheckout = new Class.create();
         PostNLCheckout.prototype = {
-            initialize: function(url, successUrl, checkoutJs) {
+            initialize: function(url, successUrl, environment) {
                 this.url = url;
                 this.createIframe();
                 
-                PostNL_OP_Checkout.initCheckout(function() {
-                    window.location = successUrl;
-                }, function() {
-                    // Cancel Action
-                }, function() {
-                    // Login Action
-                }, checkoutJs);
+                PostNL_OP_Checkout.initCheckout(
+                    function() {
+                        window.location = successUrl;
+                    }, 
+                    function() {
+                        // Cancel Action
+                    }, 
+                    function() {
+                        // Login Action
+                    }, 
+                    environment
+                );
             },
             createIframe: function() {
                 var iframe = document.createElement("div");
@@ -75,13 +81,23 @@
                 });
             },
             redirectToCheckout: function(transport) {
+                if (transport.responseText == 'error') {
+                    alert('<?php echo $this->__('An error occurred. Please use our regular checkout instead.'); ?>');
+                    document.body.style.cursor = 'default';
+                    return false;
+                }
+                
                 var data = eval('(' + transport.responseText + ')');
                 PostNL_OP_Checkout.showCheckout(data[0].orderToken);
                 document.body.style.cursor = 'default';
             }
         };
         
-        postnlcheckoutWidget = new PostNLCheckout('<?php echo $this->getUrl('postnl/checkout/prepareOrder', array('_secure' => true)); ?>','<?php echo $_continueUrl; ?>','2');
+        postnlcheckoutWidget = new PostNLCheckout(
+            '<?php echo $this->getUrl('postnl/checkout/prepareOrder', array('_secure' => true)); ?>',
+            '<?php echo $_continueUrl; ?>',
+            <?php echo $_environment; ?>
+        );
         postnlcheckoutWidget.startCheckout();
     })
 </script>

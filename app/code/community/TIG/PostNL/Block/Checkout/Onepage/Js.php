@@ -60,6 +60,12 @@ class TIG_PostNL_Block_Checkout_Onepage_Js extends Mage_Core_Block_Template
     const LIVE_CHECKOUT_JS_URL = 'https://mijnpakket.postnl.nl/Checkout2/Scripts/Checkout.js';
     
     /**
+     * Possible Checkout environments
+     */
+    const TEST_ENVIRONMENT = 'PostNL_OP_Checkout.environment_sandbox';
+    const LIVE_ENVIRONMENT = 'PostNL_OP_Checkout.environment_production';
+    
+    /**
      * Gets the current store's webshop ID
      * 
      * @return string
@@ -110,6 +116,40 @@ class TIG_PostNL_Block_Checkout_Onepage_Js extends Mage_Core_Block_Template
         
         $this->setCheckoutJsUrl($url);
         return $url;
+    }
+    
+    /**
+     * Gets the current PostNL Checkout environment value
+     * 
+     * @return string
+     */
+    public function getEnvironment()
+    {
+        if ($this->getData('environment')) {
+            return $this->getData('environment');
+        }
+        
+        $storeId = Mage::app()->getStore()->getId();
+        
+        if (Mage::helper('postnl')->isTestMode($storeId)) {
+            $environment = self::TEST_ENVIRONMENT;
+            
+            $this->setEnvironment($environment);
+            return $environment;
+        }
+        
+        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_MODE, $storeId);
+        if ($testMode) {
+            $environment = self::TEST_ENVIRONMENT;
+            
+            $this->setEnvironment($environment);
+            return $environment;
+        }
+        
+        $environment = self::LIVE_ENVIRONMENT;
+        
+        $this->setEnvironment($environment);
+        return $environment;
     }
     
     /**

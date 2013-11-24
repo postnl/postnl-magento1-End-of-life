@@ -462,7 +462,7 @@
                         </shipment_reference_type>
                         <custom_shipment_reference translate="label" module="postnl">
                             <label>Custom reference value</label>
-                            <comment>You can use the following variables: {{var shipment_increment_id}}, {{var order_increment_id}} and {{var store_frontend_name}} (max 28 characters).</comment>
+                            <comment>You can use the following variables: {{var shipment_increment_id}}, {{var order_increment_id}} and {{var store_frontend_name}}. The resulting text may not exceed 28 characters.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
@@ -471,7 +471,6 @@
                             <depends>
                                 <shipment_reference_type>custom</shipment_reference_type>
                             </depends>
-                            <validate>validate-length maximum-length-28</validate>
                         </custom_shipment_reference>
                         <grid_header translate="label" module="postnl">
                             <label>These fields allow you to alter the way the order and shipment grids are displayed.</label>

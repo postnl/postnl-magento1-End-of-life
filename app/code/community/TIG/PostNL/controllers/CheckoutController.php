@@ -76,8 +76,15 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function pingAction()
     {
-        $cif = Mage::getModel('postnl_checkout/cif');
-        $result = $cif->ping();
+        try {
+            $cif = Mage::getModel('postnl_checkout/cif');
+            $result = $cif->ping();
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            
+            $this->getResponse()->setBody('NOK');
+            return $this;
+        }
         
         if (!$result || $result == 'NOK') {
             $this->getResponse()->setBody('NOK');
@@ -95,37 +102,44 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function prepareOrderAction()
     {
-        /**
-         * Prepare the order with PostNL
-         */
-        $cif = Mage::getModel('postnl_checkout/cif');
-        $result = $cif->prepareOrder();
-        
-        /**
-         * Retrieve the order token used to identify the order with PostNL and the checkout URL
-         */
-        $orderToken  = $result->Checkout->OrderToken;
-        $checkoutUrl = $result->Checkout->Url;
-        
-        /**
-         * Turn these values into a JSON encoded associative array
-         */
-        $responseArray = array(
-            'checkoutUrl' => $checkoutUrl,
-            'orderToken'  => $orderToken,
-        );
-        
-        $response = json_encode($responseArray);
-        
-        /**
-         * Save a new PostNL order containing the current quote ID as well as the recieved order token
-         */
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $postnlOrder = Mage::getModel('postnl_checkout/order');
-        $postnlOrder->load($quote->getId(), 'quote_id') //load the order in case it aleady exists
-                    ->setQuoteId($quote->getId())
-                    ->setToken($orderToken)
-                    ->save();
+        try {
+            /**
+             * Prepare the order with PostNL
+             */
+            $cif = Mage::getModel('postnl_checkout/cif');
+            $result = $cif->prepareOrder();
+            
+            /**
+             * Retrieve the order token used to identify the order with PostNL and the checkout URL
+             */
+            $orderToken  = $result->Checkout->OrderToken;
+            $checkoutUrl = $result->Checkout->Url;
+            
+            /**
+             * Turn these values into a JSON encoded associative array
+             */
+            $responseArray = array(
+                'checkoutUrl' => $checkoutUrl,
+                'orderToken'  => $orderToken,
+            );
+            
+            $response = json_encode($responseArray);
+            
+            /**
+             * Save a new PostNL order containing the current quote ID as well as the recieved order token
+             */
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            $postnlOrder = Mage::getModel('postnl_checkout/order');
+            $postnlOrder->load($quote->getId(), 'quote_id') //load the order in case it aleady exists
+                        ->setQuoteId($quote->getId())
+                        ->setToken($orderToken)
+                        ->save();
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            
+            $this->getResponse()->setBody('error');
+            return $this;
+        }
         
         /**
          * Return the result as a json response
