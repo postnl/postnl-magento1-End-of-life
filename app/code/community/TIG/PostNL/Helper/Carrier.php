@@ -129,39 +129,6 @@ class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
     }
     
     /**
-     * Checks if a given postnl shipment exists using Zend_Validate_Db_RecordExists.
-     * 
-     * @param string $shipmentId
-     * 
-     * @return boolean
-     * 
-     * @see Zend_Validate_Db_RecordExists
-     * 
-     * @link http://framework.zend.com/manual/1.12/en/zend.validate.set.html#zend.validate.Db
-     */
-    public function postnlShipmentExists($shipmentId)
-    {
-        $coreResource = Mage::getSingleton('core/resource');
-        $readAdapter = $coreResource->getConnection('core_read');
-        
-        $validator = Mage::getModel('Zend_Validate_Db_RecordExists', 
-            array(
-                'table'   => $coreResource->getTableName('postnl_core/shipment'),
-                'field'   => 'shipment_id',
-                'adapter' => $readAdapter,
-            )
-        );
-        
-        $postnlShipmentExists = $validator->isValid($shipmentId);
-        
-        if ($postnlShipmentExists) {
-            return true;
-        }
-        
-        return false;
-    }
-    
-    /**
      * Constructs a PostNL track & trace url based on a barcode and the destination of the package (country and zipcode)
      * 
      * @param string $barcode

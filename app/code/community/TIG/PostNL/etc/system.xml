@@ -490,12 +490,22 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </show_grid_options>
+                        <show_shipment_type_column translate="label comment" module="postnl">
+                            <label>Show shipment type column in order grid</label>
+                            <comment>This will add a column to the order grid allowing you to identify whether the order is domestic, EU or global.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_shipment_type_column>
                         <shipping_grid_columns translate="label comment" module="postnl">
                             <label>Optional Shipment grid columns</label>
                             <comment>Select which optional columns to show in the shipment grid.</comment>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_shipmentGridColumns</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -505,7 +515,7 @@
                             <label>Select a default option for the shipment grid mass action</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_shipmentGridMassaction</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -514,7 +524,7 @@
                         <email_header translate="label" module="postnl">
                             <label>These fields are used to configure the track &amp; trace email that may be automatically emailed to customers after a shipment has been confirmed.</label>
                             <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -524,7 +534,7 @@
                             <comment>If enabled, a track &amp; trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -534,7 +544,7 @@
                             <label>Track &amp; trace e-mail template</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_template</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1091,7 +1101,7 @@
                     </fields>
 				</cif_globalpack_settings>
 				<checkout translate="label" module="postnl">
-				    <label>Checkout</label>
+				    <label>Checkout Settings</label>
 				    <sort_order>1000</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -1256,7 +1266,7 @@
 				    </fields>
 				</checkout>
                 <checkout_payment_methods translate="label" module="postnl">
-                    <label>Checkout Payment Configuration</label>
+                    <label>Checkout Payment Settings</label>
                     <sort_order>1100</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -1559,11 +1569,20 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</infinite_label_printing>
+                    	<max_parcel_count translate="label comment" module="postnl">
+                    	    <label>Maximum number of parcels per shipment</label>
+                    	    <comment><![CDATA[Leave empty to allow an infinite amount of parcels per shipment.<br/>If this value is empty or exceeds 200, you need to set 'Allow infinite label printing' to yes in order to be able to print the shipment's labels.]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                    	</max_parcel_count>
                     	<max_temp_file_storage_time translate="label comment" module="postnl">
                             <label>Maximum temporary file storage time</label>
                             <comment>In seconds. After this time, temporary files will be deleted. Only increase this if you use custom functionality to create a very large amount of labels at once.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>30</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1573,7 +1592,7 @@
                             <label>Number of days before a confirmation expires</label>
                             <comment>If a confirmed shipment has not been shipped after this amount of days it's confirmation will expire.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1583,7 +1602,7 @@
                             <label>Send extension usage statistics to PostNL</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1593,7 +1612,7 @@
                             <label>Recieve notifications from PostNL regarding updates and promotions</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1602,7 +1621,7 @@
                         <cif_versions_header translate="label" module="postnl">
                             <label>The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the module altogether.</label>
                             <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1610,7 +1629,7 @@
                         <cif_version_shippingstatus translate="label" module="postnl">
                             <label>ShippingStatus Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1618,7 +1637,7 @@
                         <cif_version_confirming translate="label" module="postnl">
                             <label>Confirming Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1626,7 +1645,7 @@
                         <cif_version_labelling translate="label" module="postnl">
                             <label>Labelling Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1634,7 +1653,7 @@
                         <cif_version_barcode translate="label" module="postnl">
                             <label>Barcode Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1642,7 +1661,7 @@
                         <cif_version_checkout translate="label" module="postnl">
                             <label>Checkout Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
