@@ -207,8 +207,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     protected $_shippingPhases = array(
         '1'  => 'Collection',
-        '2'  => 'Sorting',
-        '3'  => 'Distribution',
+        '2'  => 'Sorted',
+        '3'  => 'In Distribution',
         '4'  => 'Delivered',
         '99' => 'Shipment not found',
     );

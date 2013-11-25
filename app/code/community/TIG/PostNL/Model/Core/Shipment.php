@@ -106,6 +106,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const EPS_COMBI_LABEL_WARNING_CODE = 'LIRS_0';
     
     /**
+     * Newly added 'pakje_gemak' address type
+     */
+    const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
+    
+    /**
      * Array of product codes that have extra cover
      * 
      * @var array
@@ -190,6 +195,33 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $this->setShippingAddress($shippingAddress);
         return $shippingAddress;
+    }
+    
+    /**
+     * Gets an optional address with the pakje_gemak address type
+     * 
+     * @return boolean | Mage_Sales_Model_Order_Address
+     */
+    public function getPakjeGemakAddress()
+    {
+        if ($this->getData('pakje_gemak_address')) {
+            return $this->getData('pakje_gemak_address');
+        }
+        
+        $shipmentId = $this->getShipmentId();
+        if (!$shipmentId && !$this->getShipment()) {
+            return null;
+        }
+        
+        $addresses = $this->getShipment()->getOrder()->getAddressesCollection();
+        foreach ($addresses as $address) {
+            if ($address->getAddressType() == self::ADDRESS_TYPE_PAKJEGEMAK) {
+                $this->setPakjeGemakAddress($address);
+                return $address;
+            }
+        }
+        
+        return false;
     }
     
     /**
@@ -1505,7 +1537,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $shippingAddress = $this->getShippingAddress();
         $recipient = array(
-            'email' => $shippingAddress->getEmail(),
+            'email' => $this->getShipment()->getCustomerEmail(),
             'name'  => $shippingAddress->getFirstname() . ' ' . $shippingAddress->getLastname(),
         );
         

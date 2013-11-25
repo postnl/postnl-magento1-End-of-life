@@ -36,43 +36,59 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Checkout_Observer_Shipment
-{
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
+{    
     /**
-     * Updates a PostNL Checkout order with CIF. This has to occur after a shipment is confirmed. If an order has multiple
-     * shipments, this has to happen every time a shipment is confirmed. Each time the requst will contain and additional
-     * shipment each having 1 or more parcels.
-     *  
-     * @param Varien_Event_Observer $observer
-     * 
-     * @return TIG_PostNL_Model_Core_Observer_Barcode
-     * 
-     * @event postnl_shipment_confirm_after
-     * 
-     * @observer postnl_checkout_update_order
-     * 
-     * @throws TIG_PostNL_Exception
-     * 
-     * @todo change confirm date to the correct value, instead of the current timestamp
+     * Date format string
      */
-    public function updateOrder(Varien_Event_Observer $observer)
+    protected static $_format = null;
+
+    /**
+     * Retrieve datetime format
+     *
+     * @return unknown
+     */
+    protected function _getFormat()
     {
-        $postnlShipment = $observer->getShipment();
-        
-        $orderId = $postnlShipment->getOrderId();
-        $postnlOrder = Mage::getModel('postnl_checkout/order');
-        $postnlOrder->load($orderId, 'order_id');
-        if (!$postnlOrder->getId()) {
-            return $this;
+        $format = $this->getColumn()->getFormat();
+        if (!$format) {
+            if (is_null(self::$_format)) {
+                try {
+                    self::$_format = Mage::app()->getLocale()->getTimeFormat(
+                        Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM
+                    );
+                }
+                catch (Exception $e) {
+                    Mage::logException($e);
+                }
+            }
+            $format = self::$_format;
         }
-        
-        $cif = Mage::getModel('postnl_checkout/cif');
-        $result = $cif->updateOrder($postnlOrder);
-        
-        if (!isset($result->Succes) || $result->Succes != 'true') {
-            throw Mage::exception('TIG_PostNL', 'Invalid UpdateOrder response recieved!');
+        return $format;
+    }
+
+    /**
+     * Renders grid column
+     *
+     * @param   Varien_Object $row
+     * @return  string
+     */
+    public function render(Varien_Object $row)
+    {
+        if ($data = $this->_getValue($row)) {
+            $format = $this->_getFormat();
+            try {
+                $data = Mage::app()->getLocale()
+                    ->date($data, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
+            }
+            catch (Exception $e)
+            {
+                $data = Mage::app()->getLocale()
+                    ->date($data, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
+            }
+            return $data;
         }
-        
-        return $this;
+        return $this->getColumn()->getDefault();
     }
 }
