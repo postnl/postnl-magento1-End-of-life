@@ -65,6 +65,11 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     const XML_PATH_PAYMENT_METHODS = 'postnl/checkout_payment_methods';
     
     /**
+     * Newly added 'pakje_gemak' address type
+     */
+    const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
+    
+    /**
      * Gets the currently used quote object
      * 
      * @return Mage_Sales_Model_Quote
@@ -110,17 +115,23 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          */
         $delivery = $data->Bezorging;
         $shippingAddressData = $delivery->Geadresseerde;
-        $shippingAddress = $quote->getShippingAddress();
+        $shippingAddress = Mage::getModel('sales/quote_address');
+        $shippingAddress->setAddressType($shippingAddress::TYPE_SHIPPING);
         $shippingAddress = $this->_parseAddress($shippingAddress, $shippingAddressData);
+        
+        $billingAddressData = $data->Facturatie->Adres;
+        $billingAddress = Mage::getModel('sales/quote_address');
+        $billingAddress->setAddressType($billingAddress::TYPE_BILLING);
+        $billingAddress = $this->_parseAddress($billingAddress, $billingAddressData);
         
         if (isset($delivery->ServicePunt)) {
             $serviceLocationData = $delivery->ServicePunt;
-            $shippingAddress = $this->_addServiceLocationData($shippingAddress, $serviceLocationData);
+            $pakjeGemakAddress = Mage::getModel('sales/quote_address');
+            $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK);
+            $pakjeGemakAddress = $this->_parseAddress($pakjeGemakAddress, $serviceLocationData);
+            
+            $quote->addAddress($pakjeGemakAddress);
         }
-        
-        $billingAddressData = $data->Facturatie->Adres;
-        $billingAddress = $quote->getBillingAddress();
-        $billingAddress = $this->_parseAddress($billingAddress, $billingAddressData);
         
         /**
          * Update the quote's addresses
@@ -424,7 +435,9 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                 ->setCountry($country)
                 ->setCity($city)
                 ->setPostcode($postcode);
-                
+        
+        $address->setShouldIgnoreValidation(true);
+        
         return $address;
     }
     
