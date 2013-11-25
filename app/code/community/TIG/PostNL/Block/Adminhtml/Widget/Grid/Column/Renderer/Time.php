@@ -36,40 +36,59 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_shipment = Mage::registry('current_shipment'); ?>
-<?php $_progressStatus = $this->getShippingStatus($_shipment) ?>
-<div id="postnl_status_bar" class="progress-wrapper <?php echo $_progressStatus; ?>">
-    <div class="progress progress-collection">
-        <span class="begin"></span>
-        <strong><?php echo $this->__('Collection') ?></strong>
-        <span class="seperator"></span>
-    </div>
-    
-    <div class="progress progress-distribution">
-        <strong><?php echo $this->__('Sorted') ?></strong>
-        <span class="seperator"></span>
-    </div>
-    
-    <div class="progress progress-transit">
-        <strong><?php echo $this->__('In Distribution') ?></strong>
-        <span class="seperator"></span>
-    </div>
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract
+{    
+    /**
+     * Date format string
+     */
+    protected static $_format = null;
 
-    <div class="progress progress-delivered">
-        <strong><?php echo $this->__('Delivered') ?></strong>
-        <span class="end"></span>
-    </div>
-</div>
+    /**
+     * Retrieve datetime format
+     *
+     * @return unknown
+     */
+    protected function _getFormat()
+    {
+        $format = $this->getColumn()->getFormat();
+        if (!$format) {
+            if (is_null(self::$_format)) {
+                try {
+                    self::$_format = Mage::app()->getLocale()->getTimeFormat(
+                        Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM
+                    );
+                }
+                catch (Exception $e) {
+                    Mage::logException($e);
+                }
+            }
+            $format = self::$_format;
+        }
+        return $format;
+    }
 
-<script type="text/javascript">
-//<![CDATA[
-    document.observe('dom:loaded', function() {
-        statusBar = $('postnl_status_bar');
-        //insert the status bar at the top of the information tab
-        $('sales_shipment_view_tabs_shipment_info_content').insert({
-            top: statusBar
-        });
-    });
-//]]>
-</script>
+    /**
+     * Renders grid column
+     *
+     * @param   Varien_Object $row
+     * @return  string
+     */
+    public function render(Varien_Object $row)
+    {
+        if ($data = $this->_getValue($row)) {
+            $format = $this->_getFormat();
+            try {
+                $data = Mage::app()->getLocale()
+                    ->date($data, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
+            }
+            catch (Exception $e)
+            {
+                $data = Mage::app()->getLocale()
+                    ->date($data, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
+            }
+            return $data;
+        }
+        return $this->getColumn()->getDefault();
+    }
+}

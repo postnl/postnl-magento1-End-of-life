@@ -65,6 +65,11 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     const XML_PATH_PAYMENT_METHODS = 'postnl/checkout_payment_methods';
     
     /**
+     * Newly added 'pakje_gemak' address type
+     */
+    const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
+    
+    /**
      * Gets the currently used quote object
      * 
      * @return Mage_Sales_Model_Quote
@@ -106,26 +111,56 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $this->_verifyData($data, $quote);
         
         /**
+         * Get consumer data
+         */
+        $consumer = $data->Consument;
+        $email = $consumer->Email;
+        $phone = $consumer->TelefoonNummer;
+        if (!$phone) {
+            $phone = '-';
+        }
+        
+        /**
          * Parse the shipping and billing addresses
          */
         $delivery = $data->Bezorging;
         $shippingAddressData = $delivery->Geadresseerde;
-        $shippingAddress = $quote->getShippingAddress();
+        
+        $shippingAddress = Mage::getModel('sales/quote_address');
+        $shippingAddress->setAddressType($shippingAddress::TYPE_SHIPPING)
+                        ->setEmail($email)
+                        ->setPhone($phone);
+                        
         $shippingAddress = $this->_parseAddress($shippingAddress, $shippingAddressData);
         
+        $billingAddressData = $data->Facturatie->Adres;
+        $billingAddress = Mage::getModel('sales/quote_address');
+        $billingAddress->setAddressType($billingAddress::TYPE_BILLING)
+                       ->setEmail($email)
+                       ->setPhone($phone);
+                       
+        $billingAddress = $this->_parseAddress($billingAddress, $billingAddressData);
+        
+        /**
+         * If a servicelocation was set, add that as a third address
+         */
         if (isset($delivery->ServicePunt)) {
             $serviceLocationData = $delivery->ServicePunt;
-            $shippingAddress = $this->_addServiceLocationData($shippingAddress, $serviceLocationData);
+            $pakjeGemakAddress = Mage::getModel('sales/quote_address');
+            $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK)
+                              ->setEmail($email)
+                              ->setPhone($phone);
+                              
+            $pakjeGemakAddress = $this->_parseAddress($pakjeGemakAddress, $serviceLocationData);
+            
+            $quote->addAddress($pakjeGemakAddress);
         }
-        
-        $billingAddressData = $data->Facturatie->Adres;
-        $billingAddress = $quote->getBillingAddress();
-        $billingAddress = $this->_parseAddress($billingAddress, $billingAddressData);
         
         /**
          * Update the quote's addresses
          */
-        $quote->setShippingAddress($shippingAddress)
+        $quote->setCustomerEmail($email)
+              ->setShippingAddress($shippingAddress)
               ->setBillingAddress($billingAddress)
               ->save();
         
@@ -246,6 +281,12 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $quote = $this->getQuote();
         }
         
+        Mage::dispatchEvent('postnl_checkout_save_order_before',
+            array(
+                'quote' => $quote
+            )
+        );
+        
         $quoteService = Mage::getModel('sales/service_quote', $quote);
         $quoteService->submitAll();
         $order = $quoteService->getOrder();
@@ -253,8 +294,31 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         if(empty($order)) {
             throw Mage::exception('TIG_PostNL', 'Unable to create an order for quote #' . $quote->getId());
         }
+                
+        /**
+         * If a pakje_gemak address is present, add it to the order as well
+         */
+        $quoteAddresses = $quote->getAllAddresses();
+        foreach ($quoteAddresses as $address) {
+            if ($address->getAddressType() != self::ADDRESS_TYPE_PAKJEGEMAK) {
+                continue;
+            }
+            
+            $orderAddress = Mage::getModel('sales/convert_quote')->addressToOrderAddress($address);
+            $order->addAddress($orderAddress);
+            
+            $orderAddress->save();
+            break;
+        }
         
         Mage::dispatchEvent('checkout_type_onepage_save_order_after',
+            array(
+                'order' => $order, 
+                'quote' => $quote
+            )
+        );
+        
+        Mage::dispatchEvent('postnl_checkout_save_order_after',
             array(
                 'order' => $order, 
                 'quote' => $quote
@@ -421,10 +485,12 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $address->setFirstname($firstname)
                 ->setLastname($lastname)
                 ->setMiddelname($middlename)
-                ->setCountry($country)
+                ->setCountryId($country)
                 ->setCity($city)
                 ->setPostcode($postcode);
-                
+        
+        $address->setShouldIgnoreValidation(true);
+        
         return $address;
     }
     

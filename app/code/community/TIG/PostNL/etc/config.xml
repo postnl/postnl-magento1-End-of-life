@@ -210,6 +210,16 @@
                     </postnl_core_shipment_save>
                 </observers>
 			</controller_action_predispatch_adminhtml_sales_order_shipment_save>
+			<postnl_shipment_confirm_after>
+			    <observers>
+			        <!-- Updates a PostNL Checkout order -->
+			        <postnl_checkout_update_order>
+			            <type>model</type>
+			            <class>postnl_checkout/observer_shipment</class>
+			            <method>updateOrder</method>
+			        </postnl_checkout_update_order>
+			    </observers>
+			</postnl_shipment_confirm_after>
 		</events>
 		<layout>
             <updates>

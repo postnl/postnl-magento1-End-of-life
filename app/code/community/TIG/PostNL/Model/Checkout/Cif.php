@@ -62,6 +62,12 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XML_PATH_CHECKOUT_PAYMENT_METHODS = 'postnl/checkout_payment_methods';
     
     /**
+     * XML paths for shipment reference info
+     */
+    const XML_PATH_SHIPMENT_REFERENCE_TYPE   = 'postnl/cif_labels_and_confirming/shipment_reference_type';
+    const XML_PATH_CUSTOM_SHIPMENT_REFERENCE = 'postnl/cif_labels_and_confirming/custom_shipment_reference';
+    
+    /**
      * Gets the current store Id
      * 
      * @return integer
@@ -272,6 +278,41 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
     
     /**
+     * Updates an order with CIF once a shipment has been confirmed in order to link the shipment to the PostNL CHeckout order
+     * 
+     * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * 
+     * @return StdClass
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function updateOrder($postnlOrder)
+    {
+        $order   = $this->_getUpdateOrder($postnlOrder);
+        $webshop = $this->_getWebshop();
+        
+        $soapParams = array(
+            'Order'   => $order,
+            'Webshop' => $webshop,
+        );
+        
+        /**
+         * Send the SOAP request
+         */
+        $response = $this->call(
+            'checkout', 
+            'UpdateOrder',
+            $soapParams
+        );
+        
+        if (!is_object($response)) {
+            throw Mage::exception('TIG_PostNL', 'Invalid UpdateOrder response: ' . "\n" . var_export($response, true));
+        }
+        
+        return $response;
+    }
+    
+    /**
      * Gets a list of allowed payment methods
      * 
      * @return array
@@ -422,6 +463,125 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
         
         return $confirmOrder;
+    }
+    
+    /**
+     * Builds the updateOrder Order soap object based on the current postnl order.
+     * 
+     * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * 
+     * @return array
+     */
+    protected function _getUpdateOrder($postnlOrder)
+    {
+        $extRef   = $postnlOrder->getQuoteId();
+        $shipment = $this->_getShipments($postnlOrder);
+        
+        $updateOrder = array(
+            'ExtRef'  => $extRef,
+            'Zending' => $shipment,
+        );
+        
+        return $updateOrder;
+    }
+    
+    /**
+     * Gets a list of shipments associated with a PostNL order
+     * 
+     * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * 
+     * @return array
+     */
+    protected function _getShipments($postnlOrder)
+    {
+        $order = $postnlOrder->getOrder();
+        $shipments = $order->getShipmentsCollection();
+        
+        $shipmentData = array();
+        foreach ($shipments as $shipment) {
+            $shipmentData[] = array(
+                'ExtRef' => $this->_getReference($shipment),
+                'Pakket' => $this->_getParcels($shipment),
+            );
+        }
+        
+        return $shipmentData;
+    }
+    
+    /**
+     * Get a shipment's reference. By default this will be the shipment's increment ID
+     * 
+     * @param Mage_Sales_Model_Order_Shipment
+     * 
+     * @return string
+     * 
+     * @throws TIG_PostNL_Exception
+     * 
+     * @todo shouldn't we save this with the shipment in case the value changes later?
+     * @todo merge this with TIG_PostNL_Model_Core_Cif::_getReference()
+     */
+     protected function _getReference($shipment)
+     {
+         $storeId = $this->getStoreId();
+         $referenceType = Mage::getStoreConfig(self::XML_PATH_SHIPMENT_REFERENCE_TYPE, $storeId);
+         
+         /**
+          * Parse the reference type
+          */
+         switch ($referenceType) {
+             case '': //no break
+             case 'none':
+                 $reference = '';
+                 break;
+             case 'shipment_increment_id':
+                 $reference = $shipment->getIncrementId();
+                 break;
+             case 'order_increment_id':
+                 $reference = $shipment->getOrder()->getIncrementId();
+                 break;
+             case 'custom':
+                 $reference = Mage::getStoreConfig(self::XML_PATH_CUSTOM_SHIPMENT_REFERENCE, $storeId);
+                 break;
+             default:
+                 throw Mage::exception('TIG_PostNL', 'Invalid reference type requested: ' . $referenceType);
+         }
+         
+         /**
+          * For custom references we need to replace several optional variables
+          */
+         if ($referenceType == 'custom') {
+             $reference = str_replace('{{var shipment_increment_id}}', $shipment->getIncrementId(), $reference);
+             $reference = str_replace('{{var order_increment_id}}', $shipment->getOrder()->getIncrementId(), $reference);
+             
+             $store = Mage::getModel('core/store')->load($storeId);
+             $reference = str_replace('{{var store_frontend_name}}', $store->getFrontendName(), $reference);
+         }
+         
+         return $reference;
+     }
+    
+    /**
+     * Gets a list of parcels associated with a shipment
+     * 
+     * @param Mage_Sales_Model_Order_Shipment
+     * 
+     * @return array
+     */
+    protected function _getParcels($shipment)
+    {
+        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getid(), 'shipment_id');
+        $parcelCount = $postnlShipment->getParcelCount();
+        
+        $parcelData = array();
+        $postcode = $shipment->getShippingAddress()->getPostcode();
+        for ($i = 0; $i < $parcelCount; $i++) {
+            $parcelData[] = array(
+                'Barcode'  => $postnlShipment->getBarcode($i),
+                'Postcode' => $postcode,
+            );
+        }
+
+        return $parcelData;
     }
     
     /**

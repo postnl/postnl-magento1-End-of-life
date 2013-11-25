@@ -160,7 +160,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @var array
      */
     protected $_printerTypes = array(
-        //graphic files
+        //Graphic files
         'GraphicFile|GIF 200 dpi',
         'GraphicFile|GIF 400 dpi',
         'GraphicFile|GIF 600 dpi',
@@ -761,6 +761,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 ),
             );
         }
+        
+        if ($postnlShipment->getPakjeGemakAddress()) {
+            $addresses['Address'][] = $this->_getAddress('Delivery', $postnlShipment->getPakjeGemakAddress());
+        }
+        
         $shipmentData['Addresses'] = $addresses;
         
         /**
@@ -846,6 +851,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 
                 $address = new Varien_Object($returnAddress);
                 break;
+            case 'PakjeGemak': //no break
             case 'Reciever': //no break
             default:
                 $address = $shippingAddress;

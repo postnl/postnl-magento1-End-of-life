@@ -176,7 +176,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
          * Generate random values for the cron expression
          */
         $cronMorningHour   = mt_rand(10, 12);
-        $cronAfternoonHour = mt_rand(14, 16);
+        $cronAfternoonHour = $cronMorningHour + 4; //4 hours after the morning update
         $cronMinute        = mt_rand(0, 59);
         
         /**
@@ -221,7 +221,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $cronMinute        = mt_rand(0, 59);
         
         /**
-         * Generate a cron expr that runs on a specified minute on a specified hour.
+         * Generate a cron expr that runs on a specified minute on a specified hour twice per day.
          */
         $cronExpr = "{$cronMinute} {$cronMorningHour},{$cronAfternoonHour} * * *";
         

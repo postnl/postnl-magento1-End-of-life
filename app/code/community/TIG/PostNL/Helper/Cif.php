@@ -207,8 +207,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     protected $_shippingPhases = array(
         '1'  => 'Collection',
-        '2'  => 'Sorting',
-        '3'  => 'Distribution',
+        '2'  => 'Sorted',
+        '3'  => 'In Distribution',
         '4'  => 'Delivered',
         '99' => 'Shipment not found',
     );
@@ -447,6 +447,28 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $tempPostnlShipment->setShipment($shipment);
         
         return $tempPostnlShipment->isGlobalShipment();
+    }
+    
+    /**
+     * Check if a given shipment is a pakjegemak shipment
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment | Mage_Sales_Model_Order_Shipment $shipment
+     * 
+     * @return boolean
+     * 
+     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     */
+    public function isPakjeGemakShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            return $shipment->isGlobalShipment();
+        }
+        
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+        
+        return $tempPostnlShipment->isPakjeGemakShipment();
     }
     
     /**
