@@ -331,20 +331,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
-     * Set an array of labels that are to be saved together
-     * 
-     * @param array $labels
-     * 
-     * @return TIG_PostNL_Model_Core_Shipment
-     */
-    public function setLabelsToSave($labels)
-    {
-        $this->_labelsToSave = $labels;
-        
-        return $this;
-    }
-    
-    /**
      * Get all product codes that have extra cover
      * 
      * @return array
@@ -490,6 +476,37 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Gets the url for this shipment's main barcode
+     * 
+     * @param boolean $forceNl
+     * 
+     * @return string
+     * 
+     * @see TIG_PostNL_Helper_Carrier::getBarcodeUrl()
+     */
+    public function getBarcodeUrl($forceNl = false)
+    {
+        if ($this->hasBarcodeUrl()) {
+            return $this->getData('barcode_url');
+        }
+        
+        $barcode = $this->getMainBarcode();
+        if (!$barcode) {
+            return false;
+        }
+        
+        $helper = $this->getHelper('carrier');
+        
+        $locale = Mage::getStoreConfig('general/locale/code', $this->getStoreId());
+        $lang = substr($locale, 0, 2);
+        
+        $url = $helper->getBarcodeUrl($barcode, $this->getShippingAddress(), $lang, $forceNl);
+        
+        $this->setBarcodeUrl($url);
+        return $url;
+    }
+        
+    /**
      * Gets the shipment's shipment type for intrnational shipments.
      * If no shipment type is defined, use the default 'commercial goods'.
      * 
@@ -507,78 +524,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $shipmentType = 'Commercial Goods';
         return $shipmentType;
-    }
-    
-    /**
-     * Set an extra cover amount
-     * 
-     * @param int $amount
-     * 
-     * @return TIG_PostNL_Model_Core_Shipment
-     */
-    public function setExtraCoverAmount($amount)
-    {
-        /**
-         * Check if extra cover is allowed for this shipment
-         */
-        $productCode = $this->getProductCode();
-        $extraCoverProductCodes = $this->getExtraCoverProductCodes();
-        if (!in_array($productCode, $extraCoverProductCodes)) {
-            return $this;
-        }
-        
-        $this->setData('extra_cover_amount', $amount);
-        
-        return $this;
-    }
-    
-    /**
-     * Sets a shipment's shipment type. This is required for GlobalPack shipments
-     * 
-     * @param string $type
-     * 
-     * @return TIG_PostNL_Model_Core_Shipment
-     */
-    public function setShipmentType($type)
-    {
-        /**
-         * Only global shipments have a shipment type
-         */
-        if (!$this->isGlobalShipment()) {
-            return $this;
-        }
-        
-        /**
-         * Convert shipment type to CIF-compatible version
-         */
-        $shipmentType = str_replace('_', ' ', $type);
-        $shipmentType = ucwords($shipmentType);
-        
-        $this->setData('shipment_type', $shipmentType);
-        return $this;
-    }
-    
-    /**
-     * Set this shipment's parcel count. Verifies that the requested amount does not exceed the maximum allowed.
-     * 
-     * @param int $count
-     * 
-     * @return TIG_PostNL_Model_Core_Shipment
-     */
-    public function setParcelCount($count)
-    {
-        $maxParcelCount = Mage::getStoreConfig(self::XML_PATH_MAX_PARCEL_COUNT, Mage_Core_Model_App::ADMIN_STORE_ID);
-        if (!$maxParcelCount) {
-            $this->setData('parcel_count', $count);
-            return $this;
-        }
-        
-        if ($count > $maxParcelCount) {
-            throw Mage::exception("Number of parcels not allowed. Amount requested: {$count}, maximum allowed: {$maxParcelCount}.");
-        }
-        
-        $this->setData('parcel_count', $count);
-        return $this;
     }
     
     /**
@@ -699,7 +644,97 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         return $barcodeCollection->getItems();
     }
-
+    
+    /****************************************************************************************************************************
+     * SETTER METHODS
+     ***************************************************************************************************************************/
+    
+    /**
+     * Set an array of labels that are to be saved together
+     * 
+     * @param array $labels
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setLabelsToSave($labels)
+    {
+        $this->_labelsToSave = $labels;
+        
+        return $this;
+    }
+    
+    /**
+     * Set an extra cover amount
+     * 
+     * @param int $amount
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setExtraCoverAmount($amount)
+    {
+        /**
+         * Check if extra cover is allowed for this shipment
+         */
+        $productCode = $this->getProductCode();
+        $extraCoverProductCodes = $this->getExtraCoverProductCodes();
+        if (!in_array($productCode, $extraCoverProductCodes)) {
+            return $this;
+        }
+        
+        $this->setData('extra_cover_amount', $amount);
+        
+        return $this;
+    }
+    
+    /**
+     * Sets a shipment's shipment type. This is required for GlobalPack shipments
+     * 
+     * @param string $type
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setShipmentType($type)
+    {
+        /**
+         * Only global shipments have a shipment type
+         */
+        if (!$this->isGlobalShipment()) {
+            return $this;
+        }
+        
+        /**
+         * Convert shipment type to CIF-compatible version
+         */
+        $shipmentType = str_replace('_', ' ', $type);
+        $shipmentType = ucwords($shipmentType);
+        
+        $this->setData('shipment_type', $shipmentType);
+        return $this;
+    }
+    
+    /**
+     * Set this shipment's parcel count. Verifies that the requested amount does not exceed the maximum allowed.
+     * 
+     * @param int $count
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setParcelCount($count)
+    {
+        $maxParcelCount = Mage::getStoreConfig(self::XML_PATH_MAX_PARCEL_COUNT, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if (!$maxParcelCount) {
+            $this->setData('parcel_count', $count);
+            return $this;
+        }
+        
+        if ($count > $maxParcelCount) {
+            throw Mage::exception("Number of parcels not allowed. Amount requested: {$count}, maximum allowed: {$maxParcelCount}.");
+        }
+        
+        $this->setData('parcel_count', $count);
+        return $this;
+    }
+    
     /****************************************************************************************************************************
      * SHIPMENT LOCKING AND UNLOCKING FUNCTIONS
      ***************************************************************************************************************************/
@@ -744,7 +779,75 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /****************************************************************************************************************************
-     * IS / CAN / HAS METHODS
+     * HAS- METHODS
+     ***************************************************************************************************************************/
+    
+    /**
+     * Check if the shipment has any associated labels
+     * 
+     * @return boolean
+     */
+    public function hasLabels()
+    {
+        $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
+        $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
+        
+        if ($labelCollection->getSize() > 0) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Checks if this shipment has extra cover
+     * 
+     * @return boolean
+     */
+    public function hasExtraCover()
+    {
+        $productCode = $this->getProductCode();
+        $extraCoverProductCodes = $this->getExtraCoverProductCodes();
+        
+        if (!in_array($productCode, $extraCoverProductCodes)) {
+            return false;
+        }
+        
+        if ($this->getExtraCoverAmount() < 1) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Check if this shipment has a label of a given type
+     * 
+     * @param string $labelType
+     * 
+     * @return boolean
+     */
+    public function hasLabelType($labelType)
+    {
+        $coreResource = Mage::getSingleton('core/resource');
+        $readConn = $coreResource->getConnection('core/read');
+        
+        $select = $readConn->select();
+        $select->from($coreResource->getTableName('postnl_core/shipment_label', array('label_id')))
+               ->where('`label_type` = ?', $labelType)
+               ->where('`parent_id` = ?', $this->getId());
+        
+        $label = $readConn->fetchOne($select);
+        
+        if ($label === false) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /****************************************************************************************************************************
+     * IS- AND CAN- METHODS
      ***************************************************************************************************************************/
         
     /**
@@ -803,7 +906,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function isPakjeGemakShipment()
     {
         $pakjeGemakProductCodes = $this->getHelper('cif')->getPakjeGemakProductCodes();
-        $productCode = $this->getProductCode();
+        $productCode = $this->getData('product_code');
         
         if (!$productCode) {
             return false;
@@ -943,70 +1046,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $storeId = $this->getStoreId();
         $canSendTrackAndTrace = Mage::getStoreConfig(self::XML_PATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId);
         if (!$canSendTrackAndTrace) {
-            return false;
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Check if the shipment has any associated labels
-     * 
-     * @return boolean
-     */
-    public function hasLabels()
-    {
-        $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
-        $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
-        
-        if ($labelCollection->getSize() > 0) {
-            return true;
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Checks if this shipment has extra cover
-     * 
-     * @return boolean
-     */
-    public function hasExtraCover()
-    {
-        $productCode = $this->getProductCode();
-        $extraCoverProductCodes = $this->getExtraCoverProductCodes();
-        
-        if (!in_array($productCode, $extraCoverProductCodes)) {
-            return false;
-        }
-        
-        if ($this->getExtraCoverAmount() < 1) {
-            return false;
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Check if this shipment has a label of a given type
-     * 
-     * @param string $labelType
-     * 
-     * @return boolean
-     */
-    public function hasLabelType($labelType)
-    {
-        $coreResource = Mage::getSingleton('core/resource');
-        $readConn = $coreResource->getConnection('core/read');
-        
-        $select = $readConn->select();
-        $select->from($coreResource->getTableName('postnl_core/shipment_label', array('label_id')))
-               ->where('`label_type` = ?', $labelType)
-               ->where('`parent_id` = ?', $this->getId());
-        
-        $label = $readConn->fetchOne($select);
-        
-        if ($label === false) {
             return false;
         }
         
@@ -1537,7 +1576,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $shippingAddress = $this->getShippingAddress();
         $recipient = array(
-            'email' => $this->getShipment()->getCustomerEmail(),
+            'email' => $this->getShipment()->getOrder()->getCustomerEmail(),
             'name'  => $shippingAddress->getFirstname() . ' ' . $shippingAddress->getLastname(),
         );
         
@@ -1555,22 +1594,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             'order'          => $this->getShipment()->getOrder(),
             'postnlshipment' => $this,
             'barcode'        => $this->getMainBarcode(),
-            'barcode_url'    => $this->getHelper('carrier')->getBarcodeUrl(
-                                    $this->getMainBarcode(), 
-                                    $this->getShippingAddress()
-                                ),
+            'barcode_url'    => $this->getBarcodeUrl(false),
         );
         
         $orderModel = Mage::getConfig()->getModelClassName('sales/order');
-        $mailTemplate->sendTransactional(
+        $success = $mailTemplate->sendTransactional(
             $template,
             Mage::getStoreConfig($orderModel::XML_PATH_EMAIL_IDENTITY, $storeId),
             $recipient['email'],
             $recipient['name'],
             $templateVariables
-       );
-       
-       return $this;
+        );
+        
+        if ($success === false) {
+            throw Mage::exception('TIG_PostNL', 'Unable to send track and trace email for shipment #' . $this->getShipmentId());
+        }
+        
+        return $this;
     }
     
     /****************************************************************************************************************************
@@ -1931,7 +1971,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
              ->setConfirmedAt(false) //delete 'confirmed at' date
              ->setlabelsPrinted(0) //labels have not been printed
              ->deleteLabels() //delete all associated labels
-             ->deleteBarcodes(); //delete all associated barcodes
+             ->deleteBarcodes() //delete all associated barcodes
+             ->deleteStatusHistory(); //delete all associated status history items
              
         return $this;
     }
@@ -1974,6 +2015,28 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         return $this;
     }
+    
+    /**
+     * Deletes all status history items associated with this shipment
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function deleteStatusHistory()
+    {
+        $statusHistoryCollection = Mage::getResourceModel('postnl_core/shipment_status_history_collection');
+        $statusHistoryCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
+        
+        foreach ($statusHistoryCollection as $status) {
+            $status->delete()
+                   ->save();
+        }
+        
+        return $this;
+    }
+    
+    /****************************************************************************************************************************
+     * BEFORE- AND AFTERSAVE METHODS
+     ***************************************************************************************************************************/
     
     /**
      * Updates the shipment's attributes before saving this shipment

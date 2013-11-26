@@ -481,7 +481,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $twentyMinutesAgo = strtotime("-20 minutes", Mage::getModel('core/date')->gmtTimestamp());
         $twentyMinutesAgo = date('Y-m-d H:i:s', $twentyMinutesAgo);
         
-        $helper->cronLog("Track and trace email will be sent for all shipments that were confirmed at or before {$twentyMinutesAgo}.");
+        $helper->cronLog("Track and trace email will be sent for all shipments that were confirmed on or before {$twentyMinutesAgo}.");
         
         /**
          * Get all postnl shipments that have been confirmed over 20 minutes ago whose track & trace e-mail has not yet been sent

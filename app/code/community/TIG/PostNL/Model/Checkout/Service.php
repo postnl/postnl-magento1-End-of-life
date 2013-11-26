@@ -121,6 +121,11 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         }
         
         /**
+         * Remove all existing addresses, we're going to add new ones
+         */
+        $quote->removeAllAddresses();
+        
+        /**
          * Parse the shipping and billing addresses
          */
         $delivery = $data->Bezorging;
@@ -132,6 +137,13 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                         ->setPhone($phone);
                         
         $shippingAddress = $this->_parseAddress($shippingAddress, $shippingAddressData);
+        
+        $shippingMethod = Mage::helper('postnl/carrier')->getCurrentPostnlShippingMethod();
+        if (!$shippingAddress->getShippingMethod()) {
+            $shippingAddress->setCountryId('NL')
+                            ->setCollectShippingRates(true)
+                            ->setShippingMethod($shippingMethod);
+        }
         
         $billingAddressData = $data->Facturatie->Adres;
         $billingAddress = Mage::getModel('sales/quote_address');
@@ -162,6 +174,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $quote->setCustomerEmail($email)
               ->setShippingAddress($shippingAddress)
               ->setBillingAddress($billingAddress)
+              ->collectTotals()
               ->save();
         
         return $this;
