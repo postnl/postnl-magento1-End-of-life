@@ -114,6 +114,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
                 'width'    => '150px',
                 'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_time',
                 'filter'   => false,
+                'sortable' => false,
         ));
         
         $this->addColumn('code',
@@ -132,5 +133,24 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
         ));
 
         return parent::_prepareColumns();
+    }
+    
+    /**
+     * Gets a link to this shipment's mijnpakket page as the grid's header.
+     * 
+     * @return string 
+     */
+    public function getGridHeader()
+    {
+        $helper = Mage::helper('postnl');
+        
+        $postnlShipment = $this->getPostnlShipment();
+        $url = $postnlShipment->getBarcodeUrl();
+        
+        $urlTitle = $helper->__('Mijnpakket');
+        $urlText = $helper->__('View this shipment in mijnpakket');
+        $html = "<a href='{$url}' title='{$urlTitle}' target='_blank'>{$urlText}</a>";
+        
+        return $html;
     }
 }

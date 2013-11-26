@@ -370,14 +370,18 @@ class TIG_PostNL_Model_Carrier_Postnl
     {
         $statusModel = Mage::getModel('shipping/tracking_result_status');
         $track = $this->_getTrackByNumber($tracking);
+        $shipment = $track->getShipment();
         
-        $shippingAddress = $track->getShipment()->getShippingAddress();
+        $locale = Mage::getStoreConfig('general/locale/code', $shipment->getStoreId());
+        $lang = substr($locale, 0, 2);
+        
+        $shippingAddress = $shipment->getShippingAddress();
         
         $statusModel->setCarrier($track->getCarrierCode())
                     ->setCarrierTitle($this->getConfigData('name'))
                     ->setTracking($track->getTrackNumber())
                     ->setPopup(1)
-                    ->setUrl($this->getHelper()->getBarcodeUrl($track->getTrackNumber(), $shippingAddress));
+                    ->setUrl($this->getHelper()->getBarcodeUrl($track->getTrackNumber(), $shippingAddress, $lang, false));
                     
         return $statusModel;
     }

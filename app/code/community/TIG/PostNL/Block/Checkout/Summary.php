@@ -36,72 +36,86 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Core_ShippingStatus extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Checkout_Summary extends Mage_Sales_Block_Items_Abstract
 {
     /**
-     * Checks if a given shipment has been confirmed with PostNL
-     * 
-     * @param Mage_Sales_Model_Order_Shipment
-     * 
-     * @return boolean
+     * Get active or custom quote
+     *
+     * @return Mage_Sales_Model_Quote
      */
-    public function isConfirmed($shipment)
+    public function getQuote()
     {
-        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
-        if ($postnlShipment->getConfirmStatus() == $postnlShipment::CONFIRM_STATUS_CONFIRMED) {
-            return true;
+        if ($this->hasQuote()) {
+            return $this->getData('quote');
+        }
+        
+        $quote = Mage::registry('current_quote');
+        
+        $this->setQuote($quote);
+        return $quote;
+    }
+    
+    /**
+     * Get all visible items in the quote
+     * 
+     * @return array
+     */
+    public function getItems()
+    {
+        $quote = $this->getQuote();
+        
+        return $quote->getAllVisibleItems();
+    }
+    
+    /**
+     * Gets an optional pakje_gemak address from the quote
+     * 
+     * @return boolean | Mage_Sales_Model_Quote_Address
+     */
+    public function getPakjeGemakAddress()
+    {
+        $quote = $this->getQuote();
+        
+        $addresses = $quote->getAddressesCollection();
+        
+        foreach ($addresses as $address) {
+            if ($address->getAddressType() == 'pakje_gemak') {
+                $address = Mage::getModel('sales/quote_address')->load($address->getId());
+                return $address;
+            }
         }
         
         return false;
     }
     
     /**
-     * Checks if a given shipment has been confirmed with PostNL
-     * 
-     * @param Mage_Sales_Model_Order_Shipment
+     * Gets the shipping address's shipping description
      * 
      * @return string
      */
-    public function getConfirmedAt($shipment)
+    public function getShippingDescription()
     {
-        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
+        $address = $this->getQuote()->getShippingAddress();
+
+        if ($address->hasShippingDescription()) {
+            return $address->getShippingDescription();
+        }
         
-        $confirmedAt = Mage::helper('core')->formatDate($postnlShipment->getConfirmedAt(), 'medium', false);
-        
-        return $confirmedAt;
-    }
-    
-    /**
-     * Checks if a given shipment has been confirmed with PostNL
-     * 
-     * @param Mage_Sales_Model_Order_Shipment
-     * 
-     * @return boolean
-     */
-    public function getTrackingUrl($shipment)
-    {
-        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
-        
-        $barcodeUrl = $postnlShipment->getBarcodeUrl(true);
-        
-        $trackingUrl = "<a href={$barcodeUrl} title='mijnpakket' target='_blank'>"
-                     . $this->__('here')
-                     . '</a>';
-        
-        return $trackingUrl;
-    }
-    
-    /**
-     * Check if the PostNL module is enabled. Otherwise return an empty string.
-     * 
-     * @return string | Mage_Core_Block_Template::_toHtml()
-     */
-    protected function _toHtml()
-    {
-        if (!Mage::helper('postnl')->isEnabled()) {
+        $method = $address->getShippingMethod();
+
+        if (!$method) {
             return '';
         }
         
-        return parent::_toHtml();
+        $shippingDescription = '';
+        foreach ($address->getAllShippingRates() as $rate) {
+            if ($rate->getCode() == $method) {
+                $shippingDescription = $rate->getCarrierTitle() . ' - ' . $rate->getMethodTitle();
+                $address->setShippingDescription(trim($shippingDescription, ' -'));
+                break;
+            }
+        }
+        
+        return $shippingDescription;
     }
 }

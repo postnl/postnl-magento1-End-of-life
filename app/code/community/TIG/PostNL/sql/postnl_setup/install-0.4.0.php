@@ -111,6 +111,13 @@ $postnlShipmentTable = $installer->getConnection()
     ->addColumn('product_code', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
         ), 'Product Code')
     /**
+     * Flag that dtermines whether or not this is a PakjeGemak shipment
+     */
+    ->addColumn('is_pakje_gemak', Varien_Db_Ddl_Table::TYPE_BOOLEAN, false, array(
+        'unsigned' => true,
+        'default'  => 0,
+        ), 'Is PakjeGemak')
+    /**
      * The shipment's shipment type such as Commercial Goods, Gifts, Commercial sample etc. Only used for international shipments
      */
     ->addColumn('shipment_type', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(

@@ -67,6 +67,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
              * Check if this action is allowed. 
              */
             if (!$this->_isActionAllowed($row, $action)) {
+                continue;
             }
             
             $action = $this->_disableAction($row, $action);

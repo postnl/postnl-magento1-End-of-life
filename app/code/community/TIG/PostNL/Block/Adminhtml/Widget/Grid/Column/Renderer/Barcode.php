@@ -94,7 +94,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
             'postcode'    => $postcode,
         );
         
-        $barcodeUrl = Mage::helper('postnl/carrier')->getBarcodeUrl($value, $destinationData);
+        $barcodeUrl = Mage::helper('postnl/carrier')->getBarcodeUrl($value, $destinationData, false, true);
         
         $barcodeHtml = "<a href='{$barcodeUrl}' target='_blank'>{$value}</a>";
         

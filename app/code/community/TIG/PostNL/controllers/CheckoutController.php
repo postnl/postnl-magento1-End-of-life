@@ -82,16 +82,19 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
             
-            $this->getResponse()->setBody('NOK');
+            $this->getResponse()
+                 ->setBody('NOK');
             return $this;
         }
         
         if (!$result || $result == 'NOK') {
-            $this->getResponse()->setBody('NOK');
+            $this->getResponse()
+                 ->setBody('NOK');
             return $this;
         }
         
-        $this->getResponse()->setBody('OK');
+        $this->getResponse()
+             ->setBody('OK');
         return $this;
     }
     
@@ -123,7 +126,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
                 'orderToken'  => $orderToken,
             );
             
-            $response = json_encode($responseArray);
+            $response = Zend_Json::encode($responseArray);
             
             /**
              * Save a new PostNL order containing the current quote ID as well as the recieved order token
@@ -137,15 +140,17 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
             
-            $this->getResponse()->setBody('error');
+            $this->getResponse()
+                 ->setBody('error');
             return $this;
         }
         
         /**
          * Return the result as a json response
          */
-        $this->getResponse()->setHeader('Content-type', 'application/x-json');
-        $this->getResponse()->setBody('[' . $response . ']');
+        $this->getResponse()
+             ->setHeader('Content-type', 'application/x-json')
+             ->setBody('[' . $response . ']');
         return $this;
     }
     
@@ -156,11 +161,17 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function summaryAction()
     {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        
         $cif = Mage::getModel('postnl_checkout/cif');
         $orderDetails = $cif->readOrder();
         
         $service = Mage::getModel('postnl_checkout/service');
-        $service->updateQuoteAddresses($orderDetails);
+        $service->setQuote($quote)
+                ->updateQuoteAddresses($orderDetails)
+                ->updateQuotePayment($orderDetails);
+        
+        Mage::register('current_quote', $quote);
         
         $this->loadLayout()->renderLayout();
         return $this;

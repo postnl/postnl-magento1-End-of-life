@@ -77,10 +77,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $labelModel = Mage::getModel('postnl_core/label');
             $labelModel->createPdf($labels);
-        } catch (Exception $e) {
+        } catch (TIG_PostNL_Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
             );
             
             $this->_redirect('adminhtml/sales_shipment/index');
@@ -126,10 +134,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Confirm the shipment
              */
             $this->_confirmShipment($shipment);
-        } catch (Exception $e) {
+        } catch (TIG_PostNL_Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
             );
             
             $this->_redirect('adminhtml/sales_shipment/index');
@@ -284,6 +300,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             foreach ($orderIds as $orderId) {
                 $this->_createShipment($orderId);
             }
+        } catch (TIG_PostNL_Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
@@ -348,6 +372,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $label = Mage::getModel('postnl_core/label');
             $label->createPdf($labels);
+        } catch (TIG_PostNL_Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
@@ -412,10 +444,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $label = Mage::getModel('postnl_core/label');
             $label->createPdf($labels);
-        } catch (Exception $e) {
+        } catch (TIG_PostNL_Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
             );
             
             $this->_redirect('adminhtml/sales_shipment/index');
@@ -462,10 +502,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             foreach ($shipments as $shipment) {
                 $this->_confirmShipment($shipment);
             }
-        } catch (Exception $e) {
+        } catch (TIG_PostNL_Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
             );
             
             $this->_redirect('adminhtml/sales_shipment/index');

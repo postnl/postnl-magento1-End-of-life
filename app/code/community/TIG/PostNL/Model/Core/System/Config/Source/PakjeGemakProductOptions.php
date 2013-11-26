@@ -92,4 +92,40 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
         
         return $availableOptions;
     }
+    
+    /**
+     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
+     * 
+     * @return array
+     */
+    public function getAvailableOptions()
+    {
+        $helper = Mage::helper('postnl');
+        $options = $this->toOptionArray();
+        
+        /**
+         * Get a list of all possible options
+         */
+        $availableOptions = array();
+        
+        /**
+         * Get the list of supported product options from the shop's configuration
+         */
+        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $supportedOptionsArray = explode(',', $supportedOptions);
+        
+        /**
+         * Check each standard option to see if it's supprted
+         */
+        $availableStandardOptions = array();
+        foreach ($options as $option) {
+            if (!in_array($option['value'], $supportedOptionsArray)) {
+                continue;
+            }
+            
+            $availableOptions[] = $option;
+        }
+        
+        return $availableOptions;
+    }
 }
