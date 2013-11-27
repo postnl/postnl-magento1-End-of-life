@@ -73,12 +73,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * XML paths to default product options settings
      */
-    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION = 'postnl/cif_product_options/default_product_option';
-    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION       = 'postnl/cif_product_options/default_eu_product_option';
-    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION   = 'postnl/cif_product_options/default_global_product_option';
-    const XML_PATH_USE_ALTERNATIVE_DEFAULT         = 'postnl/cif_product_options/use_alternative_default';
-    const XML_PATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT  = 'postnl/cif_product_options/alternative_default_max_amount';
-    const XML_PATH_ALTERNATIVE_DEFAULT_OPTION      = 'postnl/cif_product_options/alternative_default_option';
+    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION   = 'postnl/cif_product_options/default_product_option';
+    const XML_PATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakjegemak_product_option';
+    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION         = 'postnl/cif_product_options/default_eu_product_option';
+    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION     = 'postnl/cif_product_options/default_global_product_option';
+    const XML_PATH_USE_ALTERNATIVE_DEFAULT           = 'postnl/cif_product_options/use_alternative_default';
+    const XML_PATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT    = 'postnl/cif_product_options/alternative_default_max_amount';
+    const XML_PATH_ALTERNATIVE_DEFAULT_OPTION        = 'postnl/cif_product_options/alternative_default_option';
     
     /**
      * XML path to weight per parcel config setting
@@ -537,6 +538,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $storeId = $this->getStoreId();
         
+        if ($this->isPakjeGemakShipment()) {
+            /**
+             * PakjeGemak default option
+             */
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION, $storeId);
+            $this->_checkProductCodeAllowed($productCode);
+            
+            return $productCode;
+        }
+        
         if ($this->isEuShipment()) {
             /**
              * EU default option
@@ -849,7 +860,19 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /****************************************************************************************************************************
      * IS- AND CAN- METHODS
      ***************************************************************************************************************************/
-        
+    
+    /**
+     * Alias for magic getIsPakjeGemak()
+     * 
+     * Please note the difference between this method and TIG_PostNL_Model_Core_Shipment::isPakjeGemakShipment
+     * 
+     * @return integer
+     */
+    public function isPakjeGemak()
+    {
+        return $this->getIsPakjeGemak();
+    }
+     
     /**
      * Check if the shipping destination of this shipment is NL
      * 
@@ -905,6 +928,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function isPakjeGemakShipment()
     {
+        if ($this->getIsPakjeGemak()) {
+            return true;
+        }
+        
         $pakjeGemakProductCodes = $this->getHelper('cif')->getPakjeGemakProductCodes();
         $productCode = $this->getData('product_code');
         
@@ -913,6 +940,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         if (in_array($productCode, $pakjeGemakProductCodes)) {
+            $this->setIsPakjeGemak(true);
             return true;
         }
         
@@ -980,7 +1008,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     
     /**
      * Checks if the current shipment is eligible for a shipping status update.
-     * Unconfirmed shipments or shipments that are already delivered are inelligible.
+     * Unconfirmed shipments, shipments whose labels are not yet printed or shipments that are already delivered are inelligible.
      * 
      * @return boolean
      */
@@ -998,6 +1026,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
         
+        if (!$this->getLabelsPrinted()) {
+            return false;
+        }
+        
+        if (!$this->hasLabels()) {
+            return false;
+        }
+        
         if (!$this->getMainBarcode()) {
             return false;
         }
@@ -1007,25 +1043,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     
     /**
      * Checks if the current shipment is eligible for a complete shipping status update.
-     * Unconfirmed shipments are inelligible.
+     * For now the same conditions apply as a regular status update. This may change in a future update of the extension.
      * 
      * @return boolean
+     * 
+     * @see TIG_PostNL_Model_Core_Shipment::canUpdateShippingStatus()
      */
     public function canUpdateCompleteShippingStatus()
     {
-        if ($this->isLocked()) {
-            return false;
-        }
-        
-        if (self::CONFIRM_STATUS_CONFIRMED != $this->getConfirmStatus()) {
-            return false;
-        }
-        
-        if (!$this->getMainBarcode()) {
-            return false;
-        }
-        
-        return true;
+        return $this->canUpdateShippingStatus();
     }
     
     /**
@@ -1855,11 +1881,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $cifHelper = $this->getHelper('cif');
         $allowedProductCodes = array();
         
-        if ($this->isDutchShipment() && !$this->isPakjeGemakShipment()) {
-            $allowedProductCodes = $cifHelper->getStandardProductCodes();
-        }
+        /**
+         * PakjeGemak shipments are also dutch shipments
+         */
         if ($this->isDutchShipment() && $this->isPakjeGemakShipment()) {
             $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes();
+        }
+        
+        /**
+         * Here we specifically want shipments that are dutch, but not PakjeGemak
+         */
+        if ($this->isDutchShipment() && !$this->isPakjeGemakShipment()) {
+            $allowedProductCodes = $cifHelper->getStandardProductCodes();
         }
         
         if ($this->isEuShipment()) {
@@ -1870,6 +1903,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $allowedProductCodes = $cifHelper->getGlobalProductCodes();
         }
         
+        /**
+         * Check if the product code is allowed
+         */
         if (!in_array($productCode, $allowedProductCodes)) {
             throw Mage::exception('TIG_PostNL', 'Product code ' . $productCode . ' is not allowed for this shipment.');
         }
@@ -2080,7 +2116,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Set a product code
          */
-        if (!$this->getProductCode()) {
+        if (!$this->getProductCode() || Mage::registry('postnl_product_option') !== null) {
             $productCode = $this->_getProductCode();
             $this->setProductCode($productCode);
         }

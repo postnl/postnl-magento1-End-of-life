@@ -40,6 +40,9 @@
 <?php $_checkoutJsUrl = $this->getCheckoutJsUrl(); ?>
 <?php $_continueUrl = $this->getContinueUrl(); ?>
 <?php $_environment = $this->getEnvironment(); ?>
+<div id="postnl-overlay" class="postnl-overlay" style="display:none;">
+    <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/postnl_spinner.gif'); ?>"/>
+</div>
 <script type="text/javascript" src="<?php echo $_checkoutJsUrl; ?>"></script>
 <script type="text/javascript">
     document.observe('dom:loaded', function() {
@@ -48,6 +51,7 @@
             initialize: function(url, successUrl, environment) {
                 this.url = url;
                 this.createIframe();
+                this.overlay = $('postnl-overlay');
                 
                 PostNL_OP_Checkout.initCheckout(
                     function() {
@@ -70,6 +74,7 @@
             },
             startCheckout: function(elem) {
                 document.body.style.cursor = 'wait';
+                this.overlay.show();
                 this.prepareOrder();
                 return false;
             },
@@ -90,6 +95,7 @@
                 var data = eval('(' + transport.responseText + ')');
                 PostNL_OP_Checkout.showCheckout(data[0].orderToken);
                 document.body.style.cursor = 'default';
+                this.overlay.hide();
             }
         };
         

@@ -492,6 +492,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                      array('eq' => $confirmedStatus)
                                  )
                                  ->addFieldToFilter(
+                                     'labels_printed', 
+                                     array('eq' => 1)
+                                 )
+                                 ->addFieldToFilter(
                                      'confirmed_at', 
                                      array('lteq' => $twentyMinutesAgo)
                                  )

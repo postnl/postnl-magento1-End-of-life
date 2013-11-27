@@ -88,6 +88,10 @@ class TIG_PostNL_Model_Core_Observer_Barcode
             if ($postnlOrder->getProductCode()) {
                 $postnlShipment->setProductCode($postnlOrder->getProductCode());
             }
+            
+            if ($postnlOrder->getIsPakjeGemak()) {
+                $postnlShipment->setIsPakjeGemak($postnlOrder->getIsPakjeGemak());
+            }
         }
         
         /**

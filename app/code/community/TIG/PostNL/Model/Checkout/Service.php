@@ -123,7 +123,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * Remove all existing addresses, we're going to add new ones
          */
-        $quote->removeAllAddresses();
+        $this->_removeAllQuoteAddresses($quote);
         
         /**
          * Parse the shipping and billing addresses
@@ -166,6 +166,11 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $pakjeGemakAddress = $this->_parseAddress($pakjeGemakAddress, $serviceLocationData);
             
             $quote->addAddress($pakjeGemakAddress);
+            
+            /**
+             * Register that this is a PakjeGemak order
+             */
+            Mage::register('quote_is_pakje_gemak', true);
         }
         
         /**
@@ -317,7 +322,9 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                 continue;
             }
             
+            $address->load($address->getId());
             $orderAddress = Mage::getModel('sales/convert_quote')->addressToOrderAddress($address);
+            
             $order->addAddress($orderAddress);
             
             $orderAddress->save();
@@ -407,6 +414,15 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             && isset($data->Bezorging->ProductCode)
         ) {
             $postnlOrder->setProductCode($data->Bezorging->ProductCode);
+        }
+        
+        /**
+         * Check if this is a PakjeGemak order. If so, save the PostNL Order as such
+         */
+        if (Mage::registry('quote_is_pakje_gemak')) {
+            $postnlOrder->setIsPakjeGemak(true);
+            
+            Mage::unRegister('quote_is_pakje_gemak');
         }
         
         $postnlOrder->save();
@@ -618,6 +634,24 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $webshopId = $data->Webshop->IntRef;
         if (Mage::getStoreConfig(self::XML_PATH_WEBSHOP_ID, $this->getStoreId()) != $webshopId) {
             throw Mage::exception('TIG_PostNL', 'Invalid data supplied.');
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Removes all addresses associated with a quote. The quote's regular method to remove all addresses (removeAllAddresses())
+     * only removes billing and shipping addresses. This method truly removes all addresses (including pakje_gemak addresses).
+     * 
+     * @param Mage_Sales_Model_Quote &$quote
+     * 
+     * @return TIG_PostNL_Model_Checkout_Service
+     */
+    protected function _removeAllQuoteAddresses(&$quote)
+    {
+        $addresses = $quote->getAllAddresses();
+        foreach ($addresses as $address) {
+            $quote->removeAddress($address);
         }
         
         return $this;

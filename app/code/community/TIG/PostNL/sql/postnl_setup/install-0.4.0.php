@@ -111,7 +111,7 @@ $postnlShipmentTable = $installer->getConnection()
     ->addColumn('product_code', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
         ), 'Product Code')
     /**
-     * Flag that dtermines whether or not this is a PakjeGemak shipment
+     * Flag that determines whether or not this is a PakjeGemak shipment
      */
     ->addColumn('is_pakje_gemak', Varien_Db_Ddl_Table::TYPE_BOOLEAN, false, array(
         'unsigned' => true,
@@ -352,6 +352,13 @@ $postnlOrderTable = $installer->getConnection()
     ->addColumn('product_code', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
         'nullable' => true,
         ), 'Product Code')
+    /**
+     * Flag that determines whether or not this is a PakjeGemak shipment
+     */
+    ->addColumn('is_pakje_gemak', Varien_Db_Ddl_Table::TYPE_BOOLEAN, false, array(
+        'unsigned' => true,
+        'default'  => 0,
+        ), 'Is PakjeGemak')
     /**
      * Date on which the shipment has to be confirmed in order to be delivered on time
      */
