@@ -39,6 +39,17 @@
 class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Template
 {
     /**
+     * Base URLs of the checkout button
+     */
+    const CHECKOUT_BUTTON_TEST_BASE_URL = 'https://tppcb-sandbox.e-id.nl/Button/Checkout';
+    const CHECKOUT_BUTTON_LIVE_BASE_URL = 'https://checkout.postnl.nl/Button/Checkout';
+    
+    /**
+     * XML path to public webshop ID setting
+     */
+    const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/checkout/public_webshop_id';
+    
+    /**
      * Gets the checkout URL
      * 
      * @return string
@@ -90,6 +101,43 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
         }
         
         return true;
+    }
+    
+    /**
+     * Gets this webshop's public ID
+     * 
+     * @return string
+     */
+    public function getPublicWebshopId()
+    {
+        if ($this->hasPublicWebshopId()) {
+            return $this->getData('public_webshop_id');
+        }
+        
+        $webshopId = Mage::getStoreConfig(self::XML_PATH_PUBLIC_WEBSHOP_ID, Mage::app()->getStore()->getId());
+        
+        $this->setPublicWebshopId($webshopId);
+        return $webshopId;
+    }
+    
+    /**
+     * Gets the checkout button src attribute
+     * 
+     * @return string
+     * 
+     * @todo fix test / live bas url
+     */
+    public function getSrc()
+    {
+        //TODO change to live base url
+        $baseUrl = self::CHECKOUT_BUTTON_TEST_BASE_URL;
+        $webshopId = $this->getPublicWebshopId();
+        
+        $url =  $baseUrl 
+             . '?publicId=' . $webshopId
+             . '&format=Large&type=Orange';
+                  
+        return $url;
     }
     
     /**

@@ -64,6 +64,18 @@
         </reference>
     </checkout_onepage_index>
     
+    <onestepcheckout_index_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/onepage.css</file>
+            </action>
+        </reference>
+        <reference name="before_body_end">
+            <block type="postnl_checkout/onepage_js" name="postnl_checkout_js" template="TIG/PostNL/checkout/onepage/js.phtml"/>
+        </reference>
+    </onestepcheckout_index_index>
+    
     <postnl_checkout_summary>
         <reference name="root">
             <action method="setTemplate"><template>page/2columns-left.phtml</template></action>

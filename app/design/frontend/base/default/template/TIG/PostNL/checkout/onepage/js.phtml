@@ -41,7 +41,10 @@
 <?php $_continueUrl = $this->getContinueUrl(); ?>
 <?php $_environment = $this->getEnvironment(); ?>
 <div id="postnl-overlay" class="postnl-overlay" style="display:none;">
-    <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/postnl_spinner.gif'); ?>"/>
+    <div class="overlay-content">
+        <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/postnl_spinner.gif'); ?>" />
+        <p class="message"><?php echo $this->__('Loading...'); ?></p>
+    </div>
 </div>
 <script type="text/javascript" src="<?php echo $_checkoutJsUrl; ?>"></script>
 <script type="text/javascript">
@@ -55,6 +58,7 @@
                 
                 PostNL_OP_Checkout.initCheckout(
                     function() {
+                        $('postnl-overlay').show();
                         window.location = successUrl;
                     }, 
                     function() {
