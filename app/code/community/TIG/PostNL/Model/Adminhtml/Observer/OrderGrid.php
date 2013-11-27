@@ -179,6 +179,17 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             )
         );
         
+        /**
+         * Join tig_postnl_order table
+         */
+        $select->joinLeft(
+            array('postnl_order' => $resource->getTableName('postnl_checkout/order')),
+            '`main_table`.`entity_id`=`postnl_order`.`order_id`',
+            array(
+                'is_pakje_gemak' => 'postnl_order.is_pakje_gemak',
+            )
+        );
+        
         return $this;
     }
     
@@ -205,9 +216,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'filter_condition_callback' => array($this, '_filterShipmentType'),
                 'sortable'                  => false,
                 'options'                   => array(
-                    'nl'     => $helper->__('Domestic'),
-                    'eu'     => $helper->__('EPS'),
-                    'global' => $helper->__('GlobalPack'),
+                    'nl'          => $helper->__('Domestic'),
+                    'pakje_gemak' => $helper->__('PakjeGemak'),
+                    'eu'          => $helper->__('EPS'),
+                    'global'      => $helper->__('GlobalPack'),
                 ),
             ),
             'shipping_name'
@@ -334,6 +346,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $collection->addFieldToFilter('order.shipping_method', array('in' => $postnlShippingMethods));
+        
+        /**
+         * If the filter condition is PakjeGemak, filter out all non-PakjeGemak orders
+         */
+        if ($filterCond == 'pakje_gemak') {
+            $collection->addFieldToFilter('is_pakje_gemak', array('eq' => 1));
+            
+            return $this;
+        }
         
         /**
          * If the filter condition is NL, filter out all orders not being shipped to the Netherlands

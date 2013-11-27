@@ -43,6 +43,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
      * Additional column names used
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
+    const IS_PAKJE_GEMAK_COLUMN  = 'is_pakje_gemak';
     
     /**
      * Renders the column value as a shipment type value (Domestic, EPS or GlobalPack)
@@ -68,6 +69,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         $value = $row->getData($this->getColumn()->getIndex());
         if (is_null($value) || $value === '') {
             return '';
+        }
+        
+        if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
+            $renderedValue = Mage::helper('postnl')->__('PakjeGemak');
+            return $renderedValue;
         }
         
         /**

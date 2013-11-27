@@ -337,10 +337,12 @@
         		<test_password/>
         		<customer_code/>
         		<customer_number/>
-        		<company_name/>
-        		<contact_name/>
-        		<contact_email/>
         		<collection_location/>
+        		<global_barcode_type/>
+        		<global_barcode_range/>
+                <company_name/>
+                <contact_name/>
+                <contact_email/>
         	</cif>
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
@@ -350,7 +352,7 @@
                 <custom_shipment_reference/>
                 <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
                 <show_shipment_type_column>1</show_shipment_type_column> <!-- Show the shipment type column -->
-                <shipping_grid_columns>shipping_description,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show all optional columns -->
+                <shipping_grid_columns>shipping_description,shipment_type,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show all optional columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
                 <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
@@ -399,8 +401,8 @@
         		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
         		<alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
         		<alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
+                <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- PakjeGemak + signature on delivery -->
         		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
-        		<default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- PakjeGemak + signature on delivery (Not currently used) -->
                 <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
         	</cif_product_options>
         	<cif_globalpack_settings>

@@ -52,6 +52,10 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
                 'label' => $helper->__('Shipping Method')
             ),
             array(
+                'value' => 'shipment_type',
+                'label' => $helper->__('Shipment Type')
+            ),
+            array(
                 'value' => 'labels_printed',
                 'label' => $helper->__('Labels Printed')
             ),
