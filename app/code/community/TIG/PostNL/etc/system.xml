@@ -256,13 +256,17 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</active>
-                    	<activate_button>
+                    	<activated_header translate="label" module="postnl">
+                            <label><![CDATA[The extension has been activated. Click <a href="%s">here</a> to be able to activate the extension under a different name.]]></label>
+                            <frontend_model>postnl_adminhtml/system_config_activatedFieldHeader</frontend_model>
                             <sort_order>20</sort_order>
-                            <frontend_model>postnl_adminhtml/system_config_activateButton</frontend_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                    	</activate_button>
+                            <depends>
+                                <is_activated>2</is_activated>
+                            </depends>
+                    	</activated_header>
                         <email translate="label comment" module="postnl">
                             <label>Email</label>
                             <comment>During activation 2 secure keys will be sent to this email address.</comment>
@@ -271,6 +275,9 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <depends>
+                                <is_activated>0</is_activated>
+                            </depends>
                         </email>
                         <unique_key translate="label" module="postnl">
                             <label>Unique key</label>
@@ -280,6 +287,9 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <depends>
+                                <is_activated>1</is_activated>
+                            </depends>
                         </unique_key>
                         <private_key translate="label" module="postnl">
                             <label>Private key</label>
@@ -289,7 +299,30 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <depends>
+                                <is_activated>1</is_activated>
+                            </depends>
                         </private_key>
+                        <activate_button>
+                            <frontend_model>postnl_adminhtml/system_config_activateButton</frontend_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <is_activated>0</is_activated>
+                            </depends>
+                        </activate_button>
+                        <finish_activation_button>
+                            <frontend_model>postnl_adminhtml/system_config_activateButton</frontend_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <is_activated>1</is_activated>
+                            </depends>
+                        </finish_activation_button>
                    </fields>
 				</general>
 				<cif translate="label comment" module="postnl">

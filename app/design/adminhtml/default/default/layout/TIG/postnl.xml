@@ -2,7 +2,7 @@
 <layout>
     <default>
         <reference name="notifications">
-            <block type="postnl/adminhtml_cronNotification" name="postnl_cron_notification" template="TIG/PostNL/cron_notification.phtml"></block>
+            <block type="postnl/adminhtml_cronNotification" name="postnl_cron_notification" template="TIG/PostNL/cron_notification.phtml"/>
         </reference>
     </default>
     
@@ -12,6 +12,7 @@
         		<type>skin_css</type>
         		<name>css/TIG/PostNL/system_config_edit.css</name>
         	</action>
+        	<block type="adminhtml/abstract" name="postnl_activate_button_js" template="TIG/PostNL/system/config/activate_button_js.phtml" output="tohtml" after="-"/>
         </reference>
     </adminhtml_system_config_edit>
     
