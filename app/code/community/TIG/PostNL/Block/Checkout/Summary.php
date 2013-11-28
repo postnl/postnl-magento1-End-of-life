@@ -39,6 +39,11 @@
 class TIG_PostNL_Block_Checkout_Summary extends Mage_Sales_Block_Items_Abstract
 {
     /**
+     * PakjeGemak address type
+     */
+    const PAKJE_GEMAK_ADDRESS_TYPE = 'pakje_gemak';
+    
+    /**
      * Get active or custom quote
      *
      * @return Mage_Sales_Model_Quote
@@ -79,7 +84,7 @@ class TIG_PostNL_Block_Checkout_Summary extends Mage_Sales_Block_Items_Abstract
         $addresses = $quote->getAddressesCollection();
         
         foreach ($addresses as $address) {
-            if ($address->getAddressType() == 'pakje_gemak') {
+            if ($address->getAddressType() == self::PAKJE_GEMAK_ADDRESS_TYPE) {
                 $address = Mage::getModel('sales/quote_address')->load($address->getId());
                 return $address;
             }

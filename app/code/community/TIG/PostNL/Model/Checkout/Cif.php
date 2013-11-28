@@ -54,6 +54,8 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XML_PATH_ALLOW_PRICE_OVERVIEW    = 'postnl/checkout/allow_price_overview';
     const XML_PATH_AGREE_CONDITIONS        = 'postnl/checkout/agree_conditions';
     const XML_PATH_SERVICE_URL             = 'postnl/checkout/service_url';
+    const XML_PATH_USE_MOBILE              = 'postnl/checkout/use_mobile';
+    const XML_PATH_USE_DOB                 = 'postnl/checkout/use_dob';
     
     /**
      * XML path to available payment methods.
@@ -66,6 +68,20 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     const XML_PATH_SHIPMENT_REFERENCE_TYPE   = 'postnl/cif_labels_and_confirming/shipment_reference_type';
     const XML_PATH_CUSTOM_SHIPMENT_REFERENCE = 'postnl/cif_labels_and_confirming/custom_shipment_reference';
+    
+    /**
+     * Check if the module is set to test mode
+     * 
+     * @see TIG_PostNL_Helper_Checkout::isTestMode()
+     * 
+     * @return boolean
+     */
+    public function isTestMode($storeId = false)
+    {
+        $testMode = Mage::helper('postnl/checkout')->isTestMode($storeId);
+        
+        return $testMode;
+    }
     
     /**
      * Gets the current store Id
@@ -110,31 +126,21 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Prepares a new PostNL checkout order
      * 
+     * @param null|Mage_Sales_Model_Quote $quote
+     * 
      * @return string
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function prepareOrder()
+    public function prepareOrder($quote = null)
     {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        if (is_null($quote)) {
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+        }
         
         if (!$quote) {
             throw Mage::exception('TIG_PostNL', 'No quote available to initiate PostNL Checkout.');
         }
-        
-        /**
-         * Set the quote's shipping method and collect it's totals
-         */
-        $shippingMethod = Mage::helper('postnl/carrier')->getCurrentPostnlShippingMethod();
-        $shippingAddress = $quote->getShippingAddress();
-        if (!$shippingAddress->getShippingMethod()) {
-            $shippingAddress->setCountryId('NL')
-                            ->setCollectShippingRates(true)
-                            ->setShippingMethod($shippingMethod);
-        }
-              
-        $quote->collectTotals()
-              ->save();
         
         $this->setStoreId($quote->getStoreId());
         
@@ -144,6 +150,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $paymentMethods      = $this->_getPaymentMethods();
         $communictionOptions = $this->_getCommunicationOptions();
         $customer            = $this->_getCustomer();
+        $optional            = $this->_getOptional();
         $contact             = $this->_getContact();
         $service             = $this->_getService();
         $order               = $this->_getOrder($quote);
@@ -169,6 +176,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         if ($customer) {
             $soapParams['Consument'] = $customer;
+        }
+        
+        if (!empty($optional)) {
+            $soapParams['Optional'] = $optional;
         }
         
         if ($contact) {
@@ -392,6 +403,34 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
         
         return $customer;
+    }
+    
+    /**
+     * Gets two optional fields. Both default to false.
+     * 
+     * @return array
+     */
+    protected function _getOptional()
+    {
+        $storeId = $this->getStoreId();
+        
+        $optional = 
+            array(
+                'MobileNumber' => 'False',
+                'BirthDate' => 'False',
+            );
+        
+        $useMobile = Mage::getStoreConfigFlag(self::XML_PATH_USE_MOBILE, $storeId);
+        if ($useMobile) {
+            $optional['MobileNumber'] = 'True';
+        }
+        
+        $useDob = Mage::getStoreConfigFlag(self::XML_PATH_USE_DOB, $storeId);
+        if ($useDob) {
+            $optional['BirthDate'] = 'True';
+        }
+        
+        return $optional;
     }
     
     /**
