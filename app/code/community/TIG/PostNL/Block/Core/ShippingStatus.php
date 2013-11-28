@@ -39,53 +39,56 @@
 class TIG_PostNL_Block_Core_ShippingStatus extends Mage_Core_Block_Template
 {
     /**
-     * Available status classes for the status bar html element
-     */   
-    const CLASS_UNCONFIRMED  = '';
-    const CLASS_COLLECTION   = 'status-collection';
-    const CLASS_DISTRIBUTION = 'status-distribution';
-    const CLASS_TRANSIT      = 'status-transit';
-    const CLASS_DELIVERED    = 'status-delivered';
-    const CLASS_NOT_POSTNL   = 'hidden';
+     * Checks if a given shipment has been confirmed with PostNL
+     * 
+     * @param Mage_Sales_Model_Order_Shipment
+     * 
+     * @return boolean
+     */
+    public function isConfirmed($shipment)
+    {
+        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
+        if ($postnlShipment->getConfirmStatus() == $postnlShipment::CONFIRM_STATUS_CONFIRMED) {
+            return true;
+        }
+        
+        return false;
+    }
     
     /**
-     * Get the current shipping status for a shipment
+     * Checks if a given shipment has been confirmed with PostNL
      * 
-     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param Mage_Sales_Model_Order_Shipment
      * 
      * @return string
      */
-    public function getShippingStatus($shipment)
+    public function getConfirmedAt($shipment)
     {
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
         
-        /**
-         * Check if the postnl shipment exists. Otherwise it was probably not shipped using PostNL.
-         * Even if it was, we would not be able to check the status of it anyway.
-         */
-        if (!$postnlShipment->getId()) {
-            return self::CLASS_NOT_POSTNL;
-        }
+        $confirmedAt = Mage::helper('core')->formatDate($postnlShipment->getConfirmedAt(), 'medium', false);
         
-        switch ($postnlShipment->getShippingPhase()) {
-            case '01': 
-                $class = self::CLASS_COLLECTION;
-                break;
-            case '02': 
-                $class = self::CLASS_DISTRIBUTION;
-                break;
-            case '03': 
-                $class = self::CLASS_TRANSIT;
-                break;
-            case '04': 
-                $class = self::CLASS_DELIVERED;
-                break;
-            default:
-                $class = self::CLASS_UNCONFIRMED;
-                break;
-        }
+        return $confirmedAt;
+    }
+    
+    /**
+     * Checks if a given shipment has been confirmed with PostNL
+     * 
+     * @param Mage_Sales_Model_Order_Shipment
+     * 
+     * @return boolean
+     */
+    public function getTrackingUrl($shipment)
+    {
+        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
         
-        return $class;
+        $barcodeUrl = $postnlShipment->getBarcodeUrl(true);
+        
+        $trackingUrl = "<a href={$barcodeUrl} title='mijnpakket' target='_blank'>"
+                     . $this->__('here')
+                     . '</a>';
+        
+        return $trackingUrl;
     }
     
     /**

@@ -55,27 +55,28 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         $helper = Mage::helper('postnl');
         $availableOptions = array(
             array(
-                'value' => '4950',
-                'label' => $helper->__('EU Pack Special (B2B)'),
-            ),
-            array(
                 'value' => '4952',
                 'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
+            ),
+            array(
+                'value' => '4955',
+                'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                'isBelgiumOnly' => true,
             ),
             /**
              * These are not currently implemented
              * 
              * TODO implement these options
              */
-            /*array(
+            /*
+            array(
+                'value' => '4950',
+                'label' => $helper->__('EU Pack Special (B2B)'),
+            ),
+            array(
                 'value' => '4954',
                 'label' => $helper->__('EU Pack Special COD (Belgium and Luxembourg only)'),
             ),*/
-            array(
-                'value' => '4955',
-                'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
-                'isBelgiumOnly' => true,
-            ),
         );
         
         return $availableOptions;

@@ -60,12 +60,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         $file = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
         
         if (is_file($file)) {
-            if ($this->_lockIsExpired()){
-                unlink($file);//remove file 
-                $this->_lockFile = fopen($file, 'x');//create new lock file
-            } else {
-                $this->_lockFile = fopen($file, 'w');
-            }
+            $this->_lockFile = fopen($file, 'w');
         } else {
             $this->_lockFile = fopen($file, 'x');
         }
@@ -178,6 +173,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         if($time <= $fiveMinAgo){
             $fp = fopen($file,'w');
             flock($fp, LOCK_UN);
+            unlink($file);
             return true;
         }
         

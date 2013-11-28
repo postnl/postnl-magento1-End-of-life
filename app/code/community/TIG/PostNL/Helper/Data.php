@@ -69,6 +69,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_DEBUG_MODE = 'postnl/advanced/debug_mode';
     
     /**
+     * XML path to 'is_activated' flag
+     */
+    const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
+    
+    /**
      * Required configuration fields
      * 
      * @var array
@@ -76,10 +81,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_requiredFields = array(
         'postnl/cif/customer_code',
         'postnl/cif/customer_number',
+        'postnl/cif/collection_location',
         'postnl/cif_labels_and_confirming/label_size',
         'postnl/cif_sender_address/firstname',
         'postnl/cif_sender_address/lastname',
-        'postnl/cif_sender_address/street_full',
+        'postnl/cif_sender_address/streetname',
+        'postnl/cif_sender_address/housenumber',
         'postnl/cif_sender_address/postcode',
         'postnl/cif_sender_address/city',
     );
@@ -248,7 +255,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage::app()->getStore()->getId();
         }
         
-        $testMode = (bool) Mage::getStoreConfig(self::XML_PATH_TEST_MODE, $storeId);
+        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
         
         Mage::register('postnl_test_mode', $testMode);
         return $testMode;
@@ -269,6 +276,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     {
         if (Mage::registry('postnl_is_configured') !== null) {
             return Mage::registry('postnl_is_configured');
+        }
+        
+        /**
+         * Check if the module has been activated
+         */
+        $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($isActivated != 2) {
+            Mage::register('postnl_is_configured', false);
+            return false;
         }
         
         if ($storeId === false) {

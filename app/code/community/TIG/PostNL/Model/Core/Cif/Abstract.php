@@ -59,6 +59,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const WSDL_CONFIRMING_NAME      = 'ConfirmingWebService';
     const WSDL_LABELLING_NAME       = 'LabellingWebService';
     const WSDL_SHIPPING_STATUS_NAME = 'ShippingStatusWebService';
+    const WSDL_CHECKOUT_NAME        = 'WebshopCheckoutWebService';
     
     /**
      * header security namespace. Used for constructing the SOAP headers array
@@ -81,6 +82,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const XML_PATH_CIF_VERSION_LABELLING      = 'postnl/advanced/cif_version_labelling';
     const XML_PATH_CIF_VERSION_CONFIRMING     = 'postnl/advanced/cif_version_confirming';
     const XML_PATH_CIF_VERSION_SHIPPINGSTATUS = 'postnl/advanced/cif_version_shippingstatus';
+    const XML_PATH_CIF_VERSION_CHECKOUT       = 'postnl/advanced/cif_version_checkout';
     
     /**
      * Gets the username from system/config. Test mode determines if live or test username is used.
@@ -142,7 +144,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function call($wsdlType, $method, $soapParams)
+    public function call($wsdlType, $method, $soapParams = null)
     {
         try {
             if (!$this->_getUserName() || !$this->_getPassword()) {
@@ -219,6 +221,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * - confirming
      * - labelling
      * - shippingstatus
+     * - checkout
      * 
      * @param string $wsdlType
      * 
@@ -252,6 +255,10 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_SHIPPINGSTATUS, $adminStoreId);
                 $wsdlFileName = self::WSDL_SHIPPING_STATUS_NAME;
                 break;
+            case 'checkout':
+                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_CHECKOUT, $adminStoreId);
+                $wsdlFileName = self::WSDL_CHECKOUT_NAME;
+                break;
             default:
                 throw Mage::exception('TIG_PostNL', 'Chosen wsdl type is not supported: ' . $wsdlType);
         }
@@ -268,17 +275,16 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         if ($this->isTestMode()) {
             $wsdlUrl = self::TEST_WSDL_BASE_URL;
         } else {
-            $wsdlUrl =self::WSDL_BASE_URL;
+            $wsdlUrl = self::WSDL_BASE_URL;
         }
         
         /**
          * Format the final wsdl URL
          */
         $wsdlUrl .= $wsdlFileName
-                   . DS
+                   . '/'
                    . $wsdlversion
-                   . DS
-                   . '?wsdl';
+                   . '/?wsdl';
         
         return $wsdlUrl;
     }

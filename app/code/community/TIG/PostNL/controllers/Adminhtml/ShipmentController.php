@@ -63,7 +63,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Load the shipment and check if it exists and is valid
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if ($shipment->getOrder()->getShippingMethod() != Mage::helper('postnl/carrier')->getPostnlShippingMethod()) {
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
                 throw Mage::exception('TIG_PostNL', 'This action cannot be used on non-PostNL shipments.');
             }
             
@@ -77,10 +78,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $labelModel = Mage::getModel('postnl_core/label');
             $labelModel->createPdf($labels);
-        } catch (Exception $e) {
+        } catch (TIG_PostNL_Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
             );
             
             $this->_redirect('adminhtml/sales_shipment/index');
@@ -89,7 +98,6 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         
         $this->_checkForWarnings();
         
-        $this->_redirect('adminhtml/sales_shipment/index');
         return $this;
     }
 
@@ -118,7 +126,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Load the shipment and check if it exists and is valid
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if ($shipment->getOrder()->getShippingMethod() != Mage::helper('postnl/carrier')->getPostnlShippingMethod()) {
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
                 throw Mage::exception('TIG_PostNL', 'This action cannot be used on non-PostNL shipments.');
             }
             
@@ -126,10 +135,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Confirm the shipment
              */
             $this->_confirmShipment($shipment);
-        } catch (Exception $e) {
+        } catch (TIG_PostNL_Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
             );
             
             $this->_redirect('adminhtml/sales_shipment/index');
@@ -284,10 +301,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             foreach ($orderIds as $orderId) {
                 $this->_createShipment($orderId);
             }
-        } catch (Exception $e) {
+        } catch (TIG_PostNL_Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('An error occurred whilst creating processing the shipment(s): %s', $e->getMessage())
+            );
+            
+            $this->_redirect('adminhtml/sales_order/index');
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
             );
             
             $this->_redirect('adminhtml/sales_order/index');
@@ -348,10 +373,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $label = Mage::getModel('postnl_core/label');
             $label->createPdf($labels);
-        } catch (Exception $e) {
+        } catch (TIG_PostNL_Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
             );
             
             $this->_redirect('adminhtml/sales_shipment/index');
@@ -360,7 +393,6 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         
         $this->_checkForWarnings();
         
-        $this->_redirect('adminhtml/sales_shipment/index');
         return $this;
     }
     
@@ -412,10 +444,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $label = Mage::getModel('postnl_core/label');
             $label->createPdf($labels);
-        } catch (Exception $e) {
+        } catch (TIG_PostNL_Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
             );
             
             $this->_redirect('adminhtml/sales_shipment/index');
@@ -424,7 +464,6 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         
         $this->_checkForWarnings();
         
-        $this->_redirect('adminhtml/sales_shipment/index');
         return $this;
     }
     
@@ -462,10 +501,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             foreach ($shipments as $shipment) {
                 $this->_confirmShipment($shipment);
             }
-        } catch (Exception $e) {
+        } catch (TIG_PostNL_Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('adminhtml/session')->addError(
                 $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
             );
             
             $this->_redirect('adminhtml/sales_shipment/index');
@@ -568,7 +615,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         /**
          * Load the PostNL shipment and check if it already has a label
          */
-        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
+       $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
         if ($postnlShipment->getLabels()) {
             return $postnlShipment->getlabels();
         }
@@ -588,11 +635,23 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                            ->addTrackingCodeToShipment();
         }
         
-        if ($confirm === true) {
+        if ($confirm === true 
+            && !$postnlShipment->hasLabels()
+            && $postnlShipment->getConfirmStatus() != $postnlShipment::CONFIRM_STATUS_CONFIRMED
+        ) {
             /**
              * Confirm the shipment and request a new label
              */
             $postnlShipment->confirmAndGenerateLabel()
+                           ->addTrackingCodeToShipment()
+                           ->save();
+        } elseif ($confirm === true
+            && $postnlShipment->getConfirmStatus() != $postnlShipment::CONFIRM_STATUS_CONFIRMED
+        ) {
+            /**
+             * Confirm the shipment
+             */
+            $postnlShipment->confirm()
                            ->addTrackingCodeToShipment()
                            ->save();
         } else {
@@ -683,10 +742,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         }
         
         $shipments = array();
-        $postnlShippingMethod = Mage::helper('postnl/carrier')->getPostnlShippingMethod();
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         foreach ($shipmentIds as $shipmentId) {
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if ($shipment->getOrder()->getShippingMethod() != $postnlShippingMethod) {
+            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
                 throw Mage::exception('TIG_PostNL', 'This action cannot be used on non-PostNL shipments.');
             }
             

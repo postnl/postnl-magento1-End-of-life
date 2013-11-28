@@ -62,6 +62,10 @@
                     selectedMassAction = massActionSelect[massActionSelect.selectedIndex];
                     if (selectedMassAction.value == 'create_shipments') {
                         productOptionSelect = $('product_options')
+                        if (!productOptionSelect) {
+                            extraCoverDialog.open();
+                            return;
+                        }
                         selectedProductOption = productOptionSelect[productOptionSelect.selectedIndex];
                         
                         if (productOptions.indexOf(selectedProductOption.value) > -1) {

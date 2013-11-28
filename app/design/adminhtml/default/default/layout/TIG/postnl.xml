@@ -2,7 +2,7 @@
 <layout>
     <default>
         <reference name="notifications">
-            <block type="postnl/adminhtml_cronNotification" name="postnl_cron_notification" template="TIG/PostNL/cron_notification.phtml"></block>
+            <block type="postnl/adminhtml_cronNotification" name="postnl_cron_notification" template="TIG/PostNL/cron_notification.phtml"/>
         </reference>
     </default>
     
@@ -12,6 +12,7 @@
         		<type>skin_css</type>
         		<name>css/TIG/PostNL/system_config_edit.css</name>
         	</action>
+        	<block type="adminhtml/abstract" name="postnl_activate_button_js" template="TIG/PostNL/system/config/activate_button_js.phtml" output="tohtml" after="-"/>
         </reference>
     </adminhtml_system_config_edit>
     
@@ -38,11 +39,11 @@
         <reference name="head">
             <action method="addItem">
                 <type>skin_js</type>
-                <name>js/TIG/PostNL/extra_cover.js</name>
+                <name>js/TIG/PostNL/shipment_options.js</name>
             </action>
         </reference>
-    	<reference name="content">
-    		<block type="postnl_adminhtml/sales_order_shipment_create_productOptions" name="postnl_shipment_create_product_options" template="TIG/PostNL/sales/order/shipment/create/product_options.phtml" />
+    	<reference name="before_body_end">
+    		<block type="postnl_adminhtml/sales_order_shipment_create_shipmentOptions" name="postnl_shipment_create_shipment_options" template="TIG/PostNL/sales/order/shipment/create/shipment_options.phtml" />
     	</reference>
     </adminhtml_sales_order_shipment_new>
     
@@ -63,7 +64,7 @@
     	</reference>
         <reference name="content">
             <!-- Contains some javascript and html to add a shipping status bar -->
-            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/view/shipping_status.phtml" before="-"/>
+            <block type="postnl_adminhtml/sales_order_shipment_view_shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/view/shipping_status.phtml" before="-"/>
         </reference>
         <reference name="left">
             <!-- Tabs container -->
@@ -91,7 +92,7 @@
     
     <postnl_adminhtml_shipment_statushistory>
         <block type="core/text_list" name="root" output="toHtml">
-            <block type="postnl_adminhtml/sales_order_shipment_view_tab_statusHistory" name="sales_order_shipment_status_history"/>
+            <block type="postnl_adminhtml/sales_order_shipment_view_tab_statusHistory" name="sales_order_shipment_status_history" template="TIG/PostNL/sales/order/shipment/view/tab/status_history.phtml"/>
         </block>
     </postnl_adminhtml_shipment_statushistory>
 

@@ -38,6 +38,20 @@
  */
 class TIG_PostNL_Model_Core_Resource_Shipment_Collection extends TIG_PostNL_Model_Resource_Db_Collection_Postnl
 {
+    /**
+     * Event prefix
+     *
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_shipment_collection';
+
+    /**
+     * Event object
+     *
+     * @var string
+     */
+    protected $_eventObject = 'postnl_shipment_collection';
+    
     public function _construct()
     {    
         parent::_construct();

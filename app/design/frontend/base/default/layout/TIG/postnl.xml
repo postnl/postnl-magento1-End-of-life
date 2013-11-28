@@ -40,17 +40,55 @@
 -->
 <layout version="0.1.0">
     
-    <!-- Uncomment this in order to show the current shipping phase of a customer's shipments on their acount page -->
-    <!-- <sales_order_shipment>
-    	<reference name="head">
-    		<action method="addItem">
-    			<type>skin_css</type>
-    			<name>css/TIG/PostNL/shipping_status.css</name>
-    		</action>
-    	</reference>
+    <sales_order_shipment>
         <reference name="my.account.wrapper">
             <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
         </reference>
-    </sales_order_shipment> -->
+    </sales_order_shipment>
     
+    <checkout_cart_index>
+        <reference name="checkout.cart.methods">
+            <block type="postnl_checkout/cart_checkoutLink" name="checkout.cart.methods.postnlcheckout" template="TIG/PostNL/checkout/cart/link.phtml" before="checkout.cart.methods.multishipping"/>
+        </reference>
+    </checkout_cart_index>
+    
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/onepage.css</file>
+            </action>
+            <block type="postnl_checkout/onepage_js" name="postnl_checkout_js" template="TIG/PostNL/checkout/onepage/js.phtml"/>
+        </reference>
+        <reference name="before_body_end">
+            <block type="core/template" name="postnl_spinner" template="TIG/PostNL/checkout/onepage/spinner.phtml"/>
+        </reference>
+    </checkout_onepage_index>
+    
+    <onestepcheckout_index_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/onepage.css</file>
+            </action>
+            <block type="postnl_checkout/onepage_js" name="postnl_checkout_js" template="TIG/PostNL/checkout/onepage/js.phtml"/>
+        </reference>
+        <reference name="before_body_end">
+            <block type="core/template" name="postnl_spinner" template="TIG/PostNL/checkout/onepage/spinner.phtml"/>
+        </reference>
+    </onestepcheckout_index_index>
+    
+    <postnl_checkout_summary>
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="postnl_checkout/summary" name="postnl_checkout_summary" template="TIG/PostNL/checkout/summary.phtml">
+                <action method="addItemRender"><type>default</type><block>checkout/cart_item_renderer</block><template>checkout/onepage/review/item.phtml</template></action>
+                <action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>checkout/onepage/review/item.phtml</template></action>
+                <action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>checkout/onepage/review/item.phtml</template></action>
+                <block type="postnl_checkout/summary_totals" name="totals" template="TIG/PostNL/checkout/summary/totals.phtml"/>
+            </block>
+        </reference>
+    </postnl_checkout_summary>
 </layout>
