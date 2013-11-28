@@ -52,7 +52,18 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ActivatedFieldHeader
         
         $element = $this->getElement();
         $label = $element->getLabel();
-        $label = sprintf($label, $this->getUrl('postnl/adminhtml_extensionControl/showActivationFields'));
+        
+        $url = $this->getUrl('postnl/adminhtml_extensionControl/showActivationFields');
+        $onclick = "confirmSetLocation('" 
+                 . $this->__("Are you sure? The PostNL extension will not function until you\'ve reactivated the extension.") 
+                 . "', '" 
+                 . $url 
+                 . "');";
+        
+        $label = sprintf(
+            $label,
+            $onclick
+        );
         
         $this->setLabel($label);
         return $label;

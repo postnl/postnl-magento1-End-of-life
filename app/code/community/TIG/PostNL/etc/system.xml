@@ -257,7 +257,7 @@
                             <validate>validate-select</validate>
                     	</active>
                     	<activated_header translate="label" module="postnl">
-                            <label><![CDATA[The extension has been activated. Click <a href="%s">here</a> to be able to activate the extension under a different name.]]></label>
+                            <label><![CDATA[The extension has been activated. Click <a href="#" onclick="%s">here</a> to be able to activate the extension under a different name.]]></label>
                             <frontend_model>postnl_adminhtml/system_config_activatedFieldHeader</frontend_model>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
