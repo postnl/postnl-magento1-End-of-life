@@ -62,6 +62,11 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     const XML_PATH_ACTIVE = 'postnl/general/active';
     
     /**
+     * XML path to 'is_activated' flag
+     */
+    const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
+    
+    /**
      * Expected success response
      */
     const SUCCESS_MESSAGE = 'success';
@@ -80,14 +85,20 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      * Activates the webshop. This will trigger a private key and a unique key to be sent to the specified e-mail, which must be
      * entered into system config by the merchant in order to finish the activation process.
      * 
+     * @param boolean|string $email
+     * 
      * @return TIG_PostNL_Model_ExtensionControl_Webservices
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function activateWebshop()
+    public function activateWebshop($email = false)
     {
+        if (!$email) {
+            $email = $this->_getEmail();
+        }
+        
         $soapParams = array(
-            'email'    => $this->_getEmail(),
+            'email'    => $email,
             'hostName' => $this->_getHostName(),
         );
         
@@ -170,6 +181,14 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             || $result['status'] != self::SUCCESS_MESSAGE
         ) {
             throw Mage::exception('TIG_PostNL', 'Invalid updateStatistics response: ' . var_export($result, true));
+        }
+        
+        /**
+         * If a succesfull update has taken place we can confirm that the extension has been activated
+         */
+        $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if (!$isActivated || $isActivated == '1') {
+            Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 2);
         }
         
         return $result;

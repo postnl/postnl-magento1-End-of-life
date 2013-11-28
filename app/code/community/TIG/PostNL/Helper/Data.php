@@ -69,6 +69,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_DEBUG_MODE = 'postnl/advanced/debug_mode';
     
     /**
+     * XML path to 'is_activated' flag
+     */
+    const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
+    
+    /**
      * Required configuration fields
      * 
      * @var array
@@ -271,6 +276,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     {
         if (Mage::registry('postnl_is_configured') !== null) {
             return Mage::registry('postnl_is_configured');
+        }
+        
+        /**
+         * Check if the module has been activated
+         */
+        $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($isActivated != 2) {
+            Mage::register('postnl_is_configured', false);
+            return false;
         }
         
         if ($storeId === false) {

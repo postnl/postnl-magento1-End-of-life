@@ -102,7 +102,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
         /**
          * Check if the security keys have been entered.
          */
-        $privateKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, $toreId);
+        $privateKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, $storeId);
         $uniqueKey  = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, $storeId);
         
         if (empty($privateKey) || empty($uniqueKey)) {
