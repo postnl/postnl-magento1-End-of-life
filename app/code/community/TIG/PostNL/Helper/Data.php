@@ -250,7 +250,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage::app()->getStore()->getId();
         }
         
-        $testMode = (bool) Mage::getStoreConfig(self::XML_PATH_TEST_MODE, $storeId);
+        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
         
         Mage::register('postnl_test_mode', $testMode);
         return $testMode;

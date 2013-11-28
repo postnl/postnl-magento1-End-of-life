@@ -106,11 +106,34 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     public function prepareOrderAction()
     {
         try {
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            
+            /**
+             * Set the quote's shipping method and collect it's totals
+             */
+            $shippingMethod = Mage::helper('postnl/carrier')->getCurrentPostnlShippingMethod();
+            $shippingAddress = $quote->getShippingAddress();
+            $shippingAddress->setCountryId('NL')
+                            ->setPostcode('')
+                            ->setCollectShippingRates(true)
+                            ->collectShippingRates()
+                            ->setShippingMethod($shippingMethod)
+                            ->save();
+                  
+            $quote->save();
+            
+            /**
+             * Update the cart
+             */
+            $cart = Mage::getSingleton('checkout/cart');
+            $cart->init();
+            $cart->save();
+            
             /**
              * Prepare the order with PostNL
              */
             $cif = Mage::getModel('postnl_checkout/cif');
-            $result = $cif->prepareOrder();
+            $result = $cif->prepareOrder($quote);
             
             /**
              * Retrieve the order token used to identify the order with PostNL and the checkout URL
@@ -142,6 +165,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             
             $this->getResponse()
                  ->setBody('error');
+            
             return $this;
         }
         
@@ -151,6 +175,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         $this->getResponse()
              ->setHeader('Content-type', 'application/x-json')
              ->setBody('[' . $response . ']');
+        
         return $this;
     }
     
@@ -169,7 +194,8 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         $service = Mage::getModel('postnl_checkout/service');
         $service->setQuote($quote)
                 ->updateQuoteAddresses($orderDetails)
-                ->updateQuotePayment($orderDetails);
+                ->updateQuotePayment($orderDetails)
+                ->updateQuoteCustomer($orderDetails);
         
         Mage::register('current_quote', $quote);
         
@@ -198,6 +224,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $service->setQuote($quote)
                     ->updateQuoteAddresses($orderDetails)
                     ->updateQuotePayment($orderDetails)
+                    ->updateQuoteCustomer($orderDetails)
                     ->updatePostnlOrder($orderDetails);
             
             /**

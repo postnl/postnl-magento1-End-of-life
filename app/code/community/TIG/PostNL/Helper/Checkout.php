@@ -44,6 +44,17 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     const XML_PATH_CHECKOUT_ACTIVE = 'postnl/checkout/active';
     
     /**
+     * XML path to all PostNL Checkout payment methods.
+     * N.B. last part of the XML path is missing.
+     */
+    const XML_PATH_CHECKOUT_PAYMENT_METHOD = 'postnl/checkout_payment_methods';
+    
+    /**
+     * XML path to test / live mode setting
+     */
+    const XML_PATH_TEST_MODE = 'postnl/checkout/mode';
+    
+    /**
      * Array of payment methods supported by PostNL Checkout. 
      * Keys are the names used in system.xml, values are codes used by PostNL Checkout.
      * 
@@ -64,6 +75,17 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     );
     
     /**
+     * An array of required configuration settings
+     * 
+     * @var array
+     */
+    protected $_checkoutRequiredFields = array(
+        'postnl/checkout/active',
+        'postnl/checkout/webshop_id',
+        'postnl/checkout/public_webshop_id',
+    );
+    
+    /**
      * Gets a list of payment methods supported by PostNL Checkout
      * 
      * @return array
@@ -72,6 +94,17 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     {
         $paymentMethods = $this->_checkoutPaymentMethods;
         return $paymentMethods;
+    }
+    
+    /**
+     * Returns an array of configuration settings that must be entered for PostNL Checkout to function
+     * 
+     * @return array
+     */
+    public function getCheckoutRequiredFields()
+    {
+        $requiredFields = $this->_checkoutRequiredFields;
+        return $requiredFields;
     }
     
     /**
@@ -87,6 +120,27 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
               ->save();
         
         return $quote;
+    }
+    
+    /**
+     * Check if the module is set to test mode
+     * 
+     * @return boolean
+     */
+    public function isTestMode($storeId = false)
+    {
+        if (Mage::registry('postnl_checkout_test_mode') !== null) {
+            return Mage::registry('postnl_checkout_test_mode');
+        }
+        
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
+        
+        Mage::register('postnl_checkout_test_mode', $testMode);
+        return $testMode;
     }
     
     /**
@@ -112,7 +166,55 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             return false;
         }
         
+        $isConfigured = $this->isCheckoutConfigured($storeId);
+        if (!$isConfigured) {
+            return false;
+        }
+        
         return true;
+    }
+    
+    /**
+     * Check if all required fields are entered
+     * 
+     * @param null|int $storeId
+     * 
+     * @return boolean
+     */
+    public function isCheckoutConfigured($storeId = null)
+    {
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        /**
+         * First check if all required configuration settings are entered
+         */
+        $requiredFields = $this->getCheckoutRequiredFields();
+        foreach ($requiredFields as $field) {
+            $value = Mage::getStoreConfig($field, $storeId);
+            if (empty($value)) {
+                return false;
+            }
+        }
+        
+        /**
+         * Go through each supported payment method. At least one of them must be activated.
+         */
+        $paymentMethods = $this->getCheckoutPaymentMethods();
+        $paymentMethodSettings = Mage::getStoreConfig(self::XML_PATH_CHECKOUT_PAYMENT_METHOD, $storeId);
+        foreach ($paymentMethods as $methodCode => $method) {
+            if (array_key_exists($methodCode, $paymentMethodSettings)
+                && $paymentMethodSettings[$methodCode] === '1'
+            ) {
+                return true;
+            }
+        }
+        
+        /**
+         * If no payment method was activated the extension is not configured properly
+         */
+        return false;
     }
     
     

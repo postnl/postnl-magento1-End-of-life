@@ -118,6 +118,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $phone = $consumer->TelefoonNummer;
         if (!$phone) {
             $phone = '-';
+        } else {
+            $phone = preg_replace("/[^0-9]/", '', $phone);
         }
         
         /**
@@ -126,7 +128,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $this->_removeAllQuoteAddresses($quote);
         
         /**
-         * Parse the shipping and billing addresses
+         * Parse the shippingaddresses
          */
         $delivery = $data->Bezorging;
         $shippingAddressData = $delivery->Geadresseerde;
@@ -145,6 +147,9 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                             ->setShippingMethod($shippingMethod);
         }
         
+        /**
+         * Parse the billing address
+         */
         $billingAddressData = $data->Facturatie->Adres;
         $billingAddress = Mage::getModel('sales/quote_address');
         $billingAddress->setAddressType($billingAddress::TYPE_BILLING)
@@ -248,7 +253,14 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             | Mage_Payment_Model_Method_Abstract::CHECK_ORDER_TOTAL_MIN_MAX
             | Mage_Payment_Model_Method_Abstract::CHECK_ZERO_TOTAL;
             
-        $paymentData['method'] =$methodCode;
+        if ($quote->isVirtual()) {
+            $quote->getBillingAddress()->setPaymentMethod($methodCode);
+        } else {
+            $quote->getShippingAddress()->setPaymentMethod($methodCode);
+            $quote->getShippingAddress()->setCollectShippingRates(true);
+        }
+        
+        $paymentData['method'] = $methodCode;
         
         /**
          * If the chosen payment method has an optional field (like bank selection for iDEAL) we have to check system / config in
@@ -277,6 +289,133 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                 ->save();
                 
         $quote->save();
+        
+        return $this;
+    }
+
+    /**
+     * Adds the customer to the quote if a customer is currently logged in. Also updates the customer's DOB if possible.
+     * 
+     * @param StdClass $data
+     * @param Mage_Sales_Model_Quote | null $quote
+     * 
+     * @return TIG_PostNL_Model_Checkout_Service
+     */
+    public function updateQuoteCustomer($data, $quote = null)
+    {
+        /**
+         * Load the current quote if none was supplied
+         */
+        if (is_null($quote)) {
+            $quote = $this->getQuote();
+        }
+        
+        /**
+         * Load the current customer if the user is logged in
+         */
+        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        $customerId = $customer->getId();
+        
+        /**
+         * If there is no customer we don't have to do anything
+         */
+        if(!$customerId) {
+            return $this;
+        }
+        
+        /**
+         * Add the customer to the quote
+         */
+        $quote->setCustomerId($customerId);
+        $quote->getShippingAddress()->setCustomerId($customerId);
+        $quote->getBillingAddress()->setCustomerId($customerId);
+        
+        /**
+         * If the customer already has a DOB we're finished
+         */
+        if ($customer->getDob()) {
+            return $this;
+        }
+        
+        /**
+         * Check if PostNL returned a DOB for the customer
+         */
+        if (isset($data->Consument)
+            && is_object($data->Consument)
+            && isset($data->Consument->GeboorteDatum)
+            && !empty($data->Consument->GeboorteDatum)
+        ) {
+            $dob = $data->Consument->GeboorteDatum;
+        }
+        
+        if (!isset($dob)) {
+            return $this;
+        }
+        
+        /**
+         * Update the customer with the DOB and save
+         */
+        $customer->setDob(strtotime($dob))
+                 ->save();
+        
+        return $this;
+    }
+
+    /**
+     * Updates the PostNL order with the selected options
+     * 
+     * @param StdClass $orderDetails
+     * 
+     * @return TIG_PostNL_Model_Checkout_Service
+     */
+    public function updatePostnlOrder($data, $quote = null)
+    {
+        /**
+         * Load the current quote if none was supplied
+         */
+        if (is_null($quote)) {
+            $quote = $this->getQuote();
+        }
+        
+        $this->setStoreId($quote->getStoreId());
+        
+        $this->_verifyData($data, $quote);
+                
+        $postnlOrder = Mage::getModel('postnl_checkout/order');
+        $postnlOrder->load($quote->getId(), 'quote_id');
+        
+        /**
+         * If a confirm date has been specified, save it with the PostNL Order object so we can reference it later
+         */
+        if (isset($data->Voorkeuren)
+            && is_object($data->Voorkeuren)
+            && isset($data->Voorkeuren->Bezorging)
+            && is_object($data->Voorkeuren->Bezorging)
+            && isset($data->Voorkeuren->Bezorging->VerzendDatum)
+        ) {
+            $postnlOrder->setConfirmDate($data->Voorkeuren->Bezorging->VerzendDatum);
+        }
+        
+        /**
+         * If a specific product code is needed to ship this order, save it as well
+         */
+        if (isset($data->Bezorging)
+            && is_object($data->Bezorging)
+            && isset($data->Bezorging->ProductCode)
+        ) {
+            $postnlOrder->setProductCode($data->Bezorging->ProductCode);
+        }
+        
+        /**
+         * Check if this is a PakjeGemak order. If so, save the PostNL Order as such
+         */
+        if (Mage::registry('quote_is_pakje_gemak')) {
+            $postnlOrder->setIsPakjeGemak(true);
+            
+            Mage::unRegister('quote_is_pakje_gemak');
+        }
+        
+        $postnlOrder->save();
         
         return $this;
     }
@@ -369,65 +508,6 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         );
         
         return $order;
-    }
-
-    /**
-     * Updates the PostNL order with the selected options
-     * 
-     * @param StdClass $orderDetails
-     * 
-     * @return TIG_PostNL_Model_Checkout_Service
-     */
-    public function updatePostnlOrder($data, $quote = null)
-    {
-        /**
-         * Load the current quote if none was supplied
-         */
-        if (is_null($quote)) {
-            $quote = $this->getQuote();
-        }
-        
-        $this->setStoreId($quote->getStoreId());
-        
-        $this->_verifyData($data, $quote);
-                
-        $postnlOrder = Mage::getModel('postnl_checkout/order');
-        $postnlOrder->load($quote->getId(), 'quote_id');
-        
-        /**
-         * If a confirm date has been specified, save it with the PostNL Order object so we can reference it later
-         */
-        if (isset($data->Voorkeuren)
-            && is_object($data->Voorkeuren)
-            && isset($data->Voorkeuren->Bezorging)
-            && is_object($data->Voorkeuren->Bezorging)
-            && isset($data->Voorkeuren->Bezorging->VerzendDatum)
-        ) {
-            $postnlOrder->setConfirmDate($data->Voorkeuren->Bezorging->VerzendDatum);
-        }
-        
-        /**
-         * If a specific product code is needed to ship this order, save it as well
-         */
-        if (isset($data->Bezorging)
-            && is_object($data->Bezorging)
-            && isset($data->Bezorging->ProductCode)
-        ) {
-            $postnlOrder->setProductCode($data->Bezorging->ProductCode);
-        }
-        
-        /**
-         * Check if this is a PakjeGemak order. If so, save the PostNL Order as such
-         */
-        if (Mage::registry('quote_is_pakje_gemak')) {
-            $postnlOrder->setIsPakjeGemak(true);
-            
-            Mage::unRegister('quote_is_pakje_gemak');
-        }
-        
-        $postnlOrder->save();
-        
-        return $this;
     }
     
     /**

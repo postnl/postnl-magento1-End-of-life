@@ -124,13 +124,15 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
      * Gets the checkout button src attribute
      * 
      * @return string
-     * 
-     * @todo fix test / live bas url
      */
     public function getSrc()
     {
-        //TODO change to live base url
-        $baseUrl = self::CHECKOUT_BUTTON_TEST_BASE_URL;
+        if (Mage::helper('postnl/checkout')->isTestMode()) {
+            $baseUrl = self::CHECKOUT_BUTTON_TEST_BASE_URL;
+        } else {
+            $baseUrl = self::CHECKOUT_BUTTON_LIVE_BASE_URL;
+        }
+        
         $webshopId = $this->getPublicWebshopId();
         
         $url =  $baseUrl 

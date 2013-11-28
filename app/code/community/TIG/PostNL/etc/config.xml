@@ -430,6 +430,8 @@
         	    <allow_price_overview>1</allow_price_overview> <!-- Customer's will see a price overview -->
         	    <agree_conditions>1</agree_conditions> <!-- Customers must first agree to the webshop's terms and conditions -->
         	    <service_url/>
+        	    <use_mobile>0</use_mobile> <!-- Do not use mobile phonenumbers -->
+        	    <use_dob>0</use_dob> <!-- Do not use the date of birth field -->
         	</checkout>
         	<checkout_payment_methods>
         	    <ideal/>

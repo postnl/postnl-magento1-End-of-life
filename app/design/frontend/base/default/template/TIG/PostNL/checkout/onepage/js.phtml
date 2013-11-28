@@ -40,12 +40,6 @@
 <?php $_checkoutJsUrl = $this->getCheckoutJsUrl(); ?>
 <?php $_continueUrl = $this->getContinueUrl(); ?>
 <?php $_environment = $this->getEnvironment(); ?>
-<div id="postnl-overlay" class="postnl-overlay" style="display:none;">
-    <div class="overlay-content">
-        <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/postnl_spinner.gif'); ?>" />
-        <p class="message"><?php echo $this->__('Loading...'); ?></p>
-    </div>
-</div>
 <script type="text/javascript" src="<?php echo $_checkoutJsUrl; ?>"></script>
 <script type="text/javascript">
     document.observe('dom:loaded', function() {
@@ -93,6 +87,7 @@
                 if (transport.responseText == 'error') {
                     alert('<?php echo $this->__('An error occurred. Please use our regular checkout instead.'); ?>');
                     document.body.style.cursor = 'default';
+                    this.overlay.hide();
                     return false;
                 }
                 
