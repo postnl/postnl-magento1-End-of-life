@@ -492,7 +492,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $order = $postnlOrder->getOrder();
         
         $paymentTotal      = round($order->getBaseGrandTotal());
-        $extRef            = $postnlOrder->getQuoteId();
+        $extRef            = $order->getIncrementId();
         $paymentMethodName = $order->getPayment()->getMethodInstance()->getTitle();
         
         $confirmOrder = array(
@@ -513,7 +513,9 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getUpdateOrder($postnlOrder)
     {
-        $extRef   = $postnlOrder->getQuoteId();
+        $order = $postnlOrder->getOrder();
+        
+        $extRef   = $order->getIncrementId();
         $shipment = $this->_getShipments($postnlOrder);
         
         $updateOrder = array(
@@ -720,6 +722,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $storeId = $this->getStoreId();
         
         $webshopId = Mage::getStoreConfig(self::XML_PATH_WEBSHOP_ID, $storeId);
+        $webshopId = Mage::helper('core')->decrypt($webshopId);
         
         $webshop = array(
             'IntRef' => $webshopId,

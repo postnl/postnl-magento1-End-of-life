@@ -504,6 +504,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     protected function _getCheckoutWebshopId($website)
     {
         $webshopId = $website->getConfig(self::XML_PATH_CHECKOUT_WEBSHOP_ID);
+        $webshopId = Mage::helper('core')->decrypt($webshopId);
         
         return $webshopId;
     }

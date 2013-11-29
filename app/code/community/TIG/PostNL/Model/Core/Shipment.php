@@ -263,7 +263,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         $shipment = $this->getShipment();
-        if (!$shipment || !$shipment->getId()) {
+        if (!$shipment || !$shipment->getOrderId()) {
             return null;
         }
         
@@ -929,6 +929,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function isPakjeGemakShipment()
     {
         if ($this->getIsPakjeGemak()) {
+            return true;
+        }
+        
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($this->getOrderId(), 'order_id');
+        if ($postnlOrder->getId() && $postnlOrder->getIsPakjeGemak()) {
             return true;
         }
         

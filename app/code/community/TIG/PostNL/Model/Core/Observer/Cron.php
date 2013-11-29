@@ -158,6 +158,87 @@ class TIG_PostNL_Model_Core_Observer_Cron
     }
 
     /**
+     * Method to destroy old lock files.
+     * 
+     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function cleanOldLocks()
+    {
+        $helper = Mage::helper('postnl');
+        
+        /**
+         * Check if the PostNL module is active
+         */
+        if (!$helper->isEnabled()) {
+            return $this;
+        }
+        
+        $helper->cronLog('CleanOldLocks cron starting...');
+        
+        /**
+         * Directory where all lock files are stored
+         */
+        $locksDirectory = Mage::getConfig()->getVarDir('locks');
+        if (!is_dir($locksDirectory)) {
+            $helper->cronLog('Locks directory not found. Exiting cron.');
+            return $this;
+        }
+        
+        /**
+         * Get all PostNL lock files in the directory
+         */
+        $files = glob($locksDirectory . DS . 'postnl_process_*');
+        
+        /**
+         * If the directory cannot be read, throw an exception.
+         */
+        if ($files === false) {
+            $helper->cronLog('Lock storage is unreadable. Exiting cron.');
+            throw Mage::exception('TIG_PostNL', 'Unable to read directory: ' . $locksDirectory);
+        }
+        
+        $fileCount = count($files);
+        if ($fileCount < 1) {
+            $helper->cronLog('No PostNL locks found. Exiting cron.');
+            return $this;
+        }
+        
+        /**
+         * Locks may only exist for 3600 seconds (1 hour) before being removed
+         */
+        $maxFileStorageTime = 3600;
+        $now = Mage::getModel('core/date')->gmtTimestamp();
+        $maxTimestamp = $now - $maxFileStorageTime; //1 hour ago
+        
+        $helper->cronLog("{$fileCount} temporary labels found.");
+        foreach ($files as $path) {
+            /**
+             * First we must open and unlock the file
+             */
+            $file = fopen($path, 'r+');
+            flock($file, LOCK_UN);
+            
+            /**
+             * The file should contain a date
+             */
+            $timestamp = strtotime(file_get_contents($path));
+            
+            /**
+             * If the file is more than 1 hour old, delete it
+             */
+            if ($timestamp < $maxTimestamp) {
+                $helper->cronLog("Deleting file: {$path}.");
+                unlink($path);
+            }
+        }
+        
+        $helper->cronLog('CleanOldLocks cron has finished.');
+        return $this;
+    }
+
+    /**
      * Retrieve barcodes for postnl shipments that do not have one.
      * 
      * @return TIG_PostNL_Model_Core_Observer_Cron
