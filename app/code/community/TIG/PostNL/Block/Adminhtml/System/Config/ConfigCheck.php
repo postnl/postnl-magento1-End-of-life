@@ -48,39 +48,64 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ConfigCheck
      */
     protected $_template = 'TIG/PostNL/system/config/config_check.phtml';
     
-    public function getHelper()
+    /**
+     * Get the postnl helper
+     * 
+     * @return TIG_PostNL_Helper_Data
+     */
+    public function getPostnlHelper()
     {
-        if ($this->hasHelper()) {
-            return $this->getData('helper');
+        if ($this->hasPostnlHelper()) {
+            return $this->getData('postnl_helper');
         }
         
         $helper = Mage::helper('postnl');
         
-        $this->setHelper($helper);
+        $this->setPostnlHelper($helper);
         return $helper;
     }
     
+    /**
+     * Check if live mode is enabled
+     * 
+     * @return boolean
+     */
     public function isLiveEnabled()
     {
-        $helper = $this->getHelper();
+        $helper = $this->getPostnlHelper();
         
         return $helper->isEnabled(false, false, false);
     }
     
+    /**
+     * Check if test mode is enabled
+     * 
+     * @return boolean
+     */
     public function isTestEnabled()
     {
-        $helper = $this->getHelper();
+        $helper = $this->getPostnlHelper();
         
         return $helper->isEnabled(false, false, true);
     }
     
+    /**
+     * Check if global shipments are
+     * 
+     * @return boolean
+     */
     public function isGlobalEnabled()
     {
-        $helper = $this->getHelper();
+        $helper = $this->getPostnlHelper();
         
         return $helper->isEnabled(false, true);
     }
     
+    /**
+     * Check if checkout is enabled
+     * 
+     * @return boolean
+     */
     public function isCheckoutEnabled()
     {
         $helper = Mage::helper('postnl/checkout');

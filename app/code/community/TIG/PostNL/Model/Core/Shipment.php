@@ -1062,15 +1062,17 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Checks if the current shipment can send a track & trace email to the customer.
      * 
+     * @param boolean $ignoreAlreadySent Flag to ignore the 'already sent' check
+     * 
      * @return boolean
      */
-    public function canSendTrackAndTraceEmail()
+    public function canSendTrackAndTraceEmail($ignoreAlreadySent = false)
     {
         if ($this->isLocked()) {
             return false;
         }
         
-        if ($this->getTrackAndTraceEmailSent()) {
+        if ($ignoreAlreadySent !== true && $this->getTrackAndTraceEmailSent()) {
             return false;
         }
         
@@ -1593,15 +1595,19 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Send a track & trace email to the customer containing a link to the 'mijnpakket' environment where they
      * can track their shipment.
      * 
+     * @param boolean $ignoreAlreadySent Flag to ignore the 'already sent' check
+     * 
      * @return TIG_PostNL_Model_Core_Shipment
      */
-    public function sendTrackAndTraceEmail()
+    public function sendTrackAndTraceEmail($ignoreAlreadySent = false)
     {
-        if (!$this->canSendTrackAndTraceEmail()) {
+        if (!$this->canSendTrackAndTraceEmail($ignoreAlreadySent)) {
             throw Mage::exception('TIG_PostNL', 'The sendTrackAndTraceEmail action is currently unavailable.');
         }
         
+        $oldStoreId = Mage::app()->getStore()->getId();
         $storeId = $this->getStoreId();
+        
         $template = Mage::getStoreConfig(self::XML_PATH_TRACK_AND_TRACE_EMAIL_TEMPLATE, $storeId);
         $mailTemplate = Mage::getModel('core/email_template');
         
@@ -1618,14 +1624,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             )
         );
         
+        $shipment = $this->getShipment();
+        $order = $shipment->getOrder();
         $templateVariables = array(
-            'customer'       => $customer,
-            'quote'          => $quote,
-            'shipment'       => $this->getShipment(),
-            'order'          => $this->getShipment()->getOrder(),
             'postnlshipment' => $this,
             'barcode'        => $this->getMainBarcode(),
             'barcode_url'    => $this->getBarcodeUrl(false),
+            'shipment'       => $shipment,
+            'order'          => $order,
+            'customer'       => $order->getCustomer(),
+            'quote'          => $order->getQuote(),
         );
         
         $orderModel = Mage::getConfig()->getModelClassName('sales/order');
