@@ -251,6 +251,15 @@
                 	<model>postnl_core/observer_cron::cleanTempLabels</model>
                 </run>
             </postnl_clean_temp_labels>
+            <!-- remove old lock files (by default files older than 1 hour will be deleted) -->
+            <postnl_clean_old_locks>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::cleanOldLocks</model>
+                </run>
+            </postnl_clean_old_locks>
         	<!-- get missing barcodes for postnl shipments -->
             <postnl_get_missing_barcodes>
                 <schedule>

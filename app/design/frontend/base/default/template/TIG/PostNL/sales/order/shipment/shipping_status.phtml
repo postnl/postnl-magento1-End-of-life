@@ -52,14 +52,14 @@
     <script type="text/javascript">
     //<![CDATA[
         document.observe('dom:loaded', function() {
-            statusBar<?php echo $_shipment->getId(); ?> = $('postnl_status-<?php echo $_shipment->getId(); ?>');
+            status<?php echo $_shipment->getId(); ?> = $('postnl_status-<?php echo $_shipment->getId(); ?>');
             if ($('my-tracking-table-<?php echo $_shipment->getId(); ?>')) {
                 $('my-tracking-table-<?php echo $_shipment->getId(); ?>').insert({
-                    before: statusBar<?php echo $_shipment->getId(); ?>
+                    before: status<?php echo $_shipment->getId(); ?>
                 });
             } else {
                 $('my-shipment-table-<?php echo $_shipment->getId(); ?>').previous().insert({
-                    before: statusBar<?php echo $_shipment->getId(); ?>
+                    before: status<?php echo $_shipment->getId(); ?>
                 });
             }
         });

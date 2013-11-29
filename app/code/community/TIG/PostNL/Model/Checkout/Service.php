@@ -711,8 +711,11 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * Verify the webshop ID to make sure this message was not meant for another shop
          */
-        $webshopId = $data->Webshop->IntRef;
-        if (Mage::getStoreConfig(self::XML_PATH_WEBSHOP_ID, $this->getStoreId()) != $webshopId) {
+        $dataWebshopId = $data->Webshop->IntRef;
+        $webshopId = Mage::getStoreConfig(self::XML_PATH_WEBSHOP_ID, $this->getStoreId());
+        $webshopId = Mage::helper('core')->decrypt($webshopId);
+        
+        if ($webshopId != $dataWebshopId) {
             throw Mage::exception('TIG_PostNL', 'Invalid data supplied.');
         }
         

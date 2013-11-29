@@ -65,7 +65,8 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
             $this->_lockFile = fopen($file, 'x');
         }
         
-        fwrite($this->_lockFile, date('r'));
+        $timestamp = Mage::getModel('core/date')->gmtTimestamp();
+        fwrite($this->_lockFile, date('r', $timestamp));
         
         return $this->_lockFile;
     }

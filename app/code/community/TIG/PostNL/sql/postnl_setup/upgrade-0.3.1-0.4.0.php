@@ -43,24 +43,49 @@ $installer->startSetup();
 
 $postnlOrderTable = $installer->getConnection()
     ->newTable($installer->getTable('postnl_checkout/order'))
+    /**
+     * Entity ID
+     */
     ->addColumn('entity_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
         'identity'  => true,
         'unsigned'  => true,
         'nullable'  => false,
         'primary'   => true,
         ), 'Entity Id')
+    /**
+     * Mage_Sales_Model_Order ID
+     */
     ->addColumn('order_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
         'unsigned'  => true,
         'nullable'  => true,
         ), 'Order Id')
+    /**
+     * Mage_Sales_Model_Quote ID
+     */
     ->addColumn('quote_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
         'unsigned'  => true,
         ), 'Quote Id')
+    /**
+     * PostNL Checkout ordertoken used by PostNL to reference an order
+     */
     ->addColumn('token', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
         ), 'Token')
+    /**
+     * Optional product code required to ship PakjeGemak orders
+     */
     ->addColumn('product_code', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
         'nullable' => true,
         ), 'Product Code')
+    /**
+     * Flag that determines whether or not this is a PakjeGemak shipment
+     */
+    ->addColumn('is_pakje_gemak', Varien_Db_Ddl_Table::TYPE_BOOLEAN, false, array(
+        'unsigned' => true,
+        'default'  => 0,
+        ), 'Is PakjeGemak')
+    /**
+     * Date on which the shipment has to be confirmed in order to be delivered on time
+     */
     ->addColumn('confirm_date', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
         'nullable'  => true,
         ), 'Confirm Date')
@@ -77,5 +102,16 @@ $postnlOrderTable = $installer->getConnection()
     ->setComment('TIG PostNL Order');
 
 $installer->getConnection()->createTable($postnlOrderTable);
+
+$installer->getConnection()
+          ->addColumn(
+               $installer->getTable('postnl_core/shipment'),
+               'is_pakje_gemak',
+               array(
+                   'default'  => 0,
+                   'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+                   'comment'  => 'Is PakjeGemak',
+               )
+          );
 
 $installer->endSetup();
