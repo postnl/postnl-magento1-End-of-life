@@ -9,36 +9,111 @@
 "var shipment.increment_id":"Shipment Id"}
 @-->
 <!--@styles
-body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif; }
+html
+{ height: 100%;}
+
+body
+{ 
+  background: #FFFFFF
+  color: #555;}
+
+p
+{ 
+  font: normal 11px Verdana, arial, sans-serif;padding: 0 0 10px 0;
+  line-height: 1.5em;
+  font-size: 11px;}
+
+img
+{ border: 0;}
+
+#main, #header, #logo, #menubar, #site_content, #footer
+{ margin-left: auto; 
+  margin-right: auto;}
+
+#main
+{ width: 450px;
+  margin: 20px auto;}
+
+#header
+{ margin-top:75px;
+  width: 450px;
+  height: 100px;}
+
+.logo_webwinkelier
+{
+  font: normal 11px Verdana, arial, sans-serif;
+  color: #555;
+  float: left;
+  padding-top: 0px;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0px;
+}
+
+.logo_tnt
+{ float: right;
+  width: 73px; 
+  height: 81px;
+  text-align: right; 
+  font: normal 11px Verdana, arial, sans-serif;
+}
+
+#site_content
+{ width: 450px;
+  overflow: hidden;
+  padding: 0;
+  background: #fff;}
+  
+#content
+{
+  text-align: left;
+  width: 450px;
+  margin: 0;
+  padding-top: 0px;
+  padding-right: 0;
+  padding-bottom: 0px;
+  padding-left: 0px;
+}
+
+#footer
+{
+  clear: both;
+  width: 100%;
+  height: 85px;
+  padding: 20px 0 5px 0;
+  text-align: center;
+  color: #555;
+  background: transparent;
+  margin-bottom: 20px;
+  font: normal 11px Verdana, arial, sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+}
 @-->
-<body style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
-    <div style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
-        <table cellspacing="0" cellpadding="0" border="0" width="100%">
-            <tr>
-                <td align="center" valign="top" style="padding:20px 0 20px 0">
-                    <table bgcolor="#FFFFFF" cellspacing="0" cellpadding="10" border="0" width="650" style="border:1px solid #E0E0E0;">
-                        <!-- [ header starts here] -->
-                        <tr>
-                            <td valign="top"><a href="{{store url=""}}"><img src="{{var logo_url}}" alt="{{var logo_alt}}" style="margin-bottom:10px;" border="0"/></a></td>
-                        </tr>
-                        <!-- [ middle starts here] -->
-                        <tr>
-                            <td valign="top">
-                                <p style="font-size:12px; line-height:16px; margin:0;">Beste {{htmlescape var=$order.getCustomerName()}}</p>
-                                <p style="font-size:12px; line-height:16px; margin:0;">
-                                    Uw bestelling van {{var store.getFrontendName()}}, met barcode {{var barcode}} wordt vandaag verzonden.
-                                    Kijk op <a href="{{var barcode_url}}">www.mijnpakket.nl</a> om te zien
-                                    wanneer het pakket wordt bezorgd.
-                                </p>
-                        </tr>
-                        <tr>
-                            <td bgcolor="#EAEAEA" align="center" style="background:#EAEAEA; text-align:center;">
-                                <center><p style="font-size:12px; margin:0;">Met vriendelijke groet, <strong>{{var store.getFrontendName()}}</strong></p></center>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
+<body>
+  <div id="main">
+    <div id="header">
+      
+      <div class="logo_webwinkelier"><p></p><p><a href="{{store url=""}}"><img src="{{var logo_url}}" alt="{{var logo_alt}}" style="margin-bottom:10px;" border="0"/></a></p></div>
+      <div class="logo_tnt" style="background: #FFFFFF url({{skin url='images/TIG/PostNL/postnl_email_logo.png' _area='frontend' _relative='1'}}) no-repeat;"></div>
+     
     </div>
+
+    <div id="site_content">
+      
+      <div id="content">
+        <p>Dear Sir, Madam {{htmlescape var=$order.getCustomerName()}}</p>
+        <p>Your order at {{var store.getFrontendName()}}, with barcode {{var barcode}} will be delivered by PostNL.</p>
+        <p>To track the progress of your shipment click <a href="{{var barcode_url}}">here</a>. </p>
+        <p>Kind regards</p>
+        <p>{{var store.getFrontendName()}}</p>
+      </div>
+
+    </div>
+
+    <div id="footer">
+    </div>
+
+  </div>
 </body>
