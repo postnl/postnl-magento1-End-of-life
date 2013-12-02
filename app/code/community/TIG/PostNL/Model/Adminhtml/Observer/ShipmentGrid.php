@@ -281,6 +281,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'header'         => $helper->__('Send Date'),
                 'align'          => 'left',
                 'index'          => 'confirm_date',
+                'filter_index'   => 'postnl_shipment.confirm_date',
                 'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_confirmDate',
                 'width'          => '150px',
                 'frame_callback' => array($this, 'decorateConfirmDate'),
@@ -632,7 +633,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * If the filter condition is PakjeGemak, filter out all non-PakjeGemak orders
          */
         if ($filterCond == 'pakje_gemak') {
-            $collection->addFieldToFilter('is_pakje_gemak', array('eq' => 1));
+            $collection->addFieldToFilter('postnl_shipment.is_pakje_gemak', array('eq' => 1));
             
             return $this;
         }

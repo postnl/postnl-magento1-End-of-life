@@ -230,7 +230,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $this->setStoreId($quote->getStoreId());
         
         $checkout = $this->_getCheckout($quote);
-        $webshop = $this->_getWebshop();
+        $webshop  = $this->_getWebshop();
         
         $soapParams = array(
             'Checkout' => $checkout,

@@ -965,6 +965,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Checks if this shipment is confirmed
+     * 
+     * @return boolean
+     */
+    public function isConfirmed()
+    {
+        $confirmedStatus = $this->getConfirmedStatus();
+        if ($confirmedStatus === self::CONFIRM_STATUS_CONFIRMED) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * Checks if the current entity may generate a barcode.
      * 
      * @return boolean

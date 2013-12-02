@@ -98,6 +98,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             'class'   => 'save',
         ));
         
+        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
+        if (!$postnlShipment->isConfirmed()) {
+            return $this;
+        }
+        
         /**
          * Update the send tracking info button so that it sends our info, instead of the default
          */
