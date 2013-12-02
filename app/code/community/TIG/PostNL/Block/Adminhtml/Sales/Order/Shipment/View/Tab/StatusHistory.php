@@ -36,10 +36,6 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
- 
-/**
- * @todo implement this class fully
- */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory extends Mage_Adminhtml_Block_Widget_Grid
 {
     /**
@@ -99,6 +95,28 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
     {
         $helper = Mage::helper('postnl');
         
+        $this->addColumn('date',
+            array(
+                'header'      => $helper->__('Date'),
+                'index'       => 'timestamp',
+                'type'        => 'datetime',
+                'align'       => 'left',
+                'width'       => '150px',
+                'renderer'    => 'adminhtml/widget_grid_column_renderer_date',
+                'filter_time' => true,
+        ));
+        
+        $this->addColumn('timestamp',
+            array(
+                'header'   => $helper->__('Time'),
+                'index'    => 'timestamp',
+                'align'    => 'left',
+                'width'    => '150px',
+                'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_time',
+                'filter'   => false,
+                'sortable' => false,
+        ));
+        
         $this->addColumn('code',
             array(
                 'header' => $helper->__('Status Code'),
@@ -113,44 +131,26 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
                 'align'    => 'left',
                 'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_translate',
         ));
-        
-        $this->addColumn('location_code',
-            array(
-                'header' => $helper->__('Location Code'),
-                'index'  => 'location_code',
-                'align'  => 'left',
-        ));
-        
-        $this->addColumn('destination_location_code',
-            array(
-                'header' => $helper->__('Destination Location Code'),
-                'index'  => 'destination_location_code',
-                'align'  => 'left',
-        ));
-        
-        $this->addColumn('route_code',
-            array(
-                'header' => $helper->__('Route Code'),
-                'index'  => 'route_code',
-                'align'  => 'left',
-        ));
-        
-        $this->addColumn('route_name',
-            array(
-                'header' => $helper->__('Route Name'),
-                'index'  => 'route_name',
-                'align'  => 'left',
-        ));
-        
-        $this->addColumn('timestamp',
-            array(
-                'header' => $helper->__('Date'),
-                'index'  => 'timestamp',
-                'type'   => 'datetime',
-                'align'  => 'left',
-                'width'  => '150px',
-        ));
 
         return parent::_prepareColumns();
+    }
+    
+    /**
+     * Gets a link to this shipment's mijnpakket page as the grid's header.
+     * 
+     * @return string 
+     */
+    public function getGridHeader()
+    {
+        $helper = Mage::helper('postnl');
+        
+        $postnlShipment = $this->getPostnlShipment();
+        $url = $postnlShipment->getBarcodeUrl();
+        
+        $urlTitle = $helper->__('Mijnpakket');
+        $urlText = $helper->__('View this shipment in mijnpakket');
+        $html = "<a href='{$url}' title='{$urlTitle}' target='_blank'>{$urlText}</a>";
+        
+        return $html;
     }
 }

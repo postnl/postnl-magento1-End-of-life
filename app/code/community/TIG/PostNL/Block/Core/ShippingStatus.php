@@ -81,9 +81,8 @@ class TIG_PostNL_Block_Core_ShippingStatus extends Mage_Core_Block_Template
     public function getTrackingUrl($shipment)
     {
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
-        $mainBarcode = $postnlShipment->getMainBarcode();
         
-        $barcodeUrl = Mage::helper('postnl/carrier')->getBarcodeUrl($mainBarcode, $shipment->getShippingAddress());
+        $barcodeUrl = $postnlShipment->getBarcodeUrl(true);
         
         $trackingUrl = "<a href={$barcodeUrl} title='mijnpakket' target='_blank'>"
                      . $this->__('here')

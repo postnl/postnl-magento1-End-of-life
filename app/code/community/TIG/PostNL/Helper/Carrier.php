@@ -39,56 +39,97 @@
 class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
 {
     /**
-     * Shipping method code used by PostNL
+     * Shipping carrier code used by PostNL
      */
-    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
+    const POSTNL_CARRIER = 'postnl';
     
     /**
-     * PostNL's track and trace base URL
+     * PostNL shipping methods
      */
-    const POSTNL_TRACK_AND_TRACE_BASE_URL = 'http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?lang=nl';
+    const POSTNL_FLATRATE_METHOD  = 'flatrate';
+    const POSTNL_TABLERATE_METHOD = 'tablerate';
+    
+    /**
+     * Localised track and trace base URL's
+     */
+    const POSTNL_TRACK_AND_TRACE_NL_BASE_URL  = 'https://mijnpakket.postnl.nl/Inbox/Search?';
+    const POSTNL_TRACK_AND_TRACE_GB_BASE_URL  = 'http://parcels-uk.tntpost.com/mytrackandtrace/trackandtrace.aspx?';
+    const POSTNL_TRACK_AND_TRACE_DE_BASE_URL  = 'http://parcels-de.tntpost.com/de/mytrackandtrace/TrackAndTrace.aspx?';
+    const POSTNL_TRACK_AND_TRACE_FR_BASE_URL  = 'http://parcels-fr.tntpost.com/fr/mytrackandtrace/TrackAndTrace.aspx?';
+    const POSTNL_TRACK_AND_TRACE_INT_BASE_URL = 'http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?';
+    
+    /**
+     * XML path to rate type setting
+     */
+    const XML_PATH_RATE_TYPE = 'carriers/postnl/rate_type';
+    
+    /**
+     * Array of possible PostNL shipping methods
+     * 
+     * @var array
+     */
+    protected $_postnlShippingMethods = array(
+        'postnl_postnl',    //deprecated
+        'postnl_flatrate',
+        'postnl_tablerate',
+    );
+    
+    /**
+     * Gets an array of possible PostNL shipping methods
+     * 
+     * @return array
+     */
+    public function getPostnlShippingMethods()
+    {
+        $shippingMethods = $this->_postnlShippingMethods;
+        return $shippingMethods;
+    }
+    
+    /**
+     * Alias for getCurrentPostnlShippingMethod()
+     * 
+     * @return string
+     * 
+     * @see TIG_PostNL_Helper_Carrier::getCurrentPostnlShippingMethod()
+     * 
+     * @deprecated
+     */
+    public function getPostnlShippingMethod()
+    {
+        return $this->getCurrentPostnlShippingMethod();
+    }
     
     /**
      * Returns the PostNL shipping method
      * 
      * @return string
      */
-    public function getPostnlShippingMethod()
+    public function getCurrentPostnlShippingMethod($storeId = null)
     {
-        return self::POSTNL_SHIPPING_METHOD;
-    }
-    
-    /**
-     * Checks if a given postnl shipment exists using Zend_Validate_Db_RecordExists.
-     * 
-     * @param string $shipmentId
-     * 
-     * @return boolean
-     * 
-     * @see Zend_Validate_Db_RecordExists
-     * 
-     * @link http://framework.zend.com/manual/1.12/en/zend.validate.set.html#zend.validate.Db
-     */
-    public function postnlShipmentExists($shipmentId)
-    {
-        $coreResource = Mage::getSingleton('core/resource');
-        $readAdapter = $coreResource->getConnection('core_read');
-        
-        $validator = Mage::getModel('Zend_Validate_Db_RecordExists', 
-            array(
-                'table'   => $coreResource->getTableName('postnl_core/shipment'),
-                'field'   => 'shipment_id',
-                'adapter' => $readAdapter,
-            )
-        );
-        
-        $postnlShipmentExists = $validator->isValid($shipmentId);
-        
-        if ($postnlShipmentExists) {
-            return true;
+        if (Mage::registry('current_postnl_shipping_method') !== null) {
+            return Mage::registry('current_postnl_shipping_method');
         }
         
-        return false;
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $rateType = Mage::getStoreConfig(self::XML_PATH_RATE_TYPE, $storeId);
+        
+        $carrier = self::POSTNL_CARRIER;
+        switch ($rateType) {
+            case 'flat':
+                $shippingMethod = $carrier . '_' . self::POSTNL_FLATRATE_METHOD;
+                break;
+            case 'table':
+                $shippingMethod = $carrier . '_' . self::POSTNL_TABLERATE_METHOD;
+                break;
+            default:
+                throw Mage::exception('TIG_PostNL', 'Invalid rate type requested: ' . $rateType);
+        }
+        
+        Mage::register('current_postnl_shipping_method', $shippingMethod);
+        return $shippingMethod;
     }
     
     /**
@@ -96,10 +137,12 @@ class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
      * 
      * @param string $barcode
      * @param mixed $destination An array or object containing the shipment's destination data
+     * @param boolean | string $lang
+     * @param boolean $forceNl
      * 
      * @return string
      */
-    public function getBarcodeUrl($barcode, $destination = false)
+    public function getBarcodeUrl($barcode, $destination = false, $lang = false, $forceNl = false)
     {
         $countryCode = null;
         $postcode    = null;
@@ -113,18 +156,78 @@ class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
             $postcode    = $destination->getPostcode();
         }
         
-        $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_BASE_URL
-                    . '&B=' . $barcode;
-        if ($countryCode == 'NL' && $postcode) {
+        /**
+         * Get the diutch track & trace URL for dutch shipments or for the admin
+         */
+        if ($forceNl
+            || (!empty($countryCode) 
+                && $countryCode == 'NL'
+            )
+        ) {
+            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_NL_BASE_URL
+                        . '&b=' . $barcode;
             /**
-             * For Dutch shipments we can add the destination zip code
+             * For dutch shipments add the postcode. For international shipments add an 'international' flag
              */
-            $barcodeUrl .= '&P=' . $postcode;
-        } elseif (!empty($countryCode) && $countryCode != 'NL') {
-            /**
-             * For international shipments we need to add a flag
-             */
-            $barcodeUrl .= '&I=True';
+            if (!empty($postcode) 
+                && !empty($countryCode) 
+                && $countryCode == 'NL'
+            ) {
+                $barcodeUrl .= '&p=' . $postcode;
+            } else {
+                $barcodeUrl .= '&i=true';
+            }
+            
+            return $barcodeUrl;
+        }
+        
+        /**
+         * Get localized track & trace URLs for UK, DE and FR shipments
+         */
+        if (isset($countryCode) 
+            && ($countryCode == 'UK'
+                || $countryCode == 'GB'
+            )
+        ) {
+            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_GB_BASE_URL
+                        . '&B=' . $barcode
+                        . '&D=GB'
+                        . '&lang=en';
+                        
+            return $barcodeUrl;
+        }
+        
+        if (isset($countryCode) && $countryCode == 'DE') {
+            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_DE_BASE_URL
+                        . '&B=' . $barcode
+                        . '&D=DE'
+                        . '&lang=de';
+                        
+            return $barcodeUrl;
+        }
+        
+        if (isset($countryCode) && $countryCode == 'FR') {
+            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_FR_BASE_URL
+                        . '&B=' . $barcode
+                        . '&D=FR'
+                        . '&lang=fr';
+                        
+            return $barcodeUrl;
+        }
+        
+        /**
+         * Get a general track & trace URL for all other destinations
+         */
+        $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_INT_BASE_URL
+                    . '&B=' . $barcode
+                    . '&I=true';
+                    
+        if ($lang) {
+            $barcodeUrl .= '&lang=' . strtolower($lang);
+        }
+        
+        if ($countryCode) {
+            $barcodeUrl .= '&D=' . $countryCode;
         }
         
         return $barcodeUrl;

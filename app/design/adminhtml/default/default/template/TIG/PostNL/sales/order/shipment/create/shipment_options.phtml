@@ -38,11 +38,12 @@
  */
 ?>
 
-<?php $_shipment = $this->getShipment(); ?>
-<?php $_productOptions = $this->getProductOptions(); ?>
+<?php $_shipment             = $this->getShipment(); ?>
+<?php $_productOptions       = $this->getProductOptions(); ?>
 <?php $_defaultProductOption = $this->getDefaultProductOption(); ?>
-<?php $_isBelgium = $this->isBelgium(); ?>
-<?php $_isGlobalPackShipment = Mage::helper('postnl/cif')->isGlobalShipment($_shipment); ?>
+<?php $_isBelgium            = $this->isBelgium(); ?>
+<?php $_isGlobalPackShipment = (int) Mage::helper('postnl/cif')->isGlobalShipment($_shipment); ?>
+<?php $_parcelCount          = $this->getParcelCount(); ?>
 
 <p id="postnl_product_option_container">
     <label class="normal" for="postnl_product_option"><?php echo $this->__('PostNL Shipping Options'); ?></label>
@@ -69,7 +70,11 @@
 </p>
 <p id="postnl_extra_cover_container">
     <label class="normal" for="postnl_extra_cover"><?php echo $this->__('Extra cover amount (in increments of 500)'); ?></label>
-    <input type="text" name="postnl[extra_cover_amount]" class="input-text required-entry validate-increment-500 validate-not-negative-number" id="postnl_extra_cover"></input>
+    <input type="text" name="postnl[extra_cover_amount]" class="input-text required-entry validate-increment-500 validate-not-negative-number" id="postnl_extra_cover"/>
+</p>
+<p id="postnl_parcel_count_container">
+    <label class="normal" for="postnl_parcel_count"><?php echo $this->__('Number of parcels'); ?></label>
+    <input type="text" name="postnl[parcel_count]" class="input-text validate-digits validate-not-negative-number required-entry" id="postnl_parcel_count" value="<?php echo $_parcelCount; ?>"/>
 </p>
 <?php if ($_isGlobalPackShipment): ?>
     <p id="postnl_shipment_type_container">
@@ -87,60 +92,7 @@
 <?php endif; ?>
 <script type ="text/javascript">
 //<![CDATA[
-    document.observe('dom:loaded', function() {
-        addProductOptions();
-        addExtraCover();
-        
-        <?php if($_isGlobalPackShipment): ?>
-            addGlobalPackFields();
-        <?php endif; ?>
-        
-        var productOptions = $('postnl_product_option');
-        productOptions.observe('change', function() {
-            showOrHideExtraOptions(productOptions);
-        });
-        
-        showOrHideExtraOptions(productOptions);
-    });
-    
-    function addProductOptions() {
-        postnlProductOptionsContainer = $('postnl_product_option_container');
-        $$('.order-totals-bottom div.a-right').each(function(element) {
-            element.insert({
-                before: postnlProductOptionsContainer
-            });
-        });
-    }
-    
-    function addExtraCover() {
-        postnlExtraCoverValue = $('postnl_extra_cover');
-        postnlExtraCoverValue.value = increment(<?php echo $_shipment->getOrder()->getBaseGrandTotal(); ?>, 500);
-        
-        postnlExtraCoverContainer = $('postnl_extra_cover_container');
-        $('postnl_product_option_container').insert({
-            after: postnlExtraCoverContainer
-        });
-    }
-    
-    function addGlobalPackFields() {
-        postnlShipmentTypeContainer = $('postnl_shipment_type_container');
-        postnlTreatAsAbandonedContainer = $('postnl_treat_as_abandoned_container');
-        
-        $('postnl_extra_cover_container').insert({
-            after: postnlShipmentTypeContainer
-        });
-        
-        $('postnl_shipment_type_container').insert({
-            after: postnlTreatAsAbandonedContainer
-        });
-    }
-        
-    function showOrHideExtraOptions(productOptions) {
-        if (productOptions[productOptions.selectedIndex].hasClassName('extra_cover')) {
-            $('postnl_extra_cover_container').show();
-        } else {
-            $('postnl_extra_cover_container').hide();
-        }
-    }
+    var extraCoverValue = '<?php echo $_shipment->getOrder()->getBaseGrandTotal(); ?>';
+    var isGlobalPackShipment = <?php echo $_isGlobalPackShipment; ?>
 //]]>
 </script>

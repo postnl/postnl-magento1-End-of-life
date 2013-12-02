@@ -54,12 +54,20 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      * XML paths for setting statistics
      */
     const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
-    const XML_PATH_SPLI_STREET               = 'postnl/cif_address/split_street';
+    const XML_PATH_SPLIT_STREET              = 'postnl/cif_address/split_street';
+    const XML_PATH_CHECKOUT_ACTIVE           = 'postnl/checkout/active';
+    const XML_PATH_CHECKOUT_WEBSHOP_ID       = 'postnl/checkout/webshop_id';
+    const XML_PATH_CONTACT_NAME              = 'postnl/cif/contact_name';
     
     /**
      * XML path to extension activation setting
      */
     const XML_PATH_ACTIVE = 'postnl/general/active';
+    
+    /**
+     * XML path to 'is_activated' flag
+     */
+    const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
     
     /**
      * Expected success response
@@ -72,22 +80,23 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     const ENCRYPTION_METHOD = 'bf-cbc';
     
     /**
-     * Shipping method used by PostNL
-     */
-    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
-    
-    /**
      * Activates the webshop. This will trigger a private key and a unique key to be sent to the specified e-mail, which must be
      * entered into system config by the merchant in order to finish the activation process.
+     * 
+     * @param boolean|string $email
      * 
      * @return TIG_PostNL_Model_ExtensionControl_Webservices
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function activateWebshop()
+    public function activateWebshop($email = false)
     {
+        if (!$email) {
+            $email = $this->_getEmail();
+        }
+        
         $soapParams = array(
-            'email'    => $this->_getEmail(),
+            'email'    => $email,
             'hostName' => $this->_getHostName(),
         );
         
@@ -172,6 +181,14 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             throw Mage::exception('TIG_PostNL', 'Invalid updateStatistics response: ' . var_export($result, true));
         }
         
+        /**
+         * If a succesfull update has taken place we can confirm that the extension has been activated
+         */
+        $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if (!$isActivated || $isActivated == '1') {
+            Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 2);
+        }
+        
         return $result;
     }
     
@@ -227,9 +244,13 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
                 'websiteId'         => $website->getId(),
                 'hostName'          => $this->_getHostName($website),
                 'amountOfShipments' => $this->_getAmountOfShipments($website),
+                'merchantName'      => $this->_getMerchantName($website),
+                'lastOrderDate'     => $this->_getLastOrderDate($website),
                 'settings'          => array(
-                    'globalShipping' => $this->_getUsesGlobalShipping($website),
-                    'splitAddress'   => $this->_getUsesSplitAddress($website),
+                    'globalShipping'          => $this->_getUsesGlobalShipping($website),
+                    'splitAddress'            => $this->_getUsesSplitAddress($website),
+                    'postnlCheckout'          => $this->_getUsesPostnlCheckout($website),
+                    'postnlCheckoutWebshopId' => $this->_getCheckoutWebshopId($website),
                 ),
             );
         }
@@ -329,15 +350,12 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             }
         }
         
-        /**
-         * Implode the list to use in the collection select
-         */
-        $storeIds = implode(',', $storeIds);
-        
         $resource = Mage::getSingleton('core/resource');
         
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        
         /**
-         * Get he shipment collection
+         * Get the shipment collection
          */
         $shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection');
         $shipmentCollection->addFieldToSelect('entity_id');
@@ -355,11 +373,68 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             )
         );
         
-        $shipmentCollection->addFieldToFilter('`shipping_method`', array('eq' => self::POSTNL_SHIPPING_METHOD))
+        $shipmentCollection->addFieldToFilter('`shipping_method`', array('in' => $postnlShippingMethods))
                            ->addFieldToFilter('`main_table`.`store_id`', array('in' => $storeIds));
         
         $amountOfShipments = $shipmentCollection->getSize();
         return $amountOfShipments;
+    }
+    
+    /**
+     * gets the last order date if any for this website
+     * 
+     * @param Mage_Core_Model_Website $website
+     * 
+     * @return null|string
+     */
+    protected function _getLastOrderDate($website)
+    {
+        /**
+         * Get a list of all storeIds associated with this website
+         */
+        $storeIds = array();
+        foreach ($website->getGroups() as $group) {
+            $stores = $group->getStores();
+            foreach ($stores as $store) {
+                $storeIds[] = $store->getId();
+            }
+        }
+        
+        /**
+         * Implode the list to use in the collection select
+         */
+        $storeIds = implode(',', $storeIds);
+        
+        $orderCollection = Mage::getResourceModel('sales/order_collection');
+        $orderCollection->addFieldToSelect('created_at')
+                        ->addFieldToFilter('`main_table`.`store_id`', array('in' => $storeIds));
+        
+        $select = $orderCollection->getSelect()
+                                  ->order('created_at DESC')
+                                  ->limit(1);
+                                  
+        if ($orderCollection->getSize() < 1) {
+            return null;
+        }
+        
+        $lastOrder = $orderCollection->getFirstItem();
+        $createdAt = $lastOrder->getCreatedAt();
+        
+        return Mage::getModel('core/date')->date('Y-m-d H:i:s', $createdAt);
+    }
+    
+    /**
+     * Gets the merchant's name if set
+     * 
+     * @param Mage_Core_Model_Website $website
+     * 
+     * @return string
+     */
+    protected function _getMerchantName($website)
+    {
+        $name = $website->getConfig(self::XML_PATH_CONTACT_NAME);
+        
+        return $name;
     }
     
     /**
@@ -400,8 +475,37 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsesSplitAddress($website)
     {
-        $splitStreet = (bool) $website->getConfig(self::XML_PATH_SPLI_STREET);
+        $splitStreet = (bool) $website->getConfig(self::XML_PATH_SPLIT_STREET);
         
         return $splitStreet;
+    }
+    
+    /**
+     * Gets whether the website makes use of PostNL Checkout
+     * 
+     * @param Mage_Core_Model_Website $website
+     * 
+     * @return boolean
+     */
+    protected function _getUsesPostnlCheckout($website)
+    {
+        $checkoutActive = (bool) $website->getConfig(self::XML_PATH_CHECKOUT_ACTIVE);
+        
+        return $checkoutActive;
+    }
+    
+    /**
+     * Gets the checkout webshop ID
+     * 
+     * @param Mage_Core_Model_Website $website
+     * 
+     * @return string
+     */
+    protected function _getCheckoutWebshopId($website)
+    {
+        $webshopId = $website->getConfig(self::XML_PATH_CHECKOUT_WEBSHOP_ID);
+        $webshopId = Mage::helper('core')->decrypt($webshopId);
+        
+        return $webshopId;
     }
 }

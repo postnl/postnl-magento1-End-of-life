@@ -43,13 +43,13 @@ class TIG_PostNL_Model_Core_Observer_Barcode
      * 
      * @param Varien_Event_Observer $observer
      * 
-     * @return TIG_PostNL_Model_Core_Observer
+     * @return TIG_PostNL_Model_Core_Observer_Barcode
      * 
      * @event sales_order_shipment_save_after
      * 
      * @observer postnl_shipment_generate_barcode
      * 
-     * @todo change confirm date to the correct value, instead of the current timestamp
+     * @todo change confirm date to the correct value, taking into account 'ordered before X, delivered on Y' settings
      */
     public function generateBarcode(Varien_Event_Observer $observer)
     {
@@ -65,7 +65,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         /**
          * Check if a postnl shipment exists for this shipment
          */
-        if (Mage::helper('postnl/carrier')->postnlShipmentExists($shipment->getId())) {
+        if (Mage::helper('postnl/cif')->postnlShipmentExists($shipment->getId())) {
             return $this;
         }
         
@@ -74,8 +74,30 @@ class TIG_PostNL_Model_Core_Observer_Barcode
          */
         $postnlShipment = Mage::getModel('postnl_core/shipment');
         $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmDate(Mage::getModel('core/date')->gmtTimestamp()) //TODO change this to the actual confirm date
-                       ->save();
+                       ->setConfirmDate(Mage::getModel('core/date')->gmtTimestamp());
+        
+        /**
+         * Check if this shipment has an associated PostNL Order. If so, copy it's data.
+         */
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($shipment->getOrderId(), 'order_id');
+        if ($postnlOrder->getId()) {
+            if ($postnlOrder->getConfirmDate()) {
+                $postnlShipment->setConfirmDate(strtotime($postnlOrder->getConfirmDate()));
+            }
+            
+            if ($postnlOrder->getProductCode()) {
+                $postnlShipment->setProductCode($postnlOrder->getProductCode());
+            }
+            
+            if ($postnlOrder->getIsPakjeGemak()) {
+                $postnlShipment->setIsPakjeGemak($postnlOrder->getIsPakjeGemak());
+            }
+        }
+        
+        /**
+         * We need an ID in order to save the barcodes
+         */
+        $postnlShipment->save();
         
         /**
          * Barcode generation needs to be tried seperately. This functionality may throw a valid exception
@@ -83,7 +105,8 @@ class TIG_PostNL_Model_Core_Observer_Barcode
          * created. This may happen when CIF is overburdoned.
          */              
         try {
-            $postnlShipment->generateBarcodes();
+            $postnlShipment->saveAdditionalShippingOptions()
+                           ->generateBarcodes();
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
         }

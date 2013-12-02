@@ -41,6 +41,77 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ConfigCheck
     extends Mage_Adminhtml_Block_Abstract
     implements Varien_Data_Form_Element_Renderer_Interface
 {
+    /**
+     * Template file used by this element
+     * 
+     * @var string
+     */
+    protected $_template = 'TIG/PostNL/system/config/config_check.phtml';
+    
+    /**
+     * Get the postnl helper
+     * 
+     * @return TIG_PostNL_Helper_Data
+     */
+    public function getPostnlHelper()
+    {
+        if ($this->hasPostnlHelper()) {
+            return $this->getData('postnl_helper');
+        }
+        
+        $helper = Mage::helper('postnl');
+        
+        $this->setPostnlHelper($helper);
+        return $helper;
+    }
+    
+    /**
+     * Check if live mode is enabled
+     * 
+     * @return boolean
+     */
+    public function isLiveEnabled()
+    {
+        $helper = $this->getPostnlHelper();
+        
+        return $helper->isEnabled(false, false, false);
+    }
+    
+    /**
+     * Check if test mode is enabled
+     * 
+     * @return boolean
+     */
+    public function isTestEnabled()
+    {
+        $helper = $this->getPostnlHelper();
+        
+        return $helper->isEnabled(false, false, true);
+    }
+    
+    /**
+     * Check if global shipments are
+     * 
+     * @return boolean
+     */
+    public function isGlobalEnabled()
+    {
+        $helper = $this->getPostnlHelper();
+        
+        return $helper->isEnabled(false, true);
+    }
+    
+    /**
+     * Check if checkout is enabled
+     * 
+     * @return boolean
+     */
+    public function isCheckoutEnabled()
+    {
+        $helper = Mage::helper('postnl/checkout');
+        
+        return $helper->isCheckoutEnabled(false);
+    }
     
     /**
      * Render the element
@@ -53,6 +124,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ConfigCheck
      */
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
-        return '';
+        return $this->toHtml();
     }
 }
