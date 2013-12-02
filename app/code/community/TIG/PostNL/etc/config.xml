@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.4.0</version>
+			<version>0.4.1</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -329,6 +329,7 @@
                 <handling_type>F</handling_type> <!-- Fixed -->
                 <condition_name>package_weight</condition_name> <!-- Product weight -->
                 <include_virtual_price>1</include_virtual_price> <!-- Include virtual price -->
+                <rate_type>flat</rate_type>
             </postnl>
         </carriers>
         <postnl>

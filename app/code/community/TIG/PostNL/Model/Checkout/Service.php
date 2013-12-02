@@ -174,7 +174,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             /**
              * Register that this is a PakjeGemak order
              */
-            Mage::register('quote_is_pakje_gemak', true);
+            Mage::register('quote_is_pakje_gemak', 1);
         }
         
         /**
@@ -409,7 +409,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          * Check if this is a PakjeGemak order. If so, save the PostNL Order as such
          */
         if (Mage::registry('quote_is_pakje_gemak')) {
-            $postnlOrder->setIsPakjeGemak(true);
+            $postnlOrder->setIsPakjeGemak(1);
             
             Mage::unRegister('quote_is_pakje_gemak');
         }
