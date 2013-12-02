@@ -186,23 +186,42 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function summaryAction()
     {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
-        
-        $cif = Mage::getModel('postnl_checkout/cif');
-        $orderDetails = $cif->readOrder();
-        
-        $service = Mage::getModel('postnl_checkout/service');
-        $service->setQuote($quote)
-                ->updateQuoteAddresses($orderDetails)
-                ->updateQuotePayment($orderDetails)
-                ->updateQuoteCustomer($orderDetails);
-        
-        Mage::register('current_quote', $quote);
-        
-        $this->loadLayout();
-        $this->_initLayoutMessages('customer/session');
-        $this->getLayout()->getBlock('head')->setTitle($this->__('PostNL Checkout Summary'));
-        $this->renderLayout();
+        try {
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+            if (!$quote->getIsActive() 
+                || !$postnlOrder->getId() 
+                || !$postnlOrder->getToken()
+            ) {
+                $this->_redirect('checkout/cart');
+                return $this;
+            }
+            
+            $cif = Mage::getModel('postnl_checkout/cif');
+            $orderDetails = $cif->readOrder();
+            
+            $service = Mage::getModel('postnl_checkout/service');
+            $service->setQuote($quote)
+                    ->updateQuoteAddresses($orderDetails)
+                    ->updateQuotePayment($orderDetails)
+                    ->updateQuoteCustomer($orderDetails);
+            
+            Mage::register('current_quote', $quote);
+            
+            $this->loadLayout();
+            $this->_initLayoutMessages('customer/session');
+            $this->getLayout()->getBlock('head')->setTitle($this->__('PostNL Checkout Summary'));
+            $this->renderLayout();
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            
+            Mage::getSingleton('checkout/session')->addError(
+                'An error occurred while processing your order. Please try again.'
+            );
+            
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
         
         return $this;
     }
@@ -264,9 +283,11 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         
         if(empty($redirectUrl)) {
             $redirectUrl = 'checkout/onepage/success';
+            $this->_redirect($redirectUrl);
+        } else {
+            $this->_redirectUrl($redirectUrl);
         }
         
-        $this->_redirect($redirectUrl);
         return $this;
     }
     

@@ -39,6 +39,11 @@
 class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
 {
     /**
+     * XML path to supported options configuration setting
+     */
+    const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+    
+    /**
      * Returns an option array for all possible PostNL product options
      * 
      * @return array

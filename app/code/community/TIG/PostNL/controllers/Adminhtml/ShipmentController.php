@@ -206,6 +206,59 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         return $this;
     }
     
+    public function sendTrackAndTraceAction()
+    {
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        
+        /**
+         * If no shipment was selected, cause an error
+         */
+        if (is_null($shipmentId)) {
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('Shipment not found.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+        
+        try {
+            /**
+             * Load the shipment and check if it exists and is valid
+             */
+            $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+                throw Mage::exception('TIG_PostNL', 'This action cannot be used on non-PostNL shipments.');
+            }
+            
+            $postnlShipment = $this->_getPostnlShipment($shipmentId);
+            $postnlShipment->sendTrackAndTraceEmail(true);
+            
+        } catch (TIG_PostNL_Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action: %s', $e->getMessage())
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred while processing this action.')
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+        
+        Mage::getSingleton('adminhtml/session')->addSuccess(
+            $this->__('The track & trace email was sent.')
+        );
+        $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+        return $this;
+    }
+    
     /**
      * Gets the postnl shipment associated with a shipment
      * 
@@ -318,6 +371,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $this->_redirect('adminhtml/sales_order/index');
             return $this;
         }
+        
+        Mage::getSingleton('adminhtml/session')->addSuccess(
+            $this->__('The shipments were successfully created.')
+        );
         
         $this->_checkForWarnings();
         

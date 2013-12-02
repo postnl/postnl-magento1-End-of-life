@@ -257,7 +257,7 @@
                             <validate>validate-select</validate>
                     	</active>
                     	<activated_header translate="label" module="postnl">
-                            <label><![CDATA[The extension has been activated. Click <a href="%s">here</a> to be able to activate the extension under a different name.]]></label>
+                            <label><![CDATA[The extension has been activated. Click <a href="#" onclick="%s">here</a> to be able to activate the extension under a different name.]]></label>
                             <frontend_model>postnl_adminhtml/system_config_activatedFieldHeader</frontend_model>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1250,10 +1250,14 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
                         </checkout_required_fields_header>
                         <webshop_id translate="label" module="postnl">
-                            <label>Webshop ID (external)</label>
-                            <frontend_type>text</frontend_type>
+                            <label>Webshop ID</label>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -1280,6 +1284,9 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
                         </checkout_customization_header>
                         <show_summary_page translate="label comment" module="postnl">
                             <label>Show order summary page</label>
@@ -1414,6 +1421,9 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
                         </checkout_urls_header>
                         <contact_url translate="label comment" module="postnl">
                             <label>Contact URL</label>
