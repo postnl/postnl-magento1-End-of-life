@@ -541,8 +541,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $cifShipment = $this->_getShipment($postnlShipment, $barcode, $mainBarcode, $shipmentNumber);
         }
         
-        $message     = $this->_getMessage($barcode, array('Printertype' => $printerType));
-        $customer    = $this->_getCustomer($shipment);
+        $message  = $this->_getMessage($barcode, array('Printertype' => $printerType));
+        $customer = $this->_getCustomer($shipment);
         
         $soapParams =  array(
             'Message'  => $message,
@@ -749,21 +749,20 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * Add address data
          */
         $useSenderAddressAsReturn = Mage::getStoreConfig(self::XML_PATH_USE_SENDER_ADDRESS_AS_RETURN, $this->getStoreId());
-        if ($useSenderAddressAsReturn) {
-            $addresses = array(
-                'Address' => $this->_getAddress('Receiver', $shippingAddress),
-            );
-        } else {
-            $addresses = array(
-                'Address' => array(
-                    $this->_getAddress('Receiver', $shippingAddress),
-                    $this->_getAddress('Alternative'),
-                ),
-            );
+        $pakjeGemakAddress = $postnlShipment->getPakjeGemakAddress();
+        
+        $addresses = array(
+            'Address' => array(
+                $this->_getAddress('Receiver', $shippingAddress)
+             ),
+        );
+        
+        if (!$useSenderAddressAsReturn) {
+            $addresses['Address'][] = $this->_getAddress('Alternative');
         }
         
-        if ($postnlShipment->getPakjeGemakAddress()) {
-            $addresses['Address'][] = $this->_getAddress('Delivery', $postnlShipment->getPakjeGemakAddress());
+        if ($pakjeGemakAddress) {
+            $addresses['Address'][] =$this->_getAddress('Delivery', $pakjeGemakAddress);
         }
         
         $shipmentData['Addresses'] = $addresses;
