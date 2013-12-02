@@ -880,7 +880,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function isDutchShipment()
     {
-        $shippingDestination = $this->getShippingAddress()->getCountry();
+        $shippingDestination = $this->getShippingAddress()->getCountryId();
         
         if ($shippingDestination == 'NL') {
             return true;
@@ -896,7 +896,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function isEuShipment()
     {
-        $shippingDestination = $this->getShippingAddress()->getCountry();
+        $shippingDestination = $this->getShippingAddress()->getCountryId();
         
         $euCountries = $this->getHelper('cif')->getEuCountries();
         
