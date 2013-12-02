@@ -142,8 +142,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         
         $shippingMethod = Mage::helper('postnl/carrier')->getCurrentPostnlShippingMethod();
         if (!$shippingAddress->getShippingMethod()) {
-            $shippingAddress->setCountryId('NL')
-                            ->setCollectShippingRates(true)
+            $shippingAddress->setCollectShippingRates(true)
                             ->setShippingMethod($shippingMethod);
         }
         
@@ -598,6 +597,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                 ->setCity($city)
                 ->setPostcode($postcode);
         
+        if (!$address->getCountryId()) {
+            $address->setCountryId('NL');
+        }
+        
         $address->setShouldIgnoreValidation(true);
         
         return $address;
@@ -724,7 +727,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     
     /**
      * Removes all addresses associated with a quote. The quote's regular method to remove all addresses (removeAllAddresses())
-     * only removes billing and shipping addresses. This method truly removes all addresses (including pakje_gemak addresses).
+     * effectively resets the addresses rather than removing them (replaces each address by a default one of the same type). We
+     * specifically want to delete the optional PakjeGemak address as well.
      * 
      * @param Mage_Sales_Model_Quote &$quote
      * 
@@ -732,10 +736,20 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      */
     protected function _removeAllQuoteAddresses(&$quote)
     {
+        /**
+         * Truly delete the PakjeGemak address
+         */
         $addresses = $quote->getAllAddresses();
         foreach ($addresses as $address) {
-            $quote->removeAddress($address);
+            if ($address->getAddressType() == self::ADDRESS_TYPE_PAKJEGEMAK) {
+                $address->isDeleted(true);
+            }
         }
+        
+        /**
+         * Reset all remaining address types (by default only billing and shipping will remain)
+         */
+        $quote->removeAllAddresses();
         
         return $this;
     }
