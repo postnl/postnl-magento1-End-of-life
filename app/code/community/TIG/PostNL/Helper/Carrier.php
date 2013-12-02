@@ -115,7 +115,7 @@ class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
         }
         
         $rateType = Mage::getStoreConfig(self::XML_PATH_RATE_TYPE, $storeId);
-        
+       
         $carrier = self::POSTNL_CARRIER;
         switch ($rateType) {
             case 'flat':
