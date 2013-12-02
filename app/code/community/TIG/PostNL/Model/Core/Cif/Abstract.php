@@ -59,6 +59,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const WSDL_CONFIRMING_NAME      = 'ConfirmingWebService';
     const WSDL_LABELLING_NAME       = 'LabellingWebService';
     const WSDL_SHIPPING_STATUS_NAME = 'ShippingStatusWebService';
+    const WSDL_CHECKOUT_NAME        = 'WebshopCheckoutWebService';
     
     /**
      * header security namespace. Used for constructing the SOAP headers array
@@ -81,51 +82,82 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const XML_PATH_CIF_VERSION_LABELLING      = 'postnl/advanced/cif_version_labelling';
     const XML_PATH_CIF_VERSION_CONFIRMING     = 'postnl/advanced/cif_version_confirming';
     const XML_PATH_CIF_VERSION_SHIPPINGSTATUS = 'postnl/advanced/cif_version_shippingstatus';
+    const XML_PATH_CIF_VERSION_CHECKOUT       = 'postnl/advanced/cif_version_checkout';
     
     /**
      * Gets the username from system/config. Test mode determines if live or test username is used.
      * 
+     * @param boolean|int $storeId
+     * 
      * @return string
      */
-    protected function _getUsername()
+    protected function _getUsername($storeId = false)
     {
+        if ($storeId === false) {
+            $storeId = $this->getStoreId();
+        }
+        
+        if (!$storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
         if ($this->isTestMode()) {
-            $username = Mage::getStoreConfig(self::XML_PATH_TEST_USERNAME, Mage_Core_Model_App::ADMIN_STORE_ID);
+            $username = Mage::getStoreConfig(self::XML_PATH_TEST_USERNAME, $storeId);
             return $username;
         }
         
-        $username = Mage::getStoreConfig(self::XML_PATH_LIVE_USERNAME, Mage_Core_Model_App::ADMIN_STORE_ID);
-        return $username;
+        $username = Mage::getStoreConfig(self::XML_PATH_LIVE_USERNAME, $storeId);
+        return trim($username);
     }
     
     /**
      * Gets the password from system/config. Test mode determines if live or test password is used.
      * Passwords will be decrypted using Magento's encryption key and then hashed using sha1
      * 
+     * @param boolean|int $storeId
+     * 
      * @return string
      */
-    protected function _getPassword()
+    protected function _getPassword($storeId = false)
     {
+        if ($storeId === false) {
+            $storeId = $this->getStoreId();
+        }
+        
+        if (!$storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
         if ($this->isTestMode()) {
-            $password = Mage::getStoreConfig(self::XML_PATH_TEST_PASSWORD, Mage_Core_Model_App::ADMIN_STORE_ID);
+            $password = Mage::getStoreConfig(self::XML_PATH_TEST_PASSWORD, $storeId);
             $password = sha1(Mage::helper('core')->decrypt($password));
             return $password;
         }
         
-        $password = Mage::getStoreConfig(self::XML_PATH_LIVE_PASSWORD, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $password = Mage::getStoreConfig(self::XML_PATH_LIVE_PASSWORD, $storeId);
         $password = sha1(Mage::helper('core')->decrypt($password));
-        return $password;
+        return trim($password);
     }
     
     /**
      * Check if the module is set to test mode
      * 
-     * @see TIG_PostNL_Helper_Data::isTestMode()
+     * @param boolean|int $storeId
      * 
      * @return boolean
+     * 
+     * @see TIG_PostNL_Helper_Data::isTestMode()
      */
     public function isTestMode($storeId = false)
     {
+        if ($storeId === false) {
+            $storeId = $this->getStoreId();
+        }
+        
+        if (!$storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
         $testMode = Mage::helper('postnl')->isTestMode($storeId);
         
         return $testMode;
@@ -142,7 +174,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function call($wsdlType, $method, $soapParams)
+    public function call($wsdlType, $method, $soapParams = null)
     {
         try {
             if (!$this->_getUserName() || !$this->_getPassword()) {
@@ -219,6 +251,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * - confirming
      * - labelling
      * - shippingstatus
+     * - checkout
      * 
      * @param string $wsdlType
      * 
@@ -252,6 +285,10 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_SHIPPINGSTATUS, $adminStoreId);
                 $wsdlFileName = self::WSDL_SHIPPING_STATUS_NAME;
                 break;
+            case 'checkout':
+                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_CHECKOUT, $adminStoreId);
+                $wsdlFileName = self::WSDL_CHECKOUT_NAME;
+                break;
             default:
                 throw Mage::exception('TIG_PostNL', 'Chosen wsdl type is not supported: ' . $wsdlType);
         }
@@ -268,17 +305,16 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         if ($this->isTestMode()) {
             $wsdlUrl = self::TEST_WSDL_BASE_URL;
         } else {
-            $wsdlUrl =self::WSDL_BASE_URL;
+            $wsdlUrl = self::WSDL_BASE_URL;
         }
         
         /**
          * Format the final wsdl URL
          */
         $wsdlUrl .= $wsdlFileName
-                   . DS
+                   . '/'
                    . $wsdlversion
-                   . DS
-                   . '?wsdl';
+                   . '/?wsdl';
         
         return $wsdlUrl;
     }

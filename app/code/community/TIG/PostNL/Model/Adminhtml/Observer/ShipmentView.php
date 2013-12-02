@@ -83,16 +83,36 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          * Check if the current shipment was placed with PostNL
          */
         $shipment = Mage::registry('current_shipment');
-        if ($shipment->getOrder()->getShippingMethod() != 'postnl_postnl') { 
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) { 
             return $this; 
         } 
         
+        /**
+         * Add a button to print this shipment's shipping labels
+         */
         $printShippingLabelUrl = $this->getPrintShippingLabelUrl($shipment->getId());
         $block->addButton('print_shipping_label', array(
             'label'   => Mage::helper('postnl')->__('PostNL - Print shipping label'),
             'onclick' => "setLocation('{$printShippingLabelUrl}')",
             'class'   => 'save',
         ));
+        
+        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
+        if (!$postnlShipment->isConfirmed()) {
+            return $this;
+        }
+        
+        /**
+         * Update the send tracking info button so that it sends our info, instead of the default
+         */
+        $resendTrackAndTraceUrl = $this->getResendTrackAndTraceUrl($shipment->getId());
+        $block->updateButton('save', 'label', Mage::helper('postnl')->__('PostNL - Send Tracking Information'));
+        $block->updateButton('save', 'onclick', 
+            "deleteConfirm('"
+                . Mage::helper('sales')->__('Are you sure you want to send PostNL tracking information to the customer?')
+                . "', '" . $resendTrackAndTraceUrl . "')"
+        );
                 
         return $this;
     }
@@ -108,6 +128,23 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     {
         $url = Mage::helper('adminhtml')->getUrl(
             'postnl/adminhtml_shipment/printLabel', 
+            array('shipment_id' => $shipmentId)
+        );
+        
+        return $url;
+    }
+    
+    /**
+     * Get adminhtml url for PostNL re-send track and trace action
+     * 
+     * @param int $shipmentId The ID of the current shipment
+     * 
+     * @return string
+     */
+    public function getResendTrackAndTraceUrl($shipmentId)
+    {
+        $url = Mage::helper('adminhtml')->getUrl(
+            'postnl/adminhtml_shipment/sendTrackAndTrace', 
             array('shipment_id' => $shipmentId)
         );
         

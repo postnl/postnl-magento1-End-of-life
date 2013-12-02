@@ -55,7 +55,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         $helper = Mage::helper('postnl');
         $availableOptions = array(
             'standard_options' => array(
-                'label' => $helper->__('Standard options'),
+                'label' => $helper->__('Domestic options'),
                 'value' => array(
                     '3085' => array(
                         'value' => '3085',
@@ -122,16 +122,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     ),
                 ),
             ),
-            /**
-             * These are not currently implemented
-             * 
-             * TODO implement these options
-             */
-            /*
             'pakjegemak_options' => array(
                 'label' => $helper->__('PakjeGemak options'),
                 'value' => array(
-                    '3535' => array(
+                    /**
+                     * These are not currently implemented
+                     * 
+                     * TODO implement these options
+                     */
+                    /*'3535' => array(
                         'value' => '3535',
                         'label' => $helper->__('PakjeGemak + COD')
                     ),
@@ -146,7 +145,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     '3546' => array(
                         'value' => '3546',
                         'label' => $helper->__('PakjeGemak + COD + Extra Cover + Notification')
-                    ),
+                    ),*/
                     '3534' => array(
                         'value'        => '3534',
                         'label'        => $helper->__('PakjeGemak + Extra Cover'),
@@ -166,32 +165,32 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'label' => $helper->__('PakjeGemak + Signature on Delivery + Notification')
                     ),
                 ),
-            ),*/
+            ),
             'eu_options' => array(
                 'label' => $helper->__('EU options'),
                 'value' => array(
-                    '4950' => array(
-                        'value' => '4950',
-                        'label' => $helper->__('EU Pack Special (B2B)'),
-                    ),
                     '4952' => array(
                         'value' => '4952',
                         'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
+                    ),
+                    '4955' => array(
+                        'value' => '4955',
+                        'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                        'isBelgiumOnly' => true,
                     ),
                     /**
                      * These are not currently implemented
                      * 
                      * TODO implement these options
                      */
-                    /*'4954' => array(
+                    /*'4950' => array(
+                        'value' => '4950',
+                        'label' => $helper->__('EU Pack Special (B2B)'),
+                    ),
+                    '4954' => array(
                         'value' => '4954',
                         'label' => $helper->__('EU Pack Special COD (Belgium and Luxembourg only)'),
                     ),*/
-                    '4955' => array(
-                        'value' => '4955',
-                        'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
-                        'isBelgiumOnly' => true,
-                    ),
                 ),
             ),
             'global_options' => array(
@@ -261,6 +260,22 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         }
         
         /**
+         * Check each pakje gemak option to see if it's supprted
+         */
+        $availablePakjeGemakOptions = array();
+        foreach ($options['pakjegemak_options']['value'] as $option) {
+            if (!in_array($option['value'], $supportedOptionsArray)) {
+                continue;
+            }
+            
+            if (isset($option['isExtraCover']) && $withExtraCover !== true) {
+                continue;
+            }
+            
+            $availablePakjeGemakOptions[] = $option;
+        }
+        
+        /**
          * Check each eu option to see if it's supprted
          */
         $availableEuOptions = array();
@@ -299,6 +314,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             $availableOptions['standard_options'] = array(
                 'label' => $helper->__('Standard options'),
                 'value' => $availableStandardOptions,
+            );
+        }
+        
+        if (!empty($availablePakjeGemakOptions)) {
+            $availableOptions['pakjegemak_options'] = array(
+                'label' => $helper->__('PakjeGemak options'),
+                'value' => $availablePakjeGemakOptions,
             );
         }
         
@@ -387,19 +409,29 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         /**
          * Mark each default option as default if it is present in the available options array
          */
-        if (isset($options['standard_options']) 
+        if (isset($options['standard_options'])
+            && isset($options['standard_options']['value'])
             && isset($options['standard_options']['value'][$defaultOptions['dutch']])
         ) {
             $options['standard_options']['value'][$defaultOptions['dutch']]['label'] .= ' ' . $helper->__('(default)');
         }
         
+        if (isset($options['pakjegemak_options']) 
+            && isset($options['pakjegemak_options']['value'])
+            && isset($options['pakjegemak_options']['value'][$defaultOptions['eu']])
+        ) {
+            $options['pakjegemak_options']['value'][$defaultOptions['pakjegemak']]['label'] .= ' ' . $helper->__('(default)');
+        }
+        
         if (isset($options['eu_options']) 
+            && isset($options['eu_options']['value'])
             && isset($options['eu_options']['value'][$defaultOptions['eu']])
         ) {
             $options['eu_options']['value'][$defaultOptions['eu']]['label'] .= ' ' . $helper->__('(default)');
         }
         
         if (isset($options['global_options']) 
+            && isset($options['global_options']['value'])
             && isset($options['global_options']['value'][$defaultOptions['global']])
         ) {
             $options['global_options']['value'][$defaultOptions['global']]['label'] .= ' ' . $helper->__('(default)');

@@ -45,11 +45,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_YesNo
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
     
     /**
-     * Code of postnl shipping method
-     */
-    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
-    
-    /**
      * Renders the column value as a Yes or No value
      *
      * @param Varien_Object $row
@@ -61,8 +56,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_YesNo
         /**
          * The shipment was not shipped using PostNL
          */
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if ($shippingMethod != self::POSTNL_SHIPPING_METHOD) {
+        if (!in_array($shippingMethod, $postnlShippingMethods)) {
             return parent::render($row);
         }
         

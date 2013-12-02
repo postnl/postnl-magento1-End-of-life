@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.3.1</version>
+			<version>0.4.0</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -57,6 +57,9 @@
 			<postnl_adminhtml>
 				<class>TIG_PostNL_Block_Adminhtml</class>
 			</postnl_adminhtml>
+            <postnl_checkout>
+                <class>TIG_PostNL_Block_Checkout</class>
+            </postnl_checkout>
 		</blocks>
 		<helpers>
 			<postnl>
@@ -82,6 +85,10 @@
             <postnl_extensioncontrol>
                 <class>TIG_PostNL_Model_ExtensionControl</class>
             </postnl_extensioncontrol>
+            <postnl_checkout>
+                <class>TIG_PostNL_Model_Checkout</class>
+                <resourceModel>postnl_checkout_resource</resourceModel>
+            </postnl_checkout>
             
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
@@ -104,6 +111,14 @@
                     </shipment_status_history>
                 </entities>
             </postnl_core_resource>
+            <postnl_checkout_resource>
+                <class>TIG_PostNL_Model_Checkout_Resource</class>
+                <entities>
+                    <order>
+                        <table>tig_postnl_order</table>
+                    </order>
+                </entities>
+            </postnl_checkout_resource>
         </models>
         <resources>
             <postnl_setup>
@@ -195,6 +210,16 @@
                     </postnl_core_shipment_save>
                 </observers>
 			</controller_action_predispatch_adminhtml_sales_order_shipment_save>
+			<postnl_shipment_confirm_after>
+			    <observers>
+			        <!-- Updates a PostNL Checkout order -->
+			        <postnl_checkout_update_order>
+			            <type>model</type>
+			            <class>postnl_checkout/observer_shipment</class>
+			            <method>updateOrder</method>
+			        </postnl_checkout_update_order>
+			    </observers>
+			</postnl_shipment_confirm_after>
 		</events>
 		<layout>
             <updates>
@@ -226,6 +251,15 @@
                 	<model>postnl_core/observer_cron::cleanTempLabels</model>
                 </run>
             </postnl_clean_temp_labels>
+            <!-- remove old lock files (by default files older than 1 hour will be deleted) -->
+            <postnl_clean_old_locks>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr> <!-- every hour on the hour -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::cleanOldLocks</model>
+                </run>
+            </postnl_clean_old_locks>
         	<!-- get missing barcodes for postnl shipments -->
             <postnl_get_missing_barcodes>
                 <schedule>
@@ -279,7 +313,8 @@
         </jobs>
     </crontab>
     
-    <!-- default configuration values. You can edit most of these in system/config -->
+    <!-- Default configuration values. You can edit most of these in system/config -->
+    <!-- If a setting is specified here it does not guarantee it's availability in system/config. It does mean you can override it by creating an entry in the core_config_data table -->
     <default>
         <carriers>
             <postnl>
@@ -288,15 +323,18 @@
                 <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
                 <name>PostNL</name> <!-- PostNL -->
                 <price>5.00</price> <!-- 5 EUR -->
-                <title>PostNL</title> <!-- PostNL -->
+                <title>Flat Rate</title> <!-- PostNL -->
                 <type>I</type> <!-- Price is calculated per item -->
-                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
-                <handling_type>F</handling_type>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
+                <handling_type>F</handling_type> <!-- Fixed -->
+                <condition_name>package_weight</condition_name> <!-- Product weight -->
+                <include_virtual_price>1</include_virtual_price> <!-- Include virtual price -->
             </postnl>
         </carriers>
         <postnl>
         	<general>
         		<active>0</active> <!-- inactive -->
+        		<is_activated>0</is_activated> <!-- Not activated -->
         		<email/>
                 <unique_key/>
         		<private_key/>
@@ -309,10 +347,12 @@
         		<test_password/>
         		<customer_code/>
         		<customer_number/>
-        		<company_name/>
-        		<contact_name/>
-        		<contact_email/>
         		<collection_location/>
+        		<global_barcode_type/>
+        		<global_barcode_range/>
+                <company_name/>
+                <contact_name/>
+                <contact_email/>
         	</cif>
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
@@ -321,7 +361,8 @@
                 <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
                 <custom_shipment_reference/>
                 <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
-                <shipping_grid_columns>shipping_description,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show all optional columns -->
+                <show_shipment_type_column>1</show_shipment_type_column> <!-- Show the shipment type column -->
+                <shipping_grid_columns>shipping_description,shipment_type,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show all optional columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
                 <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
@@ -365,13 +406,13 @@
                 <country>NL</country> <!-- All return addresses must be located in the Netherlands -->
         	</cif_return_address>
         	<cif_product_options>
-        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4950,4952,4954,4955,4945</supported_product_options> <!-- all possible options -->
+        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3534,3544,3533,3543,3535,3545,3536,3546,3534,3544,3533,3543,4952,4955,4945</supported_product_options> <!-- all possible options -->
         		<default_product_option>3085</default_product_option> <!-- standard shipment -->
         		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
         		<alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
         		<alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
+                <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- PakjeGemak + signature on delivery -->
         		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
-        		<default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- PakjeGemak + signature on delivery (Not currently used) -->
                 <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
         	</cif_product_options>
         	<cif_globalpack_settings>
@@ -385,9 +426,53 @@
         		<product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
         		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
         	</cif_globalpack_settings>
+        	<checkout>
+        	    <active>0</active> <!-- PostNL Checkout is inactive -->
+        	    <mode>1</mode> <!-- Test mode -->
+        	    <webshop_id/>
+        	    <public_webshop_id/>
+        	    <show_summary_page>1</show_summary_page> <!-- Show an order summary page before finalizing the order -->
+        	    <newsletter_subscription>0</newsletter_subscription> <!--Do not show the option to subscribe to the webshop's newsletter -->
+        	    <remark>0</remark> <!-- Do not allow the customer to enter a remark for the webshop -->
+                <use_mobile>0</use_mobile> <!-- Do not use mobile phonenumbers -->
+                <use_dob>0</use_dob> <!-- Do not use the date of birth field -->
+        	    <allow_retail_location>1</allow_retail_location> <!-- Customers may have their goods delivered at a retail location -->
+        	    <allow_foreign_address>1</allow_foreign_address> <!-- Customers may have their goods shipped to a foreign address -->
+        	    <allow_price_overview>1</allow_price_overview> <!-- Customer's will see a price overview -->
+        	    <agree_conditions>1</agree_conditions> <!-- Customers must first agree to the webshop's terms and conditions -->
+                <contact_url/>
+        	    <service_url/>
+        	</checkout>
+        	<checkout_payment_methods>
+        	    <ideal/>
+        	    <ideal_method/>
+        	    <ideal_option_field/>
+        	    <creditcard/>
+                <creditcard_method/>
+                <creditcard_option_field/>
+                <checkpay/>
+                <checkpay_method/>
+                <paypal/>
+                <paypal_method/>
+                <directdebit/>
+                <directdebit_method/>
+                <acceptgiro/>
+                <acceptgiro_method/>
+                <vooraf_betalen/>
+                <vooraf_betalen_method/>
+                <termijnen/>
+                <termijnen_method/>
+                <giftcard/>
+                <giftcard_method/>
+                <rabobank_internetkassa/>
+                <rabobank_internetkassa_method/>
+                <afterpay/>
+                <afterpay_method/>
+        	</checkout_payment_methods>
         	<advanced>
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
+        		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
         		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
         		<send_statistics>1</send_statistics> <!-- Send extension usga estatistics to PostNL -->
@@ -398,6 +483,7 @@
         		<cif_version_confirming>1_3</cif_version_confirming> <!-- v1.3 -->
         		<cif_version_labelling>1_4</cif_version_labelling> <!-- v1.4 -->
         		<cif_version_barcode>1_0</cif_version_barcode> <!-- v1.0 -->
+                <cif_version_checkout>2_1</cif_version_checkout> <!-- v2.1 -->
         	</advanced>
         </postnl>
     </default>

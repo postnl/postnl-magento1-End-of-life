@@ -48,11 +48,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
     const CONFIRM_STATUS_COLUMN  = 'confirm_status';
     
     /**
-     * Code of postnl shipping method
-     */
-    const POSTNL_SHIPPING_METHOD = 'postnl_postnl';
-    
-    /**
      * Renders the barcode column. This column will be empty for non-PostNL shipments.
      * If the shipment has been confirmed, it will be displayed as a track& trace URL. 
      * Otherwise the bare code will be displayed.
@@ -66,8 +61,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
         /**
          * The shipment was not shipped using PostNL
          */
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if ($shippingMethod != self::POSTNL_SHIPPING_METHOD) {
+        if (!in_array($shippingMethod, $postnlShippingMethods)) {
             return parent::render($row);
         }
         
@@ -98,7 +94,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
             'postcode'    => $postcode,
         );
         
-        $barcodeUrl = Mage::helper('postnl/carrier')->getBarcodeUrl($value, $destinationData);
+        $barcodeUrl = Mage::helper('postnl/carrier')->getBarcodeUrl($value, $destinationData, false, true);
         
         $barcodeHtml = "<a href='{$barcodeUrl}' target='_blank'>{$value}</a>";
         

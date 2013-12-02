@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ProductOptions extends Mage_Adminhtml_Block_Abstract
+class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions extends Mage_Adminhtml_Block_Abstract
 {
     /**
      * Get current shipment
@@ -121,6 +121,19 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ProductOptions exte
     }
     
     /**
+     * Gets the number of parcels in this shipment based on it's weight
+     * 
+     * @return int
+     */
+    public function getParcelCount()
+    {
+        $shipment = $this->getShipment();
+        
+        $parcelCount = Mage::helper('postnl/cif')->getParcelCount($shipment);
+        return $parcelCount;
+    }
+    
+    /**
      * Do a few checks to see if the template should be rendered before actually rendering it
      * 
      * @return string | parent::_toHtml()
@@ -133,13 +146,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ProductOptions exte
             return ''; 
         } 
         
-        $shipment = $this->getShipment(); 
-        if ($shipment->getOrder()->getShippingMethod() != 'postnl_postnl') { 
-            return ''; 
-        } 
-        
-        $productOptions = $this->getProductOptions(); 
-        if ($productOptions === null || empty($productOptions)) { 
+        $shipment = $this->getShipment();
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) { 
             return ''; 
         }
         

@@ -69,6 +69,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_DEBUG_MODE = 'postnl/advanced/debug_mode';
     
     /**
+     * XML path to 'is_activated' flag
+     */
+    const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
+    
+    /**
      * Required configuration fields
      * 
      * @var array
@@ -76,10 +81,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_requiredFields = array(
         'postnl/cif/customer_code',
         'postnl/cif/customer_number',
+        'postnl/cif/collection_location',
         'postnl/cif_labels_and_confirming/label_size',
         'postnl/cif_sender_address/firstname',
         'postnl/cif_sender_address/lastname',
-        'postnl/cif_sender_address/street_full',
+        'postnl/cif_sender_address/streetname',
+        'postnl/cif_sender_address/housenumber',
         'postnl/cif_sender_address/postcode',
         'postnl/cif_sender_address/city',
     );
@@ -175,65 +182,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
     
     /**
-     * Determines if the extension is active
-     * 
-     * @param int | bool $storeId
-     * 
-     * @return bool
-     */
-    public function isEnabled($storeId = false, $checkGlobal = false)
-    {
-        if (Mage::registry('postnl_enabled') !== null) {
-            return Mage::registry('postnl_enabled');
-        }
-        
-        if ($storeId === false) {
-            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        }
-        
-        /**
-         * Check if the module has been enabled
-         */
-        $enabled = (bool) Mage::getStoreConfig(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
-        if ($enabled === false) {
-            Mage::register('postnl_enabled', false);
-            return false;
-        }
-        
-        /**
-         * The PostNL module only works with EUR as the shop's base currency
-         */
-        $baseCurrencyCode = Mage::getModel('core/store')->load($storeId)->getBaseCurrencyCode();
-        if ($baseCurrencyCode != 'EUR') {
-            return false;
-        }
-        
-        /**
-         * Check if the module's required configuration options have been filled
-         */
-        $isConfigured = $this->isConfigured($storeId, $checkGlobal);
-        if ($isConfigured === false) {
-            Mage::register('postnl_enabled', false);
-            return false;
-        }
-        
-        Mage::register('postnl_enabled', true);
-        return true;
-    }
-    
-    /**
-     * Alias for isEnabled()
-     * 
-     * @return bool
-     * 
-     * @see TIG_PostNL_Helper_Data::isEnabled()
-     */
-    public function isActive()
-    {
-        return $this->isEnabled();
-    }
-    
-    /**
      * Check if the module is set to test mode
      * 
      * @return boolean
@@ -248,10 +196,90 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage::app()->getStore()->getId();
         }
         
-        $testMode = (bool) Mage::getStoreConfig(self::XML_PATH_TEST_MODE, $storeId);
+        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
         
         Mage::register('postnl_test_mode', $testMode);
         return $testMode;
+    }
+    
+    /**
+     * Alias for isEnabled()
+     * 
+     * @param int | bool $storeId
+     * @param boolean $checkGlobal
+     * @param null|boolean $forceTestMode
+     * 
+     * @return boolean
+     * 
+     * @see TIG_PostNL_Helper_Data::isEnabled()
+     */
+    public function isActive($storeId = false, $checkGlobal = false, $forceTestMode = null)
+    {
+        return $this->isEnabled($storeId = false, $checkGlobal = false, $forceTestMode = null);
+    }
+    
+    /**
+     * Determines if the extension is active
+     * 
+     * @param int | bool $storeId
+     * @param boolean $checkGlobal
+     * @param null|boolean $forceTestMode
+     * 
+     * @return boolean
+     */
+    public function isEnabled($storeId = false, $checkGlobal = false, $forceTestMode = null)
+    {
+        if ($forceTestMode === null) {
+            $testMode = $this->isTestMode();
+        } else {
+            $testMode = $forceTestMode;
+        }
+        
+        $registryKey = 'postnl_enabled';
+        if ($checkGlobal) {
+            $registryKey .= '_global';
+        }
+        if ($testMode) {
+            $registryKey .= '_test';
+        }
+        
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+        
+        if ($storeId === false) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
+        
+        /**
+         * Check if the module has been enabled
+         */
+        $enabled = Mage::getStoreConfigFlag(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
+        if ($enabled === false) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+        
+        /**
+         * The PostNL module only works with EUR as the shop's base currency
+         */
+        $baseCurrencyCode = Mage::getModel('core/store')->load($storeId)->getBaseCurrencyCode();
+        if ($baseCurrencyCode != 'EUR') {
+            Mage::register($registryKey, false);
+            return false;
+        }
+        
+        /**
+         * Check if the module's required configuration options have been filled
+         */
+        $isConfigured = $this->isConfigured($storeId, $checkGlobal, $forceTestMode);
+        if ($isConfigured === false) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+        
+        Mage::register($registryKey, true);
+        return true;
     }
     
     /**
@@ -260,15 +288,39 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * 
      * @param int | boolean $storeId
      * @param boolean $checkGlobal
+     * @param null|boolean $forceTestMode
      * 
      * @return boolean
      * 
      * @todo properly implement global check
      */
-    public function isConfigured($storeId = false, $checkGlobal = false)
+    public function isConfigured($storeId = false, $checkGlobal = false, $forceTestMode = null)
     {
-        if (Mage::registry('postnl_is_configured') !== null) {
-            return Mage::registry('postnl_is_configured');
+        if ($forceTestMode === null) {
+            $testMode = $this->isTestMode();
+        } else {
+            $testMode = $forceTestMode;
+        }
+        
+        $registryKey = 'postnl_is_configured';
+        if ($checkGlobal) {
+            $registryKey .= '_global';
+        }
+        if ($testMode) {
+            $registryKey .= '_test';
+        }
+        
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+        
+        /**
+         * Check if the module has been activated
+         */
+        $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($isActivated != 2) {
+            Mage::register($registryKey, false);
+            return false;
         }
         
         if ($storeId === false) {
@@ -283,7 +335,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Get either the live mode or test mode required fields
          */
-        if ($this->isTestMode($storeId)) {
+        if ($testMode) {
             $modeFields = $this->getTestModeRequiredFields();
         } else {
             $modeFields = $this->getLiveModeRequiredFields();
@@ -305,12 +357,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $value = Mage::getStoreConfig($requiredField, $storeId);
             
             if ($value === null || $value === '') {
-                Mage::register('postnl_is_configured', false);
+                Mage::register($registryKey, false);
                 return false;
             }
         }
         
-        Mage::register('postnl_is_configured', true);
+        Mage::register($registryKey, true);
         return true;
     }
     

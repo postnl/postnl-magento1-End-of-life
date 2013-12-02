@@ -1,0 +1,169 @@
+<?php
+/**
+ *                  ___________       __            __   
+ *                  \__    ___/____ _/  |_ _____   |  |  
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/       
+ *          ___          __                                   __   
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
+ *                  \/                           \/               
+ *                  ________       
+ *                 /  _____/_______   ____   __ __ ______  
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/ 
+ *                        \/                       |__|    
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL: 
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */	
+?>
+<?php $_quote             = $this->getQuote(); ?>
+<?php $_itemCollection    = $this->getItems(); ?>
+<?php $_billingAddress    = $_quote->getBillingAddress(); ?>
+<?php $_shippingAddress   = $_quote->getShippingAddress(); ?>
+<?php $_pakjeGemakAddress = $this->getPakjeGemakAddress(); ?>
+
+<div class="order-page">
+    <div class="page-title">
+        <h1><?php echo $this->__('Checkout Summary'); ?></h1>
+    </div>
+    
+    <div class="col2-set">
+        <div class="col-1">
+            <div class="info-box">
+                <h3 class="box-title"><?php echo $this->__('Billing Address'); ?></h3>
+                <address class="box-content">
+                    <?php echo $_billingAddress->getName(); ?><br />
+                    <?php if($_billingAddress->getCompany()): ?>
+                        <?php echo $_billingAddress->getCompany(); ?><br />
+                    <?php endif; ?>
+                    <?php echo $_billingAddress->getStreetFull(); ?><br />
+                    <?php echo $_billingAddress->getPostcode(); ?><br />
+                    <?php echo $_billingAddress->getCity(); ?><br />
+                    <?php if($_billingAddress->getRegion() && $_billingAddress->getRegion() != '-'): ?>
+                        <?php echo $_billingAddress->getRegion(); ?><br />
+                    <?php endif; ?>      
+                    <?php echo $_billingAddress->getCountry(); ?><br /> 
+                    <?php if($_billingAddress->getTelephone() && $_billingAddress->getTelephone() != '-'): ?>
+                        <?php echo $_billingAddress->getTelephone(); ?><br />
+                    <?php endif; ?>
+                    <?php echo $_quote->getCustomerEmail(); ?>
+                </address>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="info-box">
+                <h3 class="box-title"><?php echo $this->__('Payment Method'); ?></h3>
+                <div class="box-content">
+                    <p><?php echo $_quote->getPayment()->getMethodInstance()->getTitle(); ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col2-set">
+        <div class="col-1">
+            <div class="info-box">
+                <h3 class="box-title"><?php echo $this->__('Shipping Address'); ?></h3>
+                <address class="box-content">
+                    <?php echo $_shippingAddress->getName(); ?><br />
+                    <?php if($_shippingAddress->getCompany()): ?>
+                        <?php echo $_shippingAddress->getCompany(); ?><br />
+                    <?php endif; ?>
+                    <?php echo $_shippingAddress->getStreetFull(); ?><br />
+                    <?php echo $_shippingAddress->getPostcode(); ?><br />
+                    <?php echo $_shippingAddress->getCity(); ?><br />
+                    <?php if($_shippingAddress->getRegion() && $_shippingAddress->getRegion() != '-'): ?>
+                        <?php echo $_shippingAddress->getRegion(); ?><br />
+                    <?php endif; ?>      
+                    <?php echo $_shippingAddress->getCountry(); ?><br /> 
+                    <?php if($_shippingAddress->getTelephone() && $_shippingAddress->getTelephone() != '-'): ?>
+                        <?php echo $_shippingAddress->getTelephone(); ?><br />
+                    <?php endif; ?>
+                    <?php echo $_quote->getCustomerEmail(); ?>
+                </address>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="info-box">
+                <h3 class="box-title"><?php echo $this->__('Shipping Method'); ?></h3>
+                <div class="box-content">
+                    <p><?php echo $this->getShippingDescription(); ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php if($_pakjeGemakAddress): ?>
+        <div class="col2-set">
+            <div class="col-1">
+                <div class="info-box">
+                    <h3 class="box-title"><?php echo $this->__('PakjeGemak Address'); ?></h3>
+                    <address class="box-content">
+                        <?php echo $_pakjeGemakAddress->getName(); ?><br />
+                        <?php echo $_pakjeGemakAddress->getStreetFull(); ?><br />
+                        <?php echo $_pakjeGemakAddress->getPostcode(); ?><br />
+                        <?php echo $_pakjeGemakAddress->getCity(); ?><br />
+                        <?php echo $_pakjeGemakAddress->getCountry(); ?>
+                    </address>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+    
+    <div class="order-items order-details">
+        <h2 class="table-caption"><?php echo $this->__('Items Ordered'); ?></h2>
+        <table class="data-table" id="order-summary-table">
+            <col>
+            <col width="1">
+            <col width="1">
+            <col width="1">
+            <col width="1">
+            <thead>
+                <th><?php echo $this->__('Product Name'); ?></th>
+                <th class="a-right"><?php echo $this->__('Price'); ?></th>
+                <th class="a-center"><?php echo $this->__('Qty'); ?></th>
+                <th class="a-right"><?php echo $this->__('Subtotal'); ?></th>
+            </thead>
+            <tbody>
+                <?php foreach ($_itemCollection as $_item): ?>
+                    <?php echo $this->getItemHtml($_item) ?>
+                <?php endforeach; ?>
+            </tbody>
+            <?php echo $this->getChild('totals')->setQuote($_quote)->toHtml(); ?>
+        </table>
+    </div>
+    
+    <div class="buttons-set">
+        <p class="back-link">
+            <a href="<?php echo $this->getUrl('checkout/cart', array('_secure' => true)); ?>" title="<?php echo $this->__('Return to the shopping cart.'); ?>"><?php echo $this->__('Cancel');?></a>
+        </p>
+        <button class="button" id="postnl_confirm_order"><span><span><?php echo $this->__('Confirm Order');?></span></span></button>
+    </div>
+</div>
+<script type="text/javascript">
+    document.observe('dom:loaded', function() {
+        $('postnl_confirm_order').observe('click', function() {
+            window.location = "<?php echo $this->getUrl('postnl/checkout/finishCheckout', array('_secure' => true, 'quote_id' => $_quote->getId())); ?>";
+        });
+    });
+</script>

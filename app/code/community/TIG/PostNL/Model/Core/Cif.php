@@ -59,7 +59,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XML_PATH_GLOBAL_BARCODE_RANGE        = 'postnl/cif/global_barcode_range';
     
     /**
-     * Constants containing xml paths to cif address configuration options
+     * Constants containing XML paths to cif address configuration options
      */
     const XML_PATH_SPLIT_STREET                = 'postnl/cif_address/split_street';
     const XML_PATH_STREETNAME_FIELD            = 'postnl/cif_address/streetname_field';
@@ -160,7 +160,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @var array
      */
     protected $_printerTypes = array(
-        //graphic files
+        //Graphic files
         'GraphicFile|GIF 200 dpi',
         'GraphicFile|GIF 400 dpi',
         'GraphicFile|GIF 600 dpi',
@@ -336,7 +336,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if (!is_object($response) 
             || !isset($response->Barcode)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid barcode response: ' . "\n" . var_export($reponse, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid barcode response: ' . "\n" . var_export($response, true));
         }
         
         return $response->Barcode;
@@ -377,7 +377,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Shipments) 
             || (!is_array($response->Shipments) && !is_object($response->Shipments))
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($reponse, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($response, true));
         }
         
         foreach($response->Shipments as $shipment) {
@@ -396,7 +396,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * no shipment could be matched to the supplied barcode
          */ 
-        throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($reponse, true));
+        throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($response, true));
     }
     
     /**
@@ -440,7 +440,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Shipments) 
             || (!is_array($response->Shipments) && !is_object($response->Shipments))
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($reponse, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($response, true));
         }
         
         foreach($response->Shipments as $shipment) {
@@ -453,7 +453,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * no shipment could be matched to the supplied barcode
          */ 
-        throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($reponse, true));
+        throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($response, true));
     }
     
     /**
@@ -560,7 +560,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Labels) 
             || !is_object($response->Labels)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($reponse, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($response, true));
         }
         
         return $response;
@@ -613,7 +613,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Labels) 
             || !is_object($response->Labels)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($reponse, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($response, true));
         }
         
         return $response;
@@ -761,6 +761,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 ),
             );
         }
+        
+        if ($postnlShipment->getPakjeGemakAddress()) {
+            $addresses['Address'][] = $this->_getAddress('Delivery', $postnlShipment->getPakjeGemakAddress());
+        }
+        
         $shipmentData['Addresses'] = $addresses;
         
         /**
@@ -846,6 +851,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 
                 $address = new Varien_Object($returnAddress);
                 break;
+            case 'PakjeGemak': //no break
             case 'Reciever': //no break
             default:
                 $address = $shippingAddress;
@@ -1047,7 +1053,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getStreetData($address)
     {
         $storeId = $this->getStoreId();
-        $splitStreet = Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, $storeId);
+        $splitStreet = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_STREET, $storeId);
         
         /**
          * Website uses multi-line address mode
@@ -1117,7 +1123,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Split the housenumber into a number and an extension
          */
-        $splitHouseNumber = Mage::getStoreConfig(self::XML_PATH_SPLIT_HOUSENUMBER, $storeId);
+        $splitHouseNumber = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_HOUSENUMBER, $storeId);
         if ($splitHouseNumber) {
             $housenumberExtensionField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);
             $housenumberExtension = $address->getStreet($housenumberExtensionField);
