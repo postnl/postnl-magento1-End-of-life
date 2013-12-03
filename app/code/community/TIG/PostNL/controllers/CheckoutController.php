@@ -39,6 +39,11 @@
 class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
 {
     /**
+     * XML path of show_summary_page setting
+     */
+    const XML_PATH_SHOW_SUMMARY_PAGE = 'postnl/checkout/show_summary_page';
+    
+    /**
      * Order class variable
      * 
      * @var Mage_Sales_Model_Order | void
@@ -200,6 +205,12 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             return $this;
         }
         
+        $showSummarypage = Mage::getStoreConfigFlag(self::XML_PATH_SHOW_SUMMARY_PAGE);
+        if (!$showSummarypage) {
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
+        
         try {
             $cif = Mage::getModel('postnl_checkout/cif');
             $orderDetails = $cif->readOrder();
@@ -207,7 +218,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $service = Mage::getModel('postnl_checkout/service');
             $service->setQuote($quote)
                     ->updateQuoteAddresses($orderDetails)
-                    ->updateQuotePayment($orderDetails)
+                    ->updateQuotePayment($orderDetails, true, true)
                     ->updateQuoteCustomer($orderDetails);
             
             Mage::register('current_quote', $quote);

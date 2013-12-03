@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Checkout_Onepage_Js extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
 {
     /**
      * XML path for webshop ID setting
@@ -176,20 +176,5 @@ class TIG_PostNL_Block_Checkout_Onepage_Js extends Mage_Core_Block_Template
         
         $this->setContinueUrl($url);
         return $url;
-    }
-    
-    /**
-     * Returns the block's html. Checks if the 'use_postnl_checkout' param is set. If not, returns and empty string
-     * 
-     * @return string
-     */
-    protected function _toHtml()
-    {
-        $usePostnLCheckout = Mage::app()->getRequest()->getParam('use_postnl_checkout');
-        if (!$usePostnLCheckout || $usePostnLCheckout != 'true') {
-            return '';
-        }
-        
-        return parent::_toHtml();
     }
 }
