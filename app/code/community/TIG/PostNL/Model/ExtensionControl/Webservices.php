@@ -56,8 +56,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
     const XML_PATH_SPLIT_STREET              = 'postnl/cif_address/split_street';
     const XML_PATH_CHECKOUT_ACTIVE           = 'postnl/checkout/active';
-    const XML_PATH_CHECKOUT_WEBSHOP_ID       = 'postnl/checkout/webshop_id';
+    const XML_PATH_CHECKOUT_WEBSHOP_ID       = 'postnl/cif/webshop_id';
     const XML_PATH_CONTACT_NAME              = 'postnl/cif/contact_name';
+    const XML_PATH_CUSTOMER_NUMBER           = 'postnl/cif/customer_number';
     
     /**
      * XML path to extension activation setting
@@ -251,6 +252,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
                     'splitAddress'            => $this->_getUsesSplitAddress($website),
                     'postnlCheckout'          => $this->_getUsesPostnlCheckout($website),
                     'postnlCheckoutWebshopId' => $this->_getCheckoutWebshopId($website),
+                    'customerNumber'          => $this->_getCustomerNumber($website),
                 ),
             );
         }
@@ -505,6 +507,20 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     {
         $webshopId = $website->getConfig(self::XML_PATH_CHECKOUT_WEBSHOP_ID);
         $webshopId = Mage::helper('core')->decrypt($webshopId);
+        
+        return $webshopId;
+    }
+    
+    /**
+     * Gets the CIF customer number
+     * 
+     * @param Mage_Core_Model_Website $website
+     * 
+     * @return string
+     */
+    protected function _getCustomerNumber($website)
+    {
+        $webshopId = $website->getConfig(self::XML_PATH_CUSTOMER_NUMBER);
         
         return $webshopId;
     }

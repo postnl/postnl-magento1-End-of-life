@@ -459,6 +459,31 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-email</validate>
                     	</contact_email>
+                        <checkout_required_fields_header translate="label" module="postnl">
+                            <label>These fields contain your webshop IDs. These are required for PostNL Checkout to function.</label>
+                            <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
+                            <sort_order>140</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </checkout_required_fields_header>
+                        <webshop_id translate="label" module="postnl">
+                            <label>Webshop ID</label>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </webshop_id>
+                        <public_webshop_id translate="label" module="postnl">
+                            <label>Public Webshop ID</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>160</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </public_webshop_id>
                    </fields>
 				</cif>
 				<cif_labels_and_confirming translate="label comment" module="postnl">
@@ -1243,44 +1268,10 @@
                                 <active>1</active>
                             </depends>
                         </mode>
-                        <checkout_required_fields_header translate="label" module="postnl">
-                            <label>These fields contain your webshop IDs. These are required for PostNL Checkout to function.</label>
-                            <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
-                            <sort_order>30</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <active>1</active>
-                            </depends>
-                        </checkout_required_fields_header>
-                        <webshop_id translate="label" module="postnl">
-                            <label>Webshop ID</label>
-                            <frontend_type>obscure</frontend_type>
-                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <active>1</active>
-                            </depends>
-                        </webshop_id>
-                        <public_webshop_id translate="label" module="postnl">
-                            <label>Public Webshop ID</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <active>1</active>
-                            </depends>
-                        </public_webshop_id>
                         <checkout_customization_header translate="label" module="postnl">
                             <label>Here you can customaize the way PostNL Checkout behaves in your webshop.</label>
                             <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1288,12 +1279,24 @@
                                 <active>1</active>
                             </depends>
                         </checkout_customization_header>
+                        <show_checkout_for_letter translate="label" module="postnl">
+                            <label>Enable PostNL Checkout for orders under 2 kg</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </show_checkout_for_letter>
                         <show_summary_page translate="label comment" module="postnl">
                             <label>Show order summary page</label>
                             <comment>Whether or not to show the customer a final order summary page before finalizing the order.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1307,7 +1310,7 @@
                             <comment>Whether or not PostNL Checkout will offer the customer the ability to subscribe to your newsletter.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1321,7 +1324,7 @@
                             <comment>Whether or not the customer can leave a remark.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1335,7 +1338,7 @@
                             <comment>Whether or not the customer's mobile phonenumber will be returned by PostNL if available.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1349,7 +1352,7 @@
                             <comment>Whether or not the customer's date of birth will be returned by PostNL if available.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1363,7 +1366,7 @@
                             <comment>Whether or not the customer may choose a retail location as their delivery address.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1377,7 +1380,7 @@
                             <comment>Whether or not the customer may choose a foreign address as their shipping address.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1391,7 +1394,7 @@
                             <comment>Whether or not the user will see a price overview in PostNL Checkout</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1405,7 +1408,7 @@
                             <comment>Whether or not the customer must agree to the terms and conditions before being allowed to proceed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1417,7 +1420,7 @@
                         <checkout_urls_header translate="label" module="postnl">
                             <label>These URLs allow the customer to contact you. They will be shown on the user's MijnPakket page.</label>
                             <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1429,7 +1432,7 @@
                             <label>Contact URL</label>
                             <comment>URL of a page where customers can find contact information for your webshop. Leave empty to disable this feature.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>170</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1441,7 +1444,7 @@
                             <label>Service URL</label>
                             <comment>URL of a page where customers can find information regarding the webshop's customer service department.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>180</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

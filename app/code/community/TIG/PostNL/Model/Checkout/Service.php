@@ -41,7 +41,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     /**
      * XML path to public webshop ID setting
      */
-    const XML_PATH_WEBSHOP_ID = 'postnl/checkout/webshop_id';
+    const XML_PATH_WEBSHOP_ID = 'postnl/cif/webshop_id';
     
     /**
      * Constants containing XML paths to cif address configuration options

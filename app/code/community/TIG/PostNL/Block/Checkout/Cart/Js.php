@@ -41,7 +41,7 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
     /**
      * XML path for webshop ID setting
      */
-    const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/checkout/public_webshop_id';
+    const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
     
     /**
      * XML path of PostNL Checkout test/live settings

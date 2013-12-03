@@ -196,11 +196,9 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     public function summaryAction()
     {
         $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
-        if (!$quote->getIsActive() 
-            || !$postnlOrder->getId() 
-            || !$postnlOrder->getToken()
-        ) {
+
+        $quoteIsValid = $this->_validateQuote($quote);
+        if (!$quoteIsValid) {
             $this->_redirect('checkout/cart');
             return $this;
         }
@@ -262,11 +260,9 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     public function finishCheckoutAction()
     {
         $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
-        if (!$quote->getIsActive() 
-            || !$postnlOrder->getId() 
-            || !$postnlOrder->getToken()
-        ) {
+
+        $quoteIsValid = $this->_validateQuote($quote);
+        if (!$quoteIsValid) {
             $this->_redirect('checkout/cart');
             return $this;
         }
@@ -473,5 +469,26 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
         
         return $this;
+    }
+    
+    /**
+     * Checks if a quote is (still) valid
+     * 
+     * @param Mage_Sales_Model_Quote $quote
+     * 
+     * @return boolean
+     */
+    protected function _validateQuote($quote)
+    {
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        if (!$quote->getIsActive() 
+            || !$postnlOrder->getId() 
+            || !$postnlOrder->getToken()
+            || Mage::getSingleton('checkout/session')->getCartWasUpdated(true)
+        ) {
+            return false;
+        }
+        
+        return true;
     }
 }
