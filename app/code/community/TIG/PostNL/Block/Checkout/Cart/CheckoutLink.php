@@ -47,7 +47,12 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     /**
      * XML path to public webshop ID setting
      */
-    const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/checkout/public_webshop_id';
+    const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
+    
+    /**
+     * XML path for 'show_checkout_for_letter' setting
+     */
+    const XML_PATH_SHOW_CHECKOUT_FOR_LETTER = 'postnl/checkout/show_checkout_for_letter';
     
     /**
      * Gets the checkout URL
@@ -86,6 +91,24 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
         }
         
         /**
+         * Check if the total weight of all items in the quote exceed 2 kg. If so, the order might fit in a letter and PostNL
+         * Checkout should onyl be available if the merchant has expressly configured it as such.
+         */
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $quoteItems = $quote->getAllItems();
+        
+        $totalWeight = 0;
+        foreach ($quoteItems as $item) {
+            $totalWeight += $item->getRowWeight();
+        }
+        
+        $kilograms = Mage::helper('postnl/cif')->standardizeWeight($totalWeight, Mage::app()->getStore()->getId());
+        $showCheckoutForLetters = Mage::getStoreConfigFlag(self::XML_PATH_SHOW_CHECKOUT_FOR_LETTER);
+        if ($kilograms < 2 && !$showCheckoutForLetters) {
+            return false;
+        }
+        
+        /**
          * Send a ping request to see if the PostNL Checkout service is available
          */
         try {
@@ -96,7 +119,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
             return false;
         }
         
-        if (!$result || $result !== 'OK') {
+        if ($result !== 'OK') {
             return false;
         }
         

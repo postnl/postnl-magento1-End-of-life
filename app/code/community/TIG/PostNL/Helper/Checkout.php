@@ -81,8 +81,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      */
     protected $_checkoutRequiredFields = array(
         'postnl/checkout/active',
-        'postnl/checkout/webshop_id',
-        'postnl/checkout/public_webshop_id',
+        'postnl/cif/webshop_id',
+        'postnl/cif/public_webshop_id',
     );
     
     /**

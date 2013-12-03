@@ -41,7 +41,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Webshop ID config option path
      */
-    const XML_PATH_WEBSHOP_ID = 'postnl/checkout/webshop_id';
+    const XML_PATH_WEBSHOP_ID = 'postnl/cif/webshop_id';
     
     /**
      * XML paths for various options

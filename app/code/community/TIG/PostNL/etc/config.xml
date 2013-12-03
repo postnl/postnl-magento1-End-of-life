@@ -354,6 +354,8 @@
                 <company_name/>
                 <contact_name/>
                 <contact_email/>
+                <webshop_id/>
+                <public_webshop_id/>
         	</cif>
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
@@ -430,8 +432,7 @@
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
         	    <mode>1</mode> <!-- Test mode -->
-        	    <webshop_id/>
-        	    <public_webshop_id/>
+        	    <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the checkout button for orders under 2 kg -->
         	    <show_summary_page>1</show_summary_page> <!-- Show an order summary page before finalizing the order -->
         	    <newsletter_subscription>0</newsletter_subscription> <!--Do not show the option to subscribe to the webshop's newsletter -->
         	    <remark>0</remark> <!-- Do not allow the customer to enter a remark for the webshop -->
