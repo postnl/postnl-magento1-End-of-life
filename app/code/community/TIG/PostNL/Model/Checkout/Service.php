@@ -194,11 +194,13 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * 
      * @param mixed $data
      * @param boolean $isOrderdetails Flag whether or not the supplied data was sent by PostNL and not by magento
+     * @param boolean $methodOnly Flag whether or not to only set the payment method. If false, all data will be set for the
+     * chosen payment method.
      * @param Mage_Sales_Model_Quote | null $quote
      * 
      * @return TIG_PostNL_Model_Checkout_Service
      */
-    public function updateQuotePayment($data, $isOrderdetails = true, $quote = null)
+    public function updateQuotePayment($data, $isOrderdetails = true, $methodOnly = false, $quote = null)
     {
         /**
          * Load the current quote if none was supplied
@@ -214,7 +216,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          */
         if ($isOrderdetails) {
             $this->_verifyData($data, $quote);
-            $this->_processPostnlPaymentData($data, $quote);
+            $this->_processPostnlPaymentData($data, $methodOnly, $quote);
             
             return $this;
         }
@@ -251,13 +253,14 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * Processes PostNL payment data 
      * 
      * @param StdClass $data
+     * @param boolean $methodOnly
      * @param Mage_Sales_Model_Quote $quote
      * 
      * @return TIG_PostNL_Model_Checkout_Service
      * 
      * @throws TIG_PostNL_Exception
      */
-    protected function _processPostnlPaymentData($data, $quote)
+    protected function _processPostnlPaymentData($data, $methodOnly, $quote)
     {
         /**
          * Get the payment data PostNL supplied
@@ -282,6 +285,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          */
         $methodCode = Mage::getStoreConfig(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method', $quote->getStoreId());
         
+        
         /**
          * Remove any current payment associtaed with the quote and get a new one
          */
@@ -289,9 +293,18 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                          ->getPayment();
         
         /**
-         * Form the payment data array
+         * if we only need to set the payment method, do so and we'll be finished
          */
-         
+        if ($methodOnly) {
+            $payment->setMethod($methodCode);
+            $quote->save();
+            
+            return $this;
+        }
+        
+        /**
+         * Otherwise we need to form the payment data array containing all relevant payment data
+         */
         $paymentData = Mage::app()->getRequest()->getPost('payment', array());
         $paymentData['checks'] = Mage_Payment_Model_Method_Abstract::CHECK_USE_CHECKOUT
             | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_COUNTRY

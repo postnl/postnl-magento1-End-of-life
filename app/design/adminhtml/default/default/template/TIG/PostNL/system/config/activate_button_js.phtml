@@ -37,7 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
-<?php $_url = $this->getUrl('postnl/adminhtml_extensionControl/activate', array('_forced_secure' => true)); ?>
+<?php $_url = $this->getUrl('postnl/adminhtml_extensionControl/activate', array('_secure' => true)); ?>
 <script type="text/javascript">
     var postnlActivationUrl = '<?php echo $_url; ?>';
     function activatePostNL() {
