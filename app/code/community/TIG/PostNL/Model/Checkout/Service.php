@@ -190,16 +190,15 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     }
     
     /**
-     * Updates a quote with the given PostNL payment data. This method specifically updates the quote's payment data
+     * Updates a quote with the given payment data (from PostNL or magento).
      * 
-     * @param StdClass $data
+     * @param mixed $data
+     * @param boolean $isOrderdetails Flag whether or not the supplied data was sent by PostNL and not by magento
      * @param Mage_Sales_Model_Quote | null $quote
      * 
      * @return TIG_PostNL_Model_Checkout_Service
-     * 
-     * @throws TIG_PostNL_Exception
      */
-    public function updateQuotePayment($data, $quote = null)
+    public function updateQuotePayment($data, $isOrderdetails = true, $quote = null)
     {
         /**
          * Load the current quote if none was supplied
@@ -210,8 +209,56 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         
         $this->setStoreId($quote->getStoreId());
         
-        $this->_verifyData($data, $quote);
+        /**
+         * If the payment data is sent by PostNL we need to process it accordingly
+         */
+        if ($isOrderdetails) {
+            $this->_verifyData($data, $quote);
+            $this->_processPostnlPaymentData($data, $quote);
+            
+            return $this;
+        }
         
+        /**
+         * Otherwise, we need to process the data as we would with a regular checkout procedure
+         */
+        if ($quote->isVirtual()) {
+            $quote->getBillingAddress()->setPaymentMethod(isset($data['method']) ? $data['method'] : null);
+        } else {
+            $quote->getShippingAddress()->setPaymentMethod(isset($data['method']) ? $data['method'] : null);
+        }
+
+        // shipping totals may be affected by payment method
+        if (!$quote->isVirtual() && $quote->getShippingAddress()) {
+            $quote->getShippingAddress()->setCollectShippingRates(true);
+        }
+        
+        $data['checks'] = Mage_Payment_Model_Method_Abstract::CHECK_USE_CHECKOUT
+            | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_COUNTRY
+            | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_CURRENCY
+            | Mage_Payment_Model_Method_Abstract::CHECK_ORDER_TOTAL_MIN_MAX
+            | Mage_Payment_Model_Method_Abstract::CHECK_ZERO_TOTAL;
+        
+        $quote->getPayment()->setMethod($data['method'])->importData($data);
+        $quote->getPayment()->getMethodInstance()->assignData($data);
+        
+        $quote->save();
+        
+        return $this;
+    }
+
+    /**
+     * Processes PostNL payment data 
+     * 
+     * @param StdClass $data
+     * @param Mage_Sales_Model_Quote $quote
+     * 
+     * @return TIG_PostNL_Model_Checkout_Service
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _processPostnlPaymentData($data, $quote)
+    {
         /**
          * Get the payment data PostNL supplied
          */
@@ -284,8 +331,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * Import the payment data, save the payment, and then save the quote
          */
-        $payment->importData($paymentData)
-                ->save();
+        $payment->importData($paymentData);
                 
         $quote->save();
         

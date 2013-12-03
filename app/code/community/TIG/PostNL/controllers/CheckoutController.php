@@ -113,8 +113,12 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
              */
             $shippingMethod = Mage::helper('postnl/carrier')->getCurrentPostnlShippingMethod();
             $shippingAddress = $quote->getShippingAddress();
-            $shippingAddress->setCountryId('NL')
-                            ->setPostcode('')
+            
+            if (!$shippingAddress->getCountryId()) {
+                $shippingAddress->setCountryId('NL');
+            }
+            
+            $shippingAddress->setPostcode('')
                             ->setCollectShippingRates(true)
                             ->collectShippingRates()
                             ->setShippingMethod($shippingMethod)
@@ -186,17 +190,17 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function summaryAction()
     {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        if (!$quote->getIsActive() 
+            || !$postnlOrder->getId() 
+            || !$postnlOrder->getToken()
+        ) {
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
+        
         try {
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
-            $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
-            if (!$quote->getIsActive() 
-                || !$postnlOrder->getId() 
-                || !$postnlOrder->getToken()
-            ) {
-                $this->_redirect('checkout/cart');
-                return $this;
-            }
-            
             $cif = Mage::getModel('postnl_checkout/cif');
             $orderDetails = $cif->readOrder();
             
@@ -210,7 +214,20 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             
             $this->loadLayout();
             $this->_initLayoutMessages('customer/session');
-            $this->getLayout()->getBlock('head')->setTitle($this->__('PostNL Checkout Summary'));
+            
+            $layout = $this->getLayout();
+            
+            $paymentMethod = $quote->getPayment()->getMethodInstance();
+            $formBlockType = $paymentMethod->getFormBlockType();
+            if ($formBlockType) {
+                $formBlock = $layout->createBlock($formBlockType)->setMethod($paymentMethod);
+                $layout->getBlock('postnl_checkout_summary')->setChild('payment_method_form', $formBlock);
+            }
+            
+            $this->_initLayoutMessages('customer/session');
+            $this->_initLayoutMessages('checkout/session');
+            
+            $layout->getBlock('head')->setTitle($this->__('PostNL Checkout Summary'));
             $this->renderLayout();
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
@@ -233,27 +250,99 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function finishCheckoutAction()
     {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        if (!$quote->getIsActive() 
+            || !$postnlOrder->getId() 
+            || !$postnlOrder->getToken()
+        ) {
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
+        
+        /**
+         * First get the order details from CIF and process the chosen addresses
+         */
         try {
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
-            
             $cif = Mage::getModel('postnl_checkout/cif');
             $orderDetails = $cif->readOrder($quote);
             
             $service = Mage::getModel('postnl_checkout/service');
             $service->setQuote($quote)
                     ->updateQuoteAddresses($orderDetails)
-                    ->updateQuotePayment($orderDetails)
-                    ->updateQuoteCustomer($orderDetails)
-                    ->updatePostnlOrder($orderDetails);
+                    ->updateQuoteCustomer($orderDetails);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('checkout/session')->addError(
+                $this->__('An error occurred while processing your order. Please try again. if this problem persists, please contact the webshop owner.')
+            );
+            
+            Mage::helper('postnl/checkout')->restoreQuote($quote);
+            
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
+        
+        /**
+         * Next we process the chosen payment method
+         */
+        $skipUpdatePayment = false;
+        $data = $this->getRequest()->getPost('payment', array());
+        if ($data) {
+            /**
+             * If we have payment method data, process it
+             */
+            try {
+                $service->updateQuotePayment($data, false);
+            
+                $skipUpdatePayment = true;
+            } catch (Mage_Payment_Exception $e) {
+                Mage::getSingleton('checkout/session')->addError(
+                   $e->getMessage()
+                );
+                
+                $this->_redirect('*/*/summary');
+                return $this;
+            } catch (Mage_Core_Exception $e) {
+                Mage::getSingleton('checkout/session')->addError(
+                   $e->getMessage()
+                );
+                
+                $this->_redirect('*/*/summary');
+                return $this;
+            } catch (Exception $e) {
+                Mage::helper('postnl')->logException($e);
+                Mage::getSingleton('checkout/session')->addError(
+                   $this->__('Unable to set Payment Method.')
+                );
+                
+                $this->_redirect('*/*/summary');
+                return $this;
+            }
+        }
+        
+        /**
+         * Next we update the quote's payment if we didn't get to do that in the previous step and then place the order. Also we
+         * need to process any chosen communication options
+         */
+        try {     
+            if ($skipUpdatePayment === false) {
+                $service->updateQuotePayment($orderDetails);
+            }
+                    
+            $service->updatePostnlOrder($orderDetails);
             
             /**
              * Create the order
              */
             $order = $service->saveOrder();
             
-            $this->setOrder($order);
-            
             $service->confirmPostnlOrder();
+
+            /**
+             * Parse any possible communication options
+             */
+            $this->_parseCommunicationOptions($orderDetails);
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('checkout/session')->addError(
@@ -267,9 +356,8 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
 
         /**
-         * Parse any possible communication options
+         * Finally we redirect the customer to the success page or payment page
          */
-        $this->_parseCommunicationOptions($orderDetails);
         
         /**
          * Get the redirect URL from the payment method. If none exists, redirect to the order success page
