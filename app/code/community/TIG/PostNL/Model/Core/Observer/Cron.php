@@ -627,4 +627,96 @@ class TIG_PostNL_Model_Core_Observer_Cron
         
         return $this;
     }
+    
+    /**
+     * Deletes labels belonging to shipments that have been delievered as well as labels who have no associated shipments.
+     * 
+     * @return TIG_PostNL_Model_Core_Observer_Cron
+     */
+    public function removeOldLabels()
+    {
+        $helper = Mage::helper('postnl');
+        
+        /**
+         * Check if the PostNL module is active
+         */
+        if (!$helper->isEnabled()) {
+            return $this;
+        }
+        
+        $helper->cronLog('RemoveOldLabels cron starting...');
+        
+        /**
+         * Get the PostNL Shipment classname for later use
+         */
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        
+        /**
+         * Get the label collection
+         */
+        $labelsCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
+        
+        /**
+         * We only need the label IDs
+         */
+        $labelsCollection->addFieldToSelect('label_id');
+        
+        $resource = Mage::getSingleton('core/resource');
+        
+        $select = $labelsCollection->getSelect();
+        
+        /**
+         * Join the collection with the postnl shipments collection
+         */
+        $select->joinLeft(
+            array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
+            '`main_table`.`parent_id`=`postnl_shipment`.`entity_id`',
+            array(
+                'shipping_phase' => 'postnl_shipment.shipping_phase',
+            )
+        );
+        
+        /**
+         * Filter the collection by the lack of a parent_id OR shipping_phase being 'delivered'
+         * 
+         * Resulting query:
+         * SELECT `main_table`.`label_id` , `postnl_shipment`.`shipping_phase`
+         * FROM `tig_postnl_shipment_label` AS `main_table`
+         * LEFT JOIN `tig_postnl_shipment` AS `postnl_shipment` ON `main_table`.`parent_id` = `postnl_shipment`.`entity_id`
+         * WHERE (
+         *     (
+         *         parent_id IS NULL
+         *     )
+         *     OR (
+         *         shipping_phase =4
+         *     )
+         * )
+         */
+        $labelsCollection->addFieldToFilter(
+            array('parent_id', 'shipping_phase'),
+            array(
+                array('null' => true),
+                array('eq' => $postnlShipmentClass::SHIPPING_PHASE_DELIVERED),
+            )
+        );
+        
+        $labelCollectionSize = $labelsCollection->getSize();
+        if ($labelCollectionSize < 1) {
+            $helper->cronLog('No labels need to be removed. Exiting cron.');
+            return $this;
+        }
+        
+        $helper->cronLog("{$labelCollectionSize} labels will be removed.");
+        
+        /**
+         * Delete the labels
+         */
+        foreach ($labelCollection as $label) {
+            $helper->cronLog("Deleting label #{$label->getId()}.");
+            $label->delete()->save();
+        }
+        $helper->cronLog('RemoveOldLabels cron has finished.');
+        
+        return $this;
+    }
 }
