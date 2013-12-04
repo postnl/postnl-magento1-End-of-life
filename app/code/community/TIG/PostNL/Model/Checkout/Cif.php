@@ -292,14 +292,15 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Updates an order with CIF once a shipment has been confirmed in order to link the shipment to the PostNL CHeckout order
      * 
      * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * @param boolean $cancel
      * 
      * @return StdClass
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function updateOrder($postnlOrder)
+    public function updateOrder($postnlOrder, $cancel = false)
     {
-        $order   = $this->_getUpdateOrder($postnlOrder);
+        $order   = $this->_getUpdateOrder($postnlOrder, $cancel);
         $webshop = $this->_getWebshop();
         
         $soapParams = array(
@@ -508,10 +509,11 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Builds the updateOrder Order soap object based on the current postnl order.
      * 
      * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * @param boolean $cancel
      * 
      * @return array
      */
-    protected function _getUpdateOrder($postnlOrder)
+    protected function _getUpdateOrder($postnlOrder, $cancel = false)
     {
         $order = $postnlOrder->getOrder();
         
@@ -520,8 +522,15 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         $updateOrder = array(
             'ExtRef'  => $extRef,
-            'Zending' => $shipment,
         );
+        
+        if (!empty($shipment)) {
+            $updateOrder['Zending'] = $shipment;
+        }
+        
+        if ($cancel) {
+            $updateOrder['Geannuleerd'] = 'true';
+        }
         
         return $updateOrder;
     }

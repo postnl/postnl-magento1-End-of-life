@@ -81,6 +81,12 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function pingAction()
     {
+        if (!$this->_isPostnlCheckoutActive()) {
+            $this->getResponse()
+                 ->setBody('NOK');
+            return $this;
+        }
+    
         try {
             $cif = Mage::getModel('postnl_checkout/cif');
             $result = $cif->ping();
@@ -110,6 +116,12 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function prepareOrderAction()
     {
+        if (!$this->_isPostnlCheckoutActive()) {
+            $this->getResponse()
+                 ->setBody('error');
+            return $this;
+        }
+        
         try {
             Mage::getSingleton('checkout/session')->setCartWasUpdated(false);
             $quote = Mage::getSingleton('checkout/session')->getQuote();
@@ -203,7 +215,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
          * Validate the quote
          */
         $quoteIsValid = $this->_validateQuote($quote);
-        if (!$quoteIsValid) {
+        if (!$quoteIsValid || !$this->_isPostnlCheckoutActive()) {
             $this->_redirect('checkout/cart');
             return $this;
         }
@@ -287,7 +299,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         $quote = Mage::getSingleton('checkout/session')->getQuote();
 
         $quoteIsValid = $this->_validateQuote($quote);
-        if (!$quoteIsValid) {
+        if (!$quoteIsValid || !$this->_isPostnlCheckoutActive()) {
             $this->_redirect('checkout/cart');
             return $this;
         }
@@ -410,6 +422,33 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         
         return $this;
     }
+
+    /**
+     * Cancels the checkout and disables the PostNL order
+     * 
+     * @return TIG_PostNL_CheckoutController
+     */
+    public function cancelAction()
+    {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $quoteIsValid = $this->_validateQuote($quote);
+        if (!$quoteIsValid || !$this->_isPostnlCheckoutActive()) {
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
+        
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder->setIsActive(false)
+                    ->save();
+                    
+        Mage::getSingleton('checkout/session')->addNotice(
+            $this->__('Your order has been cancelled. Please try again.')
+        );
+        
+        $this->_redirect('checkout/cart');
+        return $this;
+    }
     
     /**
      * Parses any communication options that may have been selected
@@ -494,6 +533,17 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
         
         return $this;
+    }
+
+    /**
+     * Checks if PostNL Checkout is active
+     * 
+     * @return boolean
+     */
+    protected function _isPostnlCheckoutActive()
+    {
+        $isActive = Mage::helper('postnl/checkout')->isCheckoutActive();
+        return $isActive;
     }
     
     /**

@@ -161,7 +161,7 @@
     
     <div class="buttons-set">
         <p class="back-link">
-            <a href="<?php echo $this->getUrl('checkout/cart', array('_secure' => true)); ?>" title="<?php echo $this->__('Return to the shopping cart.'); ?>"><?php echo $this->__('Cancel');?></a>
+            <a href="<?php echo $this->getUrl('postnl/checkout/cancel', array('_secure' => true)); ?>" title="<?php echo $this->__('Return to the shopping cart.'); ?>"><?php echo $this->__('Cancel');?></a>
         </p>
         <button class="button" id="postnl_confirm_order" onclick="paymentForm.submit();"><span><span><?php echo $this->__('Confirm Order');?></span></span></button>
     </div>

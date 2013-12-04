@@ -50,9 +50,9 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
     
     /**
-     * XML path for 'show_checkout_for_letter' setting
+     * XML path to 'hide_button_if_disallowed' setting
      */
-    const XML_PATH_SHOW_CHECKOUT_FOR_LETTER = 'postnl/checkout/show_checkout_for_letter';
+    const XML_PATH_HIDE_BUTTON_IF_DISALLOWED = 'postnl/checkout/hide_button_if_disallowed';
     
     /**
      * Gets the checkout URL
@@ -73,9 +73,11 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
      */
     public function isDisabled()
     {
-        $isDisabled = !Mage::getSingleton('checkout/session')->getQuote()->validateMinimumAmount();
+        if (!$this->canUsePostnlCheckout()) {
+            return true;
+        }
         
-        return $isDisabled;
+        return false;
     }
 
     /**
@@ -85,45 +87,11 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
      */
     public function canUsePostnlCheckout()
     {
-        $checkoutEnabled = Mage::helper('postnl/checkout')->isCheckoutEnabled();
-        if (!$checkoutEnabled) {
-            return false;
-        }
-        
-        /**
-         * Check if the total weight of all items in the quote exceed 2 kg. If so, the order might fit in a letter and PostNL
-         * Checkout should onyl be available if the merchant has expressly configured it as such.
-         */
         $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $quoteItems = $quote->getAllItems();
         
-        $totalWeight = 0;
-        foreach ($quoteItems as $item) {
-            $totalWeight += $item->getRowWeight();
-        }
+        $canUseCheckout = Mage::helper('postnl/checkout')->canUsePostnlCheckout($quote);
+        return $canUseCheckout;
         
-        $kilograms = Mage::helper('postnl/cif')->standardizeWeight($totalWeight, Mage::app()->getStore()->getId());
-        $showCheckoutForLetters = Mage::getStoreConfigFlag(self::XML_PATH_SHOW_CHECKOUT_FOR_LETTER);
-        if ($kilograms < 2 && !$showCheckoutForLetters) {
-            return false;
-        }
-        
-        /**
-         * Send a ping request to see if the PostNL Checkout service is available
-         */
-        try {
-            $cif = Mage::getModel('postnl_checkout/cif');
-            $result = $cif->ping();
-        } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
-            return false;
-        }
-        
-        if ($result !== 'OK') {
-            return false;
-        }
-        
-        return true;
     }
     
     /**
@@ -160,7 +128,12 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
         
         $url =  $baseUrl 
              . '?publicId=' . $webshopId
-             . '&format=Large&type=Orange';
+             . '&format=Large'
+             . '&type=Orange';
+             
+        if ($this->isDisabled()) {
+            $url .= '&disabled=true';
+        }
                   
         return $url;
     }
@@ -172,7 +145,16 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
      */
     protected function _toHtml()
     {
-        if (!$this->canUsePostnlCheckout()) {
+        if (!Mage::helper('postnl/checkout')->isCheckoutActive()) {
+            return '';
+        }
+        
+        /**
+         * Normally if using PostNL Checkout is disallowed, but PostNL Checkout is active we disable the button. However, the 
+         * merchant may configure the module to hide the button in this case instead.
+         */
+        $hideButtonIfDisabled = Mage::getStoreConfigFlag(self::XML_PATH_HIDE_BUTTON_IF_DISALLOWED);
+        if (!$this->canUsePostnlCheckout() && $hideButtonIfDisabled) {
             return '';
         }
         
