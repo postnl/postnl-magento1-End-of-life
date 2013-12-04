@@ -130,6 +130,22 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     }
     
     /**
+     * Encrypts a value
+     * 
+     * @param string $value
+     * 
+     * @return string
+     */
+    public function encryptValue($value)
+    {
+        $value = (string) $value;
+        
+        $encrypted = Mage::helper('core')->encrypt($value);
+        
+        return $encrypted;
+    }
+    
+    /**
      * Logs a webservice request and response for debug purposes.
      * 
      * N.B.: if file logging is enabled, the log will be forced

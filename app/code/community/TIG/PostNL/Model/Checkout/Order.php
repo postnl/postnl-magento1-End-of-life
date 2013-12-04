@@ -93,6 +93,16 @@ class TIG_PostNL_Model_Checkout_Order extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Alias for magic getToken()
+     * 
+     * @return string
+     */
+    public function getOrderToken()
+    {
+        return $this->getToken();
+    }
+    
+    /**
      * Alias for magic getQuoteId()
      * 
      * @return int
@@ -100,5 +110,19 @@ class TIG_PostNL_Model_Checkout_Order extends Mage_Core_Model_Abstract
     public function getExtRef()
     {
         return $this->getQuoteId();
+    }
+    
+    /**
+     * Sets new PostNL Orders to active before saving
+     * 
+     * @return Mage_Core_Model_Abstract::_beforeSave();
+     */
+    protected function _beforeSave()
+    {
+        if ($this->isObjectNew()) {
+            $this->setIsActive(1);
+        }
+        
+        return parent::_beforeSave();
     }
 }

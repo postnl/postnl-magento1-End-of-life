@@ -116,20 +116,26 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     /**
      * Updates the ExtensionControl server with updated statistics
      * 
+     * @param boolean $forceUpdate
+     * 
      * @return TIG_PostNL_Model_ExtensionControl_Webservices
      */
-    public function updateStatistics()
+    public function updateStatistics($forceUpdate = false)
     {
         $canSendStatictics = Mage::helper('postnl/webservices')->canSendStatistics();
-        if (!$canSendStatictics) {
+        if (!$forceUpdate && !$canSendStatictics) {
             throw Mage::exception('TIG_PostNL', 'Unable to update statistics. This feature has been disabled.');
         }   
              
         /**
          * Get the security keys used to encrypt the message
          */
-        $uniqueKey  = $this->_getUniqueKey(1);
-        $privateKey = $this->_getPrivateKey(1);
+        $uniqueKey  = $this->_getUniqueKey();
+        $privateKey = $this->_getPrivateKey();
+        
+        if (!$uniqueKey || !$privateKey) {
+            throw Mage::exception('TIG_PostNL', 'No private or unique key found. Unable to complete the request.');
+        }
         
         /**
          * get version statistics of Magento and the PostNL extension
@@ -150,6 +156,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          * Serialize and encrypt the data using the private and unique keys
          */
         $serializedData = serialize($data);
+        
         $encryptedData = openssl_encrypt(
             $serializedData, 
             self::ENCRYPTION_METHOD, 

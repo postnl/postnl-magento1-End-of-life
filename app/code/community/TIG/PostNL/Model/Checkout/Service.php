@@ -548,6 +548,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $postnlOrder = Mage::getModel('postnl_checkout/order');
         $postnlOrder->load($quote->getId(), 'quote_id')
                     ->setOrderId($order->getId())
+                    ->setIsActive(false)
                     ->save();
         
         $checkoutSession = Mage::getSingleton('checkout/session');

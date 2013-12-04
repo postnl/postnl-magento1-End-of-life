@@ -54,12 +54,32 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     const XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY  = 'postnl/general/unique_key';
     const XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY = 'postnl/general/private_key';
     
+    const SHOP_ALREADY_REGISTERED_FAULTCODE = 'API-2-6';
+    
     /**
-     * Activates the webshop. Uses the latest entered email. Does not save any other fields.
+     * Activate the extension by registering it with the extension control service
      * 
      * @return TIG_PostNL_Adminhtml_ExtensionControlController
      */
     public function activateAction()
+    {
+        $activationStatus = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if (!$activationStatus) {
+            $this->_registerWebshop();
+        } elseif ($activationStatus == 1) {
+            $this->_updateStatistics();
+        }
+        
+        $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+        return $this;
+    }
+    
+    /**
+     * Registers a new webshop
+     * 
+     * @return TIG_PostNL_Adminhtml_ExtensionControlController
+     */
+    protected function _registerWebshop()
     {
         $groups = $this->getRequest()->getParam('groups');
         
@@ -70,57 +90,156 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         if (isset($groups['general']['fields']['email']['value'])) {
             $email = $groups['general']['fields']['email']['value'];
             Mage::getModel('core/config')->saveConfig(self::XML_PATH_EMAIL, $email);
+        
+            /**
+             * reinit configuration
+             */
+            Mage::getConfig()->reinit();
+            Mage::app()->reinitStores();
         }
         
         $webservice = Mage::getModel('postnl_extensioncontrol/webservices');
-        
         try {
             /**
              * Activate the webshop
              */
             $webservice->activateWebshop($email);
-        } catch (Exception $e) {
+        } catch (SoapFault $e) {
             /**
-             * The most common cause of ran exception here is that the email address used is already known. In this case we can
-             * immediately proceed to step 2 of the activation process.
+             * If the webshop is already registered (email, hostname combo exists), continue the activation by sendinging a
+             * signle update statistics request.
              */
-            Mage::helper('postnl')->logException($e);
-            try {
-                /**
-                 * The first update statistics call will, when it succeeds, cause the module to be fully activated.
-                 */
-                $this->_updateStatistics();
+            if (isset($e->faultcode) && $e->faultcode == self::SHOP_ALREADY_REGISTERED_FAULTCODE) {
+                Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 1);
                 
-                Mage::getSingleton('adminhtml/session')->addSuccess(
-                    Mage::helper('postnl')->__('The extension has been successfully activated.')
-                );
-            } catch (Exception $e) {
-                /**
-                 * If the update statistics also fails, some different error has occurred.
-                 */
-                Mage::helper('postnl')->logException($e);
-                Mage::getSingleton('adminhtml/session')->addError(
-                    Mage::helper('postnl')->__('An error occurred while activating the extension.')
-                );
+                return $this->_updateStatistics();
             }
             
-            $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred whilst processing your request: ' . $e->getMessage())
+            );
+            return $this;
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred whilst processing your request: ' . $e->getMessage())
+            );
+            return $this;
+        }
+        
+        Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 1);
+        
+        Mage::getSingleton('adminhtml/session')->addSuccess(
+            $this->__(
+                'Your webshop has been registered. You should recieve an email on the email address you specify shortly. 
+                Please read this email carefully as it contains instructions on how to finish the extension activation procedure.'
+            )
+        );
+        
+        return $this;
+    }
+    
+    /**
+     * Activates the webshop by attempting a single updateStatistics call
+     * 
+     * @return TIG_PostNL_Adminhtml_ExtensionControlController
+     */
+    protected function _updateStatistics()
+    {
+        $groups = $this->getRequest()->getParam('groups');
+        
+        /**
+         * If either the unique key or the private key were just entered without saving the config first, we need to encrypt and
+         * save them.
+         */
+        $configChanged = false;
+        if (isset($groups['general']['fields'])) {
+            /**
+             * Get the general fields array
+             */
+            $generalFields = $groups['general']['fields'];
+            
+            /**
+             * Check if the unique key was set and is a valid value (not empty and not just asterisks)
+             */
+            if (isset($generalFields['unique_key']['value'])) {
+                $uniqueKey = $generalFields['unique_key']['value'];
+                if (!empty($uniqueKey) && !preg_match('/^\*+$/', $uniqueKey)) {
+                    /**
+                     * Encrypt and save the unique key
+                     */
+                    $encryptedUniqueKey = Mage::helper('postnl/webservices')->encryptValue($uniqueKey);
+                    Mage::getModel('core/config')->saveConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, $encryptedUniqueKey);
+                    
+                    $configChanged = true;
+                }
+            }
+            
+            /**
+             * Do the same for the private key
+             */
+            if (isset($generalFields['private_key']['value'])) {
+                $privateKey = $generalFields['private_key']['value'];
+                if (!empty($privateKey) && !preg_match('/^\*+$/', $privateKey)) {
+                    /**
+                     * Encrypt and save the private key
+                     */
+                    $encryptedPrivateKey = Mage::helper('postnl/webservices')->encryptValue($privateKey);
+                    Mage::getModel('core/config')->saveConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, $encryptedPrivateKey);
+                    
+                    $configChanged = true;
+                }
+            }
+        }
+
+        /**
+         * If the config has changed we need to reinit
+         */
+        if ($configChanged) {
+            Mage::getConfig()->reinit();
+            Mage::app()->reinitStores();
+        }
+        
+        /**
+         * If either the unique or private key was not saved, get it from the config
+         */
+        $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        if (!isset($uniqueKey)) {
+            $uniqueKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, $adminStoreId);
+        }
+        
+        if (!isset($privateKey)) {
+            $privateKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, $adminStoreId);
+        }
+        
+        if (!$uniqueKey || !$privateKey) {
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('Please fill in your unique and private keys and try again.')
+            );
             return $this;
         }
         
         /**
-         * Set the activation status to the next level and inform the merchant.
+         * Try to update the shop's statistics once in order to fully activate the extension
          */
-        Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 1);
-        $successMessage = 'This website has been actived. An email has been sent to the specified e-mail address. Please'
-                        . ' read this email carefully as it contains important information regarding the activation of'
-                        . ' the extension.';
-                        
+        try {
+            $webservices = Mage::getModel('postnl_extensioncontrol/webservices');
+            $webservices->updateStatistics(true);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('An error occurred whilst processing your request: ' . $e->getMessage())
+            );
+            return $this;
+        }
+        
+        Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 2);
+        
         Mage::getSingleton('adminhtml/session')->addSuccess(
-            Mage::helper('postnl')->__($successMessage)
+            $this->__('The extension has been successfully activated!')
         );
         
-        $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
     }
     
@@ -137,27 +256,4 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
     }
-
-    /**
-     * Attempts to update this shop's statistics in order to fully activate
-     * 
-     * @return TIG_PostNL_Adminhtml_ExtensionControlController
-     */
-    protected function _updateStatistics()
-    {   
-        $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        
-        $uniqueKey  = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, $adminStoreId);
-        $privateKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, $adminStoreId);
-        
-        if (!$uniqueKey || !$privateKey) {
-            return $this;
-        }
-        
-        $webservices = Mage::getModel('postnl_extensioncontrol/webservices');
-        $webservices->updateStatistics();
-        
-        return $this;
-    }
-
 }

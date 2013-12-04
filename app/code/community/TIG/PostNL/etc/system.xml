@@ -256,10 +256,21 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                     	</active>
+                        <activation_in_progress_header translate="label" module="postnl">
+                            <label><![CDATA[The extension has been partially activated. Fill in the fields below and press the 'finish activation' button below to finish the procedure. Click <a href="#" onclick="%s">here</a> to reset the activation procedure.]]></label>
+                            <frontend_model>postnl_adminhtml/system_config_activatedFieldHeader</frontend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <is_activated>1</is_activated>
+                            </depends>
+                        </activation_in_progress_header>
                     	<activated_header translate="label" module="postnl">
                             <label><![CDATA[The extension has been activated. Click <a href="#" onclick="%s">here</a> to be able to activate the extension under a different name.]]></label>
                             <frontend_model>postnl_adminhtml/system_config_activatedFieldHeader</frontend_model>
-                            <sort_order>20</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -271,7 +282,7 @@
                             <label>Email</label>
                             <comment>During activation 2 secure keys will be sent to this email address.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>30</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -283,7 +294,7 @@
                             <label>Unique key</label>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -295,7 +306,7 @@
                             <label>Private key</label>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -305,7 +316,7 @@
                         </private_key>
                         <activate_button>
                             <frontend_model>postnl_adminhtml/system_config_activateButton</frontend_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -315,7 +326,7 @@
                         </activate_button>
                         <finish_activation_button>
                             <frontend_model>postnl_adminhtml/system_config_activateButton</frontend_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
