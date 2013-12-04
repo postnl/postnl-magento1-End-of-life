@@ -310,6 +310,15 @@
                     <model>postnl_extensioncontrol/observer_cron::checkFeedUpdate</model>
                 </run>
             </postnl_update_notification_feed>
+            <!-- Remove labels of shipments that have been delivered to prevent the database from getting too large -->
+            <postnl_remove_old_labels>
+                <schedule>
+                    <cron_expr>0 1,13 * * *</cron_expr> <!-- at 01:00 (1 A.M.) and 13:00 (1 P.M.) each day -->
+                </schedule>
+                <run>
+                    <model>postnl_core/observer_cron::removeOldLabels</model>
+                </run>
+            </postnl_remove_old_labels>
         </jobs>
     </crontab>
     
