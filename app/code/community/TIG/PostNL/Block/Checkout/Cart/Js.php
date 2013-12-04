@@ -177,4 +177,21 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
         $this->setContinueUrl($url);
         return $url;
     }
+    
+    /**
+     * Returns the block's html. Checks if the 'use_postnl_checkout' param is set. If not, returns and empty string
+     * 
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        
+        $canUseCheckout = Mage::helper('postnl/checkout')->canUsePostnlCheckout($quote);
+        if (!$canUseCheckout) {
+            return '';
+        }
+        
+        return parent::_toHtml();
+    }
 }

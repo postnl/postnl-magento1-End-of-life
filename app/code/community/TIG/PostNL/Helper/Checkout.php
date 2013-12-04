@@ -55,6 +55,12 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     const XML_PATH_TEST_MODE = 'postnl/checkout/mode';
     
     /**
+     * XML path for config options used to determine whether or not PostNL Checkout is available
+     */
+    const XML_PATH_SHOW_CHECKOUT_FOR_LETTER     = 'postnl/checkout/show_checkout_for_letter';
+    const XML_PATH_SHOW_CHECKOUT_FOR_BACKORDERS = 'postnl/checkout/show_checkout_for_backorders';
+    
+    /**
      * Array of payment methods supported by PostNL Checkout. 
      * Keys are the names used in system.xml, values are codes used by PostNL Checkout.
      * 
@@ -123,6 +129,170 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     }
     
     /**
+     * Check if PostNL Checkout may be used for a specified quote
+     * 
+     * @param Mage_Sales_Model_Quote $quote
+     * 
+     * @return boolean
+     */
+    public function canUsePostnlCheckout(Mage_Sales_Model_Quote $quote)
+    {
+        if (Mage::registry('can_use_postnl_checkout') !== null) {
+            return Mage::registry('can_use_postnl_checkout');
+        }
+        
+        $checkoutEnabled = $this->isCheckoutEnabled();
+        if (!$checkoutEnabled) {
+            Mage::register('can_use_postnl_checkout', false);
+            return false;
+        }
+        
+        /**
+         * PostNL Checkout cannot be used for virtual orders
+         */
+        if ($quote->isVirtual()) {
+            Mage::register('can_use_postnl_checkout', false);
+            return false;
+        }
+        
+        /**
+         * Check if the quote has a valid minimum amount
+         */
+        if (!$quote->validateMinimumAmount()) {
+            Mage::register('can_use_postnl_checkout', false);
+            return false;
+        }
+        
+        $storeId = $quote->getStoreId();
+        
+        /**
+         * Check if PostNL Checkout may be used for 'letter' orders and if not, if the quote could fit in an envelope
+         */
+        $showCheckoutForLetters = Mage::getStoreConfigFlag(self::XML_PATH_SHOW_CHECKOUT_FOR_LETTER, $storeId);
+        if (!$showCheckoutForLetters) {
+            $isLetterQuote = $this->quoteIsLetter($quote, $storeId);
+            if ($isLetterQuote) {
+                Mage::register('can_use_postnl_checkout', false);
+                return false;
+            }
+        }
+        
+        /**
+         * Check if PostNL Checkout may be used for out-og-stock orders and if not, whether the quote has any such products
+         */
+        $showCheckoutForBackorders = Mage::getStoreConfigFlag(self::XML_PATH_SHOW_CHECKOUT_FOR_BACKORDERS, $storeId);
+        if (!$showCheckoutForBackorders) {
+            $containsOutOfStockItems = $this->quoteHasOutOfStockItems($quote);
+            if ($containsOutOfStockItems) {
+                Mage::register('can_use_postnl_checkout', false);
+                return false;
+            }
+        }
+        
+        /**
+         * Send a ping request to see if the PostNL Checkout service is available
+         */
+        try {
+            $cif = Mage::getModel('postnl_checkout/cif');
+            $result = $cif->ping();
+        } catch (Exception $e) {
+            $this->logException($e);
+            Mage::register('can_use_postnl_checkout', false);
+            return false;
+        }
+        
+        if ($result !== 'OK') {
+            Mage::register('can_use_postnl_checkout', false);
+            return false;
+        }
+        
+        Mage::register('can_use_postnl_checkout', true);
+        return true;
+    }
+
+    /**
+     * Checks if a quote is a letter.
+     * For now it only checks if the total weight of the quote is less than 2 KG
+     * 
+     * @param mixed $quoteItems Either a quote object, or an array or collection of quote items
+     * @param null|int $storeId
+     * 
+     * @return boolean
+     * 
+     * @todo Expand this method to also check the size of products to see if they fit in an envelope
+     */
+    public function quoteIsLetter($quoteItems, $storeId = null)
+    {
+        if ($quoteItems instanceof Mage_Sales_Model_Quote) {
+            $quoteItems = $quoteItems->getAllItems();
+        }
+        
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $totalWeight = 0;
+        foreach ($quoteItems as $item) {
+            $totalWeight += $item->getRowWeight();
+        }
+        
+        $kilograms = Mage::helper('postnl/cif')->standardizeWeight($totalWeight, $storeId);
+        
+        if ($kilograms < 2) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Check if a quote has out of stock products
+     * 
+     * @param mixed $quoteItems Either a quote object, or an array or collection of quote items
+     * 
+     * @return boolean
+     */
+    public function quoteHasOutOfStockItems($quoteItems)
+    {
+        if ($quoteItems instanceof Mage_Sales_Model_Quote) {
+            $quoteItems = $quoteItems->getAllItems();
+        }
+        
+        $productIds = array();
+        foreach ($quoteItems as $item) {
+            $productIds[] = $item->getProductId();
+        }
+        
+        /**
+         * Filter the stock collection by the products in the quote and whose quantity is equal to or below 0
+         * 
+         * The resulting query:
+         * SELECT `main_table`.`item_id` , `cp_table`.`type_id`
+         * FROM `cataloginventory_stock_item` AS `main_table`
+         * INNER JOIN `catalog_product_entity` AS `cp_table` ON main_table.product_id = cp_table.entity_id
+         * WHERE (
+         *     product_id
+         *     IN (
+         *         {$productIds}
+         *     )
+         * )
+         * AND (
+         *     qty <=0
+         * )
+         */
+        $stockCollection = Mage::getResourceModel('cataloginventory/stock_item_collection');
+        $stockCollection->addFieldToSelect('item_id')
+                        ->addFieldToFilter('product_id', array('in' => $productIds))
+                        ->addFieldToFilter('qty', array('lteq' => 0));
+        
+        if ($stockCollection->getSize() > 0) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * Check if the module is set to test mode
      * 
      * @return boolean
@@ -144,9 +314,26 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     }
     
     /**
+     * Checks if PostNL Checkout is active
+     * 
+     * @param null|int $storeId
+     * 
+     * @return boolean
+     */
+    public function isCheckoutActive($storeId = null)
+    {
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $isActive = Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ACTIVE, $storeId);
+        return $isActive;
+    }
+    
+    /**
      * Check if PostNL checkout is enabled
      * 
-     * @param null | int $storeId
+     * @param null|int $storeId
      * 
      * @return boolean
      */
@@ -161,8 +348,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             return false;
         }
         
-        $checkoutEnabled = Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ACTIVE, $storeId);
-        if (!$checkoutEnabled) {
+        $isCheckoutActive = $this->isCheckoutActive();
+        if (!$isCheckoutActive) {
             return false;
         }
         
@@ -216,6 +403,4 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
          */
         return false;
     }
-    
-    
 }

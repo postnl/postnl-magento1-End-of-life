@@ -36,14 +36,20 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-    <?php echo $this->__('or'); ?>
-</li>
-<li>
-    <?php $_src = $this->getSrc(); ?>
-    <a id="postnl_checkout_link" href="#" onclick="<?php if (!$this->isDisabled()): ?>postnlcheckoutWidget.startCheckout();<?php else: ?>return false;<?php endif; ?>" title="<?php echo $this->__('PostNL Checkout') ?>" <?php if ($this->isDisabled()): ?>disabled='disabled'<?php endif; ?>>
-        <img src="<?php echo $_src; ?>"/>
-    </a>
-    <p>
-        <a href="https://www.youtube.com/watch?v=5e9iH2QdC94" title="<?php echo $this->__('How does it work?'); ?>" target="_blank"><?php echo $this->__('How does it work?'); ?></a>
-    </p>
+ 
+$installer = $this;
+
+$installer->startSetup();
+
+$installer->getConnection()
+          ->addColumn(
+               $installer->getTable('postnl_checkout/order'),
+               'is_canceled',
+               array(
+                   'default'  => 0,
+                   'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+                   'comment'  => 'Is Canceled',
+               )
+          );
+
+$installer->endSetup();

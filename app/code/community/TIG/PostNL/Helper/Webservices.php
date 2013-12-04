@@ -165,6 +165,8 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
             return $this;
         }
         
+        $this->createLogDir();
+        
         $requestXml = $this->formatXml($client->getLastRequest());
         $responseXML = $this->formatXml($client->getLastResponse());
         
@@ -173,7 +175,12 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
                     . "\nResponse recieved:\n"
                     . $responseXML;
                     
-        Mage::log($logMessage, Zend_Log::DEBUG, self::WEBSERVICES_DEBUG_LOG_FILE, true);
+        Mage::log(
+            $logMessage, 
+            Zend_Log::DEBUG, 
+            self::POSTNL_LOG_DIRECTORY . DS . self::WEBSERVICES_DEBUG_LOG_FILE, 
+            true
+        );
         
         return $this;
     }
@@ -197,6 +204,8 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
             return $this;
         }
         
+        $this->createLogDir();
+        
         if ($exception instanceof TIG_PostNL_Model_Core_Webservices_Exception) {
             $requestXml = $this->formatXml($exception->getRequestXml());
             $responseXML = $this->formatXml($exception->getResponseXml());
@@ -214,10 +223,20 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
                         . "\n<<< RESPONSE RECIEVED >>>\n"
                         . $responseXML;
                         
-            Mage::log($logMessage, Zend_Log::ERR, self::WEBSERVICES_EXCEPTION_LOG_FILE, true);
+            Mage::log(
+                $logMessage, 
+                Zend_Log::ERR, 
+                self::POSTNL_LOG_DIRECTORY . DS . self::WEBSERVICES_EXCEPTION_LOG_FILE, 
+                true
+            );
         }
         
-        Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::WEBSERVICES_EXCEPTION_LOG_FILE, true);
+        Mage::log(
+            "\n" . $exception->__toString(), 
+            Zend_Log::ERR, 
+            self::POSTNL_LOG_DIRECTORY . DS . self::WEBSERVICES_EXCEPTION_LOG_FILE, 
+            true
+        );
         
         return $this;
     }
