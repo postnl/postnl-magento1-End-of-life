@@ -364,8 +364,8 @@
         		<live_password/>
         		<test_username/>
         		<test_password/>
+                <customer_number/>
         		<customer_code/>
-        		<customer_number/>
         		<collection_location/>
         		<global_barcode_type/>
         		<global_barcode_range/>
@@ -451,7 +451,6 @@
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
         	    <mode>1</mode> <!-- Test mode -->
-        	    <hide_button_if_disallowed>0</hide_button_if_disallowed> <!-- Show the button as disabled if PostNL Checkout is unavailable -->
         	    <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the checkout button for orders under 2 kg -->
         	    <show_checkout_for_backorders>0</show_checkout_for_backorders> <!-- Do not show the checkout button if the order contains out-of-stock products -->
         	    <show_summary_page>1</show_summary_page> <!-- Show an order summary page before finalizing the order -->

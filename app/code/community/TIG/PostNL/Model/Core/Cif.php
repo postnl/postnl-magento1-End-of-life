@@ -1639,11 +1639,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
         $areaField = (string) Mage::getStoreConfig(self::XML_PATH_AREA_FIELD, $storeId);
-        if (!$areaField) {
-            return '';
+        if ($areaField) {
+            $area = $address->getStreet($areaField);
+            
+            return $area;
         }
         
-        $area = $address->getStreet($areaField);
+        /**
+         * Attempt to get the area through the magic getter instead
+         */
+        $area = $address->getArea();
         
         return $area;
     }
@@ -1657,11 +1662,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
         $buildingNameField = (string) Mage::getStoreConfig(self::XML_PATH_BUILDING_NAME_FIELD, $storeId);
-        if (!$buildingNameField) {
-            return '';
+        if ($buildingNameField) {
+            $buildingName = $address->getStreet($buildingNameField);
+            
+            return $buildingName;
         }
         
-        $buildingName = $address->getStreet($buildingNameField);
+        /**
+         * Attempt to get the building name through the magic getter instead
+         */
+        $buildingName = $address->getBuildingName();
         
         return $buildingName;
     }
@@ -1675,11 +1685,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
         $departmentField = (string) Mage::getStoreConfig(self::XML_PATH_DEPARTMENT_FIELD, $storeId);
-        if (!$departmentField) {
-            return '';
+        if ($departmentField) {
+            $department = $address->getStreet($departmentField);
+            
+            return $department;
         }
         
-        $department = $address->getStreet($departmentField);
+        /**
+         * Attempt to get department through the magic getter instead
+         */
+        $department = $address->getDepartment();
         
         return $department;
     }
@@ -1694,10 +1709,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $storeId = $this->getStoreId();
         $doorcodeField = (string) Mage::getStoreConfig(self::XML_PATH_DOORCODE_FIELD, $storeId);
         if (!$doorcodeField) {
-            return '';
+            $doorcode = $address->getStreet($doorcodeField);
+            
+            return $doorcode;
         }
         
-        $doorcode = $address->getStreet($doorcodeField);
+        /**
+         * Attempt to get the doorcode through the magic getter instead
+         */
+        $doorcode = $address->getDoorcode();
         
         return $doorcode;
     }
@@ -1711,11 +1731,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
         $floorField = (string) Mage::getStoreConfig(self::XML_PATH_FLOOR_FIELD, $storeId);
-        if (!$floorField) {
-            return '';
+        if ($floorField) {
+            $floor = $address->getStreet($floorField);
+            
+            return $floor;
         }
         
-        $floor = $address->getStreet($floorField);
+        /**
+         * Attempt to get the floor through the magic getter instead
+         */
+        $floor = $address->getFloor();
         
         return $floor;
     }
@@ -1729,11 +1754,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
         $remarkField = (string) Mage::getStoreConfig(self::XML_PATH_REMARK_FIELD, $storeId);
-        if (!$remarkField) {
-            return '';
+        if ($remarkField) {
+            $remark = $address->getStreet($remarkField);
+            
+            return $remark;
         }
         
-        $remark = $address->getStreet($remarkField);
+        /**
+         * Attempt to get the remark through the magic getter instead
+         */
+        $remark = $address->getRemark();
         
         return $remark;
     }
