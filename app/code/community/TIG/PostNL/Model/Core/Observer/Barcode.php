@@ -85,10 +85,6 @@ class TIG_PostNL_Model_Core_Observer_Barcode
                 $postnlShipment->setConfirmDate(strtotime($postnlOrder->getConfirmDate()));
             }
             
-            if ($postnlOrder->getProductCode()) {
-                $postnlShipment->setProductCode($postnlOrder->getProductCode());
-            }
-            
             if ($postnlOrder->getIsPakjeGemak()) {
                 $postnlShipment->setIsPakjeGemak($postnlOrder->getIsPakjeGemak());
             }

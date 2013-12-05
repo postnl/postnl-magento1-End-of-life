@@ -149,15 +149,6 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
             return '';
         }
         
-        /**
-         * Normally if using PostNL Checkout is disallowed, but PostNL Checkout is active we disable the button. However, the 
-         * merchant may configure the module to hide the button in this case instead.
-         */
-        $hideButtonIfDisabled = Mage::getStoreConfigFlag(self::XML_PATH_HIDE_BUTTON_IF_DISALLOWED);
-        if (!$this->canUsePostnlCheckout() && $hideButtonIfDisabled) {
-            return '';
-        }
-        
         return parent::_toHtml();
     }
 }

@@ -341,7 +341,7 @@
                         <![CDATA[
                             <div class="box">
                                 <p>
-                                    Here you can configure your CIF account as well as set the extension to test or live mode.
+                                    Here you can configure your PostNL account.
                                 </p>
                             </div>
                         ]]>
@@ -386,28 +386,28 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                     	</test_password>
-                    	<customer_code translate="label comment" module="postnl">
-                            <label>Customer Code</label>
-                            <comment>Your customer code as supplied by PostNL. Must contain between 3 and 4 leters.</comment>
+                        <customer_number translate="label" module="postnl">
+                            <label>Customer Number</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <validate>validate-alpha validate-length minimum-length-3 maximum-length-4</validate>
-                    	</customer_code>
-                    	<customer_number translate="label" module="postnl">
-                            <label>Customer Number</label>
+                            <validate>validate-digits</validate>
+                        </customer_number>
+                    	<customer_code translate="label comment" module="postnl">
+                            <label>Customer Code</label>
+                            <comment>Your customer code as supplied by PostNL. Must contain between 3 and 4 leters.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <validate>validate-digits</validate>
-                    	</customer_number>
+                            <validate>validate-alpha validate-length minimum-length-3 maximum-length-4</validate>
+                    	</customer_code>
                         <collection_location translate="label" module="postnl">
-                            <label>Collection Location</label>
-                            <comment>Your collection location. Must contain 6 numbers.</comment>
+                            <label>BLS Code</label>
+                            <comment>The internal code of the nearest PostNL Sorting centre. Must contain 6 numbers.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
@@ -857,10 +857,18 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                     	</company>
+                    	<department translate="label" module="postnl">
+                            <label>Department</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                    	</department>
                     	<streetname translate="label comment" module="postnl">
                             <label>Street</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -869,7 +877,7 @@
                         <housenumber translate="label comment" module="postnl">
                             <label>House Nr.</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -878,7 +886,7 @@
                         <housenumber_extension translate="label comment" module="postnl">
                             <label>House Nr. Extension</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -886,7 +894,7 @@
                     	<postcode translate="label" module="postnl">
                             <label>Postcode</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -894,7 +902,7 @@
                     	<city translate="label" module="postnl">
                             <label>City</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -902,7 +910,7 @@
                     	<region translate="label" module="postnl">
                             <label>Region</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -968,10 +976,18 @@
                                 <use_sender_address>0</use_sender_address>
                             </depends>
                         </company>
+                        <department translate="label" module="postnl">
+                            <label>Department</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </department>
                         <streetname translate="label comment" module="postnl">
                             <label>Street</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -983,7 +999,7 @@
                         <housenumber translate="label comment" module="postnl">
                             <label>House Nr.</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -995,7 +1011,7 @@
                         <housenumber_extension translate="label comment" module="postnl">
                             <label>House Nr. Extension</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1006,7 +1022,7 @@
                         <postcode translate="label" module="postnl">
                             <label>Postcode</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1017,7 +1033,7 @@
                         <city translate="label" module="postnl">
                             <label>City</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1028,7 +1044,7 @@
                         <region translate="label" module="postnl">
                             <label>Region</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1296,7 +1312,7 @@
                             </depends>
                         </mode>
                         <checkout_button_header translate="label" module="postnl">
-                            <label>Here you can customaize when and how the PostNL Checkout button is displayed.</label>
+                            <label>Here you can customize when and how the PostNL Checkout button is displayed.</label>
                             <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1306,24 +1322,11 @@
                                 <active>1</active>
                             </depends>
                         </checkout_button_header>
-                        <hide_button_if_disallowed translate="label comment" module="postnl">
-                            <label>Hide the button if checkout is disallowed</label>
-                            <comment>If set to 'no', the button will be disabled instead.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>1</active>
-                            </depends>
-                        </hide_button_if_disallowed>
                         <show_checkout_for_letter translate="label" module="postnl">
                             <label>Enable PostNL Checkout for orders under 2 kg</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1335,7 +1338,7 @@
                             <label>Enable PostNL Checkout for orders containing out of stock products</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1346,7 +1349,7 @@
                         <checkout_customization_header translate="label" module="postnl">
                             <label>Here you can customaize the way PostNL Checkout behaves in your webshop.</label>
                             <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1359,7 +1362,7 @@
                             <comment>Whether or not to show the customer a final order summary page before finalizing the order.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1373,7 +1376,7 @@
                             <comment>Whether or not PostNL Checkout will offer the customer the ability to subscribe to your newsletter.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1387,7 +1390,7 @@
                             <comment>Whether or not the customer can leave a remark.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1401,7 +1404,7 @@
                             <comment>Whether or not the customer's mobile phonenumber will be returned by PostNL if available.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1415,7 +1418,7 @@
                             <comment>Whether or not the customer's date of birth will be returned by PostNL if available.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1429,7 +1432,7 @@
                             <comment>Whether or not the customer may choose a retail location as their delivery address.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1443,7 +1446,7 @@
                             <comment>Whether or not the customer may choose a foreign address as their shipping address.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1457,7 +1460,7 @@
                             <comment>Whether or not the user will see a price overview in PostNL Checkout</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1471,7 +1474,7 @@
                             <comment>Whether or not the customer must agree to the terms and conditions before being allowed to proceed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1483,7 +1486,7 @@
                         <checkout_urls_header translate="label" module="postnl">
                             <label>These URLs allow the customer to contact you. They will be shown on the user's MijnPakket page.</label>
                             <frontend_model>postnl_adminhtml/system_config_fieldHeader</frontend_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1495,7 +1498,7 @@
                             <label>Contact URL</label>
                             <comment>URL of a page where customers can find contact information for your webshop. Leave empty to disable this feature.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>180</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1507,7 +1510,7 @@
                             <label>Service URL</label>
                             <comment>URL of a page where customers can find information regarding the webshop's customer service department.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>190</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
