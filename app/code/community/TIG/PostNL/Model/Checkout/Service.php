@@ -235,11 +235,24 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $quote->getShippingAddress()->setCollectShippingRates(true);
         }
         
-        $data['checks'] = Mage_Payment_Model_Method_Abstract::CHECK_USE_CHECKOUT
-            | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_COUNTRY
-            | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_CURRENCY
-            | Mage_Payment_Model_Method_Abstract::CHECK_ORDER_TOTAL_MIN_MAX
-            | Mage_Payment_Model_Method_Abstract::CHECK_ZERO_TOTAL;
+        /**
+         * Extra checks used by Magento
+         * 
+         * @since Magento v1.13
+         */
+        $paymentMethodAbstractClass = Mage::getConfig()->getModelClassName('payment/method_abstract');
+        if (defined($paymentMethodAbstractClass . '::CHECK_USE_CHECKOUT')
+            && defined($paymentMethodAbstractClass . '::CHECK_USE_FOR_COUNTRY')
+            && defined($paymentMethodAbstractClass . '::CHECK_USE_FOR_CURRENCY')
+            && defined($paymentMethodAbstractClass . '::CHECK_ORDER_TOTAL_MIN_MAX')
+            && defined($paymentMethodAbstractClass . '::CHECK_ZERO_TOTAL')
+        ) {
+            $data['checks'] = $paymentMethodAbstractClass::CHECK_USE_CHECKOUT
+                            | $paymentMethodAbstractClass::CHECK_USE_FOR_COUNTRY
+                            | $paymentMethodAbstractClass::CHECK_USE_FOR_CURRENCY
+                            | $paymentMethodAbstractClass::CHECK_ORDER_TOTAL_MIN_MAX
+                            | $paymentMethodAbstractClass::CHECK_ZERO_TOTAL;
+        }
         
         $quote->getPayment()->setMethod($data['method'])->importData($data);
         $quote->getPayment()->getMethodInstance()->assignData($data);
