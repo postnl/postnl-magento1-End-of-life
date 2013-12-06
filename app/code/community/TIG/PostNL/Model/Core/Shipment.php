@@ -971,7 +971,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function isConfirmed()
     {
-        $confirmedStatus = $this->getConfirmedStatus();
+        $confirmedStatus = $this->getConfirmStatus();
         if ($confirmedStatus === self::CONFIRM_STATUS_CONFIRMED) {
             return true;
         }
