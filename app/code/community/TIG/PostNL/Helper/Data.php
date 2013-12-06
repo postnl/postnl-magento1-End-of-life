@@ -49,6 +49,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_Debug.log';
     
     /**
+     * Directory inside var/log where PostNL log files will be logged
+     */
+    const POSTNL_LOG_DIRECTORY = 'TIG_PostNL';
+    
+    /**
      * Log filename to log all cron log messages
      */
     const POSTNL_CRON_DEBUG_LOG_FILE = 'TIG_PostNL_Cron_Debug.log';
@@ -61,7 +66,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * XML path to test/live mode config option
      */
-    const XML_PATH_TEST_MODE = 'postnl/cif/mode';
+    const XML_PATH_TEST_MODE = 'postnl/cif_labels_and_confirming/mode';
     
     /**
      * XML path to debug mode config option
@@ -469,8 +474,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         
         if (is_null($file)) {
-            $file = self::POSTNL_DEBUG_LOG_FILE;
+            $file = self::POSTNL_LOG_DIRECTORY . DS . self::POSTNL_DEBUG_LOG_FILE;
         }
+        
+        $this->createLogDir();
         
         Mage::log($message, $level, $file);
         
@@ -489,7 +496,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function cronLog($message, $level = null)
     {
-        $file = self::POSTNL_CRON_DEBUG_LOG_FILE;
+        $file = self::POSTNL_LOG_DIRECTORY . DS . self::POSTNL_CRON_DEBUG_LOG_FILE;
         
         return $this->log($message, $level, $file);
     }
@@ -511,7 +518,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $this;
         }
         
-        Mage::log("\n" . $exception->__toString(), Zend_Log::ERR, self::POSTNL_EXCEPTION_LOG_FILE, true);
+        $this->createLogDir();
+        
+        Mage::log(
+            "\n" . $exception->__toString(), 
+            Zend_Log::ERR, 
+            self::POSTNL_LOG_DIRECTORY . DS . self::POSTNL_EXCEPTION_LOG_FILE, 
+            true
+        );
         
         return $this;
     }
@@ -553,5 +567,22 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         
         return false;
+    }
+    
+    /**
+     * Creates a seperate dir to log PostNL log files. Does nothing if the dir already exists
+     * 
+     * @return TIG_PostNL_Exception
+     */
+    public function createLogDir()
+    {
+        $logDir  = Mage::getBaseDir('var') . DS . 'log' . DS . self::POSTNL_LOG_DIRECTORY;
+
+        if (!is_dir($logDir)) {
+            mkdir($logDir);
+            chmod($logDir, 0777);
+        }
+        
+        return $this;
     }
 }

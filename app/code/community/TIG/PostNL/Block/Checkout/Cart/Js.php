@@ -36,12 +36,12 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Checkout_Onepage_Js extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
 {
     /**
      * XML path for webshop ID setting
      */
-    const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/checkout/public_webshop_id';
+    const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
     
     /**
      * XML path of PostNL Checkout test/live settings
@@ -185,8 +185,10 @@ class TIG_PostNL_Block_Checkout_Onepage_Js extends Mage_Core_Block_Template
      */
     protected function _toHtml()
     {
-        $usePostnLCheckout = Mage::app()->getRequest()->getParam('use_postnl_checkout');
-        if (!$usePostnLCheckout || $usePostnLCheckout != 'true') {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        
+        $canUseCheckout = Mage::helper('postnl/checkout')->canUsePostnlCheckout($quote);
+        if (!$canUseCheckout) {
             return '';
         }
         
