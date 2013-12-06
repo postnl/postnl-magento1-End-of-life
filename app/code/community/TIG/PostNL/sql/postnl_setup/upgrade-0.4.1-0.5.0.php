@@ -36,12 +36,20 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_url = $this->getUrl('postnl/adminhtml_extensionControl/activate', array('_secure' => true)); ?>
-<script type="text/javascript">
-    var postnlActivationUrl = '<?php echo $_url; ?>';
-    function activatePostNL() {
-        $('config_edit_form').action = postnlActivationUrl;
-        configForm.submit();
-    }
-</script>
+ 
+$installer = $this;
+
+$installer->startSetup();
+
+$installer->getConnection()
+          ->addColumn(
+               $installer->getTable('postnl_checkout/order'),
+               'is_active',
+               array(
+                   'default'  => 0,
+                   'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+                   'comment'  => 'Is Active',
+               )
+          );
+
+$installer->endSetup();

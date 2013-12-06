@@ -47,7 +47,12 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     /**
      * XML path to public webshop ID setting
      */
-    const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/checkout/public_webshop_id';
+    const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
+    
+    /**
+     * XML path to 'hide_button_if_disallowed' setting
+     */
+    const XML_PATH_HIDE_BUTTON_IF_DISALLOWED = 'postnl/checkout/hide_button_if_disallowed';
     
     /**
      * Gets the checkout URL
@@ -68,9 +73,11 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
      */
     public function isDisabled()
     {
-        $isDisabled = !Mage::getSingleton('checkout/session')->getQuote()->validateMinimumAmount();
+        if (!$this->canUsePostnlCheckout()) {
+            return true;
+        }
         
-        return $isDisabled;
+        return false;
     }
 
     /**
@@ -80,27 +87,11 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
      */
     public function canUsePostnlCheckout()
     {
-        $checkoutEnabled = Mage::helper('postnl/checkout')->isCheckoutEnabled();
-        if (!$checkoutEnabled) {
-            return false;
-        }
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
         
-        /**
-         * Send a ping request to see if the PostNL Checkout service is available
-         */
-        try {
-            $cif = Mage::getModel('postnl_checkout/cif');
-            $result = $cif->ping();
-        } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
-            return false;
-        }
+        $canUseCheckout = Mage::helper('postnl/checkout')->canUsePostnlCheckout($quote);
+        return $canUseCheckout;
         
-        if (!$result || $result !== 'OK') {
-            return false;
-        }
-        
-        return true;
     }
     
     /**
@@ -137,7 +128,12 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
         
         $url =  $baseUrl 
              . '?publicId=' . $webshopId
-             . '&format=Large&type=Orange';
+             . '&format=Large'
+             . '&type=Orange';
+             
+        if ($this->isDisabled()) {
+            $url .= '&disabled=true';
+        }
                   
         return $url;
     }
@@ -149,7 +145,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
      */
     protected function _toHtml()
     {
-        if (!$this->canUsePostnlCheckout()) {
+        if (!Mage::helper('postnl/checkout')->isCheckoutActive()) {
             return '';
         }
         

@@ -110,7 +110,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Varien_Obje
              */
             Mage::helper('postnl/webservices')->logWebserviceException($e);
             
-            throw Mage::exception('TIG_PostNL', $e->getMessage());
+            throw $e;
         }
     }
 }
