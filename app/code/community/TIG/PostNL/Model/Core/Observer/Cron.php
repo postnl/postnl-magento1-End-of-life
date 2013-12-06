@@ -212,7 +212,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $now = Mage::getModel('core/date')->gmtTimestamp();
         $maxTimestamp = $now - $maxFileStorageTime; //1 hour ago
         
-        $helper->cronLog("{$fileCount} temporary labels found.");
+        $helper->cronLog("{$fileCount} locks found.");
         foreach ($files as $path) {
             /**
              * First we must open and unlock the file

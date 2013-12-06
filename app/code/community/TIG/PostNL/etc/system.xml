@@ -1080,6 +1080,7 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                             <can_be_empty>0</can_be_empty>
+                            <validate>validate-select</validate>
                     	</supported_product_options>
                     	<default_product_option translate="label comment" module="postnl">
                             <label>Default shipping options</label>
