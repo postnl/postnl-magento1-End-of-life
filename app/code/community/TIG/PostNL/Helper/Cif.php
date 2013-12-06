@@ -67,7 +67,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * XML path to weight unit used
      */
-    const XML_PATH_WEIGHT_UNIT = 'postnl/cif_product_options/weight_unit';
+    const XML_PATH_WEIGHT_UNIT = 'postnl/cif_labels_and_confirming/weight_unit';
     
     /**
      * XML path to weight per parcel config setting
