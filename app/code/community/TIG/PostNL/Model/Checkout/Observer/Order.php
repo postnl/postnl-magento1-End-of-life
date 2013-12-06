@@ -36,12 +36,35 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_url = $this->getUrl('postnl/adminhtml_extensionControl/activate', array('_secure' => true)); ?>
-<script type="text/javascript">
-    var postnlActivationUrl = '<?php echo $_url; ?>';
-    function activatePostNL() {
-        $('config_edit_form').action = postnlActivationUrl;
-        configForm.submit();
+class TIG_PostNL_Model_Checkout_Observer_Order
+{
+    /**
+     * Cancels a PostNL Checkout order
+     * 
+     * @param Varien_Event_Observer $observer
+     * 
+     * @return TIG_PostNL_Model_Checkout_Observer_Order
+     * 
+     * @event order_cancel_after
+     * 
+     * @observer postnl_cancel_checkout_order
+     */
+    public function cancelOrder(Varien_Event_Observer $observer)
+    {
+        $order = $observer->getOrder();
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($order->getId(), 'order_id');
+        
+        if (!$postnlOrder->getId()) {
+            return $this;
+        }
+        
+        try {
+            $postnlOrder->cancel()
+                        ->save();
+        } catch (Exception $e) {
+            Mage::helper('postnl/checkout')->logException($e);
+        }
+        
+        return $this;
     }
-</script>
+}

@@ -47,7 +47,7 @@
     <div class="page-title">
         <h1><?php echo $this->__('Checkout Summary'); ?></h1>
     </div>
-    
+    <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
     <div class="col2-set">
         <div class="col-1">
             <div class="info-box">
@@ -70,19 +70,6 @@
                     <?php echo $_quote->getCustomerEmail(); ?>
                 </address>
             </div>
-        </div>
-        <div class="col-2">
-            <div class="info-box">
-                <h3 class="box-title"><?php echo $this->__('Payment Method'); ?></h3>
-                <div class="box-content">
-                    <p><?php echo $_quote->getPayment()->getMethodInstance()->getTitle(); ?></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col2-set">
-        <div class="col-1">
             <div class="info-box">
                 <h3 class="box-title"><?php echo $this->__('Shipping Address'); ?></h3>
                 <address class="box-content">
@@ -103,8 +90,32 @@
                     <?php echo $_quote->getCustomerEmail(); ?>
                 </address>
             </div>
+            <?php if($_pakjeGemakAddress): ?>
+            <div class="info-box">
+                <h3 class="box-title"><?php echo $this->__('PakjeGemak Address'); ?></h3>
+                <address class="box-content">
+                    <?php echo $_pakjeGemakAddress->getName(); ?><br />
+                    <?php echo $_pakjeGemakAddress->getStreetFull(); ?><br />
+                    <?php echo $_pakjeGemakAddress->getPostcode(); ?><br />
+                    <?php echo $_pakjeGemakAddress->getCity(); ?><br />
+                    <?php echo $_pakjeGemakAddress->getCountry(); ?>
+                </address>
+            </div>
+            <?php endif; ?>
         </div>
         <div class="col-2">
+            <div class="info-box">
+                <h3 class="box-title"><?php echo $this->__('Payment Method'); ?></h3>
+                <div class="box-content">
+                    <p><?php echo $_quote->getPayment()->getMethodInstance()->getTitle(); ?></p>
+                    <form name="payment_form" id="payment_form" method="post" action="<?php echo $this->getUrl('postnl/checkout/finishCheckout', array('_secure' => true, 'quote_id' => $_quote->getId())); ?>">
+                        <input type="hidden" name="payment[method]" value="<?php echo $_quote->getPayment()->getMethodInstance()->getCode(); ?>"/>
+                        <?php if ($this->getChild('payment_method_form')): ?>
+                            <?php echo $this->getChildHtml('payment_method_form'); ?>
+                        <?php endif; ?>
+                    </form>
+                </div>
+            </div>
             <div class="info-box">
                 <h3 class="box-title"><?php echo $this->__('Shipping Method'); ?></h3>
                 <div class="box-content">
@@ -113,22 +124,6 @@
             </div>
         </div>
     </div>
-    <?php if($_pakjeGemakAddress): ?>
-        <div class="col2-set">
-            <div class="col-1">
-                <div class="info-box">
-                    <h3 class="box-title"><?php echo $this->__('PakjeGemak Address'); ?></h3>
-                    <address class="box-content">
-                        <?php echo $_pakjeGemakAddress->getName(); ?><br />
-                        <?php echo $_pakjeGemakAddress->getStreetFull(); ?><br />
-                        <?php echo $_pakjeGemakAddress->getPostcode(); ?><br />
-                        <?php echo $_pakjeGemakAddress->getCity(); ?><br />
-                        <?php echo $_pakjeGemakAddress->getCountry(); ?>
-                    </address>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
     
     <div class="order-items order-details">
         <h2 class="table-caption"><?php echo $this->__('Items Ordered'); ?></h2>
@@ -155,15 +150,17 @@
     
     <div class="buttons-set">
         <p class="back-link">
-            <a href="<?php echo $this->getUrl('checkout/cart', array('_secure' => true)); ?>" title="<?php echo $this->__('Return to the shopping cart.'); ?>"><?php echo $this->__('Cancel');?></a>
+            <a href="<?php echo $this->getUrl('postnl/checkout/cancel', array('_secure' => true)); ?>" title="<?php echo $this->__('Return to the shopping cart.'); ?>"><?php echo $this->__('Cancel');?></a>
         </p>
-        <button class="button" id="postnl_confirm_order"><span><span><?php echo $this->__('Confirm Order');?></span></span></button>
+        <button class="button" id="postnl_confirm_order" onclick="paymentForm.submit();"><span><span><?php echo $this->__('Confirm Order');?></span></span></button>
     </div>
 </div>
 <script type="text/javascript">
     document.observe('dom:loaded', function() {
-        $('postnl_confirm_order').observe('click', function() {
-            window.location = "<?php echo $this->getUrl('postnl/checkout/finishCheckout', array('_secure' => true, 'quote_id' => $_quote->getId())); ?>";
-        });
+        if ($('payment_form_<?php echo $_quote->getPayment()->getMethod(); ?>')) {
+            $('payment_form_<?php echo $_quote->getPayment()->getMethod(); ?>').show();
+        }
+        
+        paymentForm = new VarienForm('payment_form');
     });
 </script>

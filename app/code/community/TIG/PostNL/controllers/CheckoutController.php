@@ -39,6 +39,11 @@
 class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
 {
     /**
+     * XML path of show_summary_page setting
+     */
+    const XML_PATH_SHOW_SUMMARY_PAGE = 'postnl/checkout/show_summary_page';
+    
+    /**
      * Order class variable
      * 
      * @var Mage_Sales_Model_Order | void
@@ -76,6 +81,12 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function pingAction()
     {
+        if (!$this->_isPostnlCheckoutActive()) {
+            $this->getResponse()
+                 ->setBody('NOK');
+            return $this;
+        }
+    
         try {
             $cif = Mage::getModel('postnl_checkout/cif');
             $result = $cif->ping();
@@ -105,7 +116,14 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function prepareOrderAction()
     {
+        if (!$this->_isPostnlCheckoutActive()) {
+            $this->getResponse()
+                 ->setBody('error');
+            return $this;
+        }
+        
         try {
+            Mage::getSingleton('checkout/session')->setCartWasUpdated(false);
             $quote = Mage::getSingleton('checkout/session')->getQuote();
             
             /**
@@ -113,8 +131,12 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
              */
             $shippingMethod = Mage::helper('postnl/carrier')->getCurrentPostnlShippingMethod();
             $shippingAddress = $quote->getShippingAddress();
-            $shippingAddress->setCountryId('NL')
-                            ->setPostcode('')
+            
+            if (!$shippingAddress->getCountryId()) {
+                $shippingAddress->setCountryId('NL');
+            }
+            
+            $shippingAddress->setPostcode('')
                             ->setCollectShippingRates(true)
                             ->collectShippingRates()
                             ->setShippingMethod($shippingMethod)
@@ -159,6 +181,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $postnlOrder->load($quote->getId(), 'quote_id') //load the order in case it aleady exists
                         ->setQuoteId($quote->getId())
                         ->setToken($orderToken)
+                        ->setIsActive(1)
                         ->save();
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
@@ -186,31 +209,71 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function summaryAction()
     {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        /**
+         * Validate the quote
+         */
+        $quoteIsValid = $this->_validateQuote($quote);
+        if (!$quoteIsValid || !$this->_isPostnlCheckoutActive()) {
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
+        
+        /**
+         * Check if showing the checkout summary page is allowed
+         */
+        $showSummarypage = Mage::getStoreConfigFlag(self::XML_PATH_SHOW_SUMMARY_PAGE);
+        if (!$showSummarypage) {
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
+        
         try {
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
-            $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
-            if (!$quote->getIsActive() 
-                || !$postnlOrder->getId() 
-                || !$postnlOrder->getToken()
-            ) {
-                $this->_redirect('checkout/cart');
-                return $this;
-            }
-            
+            /**
+             * Get the order details from CIF for the order the customer just placed
+             */
             $cif = Mage::getModel('postnl_checkout/cif');
             $orderDetails = $cif->readOrder();
             
+            /**
+             * Update the quote with the recieved order details
+             */
             $service = Mage::getModel('postnl_checkout/service');
             $service->setQuote($quote)
                     ->updateQuoteAddresses($orderDetails)
-                    ->updateQuotePayment($orderDetails)
+                    ->updateQuotePayment($orderDetails, true, true) //only set the payment method, not all possible fields
                     ->updateQuoteCustomer($orderDetails);
             
             Mage::register('current_quote', $quote);
             
+            /**
+             * Load the layout
+             */
             $this->loadLayout();
+            
+            $layout = $this->getLayout();
+            
+            /**
+             * If the chosen payment method has a form block, add it to the layout
+             */
+            $paymentMethod = $quote->getPayment()->getMethodInstance();
+            $formBlockType = $paymentMethod->getFormBlockType();
+            if ($formBlockType) {
+                $formBlock = $layout->createBlock($formBlockType)->setMethod($paymentMethod);
+                $layout->getBlock('postnl_checkout_summary')->setChild('payment_method_form', $formBlock);
+            }
+            
+            /**
+             * Initialize customer and checkout session messages
+             */
             $this->_initLayoutMessages('customer/session');
-            $this->getLayout()->getBlock('head')->setTitle($this->__('PostNL Checkout Summary'));
+            $this->_initLayoutMessages('checkout/session');
+            
+            /**
+             * Set the page title and render the layout
+             */
+            $layout->getBlock('head')->setTitle($this->__('PostNL Checkout Summary'));
             $this->renderLayout();
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
@@ -233,27 +296,97 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function finishCheckoutAction()
     {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $quoteIsValid = $this->_validateQuote($quote);
+        if (!$quoteIsValid || !$this->_isPostnlCheckoutActive()) {
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
+        
+        /**
+         * First get the order details from CIF and process the chosen addresses
+         */
         try {
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
-            
             $cif = Mage::getModel('postnl_checkout/cif');
             $orderDetails = $cif->readOrder($quote);
             
             $service = Mage::getModel('postnl_checkout/service');
             $service->setQuote($quote)
                     ->updateQuoteAddresses($orderDetails)
-                    ->updateQuotePayment($orderDetails)
-                    ->updateQuoteCustomer($orderDetails)
-                    ->updatePostnlOrder($orderDetails);
+                    ->updateQuoteCustomer($orderDetails);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+            Mage::getSingleton('checkout/session')->addError(
+                $this->__('An error occurred while processing your order. Please try again. if this problem persists, please contact the webshop owner.')
+            );
+            
+            Mage::helper('postnl/checkout')->restoreQuote($quote);
+            
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
+        
+        /**
+         * Next we process the chosen payment method
+         */
+        $skipUpdatePayment = false;
+        $data = $this->getRequest()->getPost('payment', array());
+        if ($data) {
+            /**
+             * If we have payment method data, process it
+             */
+            try {
+                $service->updateQuotePayment($data, false);
+            
+                $skipUpdatePayment = true;
+            } catch (Mage_Payment_Exception $e) {
+                Mage::getSingleton('checkout/session')->addError(
+                   $e->getMessage()
+                );
+                
+                $this->_redirect('*/*/summary');
+                return $this;
+            } catch (Mage_Core_Exception $e) {
+                Mage::getSingleton('checkout/session')->addError(
+                   $e->getMessage()
+                );
+                
+                $this->_redirect('*/*/summary');
+                return $this;
+            } catch (Exception $e) {
+                Mage::helper('postnl')->logException($e);
+                Mage::getSingleton('checkout/session')->addError(
+                   $this->__('Unable to set Payment Method.')
+                );
+                
+                $this->_redirect('*/*/summary');
+                return $this;
+            }
+        }
+        
+        /**
+         * Next we update the quote's payment if we didn't get to do that in the previous step and then place the order. Also we
+         * need to process any chosen communication options
+         */
+        try {     
+            if ($skipUpdatePayment === false) {
+                $service->updateQuotePayment($orderDetails);
+            }
+                    
+            $service->updatePostnlOrder($orderDetails);
             
             /**
              * Create the order
              */
             $order = $service->saveOrder();
             
-            $this->setOrder($order);
-            
             $service->confirmPostnlOrder();
+
+            /**
+             * Parse any possible communication options
+             */
+            $this->_parseCommunicationOptions($orderDetails);
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
             Mage::getSingleton('checkout/session')->addError(
@@ -267,9 +400,8 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
 
         /**
-         * Parse any possible communication options
+         * Finally we redirect the customer to the success page or payment page
          */
-        $this->_parseCommunicationOptions($orderDetails);
         
         /**
          * Get the redirect URL from the payment method. If none exists, redirect to the order success page
@@ -288,6 +420,33 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $this->_redirectUrl($redirectUrl);
         }
         
+        return $this;
+    }
+
+    /**
+     * Cancels the checkout and disables the PostNL order
+     * 
+     * @return TIG_PostNL_CheckoutController
+     */
+    public function cancelAction()
+    {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $quoteIsValid = $this->_validateQuote($quote);
+        if (!$quoteIsValid || !$this->_isPostnlCheckoutActive()) {
+            $this->_redirect('checkout/cart');
+            return $this;
+        }
+        
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder->setIsActive(false)
+                    ->save();
+                    
+        Mage::getSingleton('checkout/session')->addNotice(
+            $this->__('Your order has been cancelled. Please try again.')
+        );
+        
+        $this->_redirect('checkout/cart');
         return $this;
     }
     
@@ -374,5 +533,75 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
         
         return $this;
+    }
+
+    /**
+     * Checks if PostNL Checkout is active
+     * 
+     * @return boolean
+     */
+    protected function _isPostnlCheckoutActive()
+    {
+        $isActive = Mage::helper('postnl/checkout')->isCheckoutActive();
+        return $isActive;
+    }
+    
+    /**
+     * Checks if a quote is (still) valid
+     * 
+     * @param Mage_Sales_Model_Quote $quote
+     * @param boolean $addErrors
+     * 
+     * @return boolean
+     */
+    protected function _validateQuote($quote, $addErrors = true)
+    {
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        
+        /**
+         * Check if the quote is active
+         */
+        if (!$quote->getIsActive()) {
+            if ($addErrors) {
+                Mage::getSingleton('checkout/session')->addError(
+                    $this->__('Unfortunately the checkout process cannot be finished. Please try again.')
+                );
+            }
+            
+            $postnlOrder->setIsActive(false)->save();
+            return false;
+        }
+        
+        /**
+         * Check if a valid PostNL order exists for this quote
+         */
+        if (!$postnlOrder->getIsActive()
+            || !$postnlOrder->getId() 
+            || !$postnlOrder->getToken()
+        ) {
+            if ($addErrors) {
+                Mage::getSingleton('checkout/session')->addError(
+                    $this->__('Unfortunately no PostNL Checkout order could be found. Please try again.')
+                );
+            }
+            
+            return false;
+        }
+        
+        /**
+         * Make sure the cart hasnt changed since we started the checkout process
+         */
+        if (Mage::getSingleton('checkout/session')->getCartWasUpdated(true)) {
+            if ($addErrors) {
+                Mage::getSingleton('checkout/session')->addError(
+                    $this->__('It seems your cart has been changed since you started the checkout process. Please try again.')
+                );
+            }
+            
+            $postnlOrder->setIsActive(false)->save();
+            return false;
+        }
+        
+        return true;
     }
 }
