@@ -64,6 +64,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
     
     /**
+     * XML path to postnl carier active/inactive setting
+     */
+    const XML_PATH_CARRIER_ACTIVE = 'carriers/postnl/active';
+    
+    /**
      * XML path to test/live mode config option
      */
     const XML_PATH_TEST_MODE = 'postnl/cif_labels_and_confirming/mode';
@@ -185,6 +190,96 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         Mage::register('postnl_debug_mode', $debugMode);
         return $debugMode;
     }
+
+    /**
+     * Checks to see if the module may ship to the Netherlands using PostNL standard shipments
+     * 
+     * @param boolean|int $storeId
+     * 
+     * @return boolean
+     */
+    public function canUseStandard($storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $standardProductOptions = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
+                                      ->getAvailableOptions($storeId);
+        if (empty($standardProductOptions)) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Checks to see if the module may ship using PakjeGemak
+     * 
+     * @param boolean|int $storeId
+     * 
+     * @return boolean
+     */
+    public function canUsePakjeGemak($storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $pakjeGemakProductoptions = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions')
+                                        ->getAvailableOptions($storeId);
+                                        
+        if (empty($pakjeGemakProductoptions)) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Checks to see if the module may ship to EU countries using EPS
+     * 
+     * @param boolean|int $storeId
+     * 
+     * @return boolean
+     */
+    public function canUseEps($storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $euProductOptions = Mage::getModel('postnl_core/system_config_source_euProductOptions')
+                                ->getAvailableOptions($storeId); 
+        if (empty($euProductOptions)) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Checks to see if the module may ship to countries outside the EU using GlobalPack
+     * 
+     * @param boolean|int $storeId
+     * 
+     * @return boolean
+     */
+    public function canUseGlobalPack($storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $globalProductOptions = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
+                                    ->getAvailableOptions($storeId);
+                                    
+        if (empty($globalProductOptions)) {
+            return false;
+        }
+        
+        return true;
+    }
     
     /**
      * Check if the module is set to test mode
@@ -261,6 +356,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          */
         $enabled = Mage::getStoreConfigFlag(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
         if ($enabled === false) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+        
+        /**
+         * Check if the PostNL shipping method is active
+         */
+        $postnlShippingMethodEnabled = Mage::getStoreConfigFlag(self::XML_PATH_CARRIER_ACTIVE, $storeId);
+        if ($postnlShippingMethodEnabled === false) {
             Mage::register($registryKey, false);
             return false;
         }
@@ -531,7 +635,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
     
     /**
-     * Checks if the current edition of Magento is enterprise. Uses Mage::getEdition if available or version_compare if it is not.
+     * Checks if the current edition of Magento is enterprise. Uses Mage::getEdition if available or version_compare if it is not
      * 
      * @return boolean
      * 

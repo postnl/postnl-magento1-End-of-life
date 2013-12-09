@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_Carrier extends Mage_Core_Helper_Abstract
+class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
 {
     /**
      * Shipping carrier code used by PostNL
