@@ -112,6 +112,35 @@ class TIG_PostNL_Model_Carrier_Postnl
         if (!$this->getConfigFlag('active')) {
             return false;
         }
+        
+        /**
+         * Several checks to see if shipping to the selected country is allowed based on the supported PostNL shipping products
+         */
+        $countryId = $request->getDestCountryId();
+        if ($countryId) {
+            $helper = $this->getHelper();
+            $euCountries = Mage::helper('postnl/cif')->getEuCountries();
+        
+            if ($countryId == 'NL'
+                && !$helper->canUseStandard()
+            ) {
+                return false;
+            }
+            
+            if (in_array($countryId, $euCountries)
+                && !$helper->canUseEps()
+            ) {
+                return false;
+            }
+            
+            if ($countryId != 'NL'
+                && !in_array($countryId, $euCountries)
+                && !$helper->canUseGlobalPack()
+            ) {
+                return false;
+            }
+        }
+        
 
         $rateType = Mage::getStoreConfig(self::XML_PATH_RATE_TYPE, Mage::app()->getStore()->getId());
 

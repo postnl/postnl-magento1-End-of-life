@@ -8,112 +8,33 @@
 "store url=\"customer/account/\"":"Customer Account Url",
 "var shipment.increment_id":"Shipment Id"}
 @-->
-<!--@styles
-html
-{ height: 100%;}
 
-body
-{ 
-  background: #FFFFFF
-  color: #555;}
-
-p
-{ 
-  font: normal 11px Verdana, arial, sans-serif;padding: 0 0 10px 0;
-  line-height: 1.5em;
-  font-size: 11px;}
-
-img
-{ border: 0;}
-
-#main, #header, #logo, #menubar, #site_content, #footer
-{ margin-left: auto; 
-  margin-right: auto;}
-
-#main
-{ width: 450px;
-  margin: 20px auto;}
-
-#header
-{ margin-top:75px;
-  width: 450px;
-  height: 100px;}
-
-.logo_webwinkelier
-{
-  font: normal 11px Verdana, arial, sans-serif;
-  color: #555;
-  float: left;
-  padding-top: 0px;
-  padding-right: 0;
-  padding-bottom: 0;
-  padding-left: 0px;
-}
-
-.logo_tnt
-{ float: right;
-  width: 73px; 
-  height: 81px;
-  text-align: right; 
-  font: normal 11px Verdana, arial, sans-serif;
-}
-
-#site_content
-{ width: 450px;
-  overflow: hidden;
-  padding: 0;
-  background: #fff;}
-  
-#content
-{
-  text-align: left;
-  width: 450px;
-  margin: 0;
-  padding-top: 0px;
-  padding-right: 0;
-  padding-bottom: 0px;
-  padding-left: 0px;
-}
-
-#footer
-{
-  clear: both;
-  width: 100%;
-  height: 85px;
-  padding: 20px 0 5px 0;
-  text-align: center;
-  color: #555;
-  background: transparent;
-  margin-bottom: 20px;
-  font: normal 11px Verdana, arial, sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-}
-@-->
-<body>
-  <div id="main">
-    <div id="header">
-      
-      <div class="logo_webwinkelier"><p></p><p><a href="{{store url=""}}"><img src="{{var logo_url}}" alt="{{var logo_alt}}" style="margin-bottom:10px;" border="0"/></a></p></div>
-      <div class="logo_tnt" style="background: #FFFFFF url({{skin url='images/TIG/PostNL/postnl_email_logo.png' _area='frontend' _relative='1'}}) no-repeat;"></div>
-     
-    </div>
-
-    <div id="site_content">
-      
-      <div id="content">
-        <p>Dear Sir, Madam {{htmlescape var=$order.getCustomerName()}}</p>
-        <p>Your order at {{var store.getFrontendName()}}, with barcode {{var barcode}} will be delivered by PostNL.</p>
-        <p>To track the progress of your shipment click <a href="{{var barcode_url}}">here</a>. </p>
-        <p>Kind regards</p>
-        <p>{{var store.getFrontendName()}}</p>
-      </div>
-
-    </div>
-
-    <div id="footer">
-    </div>
-
-  </div>
+<body style="font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px; margin:0; padding:0;">
+<div style="font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px; margin:0; padding:0;">
+<table cellspacing="0" cellpadding="0" border="0" height="100%" width="100%">
+    <tr>
+        <td align="center" valign="top" style="padding:20px 0 20px 0">
+            <!-- [ header starts here] -->
+            <table bgcolor="FFFFFF" cellspacing="0" cellpadding="10" border="0" width="470">
+                <tr>
+                    <td valign="top">
+                        <a href="{{store url=""}}" style="color:#1E7EC8;"><img src="{{var logo_url}}" alt="{{var logo_alt}}" border="0"/></a>
+                        <img src="{{var logo_url}}" alt="{{var logo_alt}}" border="0" style="float:right"/>
+                    </td>
+                </tr>
+                <!-- [ middle starts here] -->
+                <tr>
+                    <td valign="top">
+                        <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Dear Sir, Madam {{htmlescape var=$customer.name}},</h1>
+                        <p style="font-size:11px; line-height:1.5em; margin:0 0 8px 0;">Your order at {{var store.getFrontendName()}}, with barcode {{var barcode}} will be delivered by PostNL.</p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">To track the progress of your shipment click <a href="{{var barcode_url}}" target="_blank">here</a>.<p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">Kind Regards,</p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">{{var store.getFrontendName()}}</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</div>
 </body>

@@ -650,20 +650,38 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $priceOverview   = Mage::getStoreConfigFlag(self::XML_PATH_ALLOW_PRICE_OVERVIEW, $storeId);
         $agreeConditions = Mage::getStoreConfigFlag(self::XML_PATH_AGREE_CONDITIONS, $storeId);
         
-        if (!$retailLocation) {
+        /**
+         * If the module cannot use PakjeGemak, retail locations are not allowed in PostNL Checkout
+         */
+        if (!$retailLocation
+            || !Mage::helper('postnl')->canUsePakjeGemak()
+        ) {
             $restrictions['NoRetailLocation'] = 'true';
+        } else {
+            $restrictions['NoRetailLocation'] = 'false';
         }
 
-        if (!$foreignAddress) {
+        /**
+         * If the module cannot use EPS, foreign addresses are not allowed in PostNL Checkout
+         */
+        if (!$foreignAddress
+            || !Mage::helper('postnl')->canUseEps()
+        ) {
             $restrictions['NoForeignAddress'] = 'true';
+        } else {
+            $restrictions['NoForeignAddress'] = 'false';
         }
 
         if (!$priceOverview) {
             $restrictions['NoPriceOverview'] = 'true';
+        } else {
+            $restrictions['NoPriceOverview'] = 'false';
         }
 
         if (!$agreeConditions) {
             $restrictions['NoAgreeConditions'] = 'true';
+        } else {
+            $restrictions['NoAgreeConditions'] = 'false';
         }
         
         return $restrictions;

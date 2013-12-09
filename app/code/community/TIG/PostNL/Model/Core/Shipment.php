@@ -739,7 +739,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         if ($count > $maxParcelCount) {
-            throw Mage::exception("Number of parcels not allowed. Amount requested: {$count}, maximum allowed: {$maxParcelCount}.");
+            throw Mage::exception(
+                'TIG_PostNL', 
+                "Number of parcels not allowed. Amount requested: {$count}, maximum allowed: {$maxParcelCount}."
+            );
         }
         
         $this->setData('parcel_count', $count);
@@ -971,7 +974,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function isConfirmed()
     {
-        $confirmedStatus = $this->getConfirmedStatus();
+        $confirmedStatus = $this->getConfirmStatus();
         if ($confirmedStatus === self::CONFIRM_STATUS_CONFIRMED) {
             return true;
         }
