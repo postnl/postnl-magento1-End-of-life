@@ -1,0 +1,388 @@
+Enabled,Geactiveerd
+Method Name,Naam methode
+Rate Type,
+Price,Prijs
+Calculate Handling Fee,bereken afhandelingskosten
+Handling Fee,afhandelingskosten
+Sort Order,Sorteer bestelling
+Title,Titel
+Type,Type
+Ship to Applicable Countries,Verzend naar beschikbare landen
+Ship to Specific Countries,Verzend naar specifieke landen
+Show Method if Not Applicable,Toon methode indien niet beschikbaar
+Displayed Error Message,Getoonde foutmelding
+Condition,Conditie
+Include Virtual Products in Price Calculation,Neem de virtuele prodcten mee in de prijsberekening
+Version &amp; Support,Versie
+General Settings,Algemene instellingen
+Active,Actief
+Enable or disable the extension,Activeer/deactiveer de extensie
+Email,Email
+During activation 2 secure keys will be sent to this email address.,Tijdens de activatie zullen er 2 beveligings sleutels woren gestuurd naar dit e-mail adres
+Unique key,Unieke sleutel
+Private key,Prive sleutel
+Account Settings,Account instellingen
+Live Username,Live gebruikersnaam
+Live Password,Live wachtwoord
+Test Username,Test gebruikersnaam
+Test Password,Test wachtwoord
+Customer Number,Klantnummer
+Customer Code,Klantcode
+Your customer code as supplied by PostNL. Must contain between 3 and 4 leters.,Uw klantnummers zoals aangeleverd door PostNL. Moet bestaan uit 3 tot 4 letters
+BLS Code,BLS code
+The internal code of the nearest PostNL Sorting centre. Must contain 6 numbers.,De interne code van het dichtsbijzijnde PostNL sorteer centrum. Moet bestaan uit 6 nummers
+These fields are only required if you intend to send products to countries outside the EU.,Deze velden zijn alleen verplicht als u van plan bent om producten buiten de EU te gaan versturen.
+Global Barcode Type,Globaal barcode type
+The current global barcode type as supplied by PostNL. Must contain 2 leters.,De huidige barcodetype zoals aangeleverd door PostNL. Moet bestaan uit 2 letters
+Global Barcode Range,Globaal barcode bereik
+Your global barcode range as supplied by PostNL. Must contain 4 digits.,Uw globaal barcode bereik zoals aangeleverd door PostNL. Moet bestaan uit 4 cijfers
+These fields contain your webshop IDs. These are required for PostNL Checkout to function.,Deze velden bevatten uw webshop ID's. Deze zijn nodig voor de PostNL checkout functie
+Webshop ID,Webshop ID
+Public Webshop ID,Publieke webshop ID
+These fields contain your contact information for PostNL.,Deze velden bevatten uw contact informatie voro PostNL
+Company Name,Bedrijfsnaam
+Contact Name,Contactpersoon
+Contact Email,Contact email
+Confirming &amp; Label Printing Settings,Bevestiging &amp; Label printen instellingen
+Mode,Modus
+Label size,Label formaat
+This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4. Single Dutch or EPS labels are always printed in A6.,Deze instelling geldt alleen voor meerdere Nederlandse en EPS labels. GlobalPack labels wordt altijd in A4 geprint. Enkele Nederlandse of EPS labels worden altijd in A6 geprint.
+Maximum weight per parcel,Maximum gewicht per pakje
+"Determine the maximum weight of each parcel. if a shipment's total weight exceeds this, another parcel is added to the shipment.","Bepaal het maximale gewicht per pakje. Als het totaalgewicht teveel is, wordt er een ander pakje aan de verzending toegevoegd."
+Weight unit,Gewicht eenheid
+Select the unit in which you've entered products' weight,Selecteer de eenheid welke u ingevoerd hebt bij het productgewicht
+Shipment reference type,Verzend referentie type
+Select what to use as a shipment's reference. This will be printed on the shipping label,Selecteer wat de referentie van de verzending is. Dit wordt op het label geprint.
+Custom reference value,
+"You can use the following variables: {{var shipment_increment_id}}, {{var order_increment_id}} and {{var store_frontend_name}}. The resulting text may not exceed 28 characters.","U kunt de volgende variabelen gebruiken: {{var shipment_increment_id}}, {{var order_increment_id}} and {{var store_frontend_name}}. De uiteindelijke tekst mag niet meer zijn dan 28 karakters."
+These fields allow you to alter the way the order and shipment grids are displayed.,"Met deze velden kunt u de manier waarop het order- en verzend grid wordt getoond, aanpassen. "
+Show product options in order grid,Toon productopties in het ordergrid
+"This will add a product options field to the create shipments mass action in the order grid. If disabled, default options will be used. N.B. Not applicable to global shipments.",
+Show shipment type column in order grid,Toon kolom verzendtype in het ordergrid
+"This will add a column to the order grid allowing you to identify whether the order is domestic, EU or global.","Dit voegt een kolom toe aan het orderoverzicht zodat u kunt aangeven of het een binnenlandse, EU of wereldwijde verzending betreft."
+Optional Shipment grid columns,Optionele kolommen voor verzendoverzicht
+Select which optional columns to show in the shipment grid.,Selecteer welke optionele kolommen in het verzendoverzicht getoond moeten worden
+Select a default option for the shipment grid mass action,Selecteer een standaard waarde voor de massa actie voor de verzendingen
+These fields are used to configure the track &amp; trace email that may be automatically emailed to customers after a shipment has been confirmed.,
+Send track &amp; trace e-mail to customer,Stuur de track &amp; trace e-mail naar de klant
+"If enabled, a track &amp; trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed.","Indien geactiveerd, wordt er 20 minuten na de orderbevestiging, een track&track e-mail naar de klant gestuurd"
+Track &amp; trace e-mail template,Track&trace e-mail sjabloon
+Address Settings,Adres
+Split street parts,Deel straatnaam velden op
+Streetname field,Straatnaam
+Housenr. field,Huisnummer
+Split house number parts,Deel huisnummer op
+Housenr. extension field,Huisnummer toevoeging
+"The following fields are optional and should remain empty, unless you specifically use these fields in your checkout configuration.",De volgende velden zijn optioneel en moeten leeg blijven mits u deze speifiek gebruikt in uw checkout configuratie.
+Area field,
+Building name field,Gebouwnaam
+Department field,Departement
+Doorcode field,Deurcode
+Floor field,Verdieping
+Remark field,Opmerking
+Sender Address,Verzendadres
+First Name,Voornaam
+Last Name,Achternaam
+Company,Bedrijf
+Department,Afdeling
+Street,Straatnaam
+House Nr.,Huisnummer
+House Nr. Extension,Huisnummer toevoeging
+Postcode,Postcode
+City,Plaats
+Region,Provincie
+Return Address,Retour adres
+Use the sender address as the return adress,Gebruik verzendadres als retouradres
+Product Options,Product opties
+Select supported option,Selecteer de beschikbare opties
+Only the selected options will be available.,Alleen de geselecteerde opties zijn beschikbaar
+Default shipping options,Standaard verzendmethode
+These can be overwritten by manually creating shipments. These options are only applicable to Dutch shipments.,Deze kunnen overschreven worden door het handmatig aanmaken van een verzending. Deze opties zijn alleen beschikbaar voor Nederlandse zendingen
+Use an alternative default option,Gebruik een alternatieve standaard optie
+Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.,Zet deze aan als u een alternatieve standaardwaarde gebruikt als de totaalwaarde van de zending groter is dan een bepaald bedrag.
+Maximum amount,Maximaal aantal
+The alternative default option will be used when the shipment's total amount exceeds this value.,De alternatieve standaardoptie wordt gebruikt als als de totaalwaarde van de zending deze waarde overstijgt
+Alternative default shipping option,Alternatieve standaard verzendoptie
+This option will be used as default when the shipment's total value exceeds the given amount.,Deze optie wordt gebruikt als standaard indien de totaalwaarde van de zending groter is dan hetopgegeven bedrag.
+Default PakjeGemak option,Standaard PakjeGemak optie
+These can be overwritten by manually creating shipments. These options are only applicable to PakjeGemak shipments.,Deze kan worden overschreven door handmatig aangemaakte zendingen. Deze opties zijn allen toepasbaar op PakjeGemak zendingen
+GlobalPack Settings,Global pack instellingen
+Customs license number,Klant licentie nummer
+"If you do not own a customs license, leave this field empty.","Als u geen douane licentie heeft, laat dit veld dan leeg"
+Customs certificate number,Douane certificaat nummer
+"If you do not own a customs certificate, leave this field empty.","Als u geen douane certificaat heeft, laat dit veld dan leeg"
+The following fields are used to determine several product attributes which are required for international shipping.,De volgende velden worden gebruikt om enkele product atributen te bepalen welke nodig zijn voor internationale verzending
+Use HS Tariff,Gebruik het HS tarief
+Enable this field to specify a product attribute to use as the product's HS tariff.,Activeer dit veld om de atributen te specificeren om als HS tarief te gebruiken
+HS Tariff attribute,HS tarief
+The product attribute used to determine the product's HS tariff.,Het productattribuut wat gebruikt wordt om de HS tarief van het product te bepalen
+Customs value attribute,Douane waarde
+The product attribute used to determine product's customs value.,Het productattribuut wat gebruikt wordt om de waarde voor de douane van het product te bepalen
+Country of origin attribute,Land van origine
+The product attribute used to determine the product's country of origin.,Het productattribuut wat gebruikt wordt om het land van herkomst van het product te bepalen
+Product description attribyte,Product beschrijving
+The product attribute used to supply the product's customs description.,Het productattribuut wat gebruikt wordt om omschrijving van het product voor de douane te bepalen
+The following fields determine which products are displayed on international shipping labels and how.,De volgende velden bepalen hoe en welke producten er getoond gaan worden op het internationale verzend label
+Product sorting attribute,Product sortering
+Global shipping labels can only contain 5 products. This attribute will determine how these are sorted so that only the top 5 will be printed.,Global shipping labels kunnen maximaal 5 producten bevatten.Dit atribuut bepaalt hoe deze zijn gesorteerd zodat alleen de eerste 5 worden geprint.
+Product sorting direction,Product sortering
+PostNL Checkout Settings,PostNL checkout instellingen
+Enable PostNL Checkout,Activeer de PostNL checkout
+Mode,Modus
+Here you can customize when and how the PostNL Checkout button is displayed.,Hier kunt u configureren wanneer en hoe de PostNL checkout knop wordt getoond
+Enable PostNL Checkout for orders under 2 kg,Activeer de PostNL checkout voor orders onder de 2 kg
+Enable PostNL Checkout for orders containing out of stock products,Activeer de PostNL checkout voor orders die producten bevatten die niet op voorraad zijn.
+Here you can customaize the way PostNL Checkout behaves in your webshop.,Hier kunt u configureren hoe de PostNL functioneert in uw webshop
+Show order summary page,Toon de bestellingen verzamelpagina
+Whether or not to show the customer a final order summary page before finalizing the order.,De klant wel of geen bestellingen samenvattingspagina te tonen voor de order definitief af te ronden
+Newsletter subscription,Aanmelden nieuwsbrief
+Whether or not PostNL Checkout will offer the customer the ability to subscribe to your newsletter.,Of de PostNL checkout de klant de mogelijkheid biedt om zich aan te melden voor de nieuwsbrief
+Remark,Opmerking
+Whether or not the customer can leave a remark.,Of de klant wel of geen opmerkingen mag plaatsen
+Use mobile phonenumber,Gebruik mobiel nummer
+Whether or not the customer's mobile phonenumber will be returned by PostNL if available.,Wordt het telefoonnummer van de klant wel of niet door PostNL teruggestuurd naar de webshop.
+Use date of birth,Gebruik geboortedatum
+Whether or not the customer's date of birth will be returned by PostNL if available.,Wordt de geboortedatum van de klant wel of niet door PostNL teruggestuurd naar de webshop.
+Allow postoffice locations (PakjeGemak),Sta postkantoor locaties toe (PakjeGemak)
+Whether or not the customer may choose a retail location as their delivery address.,Mag de klant wel of niet een winkellokatie kiezen als verzendadres
+Allow foreign addresses,Sta buitenlande adressen toe
+Whether or not the customer may choose a foreign address as their shipping address.,Mag de klant wel of geen buitenalndse adressen kiezen
+Allow price overview,Sta prijsoverzicht toe
+Whether or not the user will see a price overview in PostNL Checkout,Of de klant wel of niet een prijsoverzicht in de PostNL Checkout ziet
+Agree conditions,
+Whether or not the customer must agree to the terms and conditions before being allowed to proceed.,
+These URLs allow the customer to contact you. They will be shown on the user's MijnPakket page.,
+Contact URL,Contact URL
+URL of a page where customers can find contact information for your webshop. Leave empty to disable this feature.,Pagina van een website waar klanten contactinformatie van uw webshop kunnen vinden. Laat leeg om niet te gebruiken
+Service URL,Service URL
+URL of a page where customers can find information regarding the webshop's customer service department.,Pagina van een website waar klanten informatie over de serviceafdeling van uw webshop kunnen vinden.
+PostNL Checkout Payment Settings,PostNL Checkout betalings instellingen
+PostNL Checkout is disabled. please enable PostNL Checkout in order to configure these settings.,PostNL checkout is niet geactiveerd. Activeer PostNL checkout om deze instellingen te configureren.
+Use iDEAL,Gebruik iDeal
+iDEAL payment method,iDeal betaalmethode
+iDeal Bank Field,iDeal bank
+Enter the field name used by the selected payment method for the 'bank' field.,
+Use creditcard,Gebruik credit card
+Creditcard payment method,Creditcard betaalmethode
+Creditcard card type field,Creditcard type
+Enter the field name used by the selected payment method for the 'creditcard type' field.,
+Use CheckPay,Gebruik CheckPay
+CheckPay payment method,CheckPay betaalmethode
+Use PayPal,Gebruik PayPal
+PayPal payment method,PayPal betaalmethode
+Use direct debit,Gebruik automatische incasso
+Direct debit payment method,Automatische incasse betaalmethode
+Use acceptgiro,Gebruik acceptgiro
+Acceptgiro payment method,Accpetgiro betaalmethode
+Use vooraf betalen,Gebruik vooraf betalen
+Vooraf betalen payment method,Vooraf betalen betaalmethode
+Use betaling in termijnen,Gebruik betalen in termijnen
+In termijnen betalen payment method,Betalen in termijnen betaalmethode
+Use giftcard,Gebruik cadeaubon
+Giftcard payment method,Cadeaubon betaalmethode
+Use RaboBank internetkassa,Gebruik Rabobank internetkassa
+Rabobank internetkassa payment method,Rabobank internetkassa betaalmethode
+Use AfterPay,Gebruik Afterpay
+AfterPay payment method,Afterpay betaalmethode
+Advanced Settings,Geavanceerde instellingen
+Debug mode,Debug modus
+"If enabled, debug logs will be created in the var/logs folder.","Mits geactiveerd, debug logs zullen worden aangemaakt in de var/logs map"
+Allow infinite label printing,Sta oneindig labels printen toe
+By default a maximum of 200 labels can be printed at once. Enable this to remove this limitation. Beware: enabling this may lead to server instability.,"Standaard kunt u maximaal 200 labels in een keer printen. Activeer dit om deze limiet te verwijderen. Let op, dit kan leiden tot een onstabiele server."
+Maximum number of parcels per shipment,Maximaal aantal pakketten per zending
+Maximum temporary file storage time,
+"In seconds. After this time, temporary files will be deleted. Only increase this if you use custom functionality to create a very large amount of labels at once.",In seconden. Daarna zullen de tijdelijke bestanden worden verwijderd. Verhoog dit aantal alleen als u handmatig een erg groot aantal labels aanmaakt.
+Number of days before a confirmation expires,Aantal dagen voordat een bevestiging afloopt
+If a confirmed shipment has not been shipped after this amount of days it's confirmation will expire.,"Als een bevestigde zending niet wordt verstuurd na dit aantal dagen, verloopt de bevestiging"
+Send extension usage statistics to PostNL,Stuur de gebruikerstatistieken van de extensie naar PostNL
+Recieve notifications from PostNL regarding updates and promotions,Ontvang notificaties van PostNL als er updates of aanbiedingen zijn
+The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the module altogether.,
+ShippingStatus Webservice version,Verzendstatus webservice versie
+Confirming Webservice version,Bevestig webservice versie
+Labelling Webservice version,Labelling webservice versie
+Barcode Webservice version,Barcode webservice versie
+Checkout Webservice version,Checkout webservice versie
+PostNL Track &amp; Trace Email,PostNL Track &amp; Trace e-mail
+Unable to set Payment Method.,Kan de betaalmethode niet instellen
+"An error occurred while processing your order. Please try again. if this problem persists, please contact the webshop owner.","Een fout is opgetreden tijdens het verwerken van uw bestelling. Probeert u het aub opniew. Mocht dit probleem zich blijven voordoen, neem dan contact op met de webshop eigenaar."
+Your order has been cancelled. Please try again.,Uw bestelling is geannuleerd. Probeert u het aub opnieuw
+The customer left the following remark:,De klant heeft de volgende opmerking achtergelaten:
+Unfortunately the checkout process cannot be finished. Please try again.,Helaas kan de PostNL checkout niet afgerond worden. Probeert u het aub opnieuw
+Unfortunately no PostNL Checkout order could be found. Please try again.,Helaas kan uw PostNL checkout zending niet gevonden worden. Probeert u het aub opnieuw
+It seems your cart has been changed since you started the checkout process. Please try again.,Het lijkt erop dat uw bestelling is gewijzigd sinds u de checkout procedure bent gestart. Probeert u het aub opnieuw
+Please select a shipment.,Selecteer aub een zending
+An error occurred while processing this action:,Een fout is opgetreden tijdens het verwerken van deze actie:
+Please select a shipment.,Selecteer aub een zending
+The shipment has been successfully confirmed,De zending is correct bevestigd
+Shipment not found.,Zending niet gevonden
+The track & trace email was sent.,De track&trace e-mail is verzonden
+Please select one or more orders.,Selecteer aub een of meer orders
+An error occurred whilst creating processing the shipment(s):,Een fout is opgetreden tijdens het verwerken van de zending(en)
+The shipments were successfully created.,De zending is succesvol aangemaakt
+Please select one or more shipments.,Selecteer aub een of meer zendingen
+You can print a maximum of 200 labels at once.,U kunt maximaal 200 labels printen
+The shipments have been confirmed successfully.,De zendingen zijn succesvol bevestigd
+Order #%s cannot be shipped at this time.,Order #%s kan niet worden verzonden
+PostNL replied with the following warnings:,PostNL komt met de volgende waarschuwing:
+Error code %s:,Foutcode %s:
+An error occurred whilst processing your request:,Een fout is opgetreden tijdensn het verwerken van uw aanvraag
+Your webshop has been registered. You should recieve an email on the email address you specify shortly.,Uw webshop is geregistreerd. U ontvangt een e-mail op het door u opgegeven adres
+Please read this email carefully as it contains instructions on how to finish the extension activation procedure.,Lees deze e-mail aub zorgvuldig. Er staat uitgelegd hoe u de activatieprocedure kunt afronden.
+Please fill in your unique and private keys and try again.,Vul aub uw unieke en prive sleutel in en probeer het nog een keer.
+The extension has been successfully activated!,De extensie is succesvol geactiveerd
+here,hier
+No,nee
+Yes,ja
+PakjeGemak,PakjeGemak
+Domestic,Binnenland
+EPS,EPS
+GlobalPack,GlobalPack
+Confirmed,Bevestigd
+Confirmation expired,Bevestiging verlopen
+Today,Vandaag
+No barcode available.,Geen barcode beschikbaar
+This shipment has already been confirmed.,Deze zending is al bevestigd
+You must first print a shipping label for this shipment.,U moet eerst een label printen voor deze zending
+Are you sure? The PostNL extension will not function until you\'ve reactivated the extension.,Weet u het zeker? De PostNL extensie werkt niet totdat u deze heractiveert
+Finish activation,Rond activatie af
+Activate the extension,Activeer de extensie
+Mijnpakket,Mijnpakket
+View this shipment in mijnpakket,Bekijk deze zending in Mijnpakket
+Wrong message type,Verkeerd bericht type
+Are you sure you want to send PostNL tracking information to the customer?,Weet u zeker dat u de PostNL traceer informatie naar de klant wilt zenden?
+Send Date,Verzenddatum
+Labels printed,Labels geprint
+Track & Trace,Track & trace
+Shipping Phase,Verzendfase
+Print label,Print label
+Confirm,Bevestig
+PostNL - Print shipping labels & confirm shipment,PostNL - Print verzend labels & bevestig verzending
+PostNL - Print shipping labels,PostNL - Print verzend labels
+PostNL - Confirm shipments,PostNL - Bevestig verzending
+Shipment type,Verzendtype
+PostNL - Create Shipments,PostNL - Maak zendingen aan
+Product options,Product opties
+Shipping Method,Verzendmethode
+Shipment Type,Verzendtype
+Labels Printed,Labels geprint
+Shipping Phase,Verzendfase
+Invalid Table Rate code type:,Ongeldig code type
+Invalid Table Rate code for type %s:,Ongeldige code voor %s
+Flat,Plat
+Table,Tabel
+PakjeGemak + Extra Cover,PakjeGemak + extra verzekerd
+PakjeGemak + Extra Cover + Notification,PakjeGemak + extra verzekerd + notificatie
+PakjeGemak + Signature on Delivery,PakjeGemak + handtekening bij ontvangst
+PakjeGemak + Signature on Delivery + Notification,PakjeGemak + handtekening bij ontvangst + notificatie
+Metric,Metrisch
+Tonne (t),Ton
+Kilogram (kg),Kilogram
+Hectogram (hg),Hectogram
+Gram (g),Gram
+Carat,Karat
+Centigram,Centigram
+Milligram (mg),Miligram
+Avoirdupois (US),
+Long ton,
+Short ton,
+Long hundredweight,
+Short hundredweight,
+Stone,
+Pound (lb),Pond
+Ounce,Ons
+Grain (g),
+Troy,
+Pound,Pond
+Ounce,Ons
+Pennyweight,
+carat,Karat
+Mite,
+Grain,
+Street line,
+Extra Cover,
+Extra cover + Return when not home,
+Signature on delivery,Handtekening bij ontvangst
+Signature on delivery + Delivery to stated address only,Handtekening bij ontvangst + Lever alleen aan opgegeven adres
+Signature on delivery + Return when not home,Handtekening bij ontvangst + Kom terug indien niet thuis
+Signature on delivery + Deliver to stated address only + Return when not home,Handtekening bij ontvangst + Lever alleen aan opgegeven adres + Kom terug indien niet thuis
+Delivery to neighbour + Return when not home,Lever bij buren + kom terug indien niet thuis
+Deliver to stated address only,Lever alleen aan opgegeven adres
+Deliver to stated address only + Return when not home,Lever alleen aan opgegeven adres + Kom terug indien niet thuis
+Print shipping labels & confirm shipment,Print verzendlabels en bevestig verzending
+Print shipping labels,Print verzendlabels
+Confirm shipments,Bevestig verzending
+None,Geen
+Shipment Increment ID,
+Order Increment ID,
+Use a custom value,Gebruik een eigen waarde
+EU Pack Special Consumer (incl. signature),EU Pack Speciaal klant (inclusief handtekening)
+"EU Pack Standard (Belgium only, no signature)",EU Pack Standaard (alleen Belgie zonder handtekening)
+Ascending,Oplopend
+Descending,Aflopend
+Disabled,Gedeactiveerd
+Errors only,Alleen fouten
+Full,Vol
+Domestic options,Binnenlandse opties
+Standard shipment,Standaard verzending
+PakjeGemak options,PajeGemakt opties
+PakjeGemak + Extra Cover,PakjeGemak + extra verzekerd
+PakjeGemak + Extra Cover + Notification,PakjeGemak + extra verzekerd + notificatie
+PakjeGemak + Signature on Delivery,PakjeGemak + handtekening bij ontvangst
+PakjeGemak + Signature on Delivery + Notification,PakjeGemak + handtekening bij ontvangst + notificatie
+EU options,EU opties
+EU Pack Special Consumer (incl. signature),EU Pack Speciaal klant (inclusief handtekening)
+"EU Pack Standard (Belgium only, no signature)",EU Pack Standaard (alleen Belgie zonder handtekening)
+Global options,Globale opties
+Use default,Gebruik de standaardwaarde
+Standard options,Standaard opties
+Global options,Globale opties
+(default),Standaard
+PostNL extension has been successfully updated to version %s.,De PostNL extensie is correct geüpdatet tot versie %s.
+Test,Test
+Live,Live
+Your shipment has been shipped on %s. Click %s to track your shipment.,Uw verzending is verzonden op %s. Klik %s om uw zending te volgen.
+Quick reference guide,
+"You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.",
+You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.,U heeft de extensie slechts geconfigureerd voor de testmodus. U dient een live gebruikersnaam en wachtwoord in te voeren voordat u de extensie voor daadwerkelijke verzendingen kunt gebruiken.
+You have not yet fully configured the extension. You must complete this process before you can use it.,U heeft nog niet de volledige extensie geconfigureerd. U dient dit proces te voltooien voordat u de extensie kunt gebruiken.
+You have not yet configured the extension to use GlobalPack shipments. Please complete this process  if you wish to ship parcels to outside the EU.,U heeft de GlobalPack verzendingen extensie nog niet geconfigureerd. Volgt u aub het configuratieproces indien u buiten de EU wilt verzenden.
+You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.,U heeft uw PostNL checkout module nog niet geconfigureerd. Volgt u aub het configuratieproces als u de PostNL cehckout wenst te gebruiken.
+Previous page,vorige pagina
+Page,Pagina
+Next page,Volgende pagina
+Reported at PostNL,Gerapporteerd bij PostNL
+Sorted,Gesorteerd
+In Distribution,In distributie
+Delivered,Afgeleverd
+Extra cover amount (in increments of 500),
+Number of parcels,Aantal pakketten
+Shipment type,Verzendmethode
+Treat as abandoned,Behandel als achtergelaten
+Please fill out these additional fields.,Vult u aub de extra velden in
+PostNL: It appears that your cron is not working properly.,PostNL: Het lijkt dat uw cron niet correct functioneert
+PostNL requires the cron to be active in order to function.,PostNL heeft de cron nodig om correct te functioneren
+Checkout Summary,Checkout samenvatting
+Billing Address,Betaaladres
+Shipping Address,Postadres
+PakjeGemak Address,PakjeGemal adres
+Payment Method,Betaalmethode
+Shipping Method,Verzend methode
+Items Ordered,Artikelen besteld
+Product Name,Product naam
+Price,Prijs
+Qty,Aantal
+Subtotal,Subtotaal
+Return to the shopping cart.,Terug naar winkelmandje
+Confirm Order,Bevestig bestelling
+Cancel,Annuleer
+Your credit card will be charged for,Uw credit card wordt belast met
+Loading...,Laden...
+How does it work?,Hoe werkt het?
+An error occurred. Please use our regular checkout instead.,Er is een fout opgetreden. Gebruikt u alstublieft de normale checkout methode.
+You have not yet enabled PostNL Checkout.,U heeft de PostNL checkout nog niet geactiveerd.
+%s is required.,%s is verplicht.
+You need to enable at least one payment method.,U moet tenminste één bepaalmethode activeren.
+You have not yet enabled the extension.,U heeft de extensie nog niet geactiveerd.
+The PostNL shipping method has not been enabled.,De PostNL verzendmethode is nog niet geactiveerd.
+The shop's base currency code must be set to EUR for PostNL to function.,De basis munteenheid van de shop moet Euro zijn voor een juiste werking van de PostNL extensie.
+The extension has not been activated.,De extensie is nog niet geactiveerd.
