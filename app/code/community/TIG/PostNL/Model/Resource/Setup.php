@@ -155,8 +155,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         
         $inbox = Mage::getModel('postnl/inbox');
         $inbox->addNotice(
-                  $helper->__('PostNL module has been successfully updated to version %s.', $configVer),
-                  $helper->__('PostNL module has been successfully updated to version %s.', $configVer),
+                  $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
+                  $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
                   '', 
                   true
               )

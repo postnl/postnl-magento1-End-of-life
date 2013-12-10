@@ -321,7 +321,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getBarcodeTypeForShipment($shipment)
     {
-        if ($shipment->isDutchShipment()){
+        if ($shipment->isDutchShipment() || $shipment->isPakjeGemakShipment()) {
             $barcodeType = self::DUTCH_BARCODE_TYPE;
             return $barcodeType;
         }

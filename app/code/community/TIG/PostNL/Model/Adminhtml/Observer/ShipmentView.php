@@ -95,7 +95,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         $block->addButton('print_shipping_label', array(
             'label'   => Mage::helper('postnl')->__('PostNL - Print shipping label'),
             'onclick' => "setLocation('{$printShippingLabelUrl}')",
-            'class'   => 'save',
+            'class'   => 'download',
         ));
         
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');

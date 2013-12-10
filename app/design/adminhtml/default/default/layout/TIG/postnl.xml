@@ -12,6 +12,10 @@
         		<type>skin_css</type>
         		<name>css/TIG/PostNL/system_config_edit.css</name>
         	</action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/TIG/PostNL/validate.js</name>
+            </action>
         	<block type="adminhtml/abstract" name="postnl_activate_button_js" template="TIG/PostNL/system/config/activate_button_js.phtml" output="tohtml" after="-"/>
         </reference>
     </adminhtml_system_config_edit>
