@@ -1942,7 +1942,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Check if the product code is allowed
          */
         if (!in_array($productCode, $allowedProductCodes)) {
-            throw Mage::exception('TIG_PostNL', 'Product code ' . $productCode . ' is not allowed for this shipment.');
+            throw Mage::exception('TIG_PostNL', 
+                $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode)
+            );
         }
         
         /**
@@ -1958,7 +1960,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $destination = $this->getShippingAddress()->getCountryId();
         if (!in_array($destination, $allowedCountries)) {
-            throw Mage::exception('TIG_PostNL', 'Product code ' . $productCode . ' is not allowed for this shipment.');
+            throw Mage::exception('TIG_PostNL', 
+                $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode)
+            );
         }
         
         return true;
