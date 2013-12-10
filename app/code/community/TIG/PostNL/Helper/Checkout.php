@@ -358,6 +358,10 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         
         $isCheckoutActive = $this->isCheckoutActive();
         if (!$isCheckoutActive) {
+            $errors = array(
+                $this->__('You have not yet enabled PostNL Checkout.')
+            );
+            Mage::register('postnl_enabled_checkout_test_errors_errors', $errors);
             return false;
         }
         
@@ -382,15 +386,38 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
         
+        $errors = array();
+        
+        /**
+         * Get the system > config fields for this section
+         */
+        $configFields = Mage::getSingleton('adminhtml/config');
+        $sections     = $configFields->getSections('postnl');
+        $section      = $sections->postnl;
+        
         /**
          * First check if all required configuration settings are entered
          */
         $requiredFields = $this->getCheckoutRequiredFields();
-        foreach ($requiredFields as $field) {
-            $value = Mage::getStoreConfig($field, $storeId);
-            if (empty($value)) {
-                return false;
+        foreach ($requiredFields as $requiredField) {
+            $value = Mage::getStoreConfig($requiredField, $storeId);
+            
+            if ($value === null || $value === '') {
+                $fieldParts = explode('/', $requiredField);
+                $field = $fieldParts[2];
+                $group = $fieldParts[1];
+                
+                $label = $section->groups->$group->fields->$field->label;
+                $errors[] = $this->__('%s is required.', $label);
             }
+        }
+        
+        /**
+         * If any errors were detected, add them to the registry and return false
+         */
+        if (!empty($errors)) {
+            Mage::register('postnl_is_configured_checkout_test_errors', $errors);
+            return false;
         }
         
         /**
@@ -409,6 +436,10 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         /**
          * If no payment method was activated the extension is not configured properly
          */
+        Mage::register(
+            'postnl_is_configured_checkout_test_errors', 
+            array($this->__('You need to enable ate least one payment method.'))
+        );
         return false;
     }
 }

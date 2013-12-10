@@ -54,6 +54,14 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     const XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY  = 'postnl/general/unique_key';
     const XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY = 'postnl/general/private_key';
     
+    /**
+     * XML path for active setting
+     */
+    const XML_PATH_ACTIVE = 'postnl/general/active';
+    
+    /**
+     * Error code for 'website already exists' error
+     */
     const SHOP_ALREADY_REGISTERED_FAULTCODE = 'API-2-6';
     
     /**
@@ -69,6 +77,9 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         } elseif ($activationStatus == 1) {
             $this->_updateStatistics();
         }
+        
+        $this->_saveAdvanced();
+        $this->_saveSection();
         
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
@@ -159,6 +170,18 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
              * Get the general fields array
              */
             $generalFields = $groups['general']['fields'];
+            
+            /**
+             * Check if the 'active' option was set and is a valid value (not empty)
+             */
+            if (isset($generalFields['active']['value'])) {
+                $active = $generalFields['active']['value'];
+                if (!empty($active)) {
+                    Mage::getModel('core/config')->saveConfig(self::XML_PATH_ACTIVE, $active);
+                    
+                    $configChanged = true;
+                }
+            }
             
             /**
              * Check if the unique key was set and is a valid value (not empty and not just asterisks)
@@ -252,8 +275,43 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     public function showActivationFieldsAction()
     {
         Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 0);
-                
+        
+        $this->_saveAdvanced();
+        $this->_saveSection();
+        
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
+    }
+
+    /**
+     * Custom save logic for section
+     * 
+     * @return void
+     * 
+     * @see Mage_Adminhtml_System_ConfigController::_saveSection()
+     */
+    protected function _saveSection()
+    {
+        $method = '_save' . uc_words($this->getRequest()->getParam('section'), '');
+        if (method_exists($this, $method)) {
+            $this->$method();
+        }
+    }
+
+    /**
+     * Advanced save procedure
+     * 
+     * @return void
+     * 
+     * @see Mage_Adminhtml_System_ConfigController::_saveAdvanced()
+     */
+    protected function _saveAdvanced()
+    {
+        Mage::app()->cleanCache(
+            array(
+                'layout',
+                Mage_Core_Model_Layout_Update::LAYOUT_GENERAL_CACHE_TAG
+            )
+        );
     }
 }

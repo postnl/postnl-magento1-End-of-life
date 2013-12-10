@@ -251,6 +251,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         
         $euProductOptions = Mage::getModel('postnl_core/system_config_source_euProductOptions')
                                 ->getAvailableOptions($storeId); 
+        
         if (empty($euProductOptions)) {
             return false;
         }
@@ -357,6 +358,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $enabled = Mage::getStoreConfigFlag(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
         if ($enabled === false) {
             Mage::register($registryKey, false);
+            
+            $errors = array(
+                $this->__('You have not yet enabled the extension.')
+            );
+            
+            Mage::register($registryKey . '_errors', $errors);
             return false;
         }
         
@@ -366,6 +373,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $postnlShippingMethodEnabled = Mage::getStoreConfigFlag(self::XML_PATH_CARRIER_ACTIVE, $storeId);
         if ($postnlShippingMethodEnabled === false) {
             Mage::register($registryKey, false);
+            
+            $errors = array(
+                $this->__('The PostNL shipping method has not been enabled.')
+            );
+            Mage::register($registryKey . '_errors', $errors);
             return false;
         }
         
@@ -375,6 +387,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $baseCurrencyCode = Mage::getModel('core/store')->load($storeId)->getBaseCurrencyCode();
         if ($baseCurrencyCode != 'EUR') {
             Mage::register($registryKey, false);
+            
+            $errors = array(
+                $this->__("The shop's base currency code must be set to EUR for PostNL to function.")
+            );
+            Mage::register($registryKey . '_errors', $errors);
             return false;
         }
         
@@ -423,13 +440,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return Mage::registry($registryKey);
         }
         
+        $errors = array();
+        
         /**
          * Check if the module has been activated
          */
         $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($isActivated != 2) {
-            Mage::register($registryKey, false);
-            return false;
+            $errors[] = $this->__('The extension has not been activated.');
         }
         
         if ($storeId === false) {
@@ -460,15 +478,32 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         
         /**
-         * Check if each required field is filled. If not, return false
+         * Check if each required field is filled. If not add the field's label to an array of missing fields so we can later
+         * inform the merchant which fields exactly are missing.
          */
+        $configFields = Mage::getSingleton('adminhtml/config');
+        $sections     = $configFields->getSections('postnl');
+        $section      = $sections->postnl;
         foreach ($requiredFields as $requiredField) {
             $value = Mage::getStoreConfig($requiredField, $storeId);
             
             if ($value === null || $value === '') {
-                Mage::register($registryKey, false);
-                return false;
+                $fieldParts = explode('/', $requiredField);
+                $field = $fieldParts[2];
+                $group = $fieldParts[1];
+                
+                $label = $section->groups->$group->fields->$field->label;
+                $errors[] = $this->__('%s is required.', $label);
             }
+        }
+        
+        /**
+         * If any errors were detected, add them to the registry and return false
+         */
+        if (!empty($errors)) {
+            Mage::register($registryKey, false);
+            Mage::register($registryKey . '_errors', $errors);
+            return false;
         }
         
         Mage::register($registryKey, true);
