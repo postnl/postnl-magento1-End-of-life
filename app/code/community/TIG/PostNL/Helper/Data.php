@@ -613,7 +613,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         
         if (is_null($file)) {
-            $file = self::POSTNL_LOG_DIRECTORY . DS . self::POSTNL_DEBUG_LOG_FILE;
+            $file = static::POSTNL_LOG_DIRECTORY . DS . static::POSTNL_DEBUG_LOG_FILE;
         }
         
         $this->createLogDir();
@@ -645,7 +645,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * 
      * N.B. this uses forced logging
      * 
-     * @param Exception $exception
+     * @param string|Exception $exception
      * 
      * @return TIG_PostNL_Helper_Data
      * 
@@ -657,14 +657,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $this;
         }
         
-        $this->createLogDir();
+        if (is_object($exception)) {
+            $message = "\n" . $exception->__toString();
+        } else {
+            $message = $exception;
+        }
         
-        Mage::log(
-            "\n" . $exception->__toString(), 
-            Zend_Log::ERR, 
-            self::POSTNL_LOG_DIRECTORY . DS . self::POSTNL_EXCEPTION_LOG_FILE, 
-            true
-        );
+        $file = self::POSTNL_LOG_DIRECTORY . DS . self::POSTNL_EXCEPTION_LOG_FILE;
+        
+        $this->log($message, Zend_Log::ERR, $file);
         
         return $this;
     }
@@ -721,6 +722,113 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             mkdir($logDir);
             chmod($logDir, 0777);
         }
+        
+        return $this;
+    }
+    
+    /**
+     * Add a message to the specified session. Message can be an error, a success message, an info message or a warning.
+     * If a valid error code is supplied, the message will be prepended with the error code and a link to a knowledgebase article
+     * will be appended.
+     * 
+     * @param string|Mage_Core_Model_Session_Abstract $session The session to which the messages will be added.
+     * @param string $messageType
+     * @param string|null $code
+     * @param string|null $message
+     * 
+     * @return TIG_PostNL_Helper_Data
+     * 
+     * @see Mage_Core_Model_Session_Abstract::addMessage()
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function addSessionMessage($session = 'core/session', $messageType = 'notice', $code = null, $message = null)
+    {
+        /**
+         * If the session is not an object, load it
+         */
+        if (!is_object($session)) {
+            $session = Mage::getSingleton($session);
+        }
+        
+        /**
+         * If the session could not be loaded, throw an exception
+         */
+        if (!$session) {
+            throw Mage::exception('TIG_PostNL', 'Invalid session requested: ' . $session);
+        }
+        
+        /**
+         * Get all errors from the config
+         */
+        $errors = Mage::getConfig()->getNode('postnl_error');
+        
+        $error = false;
+        $link = false;
+        
+        if ($code) {
+            /**
+             * Make sure the error code follow the POSTNL-{code} syntax
+             */
+            $code = strtoupper($code);
+            if (stripos($code, 'POSTNL-') === false) {
+                $code = 'POSTNL-' . $code;
+            }
+            
+            /**
+             * get the requested code and if possible, the knowledgebase link
+             */
+            $error = $errors->$code;
+            if ($error !== false) {
+                $link = $error->url;
+            }
+        }
+        
+        /**
+         * If the specified error was found and no message was supplied, get the error's default message
+         */
+        if ($error && !$message) {
+            $message = (string) $error->message;
+        }
+        
+        /**
+         * If we still don't have a valid message, throw an exception
+         */
+        if (!$message) {
+            throw Mage::exception('TIG_PostNL', 'No message supplied.');
+        }
+        
+        /**
+         * Build the message we're going to add. The message will consist of the erro code, followed by the actual message and
+         * then a link to the knowledge base. Only the message part is required.
+         */
+        $errorMessage = '';
+        if ($code) {
+            $errorMessage .= "[{$code}] ";
+        }
+        
+        $errorMessage .= $this->__($message);
+        
+        if ($link) {
+            $errorMessage .= ' <a href="' . $link . '" target="_blank" class="postnl-message">' . $this->__('Click here for more information.') . '</a>';
+        }
+        
+        /**
+         * The method we'll use to add the message to the session has to be built first
+         */
+        $addMethod = 'add' . ucfirst($messageType);
+        
+        /**
+         * If the method doesn't exist, throw an exception
+         */
+        if (!method_exists($session, $addMethod)) {
+            throw Mage::exception('TIG_PostNL', 'Invalid message type requested: ' . $messageType);
+        }
+        
+        /**
+         * Finally, add the message
+         */
+        $session->$addMethod($errorMessage);
         
         return $this;
     }

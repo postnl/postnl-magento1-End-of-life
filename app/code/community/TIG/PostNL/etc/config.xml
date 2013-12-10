@@ -527,4 +527,19 @@
         	</advanced>
         </postnl>
     </default>
+    
+    <!-- A list of possible error codes recognized by this extension. Each error has a default message, a knowledge base article
+         ID and a link to the associated knowledge base article -->
+    <postnl_error>
+        <POSTNL-E001>
+            <message>Release notes</message>
+            <url>http://servicedesk.totalinternetgroup.nl/entries/23902302-Release-notes</url>
+            <id>23902302</id>
+        </POSTNL-E001>
+        <POSTNL-E002>
+            <message>Installatiehandleiding Buckaroo Magento Uitgebreid (BPE 3.0)</message>
+            <url>http://servicedesk.totalinternetgroup.nl/entries/22098908-Installatiehandleiding-Buckaroo-Magento-Uitgebreid-BPE-3-0-</url>
+            <id>22098908</id>
+        </POSTNL-E002>
+    </postnl_error>
 </config>

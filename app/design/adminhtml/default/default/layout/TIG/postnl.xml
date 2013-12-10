@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <layout>
     <default>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/messages.css</file>
+            </action>
+        </reference>
         <reference name="notifications">
             <block type="postnl/adminhtml_cronNotification" name="postnl_cron_notification" template="TIG/PostNL/cron_notification.phtml"/>
         </reference>

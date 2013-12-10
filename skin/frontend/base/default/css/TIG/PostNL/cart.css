@@ -3,3 +3,5 @@
 
 .info-box { margin-bottom:17px; }
 .info-box .form-list label { text-align:left !important; }
+.info-box .month { width:250px; margin-right:10px; }
+.info-box .year { width:120px; }
