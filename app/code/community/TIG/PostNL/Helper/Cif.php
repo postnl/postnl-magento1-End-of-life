@@ -113,78 +113,17 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     );
     
     /**
-     * Array of product codes supported for standard domestic shipments
+     * Array of country-restricted product codes
+     * 
+     * Array is constructed as follows:
+     * <restricted code> => array(<allowed country>, <allowed country>, <allowed country>,...)
      * 
      * @var array
      */
-    protected $_standardProductCodes = array(
-        '3085',
-        '3086',
-        '3087',
-        '3089',
-        '3090',
-        '3091',
-        '3093',
-        '3094',
-        '3096',
-        '3097',
-        '3189',
-        '3385',
-        '3389',
-        '3390',
-    );
-    
-    /**
-     * Array of product codes supported for domestic PakjeGemak shipments
-     * 
-     * @var array
-     */
-    protected $_pakjeGemakProductCodes = array(
-        '3533',
-        '3534',
-        '3535',
-        '3536',
-        '3543',
-        '3544',
-        '3545',
-        '3546',
-    );
-    
-    /**
-     * Array of product codes supported for EU shipments
-     * 
-     * @var array
-     */
-    protected $_euProductCodes = array(
-        '4940',
-        '4924',
-        '4946',
-        '4944',
-        '4950',
-        '4954',
-        '4955',
-        '4952',
-    );
-    
-    /**
-     * Array of product codes supported for EU combilabel shipments
-     * 
-     * @var array
-     */
-    protected $_euCombilabelProductCodes = array(
-        '4950',
-        '4954',
-        '4955',
-        '4952',
-    );
-    
-    /**
-     * Array of product codes supported for global shipments
-     * 
-     * @var array
-     */
-    protected $_globalProductCodes = array(
-        '4945',
+    protected $_countryRestrictedProductCodes = array(
+        '4955' => array(
+                      'BE',
+                  ),
     );
     
     /**
@@ -224,13 +163,24 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
     
     /**
+     * Gets an array of country-restricted product codes
+     * 
+     * @return array
+     */
+    public function getCountryRestrictedProductCodes()
+    {
+        return $this->_countryRestrictedProductCodes;
+    }
+    
+    /**
      * Get an array of standard product codes
      * 
      * @return array
      */
-    public function getStandardProductCodes()
+    public function getStandardProductCodes($storeId = false)
     {
-        return $this->_standardProductCodes;
+        $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
+        return $standardProductCodes->getAvailableOptions($storeId, true);
     }
     
     /**
@@ -238,9 +188,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * 
      * @return array
      */
-    public function getPakjeGemakProductCodes()
+    public function getPakjeGemakProductCodes($storeId = false)
     {
-        return $this->_pakjeGemakProductCodes;
+        $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
+        return $pakjeGemakProductCodes->getAvailableOptions($storeId, true);
     }
     
     /**
@@ -248,19 +199,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * 
      * @return array
      */
-    public function getEuProductCodes()
+    public function getEuProductCodes($storeId = false)
     {
-        return $this->_euProductCodes;
-    }
-    
-    /**
-     * Get an array of eu combi-label product codes
-     * 
-     * @return array
-     */
-    public function getEuCombilabelProductCodes()
-    {
-        return $this->_euCombilabelProductCodes;
+        $euProductCodes = Mage::getSingleton('postnl_core/system_config_source_euProductOptions');
+        return $euProductCodes->getAvailableOptions($storeId, true);
     }
     
     /**
@@ -268,9 +210,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * 
      * @return array
      */
-    public function getGlobalProductCodes()
+    public function getGlobalProductCodes($storeId = false)
     {
-        return $this->_globalProductCodes;
+        $globalProductCodes = Mage::getSingleton('postnl_core/system_config_source_globalProductOptions');
+        return $globalProductCodes->getAvailableOptions($storeId, true);
     }
     
     /**

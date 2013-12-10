@@ -613,7 +613,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Labels) 
             || !is_object($response->Labels)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($response, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid generateLabelsWithoutConfirm response: ' . "\n" . var_export($response, true));
         }
         
         return $response;

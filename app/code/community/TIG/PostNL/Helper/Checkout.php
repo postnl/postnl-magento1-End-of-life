@@ -438,7 +438,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
          */
         Mage::register(
             'postnl_is_configured_checkout_test_errors', 
-            array($this->__('You need to enable ate least one payment method.'))
+            array($this->__('You need to enable at least one payment method.'))
         );
         return false;
     }

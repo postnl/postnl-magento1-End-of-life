@@ -1270,7 +1270,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         if (!isset($result->Labels) || !isset($result->Labels->Label)) {
-            throw Mage::exception('TIG_PostNL', "The confirmAndPrintLabel action returned an invalid response: \n" . var_export($response, true));
+            throw Mage::exception(
+                'TIG_PostNL', 
+                "The confirmAndPrintLabel action returned an invalid response: \n" . var_export($response, true)
+            );
         }
         $labels = $result->Labels->Label;
         
@@ -1928,6 +1931,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         if ($this->isEuShipment()) {
             $allowedProductCodes = $cifHelper->getEuProductCodes();
+            
         }
         
         if ($this->isGlobalShipment()) {
@@ -1941,7 +1945,46 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             throw Mage::exception('TIG_PostNL', 'Product code ' . $productCode . ' is not allowed for this shipment.');
         }
         
+        /**
+         * Check if the product code is restricted to certain countries
+         */
+        $allowedCountries = $this->_isCodeRestricted($productCode);
+        if ($allowedCountries === false) {
+            return true;
+        }
+        
+        /**
+         * Check if the destination country of this shipment is allowed
+         */
+        $destination = $this->getShippingAddress()->getCountryId();
+        if (!in_array($destination, $allowedCountries)) {
+            throw Mage::exception('TIG_PostNL', 'Product code ' . $productCode . ' is not allowed for this shipment.');
+        }
+        
         return true;
+    }
+
+    /**
+     * Checks if a given product code is only allowed for a specific country
+     * 
+     * @return boolean|array Either false if the code is not restricted, or otherwise an array of allowed country IDs
+     */
+    protected function _isCodeRestricted($code)
+    {
+        $countryRestrictedCodes = $this->getHelper('cif')->getCountryRestrictedProductCodes();
+        
+        /**
+         * Check if the supplied code is restricted
+         */
+        if (!array_key_exists($code, $countryRestrictedCodes)) {
+            return false;
+        }
+        
+        /**
+         * Get the countries that are allowed
+         */
+        $allowedCountries = $countryRestrictedCodes[$code];
+        return $allowedCountries;
     }
     
     /****************************************************************************************************************************
