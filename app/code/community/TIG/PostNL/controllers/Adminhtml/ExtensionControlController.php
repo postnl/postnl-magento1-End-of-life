@@ -78,8 +78,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             $this->_updateStatistics();
         }
         
-        $this->_saveAdvanced();
-        $this->_saveSection();
+        Mage::app()->cleanCache();
         
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
@@ -276,42 +275,9 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     {
         Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 0);
         
-        $this->_saveAdvanced();
-        $this->_saveSection();
+        Mage::app()->cleanCache();
         
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
-    }
-
-    /**
-     * Custom save logic for section
-     * 
-     * @return void
-     * 
-     * @see Mage_Adminhtml_System_ConfigController::_saveSection()
-     */
-    protected function _saveSection()
-    {
-        $method = '_save' . uc_words($this->getRequest()->getParam('section'), '');
-        if (method_exists($this, $method)) {
-            $this->$method();
-        }
-    }
-
-    /**
-     * Advanced save procedure
-     * 
-     * @return void
-     * 
-     * @see Mage_Adminhtml_System_ConfigController::_saveAdvanced()
-     */
-    protected function _saveAdvanced()
-    {
-        Mage::app()->cleanCache(
-            array(
-                'layout',
-                Mage_Core_Model_Layout_Update::LAYOUT_GENERAL_CACHE_TAG
-            )
-        );
     }
 }

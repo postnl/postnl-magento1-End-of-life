@@ -238,6 +238,15 @@
                 </postnl>
         	</updates>
 		</layout>
+        <translate>
+            <modules>
+                <TIG_PostNL>
+                    <files>
+                        <default>TIG_PostNL.csv</default>
+                    </files>
+                </TIG_PostNL>
+            </modules>
+        </translate>
     </adminhtml>
     
     <frontend>
@@ -248,6 +257,15 @@
                 </postnl>
         	</updates>
 		</layout>
+        <translate>
+            <modules>
+                <TIG_PostNL>
+                    <files>
+                        <default>TIG_PostNL.csv</default>
+                    </files>
+                </TIG_PostNL>
+            </modules>
+        </translate>
     </frontend>
     
     <crontab>
