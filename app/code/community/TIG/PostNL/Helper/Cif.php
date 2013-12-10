@@ -706,8 +706,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $this;
         }
         
-        $this->createLogDir();
-        
         $requestXml = $this->formatXml($client->getLastRequest());
         $responseXML = $this->formatXml($client->getLastResponse());
         
@@ -715,13 +713,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
                     . $requestXml
                     . "\nResponse recieved:\n"
                     . $responseXML;
-                    
-        Mage::log(
-            $logMessage, 
-            Zend_Log::DEBUG, 
-            self::POSTNL_LOG_DIRECTORY . DS . self::CIF_DEBUG_LOG_FILE,
-            true
-        );
+        
+        $file = self::POSTNL_LOG_DIRECTORY . DS . self::CIF_DEBUG_LOG_FILE;
+        $this->log($logMessage, Zend_Log::DEBUG, $file);
         
         return $this;
     }
@@ -745,8 +739,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $this;
         }
         
-        $this->createLogDir();
-        
         if ($exception instanceof TIG_PostNL_Model_Core_Cif_Exception) {
             $requestXml = $this->formatXml($exception->getRequestXml());
             $responseXML = $this->formatXml($exception->getResponseXml());
@@ -763,21 +755,12 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
                         . $requestXml
                         . "\n<<< RESPONSE RECIEVED >>>\n"
                         . $responseXML;
-                        
-            Mage::log(
-                $logMessage, 
-                Zend_Log::ERR, 
-                self::POSTNL_LOG_DIRECTORY . DS . self::CIF_EXCEPTION_LOG_FILE, 
-                true
-            );
+        } else {
+            $logMessage = "\n" . $exception->__toString();
         }
         
-        Mage::log(
-            "\n" . $exception->__toString(), 
-            Zend_Log::ERR, 
-            self::POSTNL_LOG_DIRECTORY . DS . self::CIF_EXCEPTION_LOG_FILE, 
-            true
-        );
+        $file = self::POSTNL_LOG_DIRECTORY . DS . self::CIF_EXCEPTION_LOG_FILE;
+        $this->log($logMessage, Zend_Log::ERR, $file);
         
         return $this;
     }

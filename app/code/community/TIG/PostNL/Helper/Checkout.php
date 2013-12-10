@@ -61,6 +61,11 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     const XML_PATH_SHOW_CHECKOUT_FOR_BACKORDERS = 'postnl/checkout/show_checkout_for_backorders';
     
     /**
+     * Log filename to log all non-specific PostNL debug messages
+     */
+    const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_Checkout_Debug.log';
+    
+    /**
      * Array of payment methods supported by PostNL Checkout. 
      * Keys are the names used in system.xml, values are codes used by PostNL Checkout.
      * 
@@ -353,6 +358,10 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         
         $isPostnlEnabled = $this->isEnabled();
         if ($isPostnlEnabled === false) {
+            $errors = array(
+                $this->__('You have not yet enabled PostNL Checkout.')
+            );
+            Mage::register('postnl_enabled_checkout_errors', $errors);
             return false;
         }
         
@@ -361,7 +370,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $errors = array(
                 $this->__('You have not yet enabled PostNL Checkout.')
             );
-            Mage::register('postnl_enabled_checkout_test_errors_errors', $errors);
+            Mage::register('postnl_enabled_checkout_errors', $errors);
             return false;
         }
         
@@ -416,7 +425,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
          * If any errors were detected, add them to the registry and return false
          */
         if (!empty($errors)) {
-            Mage::register('postnl_is_configured_checkout_test_errors', $errors);
+            Mage::register('postnl_is_configured_checkout_errors', $errors);
             return false;
         }
         
@@ -437,7 +446,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
          * If no payment method was activated the extension is not configured properly
          */
         Mage::register(
-            'postnl_is_configured_checkout_test_errors', 
+            'postnl_is_configured_checkout_errors', 
             array($this->__('You need to enable at least one payment method.'))
         );
         return false;
