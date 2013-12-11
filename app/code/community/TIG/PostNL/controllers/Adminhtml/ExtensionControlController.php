@@ -108,6 +108,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             Mage::app()->reinitStores();
         }
         
+        $helper = Mage::helper('postnl');
         $webservice = Mage::getModel('postnl_extensioncontrol/webservices');
         try {
             /**
@@ -125,22 +126,21 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
                 return $this->_updateStatistics();
             }
             
-            Mage::helper('postnl')->logException($e);
-            Mage::getSingleton('adminhtml/session')->addError(
-                $this->__('An error occurred whilst processing your request: ' . $e->getMessage())
-            );
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
             return $this;
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
-            Mage::getSingleton('adminhtml/session')->addError(
-                $this->__('An error occurred whilst processing your request: ' . $e->getMessage())
-            );
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+            
             return $this;
         }
         
         Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 1);
         
-        Mage::getSingleton('adminhtml/session')->addSuccess(
+        
+        $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__(
                 'Your webshop has been registered. You should recieve an email on the email address you specify shortly. 
                 Please read this email carefully as it contains instructions on how to finish the extension activation procedure.'
@@ -236,12 +236,13 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         }
         
         if (!$uniqueKey || !$privateKey) {
-            Mage::getSingleton('adminhtml/session')->addError(
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0008', 'notice',
                 $this->__('Please fill in your unique and private keys and try again.')
             );
             return $this;
         }
         
+        $helper = Mage::helper('postnl');
         /**
          * Try to update the shop's statistics once in order to fully activate the extension
          */
@@ -249,16 +250,15 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             $webservices = Mage::getModel('postnl_extensioncontrol/webservices');
             $webservices->updateStatistics(true);
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
-            Mage::getSingleton('adminhtml/session')->addError(
-                $this->__('An error occurred whilst processing your request: ' . $e->getMessage())
-            );
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+            
             return $this;
         }
         
         Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 2);
         
-        Mage::getSingleton('adminhtml/session')->addSuccess(
+        $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__('The extension has been successfully activated!')
         );
         

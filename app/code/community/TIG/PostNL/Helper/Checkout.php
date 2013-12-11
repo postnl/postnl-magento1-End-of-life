@@ -359,7 +359,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         $isPostnlEnabled = $this->isEnabled();
         if ($isPostnlEnabled === false) {
             $errors = array(
-                $this->__('You have not yet enabled PostNL Checkout.')
+                'POSTNL-0027' => $this->__('You have not yet enabled PostNL Checkout.')
             );
             Mage::register('postnl_enabled_checkout_errors', $errors);
             return false;
@@ -368,7 +368,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         $isCheckoutActive = $this->isCheckoutActive();
         if (!$isCheckoutActive) {
             $errors = array(
-                $this->__('You have not yet enabled PostNL Checkout.')
+                'POSTNL-0027' => $this->__('You have not yet enabled PostNL Checkout.')
             );
             Mage::register('postnl_enabled_checkout_errors', $errors);
             return false;
@@ -447,7 +447,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
          */
         Mage::register(
             'postnl_is_configured_checkout_errors', 
-            array($this->__('You need to enable at least one payment method.'))
+            array('POSTNL-0028' => $this->__('You need to enable at least one payment method.'))
         );
         return false;
     }

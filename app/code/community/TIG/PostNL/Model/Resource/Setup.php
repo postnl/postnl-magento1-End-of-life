@@ -199,7 +199,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
                 ->setPath(self::SHIPPING_STATUS_CRON_MODEL_PATH)
                 ->save();
         } catch (Exception $e) {
-            throw Mage::exception('TIG_PostNL', 'Unable to save shipping_status cron expression: ' . $cronExpr);
+            throw new TIG_PostNL_Exception('Unable to save shipping_status cron expression: ' . $cronExpr, 'POSTNL-0087');
         }
         
         return $this;

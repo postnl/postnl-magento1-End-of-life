@@ -44,5 +44,65 @@
  */
 class TIG_PostNL_Exception extends Mage_Core_Exception
 {
+    /**
+     * Our codes are string, however the core Exception class only accepts integers, so we need to overload it.
+     * 
+     * @param string $message
+     * @param mixed $code
+     * @param Exception|null $previous
+     * 
+     * @return void
+     * 
+     * @see Exception::__construct()
+     * 
+     * @link http://www.php.net/manual/en/exception.construct.php
+     */
+    public function __construct($message, $code = 0, Exception $previous = null)
+    {
+        parent::__construct($message, 0, $previous);
+        
+        /**
+         * Replace the code with the actual, non-integer code
+         */
+        if ($code !== 0) {
+            $code = (string) $code;
+            $this->code = $code;
+        }
+    }
     
+    /**
+     * Custom __toString method that includes the error code, if preset.
+     * 
+     * @return string
+     * 
+     * @see Exception::__toString()
+     * 
+     * @link http://www.php.net/manual/en/exception.tostring.php
+     */
+    public function __toString()
+    {
+        $string = "exception '" 
+                . __CLASS__ 
+                . "' with message '" 
+                . $this->getMessage()
+                . "'";
+        
+        $code = $this->getCode();
+        if ($code !== 0 && !empty($code)) {
+            $string .= " and code: '" 
+                     . $this->getCode() 
+                     . "'";
+        }
+        
+        $string .= " in " 
+                 . $this->getFile() 
+                 . ':' 
+                 . $this->getLine() 
+                 . PHP_EOL 
+                 . 'Stack trace:'
+                 . PHP_EOL
+                 . $this->getTraceAsString();
+                
+        return $string;
+    }
 }
