@@ -80,7 +80,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             return $this->getData('quote');
         }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();;
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
         
         $this->setQuote($quote);
         return $quote;

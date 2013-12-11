@@ -37,9 +37,8 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
-<?php if($this->getIsAddressSplit()): ?>
-    <?php return $this; ?>
+<?php if(!$this->getIsAddressSplit()): ?>
+    <div class="module-message warning">
+        <h4>[POSTNL-0005-W] <?php echo $this->__('You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.')?> <a href="<?php echo Mage::helper('postnl')->getErrorUrl('POSTNL-0005'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
+    </div>
 <?php endif; ?>
-<div class="module-message warning">
-    <h4><?php echo $this->__('You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.') ?></h4>
-</div>
