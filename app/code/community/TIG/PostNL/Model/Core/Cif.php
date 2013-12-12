@@ -1800,7 +1800,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                  $reference = Mage::getStoreConfig(self::XML_PATH_CUSTOM_SHIPMENT_REFERENCE, $storeId);
                  break;
              default:
-                 throw Mage::exception('TIG_PostNL', 'Invalid reference type requested: ' . $referenceType);
+                 throw new TIG_PostNL_Exception(
+                     Mage::helper('postnl')->__('Invalid reference type requested: %s', $referenceType),
+                     'POSTNL-0043'
+                 );
          }
          
          /**

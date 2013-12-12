@@ -196,6 +196,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'confirm_status' => 'postnl_shipment.confirm_status',
                 'labels_printed' => 'postnl_shipment.labels_printed',
                 'shipping_phase' => 'postnl_shipment.shipping_phase',
+                'parcel_count'   => 'postnl_shipment.parcel_count',
             )
         );
         
@@ -235,6 +236,22 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * column order will be followed regardless of which optional columns are shown
          */
         $after = 'total_qty';
+        if (in_array('parcel_count', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'parcel_count',
+                array(
+                    'header'       => $helper->__('Number of Parcels'),
+                    'index'        => 'parcel_count',
+                    'width'        => '100px',
+                    'type'         => 'number',
+                    'filter_index' => 'postnl_shipment.parcel_count',
+                ),
+                $after
+            );
+            
+            $after = 'parcel_count';
+        }
+        
         if (in_array('shipping_description', $columnsToDisplay)) {
             $block->addColumnAfter(
                 'shipping_description',

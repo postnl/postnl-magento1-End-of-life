@@ -402,7 +402,7 @@
                 <custom_shipment_reference/>
                 <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
                 <show_shipment_type_column>1</show_shipment_type_column> <!-- Show the shipment type column -->
-                <shipping_grid_columns>shipping_description,shipment_type,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show all optional columns -->
+                <shipping_grid_columns>shipping_description,shipment_type,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
                 <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
@@ -529,153 +529,251 @@
         </postnl>
     </default>
     
-    <!-- A list of possible error codes recognized by this and other TiG extensions. Each error has a default message, a link to 
-        the associated knowledge base article and a 'type' (whether it's an error, warning or notice) -->
-    <tig_errors>
-        <POSTNL-0001>
-            <message>You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31114923</url>
-            <type>warning</type>
-        </POSTNL-0001>
-        <POSTNL-0002>
-            <message>You have not yet fully configured the extension. You must complete this process before you can use it.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31565256</url>
-            <type>error</type>
-        </POSTNL-0002>
-        <POSTNL-0003>
-            <message>You have not yet configured the extension to use GlobalPack shipments. Please complete this process if you wish to ship parcels to outside the EU.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31566436</url>
-            <type>notice</type>
-        </POSTNL-0003>
-        <POSTNL-0004>
-            <message>You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31567046</url>
-            <type>notice</type>
-        </POSTNL-0004>
-        <POSTNL-0005>
-            <message>You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31080848</url>
-            <type>warning</type>
-        </POSTNL-0005>
-        <POSTNL-0006>
-            <message>PostNL: It appears that your cron is not working properly. PostNL requires the cron to be active in order to function.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31060037</url>
-            <type>warning</type>
-        </POSTNL-0006>
-        <POSTNL-0007>
-            <message>An error occurred whilst processing your request: </message>
-            <url></url>
-            <type>error</type>
-        </POSTNL-0007>
-        <POSTNL-0008>
-            <message>Please fill in your unique and private keys and try again.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31079168</url>
-            <type>error</type>
-        </POSTNL-0008>
-        <POSTNL-0009>
-            <message>This action cannot be used on non-PostNL shipments.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31061687</url>
-            <type>error</type>
-        </POSTNL-0009>
-        <POSTNL-0010>
-            <message>An error occurred while processing this action.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31062917</url>
-            <type>error</type>
-        </POSTNL-0010>
-        <POSTNL-0011>
-            <message>Please select one or more orders.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31570156</url>
-            <type>error</type>
-        </POSTNL-0011>
-        <POSTNL-0012>
-            <message>An error occurred whilst creating processing the shipment(s): </message>
-            <url></url>
-            <type>error</type>
-        </POSTNL-0012>
-        <POSTNL-0013>
-            <message>Please select one or more shipments.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31120533</url>
-            <type>error</type>
-        </POSTNL-0013>
-        <POSTNL-0014>
-            <message>You can print a maximum of 200 labels at once.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31083628</url>
-            <type>error</type>
-        </POSTNL-0014>
-        <POSTNL-0015>
-            <message>Order #%s cannot be shipped at this time.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31083718</url>
-            <type>error</type>
-        </POSTNL-0015>
-        <POSTNL-0016>
-            <message>For EU shipments you may only confirm a shipment after it's labels have been printed.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31573296</url>
-            <type>error</type>
-        </POSTNL-0016>
-        <POSTNL-0017>
-            <message>This shipment has already been confirmed.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31066127</url>
-            <type>error</type>
-        </POSTNL-0017>
-        <POSTNL-0018>
-            <message>This shipment cannot be confirmed at this time.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31123903</url>
-            <type>error</type>
-        </POSTNL-0018>
-        <POSTNL-0019>
-            <message>PostNL replied with the following warnings: {warnings}</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31573886</url>
-            <type>warning</type>
-        </POSTNL-0019>
-        <POSTNL-0020>
-            <message>Error code {error code}: {bericht}</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31086988</url>
-            <type>warning</type>
-        </POSTNL-0020>
-        <POSTNL-0021>
-            <message>An error occurred while processing your order. Please try again</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31085978</url>
-            <type>error</type>
-        </POSTNL-0021>
-        <POSTNL-0022>
-            <message>Unable to set Payment Method.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31086728</url>
-            <type>error</type>
-        </POSTNL-0022>
-        <POSTNL-0023>
-            <message>Your order has been cancelled. Please try again.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31069277</url>
-            <type>notice</type>
-        </POSTNL-0023>
-        <POSTNL-0024>
-            <message>Unfortunately the checkout process cannot be finished. Please try again.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31069397</url>
-            <type>error</type>
-        </POSTNL-0024>
-        <POSTNL-0025>
-            <message>Unfortunately no PostNL Checkout order could be found. Please try again.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31069667</url>
-            <type>error</type>
-        </POSTNL-0025>
-        <POSTNL-0026>
-            <message>It seems your cart has been changed since you started the checkout process. Please try again.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31126613</url>
-            <type>error</type>
-        </POSTNL-0026>
-        <POSTNL-0027>
-            <message>You have not yet enabled PostNL Checkout.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31576976</url>
-            <type>error</type>
-        </POSTNL-0027>
-        <POSTNL-0028>
-            <message>You need to enable at least one payment method.</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31070197</url>
-            <type>error</type>
-        </POSTNL-0028>
-        <POSTNL-0087>
-            <message>Wrong message type</message>
-            <url>http://servicedesk.totalinternetgroup.nl/entries/31566016</url>
-            <type>error</type>
-        </POSTNL-0087>
-    </tig_errors>
+    <!-- Custom TiG config values -->
+    <tig>
+        <!-- Version compatibility per Magento edition -->
+        <compatibility>
+            <postnl>
+                <enterprise>1.11,1.12,1.13</enterprise>
+                <community>1.6,1.7,1.8</community>
+            </postnl>
+        </compatibility>
+    
+        <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to 
+            the associated knowledge base article and a 'type' (whether it's an error, warning or notice) -->
+        <errors>
+            <POSTNL-0001>
+                <message>You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31114923</url>
+                <type>warning</type>
+            </POSTNL-0001>
+            <POSTNL-0002>
+                <message>You have not yet fully configured the extension. You must complete this process before you can use it.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31565256</url>
+                <type>error</type>
+            </POSTNL-0002>
+            <POSTNL-0003>
+                <message>You have not yet configured the extension to use GlobalPack shipments. Please complete this process if you wish to ship parcels to outside the EU.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31566436</url>
+                <type>notice</type>
+            </POSTNL-0003>
+            <POSTNL-0004>
+                <message>You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31567046</url>
+                <type>notice</type>
+            </POSTNL-0004>
+            <POSTNL-0005>
+                <message>You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31080848</url>
+                <type>warning</type>
+            </POSTNL-0005>
+            <POSTNL-0006>
+                <message>PostNL: It appears that your cron is not working properly. PostNL requires the cron to be active in order to function.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31060037</url>
+                <type>warning</type>
+            </POSTNL-0006>
+            <POSTNL-0007>
+                <message>An error occurred whilst processing your request: </message>
+                <url></url>
+                <type>error</type>
+            </POSTNL-0007>
+            <POSTNL-0008>
+                <message>Please fill in your unique and private keys and try again.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31079168</url>
+                <type>error</type>
+            </POSTNL-0008>
+            <POSTNL-0009>
+                <message>This action cannot be used on non-PostNL shipments.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31061687</url>
+                <type>error</type>
+            </POSTNL-0009>
+            <POSTNL-0010>
+                <message>An error occurred while processing this action.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31062917</url>
+                <type>error</type>
+            </POSTNL-0010>
+            <POSTNL-0011>
+                <message>Please select one or more orders.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31570156</url>
+                <type>error</type>
+            </POSTNL-0011>
+            <POSTNL-0012>
+                <message>An error occurred whilst creating processing the shipment(s): </message>
+                <url></url>
+                <type>error</type>
+            </POSTNL-0012>
+            <POSTNL-0013>
+                <message>Please select one or more shipments.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31120533</url>
+                <type>error</type>
+            </POSTNL-0013>
+            <POSTNL-0014>
+                <message>You can print a maximum of 200 labels at once.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31083628</url>
+                <type>error</type>
+            </POSTNL-0014>
+            <POSTNL-0015>
+                <message>Order #%s cannot be shipped at this time.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31083718</url>
+                <type>error</type>
+            </POSTNL-0015>
+            <POSTNL-0016>
+                <message>For EU shipments you may only confirm a shipment after it's labels have been printed.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31573296</url>
+                <type>error</type>
+            </POSTNL-0016>
+            <POSTNL-0017>
+                <message>This shipment has already been confirmed.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31066127</url>
+                <type>error</type>
+            </POSTNL-0017>
+            <POSTNL-0018>
+                <message>This shipment cannot be confirmed at this time.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31123903</url>
+                <type>error</type>
+            </POSTNL-0018>
+            <POSTNL-0019>
+                <message>PostNL replied with the following warnings: {warnings}</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31573886</url>
+                <type>warning</type>
+            </POSTNL-0019>
+            <POSTNL-0020>
+                <message>Error code {error code}: {bericht}</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31086988</url>
+                <type>warning</type>
+            </POSTNL-0020>
+            <POSTNL-0021>
+                <message>An error occurred while processing your order. Please try again</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31085978</url>
+                <type>error</type>
+            </POSTNL-0021>
+            <POSTNL-0022>
+                <message>Unable to set Payment Method.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31086728</url>
+                <type>error</type>
+            </POSTNL-0022>
+            <POSTNL-0023>
+                <message>Your order has been cancelled. Please try again.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31069277</url>
+                <type>notice</type>
+            </POSTNL-0023>
+            <POSTNL-0024>
+                <message>Unfortunately the checkout process cannot be finished. Please try again.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31069397</url>
+                <type>error</type>
+            </POSTNL-0024>
+            <POSTNL-0025>
+                <message>Unfortunately no PostNL Checkout order could be found. Please try again.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31069667</url>
+                <type>error</type>
+            </POSTNL-0025>
+            <POSTNL-0026>
+                <message>It seems your cart has been changed since you started the checkout process. Please try again.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31126613</url>
+                <type>error</type>
+            </POSTNL-0026>
+            <POSTNL-0027>
+                <message>You have not yet enabled PostNL Checkout.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31576976</url>
+                <type>error</type>
+            </POSTNL-0027>
+            <POSTNL-0028>
+                <message>You need to enable at least one payment method.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31070197</url>
+                <type>error</type>
+            </POSTNL-0028>
+            <POSTNL-0029>
+                <message>Unable to get valid barcodetype for postnl shipment id #%s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31147298</url>
+                <type>error</type>
+            </POSTNL-0029>
+            <POSTNL-0030>
+                <message>You have not yet enabled the extension.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31185593</url>
+                <type>error</type>
+            </POSTNL-0030>
+            <POSTNL-0031>
+                <message>The PostNL shipping method has not been enabled.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31129647</url>
+                <type>error</type>
+            </POSTNL-0031>
+            <POSTNL-0032>
+                <message>The shop's base currency code must be set to EUR for PostNL to function.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31129917</url>
+                <type>error</type>
+            </POSTNL-0032>
+            <POSTNL-0033>
+                <message>The extension has not been activated.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31186323</url>
+                <type>error</type>
+            </POSTNL-0033>
+            <POSTNL-0034>
+                <message>%s is required.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31186983</url>
+                <type>error</type>
+            </POSTNL-0034>
+            <POSTNL-0035>
+                <message>Invalid Magento edition detected: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31131717</url>
+                <type>error</type>
+            </POSTNL-0035>
+            <POSTNL-0036>
+                <message>Invalid rate type requested: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31150488</url>
+                <type>error</type>
+            </POSTNL-0036>
+            <POSTNL-0037>
+                <message>Invalid UpdateOrder response recieved!</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31133667</url>
+                <type>error</type>
+            </POSTNL-0037>
+            <POSTNL-0038>
+                <message>Invalid PingStatus response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31638656</url>
+                <type>error</type>
+            </POSTNL-0038>
+            <POSTNL-0039>
+                <message>No quote available to initiate PostNL Checkout.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31639136</url>
+                <type>error</type>
+            </POSTNL-0039>
+            <POSTNL-0040>
+                <message>Invalid PrepareOrder response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31191183</url>
+                <type>error</type>
+            </POSTNL-0040>
+            <POSTNL-0041>
+                <message>Invalid ReadOrder response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31191443</url>
+                <type>error</type>
+            </POSTNL-0041>
+            <POSTNL-0042>
+                <message>Invalid ConfirmOrder response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31191933</url>
+                <type>error</type>
+            </POSTNL-0042>
+            <POSTNL-0043>
+                <message>Invalid reference type requested: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31640636</url>
+                <type>error</type>
+            </POSTNL-0043>
+            <POSTNL-0044>
+                <message>Invalid object specified: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31641096</url>
+                <type>error</type>
+            </POSTNL-0044>
+            
+            
+            <POSTNL-0087>
+                <message>Wrong message type</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31566016</url>
+                <type>error</type>
+            </POSTNL-0087>
+            <LIRS_0>
+                <message>Combilabel was not processed successfully for shipment with barcode %s. Normal label is generated and product code for shipment changed to 4944.</message>
+                <url></url>
+                <type>warning</type>
+            </LIRS_0>
+        </errors>
+    </tig>
 </config>

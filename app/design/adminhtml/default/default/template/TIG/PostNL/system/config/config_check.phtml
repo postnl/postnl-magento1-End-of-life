@@ -41,15 +41,22 @@
 <?php $_testEnabled = $this->isTestEnabled(); ?>
 <?php $_globalEnabled = $this->isGlobalEnabled(); ?>
 <?php $_checkoutEnabled = $this->isCheckoutEnabled(); ?>
+<?php $_helper = Mage::helper('postnl'); ?>
 
 <?php if ($_testEnabled && !$_liveEnabled): ?>
     <?php $_liveConfigErrors = $this->getLiveConfigErrors(); ?>
     <div class="module-message warning">
-        <h4>[POSTNL-0001-W] <?php echo $this->__('You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.')?> <a href="<?php echo Mage::helper('postnl')->getErrorUrl('POSTNL-0001'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
+        <h4>[POSTNL-0001-W] <?php echo $this->__('You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0001'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
         <?php if ($_liveConfigErrors): ?>
             <ul>
-                <?php foreach ($_liveConfigErrors as $_error): ?>
-                    <li><?php echo $_error; ?></li>
+                <?php foreach ($_liveConfigErrors as $_code => $_error): ?>
+                    <li>
+                        <?php if (!is_int($_code)): ?>[<?php echo $_code; ?>-E] <?php endif; ?><?php echo $_error; ?>
+                        <?php $_errorUrl = $_helper->getErrorUrl($_code); ?>
+                        <?php if ($_errorUrl): ?>
+                            <a href="<?php echo $_helper->getErrorUrl($_code); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
+                        <?php endif; ?>
+                    </li>
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
@@ -59,11 +66,17 @@
 <?php if (!$_liveEnabled && !$_testEnabled): ?>
     <?php $_testConfigErrors = $this->getTestConfigErrors(); ?>
     <div class="module-message error">
-        <h4>[POSTNL-0002-E] <?php echo $this->__('You have not yet fully configured the extension. You must complete this process before you can use it.')?> <a href="<?php echo Mage::helper('postnl')->getErrorUrl('POSTNL-0002'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
+        <h4>[POSTNL-0002-E] <?php echo $this->__('You have not yet fully configured the extension. You must complete this process before you can use it.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0002'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
         <?php if ($_testConfigErrors): ?>
             <ul>
-                <?php foreach ($_testConfigErrors as $_error): ?>
-                    <li><?php echo $_error; ?></li>
+                <?php foreach ($_testConfigErrors as $_code => $_error): ?>
+                    <li>
+                        <?php if (!is_int($_code)): ?>[<?php echo $_code; ?>-E] <?php endif; ?><?php echo $_error; ?>
+                        <?php $_errorUrl = $_helper->getErrorUrl($_code); ?>
+                        <?php if ($_errorUrl): ?>
+                            <a href="<?php echo $_helper->getErrorUrl($_code); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
+                        <?php endif; ?>
+                    </li>
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
@@ -73,11 +86,17 @@
 <?php if (!$_globalEnabled && ($_liveEnabled || $_testEnabled)): ?>
     <?php $_globalConfigErrors = $this->getGlobalConfigErrors(); ?>
     <div class="module-message info">
-        <h4>[POSTNL-0003-N] <?php echo $this->__('You have not yet configured the extension to use GlobalPack shipments. Please complete this process  if you wish to ship parcels to outside the EU.')?> <a href="<?php echo Mage::helper('postnl')->getErrorUrl('POSTNL-0003'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
+        <h4>[POSTNL-0003-N] <?php echo $this->__('You have not yet configured the extension to use GlobalPack shipments. Please complete this process  if you wish to ship parcels to outside the EU.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0003'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
         <?php if ($_globalConfigErrors): ?>
             <ul>
-                <?php foreach ($_globalConfigErrors as $_error): ?>
-                    <li><?php echo $_error; ?></li>
+                <?php foreach ($_globalConfigErrors as $_code => $_error): ?>
+                    <li>
+                        <?php if (!is_int($_code)): ?>[<?php echo $_code; ?>-E] <?php endif; ?><?php echo $_error; ?>
+                        <?php $_errorUrl = $_helper->getErrorUrl($_code); ?>
+                        <?php if ($_errorUrl): ?>
+                            <a href="<?php echo $_helper->getErrorUrl($_code); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
+                        <?php endif; ?>
+                    </li>
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
@@ -87,11 +106,17 @@
 <?php if (!$_checkoutEnabled && ($_liveEnabled || $_testEnabled)): ?>
     <?php $_checkoutConfigErrors = $this->getCheckoutConfigErrors(); ?>
     <div class="module-message info">
-        <h4>[POSTNL-0004-N] <?php echo $this->__('You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.')?> <a href="<?php echo Mage::helper('postnl')->getErrorUrl('POSTNL-0004'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
+        <h4>[POSTNL-0004-N] <?php echo $this->__('You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0004'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
         <?php if ($_checkoutConfigErrors): ?>
             <ul>
-                <?php foreach ($_checkoutConfigErrors as $_error): ?>
-                    <li><?php echo $_error; ?></li>
+                <?php foreach ($_checkoutConfigErrors as $_code => $_error): ?>
+                    <li>
+                        <?php if (!is_int($_code)): ?>[<?php echo $_code; ?>-E] <?php endif; ?><?php echo $_error; ?>
+                        <?php $_errorUrl = $_helper->getErrorUrl($_code); ?>
+                        <?php if ($_errorUrl): ?>
+                            <a href="<?php echo $_helper->getErrorUrl($_code); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
+                        <?php endif; ?>
+                    </li>
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>

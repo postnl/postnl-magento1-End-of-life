@@ -279,7 +279,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $barcodeType;
         }
         
-        throw Mage::exception('TIG_PostNL', 'Unable to get valid barcodetype for postnl shipment id #' . $shipment->getId());
+        throw new TIG_PostNL_Exception(
+            $this->__('Unable to get valid barcodetype for postnl shipment id #%s', $shipment->getId()),
+            'POSTNL-0029'
+        );
         
         return $this;
     }
