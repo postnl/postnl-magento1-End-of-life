@@ -66,13 +66,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
             $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
             if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
-                throw new TIG_PostNL_Exception('This action cannot be used on non-PostNL shipments.', 'POSTNL-0009');
+                throw new TIG_PostNL_Exception($this->__('This action cannot be used on non-PostNL shipments.'), 'POSTNL-0009');
             }
             
             /**
              * get the labels from CIF
              */
             $labels = $this->_printLabels($shipment);
+            
+            /**
+             * We need to check for warnings before the label download response
+             */
+            $this->_checkForWarnings();
             
             /**
              * merge the labels and print them
@@ -94,8 +99,6 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $this->_redirect('adminhtml/sales_shipment/index');
             return $this;
         }
-        
-        $this->_checkForWarnings();
         
         return $this;
     }
@@ -128,7 +131,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
             $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
             if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
-                throw new TIG_PostNL_Exception('This action cannot be used on non-PostNL shipments.', 'POSTNL-0009');
+                throw new TIG_PostNL_Exception($this->__('This action cannot be used on non-PostNL shipments.'), 'POSTNL-0009');
             }
             
             /**
@@ -227,7 +230,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
             $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
             if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
-                throw new TIG_PostNL_Exception('This action cannot be used on non-PostNL shipments.', 'POSTNL-0009');
+                throw new TIG_PostNL_Exception($this->__('This action cannot be used on non-PostNL shipments.'), 'POSTNL-0009');
             }
             
             $postnlShipment = $this->_getPostnlShipment($shipmentId);
@@ -427,6 +430,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             }
             
             /**
+             * We need to check for warnings before the label download response
+             */
+            $this->_checkForWarnings();
+            
+            /**
              * The label wills be base64 encoded strings. Convert these to a single pdf
              */
             $label = Mage::getModel('postnl_core/label');
@@ -446,8 +454,6 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $this->_redirect('adminhtml/sales_shipment/index');
             return $this;
         }
-        
-        $this->_checkForWarnings();
         
         return $this;
     }
@@ -497,6 +503,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             }
             
             /**
+             * We need to check for warnings before the label download response
+             */
+            $this->_checkForWarnings();
+            
+            /**
              * The label wills be base64 encoded strings. Convert these to a single pdf
              */
             $label = Mage::getModel('postnl_core/label');
@@ -516,8 +527,6 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $this->_redirect('adminhtml/sales_shipment/index');
             return $this;
         }
-        
-        $this->_checkForWarnings();
         
         return $this;
     }
@@ -596,9 +605,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         
         if (!$order->canShip()) {
             throw new TIG_PostNL_Exception(
-                $this->__("Order #%s cannot be shipped at this time.", $order->getIncrementId()), // translate it here, as the 
-                'POSTNL-0015'                                                                     // controller won't know which 
-            );                                                                                    // shipment ID to use
+                $this->__("Order #%s cannot be shipped at this time.", $order->getIncrementId()),
+                'POSTNL-0015' 
+            );
         }
         
         $shipment = Mage::getModel('sales/service_order', $order)
@@ -738,7 +747,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          */
         if ($postnlShipment->isEuShipment() && !$postnlShipment->getLabelsPrinted()) {
             throw new TIG_PostNL_Exception(
-                "For EU shipments you may only confirm a shipment after it's labels have been printed.", 
+                $this->__("For EU shipments you may only confirm a shipment after it's labels have been printed."), 
                 'POSTNL-0016'
             );
         }
@@ -762,14 +771,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             /**
              * The shipment is already confirmed
              */
-            throw new TIG_PostNL_Exception('This shipment has already been confirmed.', 'POSTNL-00017');
+            throw new TIG_PostNL_Exception($this->__('This shipment has already been confirmed.'), 'POSTNL-00017');
         }
         
         if (!$postnlShipment->canConfirm()) {
             /**
              * The shipment cannot be confirmed at this time
              */
-            throw new TIG_PostNL_Exception('This shipment cannot be confirmed at this time.', 'POSTNL-00018');
+            throw new TIG_PostNL_Exception($this->__('This shipment cannot be confirmed at this time.'), 'POSTNL-00018');
         }
 
         /**
@@ -803,7 +812,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         foreach ($shipmentIds as $shipmentId) {
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
             if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
-                throw new TIG_PostNL_Exception('This action cannot be used on non-PostNL shipments.', 'POSTNL-0009');
+                throw new TIG_PostNL_Exception($this->__('This action cannot be used on non-PostNL shipments.'), 'POSTNL-0009');
             }
             
             $shipments[] = $shipment;
@@ -843,7 +852,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Check if we have an error code for this warning so we can add a link to the TiG knowledgebase
              */
             $link = false;
-            $error = Mage::getConfig()->getNode('tig_errors/' . $warning['code']);
+            $error = Mage::getConfig()->getNode('tig/errors/' . $warning['code']);
             if ($error !== false) {
                 $link = $error->url;
             }
@@ -852,8 +861,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Build the message proper
              */
             $warningMessage .= '<li>' 
-                             . '[' . $warning['code'] . ']'
-                             . $this->__($warning['message']);
+                             . '[' . $warning['code'] . '] '
+                             . $this->__($warning['description']);
             /**
              * Add the link if it's available
              */
@@ -873,7 +882,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         /**
          * Add the warnings to the session
          */
-        $helper->addSessionMessage('adminhtml/session', null, 'notice',
+        Mage::helper('postnl')->addSessionMessage('adminhtml/session', null, 'notice',
             $warningMessage
         );
             

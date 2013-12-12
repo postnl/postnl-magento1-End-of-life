@@ -147,6 +147,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $dbVer = $this->getDbVer();
         $configVer = $this->getConfigVer();
         
+        $this->_checkVersionCompatibility();
+        
         if (version_compare($configVer, $dbVer) != self::VERSION_COMPARE_GREATER) {
             return $this;
         }
@@ -199,7 +201,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
                 ->setPath(self::SHIPPING_STATUS_CRON_MODEL_PATH)
                 ->save();
         } catch (Exception $e) {
-            throw new TIG_PostNL_Exception('Unable to save shipping_status cron expression: ' . $cronExpr, 'POSTNL-0087');
+            throw Mage::exception('TIG_PostNL', 'Unable to save shipping_status cron expression: ' . $cronExpr);
         }
         
         return $this;
@@ -241,6 +243,61 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
                 ->save();
         } catch (Exception $e) {
             throw Mage::exception('TIG_PostNL', 'Unable to save update_statistics cron expression: ' . $cronExpr);
+        }
+        
+        return $this;
+    }
+
+    /**
+     * Checks the store's config to see if the extension is compatible with the installed Magento version. If not, a message will
+     * be added to Mage_Adminnotification.
+     * 
+     * @return TIG_PostNL_Model_Resource_Setup
+     */
+    public function _checkVersionCompatibility()
+    {
+        $helper = Mage::helper('postnl');
+        if ($helper->isEnterprise()) {
+            $edition = 'enterprise';
+        } else {
+            $edition = 'community';
+        }
+        
+        $inbox = Mage::getModel('postnl/inbox');
+        
+        $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/' . $edition);
+        if ($supportedVersions === false) {
+            $inbox->addCritical(
+                      $helper->__('The PostNL extension is not compatible with your Magento version! '
+                          . 'This may cause unexpected behaviour.'),
+                      $helper->__('The PostNL extension is not compatible with your Magento version! '
+                          . 'This may cause unexpected behaviour.'),
+                      '', 
+                      true
+                  )
+                  ->save();
+                  
+            return $this;
+        }
+        
+        $supportedVersions = (string) $supportedVersions;
+        $supportedVersionArray = explode(',', $supportedVersions);
+        
+        $installedMagentoVersionInfo = Mage::getVersionInfo();
+        $installedMagentoVersion = $installedMagentoVersionInfo['major'] . '.' . $installedMagentoVersionInfo['minor'];
+        
+        if (!in_array($installedMagentoVersion, $supportedVersionArray)) {
+            $inbox->addCritical(
+                      $helper->__('The PostNL extension is not compatible with your Magento version! '
+                          . 'This may cause unexpected behaviour.'),
+                      $helper->__('The PostNL extension is not compatible with your Magento version! '
+                          . 'This may cause unexpected behaviour.'),
+                      '', 
+                      true
+                  )
+                  ->save();
+                  
+            return $this;
         }
         
         return $this;

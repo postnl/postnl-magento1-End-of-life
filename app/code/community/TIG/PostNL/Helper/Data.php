@@ -59,11 +59,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const POSTNL_CRON_DEBUG_LOG_FILE = 'TIG_PostNL_Cron_Debug.log';
     
     /**
-     * Prefix used by error codes in this extension.
-     */
-    const ERROR_CODE_PREFIX = 'POSTNL-';
-    
-    /**
      * XML path to postnl general active/inactive setting
      */
     const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
@@ -370,7 +365,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             Mage::register($registryKey, false);
             
             $errors = array(
-                $this->__('You have not yet enabled the extension.')
+                'POSTNL-0030' => $this->__('You have not yet enabled the extension.')
             );
             
             Mage::register($registryKey . '_errors', $errors);
@@ -385,7 +380,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             Mage::register($registryKey, false);
             
             $errors = array(
-                $this->__('The PostNL shipping method has not been enabled.')
+                'POSTNL-0031' => $this->__('The PostNL shipping method has not been enabled.')
             );
             Mage::register($registryKey . '_errors', $errors);
             return false;
@@ -399,7 +394,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             Mage::register($registryKey, false);
             
             $errors = array(
-                $this->__("The shop's base currency code must be set to EUR for PostNL to function.")
+                'POSTNL-0032' => $this->__("The shop's base currency code must be set to EUR for PostNL to function.")
             );
             Mage::register($registryKey . '_errors', $errors);
             return false;
@@ -457,7 +452,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          */
         $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($isActivated != 2) {
-            $errors[] = $this->__('The extension has not been activated.');
+            $errors['POSTNL-0033'] = $this->__('The extension has not been activated.');
         }
         
         if ($storeId === false) {
@@ -503,7 +498,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 $group = $fieldParts[1];
                 
                 $label = $section->groups->$group->fields->$field->label;
-                $errors[] = $this->__('%s is required.', $label);
+                $errors['POSTNL-0034'] = $this->__('%s is required.', $label);
             }
         }
         
@@ -705,7 +700,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             /**
              * If the edition is not community or enterprise, it is not supported
              */
-            throw Mage::exception('TIG_PostNL', 'Invalid Magento edition detected: ' . $edition);
+            throw new TIG_PostNL_Exception(
+                $this->__('Invalid Magento edition detected: %s', $edition),
+                'POSTNL-0035'
+            );
         }
         
         /**
@@ -767,7 +765,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getErrorUrl($errorCode)
     {
-        $error = Mage::getConfig()->getNode('tig_errors/' . $errorCode);
+        $error = Mage::getConfig()->getNode('tig/errors/' . $errorCode);
         if ($error !== false && $error->url) {
             return (string) $error->url;
         }
@@ -860,19 +858,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $error = false;
         $link = false;
         
-        if (!is_null($code) && $code !== 0) {
-            /**
-             * Make sure the error code follows the POSTNL-{code} syntax
-             */
-            $code = strtoupper((string) $code);
-            if (stripos($code, self::ERROR_CODE_PREFIX) === false) {
-                $code = self::ERROR_CODE_PREFIX . $code;
-            }
-            
+        if (!is_null($code) && $code !== 0) {            
             /**
              * get the requested code and if possible, the knowledgebase link
              */
-            $error = Mage::getConfig()->getNode('tig_errors/' . $code);
+            $error = Mage::getConfig()->getNode('tig/errors/' . $code);
             if ($error !== false) {
                 $link = $error->url;
             }

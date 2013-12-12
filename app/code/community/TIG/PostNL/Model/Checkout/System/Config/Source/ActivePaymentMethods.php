@@ -36,46 +36,28 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Checkout_Observer_Shipment
+class TIG_PostNL_Model_Checkout_System_Config_Source_ActivePaymentMethods
 {
     /**
-     * Updates a PostNL Checkout order with CIF. This has to occur after a shipment is confirmed. If an order has multiple
-     * shipments, this has to happen every time a shipment is confirmed. Each time the request will contain and additional
-     * shipment each having 1 or more parcels.
-     *  
-     * @param Varien_Event_Observer $observer
+     * Gets an array of active payment methods
      * 
-     * @return TIG_PostNL_Model_Core_Observer_Barcode
-     * 
-     * @event postnl_shipment_confirm_after
-     * 
-     * @observer postnl_checkout_update_order
-     * 
-     * @throws TIG_PostNL_Exception
-     * 
-     * @todo change confirm date to the correct value, instead of the current timestamp
+     * @return array
      */
-    public function updateOrder(Varien_Event_Observer $observer)
+    public function toOptionArray()
     {
-        $postnlShipment = $observer->getShipment();
-        
-        $orderId = $postnlShipment->getOrderId();
-        $postnlOrder = Mage::getModel('postnl_checkout/order');
-        $postnlOrder->load($orderId, 'order_id');
-        if (!$postnlOrder->getId()) {
-            return $this;
-        }
-        
-        $cif = Mage::getModel('postnl_checkout/cif');
-        $result = $cif->updateOrder($postnlOrder);
-        
-        if (!isset($result->Succes) || $result->Succes != 'true') {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid UpdateOrder response recieved!'),
-                'POSTNL-0037'
+       $paymentMethods = Mage::getSingleton('payment/config')->getActiveMethods();
+       
+       $storeId = Mage::app()->getStore()->getId();
+       
+       $options = array();
+       foreach ($paymentMethods as $code => $model) {
+            $title = Mage::getStoreConfig('payment/' . $code . '/title', $storeId);
+            $options[$code] = array(
+                'label' => $title,
+                'value' => $code,
             );
         }
-        
-        return $this;
+       
+        return $options;
     }
 }

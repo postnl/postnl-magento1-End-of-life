@@ -63,6 +63,10 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
                 'value' => 'shipping_phase',
                 'label' => $helper->__('Shipping Phase')
             ),
+            array(
+                'value' => 'parcel_count',
+                'label' => $helper->__('Number of Parcels')
+            ),
         );
         
         return $columns;

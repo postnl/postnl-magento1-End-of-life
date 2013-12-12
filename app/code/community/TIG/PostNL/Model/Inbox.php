@@ -52,6 +52,7 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
      * @param string|array $description
      * @param string $url
      * @param bool $isInternal
+     * 
      * @return Mage_AdminNotification_Model_Inbox
      */
     public function add($severity, $title, $description, $url = '', $isInternal = true)
@@ -61,20 +62,26 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
         }
         
         if (!$this->getSeverities($severity)) {
-            Mage::throwException($this->__('Wrong message type'));
+            throw new TIG_PostNL_Exception($this->__('Wrong message type'), 'POSTNL-0087');
         }
+
         if (is_array($description)) {
             $description = '<ul><li>' . implode('</li><li>', $description) . '</li></ul>';
         }
+        
         $date = date('Y-m-d H:i:s');
-        $this->parse(array(array(
-            'severity'    => $severity,
-            'date_added'  => $date,
-            'title'       => $title,
-            'description' => $description,
-            'url'         => $url,
-            'internal'    => $isInternal
-        )));
+        $this->parse(
+            array(
+                array(
+                    'severity'    => $severity,
+                    'date_added'  => $date,
+                    'title'       => $title,
+                    'description' => $description,
+                    'url'         => $url,
+                    'internal'    => $isInternal
+                )
+            )
+        );
         return $this;
     }
 
@@ -85,6 +92,7 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
      * @param string|array $description
      * @param string $url
      * @param bool $isInternal
+     * 
      * @return Mage_AdminNotification_Model_Inbox
      */
     public function addCritical($title, $description, $url = '', $isInternal = true)
@@ -104,6 +112,7 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
      * @param string|array $description
      * @param string $url
      * @param bool $isInternal
+     * 
      * @return Mage_AdminNotification_Model_Inbox
      */
     public function addMajor($title, $description, $url = '', $isInternal = true)
@@ -123,6 +132,7 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
      * @param string|array $description
      * @param string $url
      * @param bool $isInternal
+     * 
      * @return Mage_AdminNotification_Model_Inbox
      */
     public function addMinor($title, $description, $url = '', $isInternal = true)
@@ -142,6 +152,7 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
      * @param string|array $description
      * @param string $url
      * @param bool $isInternal
+     * 
      * @return Mage_AdminNotification_Model_Inbox
      */
     public function addNotice($title, $description, $url = '', $isInternal = true)
