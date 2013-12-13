@@ -336,7 +336,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if (!is_object($response) 
             || !isset($response->Barcode)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid barcode response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid barcode response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0054'
+            );
         }
         
         return $response->Barcode;
@@ -377,7 +380,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Shipments) 
             || (!is_array($response->Shipments) && !is_object($response->Shipments))
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid shippingStatus response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0055'
+            );
         }
         
         foreach($response->Shipments as $shipment) {
@@ -440,7 +446,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Shipments) 
             || (!is_array($response->Shipments) && !is_object($response->Shipments))
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid shippingStatus response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0055'
+            );
         }
         
         foreach($response->Shipments as $shipment) {
@@ -1440,6 +1449,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $countryOfOrigin = $shipmentItem->getOrderItem()
                                         ->getProduct()
                                         ->getDataUsingMethod($countryOfOriginAttribute);
+        
+        if (empty($countryOfOrigin)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Missing country of origin value for product #%s.', $shipmentItem->getProductId())
+            );
+        }
                                     
         return $countryOfOrigin;
     }
@@ -1465,6 +1480,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                      ->getProduct()
                                      ->getDataUsingMethod($customsValueAttribute);
         
+        if (empty($customsValue)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Missing customs value for product #%s.', $shipmentItem->getProductId())
+            );
+        }
+
         return $customsValue;
     }
     
@@ -1488,7 +1509,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $description = $shipmentItem->getOrderItem()
                                     ->getProduct()
                                     ->getDataUsingMethod($descriptionAttribute);
-                                    
+        
+        if (empty($description)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Missing customs description for product #%s.', $shipmentItem->getProductId())
+            );
+        }
+        
         return $description;
     }
     

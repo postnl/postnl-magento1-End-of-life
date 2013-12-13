@@ -121,12 +121,19 @@ class TIG_PostNL_Model_Checkout_Order extends Mage_Core_Model_Abstract
      */
     public function cancel()
     {
+        $helper = Mage::helper('postnl');
         if (!$this->getOrderId()) {
-            throw Mage::exception('TIG_PostNL', 'This PostNL Checkout order cannot be cancelled: it has no associated magento order.');
+            throw new TIG_PostNL_Exception(
+                $helper->__('This PostNL Checkout order cannot be cancelled: it has no associated magento order.'),
+                'POSTNL-0046'
+            );
         }
 
         if ($this->getIsCanceled()) {
-            throw Mage::exception('TIG_PostNL', 'This PostNL Checkout order cannot be cancelled: it has already been canceled.');
+            throw new TIG_PostNL_Exception(
+                $helper->__('This PostNL Checkout order cannot be cancelled: it has already been canceled.'),
+                'POSTNL-0047'
+            );
         }
         
         $cif = Mage::getModel('postnl_checkout/cif');

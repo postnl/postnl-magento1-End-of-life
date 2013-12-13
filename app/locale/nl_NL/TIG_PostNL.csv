@@ -43,7 +43,7 @@ These fields contain your contact information for PostNL.,Deze velden bevatten u
 Company Name,Bedrijfsnaam
 Contact Name,Contactpersoon
 Contact Email,Contact email
-Confirming & Label Printing Settings,Bevestiging & Label printen instellingen
+Confirming & Label Printing Settings,Voormelden & Label printen instellingen
 Mode,Modus
 Label size,Label formaat
 This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4. Single Dutch or EPS labels are always printed in A6.,Deze instelling geldt alleen voor meerdere Nederlandse en EPS labels. GlobalPack labels wordt altijd in A4 geprint. Enkele Nederlandse of EPS labels worden altijd in A6 geprint.
@@ -65,7 +65,7 @@ Select which optional columns to show in the shipment grid.,Selecteer welke opti
 Select a default option for the shipment grid mass action,Selecteer een standaard waarde voor de massa actie voor de verzendingen
 These fields are used to configure the track & trace email that may be automatically emailed to customers after a shipment has been confirmed.,Deze velden worden gebruikt om de track & trace e-mail te configureren. Deze e-mail wordt automatisch naar uw klanten verstuurd wanneer een zending wordt voorgemeld.
 Send track & trace e-mail to customer,Stuur de track & trace e-mail naar de klant
-"If enabled, a track & trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed.","Indien geactiveerd, wordt er 20 minuten na de orderbevestiging, een track&track e-mail naar de klant gestuurd."
+"If enabled, a track & trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed.","Indien geactiveerd, wordt er ~20 minuten na de zending voormelding een track & trace e-mail naar de klant gestuurd."
 Track & trace e-mail template,Track&trace e-mail sjabloon
 Address Settings,Adres Instellingen
 Split street parts,Deel straatnaam velden op
@@ -192,7 +192,7 @@ By default a maximum of 200 labels can be printed at once. Enable this to remove
 Maximum number of parcels per shipment,Maximaal aantal pakketten per zending
 Maximum temporary file storage time,Maximum tijdelijke opslag tijd van tijdelijke verzendlabel bestanden.
 "In seconds. After this time, temporary files will be deleted. Only increase this if you use custom functionality to create a very large amount of labels at once.",In seconden. Daarna zullen de tijdelijke bestanden worden verwijderd. Verhoog dit aantal alleen als u handmatig een erg groot aantal labels aanmaakt.
-Number of days before a confirmation expires,Aantal dagen voordat een bevestiging afloopt
+Number of days before a confirmation expires,Aantal dagen voordat een voormelding verloopt
 If a confirmed shipment has not been shipped after this amount of days it's confirmation will expire.,"Als een voorgemeldde zending niet wordt verstuurd na dit aantal dagen, verloopt de voormelding."
 Send extension usage statistics to PostNL,Stuur de gebruikerstatistieken van de extensie naar PostNL
 Recieve notifications from PostNL regarding updates and promotions,Ontvang notificaties van PostNL als er updates of aanbiedingen zijn
@@ -238,7 +238,7 @@ Domestic,Binnenland
 EPS,EPS
 GlobalPack,GlobalPack
 Confirmed,Voorgemeld
-Confirmation expired,Bevestiging verlopen
+Confirmation expired,Voormelding verlopen
 Today,Vandaag
 No barcode available.,Geen barcode beschikbaar.
 This shipment has already been confirmed.,Deze zending is al voorgemeld.
@@ -336,7 +336,7 @@ Global options,Globale opties
 Use default,Gebruik de standaardwaarde
 Standard options,Standaard opties
 Global options,Globale opties
-(default),Standaard
+(default),(standaard)
 PostNL module has been successfully updated to version,De PostNL module is correct geupdate tot versie
 Test,Test
 Live,Live
@@ -356,7 +356,7 @@ In Distribution,In distributie
 Delivered,Afgeleverd
 Extra cover amount (in increments of 500),Extra dekking (veelvoud van 500)
 Number of parcels,Aantal pakketten
-Shipment type,Verzendmethode
+Shipment type,Zending type
 Treat as abandoned,Behandel als achtergelaten
 Please fill out these additional fields.,Vult u a.u.b. de extra velden in
 PostNL: It appears that your cron is not working properly.,PostNL: Uw cron lijkt niet correct te functioneren.
@@ -428,3 +428,19 @@ The 2kg limit will be based on the product's weight and the weight unit you sele
 The mobile phonenumber will be saved as the customer's regular phonenumber when used.,Het mobiele telefoonnummer zal opgeslagen worden als het normale telefoonnummer van de klant wanneer deze optie aan staat.
 All addresses outside of the Netherlands are considered 'foreign'. Addresses outside the EU are not possible regardless of this setting.,"Alle addresses buiten Nederlands worden gezien als buitenlandse adressen. Adressen buiten de EU zijn niet toegstaan, ongeacht deze instelling."
 You can enter a URL where the customer can find your terms and conditions in your PostNL Checkout account at http://checkout.postnl.nl,U kunt een URL opgeven waar de klant de algemene voorwaarden van de webshop kan vinden in uw PostNL Checkout account op http://checkout.postnl.nl
+or,of
+Missing customs description for product #%s.,Missende douane beschrijving voor product #%s.
+Missing customs value for product #%s.,Missende douane waarde voor product #%s.
+Missing country of origin value for product #%s.,Missende land van herkomst waarde voor product #%s.
+PostNL Shipping Options,PostNL Verzendopties
+Gift,Cadeau
+Documents,Documenten
+Commercial Goods,Commerciële Goederen
+Commercial Sample,Commercieel Monster
+Returned Goods,Geretourneerde Goederen
+An error occurred while processing your request: ,Er is een fout opgetreden tijdens het verwerken van uw verzoek: 
+OrderToken missing for quote #%s,OrderToken is niet aanwezig voor quote #%s
+Unable to create an order for quote #%s,Kan geen order creëren voor quote #%s
+Invalid quote supplied.,Ongeldige quote meegeleverd.
+No username or password set.,Geen gebruikersnaam of wachtwoord opgegeven.
+Invalid barcode response: %s,Ongeldige barcode : %s
