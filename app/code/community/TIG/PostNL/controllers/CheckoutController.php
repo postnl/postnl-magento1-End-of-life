@@ -245,7 +245,8 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $service->setQuote($quote)
                     ->updateQuoteAddresses($orderDetails)
                     ->updateQuotePayment($orderDetails, true, true) //only set the payment method, not all possible fields
-                    ->updateQuoteCustomer($orderDetails);
+                    ->updateQuoteCustomer($orderDetails)
+                    ->updatePostnlOrder($orderDetails);
             
             Mage::register('current_quote', $quote);
             
@@ -388,7 +389,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             /**
              * Parse any possible communication options
              */
-            $this->_parseCommunicationOptions($orderDetails);
+            $this->_parseCommunicationOptions($orderDetails, $order);
         } catch (Exception $e) {
             $helper->logException($e);
             $helper->addSessionMessage('checkout/session', 'POSTNL-0021', 'error', 
@@ -458,10 +459,11 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      * Parses any communication options that may have been selected
      * 
      * @param StdClass $orderDetails
+     * @param Mage_Sales_Model_Order $order
      * 
      * @return TIG_PostNL_CheckoutController
      */
-    protected function _parseCommunicationOptions($orderDetails)
+    protected function _parseCommunicationOptions($orderDetails, $order)
     {
         if (!isset($orderDetails->CommunicatieOpties)
             || !is_object($orderDetails->CommunicatieOpties)
@@ -476,7 +478,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         $communicationOptions = $orderDetails->CommunicatieOpties->ReadOrderResponseCommunicatieOptie;
         
         foreach ($communicationOptions as $option) {
-            $this->_processCommunicationOption($option);
+            $this->_processCommunicationOption($option, $order);
         }
         
         return $this;
@@ -486,12 +488,12 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      * Processes selected communication options
      * 
      * @param StdClass $option
+     * @param Mage_Sales_Model_Order $order
      * 
      * @return TIG_PostNL_CheckoutController
      */
-    protected function _processCommunicationOption($option)
+    protected function _processCommunicationOption($option, $order)
     {
-        $order = $this->getOrder();
         $code = $option->Code;
         
         /**
