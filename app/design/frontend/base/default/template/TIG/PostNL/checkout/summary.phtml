@@ -38,6 +38,7 @@
  */	
 ?>
 <?php $_quote             = $this->getQuote(); ?>
+<?php $_order              = $this->getPostnlOrder(); ?>
 <?php $_itemCollection    = $this->getItems(); ?>
 <?php $_billingAddress    = $_quote->getBillingAddress(); ?>
 <?php $_shippingAddress   = $_quote->getShippingAddress(); ?>
@@ -120,6 +121,12 @@
                 <h3 class="box-title"><?php echo $this->__('Shipping Method'); ?></h3>
                 <div class="box-content">
                     <p><?php echo $this->getShippingDescription(); ?></p>
+                    <?php if($_order->getDeliveryDate()): ?>
+                        <br/>
+                        <p>
+                            <?php echo $this->__('Chosen delivery date:'); ?> <strong><?php echo $this->formatDate($_order->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM); ?></strong>
+                        </p>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

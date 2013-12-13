@@ -466,8 +466,11 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             && isset($data->Voorkeuren->Bezorging)
             && is_object($data->Voorkeuren->Bezorging)
             && isset($data->Voorkeuren->Bezorging->VerzendDatum)
+            && isset($data->Voorkeuren->Bezorging->Datum)
         ) {
-            $postnlOrder->setConfirmDate($data->Voorkeuren->Bezorging->VerzendDatum);
+            $delivery = $data->Voorkeuren->Bezorging;
+            $postnlOrder->setConfirmDate($delivery->VerzendDatum)
+                        ->setDeliveryDate($delivery->Datum);
         }
         
         /**
