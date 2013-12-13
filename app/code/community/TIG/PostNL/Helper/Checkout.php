@@ -137,10 +137,11 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      * Check if PostNL Checkout may be used for a specified quote
      * 
      * @param Mage_Sales_Model_Quote $quote
+     * @param boolean $sendPing
      * 
      * @return boolean
      */
-    public function canUsePostnlCheckout(Mage_Sales_Model_Quote $quote)
+    public function canUsePostnlCheckout(Mage_Sales_Model_Quote $quote, $sendPing = false)
     {
         if (Mage::registry('can_use_postnl_checkout') !== null) {
             return Mage::registry('can_use_postnl_checkout');
@@ -202,21 +203,23 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             }
         }
         
-        /**
-         * Send a ping request to see if the PostNL Checkout service is available
-         */
-        try {
-            $cif = Mage::getModel('postnl_checkout/cif');
-            $result = $cif->ping();
-        } catch (Exception $e) {
-            $this->logException($e);
-            Mage::register('can_use_postnl_checkout', false);
-            return false;
-        }
-        
-        if ($result !== 'OK') {
-            Mage::register('can_use_postnl_checkout', false);
-            return false;
+        if ($sendPing === true) {
+            /**
+             * Send a ping request to see if the PostNL Checkout service is available
+             */
+            try {
+                $cif = Mage::getModel('postnl_checkout/cif');
+                $result = $cif->ping();
+            } catch (Exception $e) {
+                $this->logException($e);
+                Mage::register('can_use_postnl_checkout', false);
+                return false;
+            }
+            
+            if ($result !== 'OK') {
+                Mage::register('can_use_postnl_checkout', false);
+                return false;
+            }
         }
         
         Mage::register('can_use_postnl_checkout', true);

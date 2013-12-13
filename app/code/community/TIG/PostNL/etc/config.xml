@@ -633,12 +633,12 @@
                 <type>error</type>
             </POSTNL-0018>
             <POSTNL-0019>
-                <message>PostNL replied with the following warnings: {warnings}</message>
+                <message>PostNL replied with the following warnings: %s</message>
                 <url>http://servicedesk.totalinternetgroup.nl/entries/31573886</url>
                 <type>warning</type>
             </POSTNL-0019>
             <POSTNL-0020>
-                <message>Error code {error code}: {bericht}</message>
+                <message>Error code %s: %s</message>
                 <url>http://servicedesk.totalinternetgroup.nl/entries/31086988</url>
                 <type>warning</type>
             </POSTNL-0020>
@@ -762,6 +762,61 @@
                 <url>http://servicedesk.totalinternetgroup.nl/entries/31641096</url>
                 <type>error</type>
             </POSTNL-0044>
+            <POSTNL-0045>
+                <message>OrderToken missing for quote #%s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31662856</url>
+                <type>error</type>
+            </POSTNL-0045>
+            <POSTNL-0046>
+                <message>This PostNL Checkout order cannot be cancelled: it has no associated magento order.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31157957</url>
+                <type>error</type>
+            </POSTNL-0046>
+            <POSTNL-0047>
+                <message>This PostNL Checkout order cannot be cancelled: it has already been canceled.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31177418</url>
+                <type>error</type>
+            </POSTNL-0047>
+            <POSTNL-0048>
+                <message>Selected payment method %s is not available.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31158587</url>
+                <type>error</type>
+            </POSTNL-0048>
+            <POSTNL-0049>
+                <message>Unable to create an order for quote #%s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31215003</url>
+                <type>error</type>
+            </POSTNL-0049>
+            <POSTNL-0050>
+                <message>Invalid quote supplied.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31215543</url>
+                <type>error</type>
+            </POSTNL-0050>
+            <POSTNL-0051>
+                <message>Invalid data supplied.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31216003</url>
+                <type>error</type>
+            </POSTNL-0051>
+            <POSTNL-0052>
+                <message>No username or password set.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31216113</url>
+                <type>error</type>
+            </POSTNL-0052>
+            <POSTNL-0053>
+                <message>Chosen wsdl type is not supported: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31178198</url>
+                <type>error</type>
+            </POSTNL-0053>
+            <POSTNL-0054>
+                <message>Invalid barcode response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31664456</url>
+                <type>error</type>
+            </POSTNL-0054>
+            <POSTNL-0055>
+                <message>Invalid shippingStatus response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31664246</url>
+                <type>error</type>
+            </POSTNL-0055>
             
             
             <POSTNL-0087>

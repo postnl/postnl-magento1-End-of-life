@@ -178,7 +178,10 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     {
         try {
             if (!$this->_getUserName() || !$this->_getPassword()) {
-                throw Mage::exception('TIG_PostNL', 'No username or password set.');
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('No username or password set.'),
+                    'POSTNL-0052'
+                );
             }
             
             $wsdlFile = $this->_getWsdl($wsdlType);
@@ -290,7 +293,10 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 $wsdlFileName = self::WSDL_CHECKOUT_NAME;
                 break;
             default:
-                throw Mage::exception('TIG_PostNL', 'Chosen wsdl type is not supported: ' . $wsdlType);
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('Chosen wsdl type is not supported: %s', $wsdlType),
+                    'POSTNL-0053'
+                );
         }
         
         /**

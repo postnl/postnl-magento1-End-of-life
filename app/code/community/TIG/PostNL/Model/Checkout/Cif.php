@@ -479,14 +479,18 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param Mage_Sales_Model_Quote $quote
      * 
      * @return array
+     * 
+     * @todo figure out why base_shipping_incl_tax is sometimes empty when shipping_incl_tax is not
      */
     protected function _getOrder(Mage_Sales_Model_Quote $quote)
     {
+        $shippingAddress = $quote->getShippingAddress();
+        
         $extRef        = $quote->getId();
         $orderDate     = date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp());
-        $subtotal      = round($quote->getBaseSubtotal(), 2);
+        $subtotal      = round($shippingAddress->getBaseSubtotalInclTax(), 2);
         $shippingDate  = $orderDate; //TODO change this to the actual (predicted) shipping date
-        $shippingCosts = round($quote->getShippingAddress()->getBaseShippingInclTax());
+        $shippingCosts = round($shippingAddress->getShippingInclTax() * $quote->getBaseToGlobalRate()); //TODO why is base_shipping_incl_tax sometimes empty?
         
         $order = array(
             'ExtRef'        => $extRef,
@@ -753,7 +757,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         $orderToken = $postnlOrder->getToken();
         if (!$orderToken) {
-            throw Mage::exception('TIG_PostNL', 'OrderToken missing for quote #' . $postnlOrder->getQuoteId());
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('OrderToken missing for quote #%s', $postnlOrder->getQuoteId()),
+                'POSTNL-0045'
+            );
         }
         
         $checkout = array(

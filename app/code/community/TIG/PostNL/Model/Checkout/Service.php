@@ -290,7 +290,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          * Check if the payment method chosen is allowed
          */
         if (!Mage::getStoreConfigFlag(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName, $quote->getStoreId())) {
-            throw Mage::exception('TIG_PostNL', "Selected payment method {$methodName} is not available.");
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Selected payment method %s is not available.', $methodName),
+                'POSTNL-0048'
+            );
         }
 
         /**
@@ -520,7 +523,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $order = $quoteService->getOrder();
         
         if(empty($order)) {
-            throw Mage::exception('TIG_PostNL', 'Unable to create an order for quote #' . $quote->getId());
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to create an order for quote #%s', $quote->getId()),
+                'POSTNL-0049'
+            );
         }
                 
         /**
@@ -781,7 +787,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          */
         $quoteId = $data->Order->ExtRef;
         if ($quote->getId() != $quoteId) {
-            throw Mage::exception('TIG_PostNL', 'Invalid quote supplied.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid quote supplied.'), 
+                'POSTNL-0050'
+            );
         }
         
         /**
@@ -792,7 +801,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $webshopId = Mage::helper('core')->decrypt($webshopId);
         
         if ($webshopId != $dataWebshopId) {
-            throw Mage::exception('TIG_PostNL', 'Invalid data supplied.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid data supplied.'), 
+                'POSTNL-0051'
+            );
         }
         
         return $this;
