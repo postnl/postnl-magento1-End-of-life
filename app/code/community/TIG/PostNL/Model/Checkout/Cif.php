@@ -490,7 +490,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $orderDate     = date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp());
         $subtotal      = round($shippingAddress->getBaseSubtotalInclTax(), 2);
         $shippingDate  = $orderDate; //TODO change this to the actual (predicted) shipping date
-        $shippingCosts = round($shippingAddress->getShippingInclTax() * $quote->getBaseToGlobalRate()); //TODO why is base_shipping_incl_tax sometimes empty?
+        $shippingCosts = round($shippingAddress->getShippingInclTax() * $quote->getBaseToGlobalRate(), 2); //TODO why is base_shipping_incl_tax sometimes empty?
         
         $order = array(
             'ExtRef'        => $extRef,
