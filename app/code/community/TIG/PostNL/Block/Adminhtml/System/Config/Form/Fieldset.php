@@ -36,9 +36,28 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php if(!$this->getIsAddressSplit()): ?>
-    <div class="module-message warning">
-        <h4>[POSTNL-0005-W] <?php echo $this->__('You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.')?> <a href="<?php echo Mage::helper('postnl')->getErrorUrl('POSTNL-0005'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
-    </div>
-<?php endif; ?>
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminhtml_Block_System_Config_Form_Fieldset
+{
+    /**
+     * Return header comment part of html for fieldset
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * 
+     * @return string
+     */
+    protected function _getHeaderCommentHtml($element)
+    {
+        $comment = $element->getComment();
+        if (!$comment) {
+            return '';
+        }
+        
+        $commentHtml = '<div class="box">'
+                     .     '<p>'
+                     .         $comment
+                     .     '</p>'
+                     . '</div>';
+        
+        return $commentHtml;
+    }
+}

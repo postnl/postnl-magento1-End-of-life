@@ -216,10 +216,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
      * @param boolean $withDefault Determines whether or not a 'default' option is prepended to the array
      * @param boolean $witHExtraCover Flag whether or not to include extra cover options
      * @param boolean|int $storeId
+     * @param boolean $codesOnly
      * 
      * @return array
      */
-    public function getAvailableOptions($withDefault = false, $withExtraCover = true, $storeId = false)
+    public function getAvailableOptions($withDefault = false, $withExtraCover = true, $storeId = false, $codesOnly = false)
     {
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
@@ -262,6 +263,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
             
+            if ($codesOnly === true) {
+                $availableOptions[] = $option['value'];
+                continue;
+            }
+            
             $availableStandardOptions[] = $option;
         }
         
@@ -275,6 +281,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             }
             
             if (isset($option['isExtraCover']) && $withExtraCover !== true) {
+                continue;
+            }
+            
+            if ($codesOnly === true) {
+                $availableOptions[] = $option['value'];
                 continue;
             }
             
@@ -294,6 +305,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
             
+            if ($codesOnly === true) {
+                $availableOptions[] = $option['value'];
+                continue;
+            }
+            
             $availableEuOptions[] = $option;
         }
         
@@ -310,7 +326,20 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
             
+            if ($codesOnly === true) {
+                $availableOptions[] = $option['value'];
+                continue;
+            }
+            
             $availableGlobalOptions[] = $option;
+        }
+            
+        /**
+         * If we only need the codes, we can return the $availableOptions array. Otherwise, we need to order and merge the
+         * other arrays
+         */
+        if ($codesOnly === true) {
+            return $availableOptions;
         }
         
         /**

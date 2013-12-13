@@ -1,5 +1,4 @@
-<?php
-/**
+/**document
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
  *                    |    |  /  _ \\   __\\__  \  |  |
@@ -35,10 +34,25 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
  */
-?>
-<?php if(!$this->getIsAddressSplit()): ?>
-    <div class="module-message warning">
-        <h4>[POSTNL-0005-W] <?php echo $this->__('You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.')?> <a href="<?php echo Mage::helper('postnl')->getErrorUrl('POSTNL-0005'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
-    </div>
-<?php endif; ?>
+document.observe('dom:loaded', function() {
+	$$('.postnl-validate-empty').each(function(element) {
+		if (!element.value.empty()) {
+			element.removeClassName('postnl-validate-empty');
+		}
+		
+		element.observe('change', function(event) {
+			var eventElement = Event.element(event);
+			if (eventElement.value.empty() && !eventElement.hasClassName('postnl-validate-empty')) {
+				eventElement.addClassName('postnl-validate-empty');
+				return;
+			}
+			
+			if (!eventElement.value.empty() && eventElement.hasClassName('postnl-validate-empty')) {
+				eventElement.removeClassName('postnl-validate-empty');
+				return;
+			}
+		});
+	});
+});

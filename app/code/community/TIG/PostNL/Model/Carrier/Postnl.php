@@ -105,7 +105,7 @@ class TIG_PostNL_Model_Carrier_Postnl
      *
      * @param Mage_Shipping_Model_Rate_Request $data
      * 
-     * @return Mage_Shipping_Model_Rate_Result
+     * @return Mage_Shipping_Model_Rate_Result|void
      */
     public function collectRates(Mage_Shipping_Model_Rate_Request $request)
     {
@@ -117,8 +117,8 @@ class TIG_PostNL_Model_Carrier_Postnl
          * Several checks to see if shipping to the selected country is allowed based on the supported PostNL shipping products
          */
         $countryId = $request->getDestCountryId();
+        $helper = $this->getHelper();
         if ($countryId) {
-            $helper = $this->getHelper();
             $euCountries = Mage::helper('postnl/cif')->getEuCountries();
         
             if ($countryId == 'NL'
@@ -154,7 +154,10 @@ class TIG_PostNL_Model_Carrier_Postnl
             return $result;
         }
         
-        throw Mage::exception('TIG_PostNL', 'Invalid rate type requested: ' . $rateType);
+        throw new TIG_PostNL_Exception(
+            $helper->__('Invalid rate type requested: %s', $rateType),
+            'POSTNL-0036'
+        );
     }
     
     protected function _getFlatRate($request)

@@ -70,7 +70,10 @@ class TIG_PostNL_Model_Checkout_Observer_Shipment
         $result = $cif->updateOrder($postnlOrder);
         
         if (!isset($result->Succes) || $result->Succes != 'true') {
-            throw Mage::exception('TIG_PostNL', 'Invalid UpdateOrder response recieved!');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid UpdateOrder response recieved!'),
+                'POSTNL-0037'
+            );
         }
         
         return $this;

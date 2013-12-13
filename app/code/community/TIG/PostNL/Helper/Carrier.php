@@ -125,7 +125,10 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
                 $shippingMethod = $carrier . '_' . self::POSTNL_TABLERATE_METHOD;
                 break;
             default:
-                throw Mage::exception('TIG_PostNL', 'Invalid rate type requested: ' . $rateType);
+                throw new TIG_PostNL_Exception(
+                    $this->__('Invalid rate type requested: %s', $rateType),
+                    'POSTNL-0036'
+                );
         }
         
         Mage::register('current_postnl_shipping_method', $shippingMethod);

@@ -117,7 +117,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if (!is_object($response) 
             || !isset($response->Status)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid PingStatus response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid PingStatus response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0038'
+            );
         }
         
         return $response->Status;
@@ -139,7 +142,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
         
         if (!$quote) {
-            throw Mage::exception('TIG_PostNL', 'No quote available to initiate PostNL Checkout.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('No quote available to initiate PostNL Checkout.'),
+                'POSTNL-0039'
+            );
         }
         
         $this->setStoreId($quote->getStoreId());
@@ -204,7 +210,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !is_object($response->Checkout)
             || !isset($response->Checkout->OrderToken)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid PrepareOrder response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid PrepareOrder response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0040'
+            );
         }
         
         return $response;
@@ -224,7 +233,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
         
         if (!$quote) {
-            throw Mage::exception('TIG_PostNL', 'No quote available to initiate PostNL Checkout.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('No quote available to initiate PostNL Checkout.'),
+                'POSTNL-0039'
+            );
         }
         
         $this->setStoreId($quote->getStoreId());
@@ -247,7 +259,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
         
         if (!is_object($response)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid ReadOrder response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid ReadOrder response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0041'
+            );
         }
         
         return $response;
@@ -282,7 +297,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
         
         if (!is_object($response)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid ConfirmOrder response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid ConfirmOrder response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0042'
+            );
         }
         
         return $response;
@@ -461,14 +479,18 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param Mage_Sales_Model_Quote $quote
      * 
      * @return array
+     * 
+     * @todo figure out why base_shipping_incl_tax is sometimes empty when shipping_incl_tax is not
      */
     protected function _getOrder(Mage_Sales_Model_Quote $quote)
     {
+        $shippingAddress = $quote->getShippingAddress();
+        
         $extRef        = $quote->getId();
         $orderDate     = date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp());
-        $subtotal      = round($quote->getBaseSubtotal(), 2);
+        $subtotal      = round($shippingAddress->getBaseSubtotalInclTax(), 2);
         $shippingDate  = $orderDate; //TODO change this to the actual (predicted) shipping date
-        $shippingCosts = round($quote->getShippingAddress()->getBaseShippingInclTax());
+        $shippingCosts = round($shippingAddress->getShippingInclTax() * $quote->getBaseToGlobalRate()); //TODO why is base_shipping_incl_tax sometimes empty?
         
         $order = array(
             'ExtRef'        => $extRef,
@@ -593,7 +615,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                  $reference = Mage::getStoreConfig(self::XML_PATH_CUSTOM_SHIPMENT_REFERENCE, $storeId);
                  break;
              default:
-                 throw Mage::exception('TIG_PostNL', 'Invalid reference type requested: ' . $referenceType);
+                 throw new TIG_PostNL_Exception(
+                     Mage::helper('postnl')->__('Invalid reference type requested: %s', $referenceType),
+                     'POSTNL-0043'
+                 );
          }
          
          /**
@@ -724,12 +749,18 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         } elseif ($object instanceof TIG_PostNL_Model_Checkout_Order) {
             $postnlOrder = $object;
         } else {
-            throw Mage::exception('TIG_PostNL', 'Invalid object specified: ' . get_class($object));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid object specified: %s', get_class($object)),
+                'POSTNL-0044'
+            );
         }
         
         $orderToken = $postnlOrder->getToken();
         if (!$orderToken) {
-            throw Mage::exception('TIG_PostNL', 'OrderToken missing for quote #' . $postnlOrder->getQuoteId());
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('OrderToken missing for quote #%s', $postnlOrder->getQuoteId()),
+                'POSTNL-0045'
+            );
         }
         
         $checkout = array(

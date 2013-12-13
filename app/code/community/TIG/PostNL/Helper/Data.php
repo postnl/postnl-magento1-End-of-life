@@ -84,6 +84,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
     
     /**
+     * XML path to 'show_error_details_in_frontend' flag
+     */
+    const XML_PATH_SHOW_ERROR_DETAILS_IN_FRONTEND = 'postnl/advanced/show_error_details_in_frontend';
+    
+    /**
      * Required configuration fields
      * 
      * @var array
@@ -251,6 +256,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         
         $euProductOptions = Mage::getModel('postnl_core/system_config_source_euProductOptions')
                                 ->getAvailableOptions($storeId); 
+        
         if (empty($euProductOptions)) {
             return false;
         }
@@ -357,6 +363,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $enabled = Mage::getStoreConfigFlag(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
         if ($enabled === false) {
             Mage::register($registryKey, false);
+            
+            $errors = array(
+                'POSTNL-0030' => $this->__('You have not yet enabled the extension.')
+            );
+            
+            Mage::register($registryKey . '_errors', $errors);
             return false;
         }
         
@@ -366,6 +378,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $postnlShippingMethodEnabled = Mage::getStoreConfigFlag(self::XML_PATH_CARRIER_ACTIVE, $storeId);
         if ($postnlShippingMethodEnabled === false) {
             Mage::register($registryKey, false);
+            
+            $errors = array(
+                'POSTNL-0031' => $this->__('The PostNL shipping method has not been enabled.')
+            );
+            Mage::register($registryKey . '_errors', $errors);
             return false;
         }
         
@@ -375,6 +392,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $baseCurrencyCode = Mage::getModel('core/store')->load($storeId)->getBaseCurrencyCode();
         if ($baseCurrencyCode != 'EUR') {
             Mage::register($registryKey, false);
+            
+            $errors = array(
+                'POSTNL-0032' => $this->__("The shop's base currency code must be set to EUR for PostNL to function.")
+            );
+            Mage::register($registryKey . '_errors', $errors);
             return false;
         }
         
@@ -423,13 +445,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return Mage::registry($registryKey);
         }
         
+        $errors = array();
+        
         /**
          * Check if the module has been activated
          */
         $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($isActivated != 2) {
-            Mage::register($registryKey, false);
-            return false;
+            $errors['POSTNL-0033'] = $this->__('The extension has not been activated.');
         }
         
         if ($storeId === false) {
@@ -460,15 +483,32 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         
         /**
-         * Check if each required field is filled. If not, return false
+         * Check if each required field is filled. If not add the field's label to an array of missing fields so we can later
+         * inform the merchant which fields exactly are missing.
          */
+        $configFields = Mage::getSingleton('adminhtml/config');
+        $sections     = $configFields->getSections('postnl');
+        $section      = $sections->postnl;
         foreach ($requiredFields as $requiredField) {
             $value = Mage::getStoreConfig($requiredField, $storeId);
             
             if ($value === null || $value === '') {
-                Mage::register($registryKey, false);
-                return false;
+                $fieldParts = explode('/', $requiredField);
+                $field = $fieldParts[2];
+                $group = $fieldParts[1];
+                
+                $label = $section->groups->$group->fields->$field->label;
+                $errors['POSTNL-0034'] = $this->__('%s is required.', $label);
             }
+        }
+        
+        /**
+         * If any errors were detected, add them to the registry and return false
+         */
+        if (!empty($errors)) {
+            Mage::register($registryKey, false);
+            Mage::register($registryKey . '_errors', $errors);
+            return false;
         }
         
         Mage::register($registryKey, true);
@@ -578,7 +618,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         
         if (is_null($file)) {
-            $file = self::POSTNL_LOG_DIRECTORY . DS . self::POSTNL_DEBUG_LOG_FILE;
+            $file = static::POSTNL_LOG_DIRECTORY . DS . static::POSTNL_DEBUG_LOG_FILE;
         }
         
         $this->createLogDir();
@@ -610,7 +650,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * 
      * N.B. this uses forced logging
      * 
-     * @param Exception $exception
+     * @param string|Exception $exception
      * 
      * @return TIG_PostNL_Helper_Data
      * 
@@ -622,14 +662,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return $this;
         }
         
-        $this->createLogDir();
+        if (is_object($exception)) {
+            $message = "\n" . $exception->__toString();
+        } else {
+            $message = $exception;
+        }
         
-        Mage::log(
-            "\n" . $exception->__toString(), 
-            Zend_Log::ERR, 
-            self::POSTNL_LOG_DIRECTORY . DS . self::POSTNL_EXCEPTION_LOG_FILE, 
-            true
-        );
+        $file = self::POSTNL_LOG_DIRECTORY . DS . self::POSTNL_EXCEPTION_LOG_FILE;
+        
+        $this->log($message, Zend_Log::ERR, $file);
         
         return $this;
     }
@@ -659,7 +700,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             /**
              * If the edition is not community or enterprise, it is not supported
              */
-            throw Mage::exception('TIG_PostNL', 'Invalid Magento edition detected: ' . $edition);
+            throw new TIG_PostNL_Exception(
+                $this->__('Invalid Magento edition detected: %s', $edition),
+                'POSTNL-0035'
+            );
         }
         
         /**
@@ -670,6 +714,27 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return true;
         }
         
+        return false;
+    }
+    
+    /**
+     * Checks if the current environment is in the shop's admin area.
+     * 
+     * @return boolean
+     */
+    public function isAdmin()
+    {
+        if (Mage::app()->getStore()->isAdmin()) {
+            return true;
+        }
+
+        /**
+         * Fallback check in case the previous check returns a false positive
+         */
+        if (Mage::getDesign()->getArea() == 'adminhtml') {
+            return true;
+        }
+
         return false;
     }
     
@@ -688,5 +753,258 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         
         return $this;
+    }
+    
+    /**
+     * Gets the knowledge base URL for a specified error code. First we check to see if we have an entry in config.xml for this
+     * error code and if so, if it has an associated URL.
+     * 
+     * @param string $errorCode The error code (for example: POSTNL-0001)
+     * 
+     * @return string The URL or an empty string if no URL could be found
+     */
+    public function getErrorUrl($errorCode)
+    {
+        $error = Mage::getConfig()->getNode('tig/errors/' . $errorCode);
+        if ($error !== false && $error->url) {
+            return (string) $error->url;
+        }
+        
+        return '';
+    }
+    
+    /**
+     * Adds an error message to the specified session based on an exception. The exception should contain a valid error code
+     * in order to properly process the error. Exceptions without a (valid) error code will behave like a regular 
+     * $session->addError() call.
+     * 
+     * @param string|Mage_Core_Model_Session_Abstract $session The session to which the messages will be added.
+     * @param Exception $exception
+     * 
+     * @return TIG_PostNL_Helper_Data
+     * 
+     * @see TIG_PostNL_Helper_Data::addSessionMessage()
+     */
+    public function addExceptionSessionMessage($session, Exception $exception)
+    {
+        /**
+         * Get the error code, message type (hardcoded as 'error') and the message of the exception
+         */
+        $code        = $exception->getCode();
+        $messageType = 'error';
+        $message     = $this->__('An error occurred while processing your request: ') . $exception->getMessage();
+        
+        return $this->addSessionMessage($session, $code, $messageType, $message);
+    }
+    
+    /**
+     * Add a message to the specified session. Message can be an error, a success message, an info message or a warning.
+     * If a valid error code is supplied, the message will be prepended with the error code and a link to a knowledgebase article
+     * will be appended.
+     * 
+     * If no $code is specified, $messageType and $message will be required
+     * 
+     * @param string|Mage_Core_Model_Session_Abstract $session The session to which the messages will be added.
+     * @param string|null $code
+     * @param string|null $messageType
+     * @param string|null $message
+     * 
+     * @return TIG_PostNL_Helper_Data
+     * 
+     * @see Mage_Core_Model_Session_Abstract::addMessage()
+     * 
+     * @throws InvalidArgumentException
+     * @throws TIG_PostNL_Exception
+     */
+    public function addSessionMessage($session, $code = null, $messageType = null, $message = null)
+    {
+        /************************************************************************************************************************
+         * Check that the required arguments are available and valid
+         ***********************************************************************************************************************/
+        
+        /**
+         * If $code is null or 0, $messageType and $message are required
+         */
+        if (
+            (is_null($code) || $code === 0) 
+            && (is_null($messageType) || is_null($message))
+        ) {
+            throw new InvalidArgumentException(
+                "Warning: Missing argument for addSessionMessage method: 'messageType' and 'message' are required."
+            );
+        }
+        
+        /**
+         * If the session is a string, treat it as a class name and instantiate it
+         */
+        if (is_string($session)) {
+            $session = Mage::getSingleton($session);
+        }
+        
+        /**
+         * If the session could not be loaded or is not of the corect type, throw an exception
+         */
+        if (!$session 
+            || !is_object($session) 
+            || !($session instanceof Mage_Core_Model_Session_Abstract)
+        ) {
+            throw Mage::exception('TIG_PostNL', 'Invalid session requested.');
+        }
+        
+        /************************************************************************************************************************
+         * Get the actual error from config.xml if it's available
+         ***********************************************************************************************************************/
+        
+        $error = false;
+        $link = false;
+        
+        if (!is_null($code) && $code !== 0) {            
+            /**
+             * get the requested code and if possible, the knowledgebase link
+             */
+            $error = Mage::getConfig()->getNode('tig/errors/' . $code);
+            if ($error !== false) {
+                $link = $error->url;
+            }
+        }
+        
+        /************************************************************************************************************************
+         * Check that the required 'message' and 'messageType' components are available. If they are not yet available, we'll try
+         * to read them from the error itself.
+         ***********************************************************************************************************************/
+        
+        /**
+         * If the specified error was found and no message was supplied, get the error's default message
+         */
+        if ($error && !$message) {
+            $message = (string) $error->message;
+        }
+        
+        /**
+         * If we still don't have a valid message, throw an exception
+         */
+        if (!$message) {
+            throw Mage::exception('TIG_PostNL', 'No message supplied.');
+        }
+        
+        /**
+         * If the specified error was found and no message type was supplied, get the error's default type
+         */
+        if ($error && !$messageType) {
+            $messageType = (string) $error->type;
+        }
+        
+        
+        /**
+         * If we still don't have a valid message type, throw an exception
+         */
+        if (!$messageType) {
+            throw Mage::exception('TIG_PostNL', 'No message type supplied.');
+        }
+        
+        /************************************************************************************************************************
+         * Build the actual message we're going to add. The message will consist of the error code, followed by the actual
+         * message and finally a link to the knowledge base. Only the message part is required.
+         ***********************************************************************************************************************/
+        
+        /**
+         * Flag that determines whether the error code and knowledgebase link will be included in the error message 
+         * (if available)
+         */
+        $canShowErrorDetails = $this->_canShowErrorDetails();
+        
+        /**
+         * Lets start with the error code if it's paresent. It will be formatted as "[POSTNL-0001-X]".
+         */
+        $errorMessage = '';
+        if ($canShowErrorDetails 
+            && !is_null($code) 
+            && $code !== 0
+        ) {
+            $errorMessage .= "[{$code}";
+            
+            $codeSuffix = '';
+            switch ($messageType) {
+                case 'error':
+                    $codeSuffix = '-E';
+                    break;
+                case 'warning': 
+                    $codeSuffix = '-W';
+                    break;
+                case 'notice': 
+                    $codeSuffix = '-N';
+                    break;
+                case 'success': 
+                    $codeSuffix = '-S';
+                    break;
+                // no default
+            }
+            
+            $errorMessage .= $codeSuffix . '] ';
+        }
+        
+        /**
+         * Add the actual message. This is the only required part. The code and link are optional
+         */
+        $errorMessage .= $this->__($message);
+        
+        /**
+         * Add the link to the knowledgebase if we have one
+         */
+        if ($canShowErrorDetails && $link) {
+            $errorMessage .= ' <a href="' 
+                           . $link 
+                           . '" target="_blank" class="postnl-message">' 
+                           . $this->__('Click here for more information from the TiG knowledgebase.') 
+                           . '</a>';
+        }
+        
+        /************************************************************************************************************************
+         * Finally, let's add the error to the session
+         ***********************************************************************************************************************/
+        
+        /**
+         * The method we'll use to add the message to the session has to be built first
+         */
+        $addMethod = 'add' . ucfirst($messageType);
+        
+        /**
+         * If the method doesn't exist, throw an exception
+         */
+        if (!method_exists($session, $addMethod)) {
+            throw Mage::exception('TIG_PostNL', 'Invalid message type requested: ' . $messageType);
+        }
+        
+        /**
+         * Add the message to the session
+         */
+        $session->$addMethod($errorMessage);
+        
+        return $this;
+    }
+    
+    /**
+     * Checks to see if we can show error details (error code and knowledgebase link) in the frontend when an error occurs.
+     * 
+     * @return boolean
+     */
+    protected function _canShowErrorDetails()
+    {
+        /**
+         * We can always show error details in the admin area
+         */
+        if ($this->isAdmin()) {
+            return true;
+        }
+        
+        /**
+         * Check if the show_error_details_in_frontend setting is set to true
+         */
+        $storeId = Mage::app()->getStore()->getId();
+        if (Mage::getStoreConfigFlag(self::XML_PATH_SHOW_ERROR_DETAILS_IN_FRONTEND, $storeId)) {
+            return true;
+        }
+        
+        return false;
     }
 }

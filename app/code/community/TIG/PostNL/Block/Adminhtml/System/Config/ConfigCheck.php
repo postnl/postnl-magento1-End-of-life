@@ -78,6 +78,21 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ConfigCheck
     }
     
     /**
+     * gets config errors from the registry
+     * 
+     * @return array|null
+     */
+    public function getLiveConfigErrors()
+    {
+        $configErrors = Mage::registry('postnl_is_configured_errors');
+        if (is_null($configErrors)) {
+            $configErrors = Mage::registry('postnl_enabled_errors');
+        }
+        
+        return $configErrors;
+    }
+    
+    /**
      * Check if test mode is enabled
      * 
      * @return boolean
@@ -87,6 +102,21 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ConfigCheck
         $helper = $this->getPostnlHelper();
         
         return $helper->isEnabled(false, false, true);
+    }
+    
+    /**
+     * gets config errors from the registry
+     * 
+     * @return array|null
+     */
+    public function getTestConfigErrors()
+    {
+        $configErrors = Mage::registry('postnl_is_configured_test_errors');
+        if (is_null($configErrors)) {
+            $configErrors = Mage::registry('postnl_enabled_test_errors');
+        }
+        
+        return $configErrors;
     }
     
     /**
@@ -102,6 +132,21 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ConfigCheck
     }
     
     /**
+     * gets config errors from the registry
+     * 
+     * @return array|null
+     */
+    public function getGlobalConfigErrors()
+    {
+        $configErrors = Mage::registry('postnl_is_configured_global_test_errors');
+        if (is_null($configErrors)) {
+            $configErrors = Mage::registry('postnl_enabled_global_test_errors');
+        }
+        
+        return $configErrors;
+    }
+    
+    /**
      * Check if checkout is enabled
      * 
      * @return boolean
@@ -111,6 +156,21 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ConfigCheck
         $helper = Mage::helper('postnl/checkout');
         
         return $helper->isCheckoutEnabled(false);
+    }
+    
+    /**
+     * gets config errors from the registry
+     * 
+     * @return array|null
+     */
+    public function getCheckoutConfigErrors()
+    {
+        $configErrors = Mage::registry('postnl_is_configured_checkout_errors');
+        if (is_null($configErrors)) {
+            $configErrors = Mage::registry('postnl_enabled_checkout_errors');
+        }
+        
+        return $configErrors;
     }
     
     /**
