@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>0.5.6</version>
+			<version>0.5.7</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -824,6 +824,15 @@
                 <url>http://servicedesk.totalinternetgroup.nl/entries/31566016</url>
                 <type>error</type>
             </POSTNL-0087>
+            
+            
+            <POSTNL-0100>
+                <message>The user is not authorized for this barcode</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0100>
+            
+            
             <LIRS_0>
                 <message>Combilabel was not processed successfully for shipment with barcode %s. Normal label is generated and product code for shipment changed to 4944.</message>
                 <url></url>

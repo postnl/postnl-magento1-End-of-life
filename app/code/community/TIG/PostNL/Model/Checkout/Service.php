@@ -550,6 +550,14 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             break;
         }
         
+        /**
+         * Save the customer's name
+         */
+        $billingAddress = $quote->getBillingAddress();
+        $order->setCustomerFirstname($billingAddress->getFirstname())
+              ->setCustomerLastname($billingAddress->getLastname())
+              ->save();
+        
         Mage::dispatchEvent('checkout_type_onepage_save_order_after',
             array(
                 'order' => $order, 
