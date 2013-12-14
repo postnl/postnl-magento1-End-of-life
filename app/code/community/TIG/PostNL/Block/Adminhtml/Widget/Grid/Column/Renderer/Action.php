@@ -138,7 +138,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
          * If the shipment is confirmed, we can't confirm it again
          */
         if ($confirmStatus == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
-            $action['style'] = 'color:gray; cursor:default;';
+            $action['style'] = 'color:gray; cursor:not-allowed;';
             $action['onClick'] = 'return false;';
             $action['title'] = $helper->__('This shipment has already been confirmed.');
             return $action;
@@ -150,7 +150,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
         if (in_array($countryId, $euCountries)
             && !$row->getData(self::LABELS_PRINTED_COLUMN)
         ){
-            $action['style'] = 'color:gray; cursor:default;';
+            $action['style'] = 'color:gray; cursor:not-allowed;;';
             $action['onClick'] = 'return false;';
             $action['title'] = $helper->__("You must first print a shipping label for this shipment.");
             return $action;

@@ -430,10 +430,10 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             if ($errors) {
                 $message = '';
                 foreach($errors as $error) {
-                    $message .= $error->nodeValue . '<br/>';
+                    $message .= $error->nodeValue . PHP_EOL;
                 }
                 
-                $exception = Mage::exception('TIG_PostNL_Model_Core_Cif', $message);
+                $exception = new TIG_PostNL_Model_Core_Cif_Exception($message, null, $e);
             }
                 
             $errorNumbers = $errorResponse->getElementsByTagNameNS(self::CIF_ERROR_NAMESPACE, 'ErrorNumber');
@@ -446,7 +446,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             /**
              * Create a general exception
              */
-            $exception = Mage::exception('TIG_PostNL_Model_Core_Cif', $e->getMessage());
+             $exception = new TIG_PostNL_Model_Core_Cif_Exception($e->getMessage(), null, $e);
         }
         
         /**

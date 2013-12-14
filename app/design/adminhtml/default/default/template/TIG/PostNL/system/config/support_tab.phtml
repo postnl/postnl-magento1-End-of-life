@@ -1,59 +1,89 @@
-<?php $_helper = $this->helper('postnl'); ?>
+<?php 
+ /**
+ *                  ___________       __            __   
+ *                  \__    ___/____ _/  |_ _____   |  |  
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/       
+ *          ___          __                                   __   
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
+ *                  \/                           \/               
+ *                  ________       
+ *                 /  _____/_______   ____   __ __ ______  
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/ 
+ *                        \/                       |__|    
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL: 
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php $_version = (string) Mage::getConfig()->getModuleConfig("TIG_PostNL")->version; ?>
 <tr>
     <td>
-        <h2 class="content-heading"><?php echo $_helper->__('PostNL version');?> <?php echo Mage::getConfig()->getModuleConfig("TIG_PostNL")->version;?></h2>
+        <h2 class="content-heading"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>"/> <?php echo $this->__('PostNL version %s', $_version);?></h2>
         <table id="supportWrap" cellpadding="0" cellspacing="0">
             <tr>
                 <td class="col-left">
                     <div class="text-box">
-                        <h3><?php echo $_helper->__('Quick reference guide');?></h3>
+                        <h3><?php echo $this->__('Quick reference guide');?></h3>
                         <ol>
-                            <li><strong><?php echo $_helper->__('Lorem ipsum');?> <a target="_blank" href="https://www.postnl.nl/"><?php echo $_helper->__('PostNL');?></a> <?php echo $_helper->__(' dolor sit amet');?></strong>
+                            <li><strong><?php echo $this->__('Register the extension for use');?></strong>
                                 <ol>
-                                    <li><?php echo $_helper->__('dolore magna aliquam erat volutpat.');?></li>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ', Mage::getUrl('*/*/*'));?></li>
+                                    <li><?php echo $this->__("Open the 'General Settings' tab and enter your email address.");?></li>
+                                    <li><?php echo $this->__("Press the 'Activate the extension' button. You will now recieve an email at the address you specified containing 2 secure keys.");?></li>
+                                    <li><?php echo $this->__("Copy the keys and enter them in the 'Unique-' and 'Private key' fields that are now available.");?></li>
+                                    <li><?php echo $this->__("Press the 'Finish activation' button.");?></li>
+                                    <li><?php echo $this->__("Set the 'Active' field to 'Yes' and save the configuration. Your extension is now registered.");?></li>
                                 </ol>
                             </li>
-                            <li><strong><?php echo $_helper->__('Lorem ipsum dolor sit amet');?></strong>
+                            <li><strong><?php echo $this->__('Lorem ipsum dolor sit amet');?></strong>
                                 <ol>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
+                                    <li><?php echo $this->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
+                                    <li><?php echo $this->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
                                 </ol>
                             </li>
-                            <li><strong><?php echo $_helper->__('Lorem ipsum dolor sit amet');?></strong>
+                            <li><strong><?php echo $this->__('Lorem ipsum dolor sit amet');?></strong>
                                 <ol>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
+                                    <li><?php echo $this->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
+                                    <li><?php echo $this->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
+                                    <li><?php echo $this->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
                                 </ol>
                             </li>
-                            <li><strong><?php echo $_helper->__('Lorem ipsum dolor sit amet');?></strong>
+                            <li><strong><?php echo $this->__('Lorem ipsum dolor sit amet');?></strong>
                                 <ol>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
-                                    <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
+                                    <li><?php echo $this->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
+                                    <li><?php echo $this->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
+                                    <li><?php echo $this->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
                                 </ol>
                             </li>
-                            <li><strong><?php echo $_helper->__('Lorem ipsum dolor sit amet');?></strong>
+                            <li><strong><?php echo $this->__('Lorem ipsum dolor sit amet');?></strong>
                                 <ol>
-                                   <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
-                                   <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
-                                   <li><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li> 
+                                   <li><?php echo $this->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
+                                   <li><?php echo $this->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li>
+                                   <li><?php echo $this->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ');?></li> 
                                 </ol>
                             </li>
                         </ol>
-                    </div> 
-                    <div class="text-box">
-                        <h3><?php echo $_helper->__('Legend');?></h3>
-                            <ul id="legend">
-                                <li class="disabled"><?php echo $_helper->__('PostNL module - Disabled');?></li>
-                                <li class="test"><?php echo $_helper->__('PostNL module - Test Modus');?></li>
-                                <li class="live"><?php echo $_helper->__('PostNL module - Live Modus');?></li>
-                                <li class="advanced"><?php echo $_helper->__('Advanced Configuration');?></li>
-                            </ul>
                     </div>
                 </td>
                 
@@ -61,59 +91,55 @@
         
                 <td class="col-right">
                     <div class="text-box">
-                        <h3><?php echo $_helper->__('Magento &amp; 3rd party version compatibility');?></h3>
+                        <h3><?php echo $this->__('Magento &amp; 3rd party version compatibility');?></h3>
                         <ul>
-                            <li><?php echo $_helper->__('Magento Community Edition version');?> 1.5, 1.6, 1.7 &amp; 1.8</li>
-                            <li><?php echo $_helper->__('Magento Enterprise Edition version');?> 1.11,1.12 &amp; 1.13</li>
+                            <li><?php echo $this->__('Magento Community Edition version');?> v1.6, v1.7 &amp; v1.8</li>
+                            <li><?php echo $this->__('Magento Enterprise Edition version');?> v1.11, v1.12 &amp; v1.13</li>
                         </ul>
                         <ul>
-                            <li><?php echo $_helper->__('OneStepCheckout version');?> 4.0.7</li>
+                            <li><?php echo $this->__('OneStepCheckout version');?> v4.x</li>
                         </ul>
                     </div>
                     <div class="text-box">
-                        <h3><?php echo $_helper->__('Support');?></h3>
-                        <p><?php echo $_helper->__('The module is developed by Total Internet Group, commissioned by PostNL. Depending on the nature of the issue or question you should contact either PostNL or Total Internet Group.');?></p>
-                        <h4><?php echo $_helper->__('Module basic configuration and account information');?></h4>
-                        <p><?php echo $_helper->__('Lorem ipsum dolor sit amet, consectetuer adipiscing elit:');?></p>
+                        <h3><?php echo $this->__('Support');?></h3>
+                        <p><?php echo $this->__('The extension is developed by Total Internet Group, commissioned by PostNL. Depending on the nature of the issue or question you should contact either PostNL or Total Internet Group.');?></p>
+                        <h4><?php echo $this->__('PostNL account information');?></h4>
+                        <p><?php echo $this->__('For questions related to your PostNL account, please contact your PostNL account manager.');?></p>
                         <p><a href="http://www.postnl.nl" target="_blank"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>" alt="" /></a></p>
                         <table class="contact">
                              <tr>
-                                <td class="first"><?php echo $_helper->__('PostNL:');?></td>
-                                <td class="last"><a target="_blank" href="https://www.postnl.nl/">www.postnl.nl</a></td>
+                                <td class="first"><?php echo $this->__('PostNL:');?></td>
+                                <td class="last"><a target="_blank" href="http://www.postnl.nl/voorthuis/klantenservice/">http://www.postnl.nl/voorthuis/klantenservice/</a></td>
                             </tr>
                             <tr>
-                                <td class="first"><?php echo $_helper->__('Phone:');?></td>
-                                <td class="last">+31(0)20-123-45-67</td>
-                            </tr>
-                            <tr>
-                                <td class="first"><?php echo $_helper->__('E-mail:');?></td>
-                                <td class="last"><a href="mailto:support@postnl.nl">support@postnl.nl</a></td>
+                                <td class="first"><?php echo $this->__('Phone:');?></td>
+                                <td class="last">+31(0)88-86-86-868 </td>
                             </tr>
                         </table>
-                        <h4><?php echo $_helper->__('Module support and advanced configuration');?></h4>
-                        <p><?php echo $_helper->__('For configuration conflicts, bugs and Magento based support contact Total Internet Group:');?></p>
+                        <h4><?php echo $this->__('Extension support and configuration');?></h4>
+                        <p><?php echo $this->__('For configuration problems, extension conflicts, bugs and Magento based support, contact Total Internet Group:');?></p>
                         <p><a href="http://www.totalinternetgroup.nl" target="_blank"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/tig_logo_medium.gif'); ?>" alt="" /></a></p>
                         <table class="contact">
                              <tr>
-                                <td class="first"><?php echo $_helper->__('Online support form:');?></td>
-                                <td class="last"><a target="_blank" href="http://support.totalinternetgroup.nl/anonymous_requests/new">support.totalinternetgroup.nl</a></td>
+                                <td class="first"><?php echo $this->__('Online knowledgebase:');?></td>
+                                <td class="last"><a target="_blank" href="http://servicedesk.totalinternetgroup.nl/forums">http://servicedesk.totalinternetgroup.nl/forums</a></td>
+                            </tr>
+                             <tr>
+                                <td class="first"><?php echo $this->__('Online support form:');?></td>
+                                <td class="last"><a target="_blank" href="http://servicedesk.totalinternetgroup.nl/requests/new">http://servicedesk.totalinternetgroup.nl/requests/new</a></td>
                             </tr>
                             <tr>
-                                <td class="first"><?php echo $_helper->__('E-mail:');?></td>
-                                <td class="last"><a href="mailto:support@totalinternetgroup.nl">support@totalinternetgroup.nl</a></td>
-                            </tr>
-                            <tr>
-                                <td class="first"><?php echo $_helper->__('Online Documentation');?></td>
-                                <td class="last"><a target="_blank" href="http://www.totalinternetgroup.nl/support">www.totalinternetgroup.nl/support</a></td>
+                                <td class="first"><?php echo $this->__('E-mail:');?></td>
+                                <td class="last"><a href="mailto:servicedesk@totalinternetgroup.nl">servicedesk@totalinternetgroup.nl</a></td>
                             </tr>
                         </table>
                     </div>
                     <div class="text-box">
-                        <h3><?php echo $_helper->__('Documentation');?></h3>
-                        <p><?php echo $_helper->__('A list of documents regarding the module.');?></p>
+                        <h3><?php echo $this->__('Documentation');?></h3>
+                        <p><?php echo $this->__('A list of documents regarding the extension.');?></p>
                         <ul>
-                            <li><a class="pdf" target="_blank" href="<?php echo $this->getSkinUrl('media/TIG/PostNL/manual.pdf')?>" title="<?php echo $_helper->__('Download a PDF format of the manual.');?>"><?php echo $_helper->__('installation manual PostNL module v%s.pdf (NL)', '0.1.0');?></a></li>
-                            <li><a target="_blank" href="http://servicedesk.totalinternetgroup.nl/entries/23902302-Release-notes" title="<?php echo $_helper->__('View the complete changelog of the module.');?>"><?php echo $_helper->__('full changelog');?></a></li>
+                            <li><a class="pdf" target="_blank" href="" title="<?php echo $this->__('View the installation and configuration manual.');?>"><?php echo $this->__('installation and configuration manual');?></a></li>
+                            <li><a target="_blank" href="" title="<?php echo $this->__('View the complete changelog of the module.');?>"><?php echo $this->__('full changelog');?></a></li>
                         </ul>
                     </div>
                 </td>

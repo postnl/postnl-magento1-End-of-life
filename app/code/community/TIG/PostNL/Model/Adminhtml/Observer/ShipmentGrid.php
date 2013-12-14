@@ -402,6 +402,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $value;
         }
         
+        $origValue = $row->getData($column->getIndex());
+        
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         
         $class = '';
@@ -414,11 +416,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
         
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && date('Ymd', Mage::getModel('core/date')->gmtTimestamp()) == date('Ymd', strtotime($value))
+            && date('Ymd', Mage::getModel('core/date')->gmtTimestamp()) == date('Ymd', strtotime($origValue))
         ) {
             $class = 'grid-severity-major';
         } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && Mage::getModel('core/date')->gmtTimestamp() > strtotime($value)
+            && Mage::getModel('core/date')->gmtTimestamp() > strtotime($origValue)
         ) {
             $class = 'grid-severity-critical';
         } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {

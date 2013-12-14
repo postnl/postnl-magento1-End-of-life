@@ -634,14 +634,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param array $extra An array of additional parameters to add
      * 
      * @return array
-     * 
-     * @todo change message ID to truly unique value
      */
     protected function _getMessage($barcode, $extra = array())
     {
+        $messageIdString = uniqid('postnl_')
+                         . $this->_getCustomerNumber()
+                         . $barcode
+                         . microtime();
+        
         $message = array(
-            'MessageID'        => md5(uniqid('postnl_') .  md5($barcode)), //TODO change to truly unique value (based on barcode, perhaps)
-            'MessageTimeStamp' => date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp()),
+            'MessageID'        => md5($messageIdString),
+            'MessageTimeStamp' => date('d-m-Y H:i:s', Mage::getModel('core/date')->gmtTimestamp()),
         );
         
         if ($extra) {
@@ -1209,12 +1212,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         $extension = '';
         $number = '';
-        if (isset($matches[0])) {
-            $number = $matches[0];
+        if (isset($matches[1])) {
+            $number = $matches[1];
         }
         
-        if (isset($matches[1])) {
-            $extension = $matches[1];
+        if (isset($matches[2])) {
+            $extension = trim($matches[2]);
         }
         
         $housenumberParts = array(
