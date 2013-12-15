@@ -72,7 +72,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         }
         
         if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
-            $renderedValue = Mage::helper('postnl')->__('PakjeGemak');
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak</div>";
+            $renderedValue .= Mage::helper('postnl')->__('PakjeGemak');
             return $renderedValue;
         }
         
@@ -80,7 +81,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
          * Check if this order is domestic
          */
         if ($value == 'NL') {
-            $renderedValue = Mage::helper('postnl')->__('Domestic');
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>standard</div>";
+            $renderedValue .= Mage::helper('postnl')->__('Domestic');
             return $renderedValue;
         }
         
@@ -89,15 +91,53 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
          */
         $euCountries = Mage::helper('postnl/cif')->getEuCountries();
         if (in_array($value, $euCountries)) {
-            $renderedValue = Mage::helper('postnl')->__('EPS');
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>eps</div>";
+            $renderedValue .= Mage::helper('postnl')->__('EPS');
             return $renderedValue;
         }
         
         /**
          * If none of the above, it's an international order
          */
-        $renderedValue = Mage::helper('postnl')->__('GlobalPack');
+        $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>global_pack</div>";
+        $renderedValue .= Mage::helper('postnl')->__('GlobalPack');
         
         return $renderedValue;
+    }
+
+    /**
+     * Renders the <col> element of the column. Added check for $this->getColumn()->getDisplay() == 'none' that causes the
+     * entire element to be hidden
+     * 
+     * @return string
+     * 
+     * @see Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract::renderProperty()
+     */
+    public function renderProperty()
+    {
+        if ($this->getColumn()->hasData('display')
+            && $this->getColumn()->getDisplay() == 'none'
+        ) {
+            return 'style="display:none;"';
+        }
+        
+        $out = '';
+        $width = $this->_defaultWidth;
+
+        if ($this->getColumn()->hasData('width')) {
+            $customWidth = $this->getColumn()->getData('width');
+            if ((null === $customWidth) || (preg_match('/^[0-9]+%?$/', $customWidth))) {
+                $width = $customWidth;
+            }
+            elseif (preg_match('/^([0-9]+)px$/', $customWidth, $matches)) {
+                $width = (int)$matches[1];
+            }
+        }
+
+        if (null !== $width) {
+            $out .= ' width="' . $width . '"';
+        }
+
+        return $out;
     }
 }
