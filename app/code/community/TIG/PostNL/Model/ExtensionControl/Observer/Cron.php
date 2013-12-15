@@ -142,7 +142,7 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
 
         }
 
-        $helper->cronLog('CheckFeedUpdate chas finished.');
+        $helper->cronLog('CheckFeedUpdate cron has finished.');
         return $this;
     }
 }

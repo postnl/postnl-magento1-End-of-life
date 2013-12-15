@@ -43,6 +43,19 @@
 <script type="text/javascript" src="<?php echo $_checkoutJsUrl; ?>"></script>
 <script type="text/javascript">
     document.observe('dom:loaded', function() {
+        new Ajax.Request(pingUrl,{
+            method: 'get',
+            parameters: null,
+            onComplete: function(response) {
+                var responseText = response.responseText;
+                $('waiting_for_ping_spinner').hide();
+                if (responseText == 'OK') {
+                    $('postnl_checkout_seperator').show();
+                    $('postnl_checkout').show();
+                }
+            }
+        });
+    
         var PostNLCheckout = new Class.create();
         PostNLCheckout.prototype = {
             initialize: function(url, successUrl, environment) {
@@ -103,5 +116,5 @@
             '<?php echo $_continueUrl; ?>',
             <?php echo $_environment; ?>
         );
-    })
+    });
 </script>

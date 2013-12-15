@@ -54,6 +54,14 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     const XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY  = 'postnl/general/unique_key';
     const XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY = 'postnl/general/private_key';
     
+    /**
+     * XML path for active setting
+     */
+    const XML_PATH_ACTIVE = 'postnl/general/active';
+    
+    /**
+     * Error code for 'website already exists' error
+     */
     const SHOP_ALREADY_REGISTERED_FAULTCODE = 'API-2-6';
     
     /**
@@ -69,6 +77,10 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         } elseif ($activationStatus == 1) {
             $this->_updateStatistics();
         }
+        
+        $this->_saveState(array('postnl_general' => 1));
+        
+        Mage::app()->cleanCache();
         
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
@@ -98,6 +110,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             Mage::app()->reinitStores();
         }
         
+        $helper = Mage::helper('postnl');
         $webservice = Mage::getModel('postnl_extensioncontrol/webservices');
         try {
             /**
@@ -115,22 +128,21 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
                 return $this->_updateStatistics();
             }
             
-            Mage::helper('postnl')->logException($e);
-            Mage::getSingleton('adminhtml/session')->addError(
-                $this->__('An error occurred whilst processing your request: ' . $e->getMessage())
-            );
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
             return $this;
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
-            Mage::getSingleton('adminhtml/session')->addError(
-                $this->__('An error occurred whilst processing your request: ' . $e->getMessage())
-            );
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+            
             return $this;
         }
         
         Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 1);
         
-        Mage::getSingleton('adminhtml/session')->addSuccess(
+        
+        $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__(
                 'Your webshop has been registered. You should recieve an email on the email address you specify shortly. 
                 Please read this email carefully as it contains instructions on how to finish the extension activation procedure.'
@@ -159,6 +171,18 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
              * Get the general fields array
              */
             $generalFields = $groups['general']['fields'];
+            
+            /**
+             * Check if the 'active' option was set and is a valid value (not empty)
+             */
+            if (isset($generalFields['active']['value'])) {
+                $active = $generalFields['active']['value'];
+                if (!empty($active)) {
+                    Mage::getModel('core/config')->saveConfig(self::XML_PATH_ACTIVE, $active);
+                    
+                    $configChanged = true;
+                }
+            }
             
             /**
              * Check if the unique key was set and is a valid value (not empty and not just asterisks)
@@ -214,12 +238,13 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         }
         
         if (!$uniqueKey || !$privateKey) {
-            Mage::getSingleton('adminhtml/session')->addError(
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0008', 'notice',
                 $this->__('Please fill in your unique and private keys and try again.')
             );
             return $this;
         }
         
+        $helper = Mage::helper('postnl');
         /**
          * Try to update the shop's statistics once in order to fully activate the extension
          */
@@ -227,16 +252,15 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             $webservices = Mage::getModel('postnl_extensioncontrol/webservices');
             $webservices->updateStatistics(true);
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
-            Mage::getSingleton('adminhtml/session')->addError(
-                $this->__('An error occurred whilst processing your request: ' . $e->getMessage())
-            );
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+            
             return $this;
         }
         
         Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 2);
         
-        Mage::getSingleton('adminhtml/session')->addSuccess(
+        $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__('The extension has been successfully activated!')
         );
         
@@ -252,8 +276,41 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     public function showActivationFieldsAction()
     {
         Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 0);
-                
+        
+        $this->_saveState(array('postnl_general' => 1));
+        
+        Mage::app()->cleanCache();
+        
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
+    }
+    
+    /**
+     * Save state of configuration field sets
+     *
+     * @param array $configState
+     * 
+     * @return bool
+     * 
+     * @see Mage_Adminhtml_System_ConfigController::_saveState()
+     */
+    protected function _saveState($configState = array())
+    {
+        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        if (is_array($configState)) {
+            $extra = $adminUser->getExtra();
+            if (!is_array($extra)) {
+                $extra = array();
+            }
+            if (!isset($extra['configState'])) {
+                $extra['configState'] = array();
+            }
+            foreach ($configState as $fieldset => $state) {
+                $extra['configState'][$fieldset] = $state;
+            }
+            $adminUser->saveExtra($extra);
+        }
+
+        return true;
     }
 }

@@ -85,10 +85,17 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
     /**
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      * 
+     * @param boolean|int $storeId
+     * @param boolean $codesOnly
+     * 
      * @return array
      */
-    public function getAvailableOptions()
+    public function getAvailableOptions($storeId = false, $codesOnly = false)
     {
+        if ($storeId === false) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
+        
         $helper = Mage::helper('postnl');
         $options = $this->toOptionArray();
         
@@ -100,7 +107,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         /**
          * Get the list of supported product options from the shop's configuration
          */
-        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
         $supportedOptionsArray = explode(',', $supportedOptions);
         
         /**
@@ -109,6 +116,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         $availableStandardOptions = array();
         foreach ($options as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
+                continue;
+            }
+            
+            if ($codesOnly === true) {
+                $availableOptions[] = $option['value'];
                 continue;
             }
             

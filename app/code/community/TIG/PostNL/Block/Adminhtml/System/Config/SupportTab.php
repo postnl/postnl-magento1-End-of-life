@@ -53,18 +53,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_SupportTab
     protected $_template = 'TIG/PostNL/system/config/support_tab.phtml';
     
     /**
-     * Variables used in template.
-     * 
-     * @var string
-     * 
-     * @todo change these to proper PostNL variables
-     */
-    public $buckarooSupport      = '<a href="mailto:support@buckaroo.nl">Buckaroo support</a>';
-    public $anchorClose          = '</a>';
-    public $totalEmail           = '<a href="mailto:info@totalinternetgroup.nl">';
-    public $buckarooUrl          = '<a href="http://www.buckaroo.nl">Buckaroo</a>';
-    
-    /**
      * Add a new css file to the head. We couldn't do this from layout.xml, because it would have loaded 
      * for all System > Config pages, rather than just PostNL's section.
      * 

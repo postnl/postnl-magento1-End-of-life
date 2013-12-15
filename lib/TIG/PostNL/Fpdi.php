@@ -83,8 +83,8 @@ class TIG_PostNL_Fpdi extends FPDI
     public function insertTemplate($filename, $x = null, $y = null, $w = 0)
     {
         $this->setSourceFile($filename);
-        $tplidx = $this->ImportPage(1);
-        $this->useTemplate($tplidx, $x, $y, $w);
+        $templateIndex = $this->ImportPage(1);
+        $this->useTemplate($templateIndex, $x, $y, $w);
         
         return $this;
     }
