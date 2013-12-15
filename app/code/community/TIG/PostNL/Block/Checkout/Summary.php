@@ -123,4 +123,17 @@ class TIG_PostNL_Block_Checkout_Summary extends Mage_Sales_Block_Items_Abstract
         
         return $shippingDescription;
     }
+    
+    /**
+     * Gets the PostNL order associated with the current quote
+     * 
+     * @return TIG_PostNL_Model_Checkout_Order
+     */
+    public function getPostnlOrder()
+    {
+        $quote = $this->getQuote();
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        
+        return $postnlOrder;
+    }
 }

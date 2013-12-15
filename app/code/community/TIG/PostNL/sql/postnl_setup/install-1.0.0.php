@@ -354,6 +354,13 @@ $postnlOrderTable = $installer->getConnection()
         'default'  => 0,
         ), 'Is Active')
     /**
+     * Flag that determines whether or not this order has been canceled
+     */
+    ->addColumn('is_canceled', Varien_Db_Ddl_Table::TYPE_BOOLEAN, false, array(
+        'unsigned' => true,
+        'default'  => 0,
+        ), 'Is Canceled')
+    /**
      * Optional product code required to ship PakjeGemak orders
      */
     ->addColumn('product_code', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
@@ -372,6 +379,12 @@ $postnlOrderTable = $installer->getConnection()
     ->addColumn('confirm_date', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
         'nullable'  => true,
         ), 'Confirm Date')
+    /**
+     * Date on which the delivery of the order should take place. Purely informational
+     */
+    ->addColumn('delivery_date', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
+        'nullable'  => true,
+        ), 'Delivery Date')
     ->addIndex($installer->getIdxName('postnl_checkout/order', array('order_id')), 
         array('order_id'))
     ->addIndex($installer->getIdxName('postnl_checkout/order', array('quote_id')), 

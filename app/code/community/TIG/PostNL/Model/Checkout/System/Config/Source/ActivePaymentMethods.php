@@ -36,20 +36,28 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
- 
-$installer = $this;
-
-$installer->startSetup();
-
-$installer->getConnection()
-          ->addColumn(
-               $installer->getTable('postnl_core/shipment'),
-               'status_history_updated_at',
-               array(
-                   'nullable' => true,
-                   'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
-                   'comment'  => 'Status History Updated At',
-               )
-          );
-
-$installer->endSetup();
+class TIG_PostNL_Model_Checkout_System_Config_Source_ActivePaymentMethods
+{
+    /**
+     * Gets an array of active payment methods
+     * 
+     * @return array
+     */
+    public function toOptionArray()
+    {
+       $paymentMethods = Mage::getSingleton('payment/config')->getActiveMethods();
+       
+       $storeId = Mage::app()->getStore()->getId();
+       
+       $options = array();
+       foreach ($paymentMethods as $code => $model) {
+            $title = Mage::getStoreConfig('payment/' . $code . '/title', $storeId);
+            $options[$code] = array(
+                'label' => $title,
+                'value' => $code,
+            );
+        }
+       
+        return $options;
+    }
+}

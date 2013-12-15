@@ -196,6 +196,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'confirm_status' => 'postnl_shipment.confirm_status',
                 'labels_printed' => 'postnl_shipment.labels_printed',
                 'shipping_phase' => 'postnl_shipment.shipping_phase',
+                'parcel_count'   => 'postnl_shipment.parcel_count',
             )
         );
         
@@ -235,6 +236,22 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * column order will be followed regardless of which optional columns are shown
          */
         $after = 'total_qty';
+        if (in_array('parcel_count', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'parcel_count',
+                array(
+                    'header'       => $helper->__('Number of Parcels'),
+                    'index'        => 'parcel_count',
+                    'width'        => '100px',
+                    'type'         => 'number',
+                    'filter_index' => 'postnl_shipment.parcel_count',
+                ),
+                $after
+            );
+            
+            $after = 'parcel_count';
+        }
+        
         if (in_array('shipping_description', $columnsToDisplay)) {
             $block->addColumnAfter(
                 'shipping_description',
@@ -385,6 +402,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $value;
         }
         
+        $origValue = $row->getData($column->getIndex());
+        
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         
         $class = '';
@@ -397,11 +416,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
         
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && date('Ymd', Mage::getModel('core/date')->gmtTimestamp()) == date('Ymd', strtotime($value))
+            && date('Ymd', Mage::getModel('core/date')->gmtTimestamp()) == date('Ymd', strtotime($origValue))
         ) {
             $class = 'grid-severity-major';
         } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && Mage::getModel('core/date')->gmtTimestamp() > strtotime($value)
+            && Mage::getModel('core/date')->gmtTimestamp() > strtotime($origValue)
         ) {
             $class = 'grid-severity-critical';
         } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {

@@ -39,6 +39,14 @@
  */	
 -->
 <layout version="0.1.0">
+    <default>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/messages.css</file>
+            </action>
+        </reference>
+    </default>
     
     <sales_order_shipment>
         <reference name="my.account.wrapper">

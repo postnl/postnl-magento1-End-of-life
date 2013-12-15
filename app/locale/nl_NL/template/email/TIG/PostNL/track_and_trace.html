@@ -25,10 +25,10 @@
                 <!-- [ middle starts here] -->
                 <tr>
                     <td valign="top">
-                        <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Dear Sir, Madam {{htmlescape var=$customer.name}},</h1>
-                        <p style="font-size:11px; line-height:1.5em; margin:0 0 8px 0;">Your order at {{var store.getFrontendName()}}, with barcode {{var barcode}} will be delivered by PostNL.</p>
-                        <p style="font-size:11px; line-height:1.5em; margin:0;">To track the progress of your shipment click <a href="{{var barcode_url}}" target="_blank">here</a>.<p>
-                        <p style="font-size:11px; line-height:1.5em; margin:0;">Kind Regards,</p>
+                        <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Beste heer/mevrouw {{htmlescape var=$order.getCustomerName()}},</h1>
+                        <p style="font-size:11px; line-height:1.5em; margin:0 0 8px 0;">Uw bestelling van {{var store.getFrontendName()}}, met barcode {{var barcode}} wordt vandaag verzonden.</p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">Volg uw pakket op <a href="{{var barcode_url}}" target="_blank">mijnpakket</a> om te zien wanneer PostNL het pakket bij u bezorgt. <p>
+                        <p style="font-size:11px; line-height:1.5em; margin:0;">Met vriendelijke groet,</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">{{var store.getFrontendName()}}</p>
                     </td>
                 </tr>

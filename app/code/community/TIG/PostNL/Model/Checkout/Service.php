@@ -80,7 +80,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             return $this->getData('quote');
         }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();;
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
         
         $this->setQuote($quote);
         return $quote;
@@ -235,11 +235,24 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $quote->getShippingAddress()->setCollectShippingRates(true);
         }
         
-        $data['checks'] = Mage_Payment_Model_Method_Abstract::CHECK_USE_CHECKOUT
-            | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_COUNTRY
-            | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_CURRENCY
-            | Mage_Payment_Model_Method_Abstract::CHECK_ORDER_TOTAL_MIN_MAX
-            | Mage_Payment_Model_Method_Abstract::CHECK_ZERO_TOTAL;
+        /**
+         * Extra checks used by Magento
+         * 
+         * @since Magento v1.13
+         */
+        $paymentMethodAbstractClass = Mage::getConfig()->getModelClassName('payment/method_abstract');
+        if (defined($paymentMethodAbstractClass . '::CHECK_USE_CHECKOUT')
+            && defined($paymentMethodAbstractClass . '::CHECK_USE_FOR_COUNTRY')
+            && defined($paymentMethodAbstractClass . '::CHECK_USE_FOR_CURRENCY')
+            && defined($paymentMethodAbstractClass . '::CHECK_ORDER_TOTAL_MIN_MAX')
+            && defined($paymentMethodAbstractClass . '::CHECK_ZERO_TOTAL')
+        ) {
+            $data['checks'] = $paymentMethodAbstractClass::CHECK_USE_CHECKOUT
+                            | $paymentMethodAbstractClass::CHECK_USE_FOR_COUNTRY
+                            | $paymentMethodAbstractClass::CHECK_USE_FOR_CURRENCY
+                            | $paymentMethodAbstractClass::CHECK_ORDER_TOTAL_MIN_MAX
+                            | $paymentMethodAbstractClass::CHECK_ZERO_TOTAL;
+        }
         
         $quote->getPayment()->setMethod($data['method'])->importData($data);
         $quote->getPayment()->getMethodInstance()->assignData($data);
@@ -277,7 +290,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          * Check if the payment method chosen is allowed
          */
         if (!Mage::getStoreConfigFlag(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName, $quote->getStoreId())) {
-            throw Mage::exception('TIG_PostNL', "Selected payment method {$methodName} is not available.");
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Selected payment method %s is not available.', $methodName),
+                'POSTNL-0048'
+            );
         }
 
         /**
@@ -450,8 +466,11 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             && isset($data->Voorkeuren->Bezorging)
             && is_object($data->Voorkeuren->Bezorging)
             && isset($data->Voorkeuren->Bezorging->VerzendDatum)
+            && isset($data->Voorkeuren->Bezorging->Datum)
         ) {
-            $postnlOrder->setConfirmDate($data->Voorkeuren->Bezorging->VerzendDatum);
+            $delivery = $data->Voorkeuren->Bezorging;
+            $postnlOrder->setConfirmDate($delivery->VerzendDatum)
+                        ->setDeliveryDate($delivery->Datum);
         }
         
         /**
@@ -507,7 +526,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $order = $quoteService->getOrder();
         
         if(empty($order)) {
-            throw Mage::exception('TIG_PostNL', 'Unable to create an order for quote #' . $quote->getId());
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to create an order for quote #%s', $quote->getId()),
+                'POSTNL-0049'
+            );
         }
                 
         /**
@@ -527,6 +549,14 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $orderAddress->save();
             break;
         }
+        
+        /**
+         * Save the customer's name
+         */
+        $billingAddress = $quote->getBillingAddress();
+        $order->setCustomerFirstname($billingAddress->getFirstname())
+              ->setCustomerLastname($billingAddress->getLastname())
+              ->save();
         
         Mage::dispatchEvent('checkout_type_onepage_save_order_after',
             array(
@@ -768,7 +798,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          */
         $quoteId = $data->Order->ExtRef;
         if ($quote->getId() != $quoteId) {
-            throw Mage::exception('TIG_PostNL', 'Invalid quote supplied.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid quote supplied.'), 
+                'POSTNL-0050'
+            );
         }
         
         /**
@@ -779,7 +812,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $webshopId = Mage::helper('core')->decrypt($webshopId);
         
         if ($webshopId != $dataWebshopId) {
-            throw Mage::exception('TIG_PostNL', 'Invalid data supplied.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid data supplied.'), 
+                'POSTNL-0051'
+            );
         }
         
         return $this;

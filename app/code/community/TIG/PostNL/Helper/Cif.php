@@ -67,7 +67,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * XML path to weight unit used
      */
-    const XML_PATH_WEIGHT_UNIT = 'postnl/cif_product_options/weight_unit';
+    const XML_PATH_WEIGHT_UNIT = 'postnl/cif_labels_and_confirming/weight_unit';
     
     /**
      * XML path to weight per parcel config setting
@@ -113,78 +113,17 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     );
     
     /**
-     * Array of product codes supported for standard domestic shipments
+     * Array of country-restricted product codes
+     * 
+     * Array is constructed as follows:
+     * <restricted code> => array(<allowed country>, <allowed country>, <allowed country>,...)
      * 
      * @var array
      */
-    protected $_standardProductCodes = array(
-        '3085',
-        '3086',
-        '3087',
-        '3089',
-        '3090',
-        '3091',
-        '3093',
-        '3094',
-        '3096',
-        '3097',
-        '3189',
-        '3385',
-        '3389',
-        '3390',
-    );
-    
-    /**
-     * Array of product codes supported for domestic PakjeGemak shipments
-     * 
-     * @var array
-     */
-    protected $_pakjeGemakProductCodes = array(
-        '3533',
-        '3534',
-        '3535',
-        '3536',
-        '3543',
-        '3544',
-        '3545',
-        '3546',
-    );
-    
-    /**
-     * Array of product codes supported for EU shipments
-     * 
-     * @var array
-     */
-    protected $_euProductCodes = array(
-        '4940',
-        '4924',
-        '4946',
-        '4944',
-        '4950',
-        '4954',
-        '4955',
-        '4952',
-    );
-    
-    /**
-     * Array of product codes supported for EU combilabel shipments
-     * 
-     * @var array
-     */
-    protected $_euCombilabelProductCodes = array(
-        '4950',
-        '4954',
-        '4955',
-        '4952',
-    );
-    
-    /**
-     * Array of product codes supported for global shipments
-     * 
-     * @var array
-     */
-    protected $_globalProductCodes = array(
-        '4945',
+    protected $_countryRestrictedProductCodes = array(
+        '4955' => array(
+                      'BE',
+                  ),
     );
     
     /**
@@ -224,13 +163,24 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
     
     /**
+     * Gets an array of country-restricted product codes
+     * 
+     * @return array
+     */
+    public function getCountryRestrictedProductCodes()
+    {
+        return $this->_countryRestrictedProductCodes;
+    }
+    
+    /**
      * Get an array of standard product codes
      * 
      * @return array
      */
-    public function getStandardProductCodes()
+    public function getStandardProductCodes($storeId = false)
     {
-        return $this->_standardProductCodes;
+        $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
+        return $standardProductCodes->getAvailableOptions($storeId, true);
     }
     
     /**
@@ -238,9 +188,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * 
      * @return array
      */
-    public function getPakjeGemakProductCodes()
+    public function getPakjeGemakProductCodes($storeId = false)
     {
-        return $this->_pakjeGemakProductCodes;
+        $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
+        return $pakjeGemakProductCodes->getAvailableOptions($storeId, true);
     }
     
     /**
@@ -248,19 +199,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * 
      * @return array
      */
-    public function getEuProductCodes()
+    public function getEuProductCodes($storeId = false)
     {
-        return $this->_euProductCodes;
-    }
-    
-    /**
-     * Get an array of eu combi-label product codes
-     * 
-     * @return array
-     */
-    public function getEuCombilabelProductCodes()
-    {
-        return $this->_euCombilabelProductCodes;
+        $euProductCodes = Mage::getSingleton('postnl_core/system_config_source_euProductOptions');
+        return $euProductCodes->getAvailableOptions($storeId, true);
     }
     
     /**
@@ -268,9 +210,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * 
      * @return array
      */
-    public function getGlobalProductCodes()
+    public function getGlobalProductCodes($storeId = false)
     {
-        return $this->_globalProductCodes;
+        $globalProductCodes = Mage::getSingleton('postnl_core/system_config_source_globalProductOptions');
+        return $globalProductCodes->getAvailableOptions($storeId, true);
     }
     
     /**
@@ -321,7 +264,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getBarcodeTypeForShipment($shipment)
     {
-        if ($shipment->isDutchShipment()){
+        if ($shipment->isDutchShipment() || $shipment->isPakjeGemakShipment()) {
             $barcodeType = self::DUTCH_BARCODE_TYPE;
             return $barcodeType;
         }
@@ -336,7 +279,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $barcodeType;
         }
         
-        throw Mage::exception('TIG_PostNL', 'Unable to get valid barcodetype for postnl shipment id #' . $shipment->getId());
+        throw new TIG_PostNL_Exception(
+            $this->__('Unable to get valid barcodetype for postnl shipment id #%s', $shipment->getId()),
+            'POSTNL-0029'
+        );
         
         return $this;
     }
@@ -763,8 +709,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $this;
         }
         
-        $this->createLogDir();
-        
         $requestXml = $this->formatXml($client->getLastRequest());
         $responseXML = $this->formatXml($client->getLastResponse());
         
@@ -772,13 +716,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
                     . $requestXml
                     . "\nResponse recieved:\n"
                     . $responseXML;
-                    
-        Mage::log(
-            $logMessage, 
-            Zend_Log::DEBUG, 
-            self::POSTNL_LOG_DIRECTORY . DS . self::CIF_DEBUG_LOG_FILE,
-            true
-        );
+        
+        $file = self::POSTNL_LOG_DIRECTORY . DS . self::CIF_DEBUG_LOG_FILE;
+        $this->log($logMessage, Zend_Log::DEBUG, $file);
         
         return $this;
     }
@@ -802,8 +742,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $this;
         }
         
-        $this->createLogDir();
-        
         if ($exception instanceof TIG_PostNL_Model_Core_Cif_Exception) {
             $requestXml = $this->formatXml($exception->getRequestXml());
             $responseXML = $this->formatXml($exception->getResponseXml());
@@ -820,21 +758,12 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
                         . $requestXml
                         . "\n<<< RESPONSE RECIEVED >>>\n"
                         . $responseXML;
-                        
-            Mage::log(
-                $logMessage, 
-                Zend_Log::ERR, 
-                self::POSTNL_LOG_DIRECTORY . DS . self::CIF_EXCEPTION_LOG_FILE, 
-                true
-            );
+        } else {
+            $logMessage = "\n" . $exception->__toString();
         }
         
-        Mage::log(
-            "\n" . $exception->__toString(), 
-            Zend_Log::ERR, 
-            self::POSTNL_LOG_DIRECTORY . DS . self::CIF_EXCEPTION_LOG_FILE, 
-            true
-        );
+        $file = self::POSTNL_LOG_DIRECTORY . DS . self::CIF_EXCEPTION_LOG_FILE;
+        $this->log($logMessage, Zend_Log::ERR, $file);
         
         return $this;
     }

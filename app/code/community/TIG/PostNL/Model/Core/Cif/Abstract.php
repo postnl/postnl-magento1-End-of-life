@@ -178,7 +178,10 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     {
         try {
             if (!$this->_getUserName() || !$this->_getPassword()) {
-                throw Mage::exception('TIG_PostNL', 'No username or password set.');
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('No username or password set.'),
+                    'POSTNL-0052'
+                );
             }
             
             $wsdlFile = $this->_getWsdl($wsdlType);
@@ -290,7 +293,10 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 $wsdlFileName = self::WSDL_CHECKOUT_NAME;
                 break;
             default:
-                throw Mage::exception('TIG_PostNL', 'Chosen wsdl type is not supported: ' . $wsdlType);
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('Chosen wsdl type is not supported: %s', $wsdlType),
+                    'POSTNL-0053'
+                );
         }
         
         /**
@@ -424,10 +430,10 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             if ($errors) {
                 $message = '';
                 foreach($errors as $error) {
-                    $message .= $error->nodeValue . '<br/>';
+                    $message .= $error->nodeValue . PHP_EOL;
                 }
                 
-                $exception = Mage::exception('TIG_PostNL_Model_Core_Cif', $message);
+                $exception = new TIG_PostNL_Model_Core_Cif_Exception($message, null, $e);
             }
                 
             $errorNumbers = $errorResponse->getElementsByTagNameNS(self::CIF_ERROR_NAMESPACE, 'ErrorNumber');
@@ -440,7 +446,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             /**
              * Create a general exception
              */
-            $exception = Mage::exception('TIG_PostNL_Model_Core_Cif', $e->getMessage());
+             $exception = new TIG_PostNL_Model_Core_Cif_Exception($e->getMessage(), null, $e);
         }
         
         /**

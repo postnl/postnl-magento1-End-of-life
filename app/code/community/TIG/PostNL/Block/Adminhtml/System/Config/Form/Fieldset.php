@@ -36,22 +36,28 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
- 
-$installer = $this;
-
-$installer->startSetup();
-
-$installer->getConnection()
-          ->addColumn(
-               $installer->getTable('postnl_core/shipment'),
-               'track_and_trace_email_sent',
-               array(
-                   'nullable' => false,
-                   'unsigned' => true,
-                   'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
-                   'default'  => 0,
-                   'comment'  => 'Track And Trace Email Sent',
-               )
-          );
-
-$installer->endSetup();
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminhtml_Block_System_Config_Form_Fieldset
+{
+    /**
+     * Return header comment part of html for fieldset
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * 
+     * @return string
+     */
+    protected function _getHeaderCommentHtml($element)
+    {
+        $comment = $element->getComment();
+        if (!$comment) {
+            return '';
+        }
+        
+        $commentHtml = '<div class="box">'
+                     .     '<p>'
+                     .         $comment
+                     .     '</p>'
+                     . '</div>';
+        
+        return $commentHtml;
+    }
+}

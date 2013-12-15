@@ -1,4 +1,3 @@
-<?php
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -35,21 +34,25 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
  */
- 
-$installer = $this;
-
-$installer->startSetup();
-
-$installer->getConnection()
-          ->addColumn(
-               $installer->getTable('postnl_core/shipment'),
-               'confirmed_at',
-               array(
-                   'nullable' => true,
-                   'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
-                   'comment'  => 'Confirmed At',
-               )
-          );
-
-$installer->endSetup();
+document.observe('dom:loaded', function() {
+    $$('.postnl-validate-empty').each(function(element) {
+        if (!element.value.empty()) {
+            element.removeClassName('postnl-validate-empty');
+        }
+        
+        element.observe('keyup', function(event) {
+            var eventElement = Event.element(event);
+            if (eventElement.value.empty() && !eventElement.hasClassName('postnl-validate-empty')) {
+                eventElement.addClassName('postnl-validate-empty');
+                return;
+            }
+            
+            if (!eventElement.value.empty() && eventElement.hasClassName('postnl-validate-empty')) {
+                eventElement.removeClassName('postnl-validate-empty');
+                return;
+            }
+        });
+    });
+});

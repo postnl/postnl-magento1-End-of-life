@@ -410,26 +410,43 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         }
         
         /**
-         * Implode the list to use in the collection select
+         * Get the order collection and filter it by store
+         * 
+         * Resulting SQL: 
+         * SELECT `main_table`.`created_at` 
+         * FROM `sales_flat_order` AS `main_table` 
+         * WHERE 
+         * (
+         *     `main_table`.`store_id` IN(
+         *         {$storeIds}
+         *     )
+         * ) 
+         * ORDER BY `created_at` DESC 
+         * LIMIT 1
          */
-        $storeIds = implode(',', $storeIds);
-        
         $orderCollection = Mage::getResourceModel('sales/order_collection');
         $orderCollection->addFieldToSelect('created_at')
                         ->addFieldToFilter('`main_table`.`store_id`', array('in' => $storeIds));
         
-        $select = $orderCollection->getSelect()
-                                  ->order('created_at DESC')
-                                  ->limit(1);
-                                  
+        $orderCollection->getSelect()
+                        ->order('created_at DESC')
+                        ->limit(1);
+        
+        /**
+         * If the collection is empty, return false
+         */
         if ($orderCollection->getSize() < 1) {
-            return null;
+            return false;
         }
         
+        /**
+         * Get the created_at date from the only item in the collection
+         */
         $lastOrder = $orderCollection->getFirstItem();
         $createdAt = $lastOrder->getCreatedAt();
+        $createdAt = Mage::getModel('core/date')->date('Y-m-d H:i:s', $createdAt);
         
-        return Mage::getModel('core/date')->date('Y-m-d H:i:s', $createdAt);
+        return $createdAt;
     }
     
     /**

@@ -336,7 +336,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if (!is_object($response) 
             || !isset($response->Barcode)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid barcode response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid barcode response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0054'
+            );
         }
         
         return $response->Barcode;
@@ -377,7 +380,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Shipments) 
             || (!is_array($response->Shipments) && !is_object($response->Shipments))
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid shippingStatus response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0055'
+            );
         }
         
         foreach($response->Shipments as $shipment) {
@@ -440,7 +446,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Shipments) 
             || (!is_array($response->Shipments) && !is_object($response->Shipments))
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid shippingStatus response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid shippingStatus response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0055'
+            );
         }
         
         foreach($response->Shipments as $shipment) {
@@ -613,7 +622,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Labels) 
             || !is_object($response->Labels)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($response, true));
+            throw Mage::exception('TIG_PostNL', 'Invalid generateLabelsWithoutConfirm response: ' . "\n" . var_export($response, true));
         }
         
         return $response;
@@ -625,14 +634,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param array $extra An array of additional parameters to add
      * 
      * @return array
-     * 
-     * @todo change message ID to truly unique value
      */
     protected function _getMessage($barcode, $extra = array())
     {
+        $messageIdString = uniqid('postnl_')
+                         . $this->_getCustomerNumber()
+                         . $barcode
+                         . microtime();
+        
         $message = array(
-            'MessageID'        => md5(uniqid('postnl_') .  md5($barcode)), //TODO change to truly unique value (based on barcode, perhaps)
-            'MessageTimeStamp' => date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp()),
+            'MessageID'        => md5($messageIdString),
+            'MessageTimeStamp' => date('d-m-Y H:i:s', Mage::getModel('core/date')->gmtTimestamp()),
         );
         
         if ($extra) {
@@ -1200,12 +1212,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         $extension = '';
         $number = '';
-        if (isset($matches[0])) {
-            $number = $matches[0];
+        if (isset($matches[1])) {
+            $number = $matches[1];
         }
         
-        if (isset($matches[1])) {
-            $extension = $matches[1];
+        if (isset($matches[2])) {
+            $extension = trim($matches[2]);
         }
         
         $housenumberParts = array(
@@ -1440,6 +1452,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $countryOfOrigin = $shipmentItem->getOrderItem()
                                         ->getProduct()
                                         ->getDataUsingMethod($countryOfOriginAttribute);
+        
+        if (empty($countryOfOrigin)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Missing country of origin value for product #%s.', $shipmentItem->getProductId())
+            );
+        }
                                     
         return $countryOfOrigin;
     }
@@ -1465,6 +1483,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                      ->getProduct()
                                      ->getDataUsingMethod($customsValueAttribute);
         
+        if (empty($customsValue)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Missing customs value for product #%s.', $shipmentItem->getProductId())
+            );
+        }
+
         return $customsValue;
     }
     
@@ -1488,7 +1512,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $description = $shipmentItem->getOrderItem()
                                     ->getProduct()
                                     ->getDataUsingMethod($descriptionAttribute);
-                                    
+        
+        if (empty($description)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Missing customs description for product #%s.', $shipmentItem->getProductId())
+            );
+        }
+        
         return $description;
     }
     
@@ -1800,7 +1830,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                  $reference = Mage::getStoreConfig(self::XML_PATH_CUSTOM_SHIPMENT_REFERENCE, $storeId);
                  break;
              default:
-                 throw Mage::exception('TIG_PostNL', 'Invalid reference type requested: ' . $referenceType);
+                 throw new TIG_PostNL_Exception(
+                     Mage::helper('postnl')->__('Invalid reference type requested: %s', $referenceType),
+                     'POSTNL-0043'
+                 );
          }
          
          /**

@@ -89,7 +89,26 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     {
         $quote = Mage::getSingleton('checkout/session')->getQuote();
         
-        $canUseCheckout = Mage::helper('postnl/checkout')->canUsePostnlCheckout($quote);
+        $helper = Mage::helper('postnl/checkout');
+        $canUseCheckout = $helper->canUsePostnlCheckout($quote);
+        
+        /**
+         * If Checkout is not available, log the reason why for debugging purposes
+         */
+        if (!$canUseCheckout) {
+            $configErrors = Mage::registry('postnl_is_configured_checkout_errors');
+            if (is_null($configErrors)) {
+                $configErrors = Mage::registry('postnl_enabled_checkout_errors');
+            }
+            
+            $errorMessage = $helper->__('PostNL Checkout is not available due to the following reasons:');
+            foreach ($configErrors as $error) {
+                $errorMessage .= PHP_EOL . $error;
+            }
+            
+            $helper->log($errorMessage);
+        }
+        
         return $canUseCheckout;
         
     }
@@ -145,7 +164,23 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
      */
     protected function _toHtml()
     {
-        if (!Mage::helper('postnl/checkout')->isCheckoutActive()) {
+        $helper = Mage::helper('postnl/checkout');
+        if (!$helper->isCheckoutActive()) {
+            /**
+             * If Checkout is not available, log the reason why for debugging purposes
+             */
+            $configErrors = Mage::registry('postnl_enabled_checkout_errors');
+            
+            $errorMessage = $helper->__('PostNL Checkout is not available due to the following reasons:');
+            foreach ($configErrors as $error) {
+                $errorMessage .= PHP_EOL . $error;
+            }
+            
+            $helper->log($errorMessage);
+            
+            /**
+             * Do not render the checkout button
+             */
             return '';
         }
         

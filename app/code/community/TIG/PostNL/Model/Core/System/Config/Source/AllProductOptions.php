@@ -214,11 +214,18 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      * 
      * @param boolean $withDefault Determines whether or not a 'default' option is prepended to the array
+     * @param boolean $witHExtraCover Flag whether or not to include extra cover options
+     * @param boolean|int $storeId
+     * @param boolean $codesOnly
      * 
      * @return array
      */
-    public function getAvailableOptions($withDefault = false, $withExtraCover = true)
+    public function getAvailableOptions($withDefault = false, $withExtraCover = true, $storeId = false, $codesOnly = false)
     {
+        if ($storeId === false) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
+        
         $helper = Mage::helper('postnl');
         $options = $this->toOptionArray();
         
@@ -240,7 +247,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         /**
          * Get the list of supported product options from the shop's configuration
          */
-        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
         $supportedOptionsArray = explode(',', $supportedOptions);
         
         /**
@@ -253,6 +260,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             }
             
             if (isset($option['isExtraCover']) && $withExtraCover !== true) {
+                continue;
+            }
+            
+            if ($codesOnly === true) {
+                $availableOptions[] = $option['value'];
                 continue;
             }
             
@@ -272,6 +284,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
             
+            if ($codesOnly === true) {
+                $availableOptions[] = $option['value'];
+                continue;
+            }
+            
             $availablePakjeGemakOptions[] = $option;
         }
         
@@ -285,6 +302,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             }
             
             if (isset($option['isExtraCover']) && $withExtraCover !== true) {
+                continue;
+            }
+            
+            if ($codesOnly === true) {
+                $availableOptions[] = $option['value'];
                 continue;
             }
             
@@ -304,7 +326,20 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
             
+            if ($codesOnly === true) {
+                $availableOptions[] = $option['value'];
+                continue;
+            }
+            
             $availableGlobalOptions[] = $option;
+        }
+            
+        /**
+         * If we only need the codes, we can return the $availableOptions array. Otherwise, we need to order and merge the
+         * other arrays
+         */
+        if ($codesOnly === true) {
+            return $availableOptions;
         }
         
         /**
