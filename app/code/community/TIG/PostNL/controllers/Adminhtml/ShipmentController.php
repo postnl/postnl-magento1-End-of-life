@@ -883,7 +883,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $link = false;
             $error = Mage::getConfig()->getNode('tig/errors/' . $warning['code']);
             if ($error !== false) {
-                $link = $error->url;
+                $link = (string) $error->url;
             }
             
             /**

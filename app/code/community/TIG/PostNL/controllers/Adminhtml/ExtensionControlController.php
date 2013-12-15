@@ -78,6 +78,8 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             $this->_updateStatistics();
         }
         
+        $this->_saveState(array('postnl_general' => 1));
+        
         Mage::app()->cleanCache();
         
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
@@ -275,9 +277,40 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     {
         Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 0);
         
+        $this->_saveState(array('postnl_general' => 1));
+        
         Mage::app()->cleanCache();
         
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
+    }
+    
+    /**
+     * Save state of configuration field sets
+     *
+     * @param array $configState
+     * 
+     * @return bool
+     * 
+     * @see Mage_Adminhtml_System_ConfigController::_saveState()
+     */
+    protected function _saveState($configState = array())
+    {
+        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        if (is_array($configState)) {
+            $extra = $adminUser->getExtra();
+            if (!is_array($extra)) {
+                $extra = array();
+            }
+            if (!isset($extra['configState'])) {
+                $extra['configState'] = array();
+            }
+            foreach ($configState as $fieldset => $state) {
+                $extra['configState'][$fieldset] = $state;
+            }
+            $adminUser->saveExtra($extra);
+        }
+
+        return true;
     }
 }
