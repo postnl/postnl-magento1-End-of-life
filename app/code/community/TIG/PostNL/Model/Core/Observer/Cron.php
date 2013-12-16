@@ -710,7 +710,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * Delete the labels
          */
-        foreach ($labelCollection as $label) {
+        foreach ($labelsCollection as $label) {
             $helper->cronLog("Deleting label #{$label->getId()}.");
             $label->delete()->save();
         }
