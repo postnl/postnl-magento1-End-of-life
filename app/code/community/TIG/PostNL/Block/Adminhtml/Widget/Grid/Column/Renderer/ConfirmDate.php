@@ -36,7 +36,8 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate 
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
 {
     /**
      * Additional column names used
@@ -59,20 +60,63 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate extends
             return parent::render($row);
         }
         
+        /**
+         * If the shipment is confirmed, render that
+         */
         $postnlShipmentModel = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
         if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentModel::CONFIRM_STATUS_CONFIRMED) {
             return Mage::helper('postnl')->__('Confirmed');
         }
         
+        /**
+         * Check if a previous confirmation has expired
+         */
         if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentModel::CONFIRM_STATUS_CONFIRM_EXPIRED) {
             return Mage::helper('postnl')->__('Confirmation expired');
         }
         
         $value = $row->getData($this->getColumn()->getIndex());
-        if (date('Ymd', Mage::getModel('core/date')->gmtTimestamp()) == date('Ymd', strtotime($value))) { //check if value equals today
+        $now = date('Ymd', Mage::getModel('core/date')->gmtTimestamp());
+        
+        /**
+         * Check if the shipment should be confirmed today
+         */
+        if ($now == date('Ymd', strtotime($value))) {
             return Mage::helper('postnl')->__('Today');
         }
         
+        /**
+         * Check if the shipment should be confirmed somewhere in the future
+         */
+        if ($now < date('Ymd', strtotime($value))) {
+            $confirmDate = new DateTime($value);
+            $today = new DateTime();
+            
+            /**
+             * Get the number of days until the shipment should be confirmed
+             */
+            $diff = $today->diff($confirmDate)->format('%a');
+            
+            /**
+             * Check if it should be confirmed tomorrow
+             */
+            if ($diff == 1) {
+                $renderedValue = Mage::helper('postnl')->__('Tomorrow');
+                
+                return $renderedValue;
+            }
+            
+            /**
+             * Render the number of days before the shipment should be confirmed
+             */
+            $renderedValue = Mage::helper('postnl')->__('%s days from now', $diff);
+            
+            return $renderedValue;
+        }
+        
+        /**
+         * Finally, simply render the date
+         */
         return parent::render($row);
     }
 }
