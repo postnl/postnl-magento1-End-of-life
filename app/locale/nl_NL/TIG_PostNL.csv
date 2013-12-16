@@ -39,7 +39,7 @@ Your global barcode range as supplied by PostNL. Must contain 4 digits.,Uw globa
 These fields contain your webshop IDs. These are required for PostNL Checkout to function.,Deze velden bevatten uw webshop ID's. Deze zijn noodzakelijk voor PostNL Checkout om te functioneren.
 Webshop ID,Webshop ID
 Public Webshop ID,Publieke webshop ID
-These fields contain your contact information for PostNL.,Deze velden bevatten uw contact informatie voro PostNL
+These fields contain your contact information for PostNL.,Deze velden bevatten uw contact informatie voor PostNL
 Company Name,Bedrijfsnaam
 Contact Name,Contactpersoon
 Contact Email,Contact email
@@ -157,7 +157,7 @@ URL of a page where customers can find contact information for your webshop. Lea
 Service URL,Service URL
 URL of a page where customers can find information regarding the webshop's customer service department.,Pagina van een website waar klanten informatie over de serviceafdeling van uw webshop kunnen vinden.
 PostNL Checkout Payment Settings,PostNL Checkout Betalingsinstellingen
-PostNL Checkout is disabled. please enable PostNL Checkout in order to configure these settings.,PostNL Checkout is niet geactiveerd. Activeer PostNL checkout om deze instellingen te configureren.
+PostNL Checkout is disabled. please enable PostNL Checkout in order to configure these settings.,PostNL Checkout is niet geactiveerd. Activeer PostNL Checkout om deze instellingen te configureren.
 Use iDEAL,Gebruik iDeal
 iDEAL payment method,iDeal betaalmethode
 iDeal Bank Field,iDeal bank
@@ -214,7 +214,7 @@ Please select a shipment.,Selecteer a.u.b. een zending
 An error occurred while processing this action:,Een fout is opgetreden tijdens het verwerken van deze actie:
 Please select a shipment.,Selecteer a.u.b. een zending
 The shipment has been successfully confirmed,De zending is succesvolvoorgemeld.
-Shipment not found.,Zending niet gevonden
+Shipment not found,Zending niet aangetroffen
 The track & trace email was sent.,De track&trace e-mail is verzonden
 Please select one or more orders.,Selecteer a.u.b. een of meer orders
 An error occurred whilst creating processing the shipment(s):,Een fout is opgetreden tijdens het verwerken van de zending(en)
@@ -364,7 +364,7 @@ PostNL requires the cron to be active in order to function.,PostNL heeft de cron
 Checkout Summary,Checkout Overzicht
 Billing Address,Betaaladres
 Shipping Address,Verzendadres
-PakjeGemak Address,PakjeGemak adres
+Collection Address,Afhaal Locatie
 Payment Method,Betaalmethode
 Shipping Method,Verzend methode
 Items Ordered,Artikelen besteld
@@ -378,8 +378,8 @@ Cancel,Annuleer
 Your credit card will be charged for,Uw credit zard wordt belast met
 Loading...,Laden…
 How does it work?,Hoe werkt het?
-An error occurred. Please use our regular checkout instead.,Er is een fout opgetreden. Gebruikt u alstublieft de normale checkout methode.
-You have not yet enabled PostNL Checkout.,U heeft de PostNL checkout nog niet geactiveerd.
+An error occurred. Please use our regular checkout instead.,Er is een fout opgetreden. Gebruikt u alstublieft de normale afreken pagina.
+You have not yet enabled PostNL Checkout.,U heeft PostNL Checkout nog niet geactiveerd.
 %s > %s is required.,%s > %s is verplicht.
 You need to enable at least one payment method.,U moet tenminste een bepaalmethode activeren.
 You have not yet enabled the extension.,U heeft de extensie nog niet geactiveerd.
@@ -459,7 +459,7 @@ Time,Tijd
 Date,Datum
 "We highly reccommend you place several 'test'  shipments, before you use the extension for real orders and real shipments.",Wij raden ten sterkste aan om enkele 'test' zendingen aan te maken voordat u de extensie voor echte bestellingen en zendingen gebruikt.
 Before you proceed to use this extension it is very important that you have properly configured certain elements of your Magento webshop.,"Voordat u de extensie in gebruik neemt, is het belangrijk dat u enkele onderdelen van uw webshop correct ingesteld heeft."
-"You should make sure that each product you intend to ship using PostNL has a correct value for it's weight attribute. You can select a unit of measurement for this attribute in the 'Confirming & Label Settings' tab below. If you do not do this, PostNL may charge you extra when a parcel turns out to weigh significantly more than expected or they may even refuse your shipment.","U moet er zeker van zijn dat elk product dat u wilt versturen met PostNL een correcte waarde heeft in het 'gewicht' attribuut. De eenheid waarin u dit gewicht heeft ingevuld, kunt u instellen in het 'Voormelden en Labels Printen Settings' tabjke hieronder. Indien u dit niet correct instelt, loopt u het risico dat PostNL extra kosten in rekening brengt of de zending weigert wanneer blijkt dat het opgegeven gewicht van een zending significant ver afwijkt van wat de webshop heeft opgegeven bij het voormelden."
+"You should make sure that each product you intend to ship using PostNL has a correct value for it's weight attribute. You can select a unit of measurement for this attribute in the 'Confirming & Label Settings' tab below. If you do not do this, PostNL may charge you extra when a parcel turns out to weigh significantly more than expected or they may even refuse your shipment.","U moet er zeker van zijn dat elk product dat u wilt versturen met PostNL een correcte waarde heeft in het 'gewicht' attribuut. De eenheid waarin u dit gewicht heeft ingevuld, kunt u instellen in het 'Voormelden en Labels Printen Settings' tabje hieronder. Indien u dit niet correct instelt, loopt u het risico dat PostNL extra kosten in rekening brengt of de zending weigert wanneer blijkt dat het opgegeven gewicht van een zending significant ver afwijkt van wat de webshop heeft opgegeven bij het voormelden."
 "Make sure the PostNL shipping method is configured under system > config > shipping methods > PostNL. Only shipments made using this shipping method will be able to use PostNL's services. You may choose to charge either a flat rate or a table rate-based shipping fee. In the case of the latter, the table rates you have added under the Table Rate shipping method will be used. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.","Wees er zeker van dat de PostNL verzendmethode correct geconfigureerd is in systeem > configuratie > verzendmethodes > PostNL. Enkel bestellingen die met deze verzendmethode geplaatst zijn, kunnen verwerkt worden door de extensie. U kunt kiezen om een plat tarief of een tabel tarief in rekening brengen voor het gebruik van PostNL. Indien u kiest voor tabel tarieven, dan kunt u deze instellen bij de 'Tabel Tarieven' verzendmethode. De PostNL verzendmethode zal deze tarieven overnemen. Voor meer informatie over hoe u de tabel tarieven kunt instellen, kunt u <a href='%s' target='_blank'>hier</a> kijken."
 "You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.",U moet uw afreken process goed inrichten. PostNL moet uit het afreken proces een correct opgemaakt adres kunnen lezen om er zeker van te zijn dat de zending ook echt naar het gekozen adres verstuurd wordt. Om hier zeker van te zijn moet u het juiste aantal straat regels aanzetten en deze voorzien van duidelijk labels an validatie. U kunt <a href='%s' target='_blank'>hier</a> meer lezen over hoe u dit juist kunt configureren.
 Register the extension for use,Registreer de extensie voor gebruik
@@ -508,3 +508,10 @@ View the installation and configuration manual.,Bekijk de installatie en configu
 Installation and configuration manual,Installatie en configuratie handleiding
 View the complete changelog of the extension.,Bekijk de volledige changelog van de extensie.
 Full changelog,Volledig changelog
+PostNL Checkout has been disabled,PostNl Checkout is uitgeschakeld
+The quote is virtual.,De winkelwagen bevat enkel virtuele producten
+The quote's grand total is below the minimum amount required.,Het totaalbedrag van de winkelwagen is beneden het minimum
+No standard product options are enabled. At least 1 option must be active.,Geen standaard product opties zijn beschikbaar. Minstens 1 optie moet beschikbaar zijn
+You have not yet enabled the PostNL extension.,De PostNL extensie is nog niet actief
+Tomorrow,Morgen
+%s days from now,Over %s dagen
