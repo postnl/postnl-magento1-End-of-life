@@ -2,6 +2,7 @@
 #postnl_support p,
 #postnl_support ul,
 #postnl_support ol { padding:6px 0 10px;  }
+#postnl_support ul.postnl-config-warning {list-style:disc inside none; }
 #postnl_support ol { list-style:decimal inside; }
 #postnl_support ol ol { list-style:lower-alpha inside; padding:0 0 10px 12px; }
 #postnl_support ul ul { list-style:none; padding:0 0 10px 12px; }

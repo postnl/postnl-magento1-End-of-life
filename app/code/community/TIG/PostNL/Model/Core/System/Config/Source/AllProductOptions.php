@@ -361,7 +361,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         
         if (!empty($availableEuOptions)) {
             $availableOptions['eu_options'] = array(
-                'label' => $helper->__('Eu options'),
+                'label' => $helper->__('EU options'),
                 'value' => $availableEuOptions,
             );
         }

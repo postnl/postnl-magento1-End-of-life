@@ -365,7 +365,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             Mage::register($registryKey, false);
             
             $errors = array(
-                'POSTNL-0030' => $this->__('You have not yet enabled the extension.')
+                array(
+                    'code'    => 'POSTNL-0030',
+                    'message' => $this->__('You have not yet enabled the extension.'),
+                )
             );
             
             Mage::register($registryKey . '_errors', $errors);
@@ -380,7 +383,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             Mage::register($registryKey, false);
             
             $errors = array(
-                'POSTNL-0031' => $this->__('The PostNL shipping method has not been enabled.')
+                array(
+                    'code'    => 'POSTNL-0031',
+                    'message' => $this->__('The PostNL shipping method has not been enabled.'),
+                )
             );
             Mage::register($registryKey . '_errors', $errors);
             return false;
@@ -394,7 +400,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             Mage::register($registryKey, false);
             
             $errors = array(
-                'POSTNL-0032' => $this->__("The shop's base currency code must be set to EUR for PostNL to function.")
+                array(
+                    'code'    => 'POSTNL-0032',
+                    'message' => $this->__("The shop's base currency code must be set to EUR for PostNL to function."),
+                )
             );
             Mage::register($registryKey . '_errors', $errors);
             return false;
@@ -452,7 +461,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          */
         $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($isActivated != 2) {
-            $errors['POSTNL-0033'] = $this->__('The extension has not been activated.');
+            $errors[] = array(
+                'code'    => 'POSTNL-0033',
+                'message' => $this->__('The extension has not been activated.'),
+            );
         }
         
         if ($storeId === false) {
@@ -498,7 +510,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 $group = $fieldParts[1];
                 
                 $label = $section->groups->$group->fields->$field->label;
-                $errors['POSTNL-0034'] = $this->__('%s is required.', $label);
+                $groupLabel = $section->groups->$group->label;
+                $errors[] = array(
+                    'code'    => 'POSTNL-0034',
+                    'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
+                );
             }
         }
         
@@ -790,11 +806,47 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Get the error code, message type (hardcoded as 'error') and the message of the exception
          */
-        $code        = $exception->getCode();
-        $messageType = 'error';
-        $message     = $this->__('An error occurred while processing your request: ') . $exception->getMessage();
+        $messageType      = 'error';
+        $exceptionMessage = trim($exception->getMessage());
+        $message          = $this->__('An error occurred while processing your request: ') . $exceptionMessage;
+        $code             = $exception->getCode();
+        if (empty($code)) {
+            $code = $this->getErrorCodeByMessage($exceptionMessage);
+        }
         
         return $this->addSessionMessage($session, $code, $messageType, $message);
+    }
+    
+    /**
+     * Gets an error code by looping through all known errors and if the specified message can be matched, returning the
+     * associated code.
+     * 
+     * @param string $message
+     * 
+     * @return string|null
+     */
+    public function getErrorCodeByMessage($message)
+    {
+        /**
+         * Get an array of all known errors
+         */
+        $errors = Mage::getConfig()->getNode('tig/errors')->asArray();
+        
+        /**
+         * Loop through each error and compare it's message
+         */
+        foreach ($errors as $code => $error) {
+            $errorMessage = (string) $error['message'];
+            
+            /**
+             * If a the error's message and the specified message match, return the error code
+             */
+            if (strcasecmp($message, $errorMessage) === 0) {
+                return $code;
+            }
+        }
+        
+        return null;
     }
     
     /**
@@ -864,7 +916,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
              */
             $error = Mage::getConfig()->getNode('tig/errors/' . $code);
             if ($error !== false) {
-                $link = $error->url;
+                $link = (string) $error->url;
             }
         }
         

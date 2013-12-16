@@ -1,4 +1,4 @@
-/**document
+/**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
  *                    |    |  /  _ \\   __\\__  \  |  |
@@ -37,22 +37,22 @@
  *
  */
 document.observe('dom:loaded', function() {
-	$$('.postnl-validate-empty').each(function(element) {
-		if (!element.value.empty()) {
-			element.removeClassName('postnl-validate-empty');
-		}
-		
-		element.observe('change', function(event) {
-			var eventElement = Event.element(event);
-			if (eventElement.value.empty() && !eventElement.hasClassName('postnl-validate-empty')) {
-				eventElement.addClassName('postnl-validate-empty');
-				return;
-			}
-			
-			if (!eventElement.value.empty() && eventElement.hasClassName('postnl-validate-empty')) {
-				eventElement.removeClassName('postnl-validate-empty');
-				return;
-			}
-		});
-	});
+    $$('.postnl-validate-empty').each(function(element) {
+        if (!element.value.empty()) {
+            element.removeClassName('postnl-validate-empty');
+        }
+        
+        element.observe('keyup', function(event) {
+            var eventElement = Event.element(event);
+            if (eventElement.value.empty() && !eventElement.hasClassName('postnl-validate-empty')) {
+                eventElement.addClassName('postnl-validate-empty');
+                return;
+            }
+            
+            if (!eventElement.value.empty() && eventElement.hasClassName('postnl-validate-empty')) {
+                eventElement.removeClassName('postnl-validate-empty');
+                return;
+            }
+        });
+    });
 });

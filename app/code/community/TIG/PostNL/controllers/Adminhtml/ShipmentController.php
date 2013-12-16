@@ -420,13 +420,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             /**
              * Load the shipments and check if they are valid
              */
-            $shipments = $this->_loadAndCheckShipments($shipmentIds);
+            $shipments = $this->_loadAndCheckShipments($shipmentIds, true);
             
             /**
              * Get the labels from CIF
              */
             foreach ($shipments as $shipment) {
-                $labels = array_merge($labels, $this->_printLabels($shipment, true));
+                $shipmentLabels = $this->_printLabels($shipment, true);
+                $labels = array_merge($labels, $shipmentLabels);
             }
             
             /**
@@ -493,7 +494,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             /**
              * Load the shipments and check if they are valid
              */
-            $shipments = $this->_loadAndCheckShipments($shipmentIds);
+            $shipments = $this->_loadAndCheckShipments($shipmentIds, true);
             
             /**
              * Get the labels from CIF
@@ -558,7 +559,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             /**
              * Load the shipments and check if they are valid
              */
-            $shipments = $this->_loadAndCheckShipments($shipmentIds);
+            $shipments = $this->_loadAndCheckShipments($shipmentIds, true);
             
             /**
              * Confirm the shipments
@@ -666,7 +667,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      * 
      * If the shipment has a stored label, it is returned. Otherwise a new one is generated.
      * 
-     * @param int $shipmentId
+     * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
      * @param boolean $confirm Optional parameter to also confirm the shipment
      * 
      * @return string The encoded label
@@ -676,10 +677,27 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     protected function _printLabels($shipment, $confirm = false)
     {
         /**
-         * Load the PostNL shipment and check if it already has a label
+         * Load the PostNL shipment.
          */
-       $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
-        if ($postnlShipment->getLabels()) {
+        if ($shipment instanceof Mage_Sales_Model_Order_Shipment) {
+            $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
+        } else {
+            $postnlShipment = $shipment;
+        }
+        
+        /**
+         * Check if the shipment already has any labels. If so, return those. If we also need to confirm the shipment, do that
+         * first.
+         */
+        if ($postnlShipment->hasLabels()
+            && $confirm === true
+            && !$postnlShipment->isConfirmed()
+        ) {
+            $this->_confirmShipment($postnlShipment);
+            return $postnlShipment->getlabels();
+        }
+        
+        if ($postnlShipment->hasLabels()) {
             return $postnlShipment->getlabels();
         }
         
@@ -700,21 +718,12 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         
         if ($confirm === true 
             && !$postnlShipment->hasLabels()
-            && $postnlShipment->getConfirmStatus() != $postnlShipment::CONFIRM_STATUS_CONFIRMED
+            && !$postnlShipment->isConfirmed()
         ) {
             /**
              * Confirm the shipment and request a new label
              */
             $postnlShipment->confirmAndGenerateLabel()
-                           ->addTrackingCodeToShipment()
-                           ->save();
-        } elseif ($confirm === true
-            && $postnlShipment->getConfirmStatus() != $postnlShipment::CONFIRM_STATUS_CONFIRMED
-        ) {
-            /**
-             * Confirm the shipment
-             */
-            $postnlShipment->confirm()
                            ->addTrackingCodeToShipment()
                            ->save();
         } else {
@@ -732,7 +741,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     /**
      * Confirms the shipment without printing labels
      * 
-     * @param int $shipmentId
+     * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
      * 
      * @return TIG_PostNL_Adminhtml_ShipmentController
      * 
@@ -740,7 +749,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     protected function _confirmShipment($shipment)
     {
-        $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
+        /**
+         * Load the PostNL shipment
+         */
+        if ($shipment instanceof Mage_Sales_Model_Order_Shipment) {
+            $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
+        } else {
+            $postnlShipment = $shipment;
+        }
         
         /**
          * Prevent EU shipments from being confirmed if their labels are not yet printed
@@ -801,7 +817,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      * 
      * @throws TIG_PostNL_Exception
      */
-    protected function _loadAndCheckShipments($shipmentIds)
+    protected function _loadAndCheckShipments($shipmentIds, $loadPostnlShipments = false)
     {
         if (!is_array($shipmentIds)) {
             $shipmentIds = array($shipmentIds);
@@ -810,8 +826,21 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         $shipments = array();
         $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         foreach ($shipmentIds as $shipmentId) {
-            $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+            /**
+             * Load the shipment
+             */
+            if ($loadPostnlShipments ===  false) {
+                $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
+                $shippingMethod = $shipment->getOrder()->getShippingMethod();
+            } else {
+                $shipment = Mage::getModel('postnl_core/shipment')->load($shipmentId, 'shipment_id');
+                $shippingMethod = $shipment->getShipment()->getOrder()->getShippingMethod();
+            }
+            
+            /**
+             * Check if the shipping method used is allowed
+             */
+            if (!in_array($shippingMethod, $postnlShippingMethods)) {
                 throw new TIG_PostNL_Exception($this->__('This action cannot be used on non-PostNL shipments.'), 'POSTNL-0009');
             }
             
@@ -854,7 +883,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $link = false;
             $error = Mage::getConfig()->getNode('tig/errors/' . $warning['code']);
             if ($error !== false) {
-                $link = $error->url;
+                $link = (string) $error->url;
             }
             
             /**

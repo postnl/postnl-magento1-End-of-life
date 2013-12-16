@@ -284,8 +284,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             try {
                 $helper->cronLog("Getting barcodes for shipment #{$postnlShipment->getId()}.");
-                $postnlShipment->generateBarcode()
-                               ->addTrackingCodeToShipment()
+                $postnlShipment->generateBarcodes()
                                ->save();
                 
                 $n--;
@@ -711,7 +710,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         /**
          * Delete the labels
          */
-        foreach ($labelCollection as $label) {
+        foreach ($labelsCollection as $label) {
             $helper->cronLog("Deleting label #{$label->getId()}.");
             $label->delete()->save();
         }

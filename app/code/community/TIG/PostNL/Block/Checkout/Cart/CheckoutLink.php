@@ -103,7 +103,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
             
             $errorMessage = $helper->__('PostNL Checkout is not available due to the following reasons:');
             foreach ($configErrors as $error) {
-                $errorMessage .= PHP_EOL . $error;
+                $errorMessage .= PHP_EOL . $error['message'];
             }
             
             $helper->log($errorMessage);
@@ -173,7 +173,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
             
             $errorMessage = $helper->__('PostNL Checkout is not available due to the following reasons:');
             foreach ($configErrors as $error) {
-                $errorMessage .= PHP_EOL . $error;
+                $errorMessage .= PHP_EOL . $error['message'];
             }
             
             $helper->log($errorMessage);
