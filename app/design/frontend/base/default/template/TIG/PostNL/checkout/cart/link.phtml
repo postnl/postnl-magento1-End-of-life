@@ -48,9 +48,10 @@
         <a id="postnl_checkout_link" href="#" onclick="<?php if (!$this->isDisabled()): ?>postnlcheckoutWidget.startCheckout();<?php else: ?>return false;<?php endif; ?>" title="<?php echo $this->__('PostNL Checkout') ?>" <?php if ($this->isDisabled()): ?>disabled='disabled'<?php endif; ?>>
             <img src="<?php echo $_src; ?>"/>
         </a>
-        <?php if (!$this->isDisabled()): ?>
+        <?php $_instructionUrl = $this->getInstructionUrl(); ?>
+        <?php if (!$this->isDisabled() && $_instructionUrl): ?>
             <p>
-                <a href="https://www.youtube.com/watch?v=5e9iH2QdC94" title="<?php echo $this->__('How does it work?'); ?>" target="_blank"><?php echo $this->__('How does it work?'); ?></a>
+                <a href="<?php echo $_instructionUrl; ?>" title="<?php echo $this->__('How does it work?'); ?>" target="_blank"><?php echo $this->__('How does it work?'); ?></a>
             </p>
         <?php endif; ?>
     </div>

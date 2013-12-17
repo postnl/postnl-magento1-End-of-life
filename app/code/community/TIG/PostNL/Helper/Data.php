@@ -762,9 +762,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function createLogDir()
     {
         $logDir  = Mage::getBaseDir('var') . DS . 'log' . DS . self::POSTNL_LOG_DIRECTORY;
-
+        
         if (!is_dir($logDir)) {
-            mkdir($logDir);
+            mkdir($logDir, 0777, true);
             chmod($logDir, 0777);
         }
         

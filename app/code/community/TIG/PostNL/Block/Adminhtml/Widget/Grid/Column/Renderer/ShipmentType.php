@@ -73,7 +73,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         
         if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak</div>";
-            $renderedValue .= Mage::helper('postnl')->__('PakjeGemak');
+            $renderedValue .= Mage::helper('postnl')->__('Post Office');
             return $renderedValue;
         }
         

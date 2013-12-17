@@ -202,7 +202,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'sortable'                  => false,
             'options'                   => array(
                 'nl'          => $helper->__('Domestic'),
-                'pakje_gemak' => $helper->__('PakjeGemak'),
+                'pakje_gemak' => $helper->__('Post Office'),
                 'eu'          => $helper->__('EPS'),
                 'global'      => $helper->__('GlobalPack'),
             ),
