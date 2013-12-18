@@ -51,6 +51,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     const UPDATE_STATISTICS_CRON_MODEL_PATH  = 'crontab/jobs/postnl_update_statistics/run/model';
     
     /**
+     * XML path to the supporttab_expanded setting
+     */
+    const EXPAND_SUPPORT_PATH = 'postnl/support/expanded';
+    
+    /**
      * callAfterApplyAllUpdates flag. Causes applyAFterUpdates() to be called.
      * 
      * @var boolean

@@ -739,9 +739,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         if ($count > $maxParcelCount) {
-            throw Mage::exception(
-                'TIG_PostNL', 
-                "Number of parcels not allowed. Amount requested: {$count}, maximum allowed: {$maxParcelCount}."
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__(
+                    'Number of parcels not allowed. Amount requested: %s, maximum allowed: %s.',
+                    $count,
+                    $maxParcelCount
+                ),
+                'POSTNL-0068'
             );
         }
         
@@ -1118,7 +1122,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function generateBarcodes()
     {
         if (!$this->canGenerateBarcode()) {
-            throw Mage::exception('TIG_PostNL', 'The generateBarcodes action is currently unavailable.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The generateBarcodes action is currently unavailable.'),
+                'POSTNL-0069'
+            );
         }
         
         $this->lock();
@@ -1176,7 +1183,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $barcode = $cif->generateBarcode($shipment, $barcodeType);
         
         if (!$barcode) {
-            throw Mage::exception('TIG_PostNL', 'Unable to generate barcode for this shipment: '. $shipment->getId());
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to generate barcode for this shipment: %s', $shipment->getId()),
+                'POSTNL-0070'
+            );
         }
         
         /**
@@ -1270,9 +1280,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         if (!isset($result->Labels) || !isset($result->Labels->Label)) {
-            throw Mage::exception(
-                'TIG_PostNL', 
-                "The confirmAndPrintLabel action returned an invalid response: \n" . var_export($response, true)
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__(
+                    'The confirmAndPrintLabel action returned an invalid response: %s', 
+                    var_export($response, true)
+                ),
+                'POSTNL-0071'
             );
         }
         $labels = $result->Labels->Label;
@@ -1398,7 +1411,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * The response was not valid; throw an exception
          */
-        throw Mage::exception('TIG_PostNL', 'Invalid confirm response recieved: ' . var_export($result, true));
+        throw new TIG_PostNL_Exception(
+            Mage::helper('postnl')->__('Invalid confirm response recieved: %s', var_export($result, true)),
+            'POSTNL-0072'
+        );
     }
     
     /**
@@ -1473,7 +1489,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function updateShippingStatus()
     {
         if (!$this->canUpdateShippingStatus()) {
-            throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The updateShippingStatus action is currently unavailable.'),
+                'POSTNL-0073'
+            );
         }
         
         $this->lock();
@@ -1507,7 +1526,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function updateCompleteShippingStatus()
     {
         if (!$this->canUpdateCompleteShippingStatus()) {
-            throw Mage::exception('TIG_PostNL', 'The updateShippingStatus action is currently unavailable.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The updateCompleteShippingStatus action is currently unavailable.'),
+                'POSTNL-0074'
+            );
         }
         
         $this->lock();
@@ -1586,7 +1608,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $barcode = $this->getMainBarcode();
         
         if (!$shipment || !$barcode) {
-            throw Mage::exception('TIG_PostNL', 'Unable to add tracking info: no barcode or shipment available.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to add tracking info: no barcode or shipment available.'),
+                'POSTNL-0075'
+            );
         }
         
         $carrierCode = self::POSTNL_CARRIER_CODE;
@@ -1623,7 +1648,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function sendTrackAndTraceEmail($ignoreAlreadySent = false)
     {
         if (!$this->canSendTrackAndTraceEmail($ignoreAlreadySent)) {
-            throw Mage::exception('TIG_PostNL', 'The sendTrackAndTraceEmail action is currently unavailable.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The sendTrackAndTraceEmail action is currently unavailable.'),
+                'POSTNL-0076'
+            );
         }
         
         $oldStoreId = Mage::app()->getStore()->getId();
@@ -1667,7 +1695,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         );
         
         if ($success === false) {
-            throw Mage::exception('TIG_PostNL', 'Unable to send track and trace email for shipment #' . $this->getShipmentId());
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to send track and trace email for shipment #', $this->getShipmentId()),
+                'POSTNL-0077'
+            );
         }
         
         return $this;
@@ -1940,8 +1971,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Check if the product code is allowed
          */
         if (!in_array($productCode, $allowedProductCodes)) {
-            throw Mage::exception('TIG_PostNL', 
-                $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode)
+            throw new TIG_PostNL_Exception(
+                $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
+                'POSTNL-0078'
             );
         }
         
@@ -1958,8 +1990,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $destination = $this->getShippingAddress()->getCountryId();
         if (!in_array($destination, $allowedCountries)) {
-            throw Mage::exception('TIG_PostNL', 
-                $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode)
+            throw new TIG_PostNL_Exception(
+                $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
+                'POSTNL-0078'
             );
         }
         

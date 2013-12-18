@@ -192,19 +192,19 @@
 			    <observers>
 			   		<!-- Adds a massaction the grid that allows merchants to create shipments for selected orders-->
 				    <postnl_adminhtml_ordergrid>
-					    <type>model</type>
+					    <type>singleton</type>
 					    <class>postnl_adminhtml/observer_orderGrid</class>
 					    <method>modifyGrid</method>
 				    </postnl_adminhtml_ordergrid>
 					<!-- Adds new columns to the shipment grid and allows these columns to be filtered and sorted properly -->
 					<postnl_adminhtml_shipmentgrid>
-						<type>model</type>
+						<type>singleton</type>
 						<class>postnl_adminhtml/observer_shipmentGrid</class>
 						<method>modifyGrid</method>
 					</postnl_adminhtml_shipmentgrid>
                     <!-- Adds a new print shipping label button to the shipment view page -->
                     <postnl_adminhtml_shipmentview>
-                        <type>model</type>
+                        <type>singleton</type>
                         <class>postnl_adminhtml/observer_shipmentView</class>
                         <method>addPrintLabelButton</method>
                     </postnl_adminhtml_shipmentview>
@@ -370,6 +370,9 @@
             </postnl>
         </carriers>
         <postnl>
+            <support>
+                <expanded>1</expanded> <!-- Expand the support tab on first view after install -->
+            </support>
         	<general>
         		<active>0</active> <!-- inactive -->
         		<is_activated>0</is_activated> <!-- Not activated -->
@@ -394,7 +397,7 @@
                 <contact_email/>
         	</cif>
         	<cif_labels_and_confirming>
-                <mode>1</mode> <!-- test mode -->
+                <mode>0</mode> <!-- Live mode -->
                 <label_size>A4</label_size> <!-- A4 size labels -->
                 <weight_per_parcel>20000</weight_per_parcel> <!-- 20 kg -->
                 <weight_unit>gram</weight_unit> <!-- gram -->
@@ -468,7 +471,7 @@
         	</cif_globalpack_settings>
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
-        	    <mode>1</mode> <!-- Test mode -->
+        	    <mode>0</mode> <!-- Live mode -->
         	    <instruction_cms_page/>
         	    <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the PostNL Checkout button for orders under 2 kg -->
         	    <show_checkout_for_backorders>0</show_checkout_for_backorders> <!-- Do not show the PostNL Checkout button if the order contains out-of-stock products -->
@@ -511,6 +514,7 @@
                 <afterpay_method/>
         	</checkout_payment_methods>
         	<advanced>
+        	    <allow_test_mode>0</allow_test_mode>
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
@@ -824,6 +828,126 @@
                 <url>http://servicedesk.totalinternetgroup.nl/entries/31664246</url>
                 <type>error</type>
             </POSTNL-0055>
+            <POSTNL-0056>
+                <message>Invalid confirmShipment response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31923588</url>
+                <type>error</type>
+            </POSTNL-0056>
+            <POSTNL-0057>
+                <message>Invalid generateLabels response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31906367</url>
+                <type>error</type>
+            </POSTNL-0057>
+            <POSTNL-0058>
+                <message>Invalid generateLabelsWithoutConfirm response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31923208</url>
+                <type>error</type>
+            </POSTNL-0058>
+            <POSTNL-0059>
+                <message>Invalid housnumber supplied: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32412636</url>
+                <type>error</type>
+            </POSTNL-0059>
+            <POSTNL-0060>
+                <message>Invalid full street supplied: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31924308</url>
+                <type>error</type>
+            </POSTNL-0060>
+            <POSTNL-0061>
+                <message>Invalid barcodetype requested: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31924098</url>
+                <type>error</type>
+            </POSTNL-0061>
+            <POSTNL-0062>
+                <message>Invalid printer type requested: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32413996</url>
+                <type>error</type>
+            </POSTNL-0062>
+            <POSTNL-0063>
+                <message>Unable to match barcode to shippingStatus response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31910007</url>
+                <type>error</type>
+            </POSTNL-0063>
+            <POSTNL-0064>
+                <message>Maximum amount of labels exceeded. Maximum allowed: 200. Requested: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31925938</url>
+                <type>error</type>
+            </POSTNL-0064>
+            <POSTNL-0065>
+                <message>Invalid label type supplied: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31910337</url>
+                <type>error</type>
+            </POSTNL-0065>
+            <POSTNL-0066>
+                <message>Temporary template file already exists: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32415756</url>
+                <type>error</type>
+            </POSTNL-0066>
+            <POSTNL-0067>
+                <message>Invalid counter: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31973693</url>
+                <type>error</type>
+            </POSTNL-0067>
+            <POSTNL-0068>
+                <message>Number of parcels not allowed. Amount requested: %s, maximum allowed: %s.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31973693</url>
+                <type>error</type>
+            </POSTNL-0068>
+            <POSTNL-0069>
+                <message>The generateBarcodes action is currently unavailable.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32416446</url>
+                <type>error</type>
+            </POSTNL-0069>
+            <POSTNL-0070>
+                <message>Unable to generate barcode for this shipment: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31974103</url>
+                <type>error</type>
+            </POSTNL-0070>
+            <POSTNL-0071>
+                <message>The confirmAndPrintLabel action returned an invalid response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31928088</url>
+                <type>error</type>
+            </POSTNL-0071>
+            <POSTNL-0072>
+                <message>Invalid confirm response recieved: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31976783</url>
+                <type>error</type>
+            </POSTNL-0072>
+            <POSTNL-0073>
+                <message>The updateShippingStatus action is currently unavailable.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31930018</url>
+                <type>error</type>
+            </POSTNL-0073>
+            <POSTNL-0074>
+                <message>The updateCompleteShippingStatus action is currently unavailable.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31930488</url>
+                <type>error</type>
+            </POSTNL-0074>
+            <POSTNL-0075>
+                <message>Unable to add tracking info: no barcode or shipment available.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31977793</url>
+                <type>error</type>
+            </POSTNL-0075>
+            <POSTNL-0076>
+                <message>The sendTrackAndTraceEmail action is currently unavailable.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31930908</url>
+                <type>error</type>
+            </POSTNL-0076>
+            <POSTNL-0077>
+                <message>Unable to send track and trace email for shipment #%s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31977863</url>
+                <type>error</type>
+            </POSTNL-0077>
+            <POSTNL-0078>
+                <message>Product code %s is not allowed for this shipment.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31978843</url>
+                <type>error</type>
+            </POSTNL-0078>
+            <POSTNL-0079>
+                <message>Invalid activateWebshop response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31978413</url>
+                <type>error</type>
+            </POSTNL-0079>
             <POSTNL-0087>
                 <message>Wrong message type</message>
                 <url>http://servicedesk.totalinternetgroup.nl/entries/31566016</url>

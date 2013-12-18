@@ -107,7 +107,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             || !isset($result['status'])
             || $result['status'] != self::SUCCESS_MESSAGE
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid activateWebshop response: ' . var_export($result, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid activateWebshop response: %s', var_export($result, true)),
+                'POSTNL-0079'
+            );
         }
         
         return $this;

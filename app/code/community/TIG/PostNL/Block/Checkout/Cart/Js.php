@@ -153,7 +153,7 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
     }
     
     /**
-     * Gets a URL to which the user will be redirected after finishing the order in the PostNl overlay.
+     * Gets a URL to which the user will be redirected after finishing the order in the PostNL overlay.
      * 
      * @return string
      */
