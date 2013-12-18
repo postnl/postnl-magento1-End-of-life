@@ -199,7 +199,7 @@
         <postnl translate="label" module="postnl">
             <label>PostNL</label>
             <tab>sales</tab>
-            <frontend_type>text</frontend_type>
+            <frontend_model>postnl_adminhtml/system_config_edit_form</frontend_model>
             <class>postnl-tab</class>
             <sort_order>330</sort_order> <!-- After Shipping Methods, before Google API -->
             <show_in_default>1</show_in_default>
@@ -365,6 +365,12 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
+                            <depends>
+                                <allow_test_mode>
+                                    <fieldset>advanced</fieldset>
+                                    <value>1</value>
+                                </allow_test_mode>
+                            </depends>
                         </test_username>
                         <test_password translate="label" module="postnl">
                             <label>Test Password</label>
@@ -375,6 +381,12 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
+                            <depends>
+                                <allow_test_mode>
+                                    <fieldset>advanced</fieldset>
+                                    <value>1</value>
+                                </allow_test_mode>
+                            </depends>
                         </test_password>
                         <customer_number translate="label" module="postnl">
                             <label>Customer Number</label>
@@ -513,6 +525,12 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
+                            <depends>
+                                <allow_test_mode>
+                                    <fieldset>advanced</fieldset>
+                                    <value>1</value>
+                                </allow_test_mode>
+                            </depends>
                         </mode>
                         <label_size translate="label comment" module="postnl">
                             <label>Label size</label>
@@ -1266,6 +1284,10 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <active>1</active>
+                                <allow_test_mode>
+                                    <fieldset>advanced</fieldset>
+                                    <value>1</value>
+                                </allow_test_mode>
                             </depends>
                         </mode>
                         <checkout_button_header translate="label" module="postnl">
@@ -1281,7 +1303,7 @@
                         </checkout_button_header>
                         <instruction_cms_page translate="label comment" module="postnl">
                             <label>Instruction CMS page</label>
-                            <comment>Select a CMS page containing instructions on how to use PostNl Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.</comment>
+                            <comment>Select a CMS page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_cmsPage</source_model>
                             <sort_order>40</sort_order>
@@ -1920,13 +1942,25 @@
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
+                        <allow_test_mode translate="label comment tooltip" module ="postnl">
+                            <label>Allow test mode</label>
+                            <comment>If enabled new fields will appear allowing you to configure the extension for test mode.</comment>
+                            <tooltip>By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                        </allow_test_mode>
                         <debug_mode translate="label comment tooltip" module="postnl">
                             <label>Debug mode</label>
                             <comment>If enabled, debug logs will be created in the var/logs folder.</comment>
                             <tooltip>Full logging will log various debugging messages as well as errors. N.B.: these log files may become very large in a short amount of time.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_debugMode</source_model>
-                            <sort_order>10</sort_order>
+                            <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1937,7 +1971,7 @@
                             <comment>By default a maximum of 200 labels can be printed at once. Enable this to remove this limitation. Beware: enabling this may lead to server instability.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>20</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1947,7 +1981,7 @@
                             <label>Maximum number of parcels per shipment</label>
                             <comment><![CDATA[Leave empty to allow an infinite amount of parcels per shipment.<br/>If this value is empty or exceeds 200, you need to set 'Allow infinite label printing' to yes in order to be able to print the shipment's labels.]]></comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>30</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1956,7 +1990,7 @@
                             <label>Maximum temporary file storage time</label>
                             <comment>In seconds. After this time, temporary files will be deleted. Only increase this if you use custom functionality to create a very large amount of labels at once.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1966,7 +2000,7 @@
                             <label>Number of days before a confirmation expires</label>
                             <comment>If a confirmed shipment has not been shipped after this amount of days it's confirmation will expire.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1976,7 +2010,7 @@
                             <label>Send extension usage statistics to PostNL</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1986,7 +2020,7 @@
                             <label>Recieve notifications from PostNL regarding updates and promotions</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1997,7 +2031,7 @@
                             <comment>If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2006,7 +2040,7 @@
                         <cif_versions_header translate="label" module="postnl">
                             <label>The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the module altogether.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2014,7 +2048,7 @@
                         <cif_version_shippingstatus translate="label" module="postnl">
                             <label>ShippingStatus Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2022,7 +2056,7 @@
                         <cif_version_confirming translate="label" module="postnl">
                             <label>Confirming Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2030,7 +2064,7 @@
                         <cif_version_labelling translate="label" module="postnl">
                             <label>Labelling Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2038,7 +2072,7 @@
                         <cif_version_barcode translate="label" module="postnl">
                             <label>Barcode Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2046,7 +2080,7 @@
                         <cif_version_checkout translate="label" module="postnl">
                             <label>Checkout Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>

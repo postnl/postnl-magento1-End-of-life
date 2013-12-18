@@ -402,7 +402,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * no shipment could be matched to the supplied barcode
          */ 
-        throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($response, true));
+        throw new TIG_PostNL_Exception(
+            Mage::helper('postnl')->__( 'Unable to match barcode to shippingStatus response: %s', var_export($response, true)),
+            'POSTNL-0063'
+        );
     }
     
     /**
@@ -462,7 +465,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * no shipment could be matched to the supplied barcode
          */ 
-        throw Mage::exception('TIG_PostNL', 'Unable to match barcode to shippingStatus response: ' . "\n" . var_export($response, true));
+        throw new TIG_PostNL_Exception(
+            Mage::helper('postnl')->__( 'Unable to match barcode to shippingStatus response: %s', var_export($response, true)),
+            'POSTNL-0063'
+        );
     }
     
     /**
@@ -508,7 +514,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
         
         if (!is_object($response)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid confirmShipment response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid confirmShipment response: %s', var_export($response, true)),
+                'POSTNL-0056'
+            );
         }
         
         if (isset($response->ConfirmingResponseShipment) 
@@ -519,7 +528,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             return $response;
         }
         
-        throw Mage::exception('TIG_PostNL', 'Invalid confirmShipment response: ' . "\n" . var_export($response, true));
+        throw new TIG_PostNL_Exception(
+            Mage::helper('postnl')->__('Invalid confirmShipment response: %s', var_export($response, true)),
+            'POSTNL-0056'
+        );
     }
     
     /**
@@ -538,7 +550,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         $availablePrinterTypes = $this->_printerTypes;
         if (!in_array($printerType, $availablePrinterTypes)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid printer type requested: %s', $printerType),
+                'POSTNL-0062'
+            );
         }
         
         /**
@@ -569,7 +584,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Labels) 
             || !is_object($response->Labels)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid generateLabels response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid generateLabels response: %s', var_export($response, true)),
+                'POSTNL-0057'
+            );
         }
         
         return $response;
@@ -591,7 +609,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         $availablePrinterTypes = $this->_printerTypes;
         if (!in_array($printerType, $availablePrinterTypes)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid printer type requested: ' . $printerType);
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid printer type requested: %s', $printerType),
+                'POSTNL-0062'
+            );
         }
         
         /**
@@ -622,7 +643,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !isset($response->Labels) 
             || !is_object($response->Labels)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid generateLabelsWithoutConfirm response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid generateLabelsWithoutConfirm response: %s', var_export($response, true)),
+                'POSTNL-0058'
+            );
         }
         
         return $response;
@@ -949,7 +973,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $serie = self::GLOBAL_BARCODE_SERIE;
                 break;
             default:
-                throw Mage::exception('TIG_PostNL', 'Invalid barcodetype requested: ' . $barcodeType);
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('Invalid barcodetype requested: %s', $barcodeType),
+                    'POSTNL-0061'
+                );
         }
 
         $barcodeData = array(
@@ -1167,7 +1194,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $result = preg_match(self::SPLIT_STREET_REGEX, $fullStreet, $matches);
         if (!$result || !is_array($matches)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid full street supplied: ' . $fullStreet);
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid full street supplied: %s', $fullStreet),
+                'POSTNL-0060'
+            );
         }
         
         $streetname = '';
@@ -1207,7 +1237,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $result = preg_match(self::SPLIT_HOUSENUMBER_REGEX, $housenumber, $matches);
         if (!$result || !is_array($matches)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid housnumber supplied: ' . $housenumber);
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid housnumber supplied: %s', $housenumber),
+                'POSTNL-0059'
+            );
         }
         
         $extension = '';
