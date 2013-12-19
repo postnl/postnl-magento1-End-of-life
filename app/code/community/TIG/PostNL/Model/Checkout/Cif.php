@@ -336,7 +336,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
         
         if (!is_object($response)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid UpdateOrder response: ' . "\n" . var_export($response, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid UpdateOrder response: %s', var_export($response, true)),
+                'POSTNL-0097'
+            );
         }
         
         return $response;

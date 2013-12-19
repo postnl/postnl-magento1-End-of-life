@@ -1,0 +1,7 @@
+.postnl-overlay { height:100%; width:100%; position:fixed; top:0; left:0; z-index:999; background:url(../../../images/TIG/PostNL/overlay.png) 0 0 scroll repeat; }
+.overlay-content { width:100px; height:74px; background:#FCF8F4; text-align:center; position:absolute; left:50%; top:262px; margin-left:-37px; box-shadow:0 0 30px rgba(0,0,0,0.5); -webkit-box-shadow:0 0 30px rgba(0,0,0,0.5); border:1px solid #888; border-radius:10px; -moz-border-radius:10px; -webkit-border-radius:10px; }
+
+.info-box { margin-bottom:17px; }
+.info-box .form-list label { text-align:left !important; }
+.info-box .month { width:250px; margin-right:10px; }
+.info-box .year { width:120px; }

@@ -178,7 +178,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Edit_Form extends Mage_Adminhtml_
                 if ($group->clone_model) {
                     $cloneModel = Mage::getModel((string)$group->clone_model);
                 } else {
-                    Mage::throwException($this->__('Config form fieldset clone model required to be able to clone fields'));
+                    throw new TIG_PostNL_Exception(
+                        $this->__('Config form fieldset clone model required to be able to clone fields'),
+                        'POSTNL-0095'
+                    );
                 }
                 foreach ($cloneModel->getPrefixes() as $prefix) {
                     $this->initFields($fieldset, $group, $section, $prefix['field'], $prefix['label']);

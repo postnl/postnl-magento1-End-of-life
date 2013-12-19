@@ -942,6 +942,7 @@
                             <depends>
                                 <use_sender_address>0</use_sender_address>
                             </depends>
+                            <validate>postnl-validate-empty</validate>
                         </firstname>
                         <lastname translate="label" module="postnl">
                             <label>Last Name</label>
@@ -953,6 +954,7 @@
                             <depends>
                                 <use_sender_address>0</use_sender_address>
                             </depends>
+                            <validate>postnl-validate-empty</validate>
                         </lastname>
                         <company translate="label" module="postnl">
                             <label>Company</label>
@@ -987,6 +989,7 @@
                             <depends>
                                 <use_sender_address>0</use_sender_address>
                             </depends>
+                            <validate>postnl-validate-empty</validate>
                         </streetname>
                         <housenumber translate="label comment" module="postnl">
                             <label>House Nr.</label>
@@ -999,6 +1002,7 @@
                             <depends>
                                 <use_sender_address>0</use_sender_address>
                             </depends>
+                            <validate>postnl-validate-empty</validate>
                         </housenumber>
                         <housenumber_extension translate="label comment" module="postnl">
                             <label>House Nr. Extension</label>
@@ -1021,6 +1025,7 @@
                             <depends>
                                 <use_sender_address>0</use_sender_address>
                             </depends>
+                            <validate>postnl-validate-empty</validate>
                         </postcode>
                         <city translate="label" module="postnl">
                             <label>City</label>
@@ -1032,6 +1037,7 @@
                             <depends>
                                 <use_sender_address>0</use_sender_address>
                             </depends>
+                            <validate>postnl-validate-empty</validate>
                         </city>
                         <region translate="label" module="postnl">
                             <label>Region</label>
@@ -1540,11 +1546,25 @@
                             </depends>
                         </postnl_checkout_disabled_header>
                         <!-- iDEAL -->
+                        <ideal_header translate="label" module="postnl">
+                            <label>iDEAL</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </ideal_header>
                         <ideal translate="label" module="postnl">
                             <label>Use iDEAL</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>20</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1559,7 +1579,7 @@
                             <label>iDEAL payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1575,7 +1595,7 @@
                             <label>iDeal Bank Field</label>
                             <comment>Enter the field name used by the selected payment method for the 'bank' field.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1592,11 +1612,25 @@
                             </depends>
                         </ideal_option_field>
                         <!-- Creditcard -->
+                        <creditcard_header translate="label" module="postnl">
+                            <label>Creditcard</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </creditcard_header>
                         <creditcard translate="label" module="postnl">
                             <label>Use creditcard</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1611,7 +1645,7 @@
                             <label>Creditcard payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1627,7 +1661,7 @@
                             <label>Creditcard card type field</label>
                             <comment>Enter the field name used by the selected payment method for the 'creditcard type' field.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1644,11 +1678,25 @@
                             </depends>
                         </creditcard_option_field>
                         <!-- Checkpay -->
+                        <creckpay_header translate="label" module="postnl">
+                            <label>Checkpay</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </creckpay_header>
                         <checkpay translate="label" module="postnl">
                             <label>Use CheckPay</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1663,7 +1711,7 @@
                             <label>CheckPay payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1676,11 +1724,25 @@
                             </depends>
                         </checkpay_method>
                         <!-- Paypal -->
+                        <paypal_header translate="label" module="postnl">
+                            <label>PayPal</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>130</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </paypal_header>
                         <paypal translate="label" module="postnl">
                             <label>Use PayPal</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1695,7 +1757,7 @@
                             <label>PayPal payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1708,11 +1770,25 @@
                             </depends>
                         </paypal_method>
                         <!-- Machtiging -->
+                        <directdebit_header translate="label" module="postnl">
+                            <label>Direct Debit</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>160</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </directdebit_header>
                         <directdebit translate="label" module="postnl">
                             <label>Use direct debit</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1727,7 +1803,7 @@
                             <label>Direct debit payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1740,11 +1816,25 @@
                             </depends>
                         </directdebit_method>
                         <!-- Accept Giro -->
+                        <acceptgiro_header translate="label" module="postnl">
+                            <label>Acceptgiro</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>190</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </acceptgiro_header>
                         <acceptgiro translate="label" module="postnl">
                             <label>Use acceptgiro</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1759,7 +1849,7 @@
                             <label>Acceptgiro payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1772,11 +1862,25 @@
                             </depends>
                         </acceptgiro_method>
                         <!-- Betaling Vooraf -->
+                        <vooraf_betalen_header translate="label" module="postnl">
+                            <label>Vooraf Betalen</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>220</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </vooraf_betalen_header>
                         <vooraf_betalen translate="label" module="postnl">
                             <label>Use vooraf betalen</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1791,7 +1895,7 @@
                             <label>Vooraf betalen payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1804,11 +1908,25 @@
                             </depends>
                         </vooraf_betalen_method>
                         <!-- Termijnen -->
+                        <termijnen_header translate="label" module="postnl">
+                            <label>Betaling in Termijnen</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>250</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </termijnen_header>
                         <termijnen translate="label" module="postnl">
                             <label>Use betaling in termijnen</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>180</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1823,7 +1941,7 @@
                             <label>In termijnen betalen payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>190</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1836,11 +1954,25 @@
                             </depends>
                         </termijnen_method>
                         <!-- Kadobon -->
+                        <giftcard_header translate="label" module="postnl">
+                            <label>Giftcard</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>280</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </giftcard_header>
                         <giftcard translate="label" module="postnl">
                             <label>Use giftcard</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>200</sort_order>
+                            <sort_order>290</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1855,7 +1987,7 @@
                             <label>Giftcard payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>210</sort_order>
+                            <sort_order>300</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1868,11 +2000,25 @@
                             </depends>
                         </giftcard_method>
                         <!-- Rabobank Internet Kassa -->
+                        <rabobank_internetkassa_header translate="label" module="postnl">
+                            <label>Rabobank Internetkassa</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>310</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </rabobank_internetkassa_header>
                         <rabobank_internetkassa translate="label" module="postnl">
                             <label>Use RaboBank internetkassa</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>220</sort_order>
+                            <sort_order>320</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1887,7 +2033,7 @@
                             <label>Rabobank internetkassa payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>230</sort_order>
+                            <sort_order>330</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1900,11 +2046,25 @@
                             </depends>
                         </rabobank_internetkassa_method>
                         <!-- Afterpay -->
+                        <afterpay_header translate="label" module="postnl">
+                            <label>AfterPay</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>340</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </afterpay_header>
                         <afterpay translate="label" module="postnl">
                             <label>Use AfterPay</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>240</sort_order>
+                            <sort_order>350</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1919,7 +2079,7 @@
                             <label>AfterPay payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>250</sort_order>
+                            <sort_order>360</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
