@@ -41,8 +41,6 @@
  * Class containing all default methods used for CIF communication by this extension.
  * 
  * If you wish to add new methods you can etxend this class or create a new class that extends TIG_PostNL_Model_Core_Cif_Abstract
- * 
- * @todo implement warning processing
  */
 class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 {
@@ -835,7 +833,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $availableAddressTypes = $this->getAddressTypes();
         if (!array_key_exists($addressType, $availableAddressTypes)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid address type supplied: ' . $addressType);
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid address type supplied: %s', $addressType),
+                'POSTNL-0108'
+            );
         }
         
         /**
@@ -1081,7 +1082,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * 
      * PREG cannot be relied on as it is impossible to create a regex that can filter all
      * possible street syntaxes. Therefore we strongly recommend to use multiple street lines. This
-     * can be enabled in Magento communiy in system > config > customer configuration. Or if you 
+     * can be enabled in Magento community in system > config > customer configuration. Or if you 
      * use Enterprise, in customers > attributes > manage customer address attributes. 
      * 
      * @param Mage_Sales_Model_Order_Address $address
@@ -1488,7 +1489,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         if (empty($countryOfOrigin)) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Missing country of origin value for product #%s.', $shipmentItem->getProductId())
+                Mage::helper('postnl')->__('Missing country of origin value for product #%s.', $shipmentItem->getProductId()),
+                'POSTNL-0091'
             );
         }
                                     
@@ -1518,7 +1520,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         if (empty($customsValue)) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Missing customs value for product #%s.', $shipmentItem->getProductId())
+                Mage::helper('postnl')->__('Missing customs value for product #%s.', $shipmentItem->getProductId()),
+                'POSTNL-0092'
             );
         }
 
@@ -1548,7 +1551,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         if (empty($description)) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Missing customs description for product #%s.', $shipmentItem->getProductId())
+                Mage::helper('postnl')->__('Missing customs description for product #%s.', $shipmentItem->getProductId()),
+                'POSTNL-0093'
             );
         }
         

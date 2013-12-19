@@ -1310,7 +1310,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function confirm()
     {
         if (!$this->canConfirm()) {
-            throw Mage::exception('TIG_PostNL', 'The confirm action is currently unavailable.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The confirm action is currently unavailable.'),
+                'POSTNL-0109'
+            );
         }
         
         $this->lock();
@@ -1427,7 +1430,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function confirmAndGenerateLabel()
     {
         if (!$this->canConfirm(true)) {
-            throw Mage::exception('TIG_PostNL', 'The confirmAndGenerateLabel action is currently unavailable.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The confirm action is currently unavailable.'),
+                'POSTNL-0110'
+            );
         }
         
         $this->lock();

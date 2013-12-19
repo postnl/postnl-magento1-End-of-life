@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -719,7 +719,7 @@
                 <type>error</type>
             </POSTNL-0033>
             <POSTNL-0034>
-                <message>%s is required.</message>
+                <message>%s > %s is required.</message>
                 <url>http://servicedesk.totalinternetgroup.nl/entries/31186983</url>
                 <type>error</type>
             </POSTNL-0034>
@@ -948,23 +948,160 @@
                 <url>http://servicedesk.totalinternetgroup.nl/entries/31978413</url>
                 <type>error</type>
             </POSTNL-0079>
+            <POSTNL-0080>
+                <message>Unable to update statistics. This feature has been disabled.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31978413</url>
+                <type>error</type>
+            </POSTNL-0080>
+            <POSTNL-0081>
+                <message>No private or unique key found. Unable to complete the request.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31979763</url>
+                <type>error</type>
+            </POSTNL-0081>
+            <POSTNL-0082>
+                <message>Invalid updateStatistics response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31918757</url>
+                <type>error</type>
+            </POSTNL-0082>
+            <POSTNL-0083>
+                <message>PostNL extension has been successfully updated to version %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31921907</url>
+                <type>notice</type>
+            </POSTNL-0083>
+            <POSTNL-0084>
+                <message>Unable to save shipping_status cron expression: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31940658</url>
+                <type>error</type>
+            </POSTNL-0084>
+            <POSTNL-0085>
+                <message>Unable to save update_statistics cron expression: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31925327</url>
+                <type>error</type>
+            </POSTNL-0085>
+            <POSTNL-0086>
+                <message>The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31925577</url>
+                <type>warning</type>
+            </POSTNL-0086>
             <POSTNL-0087>
                 <message>Wrong message type</message>
                 <url>http://servicedesk.totalinternetgroup.nl/entries/31566016</url>
                 <type>error</type>
             </POSTNL-0087>
+            <POSTNL-0088>
+                <message>Invalid session requested.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32430366</url>
+                <type>error</type>
+            </POSTNL-0088>
+            <POSTNL-0089>
+                <message>No message supplied.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31925967</url>
+                <type>error</type>
+            </POSTNL-0089>
+            <POSTNL-0090>
+                <message>No message type supplied.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31988933</url>
+                <type>error</type>
+            </POSTNL-0090>
+            <POSTNL-0091>
+                <message>Missing country of origin value for product #%s.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31988983</url>
+                <type>error</type>
+            </POSTNL-0091>
+            <POSTNL-0092>
+                <message>Missing customs value for product #%s.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32432746</url>
+                <type>error</type>
+            </POSTNL-0092>
+            <POSTNL-0093>
+                <message>Missing customs description for product #%s.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31944008</url>
+                <type>error</type>
+            </POSTNL-0093>
+            <POSTNL-0094>
+                <message>Invalid message type requested: %s.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/33566806</url>
+                <type>error</type>
+            </POSTNL-0094>
+            <POSTNL-0095>
+                <message>Config form fieldset clone model required to be able to clone fields</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/33059188</url>
+                <type>error</type>
+            </POSTNL-0095>
+            <POSTNL-0096>
+                <message>Unable to read directory: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/33063203</url>
+                <type>error</type>
+            </POSTNL-0096>
+            <POSTNL-0097>
+                <message>Invalid UpdateOrder response: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/33064418</url>
+                <type>error</type>
+            </POSTNL-0097>
             
-            <!-- These are errors that are generated by CIF, but that we have designated an error code -->
+            <!-- Note: errors 0098 and 0099 are missing. They will be added later. They have no special significance, we just forgot them :) -->
+            
+            <!-- This error is generated by CIF, however we have designated it an error code -->
             <POSTNL-0100>
                 <message>The user is not authorized for this barcode</message>
-                <url/>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32435446</url>
                 <type>error</type>
             </POSTNL-0100>
+            <POSTNL-0101>
+                <message>The quote's total weight is below the miniumum required to use PostNL Checkout.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32433656</url>
+                <type>notice</type>
+            </POSTNL-0101>
+            <POSTNL-0102>
+                <message>One or more items in the cart are out of stock.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31993743</url>
+                <type>notice</type>
+            </POSTNL-0102>
+            <POSTNL-0103>
+                <message>PostNL Checkout has been disabled.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/31947888</url>
+                <type>notice</type>
+            </POSTNL-0103>
+            <POSTNL-0104>
+                <message>The quote is virtual.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32436016</url>
+                <type>notice</type>
+            </POSTNL-0104>
+            <POSTNL-0105>
+                <message>The quote's grand total is below the minimum amount required.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32759156</url>
+                <type>notice</type>
+            </POSTNL-0105>
+            <POSTNL-0106>
+                <message>No standard product options are enabled. At least 1 option must be active.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32288438</url>
+                <type>notice</type>
+            </POSTNL-0106>
+            <POSTNL-0107>
+                <message>You have not yet enabled the PostNL extension.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32266563</url>
+                <type>notice</type>
+            </POSTNL-0107>
+            <POSTNL-0108>
+                <message>Invalid address type supplied: %s</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32295088</url>
+                <type>error</type>
+            </POSTNL-0108>
+            <POSTNL-0109>
+                <message>The confirm action is currently unavailable.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32772946</url>
+                <type>error</type>
+            </POSTNL-0109>
+            <POSTNL-0110>
+                <message>The confirmAndGenerateLabel action is currently unavailable.</message>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32279277</url>
+                <type>error</type>
+            </POSTNL-0110>
             
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>
                 <message>Combilabel was not processed successfully for shipment with barcode %s. Normal label is generated and product code for shipment changed to 4944.</message>
-                <url></url>
+                <url>http://servicedesk.totalinternetgroup.nl/entries/32432076</url>
                 <type>warning</type>
             </LIRS_0>
         </errors>

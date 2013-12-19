@@ -162,9 +162,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         
         $inbox = Mage::getModel('postnl/inbox');
         $inbox->addNotice(
-                  $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
-                  $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
-                  '', 
+                  '[POSTNL-0083-N] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
+                  '[POSTNL-0083-N] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
+                  'http://servicedesk.totalinternetgroup.nl/entries/31921907', 
                   true
               )
               ->save();
@@ -206,7 +206,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
                 ->setPath(self::SHIPPING_STATUS_CRON_MODEL_PATH)
                 ->save();
         } catch (Exception $e) {
-            throw Mage::exception('TIG_PostNL', 'Unable to save shipping_status cron expression: ' . $cronExpr);
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to save shipping_status cron expression: %s', $cronExpr),
+                'POSTNL-0084',
+                $e
+            );
         }
         
         return $this;
@@ -247,7 +251,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
                 ->setPath(self::UPDATE_STATISTICS_CRON_MODEL_PATH)
                 ->save();
         } catch (Exception $e) {
-            throw Mage::exception('TIG_PostNL', 'Unable to save update_statistics cron expression: ' . $cronExpr);
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to save update_statistics cron expression: %s', $cronExpr),
+                'POSTNL-0085',
+                $e
+            );
         }
         
         return $this;
@@ -272,12 +280,15 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         
         $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/' . $edition);
         if ($supportedVersions === false) {
+            $message = '[POSTNL-0086-W] ' 
+                     . $helper->__(
+                           'The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.'
+                       );
+                       
             $inbox->addCritical(
-                      $helper->__('The PostNL extension is not compatible with your Magento version! '
-                          . 'This may cause unexpected behaviour.'),
-                      $helper->__('The PostNL extension is not compatible with your Magento version! '
-                          . 'This may cause unexpected behaviour.'),
-                      '', 
+                      $message,
+                      $message,
+                      'http://servicedesk.totalinternetgroup.nl/entries/31925577', 
                       true
                   )
                   ->save();
@@ -292,12 +303,15 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $installedMagentoVersion = $installedMagentoVersionInfo['major'] . '.' . $installedMagentoVersionInfo['minor'];
         
         if (!in_array($installedMagentoVersion, $supportedVersionArray)) {
+            $message = '[POSTNL-0086-W] ' 
+                     . $helper->__(
+                           'The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.'
+                       );
+                       
             $inbox->addCritical(
-                      $helper->__('The PostNL extension is not compatible with your Magento version! '
-                          . 'This may cause unexpected behaviour.'),
-                      $helper->__('The PostNL extension is not compatible with your Magento version! '
-                          . 'This may cause unexpected behaviour.'),
-                      '', 
+                      $message,
+                      $message,
+                      'http://servicedesk.totalinternetgroup.nl/entries/31925577',
                       true
                   )
                   ->save();
