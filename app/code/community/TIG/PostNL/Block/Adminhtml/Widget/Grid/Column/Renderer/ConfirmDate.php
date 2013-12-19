@@ -90,7 +90,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
          */
         if ($now < date('Ymd', strtotime($value))) {
             $confirmDate = new DateTime($value);
-            $today = new DateTime();
+            $today = new DateTime($now);
             
             /**
              * Get the number of days until the shipment should be confirmed

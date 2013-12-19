@@ -122,7 +122,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
         
         $currentCollection = $block->getCollection();
-        $select = $currentCollection->getSelect();
+        $select = $currentCollection->getSelect()->reset(Zend_Db_Select::WHERE);
         
         /**
          * replace the collection as the default collection has a bug preventing it from being reset.
@@ -139,6 +139,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $this->setBlock($block);
         
         $this->_joinCollection($collection);
+        $this->_modifyColumns($block);
         $this->_addColumns($block);
         $this->_applySortAndFilter($collection);
         $this->_addMassaction($block);
@@ -210,6 +211,24 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'is_pakje_gemak' => 'postnl_order.is_pakje_gemak',
             )
         );
+        
+        return $this;
+    }
+    
+    /**
+     * Modifies existing columns to prevent issues with the new collections
+     * 
+     * @param Mage_Adminhtml_Block_Sales_Shipment_Grid $block
+     * 
+     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     */
+    protected function _modifyColumns($block)
+    {
+        $incrementIdColumn = $block->getColumn('increment_id');
+        $incrementIdColumn->setFilterIndex('main_table.increment_id');
+        
+        $createdAtColumn = $block->getColumn('created_at');
+        $createdAtColumn->setFilterIndex('main_table.created_at');
         
         return $this;
     }
@@ -621,6 +640,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         
         foreach ($filter as $columnName => $value) {
             $column = $block->getColumn($columnName);
+            if (!$column) {
+                continue;
+            }
             
             $column->getFilter()->setValue($value);
             $this->_addColumnFilterToCollection($column);
@@ -702,13 +724,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $this;
         }
         
-        $field = ($column->getFilterIndex()) ? $column->getFilterIndex() : $column->getIndex();
         if ($column->getFilterConditionCallback()) {
             call_user_func($column->getFilterConditionCallback(), $this->getCollection(), $column);
             
             return $this;
         }
         
+        $field = ($column->getFilterIndex()) ? $column->getFilterIndex() : $column->getIndex();        
         $cond = $column->getFilter()->getCondition();
         if ($field && isset($cond)) {
             $this->getCollection()->addFieldToFilter($field , $cond);
@@ -755,6 +777,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
         
         $columnIndex = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
+        
         $collection->setOrder($columnIndex, strtoupper($column->getDir()));
         return $this;
     }
