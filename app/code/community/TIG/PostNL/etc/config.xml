@@ -89,6 +89,9 @@
                 <class>TIG_PostNL_Model_Checkout</class>
                 <resourceModel>postnl_checkout_resource</resourceModel>
             </postnl_checkout>
+            <postnl_addressvalidation>
+                <class>TIG_PostNL_Model_AddressValidation</class>
+            </postnl_addressvalidation>
             
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
