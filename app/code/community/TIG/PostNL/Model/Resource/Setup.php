@@ -56,11 +56,6 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     const EXPAND_SUPPORT_PATH = 'postnl/support/expanded';
     
     /**
-     * CMS block identifier for PostNL Checkout instructions CMS block
-     */
-    const POSTNL_CHECKOUT_INSTRUCTIONS_CMS_BLOCK_IDENTIFIER = 'postnl_checkout_instructions';
-    
-    /**
      * callAfterApplyAllUpdates flag. Causes applyAFterUpdates() to be called.
      * 
      * @var boolean
@@ -264,52 +259,6 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         }
         
         return $this;
-    }
-    
-    /**
-     * Adds a CMS block containing instructions for the customer on how to use PostNL Checkout.
-     * 
-     * @return TIG_PostNL_Model_Resource_Setup
-     */
-    public function addPostnlCheckoutInstructions()
-    {
-        $currentStore = Mage::app()->getStore()->getId();
-        $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        
-        Mage::app()->setCurrentStore($adminStoreId);
-        
-        $instructionsBlock = Mage::getModel('cms/block')
-                                 ->load(self::POSTNL_CHECKOUT_INSTRUCTIONS_CMS_BLOCK_IDENTIFIER);
-        
-        $stores = array_keys(Mage::app()->getStores());
-        
-        $parameters = array(
-            'title'      => 'PostNL Checkout instructions',
-            'identifier' => self::POSTNL_CHECKOUT_INSTRUCTIONS_CMS_BLOCK_IDENTIFIER,
-            'content'    => $this->getPostnlCheckoutInstructionsContent(),
-            'is_active'  => 1,
-            'stores'     => $stores,
-        );
-        
-        $informationRequirement->setData($parameters)
-                               ->save();
-                               
-        Mage::app()->setCurrentStore($currentStore);
-        return $this;
-    }
-
-    /**
-     * Gets the content of the PostNL Checkout instructions CMS block
-     * 
-     * @return string
-     * 
-     * @todo add the actual content
-     */
-    public function getPostnlCheckoutInstructionsContent()
-    {
-        $content = "";
-        
-        return $content;
     }
 
     /**
