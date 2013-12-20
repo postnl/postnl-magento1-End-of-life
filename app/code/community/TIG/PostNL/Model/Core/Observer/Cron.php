@@ -116,7 +116,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
          */
         if ($files === false) {
             $helper->cronLog('Temporary label storage is unreadable. Exiting cron.');
-            throw Mage::exception('TIG_PostNL', 'Unable to read directory: ' . $tempLabelsDirectory);
+            throw new TIG_PostNL_Exception(
+                $helper->__('Unable to read directory: %s', $tempLabelsDirectory),
+                'POSTNL-0096'
+            );
         }
         
         $fileCount = count($files);
@@ -196,7 +199,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
          */
         if ($files === false) {
             $helper->cronLog('Lock storage is unreadable. Exiting cron.');
-            throw Mage::exception('TIG_PostNL', 'Unable to read directory: ' . $locksDirectory);
+            throw new TIG_PostNL_Exception(
+                $helper->__('Unable to read directory: %s', $tempLabelsDirectory),
+                'POSTNL-0096'
+            );
         }
         
         $fileCount = count($files);

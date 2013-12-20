@@ -1,4 +1,4 @@
-Enabled,Enabled
+,Enabled
 Method Name,Method Name
 Rate Type,Rate Type
 Price,Price
@@ -104,8 +104,8 @@ Maximum amount,Maximum amount
 The alternative default option will be used when the shipment's total amount exceeds this value.,The alternative default option will be used when the shipment's total amount exceeds this value.
 Alternative default shipping option,Alternative default shipping option
 This option will be used as default when the shipment's total value exceeds the given amount.,This option will be used as default when the shipment's total value exceeds the given amount.
-Default PakjeGemak option,Default PakjeGemak option
-These can be overwritten by manually creating shipments. These options are only applicable to PakjeGemak shipments.,These can be overwritten by manually creating shipments. These options are only applicable to PakjeGemak shipments.
+Default Post Office option,Default Post Office option
+These can be overwritten by manually creating shipments. These options are only applicable to Post Office shipments.,These can be overwritten by manually creating shipments. These options are only applicable to Post Office shipments.
 GlobalPack Settings,GlobalPack Settings
 Customs license number,Customs license number
 "If you do not own a customs license, leave this field empty.","If you do not own a customs license, leave this field empty."
@@ -143,7 +143,7 @@ Use mobile phonenumber,Use mobile phonenumber
 Whether or not the customer's mobile phonenumber will be returned by PostNL if available.,Whether or not the customer's mobile phonenumber will be returned by PostNL if available.
 Use date of birth,Use date of birth
 Whether or not the customer's date of birth will be returned by PostNL if available.,Whether or not the customer's date of birth will be returned by PostNL if available.
-Allow postoffice locations (PakjeGemak),Allow postoffice locations (PakjeGemak)
+Allow post office locations,Allow post office locations
 Whether or not the customer may choose a retail location as their delivery address.,Whether or not the customer may choose a retail location as their delivery address.
 Allow foreign addresses,Allow foreign addresses
 Whether or not the customer may choose a foreign address as their shipping address.,Whether or not the customer may choose a foreign address as their shipping address.
@@ -270,10 +270,10 @@ Invalid Table Rate code type:,Invalid Table Rate code type:
 Invalid Table Rate code for type %s:,Invalid Table Rate code for type %s:
 Flat,Flat
 Table,Table
-PakjeGemak + Extra Cover,PakjeGemak + Extra Cover
-PakjeGemak + Extra Cover + Notification,PakjeGemak + Extra Cover + Notification
-PakjeGemak + Signature on Delivery,PakjeGemak + Signature on Delivery
-PakjeGemak + Signature on Delivery + Notification,PakjeGemak + Signature on Delivery + Notification
+Post Office + Extra Cover,Post Office + Extra Cover
+Post Office + Extra Cover + Notification,Post Office + Extra Cover + Notification
+Post Office + Signature on Delivery,Post Office + Signature on Delivery
+Post Office + Signature on Delivery + Notification,Post Office + Signature on Delivery + Notification
 Metric,Metric
 Tonne (t),Tonne (t)
 Kilogram (kg),Kilogram (kg)
@@ -324,11 +324,10 @@ Errors only,Errors only
 Full,Full
 Domestic options,Domestic options
 Standard shipment,Standard shipment
-PakjeGemak options,PakjeGemak options
-PakjeGemak + Extra Cover,PakjeGemak + Extra Cover
-PakjeGemak + Extra Cover + Notification,PakjeGemak + Extra Cover + Notification
-PakjeGemak + Signature on Delivery,PakjeGemak + Signature on Delivery
-PakjeGemak + Signature on Delivery + Notification,PakjeGemak + Signature on Delivery + Notification
+Post Office + Extra Cover,Post Office + Extra Cover
+Post Office + Extra Cover + Notification,Post Office + Extra Cover + Notification
+Post Office + Signature on Delivery,Post Office + Signature on Delivery
+Post Office + Signature on Delivery + Notification,Post Office + Signature on Delivery + Notification
 EU options,EU options
 EU Pack Special Consumer (incl. signature),EU Pack Special Consumer (incl. signature)
 "EU Pack Standard (Belgium only, no signature)","EU Pack Standard (Belgium only, no signature)"
@@ -337,7 +336,7 @@ Use default,Use default
 Standard options,Standard options
 Global options,Global options
 (default),(default)
-PostNL extension has been successfully updated to version,PostNL extension has been successfully updated to version
+PostNL extension has been successfully updated to version %s,PostNL extension has been successfully updated to version %s
 Test,Test
 Live,Live
 Your shipment has been shipped on %s. Click %s to track your shipment.,Your shipment has been shipped on %s. Click %s to track your shipment.
@@ -515,3 +514,24 @@ No standard product options are enabled. At least 1 option must be active.,No st
 You have not yet enabled the PostNL extension.,You have not yet enabled the PostNL extension.
 Tomorrow,Tomorrow
 %s days from now,%s days from now
+Post Office,Post Office
+Instruction CMS page,Instruction CMS page
+Select a CMS page containing instructions on how to use PostNl Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.,Select a CMS page containing instructions on how to use PostNl Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.
+-- none --,-- none --
+Invalid full street supplied: %s,Invalid full street supplied: %s
+Unable to match barcode to shippingStatus response: %s,Unable to match barcode to shippingStatus response: %s
+Temporary template file already exists: %s,Temporary template file already exists: %s
+The generateBarcodes action is currently unavailable.,The generateBarcodes action is currently unavailable.
+Invalid confirm response recieved: %s,Invalid confirm response recieved: %s
+Unable to add tracking info: no barcode or shipment available.,Unable to add tracking info: no barcode or shipment available.
+No private or unique key found. Unable to complete the request.,No private or unique key found. Unable to complete the request.
+Invalid updateStatistics response: %s,Invalid updateStatistics response: %s
+Unable to save shipping_status cron expression: %s,Unable to save shipping_status cron expression: %s
+No message supplied.,No message supplied.
+No message type supplied.,No message type supplied.
+Invalid address type supplied: %s,Invalid address type supplied: %s
+The confirm action is currently unavailable.,The confirm action is currently unavailable.
+The confirmAndGenerateLabel action is currently unavailable.,The confirmAndGenerateLabel action is currently unavailable.
+Invalid message type requested: %s,Invalid message type requested: %s
+Unable to read directory: %s,Unable to read directory: %s
+Invalid UpdateOrder response: %s,Invalid UpdateOrder response: %s

@@ -762,9 +762,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function createLogDir()
     {
         $logDir  = Mage::getBaseDir('var') . DS . 'log' . DS . self::POSTNL_LOG_DIRECTORY;
-
+        
         if (!is_dir($logDir)) {
-            mkdir($logDir);
+            mkdir($logDir, 0777, true);
             chmod($logDir, 0777);
         }
         
@@ -900,7 +900,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             || !is_object($session) 
             || !($session instanceof Mage_Core_Model_Session_Abstract)
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid session requested.');
+            throw new TIG_PostNL_Exception(
+                $this->__('Invalid session requested.'),
+                'POSTNL-0088'
+            );
         }
         
         /************************************************************************************************************************
@@ -936,7 +939,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If we still don't have a valid message, throw an exception
          */
         if (!$message) {
-            throw Mage::exception('TIG_PostNL', 'No message supplied.');
+            throw new TIG_PostNL_Exception(
+                $this->__('No message supplied.'),
+                'POSTNL-0089'
+            );
         }
         
         /**
@@ -951,7 +957,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If we still don't have a valid message type, throw an exception
          */
         if (!$messageType) {
-            throw Mage::exception('TIG_PostNL', 'No message type supplied.');
+            throw new TIG_PostNL_Exception(
+                $this->__('No message type supplied.'),
+                'POSTNL-0090'
+            );
         }
         
         /************************************************************************************************************************
@@ -1024,7 +1033,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If the method doesn't exist, throw an exception
          */
         if (!method_exists($session, $addMethod)) {
-            throw Mage::exception('TIG_PostNL', 'Invalid message type requested: ' . $messageType);
+            throw new TIG_PostNL_Exception(
+                $this->__('Invalid message type requested: %s.', $messageType),
+                'POSTNL-0094'
+            );
         }
         
         /**

@@ -61,37 +61,37 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
              */
             /*array(
                 'value' => '3535',
-                'label' => $helper->__('PakjeGemak + COD')
+                'label' => $helper->__('Post Office + COD')
             ),
             array(
                 'value' => '3545',
-                'label' => $helper->__('PakjeGemak + COD + Notification')
+                'label' => $helper->__('Post Office + COD + Notification')
             ),
             array(
                 'value' => '3536',
-                'label' => $helper->__('PakjeGemak + COD + Extra Cover')
+                'label' => $helper->__('Post Office + COD + Extra Cover')
             ),
             array(
                 'value' => '3546',
-                'label' => $helper->__('PakjeGemak + COD + Extra Cover + Notification')
+                'label' => $helper->__('Post Office + COD + Extra Cover + Notification')
             ),*/
             array(
                 'value'        => '3534',
-                'label'        => $helper->__('PakjeGemak + Extra Cover'),
+                'label'        => $helper->__('Post Office + Extra Cover'),
                 'isExtraCover' => true,
             ),
             array(
                 'value'        => '3544',
-                'label'        => $helper->__('PakjeGemak + Extra Cover + Notification'),
+                'label'        => $helper->__('Post Office + Extra Cover + Notification'),
                 'isExtraCover' => true,
             ),
             array(
                 'value' => '3533',
-                'label' => $helper->__('PakjeGemak + Signature on Delivery')
+                'label' => $helper->__('Post Office + Signature on Delivery')
             ),
             array(
                 'value' => '3543',
-                'label' => $helper->__('PakjeGemak + Signature on Delivery + Notification')
+                'label' => $helper->__('Post Office + Signature on Delivery + Notification')
             ),
         );
         

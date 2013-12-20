@@ -63,6 +63,7 @@
             </action>
         	<block type="adminhtml/abstract" name="postnl_activate_button_js" template="TIG/PostNL/system/config/activate_button_js.phtml" output="tohtml" after="-"/>
         </reference>
+        <remove name="form"/>
     </adminhtml_system_config_edit>
     
     <adminhtml_sales_order_index>
