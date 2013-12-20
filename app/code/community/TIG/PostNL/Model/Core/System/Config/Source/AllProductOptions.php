@@ -123,7 +123,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 ),
             ),
             'pakjegemak_options' => array(
-                'label' => $helper->__('PakjeGemak options'),
+                'label' => $helper->__('Post Office options'),
                 'value' => array(
                     /**
                      * These are not currently implemented
@@ -132,37 +132,37 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                      */
                     /*'3535' => array(
                         'value' => '3535',
-                        'label' => $helper->__('PakjeGemak + COD')
+                        'label' => $helper->__('Post Office + COD')
                     ),
                     '3545' => array(
                         'value' => '3545',
-                        'label' => $helper->__('PakjeGemak + COD + Notification')
+                        'label' => $helper->__('Post Office + COD + Notification')
                     ),
                     '3536' => array(
                         'value' => '3536',
-                        'label' => $helper->__('PakjeGemak + COD + Extra Cover')
+                        'label' => $helper->__('Post Office + COD + Extra Cover')
                     ),
                     '3546' => array(
                         'value' => '3546',
-                        'label' => $helper->__('PakjeGemak + COD + Extra Cover + Notification')
+                        'label' => $helper->__('Post Office + COD + Extra Cover + Notification')
                     ),*/
                     '3534' => array(
                         'value'        => '3534',
-                        'label'        => $helper->__('PakjeGemak + Extra Cover'),
+                        'label'        => $helper->__('Post Office + Extra Cover'),
                         'isExtraCover' => true,
                     ),
                     '3544' => array(
                         'value'        => '3544',
-                        'label'        => $helper->__('PakjeGemak + Extra Cover + Notification'),
+                        'label'        => $helper->__('Post Office + Extra Cover + Notification'),
                         'isExtraCover' => true,
                     ),
                     '3533' => array(
                         'value' => '3533',
-                        'label' => $helper->__('PakjeGemak + Signature on Delivery')
+                        'label' => $helper->__('Post Office + Signature on Delivery')
                     ),
                     '3543' => array(
                         'value' => '3543',
-                        'label' => $helper->__('PakjeGemak + Signature on Delivery + Notification')
+                        'label' => $helper->__('Post Office + Signature on Delivery + Notification')
                     ),
                 ),
             ),
@@ -354,14 +354,14 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         
         if (!empty($availablePakjeGemakOptions)) {
             $availableOptions['pakjegemak_options'] = array(
-                'label' => $helper->__('PakjeGemak options'),
+                'label' => $helper->__('Post Office options'),
                 'value' => $availablePakjeGemakOptions,
             );
         }
         
         if (!empty($availableEuOptions)) {
             $availableOptions['eu_options'] = array(
-                'label' => $helper->__('Eu options'),
+                'label' => $helper->__('EU options'),
                 'value' => $availableEuOptions,
             );
         }

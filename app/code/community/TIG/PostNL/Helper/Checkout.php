@@ -157,6 +157,13 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
          * PostNL Checkout cannot be used for virtual orders
          */
         if ($quote->isVirtual()) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0104',
+                    'message' => $this->__('The quote is virtual.'),
+                )
+            );
+            Mage::register('postnl_enabled_checkout_errors', $errors);
             Mage::register('can_use_postnl_checkout', false);
             return false;
         }
@@ -165,6 +172,13 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
          * Check if the quote has a valid minimum amount
          */
         if (!$quote->validateMinimumAmount()) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0105',
+                    'message' => $this->__("The quote's grand total is below the minimum amount required."),
+                )
+            );
+            Mage::register('postnl_enabled_checkout_errors', $errors);
             Mage::register('can_use_postnl_checkout', false);
             return false;
         }
@@ -173,6 +187,13 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
          * Check that dutch addresses are allowed
          */
         if (!$this->canUseStandard()) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0106',
+                    'message' => $this->__('No standard product options are enabled. At least 1 option must be active.'),
+                )
+            );
+            Mage::register('postnl_enabled_checkout_errors', $errors);
             Mage::register('can_use_postnl_checkout', false);
             return false;
         }
@@ -188,7 +209,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             if ($isLetterQuote) {
                 $errors = array(
                     array(
-                        'code'    => '',
+                        'code'    => 'POSTNL-0101',
                         'message' => $this->__("The quote's total weight is below the miniumum required to use PostNL Checkout."),
                     )
                 );
@@ -207,7 +228,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             if ($containsOutOfStockItems) {
                 $errors = array(
                     array(
-                        'code'    => '',
+                        'code'    => 'POSTNL-0102',
                         'message' => $this->__('One or more items in the cart are out of stock.'),
                     )
                 );
@@ -377,8 +398,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         if ($isPostnlEnabled === false) {
             $errors = array(
                 array(
-                    'code'    => 'POSTNL-0027',
-                    'message' => $this->__('You have not yet enabled PostNL Checkout.'),
+                    'code'    => 'POSTNL-0107',
+                    'message' => $this->__('You have not yet enabled the PostNL extension.'),
                 )
             );
             Mage::register('postnl_enabled_checkout_errors', $errors);
@@ -442,7 +463,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 $label = $section->groups->$group->fields->$field->label;
                 $groupLabel = $section->groups->$group->label;
                 $errors[] = array(
-                    'code'    => '',
+                    'code'    => 'POSTNL-0034',
                     'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
                 );
             }

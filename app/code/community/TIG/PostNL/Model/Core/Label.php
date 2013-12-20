@@ -260,7 +260,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * in the shipment grid.
          */
         if(count($labels) > 200 && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
-            throw Mage::exception('TIG_PostNL', 'Maximum amount of labels exceeded. Maximum allowed: 200. Requested: ' . count($labels));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__(
+                    'Maximum amount of labels exceeded. Maximum allowed: 200. Requested: %s',
+                    count($labels)
+                ),
+                'POSTNL-0064'
+            );
         }
         
         $labels = $this->_sortLabels($labels);
@@ -402,7 +408,10 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $this->setLabelCounter(5);
                 break;
             default:
-                throw Mage::exception('TIG_PostNL', 'Invalid label type supplied: ' . $label->getLabelType());
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('Invalid label type supplied: %s', $label->getLabelType()),
+                    'POSTNL-0065'
+                );
         }
 
         /**
@@ -434,7 +443,10 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                       . self::TEMP_LABEL_FILENAME;
         
         if (file_exists($tempFilePath)) {
-            throw Mage::exception('TIG_PostNL', 'Temporary template file already exists: ' . $tempFilePath);
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Temporary template file already exists: %s', $tempFilePath),
+                'POSTNL-0066'
+            );
         }
         
         /**
@@ -607,8 +619,11 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             case 4: 
                 $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(414)); 
                 break;
-            default: 
-                throw Mage::exception('TIG_PostNL', 'Invalid counter: ' . $counter);
+            default:
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('Invalid counter: %s', $counter),
+                    'POSTNL-0067'
+                );
         }
         
         return $position;

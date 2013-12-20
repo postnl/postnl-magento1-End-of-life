@@ -106,19 +106,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         
         $currentCollection = $block->getCollection();
         
-        $showShipmentTypeColumn = Mage::getStoreConfigFlag(
-            self::XML_PATH_SHOW_SHIPMENT_TYPE_COLUMN, 
-            Mage_Core_Model_App::ADMIN_STORE_ID
-        );
-        
-        /**
-         * If we don't need to display the shipment type column, we only need to add the massaction and we're done
-         */
-        if (!$showShipmentTypeColumn) {
-            $this->_addMassaction($block);
-            return $this;
-        }
-        
         $select = $currentCollection->getSelect();
         
         /**
@@ -204,24 +191,40 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     {
         $helper = Mage::helper('postnl');
         
+        $columnAttributes = array(
+            'header'                    => $helper->__('Shipment type'),
+            'align'                     => 'left',
+            'index'                     => 'country_id',
+            'type'                      => 'options',
+            'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_shipmentType',
+            'width'                     => '0px',
+            'filter_condition_callback' => array($this, '_filterShipmentType'),
+            'sortable'                  => false,
+            'options'                   => array(
+                'nl'          => $helper->__('Domestic'),
+                'pakje_gemak' => $helper->__('Post Office'),
+                'eu'          => $helper->__('EPS'),
+                'global'      => $helper->__('GlobalPack'),
+            ),
+        );
+        
+        $showShipmentTypeColumn = Mage::getStoreConfigFlag(
+            self::XML_PATH_SHOW_SHIPMENT_TYPE_COLUMN, 
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+        
+        /**
+         * If we don't need to display the shipment type column, hide it. We'll still need it for some javascript functionality
+         */
+        if (!$showShipmentTypeColumn) {
+            $columnAttributes['column_css_class'] = 'no-display';
+            $columnAttributes['header_css_class'] = 'no-display';
+            $columnAttributes['display'] = 'none';
+        }
+        
         $block->addColumnAfter(
             'country_id',
-            array(
-                'header'                    => $helper->__('Shipment type'),
-                'align'                     => 'left',
-                'index'                     => 'country_id',
-                'type'                      => 'options',
-                'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_shipmentType',
-                'width'                     => '75px',
-                'filter_condition_callback' => array($this, '_filterShipmentType'),
-                'sortable'                  => false,
-                'options'                   => array(
-                    'nl'          => $helper->__('Domestic'),
-                    'pakje_gemak' => $helper->__('PakjeGemak'),
-                    'eu'          => $helper->__('EPS'),
-                    'global'      => $helper->__('GlobalPack'),
-                ),
-            ),
+            $columnAttributes,
             'shipping_name'
         );
         

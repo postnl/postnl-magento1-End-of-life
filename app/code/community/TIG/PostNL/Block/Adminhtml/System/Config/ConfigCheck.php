@@ -128,7 +128,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ConfigCheck
     {
         $helper = $this->getPostnlHelper();
         
-        return $helper->isEnabled(false, true);
+        return $helper->isEnabled(false, true, false);
     }
     
     /**

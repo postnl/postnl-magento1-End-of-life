@@ -107,7 +107,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             || !isset($result['status'])
             || $result['status'] != self::SUCCESS_MESSAGE
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid activateWebshop response: ' . var_export($result, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid activateWebshop response: %s', var_export($result, true)),
+                'POSTNL-0079'
+            );
         }
         
         return $this;
@@ -124,7 +127,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     {
         $canSendStatictics = Mage::helper('postnl/webservices')->canSendStatistics();
         if (!$forceUpdate && !$canSendStatictics) {
-            throw Mage::exception('TIG_PostNL', 'Unable to update statistics. This feature has been disabled.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to update statistics. This feature has been disabled.'),
+                'POSTNL-0080'
+            );
         }   
              
         /**
@@ -134,7 +140,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $privateKey = $this->_getPrivateKey();
         
         if (!$uniqueKey || !$privateKey) {
-            throw Mage::exception('TIG_PostNL', 'No private or unique key found. Unable to complete the request.');
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('No private or unique key found. Unable to complete the request.'),
+                'POSTNL-0081'
+            );
         }
         
         /**
@@ -186,7 +195,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             || !isset($result['status'])
             || $result['status'] != self::SUCCESS_MESSAGE
         ) {
-            throw Mage::exception('TIG_PostNL', 'Invalid updateStatistics response: ' . var_export($result, true));
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid updateStatistics response: %s', var_export($result, true)),
+                'POSTNL-0082'
+            );
         }
         
         /**
