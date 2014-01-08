@@ -48,9 +48,11 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     /**
      * Get lock file resource
      *
+     * @param boolean $asFile
+     * 
      * @return resource | TIG_PostNL_Model_Core_Shipment_Process
      */
-    protected function _getLockFile()
+    protected function _getLockFile($asPath = false)
     {
         if ($this->_lockFile !== null) {
             return $this->_lockFile;
@@ -67,6 +69,10 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         
         $timestamp = Mage::getModel('core/date')->gmtTimestamp();
         fwrite($this->_lockFile, date('r', $timestamp));
+        
+        if ($asPath === true) {
+            return $file;
+        }
         
         return $this->_lockFile;
     }
@@ -158,7 +164,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
      */
     protected function _lockIsExpired()
     {
-        $file = $this->_getLockFile();
+        $file = $this->_getLockFile(true);
         
         if(!is_file($file)){
             $fp = fopen($file, 'x');

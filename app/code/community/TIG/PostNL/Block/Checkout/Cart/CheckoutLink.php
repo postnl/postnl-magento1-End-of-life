@@ -55,6 +55,11 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     const XML_PATH_HIDE_BUTTON_IF_DISALLOWED = 'postnl/checkout/hide_button_if_disallowed';
     
     /**
+     * XML path to the 'instruction_cms_page' setting
+     */
+    const XML_PATH_INSTRUCTION_CMS_PAGE = 'postnl/checkout/instruction_cms_page';
+    
+    /**
      * Gets the checkout URL
      * 
      * @return string
@@ -95,10 +100,14 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
         /**
          * If Checkout is not available, log the reason why for debugging purposes
          */
-        if (!$canUseCheckout) {
+        if (!$canUseCheckout && Mage::registry('postnl_checkout_logged') === null) {
             $configErrors = Mage::registry('postnl_is_configured_checkout_errors');
             if (is_null($configErrors)) {
                 $configErrors = Mage::registry('postnl_enabled_checkout_errors');
+            }
+            
+            if (is_null($configErrors)) {
+                return $canUseCheckout;
             }
             
             $errorMessage = $helper->__('PostNL Checkout is not available due to the following reasons:');
@@ -106,6 +115,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
                 $errorMessage .= PHP_EOL . $error['message'];
             }
             
+            Mage::register('postnl_checkout_logged', true);
             $helper->log($errorMessage);
         }
         
@@ -158,6 +168,22 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     }
     
     /**
+     * Gets the URL of a CMS page containing instructions on how to use PostNL Checkout
+     * 
+     * @return boolean|string
+     */
+    public function getInstructionUrl()
+    {
+        $instructionPage = Mage::getStoreConfig(self::XML_PATH_INSTRUCTION_CMS_PAGE, Mage::app()->getStore()->getId());
+        if (!$instructionPage) {
+            return false;
+        }
+        
+        $pageUrl = Mage::helper('cms/page')->getPageUrl($instructionPage);
+        return $pageUrl;
+    }
+    
+    /**
      * Returns the block's html. Checks if the 'use_postnl_checkout' param is set. If not, returns and empty string
      * 
      * @return string
@@ -165,17 +191,22 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     protected function _toHtml()
     {
         $helper = Mage::helper('postnl/checkout');
-        if (!$helper->isCheckoutActive()) {
+        if (!$helper->isCheckoutActive() && Mage::registry('postnl_checkout_logged') === null) {
             /**
              * If Checkout is not available, log the reason why for debugging purposes
              */
             $configErrors = Mage::registry('postnl_enabled_checkout_errors');
+            
+            if (is_null($configErrors)) {
+                return $canUseCheckout;
+            }
             
             $errorMessage = $helper->__('PostNL Checkout is not available due to the following reasons:');
             foreach ($configErrors as $error) {
                 $errorMessage .= PHP_EOL . $error['message'];
             }
             
+            Mage::register('postnl_checkout_logged', true);
             $helper->log($errorMessage);
             
             /**
