@@ -36,36 +36,47 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_AddressValidation_Webservices extends TIG_PostNL_Model_AddressValidation_Webservices_Abstract
+class TIG_PostNL_Model_AddressValidation_Observer extends Varien_Object
 {
     /**
-     * Validates and enriches the postcode and housenumber with a city and streetname
-     * 
-     * @param string $postcode
-     * @param string $housenumber
-     * 
-     * @return array
+     * The block classes that we want to edit
      */
-    public function getAdresxpressPostcode($postcode, $housenumber)
+    const ONEPAGE_BILLING_ADDRESS_BLOCK_NAME = 'checkout/onepage_billing';
+    
+    public function getOnepageBillingAddressBlockClass()
     {
-        $soapParams = array(
-            'gebruikersnaam' => 'tpgpost030',
-            'wachtwoord' => 'YlymZYgq',
-            'postcode' => '2491DA',
-            'huisnummer' => '52'
-        );
+        if ($this->hasData('onepage_billing_address_block_class')) {
+            return $this->getData('onepage_billing_address_block_class');
+        }
         
-        $result = $this->call('getAdresxpressPostcode', $soapParams);
-        echo '<pre>';var_dump($result);exit;
-        // if (!is_array($result)
-            // || !isset($result['status'])
-            // || $result['status'] != self::SUCCESS_MESSAGE
-        // ) {
-            // throw new TIG_PostNL_Exception(
-                // Mage::helper('postnl')->__('Invalid activateWebshop response: %s', var_export($result, true)),
-                // 'POSTNL-0079'
-            // );
-        // }
+        $blockClass = Mage::getConfig()->getBlockClassName(self::ONEPAGE_BILLING_ADDRESS_BLOCK_NAME);
+        
+        $this->setOnepageBillingAddressBlockClass($blockClass);
+        return $blockClass;
+    }
+    
+    public function onepagePostcodeCheck(Varien_Event_Observer $observer)
+    {
+        /**
+         * check if the extension is active
+         */
+        if (!Mage::helper('postnl')->isEnabled()) {
+            return $this;
+        }
+        
+        /**
+         * Checks if the current block is the one we want to edit.
+         * 
+         * Unfortunately there is no unique event for this block
+         */
+        $block = $observer->getBlock();
+        $blockClass = $this->getOnepageBillingAddressBlockClass();
+       
+        if (get_class($block) !== $blockClass) {
+            return $this;
+        }
+        
+        $block->setTemplate('TIG/PostNL/checkout/onepage/billing.phtml');
         
         return $this;
     }

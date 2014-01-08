@@ -1,0 +1,116 @@
+<?php
+/**
+ *                  ___________       __            __   
+ *                  \__    ___/____ _/  |_ _____   |  |  
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/       
+ *          ___          __                                   __   
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
+ *                  \/                           \/               
+ *                  ________       
+ *                 /  _____/_______   ____   __ __ ______  
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/ 
+ *                        \/                       |__|    
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL: 
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php $_disabled = ''; ?>
+<?php $_disabledClass = ''; ?>
+<?php if ($this->getAddress()->getCountryId() == 'NL'): ?>
+    <?php $_disabled = 'disabled="disabled"'; ?>
+    <?php $_disabledClass = 'disabled'; ?>
+<?php endif; ?>
+<?php $_streetValidationClass = $this->helper('customer/address')->getAttributeValidationClass('street'); ?>
+<li class="fields">
+    <div class="field">
+        <label for="billing:country_id" class="required"><em>*</em><?php echo $this->__('Country') ?></label>
+        <div class="input-box">
+            <?php echo $this->getCountryHtmlSelect() ?>
+        </div>
+    </div>
+    <div class="field">
+        <label for="billing:postcode" class="required"><em>*</em><?php echo $this->__('Zip/Postal Code') ?></label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $this->__('Zip/Postal Code') ?>" name="billing[postcode]" id="billing:postcode" value="<?php echo $this->escapeHtml($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" />
+        </div>
+    </div>
+</li>
+<li>
+    <label for="billing:street2" class="required"><em>*</em><?php echo $this->__('Housenumber') ?></label>
+    <div class="input-box">
+        <input type="text" title="<?php echo $this->__('Housenumber') ?>" name="virtual_billing[street][1]" id="virtual:billing:street2" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(2)) ?>" class="input-text <?php echo $_streetValidationClass ?>" />
+    </div>
+</li>
+<li>
+    <label for="billing:street3" class="required"><em>*</em><?php echo $this->__('Housenumber extension') ?></label>
+    <div class="input-box">
+        <input type="text" title="<?php echo $this->__('Housenumber extension') ?>" name="virtual_billing[street][2]" id="virtual:billing:street3" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(3)) ?>" class="input-text <?php echo $_streetValidationClass ?>" />
+    </div>
+</li>
+<li>
+    <label for="billing:street1" class="required"><em>*</em><?php echo $this->__('Street name') ?></label>
+    <div class="input-box">
+        <input type="text" title="<?php echo $this->__('Street name') ?>" name="virtual_billing[street][0]" id="virtual:billing:street1" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(1)) ?>" class="input-text <?php echo $_streetValidationClass ?> <?php echo $_disabledClass; ?>" <?php echo $_disabled; ?>/>
+    </div>
+</li>
+<?php $_streetValidationClass = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
+<?php /* Only street lines 4+ will be used as expected. Street lines 1, 2 and 3 are used for the postcode check. */ ?>
+<?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
+    <li class="add-field">
+        <div class="input-box">
+            <input type="text" title="<?php echo $this->__('Street Address %s', $_i) ?>" name="virtual_billing[street][]" id="virtual:billing:street<?php echo $_i ?>" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet($_i)) ?>" class="input-text <?php echo $_streetValidationClass ?>" />
+        </div>
+    </li>
+<?php endfor; ?>
+<li class="fields">
+    <div class="field">
+        <label for="billing:city" class="required"><em>*</em><?php echo $this->__('City') ?></label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $this->__('City') ?>" name="billing[city]" value="<?php echo $this->escapeHtml($this->getAddress()->getCity()) ?>" class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('city') ?> <?php echo $_disabledClass; ?>" id="billing:city" <?php echo $_disabled; ?>/>
+        </div>
+    </div>
+</li>
+<div class="hidden">
+    <input type="hidden" name="billing[street][]" id="billing:street1"/>
+    <input type="hidden" name="billing[street][]" id="billing:street2"/>
+    <input type="hidden" name="billing[street][]" id="billing:street3"/>
+    <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
+        <input type="hidden" name="billing[street][]" id="billing:street<?php echo $_i ?>"/>
+    <?php endfor; ?>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+    <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
+        $('virtual:billing:street<?php echo $_i; ?>').observe('change', function(event) {
+            var element = Event.element(event);
+            var value = element.getValue();
+            
+            $('billing:street<?php echo $_i; ?>').setValue(value);
+    });
+    <?php endfor; ?>
+//]]>
+</script>
