@@ -98,27 +98,27 @@ class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Obj
             
             Mage::helper('postnl/webservices')->logWebserviceCall($client);
             return $response;
-        // } catch(SoapFault $e) {
-            // /**
-             // * Only Soap exceptions are caught. Other exceptions must be caught by the caller
-             // */
-            // Mage::helper('postnl/webservices')->logWebserviceException($e);
-//             
-            // throw $e;
-        // }
-        } catch (SoapFault $e) {
-            $cifHelper = Mage::helper('postnl/cif');
-        
+        } catch(SoapFault $e) {
             /**
-             * Get the request and response XML data
+             * Log a possible SoapFault exception.
              */
-            if ($client) {
-                $requestXML  = $cifHelper->formatXml($client->getLastRequest());
-                $responseXML = $cifHelper->formatXml($client->getLastResponse());
-            }
-            echo '<pre>';var_dump(htmlentities($requestXML));
-            var_dump(htmlentities($responseXML));
-            exit;
+            Mage::helper('postnl/webservices')->logWebserviceException($e);
+            
+            throw $e;
         }
+        // } catch (SoapFault $e) {
+            // $cifHelper = Mage::helper('postnl/cif');
+//         
+            // /**
+             // * Get the request and response XML data
+             // */
+            // if ($client) {
+                // $requestXML  = $cifHelper->formatXml($client->getLastRequest());
+                // $responseXML = $cifHelper->formatXml($client->getLastResponse());
+            // }
+            // echo '<pre>';var_dump(htmlentities($requestXML));
+            // var_dump(htmlentities($responseXML));
+            // exit;
+        // }
     }
 }

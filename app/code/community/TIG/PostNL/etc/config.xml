@@ -259,8 +259,8 @@
                     <!-- Adds the postcode check functionality by overloading the billing address template for onepage checkout -->
                     <checkout_onepage_billing_postcodecheck>
                         <type>singleton</type>
-                        <class>postnl_addressvalidation/observer</class>
-                        <method>onepagePostcodeCheck</method>
+                        <class>postnl_addressvalidation/observer_onepage</class>
+                        <method>billingAddressPostcodeCheck</method>
                     </checkout_onepage_billing_postcodecheck>
                 </observers>
             </core_block_abstract_to_html_before>

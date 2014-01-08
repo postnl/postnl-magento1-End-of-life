@@ -44,7 +44,7 @@ class TIG_PostNL_Model_AddressValidation_Webservices extends TIG_PostNL_Model_Ad
      * @param string $postcode
      * @param string $housenumber
      * 
-     * @return array
+     * @return StdClass
      */
     public function getAdresxpressPostcode($postcode, $housenumber)
     {
@@ -56,17 +56,7 @@ class TIG_PostNL_Model_AddressValidation_Webservices extends TIG_PostNL_Model_Ad
         );
         
         $result = $this->call('getAdresxpressPostcode', $soapParams);
-        echo '<pre>';var_dump($result);exit;
-        // if (!is_array($result)
-            // || !isset($result['status'])
-            // || $result['status'] != self::SUCCESS_MESSAGE
-        // ) {
-            // throw new TIG_PostNL_Exception(
-                // Mage::helper('postnl')->__('Invalid activateWebshop response: %s', var_export($result, true)),
-                // 'POSTNL-0079'
-            // );
-        // }
         
-        return $this;
+        return $result;
     }
 }

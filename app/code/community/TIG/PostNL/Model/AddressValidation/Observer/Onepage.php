@@ -36,29 +36,46 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_AddressValidation_Observer extends Varien_Object
+class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
 {
     /**
      * The block classes that we want to edit
      */
-    const ONEPAGE_BILLING_ADDRESS_BLOCK_NAME = 'checkout/onepage_billing';
+    const BILLING_ADDRESS_BLOCK_NAME = 'checkout/onepage_billing';
     
-    public function getOnepageBillingAddressBlockClass()
+    /**
+     * Gets the classname for the onepage checkout billing address block that we want to alter
+     * 
+     * @return string
+     */
+    public function getBillingAddressBlockClass()
     {
-        if ($this->hasData('onepage_billing_address_block_class')) {
-            return $this->getData('onepage_billing_address_block_class');
+        if ($this->hasBillingAddressBlockClass()) {
+            return $this->getData('billing_address_block_class');
         }
         
-        $blockClass = Mage::getConfig()->getBlockClassName(self::ONEPAGE_BILLING_ADDRESS_BLOCK_NAME);
+        $blockClass = Mage::getConfig()->getBlockClassName(self::BILLING_ADDRESS_BLOCK_NAME);
         
-        $this->setOnepageBillingAddressBlockClass($blockClass);
+        $this->setBillingAddressBlockClass($blockClass);
         return $blockClass;
     }
     
-    public function onepagePostcodeCheck(Varien_Event_Observer $observer)
+    /**
+     * Alters the template of the onepage checkout billing address block if the postcode check functionality is active.
+     * 
+     * @param Varien_Event_Observer $observer
+     * 
+     * @return TIG_PostNL_Model_AddressValidation_Observer_Onepage
+     * 
+     * @event core_block_abstract_to_html_before
+     * 
+     * @observer checkout_onepage_billing_postcodecheck
+     * 
+     */
+    public function billingAddressPostcodeCheck(Varien_Event_Observer $observer)
     {
         /**
-         * check if the extension is active
+         * Check if the extension is active
          */
         if (!Mage::helper('postnl')->isEnabled()) {
             return $this;
@@ -70,7 +87,7 @@ class TIG_PostNL_Model_AddressValidation_Observer extends Varien_Object
          * Unfortunately there is no unique event for this block
          */
         $block = $observer->getBlock();
-        $blockClass = $this->getOnepageBillingAddressBlockClass();
+        $blockClass = $this->getBillingAddressBlockClass();
        
         if (get_class($block) !== $blockClass) {
             return $this;
