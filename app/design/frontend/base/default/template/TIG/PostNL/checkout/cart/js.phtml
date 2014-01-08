@@ -65,7 +65,9 @@
                 
                 PostNL_OP_Checkout.initCheckout(
                     function() {
-                        $('postnl-overlay').show();
+                        if ($('postnl-overlay')) {
+                            $('postnl-overlay').show();
+                        }
                         window.location = successUrl;
                     }, 
                     function() {

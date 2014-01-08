@@ -396,20 +396,17 @@
         		<private_key/>
         	</general>
         	<cif>
-        		<live_username/>
-        		<live_password/>
-        		<test_username/>
-        		<test_password/>
                 <customer_number/>
         		<customer_code/>
+                <live_username/>
+                <live_password/>
+                <test_username/>
+                <test_password/>
         		<collection_location/>
         		<global_barcode_type/>
         		<global_barcode_range/>
                 <webshop_id/>
                 <public_webshop_id/>
-                <company_name/>
-                <contact_name/>
-                <contact_email/>
         	</cif>
         	<cif_labels_and_confirming>
                 <mode>0</mode> <!-- Live mode -->
