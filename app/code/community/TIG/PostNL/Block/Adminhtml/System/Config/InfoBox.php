@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_ActivatedFieldHeader
+class TIG_PostNL_Block_Adminhtml_System_Config_InfoBox
     extends Mage_Adminhtml_Block_Abstract
     implements Varien_Data_Form_Element_Renderer_Interface
 {
@@ -45,7 +45,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ActivatedFieldHeader
      * 
      * @var string
      */
-    protected $_template = 'TIG/PostNL/system/config/field_header.phtml';
+    protected $_template = 'TIG/PostNL/system/config/info_box.phtml';
     
     /**
      * Get the element's HTML ID
@@ -68,60 +68,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ActivatedFieldHeader
         $this->setHtmlId($id);
         return $id;
     }
-    /**
-     * Get the element's label
-     * 
-     * @return string
-     */
-    public function getLabel()
-    {
-        if ($this->hasLabel()) {
-            return $this->getData('label');
-        }
-        
-        if (!$this->getElement()) {
-            return '';
-        }
-        
-        $element = $this->getElement();
-        $label = $element->getLabel();
-        
-        $section = $this->getRequest()->getParam('section');
-        $website = $this->getRequest()->getParam('website');
-        $store   = $this->getRequest()->getParam('store');
-        
-        $urlParams = array(
-            '_secure' => true,
-        );
-        
-        if ($section) {
-            $urlParams['section'] = $section;
-        }
-        
-        if ($website) {
-            $urlParams['website'] = $website;
-        }
-        
-        if ($store) {
-            $urlParams['store'] = $store;
-        }
-        
-        $url = $this->getUrl('postnl/adminhtml_extensionControl/showActivationFields', $urlParams);
-        $onclick = "confirmSetLocation('" 
-                 . $this->__("Are you sure? The PostNL extension will not function until you\'ve reactivated the extension.") 
-                 . "', '" 
-                 . $url 
-                 . "');";
-        
-        $label = sprintf(
-            $label,
-            $onclick
-        );
-        
-        $this->setLabel($label);
-        return $label;
-    }
-    
+
     /**
      * Render fieldset html
      *
