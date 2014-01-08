@@ -49,9 +49,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     const XML_PATH_CUSTOMER_CODE               = 'postnl/cif/customer_code';
     const XML_PATH_CUSTOMER_NUMBER             = 'postnl/cif/customer_number';
-    const XML_PATH_COMPANY_NAME                = 'postnl/cif/company_name';
-    const XML_PATH_CONTACT_NAME                = 'postnl/cif/contact_name';
-    const XML_PATH_CONTACT_EMAIL               = 'postnl/cif/contact_email';
     const XML_PATH_COLLECTION_LOCATION         = 'postnl/cif/collection_location';
     const XML_PATH_GLOBAL_BARCODE_TYPE         = 'postnl/cif/global_barcode_type';
     const XML_PATH_GLOBAL_BARCODE_RANGE        = 'postnl/cif/global_barcode_range';
@@ -694,9 +691,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $additionalCustomerData = array(
                 'Address'            => $this->_getAddress('Sender'),
                 'CollectionLocation' => $this->_getCollectionLocation(),
-                'ContactPerson'      => $this->_getContactName(),
-                'Email'              => $this->_getContactEmail(),
-                'Name'               => $this->_getCompanyName(),
             );
             
             $customer = array_merge($customer, $additionalCustomerData);
@@ -1583,45 +1577,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $customerNumber = (string) Mage::getStoreConfig(self::XML_PATH_CUSTOMER_NUMBER, $storeId);
         
         return $customerNumber;
-    }
-    
-    /**
-     * Gets the company name from system/config
-     * 
-     * @return string
-     */
-    protected function _getCompanyName()
-    {
-        $storeId = $this->getStoreId();
-        $companyName = (string) Mage::getStoreConfig(self::XML_PATH_COMPANY_NAME, $storeId);
-        
-        return $companyName;
-    }
-    
-    /**
-     * Gets the contact name from system/config
-     * 
-     * @return string
-     */
-    protected function _getContactName()
-    {
-        $storeId = $this->getStoreId();
-        $contactName = (string) Mage::getStoreConfig(self::XML_PATH_CONTACT_NAME, $storeId);
-        
-        return $contactName;
-    }
-    
-    /**
-     * Gets the contact email address from system/config
-     * 
-     * @return string
-     */
-    protected function _getContactEmail()
-    {
-        $storeId = $this->getStoreId();
-        $contactEmail = (string) Mage::getStoreConfig(self::XML_PATH_CONTACT_EMAIL, $storeId);
-        
-        return $contactEmail;
     }
     
     /**
