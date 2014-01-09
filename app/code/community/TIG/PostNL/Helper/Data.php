@@ -74,6 +74,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_TEST_MODE = 'postnl/cif_labels_and_confirming/mode';
     
     /**
+     * XML path to the test mode allowed config option
+     */
+    const XML_PATH_TEST_MODE_ALLOWED = 'postnl/advanced/allow_test_mode';
+    
+    /**
      * XML path to debug mode config option
      */
     const XML_PATH_DEBUG_MODE = 'postnl/advanced/debug_mode';
@@ -302,10 +307,35 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage::app()->getStore()->getId();
         }
         
+        $testModeAllowed = $this->isTestModeAllowed();
+        if (!$testModeAllowed) {
+            Mage::register('postnl_test_mode', false);
+            return false;
+        }
+        
         $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
         
         Mage::register('postnl_test_mode', $testMode);
         return $testMode;
+    }
+    
+    /**
+     * Checks if test mode is currently allowed
+     * 
+     * @return boolean
+     */
+    public function isTestModeAllowed()
+    {
+        if (Mage::registry('postnl_test_mode_allowed') !== null) {
+            return Mage::registry('postnl_test_mode_allowed');
+        }
+        
+        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        
+        $testModeAllowed = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE_ALLOWED, $storeId);
+        
+        Mage::register('postnl_test_mode_allowed', $testModeAllowed);
+        return $testModeAllowed;
     }
     
     /**
@@ -321,7 +351,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isActive($storeId = false, $checkGlobal = false, $forceTestMode = null)
     {
-        return $this->isEnabled($storeId = false, $checkGlobal = false, $forceTestMode = null);
+        return $this->isEnabled($storeId, $checkGlobal, $forceTestMode);
     }
     
     /**
@@ -509,8 +539,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 $field = $fieldParts[2];
                 $group = $fieldParts[1];
                 
-                $label = $section->groups->$group->fields->$field->label;
-                $groupLabel = $section->groups->$group->label;
+                $label = (string) $section->groups->$group->fields->$field->label;
+                $groupLabel = (string) $section->groups->$group->label;
                 $errors[] = array(
                     'code'    => 'POSTNL-0034',
                     'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
@@ -618,12 +648,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @param string $message
      * @param int | null $level
      * @param string | null $file
+     * @param boolean $forced
      * 
      * @return TIG_PostNL_Helper_Data
      * 
      * @see Mage::log
      */
-    public function log($message, $level = null, $file = null)
+    public function log($message, $level = null, $file = null, $forced = false)
     {
         if (!$this->isLoggingEnabled()) {
             return $this;
@@ -639,7 +670,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         
         $this->createLogDir();
         
-        Mage::log($message, $level, $file);
+        Mage::log($message, $level, $file, $forced);
         
         return $this;
     }

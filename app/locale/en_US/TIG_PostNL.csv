@@ -1,4 +1,4 @@
-,Enabled
+Enabled,Enabled
 Method Name,Method Name
 Rate Type,Rate Type
 Price,Price
@@ -195,7 +195,7 @@ Maximum temporary file storage time,Maximum temporary file storage time
 Number of days before a confirmation expires,Number of days before a confirmation expires
 If a confirmed shipment has not been shipped after this amount of days it's confirmation will expire.,If a confirmed shipment has not been shipped after this amount of days it's confirmation will expire.
 Send extension usage statistics to PostNL,Send extension usage statistics to PostNL
-Recieve notifications from PostNL regarding updates and promotions,Recieve notifications from PostNL regarding updates and promotions
+PostNL may periodically send important updates regarding new versions of the PostNL extension or important security updates in the same manner as Magento. Disable this setting to no longer ecieve these notifications.,PostNL may periodically send important updates regarding new versions of the PostNL extension or important security updates in the same manner as Magento. Disable this setting to no longer ecieve these notifications.
 The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the extension altogether.,The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the extension altogether.
 ShippingStatus Webservice version,ShippingStatus Webservice version
 Confirming Webservice version,Confirming Webservice version
@@ -516,7 +516,7 @@ Tomorrow,Tomorrow
 %s days from now,%s days from now
 Post Office,Post Office
 Instruction CMS page,Instruction CMS page
-Select a CMS page containing instructions on how to use PostNl Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.,Select a CMS page containing instructions on how to use PostNl Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.
+Select a CMS page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.,Select a CMS page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.
 -- none --,-- none --
 Invalid full street supplied: %s,Invalid full street supplied: %s
 Unable to match barcode to shippingStatus response: %s,Unable to match barcode to shippingStatus response: %s
@@ -535,3 +535,9 @@ The confirmAndGenerateLabel action is currently unavailable.,The confirmAndGener
 Invalid message type requested: %s,Invalid message type requested: %s
 Unable to read directory: %s,Unable to read directory: %s
 Invalid UpdateOrder response: %s,Invalid UpdateOrder response: %s
+In order to use this extension you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure the extension.,In order to use this extension you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure the extension.
+You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.,You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.
+DO NOT CHANGE THESE SETTINGS WITHOUT INSTRUCTIONS FROM POSTNL OR TOTAL INTERNET GROUP,DO NOT CHANGE THESE SETTINGS WITHOUT INSTRUCTIONS FROM POSTNL OR TOTAL INTERNET GROUP
+"Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature.","Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature."
+Doorcodes are often used in foreign addresses such as those used in France and Singapore.,Doorcodes are often used in foreign addresses such as those used in France and Singapore.
+In order to use PostNL Checkout you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.,In order to use PostNL Checkout you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.
