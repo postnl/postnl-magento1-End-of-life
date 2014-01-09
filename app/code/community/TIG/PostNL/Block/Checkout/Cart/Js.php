@@ -44,11 +44,6 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
     const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
     
     /**
-     * XML path of PostNL Checkout test/live settings
-     */
-    const XML_PATH_MODE = 'postnl/checkout/mode';
-    
-    /**
      * XML path of show_summary_page setting
      */
     const XML_PATH_SHOW_SUMMARY_PAGE = 'postnl/checkout/show_summary_page';
@@ -97,15 +92,7 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
         
         $storeId = Mage::app()->getStore()->getId();
         
-        if (Mage::helper('postnl')->isTestMode($storeId)) {
-            $url = self::TEST_CHECKOUT_JS_URL;
-            
-            $this->setCheckoutJsUrl($url);
-            return $url;
-        }
-        
-        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_MODE, $storeId);
-        if ($testMode) {
+        if (Mage::helper('postnl/checkout')->isTestMode($storeId)) {
             $url = self::TEST_CHECKOUT_JS_URL;
             
             $this->setCheckoutJsUrl($url);

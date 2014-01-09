@@ -33,77 +33,57 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
+    extends Mage_Adminhtml_Block_System_Config_Form_Field
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
     /**
-     * @var array
+     * XML path to 'is_activated' flag
      */
-    protected $_options;
+    const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
     
     /**
-     * Get the stored options array
+     * Gets the element's html. In this case: a button redirecting the user to the extensionControl controller
      * 
-     * @return array
+     * @return string
      */
-    public function getOptions()
+    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
-        return $this->_options;
-    }
-    
-    /**
-     * Store the options array
-     * 
-     * @param array $options
-     * 
-     * @return TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
-     */
-    public function setOptions($options)
-    {
-        $this->_options = $options;
+        $this->setElement($element);
         
-        return $this;
-    }
-    
-    /**
-     * Checks if an option array has been stored
-     * 
-     * @return boolean
-     */
-    public function hasOptions()
-    {
-        $options = $this->_options;
-        if (empty($options)) {
-            return false;
+        $url = $this->getUrl('postnl/adminhtml_extensionControl/activate');
+        
+        $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($isActivated == '1') {
+            $label = $this->__('Finish activation');
+        } else {
+            $label = $this->__('Activate the extension');
         }
         
-        return true;
+        $html = $this->getLayout()->createBlock('adminhtml/widget_button')
+                     ->setId($element->getHtmlId())
+                     ->setType('button')
+                     ->setClass('scalable')
+                     ->setLabel($label)
+                     ->setOnClick("activatePostNL()")
+                     ->toHtml();
+
+        return $html;
     }
     
     /**
-     * Get an option array of all CMS pages available
+     * Render the element without a scope label
      * 
-     * @return array
+     * @return string
+     * 
+     * @see parent::render()
      */
-    public function toOptionArray()
+    public function render(Varien_Data_Form_Element_Abstract $element)
     {
-        if ($this->hasOptions()) {
-            return $this->getOptions();
-            
-        }
-        
-        $options = array(
-            '' => Mage::helper('postnl')->__('-- none --'),
-        );
-        
-        $pageOptions = Mage::getResourceModel('cms/page_collection')->load()
-                                                                    ->toOptionIdArray();
-                                                                    
-        $options = array_merge($options, $pageOptions);
-        $this->setOptions($options);
-        
-        return $options;
+        $element->setScopeLabel('');
+        return parent::render($element);
     }
 }

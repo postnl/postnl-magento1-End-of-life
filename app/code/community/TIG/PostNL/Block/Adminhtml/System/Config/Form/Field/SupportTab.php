@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,49 +36,34 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_InfoBox
-    extends Mage_Adminhtml_Block_Abstract
-    implements Varien_Data_Form_Element_Renderer_Interface
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
+    /**
+     * Css file loaded for PostNL's system > config section
+     */
+    const SYSTEM_CONFIG_EDIT_CSS_FILE = 'css/TIG/PostNL/system_config_edit_postnl.css';
+    
     /**
      * Template file used
      * 
      * @var string
      */
-    protected $_template = 'TIG/PostNL/system/config/info_box.phtml';
+    protected $_template = 'TIG/PostNL/system/config/form/field/support_tab.phtml';
     
     /**
-     * Get the element's HTML ID
+     * Add a new css file to the head. We couldn't do this from layout.xml, because it would have loaded 
+     * for all System > Config pages, rather than just PostNL's section.
      * 
-     * @return string
+     * @return Mage_Adminhtml_Block_Abstract::_prepareLayout()
+     * 
+     * @see Mage_Adminhtml_Block_Abstract::_prepareLayout()
      */
-    public function getHtmlId()
+    protected function _prepareLayout()
     {
-        if ($this->hasHtmlId()) {
-            return $this->getData('html_id');
-        }
+        $this->getLayout()
+             ->getBlock('head')
+             ->addCss(self::SYSTEM_CONFIG_EDIT_CSS_FILE);
         
-        if (!$this->getElement()) {
-            return '';
-        }
-        
-        $element = $this->getElement();
-        $id = $element->getHtmlId();
-        
-        $this->setHtmlId($id);
-        return $id;
-    }
-
-    /**
-     * Render fieldset html
-     *
-     * @param Varien_Data_Form_Element_Abstract $element
-     * @return string
-     */
-    public function render(Varien_Data_Form_Element_Abstract $element)
-    {
-        $this->setElement($element);
-        
-        return $this->toHtml();
+        return parent::_prepareLayout();
     }
 }
