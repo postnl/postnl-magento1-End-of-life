@@ -186,7 +186,7 @@ Use AfterPay,Use AfterPay
 AfterPay payment method,AfterPay payment method
 Advanced Settings,Advanced Settings
 Debug mode,Debug mode
-"If enabled, debug logs will be created in the var/logs folder.","If enabled, debug logs will be created in the var/logs folder."
+"If enabled, debug logs will be created in the var/logs/TIG_PostNL/ directory.","If enabled, debug logs will be created in the var/logs/TIG_PostNL/ directory."
 Allow infinite label printing,Allow infinite label printing
 By default a maximum of 200 labels can be printed at once. Enable this to remove this limitation. Beware: enabling this may lead to server instability.,By default a maximum of 200 labels can be printed at once. Enable this to remove this limitation. Beware: enabling this may lead to server instability.
 Maximum number of parcels per shipment,Maximum number of parcels per shipment
@@ -404,7 +404,7 @@ Here you can specify the PostNL product options that will be used by the extensi
 "You may specify a separate return address for shipments that could not be delivered. If you do not wish to specify a separate return address, your sender address will be used.","You may specify a separate return address for shipments that could not be delivered. If you do not wish to specify a separate return address, your sender address will be used."
 This is where you enter your address. This is required for the extension to work.,This is where you enter your address. This is required for the extension to work.
 Invalid UpdateOrder response recieved!,Invalid UpdateOrder response recieved!
-This is where you configure the way the extension handles addresses entered by your customers. This is very important if you want to make printing correctly formatted shipping labels foolproof.,This is where you configure the way the extension handles addresses entered by your customers. This is very important if you want to make printing correctly formatted shipping labels foolproof.
+"This is where you configure the way the extension handles addresses entered by your customers. If these settings are not configured correctly, PostNL cannot guarantee that all addresses will be printed in the correct format.","This is where you configure the way the extension handles addresses entered by your customers. If these settings are not configured correctly, PostNL cannot guarantee that all addresses will be printed in the correct format."
 "Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track & trace email to your customers.","Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track & trace email to your customers."
 Here you can configure your PostNL account.,Here you can configure your PostNL account.
 Invalid PingStatus response: %s,Invalid PingStatus response: %s
@@ -541,3 +541,14 @@ DO NOT CHANGE THESE SETTINGS WITHOUT INSTRUCTIONS FROM POSTNL OR TOTAL INTERNET 
 "Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature.","Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature."
 Doorcodes are often used in foreign addresses such as those used in France and Singapore.,Doorcodes are often used in foreign addresses such as those used in France and Singapore.
 In order to use PostNL Checkout you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.,In order to use PostNL Checkout you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.
+Klarna,Klarna
+Use Klarna,Use Klarna
+Klarna payment method,Klarna payment method
+Ping status request resulting in an error.,Ping status request resulting in an error.
+Ping status response indicated PostNL Checkout is currently not available.,Ping status response indicated PostNL Checkout is currently not available.
+"In order to continuously improve the PostNL extension, the extension sends usage statistics to a secure PostNL server.","In order to continuously improve the PostNL extension, the extension sends usage statistics to a secure PostNL server."
+Recieve notifications from PostNL regarding updates and promotions,Recieve notifications from PostNL regarding updates and promotions
+"Leave empty to allow an infinite amount of parcels per shipment.<br/>If this value is empty or exceeds 200, you need to set 'Allow infinite label printing' to yes in order to be able to print the shipment's labels.","Leave empty to allow an infinite amount of parcels per shipment.<br/>If this value is empty or exceeds 200, you need to set 'Allow infinite label printing' to yes in order to be able to print the shipment's labels."
+Allow test mode,Allow test mode
+If enabled new fields will appear allowing you to configure the extension for test mode.,If enabled new fields will appear allowing you to configure the extension for test mode.
+By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.,By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.

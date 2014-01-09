@@ -96,7 +96,7 @@ Use the sender address as the return adress,Gebruik afzenderadres als retouradre
 Product Options,Product opties
 Select supported option,Selecteer de beschikbare opties
 Only the selected options will be available.,Alleen de geselecteerde opties zijn beschikbaar
-Default shipping options,Standaard verzendmethode
+Default shipping options,Standaard verzendopties
 These can be overwritten by manually creating shipments. These options are only applicable to Dutch shipments.,Deze kunnen overschreven worden door het handmatig aanmaken van een verzending. Deze opties zijn alleen beschikbaar voor Nederlandse zendingen
 Use an alternative default option,Gebruik een alternatieve standaard optie
 Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.,Zet deze aan als u een alternatieve standaardwaarde gebruikt als de totaalwaarde van de zending groter is dan een bepaald bedrag.
@@ -186,7 +186,7 @@ Use AfterPay,Gebruik Afterpay
 AfterPay payment method,Afterpay betaalmethode
 Advanced Settings,Geavanceerde instellingen
 Debug mode,Debug modus
-"If enabled, debug logs will be created in the var/logs folder.","Mits geactiveerd, debug logs zullen worden aangemaakt in de var/logs map"
+"If enabled, debug logs will be created in the var/logs/TIG_PostNL/ directory.","Mits geactiveerd, debug logs zullen worden aangemaakt in de var/logs/TIG_PostNL/ map"
 Allow infinite label printing,Sta oneindig labels printen toe
 By default a maximum of 200 labels can be printed at once. Enable this to remove this limitation. Beware: enabling this may lead to server instability.,"Standaard kunt u maximaal 200 labels in een keer printen. Activeer dit om deze limiet te verwijderen. Let op, dit kan leiden tot een onstabiele server."
 Maximum number of parcels per shipment,Maximaal aantal pakketten per zending
@@ -341,7 +341,7 @@ Test,Test
 Live,Live
 Your shipment has been shipped on %s. Click %s to track your shipment.,Uw verzending is verzonden op %s. Klik %s om uw zending te volgen.
 Quick reference guide,Beknopte handleiding
-"You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.","U gebruikt momenteel geen gesplitste adresregels. Dit kan fouten veroorzaken in het verwerken van bestellingen, aangezien PostNL niet iedere internationaal gebruikte adres syntax kan ondersteunen. Wij raden ten sterkste aan om gesplitste adresregels te gebruiken in ur webshop. Neem voor meer informatie contact op met PostNL support."
+"You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.","U gebruikt momenteel geen gesplitste adresregels. Dit kan fouten veroorzaken in het verwerken van bestellingen, aangezien PostNL niet iedere internationaal gebruikte adres syntax kan ondersteunen. Wij raden ten sterkste aan om gesplitste adresregels te gebruiken in uw webshop. Neem voor meer informatie contact op met PostNL support."
 You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.,U heeft de extensie slechts geconfigureerd voor de testmodus. U dient een live gebruikersnaam en wachtwoord in te voeren voordat u de extensie voor daadwerkelijke verzendingen kunt gebruiken.
 You have not yet fully configured the extension. You must complete this process before you can use it.,U heeft nog niet de volledige extensie geconfigureerd. U dient dit proces te voltooien voordat u de extensie kunt gebruiken.
 You have not yet configured the extension to use GlobalPack shipments. Please complete this process  if you wish to ship parcels to outside the EU.,U heeft de GlobalPack verzendingen extensie nog niet geconfigureerd. Volgt u a.u.b. het configuratieproces indien u buiten de EU wilt verzenden.
@@ -404,7 +404,7 @@ Here you can specify the PostNL product options that will be used by the extensi
 "You may specify a separate return address for shipments that could not be delivered. If you do not wish to specify a separate return address, your sender address will be used.","U kunt een alternatief retouradres opgeven voor zendingen die niet afgeleverd konden worden. Indien u hier geen gebruik van wenst te maken, zal uw afzenderadres gebruikt worden."
 This is where you enter your address. This is required for the extension to work.,Hier dient u uw adres in te vullen. Dit is noodzakelijk voor de werking van de extensie.
 Invalid UpdateOrder response recieved!,Ongeldig UpdateOrder antwoord ontvangen!
-This is where you configure the way the extension handles addresses entered by your customers. This is very important if you want to make printing correctly formatted shipping labels foolproof.,"Hier configureert u de wijze waarop de extensie de adres gegevens van uw klanten behandelt. Dit is uiterst belangrijk om correct te configureren. Indien dit niet correct geconfigureerd is, kan PostNL niet garanderen dat de adres gegevens correct geformatteerd afgedrukt kunnen worden."
+"This is where you configure the way the extension handles addresses entered by your customers. If these settings are not configured correctly, PostNL cannot guarantee that all addresses will be printed in the correct format.","Hier configureert u de wijze waarop de extensie de adres gegevens van uw klanten behandelt. Dit is uiterst belangrijk om correct te configureren. Indien dit niet correct geconfigureerd is, kan PostNL niet garanderen dat de adres gegevens correct geformatteerd afgedrukt kunnen worden."
 "Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track & trace email to your customers.",Hier kunt u uw label printen en voormelden voorkeuren opgeven. Ook kunt u hier aangeven hoe de bestelling- en zendingoverzichten weergegeven worden. Als laatste kunt u hier opgeven of de extensie automatisch een track & trace e-mail moet versturen naar uw klanten.
 Here you can configure your PostNL account.,Hier kunt u uw PostNL account gegevens invullen.
 Invalid PingStatus response: %s,Ongeldig PingStatus antwoord: %s
@@ -545,3 +545,14 @@ Doorcodes are often used in foreign addresses such as those used in France and S
 In order to use PostNL Checkout you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.,"Voor het gebruik van PostNl Checkout dient u zich <a 
 href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' 
 title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen."
+Klarna,Klarna
+Use Klarna,Gebruik Klarna
+Klarna payment method,Klarna betaalmethode
+Ping status request resulting in an error.,Ping status verzoek heeft geresulteerd in een fout.
+Ping status response indicated PostNL Checkout is currently not available.,Ping status verzoek geeft aan dat PostNL Checkout momenteel niet beschikbaar is.
+"In order to continuously improve the PostNL extension, the extension sends usage statistics to a secure PostNL server.","Om de extensie continu te verbeteren, verstuurd de extensie enkele gebruiks statistieken naar een beveiligde PostNL server."
+Recieve notifications from PostNL regarding updates and promotions,Ontvang noticaties van PostNL m.b.t. updates en promoties
+"Leave empty to allow an infinite amount of parcels per shipment.<br/>If this value is empty or exceeds 200, you need to set 'Allow infinite label printing' to yes in order to be able to print the shipment's labels.","Laat leeg om een oneindig aantal doosjes per zending toe te staan.<br/>Indien dit veld leeg is of een waarde groter dan 200 bevat, moet 'Sta oneindig labels printen toe' op ja staan. Anders zal het niet mogelijk zijn om van sommige zendingen de labels te printen."
+Allow test mode,Test modus toestaan
+If enabled new fields will appear allowing you to configure the extension for test mode.,"Indien deze instelling aan staat, zullen er nieuwe configuratie velden verschijnen waarmee u de extensie kunt configureren voor test modus."
+By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.,"Standaard staat de extensie altijd in 'live' modus. Indien u een ontwikkelaar bent, kan het echter interessant zijn om de extensie op test (sandbox) modus te zetten."
