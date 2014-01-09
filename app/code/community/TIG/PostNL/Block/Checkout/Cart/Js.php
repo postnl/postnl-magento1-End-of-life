@@ -118,15 +118,7 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
         
         $storeId = Mage::app()->getStore()->getId();
         
-        if (Mage::helper('postnl')->isTestMode($storeId)) {
-            $environment = self::TEST_ENVIRONMENT;
-            
-            $this->setEnvironment($environment);
-            return $environment;
-        }
-        
-        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_MODE, $storeId);
-        if ($testMode) {
+        if (Mage::helper('postnl/checkout')->isTestMode($storeId)) {
             $environment = self::TEST_ENVIRONMENT;
             
             $this->setEnvironment($environment);

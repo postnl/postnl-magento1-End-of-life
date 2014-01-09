@@ -83,6 +83,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         'giftcard'               => 'KADOBON',
         'rabobank_internetkassa' => 'RABOINTKASSA', 
         'afterpay'               => 'AFTERPAY',
+        'klarna'                 => 'KLARNA',
     );
     
     /**
