@@ -17,7 +17,7 @@ Version & Support,Versie & Ondersteuning
 General Settings,Algemene instellingen
 Active,Actief
 Enable or disable the extension,Activeer/deactiveer de extensie
-Email,Email
+Email,E-mail
 During activation 2 secure keys will be sent to this email address.,Tijdens de activatie zullen er 2 beveligings sleutels woren gestuurd naar dit e-mail adres
 Unique key,Unieke sleutel
 Private key,Prive sleutel
@@ -42,7 +42,7 @@ Public Webshop ID,Publieke webshop ID
 These fields contain your contact information for PostNL.,Deze velden bevatten uw contact informatie voor PostNL
 Company Name,Bedrijfsnaam
 Contact Name,Contactpersoon
-Contact Email,Contact email
+Contact Email,Contact e-mail
 Confirming & Label Printing Settings,Voormelden & Label printen instellingen
 Mode,Modus
 Label size,Label formaat
@@ -67,7 +67,7 @@ These fields are used to configure the track & trace email that may be automatic
 Send track & trace e-mail to customer,Stuur de track & trace e-mail naar de klant
 "If enabled, a track & trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed.","Indien geactiveerd, wordt er ~20 minuten na de zending voormelding een track & trace e-mail naar de klant gestuurd."
 Track & trace e-mail template,Track&trace e-mail sjabloon
-Address Settings,Adres Instellingen
+Address Settings,Adres instellingen
 Split street parts,Deel straatnaam velden op
 Streetname field,Straatnaam
 Housenr. field,Huisnummer
@@ -96,7 +96,7 @@ Use the sender address as the return adress,Gebruik afzenderadres als retouradre
 Product Options,Product opties
 Select supported option,Selecteer de beschikbare opties
 Only the selected options will be available.,Alleen de geselecteerde opties zijn beschikbaar
-Default shipping options,Standaard verzendmethode
+Default shipping options,Standaard verzendopties
 These can be overwritten by manually creating shipments. These options are only applicable to Dutch shipments.,Deze kunnen overschreven worden door het handmatig aanmaken van een verzending. Deze opties zijn alleen beschikbaar voor Nederlandse zendingen
 Use an alternative default option,Gebruik een alternatieve standaard optie
 Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.,Zet deze aan als u een alternatieve standaardwaarde gebruikt als de totaalwaarde van de zending groter is dan een bepaald bedrag.
@@ -126,7 +126,7 @@ The following fields determine which products are displayed on international shi
 Product sorting attribute,Product sortering
 Global shipping labels can only contain 5 products. This attribute will determine how these are sorted so that only the top 5 will be printed.,Global shipping labels kunnen maximaal 5 producten bevatten.Dit atribuut bepaalt hoe deze zijn gesorteerd zodat alleen de eerste 5 worden geprint.
 Product sorting direction,Product sortering
-PostNL Checkout Settings,PostNL Checkout Instellingen
+PostNL Checkout Settings,PostNL Checkout instellingen
 Enable PostNL Checkout,Activeer PostNL checkout
 Mode,Modus
 Here you can customize when and how the PostNL Checkout button is displayed.,Hier kunt u configureren wanneer en hoe de PostNL Checkout knop wordt getoond.
@@ -156,7 +156,7 @@ Contact URL,Contact URL
 URL of a page where customers can find contact information for your webshop. Leave empty to disable this feature.,Pagina van een website waar klanten contactinformatie van uw webshop kunnen vinden. Laat leeg om niet te gebruiken
 Service URL,Service URL
 URL of a page where customers can find information regarding the webshop's customer service department.,Pagina van een website waar klanten informatie over de serviceafdeling van uw webshop kunnen vinden.
-PostNL Checkout Payment Settings,PostNL Checkout Betalingsinstellingen
+PostNL Checkout Payment Settings,PostNL Checkout betalingsinstellingen
 PostNL Checkout is disabled. please enable PostNL Checkout in order to configure these settings.,PostNL Checkout is niet geactiveerd. Activeer PostNL Checkout om deze instellingen te configureren.
 Use iDEAL,Gebruik iDeal
 iDEAL payment method,iDeal betaalmethode
@@ -186,7 +186,7 @@ Use AfterPay,Gebruik Afterpay
 AfterPay payment method,Afterpay betaalmethode
 Advanced Settings,Geavanceerde instellingen
 Debug mode,Debug modus
-"If enabled, debug logs will be created in the var/logs folder.","Mits geactiveerd, debug logs zullen worden aangemaakt in de var/logs map"
+"If enabled, debug logs will be created in the var/logs/TIG_PostNL/ directory.","Mits geactiveerd, debug logs zullen worden aangemaakt in de var/logs/TIG_PostNL/ map"
 Allow infinite label printing,Sta oneindig labels printen toe
 By default a maximum of 200 labels can be printed at once. Enable this to remove this limitation. Beware: enabling this may lead to server instability.,"Standaard kunt u maximaal 200 labels in een keer printen. Activeer dit om deze limiet te verwijderen. Let op, dit kan leiden tot een onstabiele server."
 Maximum number of parcels per shipment,Maximaal aantal pakketten per zending
@@ -195,7 +195,7 @@ Maximum temporary file storage time,Maximum tijdelijke opslag tijd van tijdelijk
 Number of days before a confirmation expires,Aantal dagen voordat een voormelding verloopt
 If a confirmed shipment has not been shipped after this amount of days it's confirmation will expire.,"Als een voorgemeldde zending niet wordt verstuurd na dit aantal dagen, verloopt de voormelding."
 Send extension usage statistics to PostNL,Stuur de gebruikerstatistieken van de extensie naar PostNL
-Recieve notifications from PostNL regarding updates and promotions,Ontvang notificaties van PostNL als er updates of aanbiedingen zijn
+PostNL may periodically send important updates regarding new versions of the PostNL extension or important security updates in the same manner as Magento. Disable this setting to no longer ecieve these notifications.,PostNL stuurt periodiek belangrijke updates m.b.t. nieuwe versies van de PostNL extensie of belangrijke beveiligings updates op dezelfde wijze als Magento. Zet deze instelling uit om deze updates niet langer te ontvangen
 The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the extension altogether.,"De volgende velden bepalen de CIF versie die gebruikt wordt door de extensie voor de individuele CIF onderdelen. Indien u deze instellingen wijzigt, kan dit tot onverwachtte resultaten lijden. Het kan er zelfs voor zorgen dat de algehele extensie niet langer functioneert."
 ShippingStatus Webservice version,Verzendstatus webservice versie
 Confirming Webservice version,Voormeld webservice versie
@@ -341,7 +341,7 @@ Test,Test
 Live,Live
 Your shipment has been shipped on %s. Click %s to track your shipment.,Uw verzending is verzonden op %s. Klik %s om uw zending te volgen.
 Quick reference guide,Beknopte handleiding
-"You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.","U gebruikt momenteel geen gesplitste adresregels. Dit kan fouten veroorzaken in het verwerken van bestellingen, aangezien PostNL niet iedere internationaal gebruikte adres syntax kan ondersteunen. Wij raden ten sterkste aan om gesplitste adresregels te gebruiken in ur webshop. Neem voor meer informatie contact op met PostNL support."
+"You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.","U gebruikt momenteel geen gesplitste adresregels. Dit kan fouten veroorzaken in het verwerken van bestellingen, aangezien PostNL niet iedere internationaal gebruikte adres syntax kan ondersteunen. Wij raden ten sterkste aan om gesplitste adresregels te gebruiken in uw webshop. Neem voor meer informatie contact op met PostNL support."
 You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.,U heeft de extensie slechts geconfigureerd voor de testmodus. U dient een live gebruikersnaam en wachtwoord in te voeren voordat u de extensie voor daadwerkelijke verzendingen kunt gebruiken.
 You have not yet fully configured the extension. You must complete this process before you can use it.,U heeft nog niet de volledige extensie geconfigureerd. U dient dit proces te voltooien voordat u de extensie kunt gebruiken.
 You have not yet configured the extension to use GlobalPack shipments. Please complete this process  if you wish to ship parcels to outside the EU.,U heeft de GlobalPack verzendingen extensie nog niet geconfigureerd. Volgt u a.u.b. het configuratieproces indien u buiten de EU wilt verzenden.
@@ -404,11 +404,11 @@ Here you can specify the PostNL product options that will be used by the extensi
 "You may specify a separate return address for shipments that could not be delivered. If you do not wish to specify a separate return address, your sender address will be used.","U kunt een alternatief retouradres opgeven voor zendingen die niet afgeleverd konden worden. Indien u hier geen gebruik van wenst te maken, zal uw afzenderadres gebruikt worden."
 This is where you enter your address. This is required for the extension to work.,Hier dient u uw adres in te vullen. Dit is noodzakelijk voor de werking van de extensie.
 Invalid UpdateOrder response recieved!,Ongeldig UpdateOrder antwoord ontvangen!
-This is where you configure the way the extension handles addresses entered by your customers. This is very important if you want to make printing correctly formatted shipping labels foolproof.,"Hier configureert u de wijze waarop de extensie de adres gegevens van uw klanten behandelt. Dit is uiterst belangrijk om correct te configureren. Indien dit niet correct geconfigureerd is, kan PostNL niet garanderen dat de adres gegevens correct geformatteerd afgedrukt kunnen worden."
+"This is where you configure the way the extension handles addresses entered by your customers. If these settings are not configured correctly, PostNL cannot guarantee that all addresses will be printed in the correct format.","Hier configureert u de wijze waarop de extensie de adres gegevens van uw klanten behandelt. Dit is uiterst belangrijk om correct te configureren. Indien dit niet correct geconfigureerd is, kan PostNL niet garanderen dat de adres gegevens correct geformatteerd afgedrukt kunnen worden."
 "Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track & trace email to your customers.",Hier kunt u uw label printen en voormelden voorkeuren opgeven. Ook kunt u hier aangeven hoe de bestelling- en zendingoverzichten weergegeven worden. Als laatste kunt u hier opgeven of de extensie automatisch een track & trace e-mail moet versturen naar uw klanten.
 Here you can configure your PostNL account.,Hier kunt u uw PostNL account gegevens invullen.
 Invalid PingStatus response: %s,Ongeldig PingStatus antwoord: %s
-Confirming & Label Printing Settings,Voormelden & Label Printen Instellingen
+Confirming & Label Printing Settings,Voormelden & Label Printen instellingen
 No quote available to initiate PostNL Checkout.,Geen quote beschikbaar voor PostNL Checkout
 Here you can enable or disable the entire extension. This is also where you register your extension for use.,Hier kunt u de extensie aan of uit zetten. Hier kunt u de extensie ook registreren voor gebruik.
 Invalid PrepareOrder response: %s,Ongeldig PrepareOrder antwoord: %s
@@ -462,7 +462,7 @@ Before you proceed to use this extension it is very important that you have prop
 "Make sure the PostNL shipping method is configured under system > config > shipping methods > PostNL. Only shipments made using this shipping method will be able to use PostNL's services. You may choose to charge either a flat rate or a table rate-based shipping fee. In the case of the latter, the table rates you have added under the Table Rate shipping method will be used. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.","Wees er zeker van dat de PostNL verzendmethode correct geconfigureerd is in systeem > configuratie > verzendmethodes > PostNL. Enkel bestellingen die met deze verzendmethode geplaatst zijn, kunnen verwerkt worden door de extensie. U kunt kiezen om een plat tarief of een tabel tarief in rekening brengen voor het gebruik van PostNL. Indien u kiest voor tabel tarieven, dan kunt u deze instellen bij de 'Tabel Tarieven' verzendmethode. De PostNL verzendmethode zal deze tarieven overnemen. Voor meer informatie over hoe u de tabel tarieven kunt instellen, kunt u <a href='%s' target='_blank'>hier</a> kijken."
 "You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.",U moet uw afreken process goed inrichten. PostNL moet uit het afreken proces een correct opgemaakt adres kunnen lezen om er zeker van te zijn dat de zending ook echt naar het gekozen adres verstuurd wordt. Om hier zeker van te zijn moet u het juiste aantal straat regels aanzetten en deze voorzien van duidelijk labels an validatie. U kunt <a href='%s' target='_blank'>hier</a> meer lezen over hoe u dit juist kunt configureren.
 Register the extension for use,Registreer de extensie voor gebruik
-Open the 'General Settings' tab and enter your email address.,Open het 'Algemene Instellingen' tabje en vul uw e-mail adres in.
+Open the 'General Settings' tab and enter your email address.,Open het 'Algemene instellingen' tabje en vul uw e-mail adres in.
 Press the 'Activate the extension' button. You will now recieve an email at the address you specified containing 2 secure keys.,Klik op de 'Activeer de extensie' knop. U ontvangt nu 2 beveiligingssleutels op het door u ingevulde e-mail adres.
 Copy the keys and enter them in the 'Unique-' and 'Private key' fields that are now available.,Kopieer de sleutels en vul deze in in de 'Unieke-' en 'Prive sleutel' velden die nu zichtbaar zullen zijn.
 Press the 'Finish activation' button.,Klik op de 'Rond activatie af' knop.
@@ -478,16 +478,16 @@ Enter a sender and return address,Vul een afzender- en retouradres in
 "You may now choose to enter a separate return address. If you choose to do so, this address will be printed on the shipping labels, rather than your sender address.","U kunt nu ervoor kiezen om een alternatief retouradres te gebruiken. Indien u hiervoor kiest, zal dit adres op de verzendlabels afgedrukt worden in plaats van uw afzenderadres."
 "In order to enter a separare return address, go to the 'Return Address' tab and switch the 'Use the sender address as the return adress' settng to 'no'. New fields will now appear for you to enter your return address.","Om een alternatief retouradres te gebruiken, moet u naar het 'Retouradres' tabje gaan. Zet daar het 'Gebruik verzendadres als retouradres' veld op 'nee'. Er zullen nu nieuwe velden verschijnen waarin u uw retouradres kunt opgeven."
 "Configure your address settings, your confirming & label printing preferences and your preferred product options","Configureer nu uw adres instellingen, uw voormelden en labels printen voorkeuren, en uw product optie voorkeuren."
-"Go to the 'Address Settings' tab and configure this section based on which fields you use in your checkout process. If this does not precisely match your checkout process, orders may not be shipped to the correct address.",Ga nu naar het 'Adres Instellingen' tabje en configureer deze velden op basis van welke velden u gebruikt in uw afreken proces. Indien deze configuratie niet exact overeenkomt met de velden die u gebruikt in uw afrekenproces kan het voorkomen dat bestellingen naar het verkeerde adres verstuurd worden.
-Go to the 'Confirming & Label Printing Settings' tab and change your preferences. You may want to tweak these and then test them repeatedly before deciding on a final configuration.,Ga naar het 'Voormelden & Labels Printen Instellingen' tabje en pas uw voorkeuren aan. Het is verstandig om met deze instellingen te experimenteren en telkens te testen voordat u uw definitieve voorkeuren vastlegt.
+"Go to the 'Address Settings' tab and configure this section based on which fields you use in your checkout process. If this does not precisely match your checkout process, orders may not be shipped to the correct address.",Ga nu naar het 'Adres instellingen' tabje en configureer deze velden op basis van welke velden u gebruikt in uw afreken proces. Indien deze configuratie niet exact overeenkomt met de velden die u gebruikt in uw afrekenproces kan het voorkomen dat bestellingen naar het verkeerde adres verstuurd worden.
+Go to the 'Confirming & Label Printing Settings' tab and change your preferences. You may want to tweak these and then test them repeatedly before deciding on a final configuration.,Ga naar het 'Voormelden & Labels Printen instellingen' tabje en pas uw voorkeuren aan. Het is verstandig om met deze instellingen te experimenteren en telkens te testen voordat u uw definitieve voorkeuren vastlegt.
 "Go to the 'Product Options' tab and select your supported and preferred product options. If you have questions regarding each product option and which would be most suitable to you, please contact PostNL.","Ga naar het 'Product Opties' tabje en selecteer welke PostNL preoducten u ondersteunt en welke u als standaard wilt aanhouden. Indien u vragen heeft met betrekking tot de mogelijke product opties of als u niet zeker bent welke product opties het beste bij u passen, neem dan contact op met PostNL."
 Configure your GlobalPack settings,Configureer uw GlobalPack instellingen
 "If you wish to send orders to outside the EU, you need to configure your GlobalPack settings.",Indien u bestellingen wilt versturen naar buiten de EU moet u uw GlobalPack instellingen configureren.
-Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.,Ga naar het 'Account Instellingen' tabje en vul de 'Globaal barcode type' en 'Globaal barcode bereik' velden in.
-"Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office.","Ga naar het 'GlobalPack Instellingen' tabje en vul uw voorkeuren in. Let op: als u deze instellingen niet correct configureerd, kan het voorkomen dat PostNL of de douane de zending weigert."
+Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.,Ga naar het 'Account instellingen' tabje en vul de 'Globaal barcode type' en 'Globaal barcode bereik' velden in.
+"Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office.","Ga naar het 'GlobalPack instellingen' tabje en vul uw voorkeuren in. Let op: als u deze instellingen niet correct configureerd, kan het voorkomen dat PostNL of de douane de zending weigert."
 Configure your PostNL Checkout settings,Configureer uw PostNL Checkout instellingen
 "If you wish to use PostNL Checkout in your webshop, you need to configure your PostNl Checkout settings.",Indien u gebruik wilt maken van PostNL Checkout moet u uw PostNL Checkout instellingen configureren.
-Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.,Ga naar het 'Account Instellingen' tabje en vul de 'Webshop ID' en 'Publieke webshop ID' velden in.
+Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.,Ga naar het 'Account instellingen' tabje en vul de 'Webshop ID' en 'Publieke webshop ID' velden ini
 Go to the 'PostNL Checkout' tab and specify your preferences.,Ga naar het 'PostNL Checkout' tabje en vul uw voorkeuren in.
 "Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected.","Ga naar het 'PostNL Checkout Betalingsinstellingen' tabje en kies welke betaalmethode u wilt aanbieden in PostNL Checkout. Hier moet u ook iedere PostNL Checkout betaalmethode die u ondersteunt, koppelen aan een Magento betaalmethode. Als u dit niet goed instelt, kan het voorkomen dat een klant uiteindelijk met een andere betaalmethode moet afrekenen dan hij of zij heeft gekozen in PostNL Checkout."
 "If you wish to use this extension on an unsupported Magento version or edition, or in combination with an unsupported 3rd party extension, we cannot guarantee the PostNL extension will function as expected. For questions please contact the Total Internet Group servicedesk.","Indien u de extensie wilt gebruiken op een niet-ondersteunde versie of editie van magento, of als u de extensie wilt gebruiken samen met een 3rd party extensie die niet ondersteunt wordt, kunnen wij niet garanderen dat de PostNL extensie feilloos zal functioneren. Voor vragen kunt u contact op nemen met de Total Internet Group servicedesk."
@@ -516,15 +516,15 @@ Tomorrow,Morgen
 %s days from now,Over %s dagen
 Post Office,Postkantoor
 Instruction CMS page,Instructie CMS pagina
-Select a CMS page containing instructions on how to use PostNl Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.,Selecteer een CMS pagina met instructies over hoe men PostNL Checkout kan gebruiken. Een link naar deze pagina zal getoond worden onder de PostNL Checkout knop om klanten te helpen. Selecteer 'geen' om deze link niet te tonen.
--- none --,
+Select a CMS page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.,Selecteer een CMS pagina met instructies over hoe men PostNL Checkout kan gebruiken. Een link naar deze pagina zal getoond worden onder de PostNL Checkout knop om klanten te helpen. Selecteer 'geen' om deze link niet te tonen.
+-- none --,-- geen --
 Invalid full street supplied: %s,Ongeldig volledig adres opgegeven: %s
 Unable to match barcode to shippingStatus response: %s,Niet mogelijk om barcode aan shippingStatus te koppelen: %s
 Temporary template file already exists: %s,Tijdelijk template bestand bestaat al: %s
 The generateBarcodes action is currently unavailable.,De generateBarcodes actie is momenteel niet beschikbaar.
 Invalid confirm response recieved: %s,Ongeldige ontvangstbevestiging ontvangen: %s
 Unable to add tracking info: no barcode or shipment available.,Onmogelijk om tracking informatie toe te voegen. Geen barcode of verzending beschikbaar.
-No private or unique key found. Unable to complete the request.,Geen prive of unieke sleutel gevonden. Niet mogelijk om verzoek af te ronden.
+No private or unique key found. Unable to complete the request.,Geen privé of unieke sleutel gevonden. Niet mogelijk om verzoek af te ronden.
 Invalid updateStatistics response: %s,Ongeldig antwoord updateStatistics: %s
 Unable to save shipping_status cron expression: %s,Opslaan niet mogelijk voor shipping_status cron expression: %s
 No message supplied.,Geen melding meegegeven.
@@ -535,3 +535,24 @@ The confirmAndGenerateLabel action is currently unavailable.,De confirmAndGenera
 Invalid message type requested: %s,Ongeldig bericht type gekozen: %s
 Unable to read directory: %s,Kan folder niet lezen: %s
 Invalid UpdateOrder response: %s,Ongeldige UpdateOrder ontvangen: %s
+In order to use this extension you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure the extension.,"Voor het gebruik van de extensie dient u zich <a 
+href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' 
+title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen."
+You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.,Deze gegevens vindt u in uw <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>Checkout instellingen</a> bij PostNL. 
+DO NOT CHANGE THESE SETTINGS WITHOUT INSTRUCTIONS FROM POSTNL OR TOTAL INTERNET GROUP,PAS DEZE INSTELLINGEN NOOIT AAN ZONDER INSTRUCTIES VAN POSTNL OF TOTAL INTERNET GROUP
+"Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature.","Klanten die gebruik maken van deze feature zullen ingeschreven worden op de nieuwsbrief van uw webshop, niet op de nieuwsbrief van PostNL. Houd er rekenen mee dat extensies van derden die de Magento nieuwsbrief functionaliteit aanpassen mogelijk zullen conflicteren met deze feature."
+Doorcodes are often used in foreign addresses such as those used in France and Singapore.,Deurcodes worden veelal gebruikt in buitenlandse addressen zoals addressen uit Frankrijk en Singapore.
+In order to use PostNL Checkout you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.,"Voor het gebruik van PostNl Checkout dient u zich <a 
+href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' 
+title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen."
+Klarna,Klarna
+Use Klarna,Gebruik Klarna
+Klarna payment method,Klarna betaalmethode
+Ping status request resulting in an error.,Ping status verzoek heeft geresulteerd in een fout.
+Ping status response indicated PostNL Checkout is currently not available.,Ping status verzoek geeft aan dat PostNL Checkout momenteel niet beschikbaar is.
+"In order to continuously improve the PostNL extension, the extension sends usage statistics to a secure PostNL server.","Om de extensie continu te verbeteren, verstuurd de extensie enkele gebruiks statistieken naar een beveiligde PostNL server."
+Recieve notifications from PostNL regarding updates and promotions,Ontvang noticaties van PostNL m.b.t. updates en promoties
+"Leave empty to allow an infinite amount of parcels per shipment.<br/>If this value is empty or exceeds 200, you need to set 'Allow infinite label printing' to yes in order to be able to print the shipment's labels.","Laat leeg om een oneindig aantal doosjes per zending toe te staan.<br/>Indien dit veld leeg is of een waarde groter dan 200 bevat, moet 'Sta oneindig labels printen toe' op ja staan. Anders zal het niet mogelijk zijn om van sommige zendingen de labels te printen."
+Allow test mode,Test modus toestaan
+If enabled new fields will appear allowing you to configure the extension for test mode.,"Indien deze instelling aan staat, zullen er nieuwe configuratie velden verschijnen waarmee u de extensie kunt configureren voor test modus."
+By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.,"Standaard staat de extensie altijd in 'live' modus. Indien u een ontwikkelaar bent, kan het echter interessant zijn om de extensie op test (sandbox) modus te zetten."

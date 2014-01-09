@@ -49,9 +49,12 @@
             onComplete: function(response) {
                 var responseText = response.responseText;
                 $('waiting_for_ping_spinner').hide();
+                
+                $('postnl_checkout_seperator').show();
                 if (responseText == 'OK') {
-                    $('postnl_checkout_seperator').show();
                     $('postnl_checkout').show();
+                } else {
+                    $('postnl_checkout_link_disabled').show();
                 }
             }
         });
@@ -103,6 +106,7 @@
                     alert('<?php echo $this->__('An error occurred. Please use our regular checkout instead.'); ?>');
                     document.body.style.cursor = 'default';
                     this.overlay.hide();
+                    
                     return false;
                 }
                 

@@ -36,47 +36,41 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_SupportTab
-    extends Mage_Adminhtml_Block_Abstract
-    implements Varien_Data_Form_Element_Renderer_Interface
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
     /**
-     * Css file loaded for PostNL's system > config section
+     * XML path to split street configuration option
      */
-    const SYSTEM_CONFIG_EDIT_CSS_FILE = 'css/TIG/PostNL/system_config_edit_postnl.css';
+    const XML_PATH_SPLIT_STREET = 'postnl/cif_address/split_street';
     
     /**
      * Template file used
      * 
      * @var string
      */
-    protected $_template = 'TIG/PostNL/system/config/support_tab.phtml';
+    protected $_template = 'TIG/PostNL/system/config/form/field/split_address_check.phtml';
     
     /**
-     * Add a new css file to the head. We couldn't do this from layout.xml, because it would have loaded 
-     * for all System > Config pages, rather than just PostNL's section.
+     * Get if the split_street field is enabled
      * 
-     * @return Mage_Adminhtml_Block_Abstract::_prepareLayout()
-     * 
-     * @see Mage_Adminhtml_Block_Abstract::_prepareLayout()
+     * @return boolean
      */
-    protected function _prepareLayout()
+    public function getIsAddressSplit()
     {
-        $this->getLayout()
-             ->getBlock('head')
-             ->addCss(self::SYSTEM_CONFIG_EDIT_CSS_FILE);
+        $request = Mage::app()->getRequest();
+
+        /**
+         * Check if the split_street field is enabled based on the current scope
+         */
+        if ($request->getParam('store')) {
+            $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, $request->getparam('store'));
+        } elseif ($request->getParam('website')) {
+            $website = Mage::getModel('core/website')->load($request->getparam('website'), 'name');
+            $splitStreet = (bool) $website->getConfig(self::XML_PATH_SPLIT_STREET, $website->getId());
+        } else {
+            $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, Mage_Core_Model_App::ADMIN_STORE_ID);
+        }
         
-        return parent::_prepareLayout();
-    }
-    
-    /**
-     * Render fieldset html
-     *
-     * @param Varien_Data_Form_Element_Abstract $element
-     * @return string
-     */
-    public function render(Varien_Data_Form_Element_Abstract $element)
-    {
-        return $this->toHtml();
+        return $splitStreet;
     }
 }

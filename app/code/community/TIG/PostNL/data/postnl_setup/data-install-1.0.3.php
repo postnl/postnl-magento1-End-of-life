@@ -33,35 +33,16 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-    <span id="postnl_checkout_seperator" style="display:none;"><?php echo $this->__('or'); ?></span>
-</li>
-<li>
-    <?php $_src = $this->getSrc(); ?>
-    <?php if (!$this->isDisabled()): ?>
-        <img id="waiting_for_ping_spinner" src="<?php echo $this->getSkinUrl('images/TIG/PostNL/postnl_spinner.gif'); ?>" />
-    <?php endif; ?>
-    <div id="postnl_checkout" <?php if (!$this->isDisabled()): ?>style="display:none;"<?php endif; ?>>
-        <a id="postnl_checkout_link" href="#" onclick="<?php if (!$this->isDisabled()): ?>postnlcheckoutWidget.startCheckout();<?php else: ?>return false;<?php endif; ?>" title="<?php echo $this->__('PostNL Checkout') ?>" <?php if ($this->isDisabled()): ?>disabled='disabled'<?php endif; ?>>
-            <img src="<?php echo $_src; ?>"/>
-        </a>
-        <?php $_instructionUrl = $this->getInstructionUrl(); ?>
-        <?php if (!$this->isDisabled() && $_instructionUrl): ?>
-            <p>
-                <a href="<?php echo $_instructionUrl; ?>" title="<?php echo $this->__('How does it work?'); ?>" target="_blank"><?php echo $this->__('How does it work?'); ?></a>
-            </p>
-        <?php endif; ?>
-    </div>
-    <?php if (!$this->isDisabled()): ?>
-        <?php $_disabledSrc = $this->getSrc(true); ?>
-        <div id="postnl_checkout_link_disabled" style="display:none;">
-            <img src="<?php echo $_disabledSrc; ?>"/>
-        </div>
-        
-        <script type="text/javascript">
-            pingUrl = '<?php echo $this->getUrl('postnl/checkout/ping'); ?>';
-        </script>
-    <?php endif; ?>
+ 
+$installer = $this;
+
+$installer->startSetup();
+
+$installer->generateShippingStatusCronExpr();
+$installer->generateUpdateStatisticsCronExpr();
+$installer->expandSupportTab();
+
+$installer->endSetup();

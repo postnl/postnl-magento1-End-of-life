@@ -36,17 +36,14 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-
-class TIG_PostNL_Block_Adminhtml_System_Config_ConfigCheck
-    extends Mage_Adminhtml_Block_Abstract
-    implements Varien_Data_Form_Element_Renderer_Interface
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
     /**
      * Template file used by this element
      * 
      * @var string
      */
-    protected $_template = 'TIG/PostNL/system/config/config_check.phtml';
+    protected $_template = 'TIG/PostNL/system/config/form/field/config_check.phtml';
     
     /**
      * Get the postnl helper
@@ -171,19 +168,5 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ConfigCheck
         }
         
         return $configErrors;
-    }
-    
-    /**
-     * Render the element
-     * 
-     * @param Varien_Data_Form_Element_Abstract $element
-     * 
-     * @return string
-     * 
-     * @todo implement this method so that it renders a warning if the module has not yet been fully configured
-     */
-    public function render(Varien_Data_Form_Element_Abstract $element)
-    {
-        return $this->toHtml();
     }
 }
