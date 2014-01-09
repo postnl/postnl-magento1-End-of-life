@@ -81,6 +81,8 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     public function pingAction()
     {
+        $helper = Mage::helper('postnl/checkout');
+        
         if (!$this->_isPostnlCheckoutActive()) {
             $this->getResponse()
                  ->setBody('NOK');
@@ -91,7 +93,13 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $cif = Mage::getModel('postnl_checkout/cif');
             $result = $cif->ping();
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            $helper->logException($e);
+            
+            $errorMessage = $helper->__('PostNL Checkout is not available due to the following reasons:')
+                          . PHP_EOL 
+                          . $helper->__('Ping status request resulting in an error.');
+            
+            $helper->log($errorMessage);
             
             $this->getResponse()
                  ->setBody('NOK');
@@ -99,6 +107,10 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
         
         if (!$result || $result == 'NOK') {
+            $errorMessage = $helper->__('PostNL Checkout is not available due to the following reasons:')
+                          . PHP_EOL 
+                          . $helper->__('Ping status response indicated PostNL Checkout is currently not available.');
+                          
             $this->getResponse()
                  ->setBody('NOK');
             return $this;
@@ -106,7 +118,8 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         
         $this->getResponse()
              ->setBody('OK');
-             
+             $helper = Mage::helper('postnl/checkout');
+        
         return $this;
     }
     

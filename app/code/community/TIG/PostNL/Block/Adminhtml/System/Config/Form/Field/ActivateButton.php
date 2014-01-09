@@ -36,32 +36,54 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-    <span id="postnl_checkout_seperator" style="display:none;"><?php echo $this->__('or'); ?></span>
-</li>
-<li>
-    <?php $_src = $this->getSrc(); ?>
-    <?php if (!$this->isDisabled()): ?>
-        <img id="waiting_for_ping_spinner" src="<?php echo $this->getSkinUrl('images/TIG/PostNL/postnl_spinner.gif'); ?>" />
-    <?php endif; ?>
-    <div id="postnl_checkout" <?php if (!$this->isDisabled()): ?>style="display:none;"<?php endif; ?>>
-        <a id="postnl_checkout_link" href="#" onclick="<?php if (!$this->isDisabled()): ?>postnlcheckoutWidget.startCheckout();<?php else: ?>return false;<?php endif; ?>" title="<?php echo $this->__('PostNL Checkout') ?>" <?php if ($this->isDisabled()): ?>disabled='disabled'<?php endif; ?>>
-            <img src="<?php echo $_src; ?>"/>
-        </a>
-        <?php $_instructionUrl = $this->getInstructionUrl(); ?>
-        <?php if (!$this->isDisabled() && $_instructionUrl): ?>
-            <p>
-                <a href="<?php echo $_instructionUrl; ?>" title="<?php echo $this->__('How does it work?'); ?>" target="_blank"><?php echo $this->__('How does it work?'); ?></a>
-            </p>
-        <?php endif; ?>
-    </div>
-    <?php if (!$this->isDisabled()): ?>
-        <?php $_disabledSrc = $this->getSrc(true); ?>
-        <div id="postnl_checkout_link_disabled" style="display:none;">
-            <img src="<?php echo $_disabledSrc; ?>"/>
-        </div>
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
+    extends Mage_Adminhtml_Block_System_Config_Form_Field
+    implements Varien_Data_Form_Element_Renderer_Interface
+{
+    /**
+     * XML path to 'is_activated' flag
+     */
+    const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
+    
+    /**
+     * Gets the element's html. In this case: a button redirecting the user to the extensionControl controller
+     * 
+     * @return string
+     */
+    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
+    {
+        $this->setElement($element);
         
-        <script type="text/javascript">
-            pingUrl = '<?php echo $this->getUrl('postnl/checkout/ping'); ?>';
-        </script>
-    <?php endif; ?>
+        $url = $this->getUrl('postnl/adminhtml_extensionControl/activate');
+        
+        $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if ($isActivated == '1') {
+            $label = $this->__('Finish activation');
+        } else {
+            $label = $this->__('Activate the extension');
+        }
+        
+        $html = $this->getLayout()->createBlock('adminhtml/widget_button')
+                     ->setId($element->getHtmlId())
+                     ->setType('button')
+                     ->setClass('scalable')
+                     ->setLabel($label)
+                     ->setOnClick("activatePostNL()")
+                     ->toHtml();
+
+        return $html;
+    }
+    
+    /**
+     * Render the element without a scope label
+     * 
+     * @return string
+     * 
+     * @see parent::render()
+     */
+    public function render(Varien_Data_Form_Element_Abstract $element)
+    {
+        $element->setScopeLabel('');
+        return parent::render($element);
+    }
+}

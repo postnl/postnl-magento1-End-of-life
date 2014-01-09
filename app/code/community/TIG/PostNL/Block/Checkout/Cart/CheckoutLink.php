@@ -143,9 +143,11 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     /**
      * Gets the checkout button src attribute
      * 
+     * @param boolean $forceDisabled
+     * 
      * @return string
      */
-    public function getSrc()
+    public function getSrc($forceDisabled = false)
     {
         if (Mage::helper('postnl/checkout')->isTestMode()) {
             $baseUrl = self::CHECKOUT_BUTTON_TEST_BASE_URL;
@@ -160,7 +162,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
              . '&format=Large'
              . '&type=Orange';
              
-        if ($this->isDisabled()) {
+        if ($forceDisabled === true || $this->isDisabled()) {
             $url .= '&disabled=true';
         }
                   
