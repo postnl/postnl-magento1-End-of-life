@@ -36,34 +36,15 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_ActivatedFieldHeader
-    extends Mage_Adminhtml_Block_Abstract
-    implements Varien_Data_Form_Element_Renderer_Interface
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivatedFieldHeader extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
     /**
      * Template file used
      * 
      * @var string
      */
-    protected $_template = 'TIG/PostNL/system/config/field_header.phtml';
+    protected $_template = 'TIG/PostNL/system/config/form/field/field_header.phtml';
     
-    /**
-     * Get the element's HTML ID
-     * 
-     * @return string
-     */
-    public function getHtmlId()
-    {
-        if (!$this->getElement()) {
-            return '';
-        }
-        
-        $element = $this->getElement();
-        $id = $element->getHtmlId();
-        
-        $this->setHtmlId($id);
-        return $id;
-    }
     /**
      * Get the element's label
      * 
@@ -71,6 +52,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ActivatedFieldHeader
      */
     public function getLabel()
     {
+        if ($this->hasLabel()) {
+            return $this->getData('label');
+        }
+        
         if (!$this->getElement()) {
             return '';
         }
@@ -112,18 +97,5 @@ class TIG_PostNL_Block_Adminhtml_System_Config_ActivatedFieldHeader
         
         $this->setLabel($label);
         return $label;
-    }
-    
-    /**
-     * Render fieldset html
-     *
-     * @param Varien_Data_Form_Element_Abstract $element
-     * @return string
-     */
-    public function render(Varien_Data_Form_Element_Abstract $element)
-    {
-        $this->setElement($element);
-        
-        return $this->toHtml();
     }
 }

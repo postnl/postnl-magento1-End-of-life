@@ -33,16 +33,53 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-$includePath = '';
-if (defined('COMPILER_INCLUDE_PATH')) {
-    $includePath = 'TIG/PostNL/';
-}
-
-include($includePath . 'Fpdf/fpdf.php');
-class TIG_PostNL_Fpdf extends FPDF
+abstract class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
+    extends Mage_Adminhtml_Block_Abstract
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
+    /**
+     * Template file used
+     * 
+     * @var string
+     */
+    protected $_template = '';
     
+    /**
+     * Get the element's HTML ID
+     * 
+     * @return string
+     */
+    public function getHtmlId()
+    {
+        if ($this->hasHtmlId()) {
+            return $this->getData('html_id');
+        }
+        
+        if (!$this->getElement()) {
+            return '';
+        }
+        
+        $element = $this->getElement();
+        $id = $element->getHtmlId();
+        
+        $this->setHtmlId($id);
+        return $id;
+    }
+
+    /**
+     * Render fieldset html
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @return string
+     */
+    public function render(Varien_Data_Form_Element_Abstract $element)
+    {
+        $this->setElement($element);
+        
+        return $this->toHtml();
+    }
 }
+ 

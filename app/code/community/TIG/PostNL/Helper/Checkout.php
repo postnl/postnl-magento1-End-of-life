@@ -83,6 +83,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         'giftcard'               => 'KADOBON',
         'rabobank_internetkassa' => 'RABOINTKASSA', 
         'afterpay'               => 'AFTERPAY',
+        'klarna'                 => 'KLARNA',
     );
     
     /**
@@ -358,6 +359,12 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
         
+        $testModeAllowed = $this->isTestModeAllowed();
+        if (!$testModeAllowed) {
+            Mage::register('postnl_checkout_test_mode', false);
+            return false;
+        }
+        
         $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
         
         Mage::register('postnl_checkout_test_mode', $testMode);
@@ -394,7 +401,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
         
-        $isPostnlEnabled = $this->isEnabled();
+        $isPostnlEnabled = $this->isEnabled($storeId, false, $this->isTestMode());
         if ($isPostnlEnabled === false) {
             $errors = array(
                 array(
@@ -406,7 +413,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             return false;
         }
         
-        $isCheckoutActive = $this->isCheckoutActive();
+        $isCheckoutActive = $this->isCheckoutActive($storeId);
         if (!$isCheckoutActive) {
             $errors = array(
                 array(

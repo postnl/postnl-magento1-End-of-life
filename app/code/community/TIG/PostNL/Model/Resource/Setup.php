@@ -321,4 +321,68 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         
         return $this;
     }
+
+    /**
+     * Makes sure the PostNL support tab is expanded the first time an adin visits the PostNL system/config/edit page.
+     * 
+     * @return TIG_PostNL_Model_Resource_Setup
+     */
+    public function expandSupportTab()
+    {
+        $configState = array(
+            'postnl_support' => 1,
+        );
+        
+        /**
+         * Get all admin users and save the PostNL support tab's state as being expanded for each one.
+         * 
+         * This has the same effect as having every admin log in, go to system/config/edit/section/postnl and manually click on
+         * the 'Version & Support' tab before saving the section.
+         */
+        $adminUsers = Mage::getResourceModel('admin/user_collection');
+        foreach ($adminUsers as $adminUser) {
+            $this->_saveState($adminUser, $configState);
+        }
+        
+        return $this;
+    }
+
+    /**
+     * Save state of configuration field sets.
+     * Modified version of the Mage_Adminhtml_System_ConfigController::_saveState() method.
+     *
+     * @param Mage_Admin_Model_User $adminUser
+     * @param array $configState
+     * 
+     * @return TIG_PostNL_Model_Resource_Setup
+     * 
+     * @see Mage_Adminhtml_System_ConfigController::_saveState()
+     */
+    protected function _saveState(Mage_Admin_Model_User $adminUser, $configState = array())
+    {
+        if (!is_array($configState)) {
+            return $this;
+        }
+        
+        $extra = $adminUser->getExtra();
+        if (!is_array($extra)) {
+            $extra = array();
+        }
+        
+        if (!isset($extra['configState'])) {
+            $extra['configState'] = array();
+        }
+
+        foreach ($configState as $fieldset => $state) {
+            $extra['configState'][$fieldset] = $state;
+        }
+        
+        try {
+            $adminUser->saveExtra($extra);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+        }
+
+        return $this;
+    }
 }
