@@ -22,15 +22,15 @@ During activation 2 secure keys will be sent to this email address.,During activ
 Unique key,Unique key
 Private key,Private key
 Account Settings,Account Settings
-Live Username,Live Username
-Live Password,Live Password
+Username,Username
+Password,Password
 Test Username,Test Username
 Test Password,Test Password
 Customer Number,Customer Number
 Customer Code,Customer Code
 Your customer code as supplied by PostNL. Must contain between 3 and 4 leters.,Your customer code as supplied by PostNL. Must contain between 3 and 4 leters.
-BLS Code,BLS Code
-The internal code of the nearest PostNL Sorting centre. Must contain 6 numbers.,The internal code of the nearest PostNL Sorting centre. Must contain 6 numbers.
+BLS (location) Code,BLS (location) Code
+The internal code of the nearest PostNL sorting centre. Must contain 6 numbers.,The internal code of the nearest PostNL sorting centre. Must contain 6 numbers.
 These fields are only required if you intend to send products to countries outside the EU.,These fields are only required if you intend to send products to countries outside the EU.
 Global Barcode Type,Global Barcode Type
 The current global barcode type as supplied by PostNL. Must contain 2 leters.,The current global barcode type as supplied by PostNL. Must contain 2 leters.
@@ -552,3 +552,4 @@ Recieve notifications from PostNL regarding updates and promotions,Recieve notif
 Allow test mode,Allow test mode
 If enabled new fields will appear allowing you to configure the extension for test mode.,If enabled new fields will appear allowing you to configure the extension for test mode.
 By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.,By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.
+Restore default values,Restore default values
