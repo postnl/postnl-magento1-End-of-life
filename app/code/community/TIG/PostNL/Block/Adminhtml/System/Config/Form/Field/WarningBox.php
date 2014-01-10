@@ -33,16 +33,15 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-$includePath = '';
-if (defined('COMPILER_INCLUDE_PATH')) {
-    $includePath = 'TIG/PostNL/';
-}
-
-include($includePath . 'Fpdf/fpdf.php');
-class TIG_PostNL_Fpdf extends FPDF
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WarningBox extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
-    
+    /**
+     * Template file used
+     * 
+     * @var string
+     */
+    protected $_template = 'TIG/PostNL/system/config/form/field/warning_box.phtml';
 }

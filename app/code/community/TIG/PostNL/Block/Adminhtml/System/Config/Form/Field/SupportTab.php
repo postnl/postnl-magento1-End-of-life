@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  *                  ___________       __            __   
  *                  \__    ___/____ _/  |_ _____   |  |  
@@ -36,13 +36,34 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-$includePath = '';
-if (defined('COMPILER_INCLUDE_PATH')) {
-    $includePath = 'TIG/PostNL/';
-}
-
-include($includePath . 'Fpdf/fpdf.php');
-class TIG_PostNL_Fpdf extends FPDF
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
+    /**
+     * Css file loaded for PostNL's system > config section
+     */
+    const SYSTEM_CONFIG_EDIT_CSS_FILE = 'css/TIG/PostNL/system_config_edit_postnl.css';
     
+    /**
+     * Template file used
+     * 
+     * @var string
+     */
+    protected $_template = 'TIG/PostNL/system/config/form/field/support_tab.phtml';
+    
+    /**
+     * Add a new css file to the head. We couldn't do this from layout.xml, because it would have loaded 
+     * for all System > Config pages, rather than just PostNL's section.
+     * 
+     * @return Mage_Adminhtml_Block_Abstract::_prepareLayout()
+     * 
+     * @see Mage_Adminhtml_Block_Abstract::_prepareLayout()
+     */
+    protected function _prepareLayout()
+    {
+        $this->getLayout()
+             ->getBlock('head')
+             ->addCss(self::SYSTEM_CONFIG_EDIT_CSS_FILE);
+        
+        return parent::_prepareLayout();
+    }
 }

@@ -36,10 +36,16 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-require_once('Fpdf/fpdf.php');
-require_once('Fpdi/fpdf_tpl.php');
-require_once('Fpdi/fpdi.php');
-require_once('Fpdi/fpdi_pdf_parser.php');
+
+$includePath = '';
+if (defined('COMPILER_INCLUDE_PATH')) {
+    $includePath = 'TIG/PostNL/';
+}
+
+require_once($includePath . 'Fpdf/fpdf.php');
+require_once($includePath . 'Fpdi/fpdf_tpl.php');
+require_once($includePath . 'Fpdi/fpdi.php');
+require_once($includePath . 'Fpdi/fpdi_pdf_parser.php');
 
 class TIG_PostNL_Fpdi extends FPDI
 {

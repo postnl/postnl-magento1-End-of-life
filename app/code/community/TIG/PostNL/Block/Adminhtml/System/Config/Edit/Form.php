@@ -37,13 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Edit_Form extends Mage_Adminhtml_Block_System_Config_Form
-{
-    
-    /**
-     * XML path to the supporttab_expanded setting
-     */
-    const EXPAND_SUPPORT_PATH = 'postnl/support/expanded';
-    
+{    
     /**
      * Creates the system > config > edit form for the PostNL section.
      * 
@@ -124,26 +118,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Edit_Form extends Mage_Adminhtml_
             $fieldsetRenderer = $this->_defaultFieldsetRenderer;
         }
         
-        /**
-         * Expand the support tab on first view
-         */
-        if ($group->getName() == 'support') {
-            $expanded = Mage::getStoreConfigFlag(self::EXPAND_SUPPORT_PATH, Mage_Core_Model_App::ADMIN_STORE_ID);
-            
-            if ($expanded === true) {
-                $group->expanded = 1;
-            }
-            
-            /**
-             * Prevent the tab from being expanded in the future unless the merchant opens it him-/herself
-             */
-            Mage::getModel('core/config_data')
-                ->load(self::EXPAND_SUPPORT_PATH, 'path')
-                ->setValue(0)
-                ->setPath(self::EXPAND_SUPPORT_PATH)
-                ->save();
-        }
-
         $fieldsetRenderer->setForm($this)
             ->setConfigData($this->_configData);
 
