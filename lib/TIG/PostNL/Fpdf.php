@@ -36,7 +36,12 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-include('Fpdf/fpdf.php');
+$includePath = '';
+if (defined('COMPILER_INCLUDE_PATH')) {
+    $includePath = 'TIG/PostNL/';
+}
+
+include($includePath . 'Fpdf/fpdf.php');
 class TIG_PostNL_Fpdf extends FPDF
 {
     
