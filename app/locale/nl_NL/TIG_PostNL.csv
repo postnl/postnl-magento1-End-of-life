@@ -22,15 +22,15 @@ During activation 2 secure keys will be sent to this email address.,Tijdens de a
 Unique key,Unieke sleutel
 Private key,Prive sleutel
 Account Settings,Account instellingen
-Live Username,Live gebruikersnaam
-Live Password,Live wachtwoord
+Username,Gebruikersnaam
+Password,Wachtwoord
 Test Username,Test gebruikersnaam
 Test Password,Test wachtwoord
 Customer Number,Klantnummer
 Customer Code,Klantcode
 Your customer code as supplied by PostNL. Must contain between 3 and 4 leters.,Uw klantnummers zoals aangeleverd door PostNL. Moet bestaan uit 3 tot 4 letters
-BLS Code,BLS code
-The internal code of the nearest PostNL Sorting centre. Must contain 6 numbers.,De interne code van het dichtsbijzijnde PostNL sorteer centrum. Moet bestaan uit 6 nummers
+BLS (location) Code,BLS (locatie) code
+The internal code of the nearest PostNL sorting centre. Must contain 6 numbers.,De interne code van het dichtsbijzijnde PostNL sorteer centrum. Moet bestaan uit 6 nummers
 These fields are only required if you intend to send products to countries outside the EU.,Deze velden zijn alleen verplicht als u van plan bent om producten buiten de EU te gaan versturen.
 Global Barcode Type,Globaal barcode type
 The current global barcode type as supplied by PostNL. Must contain 2 leters.,De huidige barcodetype zoals aangeleverd door PostNL. Moet bestaan uit 2 letters
@@ -556,3 +556,4 @@ Recieve notifications from PostNL regarding updates and promotions,Ontvang notic
 Allow test mode,Test modus toestaan
 If enabled new fields will appear allowing you to configure the extension for test mode.,"Indien deze instelling aan staat, zullen er nieuwe configuratie velden verschijnen waarmee u de extensie kunt configureren voor test modus."
 By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.,"Standaard staat de extensie altijd in 'live' modus. Indien u een ontwikkelaar bent, kan het echter interessant zijn om de extensie op test (sandbox) modus te zetten."
+Restore default values,Herstel fabrieksinstellingen

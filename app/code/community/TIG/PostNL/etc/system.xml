@@ -373,7 +373,7 @@
                             <validate>validate-alpha validate-length minimum-length-3 maximum-length-4 postnl-validate-empty</validate>
                         </customer_code>
                         <live_username translate="label" module="postnl">
-                            <label>Live Username</label>
+                            <label>Username</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
@@ -382,7 +382,7 @@
                             <validate>postnl-validate-empty</validate>
                         </live_username>
                         <live_password translate="label" module="postnl">
-                            <label>Live Password</label>
+                            <label>Password</label>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>50</sort_order>
@@ -423,8 +423,8 @@
                             </depends>
                         </test_password>
                         <collection_location translate="label comment" module="postnl">
-                            <label>BLS Code</label>
-                            <comment>The internal code of the nearest PostNL Sorting centre. Must contain 6 numbers.</comment>
+                            <label>BLS (location) Code</label>
+                            <comment>The internal code of the nearest PostNL sorting centre. Must contain 6 numbers.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
