@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_ShipmentGridMassAction
+class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridMassAction
 {
     /**
      * Returns an option array for available shipment grid mass actions
@@ -58,6 +58,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShipmentGridMassAction
             array(
                 'value' => 'postnl_confirm_shipments',
                 'label' => $helper->__('Confirm shipments'),
+            ),
+            array(
+                'value' => 'postnl_parcelware_export',
+                'label' => $helper->__('Parcelware export'),
             ),
         );
         

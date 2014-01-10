@@ -89,6 +89,9 @@
                 <class>TIG_PostNL_Model_Checkout</class>
                 <resourceModel>postnl_checkout_resource</resourceModel>
             </postnl_checkout>
+            <postnl_parcelware>
+                <class>TIG_PostNL_Model_Parcelware</class>
+            </postnl_parcelware>
             
             <!-- Resource model definitions per submodule -->
             <postnl_resource>

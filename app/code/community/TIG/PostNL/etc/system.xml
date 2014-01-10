@@ -620,7 +620,7 @@
                         <shipping_grid_massaction_default translate="label" module="postnl">
                             <label>Select a default option for the shipment grid mass action</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_shipmentGridMassaction</source_model>
+                            <source_model>postnl_adminhtml/system_config_source_shipmentGridMassaction</source_model>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
@@ -661,11 +661,32 @@
                         </track_and_trace_email_template>
                     </fields>
                 </cif_labels_and_confirming>
+                <parcelware_export translate="label comment" module="postnl">
+                    <comment>This is where you can configure your parcelware export.</comment>
+                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <label>Parcelware export Settings</label>
+                    <sort_order>700</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <active translate="label" module="postnl">
+                            <label>Enable parcelware export</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                        </active>
+                    </fields>
+                </parcelware_export>
                 <cif_address translate="label comment" module="postnl">
                     <comment>This is where you configure the way the extension handles addresses entered by your customers. If these settings are not configured correctly, PostNL cannot guarantee that all addresses will be printed in the correct format.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>Address Settings</label>
-                    <sort_order>700</sort_order>
+                    <sort_order>800</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
@@ -802,7 +823,7 @@
                     <comment>This is where you enter your address. This is required for the extension to work.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>Sender Address</label>
-                    <sort_order>800</sort_order>
+                    <sort_order>900</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -899,7 +920,7 @@
                     <comment>You may specify a separate return address for shipments that could not be delivered. If you do not wish to specify a separate return address, your sender address will be used.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>Return Address</label>
-                    <sort_order>900</sort_order>
+                    <sort_order>1000</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -1038,7 +1059,7 @@
                     <comment>Here you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>Product Options</label>
-                    <sort_order>1000</sort_order>
+                    <sort_order>1100</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
@@ -1121,7 +1142,7 @@
                     <comment>Here you can specify the way GlobalPack shipments are handled. This is very important if you want to ship products to outside the EU. Otherwise you can safely ignore these settings.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>GlobalPack Settings</label>
-                    <sort_order>1100</sort_order>
+                    <sort_order>1200</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
@@ -1247,7 +1268,7 @@
                     <comment>Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>PostNL Checkout Settings</label>
-                    <sort_order>1200</sort_order>
+                    <sort_order>1300</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -1517,7 +1538,7 @@
                     <comment>This is where you specify which payment options will be presented to your customers in PostNL Checkout. At least one of these must be activated for PostNL Checkout to work.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>PostNL Checkout Payment Settings</label>
-                    <sort_order>1300</sort_order>
+                    <sort_order>1400</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -2134,7 +2155,7 @@
                     <comment>These settings are intended for advanced users only! If you're not 100% sure what you're doing, please do not touch these settings.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>Advanced Settings</label>
-                    <sort_order>1400</sort_order>
+                    <sort_order>1500</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>

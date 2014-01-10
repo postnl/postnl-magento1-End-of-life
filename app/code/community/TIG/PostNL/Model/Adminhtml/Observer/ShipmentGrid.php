@@ -532,24 +532,32 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     protected function _addMassaction($block)
     {
+        $helper = Mage::helper('postnl');
+        $adminhtmlHelper = Mage::helper('adminhtml');
+        
         $massactionBlock = $block->getMassactionBlock();
         
         /**
          * Build all the mass action option arrays
          */
         $printAndConfirmOptions = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels & confirm shipment'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
+            'label'=> $helper->__('PostNL - Print shipping labels & confirm shipment'),
+            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
         );
         
         $printOptions = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
+            'label'=> $helper->__('PostNL - Print shipping labels'),
+            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
         );
         
         $confirmOptions = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Confirm shipments'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massConfirm'),
+            'label'=> $helper->__('PostNL - Confirm shipments'),
+            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massConfirm'),
+        );
+        
+        $parcelWareOptions = array(
+            'label' => $helper->__('PostNL - Create parcelware export'),
+            'url'   => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massCreateParcelwareExport')
         );
         
         /**
@@ -573,6 +581,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case 'postnl_confirm_shipments':
                 $confirmOptions['selected'] = true;
                 break;
+            case 'postnl_parcelware_export':
+                $parcelWareOptions['selected'] = true;
+                break;
             // no default
         }
         
@@ -593,6 +604,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'postnl_confirm_shipments',
             $confirmOptions
         );
+        
+        $parcelwareExportEnabled = Mage::helper('postnl/parcelware')->isParcelwareExportEnabled();
+        if ($parcelwareExportEnabled) {
+            $massactionBlock->addItem(
+                'postnl_parcelware_export',
+                $parcelWareOptions
+            );
+        }
         
         return $this;
     }
