@@ -67,6 +67,10 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
                 'value' => 'parcel_count',
                 'label' => $helper->__('Number of Parcels')
             ),
+            array(
+                'value' => 'is_parcelware_exported',
+                'label' => $helper->__('Exported to parcelware')
+            ),
         );
         
         return $columns;
