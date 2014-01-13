@@ -52,10 +52,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivatedFieldHeader e
      */
     public function getLabel()
     {
-        if ($this->hasLabel()) {
-            return $this->getData('label');
-        }
-        
         if (!$this->getElement()) {
             return '';
         }
@@ -95,7 +91,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivatedFieldHeader e
             $onclick
         );
         
-        $this->setLabel($label);
         return $label;
     }
 }
