@@ -37,10 +37,10 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
  
- /**
-  * Base CIF model. Contains general code for communicating with the CIF API
-  */
-class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
+/**
+ * Base CIF model. Contains general code for communicating with the CIF API
+ */
+abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 {
     /**
      * Base URL of wsdl files

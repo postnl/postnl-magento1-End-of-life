@@ -511,7 +511,7 @@
                 <afterpay_method/>
         	</checkout_payment_methods>
         	<advanced>
-        	    <allow_test_mode>0</allow_test_mode>
+                <allow_test_mode>0</allow_test_mode> <!-- Do not allow test mode -->
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->

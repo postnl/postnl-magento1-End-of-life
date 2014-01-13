@@ -1068,21 +1068,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
     
     /**
-     * Public alias fro TIG_PostNL_Model_Core_Cif::getStreetData()
-     * 
-     * @param Mage_Sales_Model_Order_Address $address
-     * @param boolean $allowFullStreet
-     * 
-     * @return array
-     * 
-     * @see TIG_PostNL_Model_Core_Cif::getStreetData()
-     */
-    public function getStreetData($address, $allowFullStreet = true)
-    {
-        return $this->_getStreetData($address, $allowFullStreet);
-    }
-    
-    /**
      * Retrieves streetname, housenumber and housenumber extension from the shipping address.
      * The shipping address may be in multiple streetlines configuration or single line 
      * configuration. In the case of multi-line, each part of the street data will be in a seperate 

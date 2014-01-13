@@ -623,7 +623,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $parcelwareExportModel = Mage::getModel('postnl_parcelware/export');
             $csvContents = $parcelwareExportModel->exportShipments($shipments);
             
-            $this->_prepareDownloadResponse('PostNL_Parcelware_Export', $csvContents);
+            $this->_prepareDownloadResponse('PostNL_Parcelware_Export.csv', $csvContents);
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);

@@ -1144,9 +1144,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         /**
-         * If this shipment consists of a single parcel or if it's an international shipment we only need the main barcode
+         * If this shipment consists of a single parcel we only need the main barcode
          */
-        if ($parcelCount < 2 || $this->isGlobalShipment()) {
+        if ($parcelCount < 2) {
             Mage::dispatchEvent('postnl_shipment_generatebarcode_after', array('shipment' => $this));
             $this->unlock();
             
