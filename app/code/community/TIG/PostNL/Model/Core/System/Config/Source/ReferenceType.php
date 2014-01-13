@@ -53,11 +53,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_ReferenceType
             ),
             array(
                 'value' => 'shipment_increment_id',
-                'label' => $helper->__('Shipment Increment ID'),
+                'label' => $helper->__('Shipment ID'),
             ),
             array(
                 'value' => 'order_increment_id',
-                'label' => $helper->__('Order Increment ID'),
+                'label' => $helper->__('Order ID'),
             ),
             array(
                 'value' => 'custom',
