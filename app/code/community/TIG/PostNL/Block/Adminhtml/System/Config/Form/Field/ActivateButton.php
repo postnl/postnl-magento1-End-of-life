@@ -57,7 +57,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
         $url = $this->getUrl('postnl/adminhtml_extensionControl/activate');
         
         $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
-        if ($isActivated == '1') {
+        if ($isActivated === '1') {
             $label = $this->__('Finish activation');
         } else {
             $label = $this->__('Activate the extension');

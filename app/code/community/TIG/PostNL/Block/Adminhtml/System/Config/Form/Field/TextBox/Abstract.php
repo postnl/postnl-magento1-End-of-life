@@ -54,10 +54,6 @@ abstract class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstr
      */
     public function getHtmlId()
     {
-        if ($this->hasHtmlId()) {
-            return $this->getData('html_id');
-        }
-        
         if (!$this->getElement()) {
             return '';
         }
@@ -65,7 +61,6 @@ abstract class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstr
         $element = $this->getElement();
         $id = $element->getHtmlId();
         
-        $this->setHtmlId($id);
         return $id;
     }
 
