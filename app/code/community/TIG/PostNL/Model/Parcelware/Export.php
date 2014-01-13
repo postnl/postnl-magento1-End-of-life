@@ -56,9 +56,13 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     {
         $this->setIsGlobal(false);
         $this->setStoreId(Mage_Core_Model_App::ADMIN_STORE_ID);
-        
+        $transactionSave = Mage::getModel('core/resource_transaction');
+                               
         $content = array();
         foreach ($postnlShipments as $postnlShipment) {
+            $postnlShipment->setIsParcelwareExported(true);
+            $transactionSave->addObject($postnlShipment);
+            
             $parcelCount = $postnlShipment->getParcelCount();
             if ($parcelCount > 1) {
                 for ($i = 0; $i < $parcelCount; $i++) {
@@ -66,6 +70,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
                     
                     $content[] = $shipmentData;
                 }
+                
                 continue;
             }
             
@@ -91,12 +96,16 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         foreach ($content as $item) {
             $io->streamWriteCsv($item);
         }
+        
+        $transactionSave->save();
  
-        return array(
+        $exportArray = array(
             'type'  => 'filename',
             'value' => $file,
             'rm'    => true // can delete file after use
         );
+        
+        return $exportArray;
     }
 
     /**

@@ -655,6 +655,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         return $barcodeCollection->getItems();
     }
+
+    /**
+     * Alias for magic getIsParcelwareExported()
+     * 
+     * @return string
+     */
+    public function getIsExported()
+    {
+        return $this->getIsParcelwareExported();
+    }
     
     /****************************************************************************************************************************
      * SETTER METHODS
@@ -751,6 +761,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         $this->setData('parcel_count', $count);
         return $this;
+    }
+
+    /**
+     * Alias for magic setIsParcelwareExported()
+     * 
+     * @param mixed $isExported
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setIsExported($isExported)
+    {
+        return $this->setIsParcelwareExported($isExported);
     }
     
     /****************************************************************************************************************************
@@ -984,6 +1006,28 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         return false;
+    }
+    
+    /**
+     * Alias for isParcelwareExported()
+     * 
+     * @return boolean
+     */
+    public function isExported()
+    {
+        return $this->isParcelwareExported();
+    }
+
+    /**
+     * Checks if this shipment has been exported to parcelware
+     * 
+     * @return boolean
+     */
+    public function isParcelwareExported()
+    {
+        $isExported = (bool) $this->getIsParcelwareExported();
+        
+        return $isExported;
     }
     
     /**
