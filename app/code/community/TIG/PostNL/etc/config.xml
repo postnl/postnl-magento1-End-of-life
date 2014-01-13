@@ -407,6 +407,12 @@
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
                 <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
         	</cif_labels_and_confirming>
+        	<parcelware_export>
+        	    <active>0</active> <!-- Inactive -->
+        	    <contract_ref_nr/>
+        	    <contract_name/>
+        	    <sender_ref_nr/>
+        	</parcelware_export>
         	<cif_address>
         		<split_street>1</split_street> <!-- split street -->
         		<streetname_field>1</streetname_field> <!-- first address line -->
