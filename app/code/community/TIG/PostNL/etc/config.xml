@@ -462,7 +462,7 @@
         		<hs_tariff_attribute/>
         		<customs_value_attribute>price</customs_value_attribute> <!-- price attribute -->
         		<country_of_origin_attribute>country_of_manufacture</country_of_origin_attribute> <!-- country of manufacture attribute -->
-        		<description_attribute>short_description</description_attribute> <!-- short description attribute -->
+        		<description_attribute>name</description_attribute> <!-- name attribute -->
         		<product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
         		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
         	</cif_globalpack_settings>

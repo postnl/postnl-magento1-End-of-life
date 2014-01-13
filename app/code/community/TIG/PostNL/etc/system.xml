@@ -373,7 +373,7 @@
                             <validate>validate-alpha validate-length minimum-length-3 maximum-length-4 postnl-validate-empty</validate>
                         </customer_code>
                         <live_username translate="label" module="postnl">
-                            <label>Live Username</label>
+                            <label>Username</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
@@ -382,7 +382,7 @@
                             <validate>postnl-validate-empty</validate>
                         </live_username>
                         <live_password translate="label" module="postnl">
-                            <label>Live Password</label>
+                            <label>Password</label>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>50</sort_order>
@@ -423,8 +423,8 @@
                             </depends>
                         </test_password>
                         <collection_location translate="label comment" module="postnl">
-                            <label>BLS Code</label>
-                            <comment>The internal code of the nearest PostNL Sorting centre. Must contain 6 numbers.</comment>
+                            <label>BLS (location) Code</label>
+                            <comment>The internal code of the nearest PostNL sorting centre. Must contain 6 numbers.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
@@ -533,8 +533,8 @@
                         </label_size>
                         <weight_per_parcel translate="label comment tooltip" module="postnl">
                             <label>Maximum weight per parcel</label>
-                            <comment>Determine the maximum weight of each parcel. if a shipment's total weight exceeds this, another parcel is added to the shipment.</comment>
-                            <tooltip>This only applies to Dutch shipments. Each parcel needs to be shipped sperately and will recieve it's own shipping label.</tooltip>
+                            <comment>Determine the maximum weight of each parcel. If a shipment's total weight exceeds this, the shipment will be spread out over multiple parcels.</comment>
+                            <tooltip>This only applies to Dutch shipments. Each parcel needs to be shipped seperately and will recieve it's own shipping label.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -637,7 +637,7 @@
                         </email_header>
                         <send_track_and_trace_email translate="label comment" module="postnl">
                             <label>Send track &amp; trace e-mail to customer</label>
-                            <comment>If enabled, a track &amp; trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed.</comment>
+                            <comment>If enabled, a track &amp; trace e-mail will be sent to the customer roughly 20 minutes after a shipment has been confirmed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>130</sort_order>
@@ -646,8 +646,9 @@
                             <show_in_store>1</show_in_store>
                             <validate>validate-select</validate>
                         </send_track_and_trace_email>
-                        <track_and_trace_email_template translate="label" module="postnl">
+                        <track_and_trace_email_template translate="label comment" module="postnl">
                             <label>Track &amp; trace e-mail template</label>
+                            <comment>You can customize the track &amp; trace e-mail in system > transactional emails.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_template</source_model>
                             <sort_order>140</sort_order>
@@ -691,8 +692,9 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
-                        <split_street translate="label" module="postnl">
+                        <split_street translate="label tooltip" module="postnl">
                             <label>Split street parts</label>
+                            <tooltip>If you do not use split street lines and you wish to ship to outside the EU, there is a strong possibility that PostNL will be unable to properly parse the address. This may result in the shipment being refused or it may even lead to the shipment being delivered at the wrong address!</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>10</sort_order>
@@ -1056,7 +1058,7 @@
                     </fields>
                 </cif_return_address>
                 <cif_product_options translate="label" module="postnl">
-                    <comment>Here you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments</comment>
+                    <comment>Here you can specify which PostNL product options you have a contract for. Also you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments. Please note that if you select a product option which is not covered by your PostNL contract it will result in an error.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>Product Options</label>
                     <sort_order>1100</sort_order>
@@ -1078,8 +1080,8 @@
                             <validate>validate-select</validate>
                         </supported_product_options>
                         <default_product_option translate="label comment" module="postnl">
-                            <label>Default shipping options</label>
-                            <comment>These can be overwritten by manually creating shipments. These options are only applicable to Dutch shipments.</comment>
+                            <label>Default shipping option</label>
+                            <comment>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_standardProductOptions</source_model>
                             <sort_order>20</sort_order>
@@ -1126,8 +1128,8 @@
                             <validate>validate-select</validate>
                         </alternative_default_option>
                         <default_pakjegemak_product_option translate="label comment" module="postnl">
-                            <label>Default Post Office option</label>
-                            <comment>These can be overwritten by manually creating shipments. These options are only applicable to Post Office shipments.</comment>
+                            <label>Default 'deliver at the Post Office' option</label>
+                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions</source_model>
                             <sort_order>60</sort_order>
@@ -1173,9 +1175,10 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </customs_attributes_header>
-                        <use_hs_tariff translate="label comment" module="postnl">
+                        <use_hs_tariff translate="label comment tooltip" module="postnl">
                             <label>Use HS Tariff</label>
                             <comment>Enable this field to specify a product attribute to use as the product's HS tariff.</comment>
+                            <tooltip>The HS tariff value is a number used to identify the type of product that is shipped. In general this is only required for larger export volumes. If you disable this setting the value '000000' will be used. Please contact PostNL for more information.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>40</sort_order>
@@ -1319,8 +1322,8 @@
                             </depends>
                         </checkout_button_header>
                         <instruction_cms_page translate="label comment" module="postnl">
-                            <label>Instruction CMS page</label>
-                            <comment>Select a CMS page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.</comment>
+                            <label>Instruction page</label>
+                            <comment>Select a page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_cmsPage</source_model>
                             <sort_order>50</sort_order>
@@ -1522,7 +1525,7 @@
                         </contact_url>
                         <service_url translate="label comment" module="postnl">
                             <label>Service URL</label>
-                            <comment>URL of a page where customers can find information regarding the webshop's customer service department.</comment>
+                            <comment>URL of a page where customers can find information regarding the webshop's customer service department. Leave empty to disable this feature.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
