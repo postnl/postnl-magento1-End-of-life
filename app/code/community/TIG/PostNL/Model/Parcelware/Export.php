@@ -181,9 +181,15 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         
         $this->setStoreId($shipment->getStoreId());
         
+        /**
+         * Get the address and reference data for this shipment. These are simple associative arrays
+         */
         $addressData   = $this->_getAddressData($postnlShipment, $shipment);
         $referenceData = $this->_getReferenceData();
         
+        /**
+         * If this is part of a multi-colli shipment, we need to get slightly different parameters.
+         */
         if ($parcelCount) {
                 $shipmentData = array(
                     'ProductCodeDelivery' => $postnlShipment->getProductCode(),
@@ -202,12 +208,20 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             );
         }
         
+        /**
+         * If this is an international (GlobalPack) shipment, we need some additional information regarding the contents of the
+         * shipment.
+         */
         $globalPackData = array();
         if ($postnlShipment->isGlobalShipment()) {
             $this->setIsGlobal(true);
             $globalPackData = $this->_getGlobalPackData($postnlShipment);
         }
         
+        /**
+         * Merge all the data we fetched above. Please note that the order in which we merge these arrays is critical to ensure
+         * all values are placed in their respective columns.
+         */
         $shipmentData = array_merge(
             $addressData, 
             $shipmentData, 
