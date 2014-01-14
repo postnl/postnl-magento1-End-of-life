@@ -46,7 +46,10 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     const XML_PATH_SENDER_REF_NR   = 'postnl/parcelware_export/sender_ref_nr';
     
     /**
-     * Creates a parcelware export csv based for an array of PostNL shipments
+     * Creates a parcelware export csv based for an array of PostNL shipments. This method basically consists of 3 parts:
+     *  1. Fetch data from every shipment that we're going to put in the export file.
+     *  2. Update the shipments.
+     *  3. Actually create the CSV file and return an array containing data for whoever called this method (probably a controller).
      * 
      * @param array $shipments An array of TIG_PostNL_Model_Core_Shipment objects
      * 
@@ -56,16 +59,45 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     {
         $this->setIsGlobal(false);
         $this->setStoreId(Mage_Core_Model_App::ADMIN_STORE_ID);
+        
+        $helper = Mage::helper('postnl/parcelware');
+        
+        /**
+         * Prepare a transaction save object. We're going to edit all the postbl shipments that we're going to export, however
+         * we want all of them to be saved at the same time AFTER the export has been generated.
+         */
         $transactionSave = Mage::getModel('core/resource_transaction');
                                
         $content = array();
         foreach ($postnlShipments as $postnlShipment) {
+            /**
+             * Set each shipment's is_parcelware_exported flag to true
+             */
             $postnlShipment->setIsParcelwareExported(true);
+            
+            /**
+             * If auto_confirm is enabled, confirm each shipment manually. Please note that we do not yet save these shipments.
+             */
+            if ($helper->isAutoConfirmEnabled() === true && !$postnlShipment->isConfirmed()) {
+                $postnlShipment->setConfirmStatus($postnlShipment::CONFIRM_STATUS_CONFIRMED)
+                               ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
+            }
+            
+            /**
+             * Add the shipment to the transactonsave object.
+             */
             $transactionSave->addObject($postnlShipment);
             
+            /**
+             * If this is a multi-colli shipment we need to treat each parcel as a seperate shipment and therefore, as a seperate
+             * row in the csv export file.
+             */
             $parcelCount = $postnlShipment->getParcelCount();
             if ($parcelCount > 1) {
                 for ($i = 0; $i < $parcelCount; $i++) {
+                    /**
+                     * Get the shipment's data.
+                     */
                     $shipmentData = $this->_getShipmentData($postnlShipment, $parcelCount, $i);
                     
                     $content[] = $shipmentData;
@@ -74,42 +106,67 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
                 continue;
             }
             
+            /**
+             * Same as above, only for a single-colli shipment.
+             */
             $shipmentData = $this->_getShipmentData($postnlShipment);
             
             $content[] = $shipmentData;
         }
         
+        /**
+         * Get the CSV headers. Basically these are the column names.
+         */
         $csvHeaders = $this->_getCsvHeaders();
         
+        /**
+         * Prepare to create a new export file.
+         */
         $io = Mage::getModel('varien/io_file');
         
+        /**
+         * Some parameters for the file. Please note that the filename is purely temporary. The name of the file you'll end up
+         * downloading will be defined in the controller.
+         */
         $path = Mage::getBaseDir('var') . DS . 'export' . DS;
         $name = md5(microtime());
         $file = $path . DS . $name . '.csv';
         
+        /**
+         * Open and lock the file.
+         */
         $io->setAllowCreateFolders(true);
         $io->open(array('path' => $path));
         $io->streamOpen($file, 'w+');
         $io->streamLock(true);
  
+        /**
+         * Write the CSV headers and then each row of data.
+         */
         $io->streamWriteCsv($csvHeaders);
         foreach ($content as $item) {
             $io->streamWriteCsv($item);
         }
         
-        $transactionSave->save();
- 
+        /**
+         * This is what the controller will need to offer the file as a download response.
+         */
         $exportArray = array(
             'type'  => 'filename',
             'value' => $file,
             'rm'    => true // can delete file after use
         );
         
+        /**
+         * Remember those shipments we added to the transaction save object? Now we can finally save them all at once.
+         */
+        $transactionSave->save();
+        
         return $exportArray;
     }
 
     /**
-     * Gets all shipment data for a csv row
+     * Gets all shipment data for a CSV row.
      * 
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      * 
@@ -117,6 +174,9 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getShipmentData($postnlShipment, $parcelCount = false, $count = false)
     {
+        /**
+         * @var Mage_Sales_Model_Order_Shipment
+         */
         $shipment = $postnlShipment->getShipment();
         
         $this->setStoreId($shipment->getStoreId());

@@ -39,6 +39,42 @@
 class TIG_PostNL_Helper_Parcelware extends TIG_PostNL_Helper_Data
 {
     /**
+     * XML path to auto confirm setting
+     */
+    const XML_PATH_AUTO_CONFIRM = 'postnl/parcelware_export/auto_confirm';
+    
+    /**
+     * AutoConfirmEnabled flag
+     *
+     * @var boolean|null $_autoConfirmEnabled
+     */
+    protected $_autoConfirmEnabled = null;
+    
+    /**
+     * Gets the autoConfirmEnabled flag
+     * 
+     * @return boolean|null
+     */
+    public function getAutoConfirmEnabled()
+    {
+        return $this->_autoConfirmEnabled;
+    }
+    
+    /**
+     * Sets the autoConfirmEnabled flag
+     * 
+     * @param boolean $autoConfirmEnabled
+     * 
+     * @return TIG_PostNL_Helper_Parcelware
+     */
+    public function setAutoConfirmEnabled($autoConfirmEnabled)
+    {
+        $this->_autoConfirmEnabled = $autoConfirmEnabled;
+        
+        return $this;
+    }
+    
+    /**
      * Check to see if parcelware export functionality is enabled.
      * 
      * @todo implement this method
@@ -46,5 +82,22 @@ class TIG_PostNL_Helper_Parcelware extends TIG_PostNL_Helper_Data
     public function isParcelwareExportEnabled()
     {
         return true;
+    }
+    
+    /**
+     * Checks if auto confirm is enabled
+     * 
+     * @return boolean
+     */
+    public function isAutoConfirmEnabled()
+    {
+        if ($this->getAutoConfirmEnabled() !== null) {
+            return $this->getAutoConfirmEnabled();
+        }
+        
+        $autoConfirmEnabled = Mage::getStoreConfigFlag(self::XML_PATH_AUTO_CONFIRM, Mage_Core_Model_App::ADMIN_STORE_ID);
+        
+        $this->setAutoConfirmEnabled($autoConfirmEnabled);
+        return $autoConfirmEnabled;
     }
 }

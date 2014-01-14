@@ -409,6 +409,7 @@
         	</cif_labels_and_confirming>
         	<parcelware_export>
         	    <active>0</active> <!-- Inactive -->
+        	    <auto_confirm>0</auto_confirm> <!-- Do not auto confirm -->
         	    <contract_ref_nr/>
         	    <contract_name/>
         	    <sender_ref_nr/>
