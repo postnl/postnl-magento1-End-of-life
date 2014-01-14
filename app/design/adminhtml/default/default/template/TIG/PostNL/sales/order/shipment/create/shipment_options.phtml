@@ -43,6 +43,7 @@
 <?php $_defaultProductOption = $this->getDefaultProductOption(); ?>
 <?php $_isBelgium            = $this->isBelgium(); ?>
 <?php $_isGlobalPackShipment = (int) Mage::helper('postnl/cif')->isGlobalShipment($_shipment); ?>
+<?php $_isDutchShipment      = (bool) Mage::helper('postnl/cif')->isDutchShipment($_shipment); ?>
 <?php $_parcelCount          = $this->getParcelCount(); ?>
 
 <p id="postnl_product_option_container">
@@ -72,10 +73,12 @@
     <label class="normal" for="postnl_extra_cover"><?php echo $this->__('Extra cover amount (in increments of 500)'); ?></label>
     <input type="text" name="postnl[extra_cover_amount]" class="input-text required-entry validate-increment-500 validate-not-negative-number" id="postnl_extra_cover"/>
 </p>
+<?php if ($_isDutchShipment): ?>
 <p id="postnl_parcel_count_container">
     <label class="normal" for="postnl_parcel_count"><?php echo $this->__('Number of parcels'); ?></label>
     <input type="text" name="postnl[parcel_count]" class="input-text validate-digits validate-not-negative-number required-entry" id="postnl_parcel_count" value="<?php echo $_parcelCount; ?>"/>
 </p>
+<?php endif; ?>
 <?php if ($_isGlobalPackShipment): ?>
     <p id="postnl_shipment_type_container">
         <label class="normal" for="postnl_shipment_type"><?php echo $this->__('Shipment type'); ?></label>

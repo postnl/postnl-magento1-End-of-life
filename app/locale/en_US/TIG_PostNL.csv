@@ -48,7 +48,7 @@ Mode,Mode
 Label size,Label size
 This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4. Single Dutch or EPS labels are always printed in A6.,This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4. Single Dutch or EPS labels are always printed in A6.
 Maximum weight per parcel,Maximum weight per parcel
-"Determine the maximum weight of each parcel. if a shipment's total weight exceeds this, another parcel is added to the shipment.","Determine the maximum weight of each parcel. if a shipment's total weight exceeds this, another parcel is added to the shipment."
+"Determine the maximum weight of each parcel. If a shipment's total weight exceeds this, the shipment will be spread out over multiple parcels.","Determine the maximum weight of each parcel. If a shipment's total weight exceeds this, the shipment will be spread out over multiple parcels."
 Weight unit,Weight unit
 Select the unit in which you've entered products' weight,Select the unit in which you've entered products' weight
 Shipment reference type,Shipment reference type
@@ -65,7 +65,7 @@ Select which optional columns to show in the shipment grid.,Select which optiona
 Select a default option for the shipment grid mass action,Select a default option for the shipment grid mass action
 These fields are used to configure the track & trace email that may be automatically emailed to customers after a shipment has been confirmed.,These fields are used to configure the track & trace email that may be automatically emailed to customers after a shipment has been confirmed.
 Send track & trace e-mail to customer,Send track & trace e-mail to customer
-"If enabled, a track & trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed.","If enabled, a track & trace e-mail will be sent to the customer ~20 minutes after a shipment has been confirmed."
+"If enabled, a track & trace e-mail will be sent to the customer roughly 20 minutes after a shipment has been confirmed.","If enabled, a track & trace e-mail will be sent to the customer roughly 20 minutes after a shipment has been confirmed."
 Track & trace e-mail template,Track & trace e-mail template
 Address Settings,Address Settings
 Split street parts,Split street parts
@@ -96,16 +96,16 @@ Use the sender address as the return adress,Use the sender address as the return
 Product Options,Product Options
 Select supported option,Select supported option
 Only the selected options will be available.,Only the selected options will be available.
-Default shipping options,Default shipping options
-These can be overwritten by manually creating shipments. These options are only applicable to Dutch shipments.,These can be overwritten by manually creating shipments. These options are only applicable to Dutch shipments.
+Default shipping option,Default shipping option
+This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.,This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.
 Use an alternative default option,Use an alternative default option
 Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.,Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.
 Maximum amount,Maximum amount
 The alternative default option will be used when the shipment's total amount exceeds this value.,The alternative default option will be used when the shipment's total amount exceeds this value.
 Alternative default shipping option,Alternative default shipping option
 This option will be used as default when the shipment's total value exceeds the given amount.,This option will be used as default when the shipment's total value exceeds the given amount.
-Default Post Office option,Default Post Office option
-These can be overwritten by manually creating shipments. These options are only applicable to Post Office shipments.,These can be overwritten by manually creating shipments. These options are only applicable to Post Office shipments.
+Default 'deliver at the Post Office' option,Default 'deliver at the Post Office' option
+This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.,This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.
 GlobalPack Settings,GlobalPack Settings
 Customs license number,Customs license number
 "If you do not own a customs license, leave this field empty.","If you do not own a customs license, leave this field empty."
@@ -155,7 +155,7 @@ These URLs allow the customer to contact you. They will be shown on the user's M
 Contact URL,Contact URL
 URL of a page where customers can find contact information for your webshop. Leave empty to disable this feature.,URL of a page where customers can find contact information for your webshop. Leave empty to disable this feature.
 Service URL,Service URL
-URL of a page where customers can find information regarding the webshop's customer service department.,URL of a page where customers can find information regarding the webshop's customer service department.
+URL of a page where customers can find information regarding the webshop's customer service department. Leave empty to disable this feature.,URL of a page where customers can find information regarding the webshop's customer service department. Leave empty to disable this feature.
 PostNL Checkout Payment Settings,PostNL Checkout Payment Settings
 PostNL Checkout is disabled. please enable PostNL Checkout in order to configure these settings.,PostNL Checkout is disabled. please enable PostNL Checkout in order to configure these settings.
 Use iDEAL,Use iDEAL
@@ -312,8 +312,8 @@ Print shipping labels & confirm shipment,Print shipping labels & confirm shipmen
 Print shipping labels,Print shipping labels
 Confirm shipments,Confirm shipments
 None,None
-Shipment Increment ID,Shipment Increment ID
-Order Increment ID,Order Increment ID
+Shipment ID,Shipment ID
+Order ID,Order ID
 Use a custom value,Use a custom value
 EU Pack Special Consumer (incl. signature),EU Pack Special Consumer (incl. signature)
 "EU Pack Standard (Belgium only, no signature)","EU Pack Standard (Belgium only, no signature)"
@@ -398,15 +398,13 @@ Invalid Magento edition detected: %s,Invalid Magento edition detected: %s
 Invalid rate type requested: %s,Invalid rate type requested: %s
 "These settings are intended for advanced users only! If you're not 100% sure what you're doing, please do not touch these settings.","These settings are intended for advanced users only! If you're not 100% sure what you're doing, please do not touch these settings."
 This is where you specify which payment options will be presented to your customers in PostNL Checkout. At least one of these must be activated for PostNL Checkout to work.,This is where you specify which payment options will be presented to your customers in PostNL Checkout. At least one of these must be activated for PostNL Checkout to work.
-Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.,Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.
 Here you can specify the way GlobalPack shipments are handled. This is very important if you want to ship products to outside the EU. Otherwise you can safely ignore these settings.,Here you can specify the way GlobalPack shipments are handled. This is very important if you want to ship products to outside the EU. Otherwise you can safely ignore these settings.
-Here you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments,Here you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments
+Here you can specify which PostNL product options you have a contract for. Also you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments. Please note that if you select a product option which is not covered by your PostNL contract it will result in an error.,Here you can specify which PostNL product options you have a contract for. Also you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments. Please note that if you select a product option which is not covered by your PostNL contract it will result in an error.
 "You may specify a separate return address for shipments that could not be delivered. If you do not wish to specify a separate return address, your sender address will be used.","You may specify a separate return address for shipments that could not be delivered. If you do not wish to specify a separate return address, your sender address will be used."
 This is where you enter your address. This is required for the extension to work.,This is where you enter your address. This is required for the extension to work.
 Invalid UpdateOrder response recieved!,Invalid UpdateOrder response recieved!
 "This is where you configure the way the extension handles addresses entered by your customers. If these settings are not configured correctly, PostNL cannot guarantee that all addresses will be printed in the correct format.","This is where you configure the way the extension handles addresses entered by your customers. If these settings are not configured correctly, PostNL cannot guarantee that all addresses will be printed in the correct format."
 "Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track & trace email to your customers.","Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track & trace email to your customers."
-Here you can configure your PostNL account.,Here you can configure your PostNL account.
 Invalid PingStatus response: %s,Invalid PingStatus response: %s
 Confirming & Label Printing Settings,Confirming & Label Printing Settings
 No quote available to initiate PostNL Checkout.,No quote available to initiate PostNL Checkout.
@@ -416,7 +414,7 @@ Invalid ReadOrder response: %s,Invalid ReadOrder response: %s
 Invalid ConfirmOrder response: %s,Invalid ConfirmOrder response: %s
 Invalid reference type requested: %s,Invalid reference type requested: %s
 Invalid object specified: %s,Invalid object specified: %s
-This only applies to Dutch shipments. Each parcel needs to be shipped sperately and will recieve it's own shipping label.,This only applies to Dutch shipments. Each parcel needs to be shipped sperately and will recieve it's own shipping label.
+This only applies to Dutch shipments. Each parcel needs to be shipped seperately and will recieve it's own shipping label.,This only applies to Dutch shipments. Each parcel needs to be shipped seperately and will recieve it's own shipping label.
 Number of Parcels,Number of Parcels
 "You can use this field to for example, add a prefix to the shipment increment ID or to help identify the shipment as coming from your webshop.","You can use this field to for example, add a prefix to the shipment increment ID or to help identify the shipment as coming from your webshop."
 These options will appear in a dropdown field next to the 'create shipments' mass action in the sales > order grid.,These options will appear in a dropdown field next to the 'create shipments' mass action in the sales > order grid.
@@ -486,7 +484,7 @@ Configure your GlobalPack settings,Configure your GlobalPack settings
 Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.,Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.
 "Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office.","Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office."
 Configure your PostNL Checkout settings,Configure your PostNL Checkout settings
-"If you wish to use PostNL Checkout in your webshop, you need to configure your PostNl Checkout settings.","If you wish to use PostNL Checkout in your webshop, you need to configure your PostNl Checkout settings."
+"If you wish to use PostNL Checkout in your webshop, you need to configure your PostNL Checkout settings.","If you wish to use PostNL Checkout in your webshop, you need to configure your PostNL Checkout settings."
 Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.,Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.
 Go to the 'PostNL Checkout' tab and specify your preferences.,Go to the 'PostNL Checkout' tab and specify your preferences.
 "Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected.","Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected."
@@ -515,8 +513,8 @@ You have not yet enabled the PostNL extension.,You have not yet enabled the Post
 Tomorrow,Tomorrow
 %s days from now,%s days from now
 Post Office,Post Office
-Instruction CMS page,Instruction CMS page
-Select a CMS page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.,Select a CMS page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.
+Instruction page,Instruction page
+Select a page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.,Select a page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.
 -- none --,-- none --
 Invalid full street supplied: %s,Invalid full street supplied: %s
 Unable to match barcode to shippingStatus response: %s,Unable to match barcode to shippingStatus response: %s
@@ -535,12 +533,12 @@ The confirmAndGenerateLabel action is currently unavailable.,The confirmAndGener
 Invalid message type requested: %s,Invalid message type requested: %s
 Unable to read directory: %s,Unable to read directory: %s
 Invalid UpdateOrder response: %s,Invalid UpdateOrder response: %s
-In order to use this extension you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure the extension.,In order to use this extension you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure the extension.
+"Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.","Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager."
 You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.,You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.
 DO NOT CHANGE THESE SETTINGS WITHOUT INSTRUCTIONS FROM POSTNL OR TOTAL INTERNET GROUP,DO NOT CHANGE THESE SETTINGS WITHOUT INSTRUCTIONS FROM POSTNL OR TOTAL INTERNET GROUP
 "Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature.","Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature."
 Doorcodes are often used in foreign addresses such as those used in France and Singapore.,Doorcodes are often used in foreign addresses such as those used in France and Singapore.
-In order to use PostNL Checkout you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.,In order to use PostNL Checkout you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.
+Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.</p><p>In order to use PostNL Checkout you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.,Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.</p><p>In order to use PostNL Checkout you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.
 Klarna,Klarna
 Use Klarna,Use Klarna
 Klarna payment method,Klarna payment method
@@ -553,3 +551,11 @@ Allow test mode,Allow test mode
 If enabled new fields will appear allowing you to configure the extension for test mode.,If enabled new fields will appear allowing you to configure the extension for test mode.
 By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.,By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.
 Restore default values,Restore default values
+You can customize the track & trace e-mail in system > transactional emails.,You can customize the track & trace e-mail in system > transactional emails.
+"If you do not use split street lines and you wish to ship to outside the EU, there is a strong possibility that PostNL will be unable to properly parse the address. This may result in the shipment being refused or it may even lead to the shipment being delivered at the wrong address!","If you do not use split street lines and you wish to ship to outside the EU, there is a strong possibility that PostNL will be unable to properly parse the address. This may result in the shipment being refused or it may even lead to the shipment being delivered at the wrong address!"
+Field not used.,Field not used.
+Street line #%s,Street line #%s
+The HS tariff value is a number used to identify the type of product that is shipped. In general this is only required for larger export volumes. If you disable this setting the value '000000' will be used. Please contact PostNL for more information.,The HS tariff value is a number used to identify the type of product that is shipped. In general this is only required for larger export volumes. If you disable this setting the value '000000' will be used. Please contact PostNL for more information.
+Post Office options,Post Office options
+"Customers can select a specific date and time when they want their shipment delivered when they use PostNL Checkout. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL Checkout if they are attempting to order an item that is not in stock, thereby preventing this situation.","Customers can select a specific date and time when they want their shipment delivered when they use PostNL Checkout. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL Checkout if they are attempting to order an item that is not in stock, thereby preventing this situation."
+The price overview will contain the order's subtotal and shipping costs only.,The price overview will contain the order's subtotal and shipping costs only.
