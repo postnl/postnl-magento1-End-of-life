@@ -233,7 +233,12 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      */
     public function getShippingPhases()
     {
-        return $this->_shippingPhases;
+        $shippingPhases = $this->_shippingPhases;
+        foreach ($shippingPhases as $key => &$value) {
+            $value = $this->__($value);
+        }
+        
+        return $shippingPhases;
     }
     
     /**

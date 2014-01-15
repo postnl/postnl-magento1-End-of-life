@@ -45,18 +45,31 @@ class TIG_PostNL_Model_Core_System_Config_Source_StreetField
     const XML_PATH_COMMUNITY_STREET_LINES = 'customer/address/street_lines';
     
     /**
+     * @var null|array The resulting product option array
+     */
+    protected $_options = null;
+    
+    /**
      * Source model for street line settings
      * 
      * @return array
      */
     public function toOptionArray()
     {
+        if ($this->_options !== null) {
+            return $this->_options;
+        }
+        
         if (Mage::helper('postnl')->isEnterprise()) {
             $array = $this->_getEnterpriseOptions();
+        
+            $this->_options = $array;
             return $array;
         }
         
         $array = $this->_getCommunityOptions();
+        
+        $this->_options = $array;
         return $array;
     }
     
