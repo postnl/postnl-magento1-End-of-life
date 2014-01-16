@@ -345,8 +345,9 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
-                        <customer_number translate="label" module="postnl">
+                        <customer_number translate="label tooltip" module="postnl">
                             <label>Customer Number</label>
+                            <tooltip>If you are a contract customer of PostNL, you will have recieved an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
@@ -354,9 +355,10 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-digits postnl-validate-empty</validate>
                         </customer_number>
-                        <customer_code translate="label comment" module="postnl">
+                        <customer_code translate="label comment tooltip" module="postnl">
                             <label>Customer Code</label>
                             <comment>Your customer code as supplied by PostNL. Must contain between 3 and 4 letters.</comment>
+                            <tooltip>If you are a contract customer of PostNL, you will have recieved an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
@@ -364,8 +366,9 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-alpha validate-length minimum-length-3 maximum-length-4 postnl-validate-empty</validate>
                         </customer_code>
-                        <live_username translate="label" module="postnl">
+                        <live_username translate="label tooltip" module="postnl">
                             <label>Username</label>
+                            <tooltip>If you are a contract customer of PostNL, you will have recieved an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -373,8 +376,9 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
                         </live_username>
-                        <live_password translate="label" module="postnl">
+                        <live_password translate="label tooltip" module="postnl">
                             <label>Password</label>
+                            <tooltip>If you are a contract customer of PostNL, you will have recieved an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>40</sort_order>
@@ -414,9 +418,10 @@
                                 </allow_test_mode>
                             </depends>
                         </test_password>
-                        <collection_location translate="label comment" module="postnl">
+                        <collection_location translate="label comment tooltip" module="postnl">
                             <label>BLS (location) Code</label>
                             <comment>The internal code of the nearest PostNL sorting centre. Must contain 6 numbers.</comment>
+                            <tooltip>If you are a contract customer of PostNL, you will have recieved an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
