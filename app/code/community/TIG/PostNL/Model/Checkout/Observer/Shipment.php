@@ -52,8 +52,6 @@ class TIG_PostNL_Model_Checkout_Observer_Shipment
      * @observer postnl_checkout_update_order
      * 
      * @throws TIG_PostNL_Exception
-     * 
-     * @todo change confirm date to the correct value, instead of the current timestamp
      */
     public function updateOrder(Varien_Event_Observer $observer)
     {

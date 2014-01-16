@@ -467,8 +467,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 $field = $fieldParts[2];
                 $group = $fieldParts[1];
                 
-                $label = $section->groups->$group->fields->$field->label;
-                $groupLabel = $section->groups->$group->label;
+                $label      = (string) $section->groups->$group->fields->$field->label;
+                $groupLabel = (string) $section->groups->$group->label;
                 $errors[] = array(
                     'code'    => 'POSTNL-0034',
                     'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
