@@ -36,6 +36,7 @@
 .module-message.info { background:#e6eef8 url(../../../images/TIG/PostNL/glyph_info.gif) 9px 9px no-repeat; border-color:#264697; } 
 .module-message.warning { background:#fff7bd url(../../../images/TIG/PostNL/glyph_warning.gif) 9px 9px no-repeat; border-color:#c68c05; }
 .module-message.error { background:#fdece4 url(../../../images/TIG/PostNL/glyph_error.gif) 9px 9px no-repeat; border-color:#c63625; }
+.module-message ul.postnl-errors {list-style:disc inside; }
 
 /* Config Header */
 .content-header h3 { background:transparent url(../../../images/TIG/PostNL/logo_postnl.png) 0 0 no-repeat !important; height:25px; padding-left:31px; line-height:24px; }
