@@ -768,7 +768,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         }
         
         $file = self::POSTNL_LOG_DIRECTORY . DS . self::CIF_EXCEPTION_LOG_FILE;
-        $this->log($logMessage, Zend_Log::ERR, $file);
+        $this->log($logMessage, Zend_Log::ERR, $file, false, true);
         
         return $this;
     }

@@ -388,7 +388,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getExtraCoverAmount()
     {
-        if ($this->getData('extra_cover_amount')) {
+        if ($this->hasData('extra_cover_amount')) {
             return $this->getData('extra_cover_amount');
         }
         

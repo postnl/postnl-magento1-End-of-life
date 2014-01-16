@@ -776,11 +776,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         }
         
         /**
-         * If the shipment does not have a barcode, generate one
+         * If the shipment does not have a main barcode, generate new barcodes
          */
         if (!$postnlShipment->getMainBarcode()) {
-            $postnlShipment->generateBarcode()
-                           ->addTrackingCodeToShipment();
+            $postnlShipment->generateBarcodes();
         }
         
         if ($postnlShipment->getConfirmStatus() === $postnlShipment::CONFIRM_STATUS_CONFIRMED) {

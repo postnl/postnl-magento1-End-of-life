@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.0.3</version>
+			<version>1.0.5</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -356,17 +356,19 @@
         <carriers>
             <postnl>
                 <active>0</active> <!-- disabled -->
-                <sallowspecific>0</sallowspecific> <!-- Allow all countries -->
-                <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
-                <name>PostNL</name> <!-- PostNL -->
-                <price>5.00</price> <!-- 5.00 (in base currency) -->
                 <title>PostNL</title> <!-- PostNL -->
+                <name>PostNL</name> <!-- PostNL -->
+                <rate_type>flat</rate_type> <!-- Flat rate -->
                 <type>I</type> <!-- Price is calculated per item -->
-                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
-                <handling_type>F</handling_type> <!-- Fixed -->
+                <price>5.00</price> <!-- 5.00 (in base currency) -->
                 <condition_name>package_weight</condition_name> <!-- Package weight -->
                 <include_virtual_price>1</include_virtual_price> <!-- Include virtual price -->
-                <rate_type>flat</rate_type>
+                <handling_type>F</handling_type> <!-- Fixed -->
+                <handling_fee/>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
+                <sallowspecific>0</sallowspecific> <!-- Allow only specific countries -->
+                <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,Sk,ES,CZ,SE</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
+                <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
             </postnl>
         </carriers>
         <postnl>
@@ -385,8 +387,10 @@
                 <test_username/>
                 <test_password/>
         		<collection_location/>
+        		<use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
         		<global_barcode_type/>
         		<global_barcode_range/>
+        		<use_checkout>0</use_checkout> <!-- Do not use PostNL Checkout -->
                 <webshop_id/>
                 <public_webshop_id/>
         	</cif>
