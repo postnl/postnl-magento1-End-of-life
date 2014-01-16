@@ -36,7 +36,7 @@ Global Barcode Type,Globaal barcode type
 The current global barcode type as supplied by PostNL. Must contain 2 letters.,De huidige barcodetype zoals aangeleverd door PostNL. Moet bestaan uit 2 letters
 Global Barcode Range,Globaal barcode bereik
 Your global barcode range as supplied by PostNL. Must contain 4 digits.,Uw globaal barcode bereik zoals aangeleverd door PostNL. Moet bestaan uit 4 cijfers
-These fields contain your webshop IDs. These are required for PostNL Checkout to function.,Deze velden bevatten uw webshop ID's. Deze zijn noodzakelijk voor PostNL Checkout om te functioneren.
+These fields are only required if you wish to use PostNL Checkout.,Deze velden zijn alleen verplicht als u gebruik wenst te maken van PostNL Checkout.
 Webshop ID,Webshop ID
 Public Webshop ID,Publieke webshop ID
 These fields contain your contact information for PostNL.,Deze velden bevatten uw contact informatie voor PostNL
@@ -570,3 +570,4 @@ Use PostNL Checkout,Gebruik PostNL Checkout
 "If you wish to make use of PostNL Checkout, set this field to 'yes'.",Indien u gebruik wilt maken van PostNL Checkout moet u deze instelling op 'ja' zetten.
 You have not enabled GlobalPack. Please enable GlobalPack under 'Account Settings' in order to configure your GlobalPack preferences.,U heeft GlobalPack niet geactiveerd. Activeer GlobalPack onder 'Account Instellingen' om uw GlobalPack voorkeuren te configureren.
 You have not enabled PostNL Checkout. Please enable PostNL Checkout under 'Account Settings' in order to configure your PostNL Checkout preferences.,U heeft PostNL Checkout niet geactiveerd. Activeer PostNL Checkout onder 'Account Instellingen' om uw PostNL Checkout voorkeuren te configureren.
+"If you are a contract customer of PostNL, you will have recieved an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53","Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op +31(0)23-567 59 53"

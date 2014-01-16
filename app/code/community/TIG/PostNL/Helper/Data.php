@@ -137,6 +137,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var array
      */
     protected $_globalShipmentRequiredFields = array(
+        'postnl/cif/use_globalpack',
         'postnl/cif/global_barcode_type',
         'postnl/cif/global_barcode_range',
         'postnl/cif_globalpack_settings/customs_value_attribute',
