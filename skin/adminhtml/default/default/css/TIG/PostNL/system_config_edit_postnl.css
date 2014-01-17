@@ -43,3 +43,6 @@
 
 /* Required Inputs */
 input.postnl-validate-empty.input-text { border-color:#f00 !important; }
+
+/* PostNL specific fields */
+button.postnl-button { width:280px; margin-right:5px; }

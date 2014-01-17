@@ -1,0 +1,91 @@
+<?php
+/**
+ *                  ___________       __            __   
+ *                  \__    ___/____ _/  |_ _____   |  |  
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/       
+ *          ___          __                                   __   
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
+ *                  \/                           \/               
+ *                  ________       
+ *                 /  _____/_______   ____   __ __ ______  
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/ 
+ *                        \/                       |__|    
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL: 
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php $_activateUrl = $this->getUrl('postnl/adminhtml_extensionControl/activate', array('_secure' => true)); ?>
+<?php $_validateUrl = $this->getUrl('postnl/adminhtml_config/validateAccount', array('_secure' => true)); ?>
+<?php $_website = Mage::app()->getRequest()->getParam('website'); ?>
+<script type="text/javascript">
+    //<![CDATA[
+        var postnlActivationUrl = '<?php echo $_activateUrl; ?>';
+        function activatePostNL() {
+            $('config_edit_form').action = postnlActivationUrl;
+            configForm.submit();
+        }
+        
+        function validateAccountSettings() {
+            new Ajax.Request('<?php echo $_validateUrl; ?>',{
+                method: 'post',
+                parameters: {
+                    customerNumber: getConfigValue('postnl_cif_customer_number'),
+                    customerCode:   getConfigValue('postnl_cif_customer_code'),
+                    username:       getConfigValue('postnl_cif_live_username'),
+                    password:       getConfigValue('postnl_cif_live_password'),
+                    locationCode:   getConfigValue('postnl_cif_collection_location'),
+                    website:        '<?php echo $_website; ?>'
+                },
+                onComplete: function(response) {
+                    response = response.responseText;
+                    if (response == 'ok') {
+                        alert('<?php echo $this->__('Account settings have been succesfully validated. Please save this page to keep these settings.'); ?>');
+                        return;
+                    }
+                    
+                    if (response == 'missing_data') {
+                        alert('<?php echo $this->__('One or more fields are missing. Please fill these fields and try again.'); ?>');
+                        return;
+                    }
+                    
+                    alert('<?php echo $this->__('Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL.'); ?>');
+                    return;
+                }
+            });
+        }
+        
+        function getConfigValue(fieldName) {
+            var inheritName = fieldName + '_inherit';
+            
+            if ($(inheritName) && $(inheritName).checked) {
+                return 'inherit';
+            }
+            
+            var value = $(fieldName).getValue();
+            return value;
+        }
+    //]]>
+</script>
