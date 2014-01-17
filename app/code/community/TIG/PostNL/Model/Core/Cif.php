@@ -1290,6 +1290,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _splitHousenumber($housenumber)
     {
+        $housenumber = trim($housenumber);
+        
         $result = preg_match(self::SPLIT_HOUSENUMBER_REGEX, $housenumber, $matches);
         if (!$result || !is_array($matches)) {
             throw new TIG_PostNL_Exception(
