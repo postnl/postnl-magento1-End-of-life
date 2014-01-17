@@ -322,11 +322,25 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          * Otherwise we need to form the payment data array containing all relevant payment data
          */
         $paymentData = Mage::app()->getRequest()->getPost('payment', array());
-        $paymentData['checks'] = Mage_Payment_Model_Method_Abstract::CHECK_USE_CHECKOUT
-            | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_COUNTRY
-            | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_CURRENCY
-            | Mage_Payment_Model_Method_Abstract::CHECK_ORDER_TOTAL_MIN_MAX
-            | Mage_Payment_Model_Method_Abstract::CHECK_ZERO_TOTAL;
+        
+        /**
+         * Extra checks used by Magento
+         * 
+         * @since Magento v1.13
+         */
+        $paymentMethodAbstractClass = Mage::getConfig()->getModelClassName('payment/method_abstract');
+        if (defined($paymentMethodAbstractClass . '::CHECK_USE_CHECKOUT')
+            && defined($paymentMethodAbstractClass . '::CHECK_USE_FOR_COUNTRY')
+            && defined($paymentMethodAbstractClass . '::CHECK_USE_FOR_CURRENCY')
+            && defined($paymentMethodAbstractClass . '::CHECK_ORDER_TOTAL_MIN_MAX')
+            && defined($paymentMethodAbstractClass . '::CHECK_ZERO_TOTAL')
+        ) {
+            $paymentData['checks'] = $paymentMethodAbstractClass::CHECK_USE_CHECKOUT
+                            | $paymentMethodAbstractClass::CHECK_USE_FOR_COUNTRY
+                            | $paymentMethodAbstractClass::CHECK_USE_FOR_CURRENCY
+                            | $paymentMethodAbstractClass::CHECK_ORDER_TOTAL_MIN_MAX
+                            | $paymentMethodAbstractClass::CHECK_ZERO_TOTAL;
+        }
             
         if ($quote->isVirtual()) {
             $quote->getBillingAddress()->setPaymentMethod($methodCode);

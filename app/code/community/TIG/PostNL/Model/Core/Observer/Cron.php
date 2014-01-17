@@ -220,6 +220,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
         
         $helper->cronLog("{$fileCount} locks found.");
         foreach ($files as $path) {
+            if (!is_file($path)) {
+                continue;
+            }
+            
             /**
              * First we must open and unlock the file
              */
