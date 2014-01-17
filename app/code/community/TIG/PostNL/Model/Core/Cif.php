@@ -339,6 +339,66 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         
         return $response->Barcode;
     }
+
+    /**
+     * Requests a new barcode from CIF as a ping request. This can be used to validate account settings or to check if the CIF
+     * service is up and running. This is not meant to be used to generate an actual barcode for a shipment. Use the
+     * generateBarcode method for that.
+     * 
+     * The generateBarcode CIF call was chosena s it is the simplest CIF function available.
+     * 
+     * @param array $data Array containing all data required for the request.
+     * 
+     * @return string
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function generateBarcodePing($data)
+    {
+        $this->setStoreId(Mage_Core_Model_App::ADMIN_STORE_ID);
+        
+        $barcode = $this->_getBarcodeData('NL');
+        
+        $message  = $this->_getMessage('');
+        $range    = $barcode['range'];
+        $type     = $barcode['type'];
+        $serie    = $barcode['serie'];
+        
+        $customer = array(
+            'CustomerCode'       => $data['customerCode'],
+            'CustomerNumber'     => $data['customerNumber'],
+            'CollectionLocation' => $data['locationCode'],
+        );
+        
+        $soapParams = array(
+            'Message'  => $message,
+            'Customer' => $customer,
+            'Barcode'  => array(
+                'Type'  => $type,
+                'Range' => $range,
+                'Serie' => $serie,
+            ),
+        );
+        
+        $response = $this->call(
+            'Barcode', 
+            'GenerateBarcode',
+            $soapParams,
+            $data['username'],
+            $data['password']
+        );
+        
+        if (!is_object($response) 
+            || !isset($response->Barcode)
+        ) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid barcode response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0054'
+            );
+        }
+        
+        return $response->Barcode;
+    }
     
     /**
      * Retrieves the latest shipping status of a shipment from CIF

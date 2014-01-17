@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_Edit_Form extends Mage_Adminhtml_Block_System_Config_Form
+class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block_System_Config_Form
 {    
     /**
      * Creates the system > config > edit form for the PostNL section.
@@ -90,6 +90,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Edit_Form extends Mage_Adminhtml_
                  * This part is new
                  ************************/
                 foreach ($groups as $group){
+                    if (!isset($this->_fieldsets[$group->getName()])) {
+                        continue;
+                    }
+                    
                     $fieldset = $this->_fieldsets[$group->getName()];
                     $this->initFields($fieldset, $group, $section);
                 }

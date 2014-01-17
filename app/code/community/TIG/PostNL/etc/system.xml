@@ -199,7 +199,7 @@
         <postnl translate="label" module="postnl">
             <label>PostNL</label>
             <tab>sales</tab>
-            <frontend_model>postnl_adminhtml/system_config_edit_form</frontend_model>
+            <frontend_model>postnl_adminhtml/system_config_form</frontend_model>
             <class>postnl-tab</class>
             <sort_order>330</sort_order> <!-- After Shipping Methods, before Google API -->
             <show_in_default>1</show_in_default>
@@ -429,10 +429,18 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-digits validate-length minimum-length-6 maximum-length-6 postnl-validate-empty</validate>
                         </collection_location>
+                        <validate_button translate="tooltip" module="postnl">
+                            <tooltip>This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error.</tooltip>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_validateButton</frontend_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </validate_button>
                         <global_fields_header translate="label" module="postnl">
                             <label>These fields are only required if you intend to send products to countries outside the EU.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -442,7 +450,7 @@
                             <comment>GlobalPack is used to ship orders outside the EU. Otherwise you can leave this field disabled.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -451,7 +459,7 @@
                             <label>Global Barcode Type</label>
                             <comment>The current global barcode type as supplied by PostNL. Must contain 2 letters.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -464,7 +472,7 @@
                             <label>Global Barcode Range</label>
                             <comment>Your global barcode range as supplied by PostNL. Must contain 4 digits.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -476,7 +484,7 @@
                         <checkout_ids_header translate="label" module="postnl">
                             <label>These fields are only required if you wish to use PostNL Checkout.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -484,7 +492,7 @@
                         <checkout_infobox translate="comment" module="postnl">
                             <comment><![CDATA[You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -494,7 +502,7 @@
                             <comment>If you wish to make use of PostNL Checkout, set this field to 'yes'.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -503,7 +511,7 @@
                             <label>Webshop ID</label>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -514,7 +522,7 @@
                         <public_webshop_id translate="label" module="postnl">
                             <label>Public Webshop ID</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>

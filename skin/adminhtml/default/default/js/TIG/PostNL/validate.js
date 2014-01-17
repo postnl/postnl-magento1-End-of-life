@@ -42,17 +42,26 @@ document.observe('dom:loaded', function() {
             element.removeClassName('postnl-validate-empty');
         }
         
+        element.observe('change', function(event) {
+            var eventElement = Event.element(event);
+            checkEmpty(eventElement);
+        });
+        
         element.observe('keyup', function(event) {
             var eventElement = Event.element(event);
-            if (eventElement.value.empty() && !eventElement.hasClassName('postnl-validate-empty')) {
-                eventElement.addClassName('postnl-validate-empty');
-                return;
-            }
-            
-            if (!eventElement.value.empty() && eventElement.hasClassName('postnl-validate-empty')) {
-                eventElement.removeClassName('postnl-validate-empty');
-                return;
-            }
+            checkEmpty(eventElement);
         });
     });
 });
+
+function checkEmpty(eventElement) {
+    if (eventElement.value.empty() && !eventElement.hasClassName('postnl-validate-empty')) {
+        eventElement.addClassName('postnl-validate-empty');
+        return;
+    }
+    
+    if (!eventElement.value.empty() && eventElement.hasClassName('postnl-validate-empty')) {
+        eventElement.removeClassName('postnl-validate-empty');
+        return;
+    }
+}
