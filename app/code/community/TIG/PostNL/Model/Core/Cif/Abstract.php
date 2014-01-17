@@ -130,13 +130,19 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         
         if ($this->isTestMode()) {
             $password = Mage::getStoreConfig(self::XML_PATH_TEST_PASSWORD, $storeId);
+            
+            $password = trim($password);
             $password = sha1(Mage::helper('core')->decrypt($password));
+            
             return $password;
         }
         
         $password = Mage::getStoreConfig(self::XML_PATH_LIVE_PASSWORD, $storeId);
+        
+        $password = trim($password);
         $password = sha1(Mage::helper('core')->decrypt($password));
-        return trim($password);
+        
+        return $password;
     }
     
     /**
