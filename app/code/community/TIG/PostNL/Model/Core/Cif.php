@@ -1034,6 +1034,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 );
         }
 
+        if (!$type || !$range) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to retrieve barcode data.'),
+                'POSTNL-0111'
+            );
+        }
+        
         $barcodeData = array(
             'type'  => $type,
             'range' => $range,

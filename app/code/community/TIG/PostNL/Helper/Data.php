@@ -94,6 +94,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_SHOW_ERROR_DETAILS_IN_FRONTEND = 'postnl/advanced/show_error_details_in_frontend';
     
     /**
+     * XML path to use_globalpack settings
+     */
+    const XML_PATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
+    
+    /**
      * Required configuration fields
      * 
      * @var array
@@ -283,6 +288,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage::app()->getStore()->getId();
         }
         
+        if (!$this->isGlobalAllowed()) {
+            return false;
+        }
+        
         $globalProductOptions = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
                                     ->getAvailableOptions($storeId);
                                     
@@ -330,6 +339,19 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                   ->saveExtra($extra);
 
         return true;
+    }
+    
+    /**
+     * Checks if GlobalPack may be used.
+     * 
+     * @return boolean
+     */
+    public function isGlobalAllowed()
+    {
+        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        
+        $useGlobal = Mage::getStoreConfigFlag(self::XML_PATH_USE_GLOBALPACK, $storeId);
+        return $useGlobal;
     }
     
     /**
@@ -1074,7 +1096,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             && !is_null($code) 
             && $code !== 0
         ) {
-            $errorMessage .= "[{$code}]";
+            $errorMessage .= "[{$code}] ";
         }
         
         /**
