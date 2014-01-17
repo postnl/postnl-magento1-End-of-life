@@ -42,6 +42,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      * XML path to checkout on/off switch
      */
     const XML_PATH_CHECKOUT_ACTIVE = 'postnl/checkout/active';
+    const XML_PATH_USE_CHECKOUT    = 'postnl/cif/use_checkout';
     
     /**
      * XML path to all PostNL Checkout payment methods.
@@ -384,6 +385,12 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
         
+        $useCheckout = Mage::getStoreConfigFlag(self::XML_PATH_USE_CHECKOUT, $storeId);
+        
+        if (!$useCheckout) {
+            return false;
+        }
+        
         $isActive = Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ACTIVE, $storeId);
         return $isActive;
     }
@@ -467,8 +474,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 $field = $fieldParts[2];
                 $group = $fieldParts[1];
                 
-                $label = $section->groups->$group->fields->$field->label;
-                $groupLabel = $section->groups->$group->label;
+                $label      = (string) $section->groups->$group->fields->$field->label;
+                $groupLabel = (string) $section->groups->$group->label;
                 $errors[] = array(
                     'code'    => 'POSTNL-0034',
                     'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),

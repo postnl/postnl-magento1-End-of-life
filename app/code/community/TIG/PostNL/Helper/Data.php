@@ -94,6 +94,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_SHOW_ERROR_DETAILS_IN_FRONTEND = 'postnl/advanced/show_error_details_in_frontend';
     
     /**
+     * XML path to use_globalpack settings
+     */
+    const XML_PATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
+    
+    /**
      * Required configuration fields
      * 
      * @var array
@@ -137,6 +142,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var array
      */
     protected $_globalShipmentRequiredFields = array(
+        'postnl/cif/use_globalpack',
         'postnl/cif/global_barcode_type',
         'postnl/cif/global_barcode_range',
         'postnl/cif_globalpack_settings/customs_value_attribute',
@@ -282,6 +288,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage::app()->getStore()->getId();
         }
         
+        if (!$this->isGlobalAllowed()) {
+            return false;
+        }
+        
         $globalProductOptions = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
                                     ->getAvailableOptions($storeId);
                                     
@@ -290,6 +300,58 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         
         return true;
+    }
+    
+    /**
+     * Save state of configuration field sets
+     *
+     * @param array $configState
+     * 
+     * @return bool
+     * 
+     * @see Mage_Adminhtml_System_ConfigController::_saveState()
+     */
+    public function saveConfigState($configState = array())
+    {
+        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        if (!$adminUser) {
+            return false;
+        }
+        
+        if (!is_array($configState)) {
+            return false;
+        }
+        
+        $extra = $adminUser->getExtra();
+        if (!is_array($extra)) {
+            $extra = array();
+        }
+        
+        if (!isset($extra['configState'])) {
+            $extra['configState'] = array();
+        }
+        
+        foreach ($configState as $fieldset => $state) {
+            $extra['configState'][$fieldset] = $state;
+        }
+        
+        $adminUser->setExtra($extra)
+                  ->saveExtra($extra);
+
+        return true;
+    }
+    
+    /**
+     * Checks if GlobalPack may be used.
+     * 
+     * @return boolean
+     */
+    public function isGlobalAllowed()
+    {
+        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        
+        $useGlobal = Mage::getStoreConfigFlag(self::XML_PATH_USE_GLOBALPACK, $storeId);
+        return $useGlobal;
     }
     
     /**
@@ -406,16 +468,39 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         
         /**
+         * Check if the module's required configuration options have been filled
+         */
+        $isConfigured = $this->isConfigured($storeId, $checkGlobal, $forceTestMode);
+        if ($isConfigured === false) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+        
+        /**
          * Check if the PostNL shipping method is active
          */
         $postnlShippingMethodEnabled = Mage::getStoreConfigFlag(self::XML_PATH_CARRIER_ACTIVE, $storeId);
         if ($postnlShippingMethodEnabled === false) {
             Mage::register($registryKey, false);
             
+            $shippingMethodSectionurl = Mage::helper("adminhtml")->getUrl(
+                'adminhtml/system_config/edit',
+                array(
+                    '_secure' => true,
+                    'section' => 'carriers',
+                )
+            );
+            
+            $errorMessage = $this->__(
+                'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under %sSystem > Config > Shipping Methods%s.',
+                '<a href="' . $shippingMethodSectionurl . '" target="_blank" title="' . $this->__('Shipping Methods') . '">',
+                '</a>'
+            );
+            
             $errors = array(
                 array(
                     'code'    => 'POSTNL-0031',
-                    'message' => $this->__('The PostNL shipping method has not been enabled.'),
+                    'message' => $errorMessage,
                 )
             );
             Mage::register($registryKey . '_errors', $errors);
@@ -436,15 +521,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 )
             );
             Mage::register($registryKey . '_errors', $errors);
-            return false;
-        }
-        
-        /**
-         * Check if the module's required configuration options have been filled
-         */
-        $isConfigured = $this->isConfigured($storeId, $checkGlobal, $forceTestMode);
-        if ($isConfigured === false) {
-            Mage::register($registryKey, false);
             return false;
         }
         
@@ -541,10 +617,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 
                 $label = (string) $section->groups->$group->fields->$field->label;
                 $groupLabel = (string) $section->groups->$group->label;
+                $groupName = $section->groups->$group->getName();
+                
                 $errors[] = array(
                     'code'    => 'POSTNL-0034',
                     'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
                 );
+                
+                $this->saveConfigState(array('postnl_' . $groupName => 1));
             }
         }
         
@@ -649,14 +729,17 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @param int | null $level
      * @param string | null $file
      * @param boolean $forced
+     * @param boolean $isError
      * 
      * @return TIG_PostNL_Helper_Data
      * 
      * @see Mage::log
      */
-    public function log($message, $level = null, $file = null, $forced = false)
+    public function log($message, $level = null, $file = null, $forced = false, $isError = false)
     {
-        if (!$this->isLoggingEnabled()) {
+        if ($isError === true && !$this->isExceptionLoggingEnabled()) {
+            return $this;
+        } elseif ($isError !== true && !$this->isLoggingEnabled()) {
             return $this;
         }
         
@@ -717,7 +800,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         
         $file = self::POSTNL_LOG_DIRECTORY . DS . self::POSTNL_EXCEPTION_LOG_FILE;
         
-        $this->log($message, Zend_Log::ERR, $file);
+        $this->log($message, Zend_Log::ERR, $file, false, true);
         
         return $this;
     }
@@ -1006,33 +1089,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $canShowErrorDetails = $this->_canShowErrorDetails();
         
         /**
-         * Lets start with the error code if it's paresent. It will be formatted as "[POSTNL-0001-X]".
+         * Lets start with the error code if it's present. It will be formatted as "[POSTNL-0001]".
          */
         $errorMessage = '';
         if ($canShowErrorDetails 
             && !is_null($code) 
             && $code !== 0
         ) {
-            $errorMessage .= "[{$code}";
-            
-            $codeSuffix = '';
-            switch ($messageType) {
-                case 'error':
-                    $codeSuffix = '-E';
-                    break;
-                case 'warning': 
-                    $codeSuffix = '-W';
-                    break;
-                case 'notice': 
-                    $codeSuffix = '-N';
-                    break;
-                case 'success': 
-                    $codeSuffix = '-S';
-                    break;
-                // no default
-            }
-            
-            $errorMessage .= $codeSuffix . '] ';
+            $errorMessage .= "[{$code}] ";
         }
         
         /**

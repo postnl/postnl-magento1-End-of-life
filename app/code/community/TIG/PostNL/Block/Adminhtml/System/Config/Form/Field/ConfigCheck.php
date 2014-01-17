@@ -39,6 +39,12 @@
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
     /**
+     * XML paths to use GlobalPack/Checkout settings
+     */
+    const XML_PATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
+    const XML_PATH_USE_CHECKOUT   = 'postnl/cif/use_checkout';
+    
+    /**
      * Template file used by this element
      * 
      * @var string
@@ -123,6 +129,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck extends TI
      */
     public function isGlobalEnabled()
     {
+        $globalEnabled = Mage::getStoreConfigFlag(self::XML_PATH_USE_GLOBALPACK, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if (!$globalEnabled) {
+            return true;
+        }
+        
         $helper = $this->getPostnlHelper();
         
         return $helper->isEnabled(false, true, false);
@@ -150,6 +161,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck extends TI
      */
     public function isCheckoutEnabled()
     {
+        $checkoutEnabled = Mage::getStoreConfigFlag(self::XML_PATH_USE_CHECKOUT, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if (!$checkoutEnabled) {
+            return true;
+        }
+        
         $helper = Mage::helper('postnl/checkout');
         
         return $helper->isCheckoutEnabled(false);

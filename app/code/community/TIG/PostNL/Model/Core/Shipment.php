@@ -388,7 +388,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getExtraCoverAmount()
     {
-        if ($this->getData('extra_cover_amount')) {
+        if ($this->hasData('extra_cover_amount')) {
             return $this->getData('extra_cover_amount');
         }
         
@@ -1970,6 +1970,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         if ($this->isGlobalShipment()) {
+            if (!$cifHelper->isGlobalAllowed()) {
+                throw new TIG_PostNL_Exception(
+                    $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
+                    'POSTNL-0078'
+                );
+            }
+            
             $allowedProductCodes = $cifHelper->getGlobalProductCodes();
         }
         

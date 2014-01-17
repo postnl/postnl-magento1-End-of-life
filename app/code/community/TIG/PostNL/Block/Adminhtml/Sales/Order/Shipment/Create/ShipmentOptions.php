@@ -141,15 +141,21 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
      * @see Mage_Adminhtml_Block_Abstract::_toHtml()
      */
     protected function _toHtml()
-    {     
-        if (!Mage::helper('postnl')->isEnabled()) { 
+    {
+        $helper = Mage::helper('postnl');
+        if (!$helper->isEnabled()) { 
             return ''; 
         } 
         
         $shipment = $this->getShipment();
+        
         $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) { 
             return ''; 
+        }
+        
+        if (Mage::helper('postnl/cif')->isGlobalShipment($shipment) && !$helper->isGlobalAllowed()) {
+            return '';
         }
         
         return parent::_toHtml();
