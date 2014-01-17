@@ -61,7 +61,7 @@
                 <type>skin_js</type>
                 <name>js/TIG/PostNL/validate.js</name>
             </action>
-        	<block type="adminhtml/abstract" name="postnl_activate_button_js" template="TIG/PostNL/system/config/form/field/activate_button_js.phtml" output="tohtml" after="-"/>
+        	<block type="adminhtml/abstract" name="postnl_system_config_js" template="TIG/PostNL/system/config/form/field/js.phtml" output="tohtml" after="-"/>
         </reference>
         <remove name="form"/>
     </adminhtml_system_config_edit>
