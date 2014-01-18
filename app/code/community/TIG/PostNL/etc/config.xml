@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.0.5</version>
+			<version>1.0.6</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -403,7 +403,7 @@
                 <custom_shipment_reference/>
                 <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
                 <show_shipment_type_column>1</show_shipment_type_column> <!-- Show the shipment type column -->
-                <shipping_grid_columns>shipping_description,shipment_type,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
+                <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
                 <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->

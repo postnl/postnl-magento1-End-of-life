@@ -285,6 +285,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          */
         $postnlPaymentMethods = Mage::helper('postnl/checkout')->getCheckoutPaymentMethods();
         $methodName = array_search($postnlPaymentData->Code, $postnlPaymentMethods);
+        $optionValue = $postnlPaymentData->Optie;
         
         /**
          * Check if the payment method chosen is allowed
@@ -307,6 +308,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          */
         $payment = $quote->removePayment()
                          ->getPayment();
+        
+        Mage::register('postnl_payment_data', array('method' => $methodCode, 'option' => $optionValue));
         
         /**
          * if we only need to set the payment method, do so and we'll be finished
@@ -355,7 +358,6 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          * If the chosen payment method has an optional field (like bank selection for iDEAL) we have to check system / config in
          * order to map it to a form field the payment method would expect.
          */
-        $optionValue = $postnlPaymentData->Optie;
         if ($optionValue) {
             $field = Mage::getStoreConfig(
                 self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_option_field', 

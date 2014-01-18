@@ -99,6 +99,38 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     );
     
     /**
+     * Array containing conversions between PostNL CHeckout payment option fields and those used by Magento payment methods.
+     * This array should be extended as time goes on in order to support as many payment methods as possible.
+     * 
+     * @var array
+     */
+    protected $_optionConversionArray = array(
+        'sisow' => array(
+            '0031' => '01',
+            '0721' => '05',
+            '0021' => '06',
+            '0751' => '07',
+            '0761' => '02',
+            '0771' => '08',
+            '0091' => '04',
+            '0511' => '09',
+            '0161' => '10',
+         ),
+         'buckaroo3extended_ideal' => array(
+            '0031' => 'ABNANL2A',
+            '0081' => 'FRBKNL2L',
+            '0721' => 'INGBNL2A',
+            '0021' => 'RABONL2U',
+            '0751' => 'SNSBNL2A',
+            '0761' => 'ASNBNL21',
+            '0771' => 'RBRBNL21',
+            '0091' => 'FRBKNL2L',
+            '0511' => 'TRIONL2U',
+            '0161' => 'FVLBNL22',
+         ),
+    );
+    
+    /**
      * Gets a list of payment methods supported by PostNL Checkout
      * 
      * @return array
@@ -118,6 +150,33 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     {
         $requiredFields = $this->_checkoutRequiredFields;
         return $requiredFields;
+    }
+    
+    /**
+     * Returns a conversion array used to convert PostNL Checkout payment method fields to those used by Magento payment methods.
+     * 
+     * @return array
+     */
+    public function getOptionConversionArray()
+    {
+        $conversionArray = array(
+            'conversion_array' => $this->_optionConversionArray
+        );
+        
+        $conversionObject = new Varien_Object($conversionArray);
+        
+        /**
+         * You can observe this event in order to add (or modify) conversion options. This prevents you from having to overload 
+         * this helper if you want to change this functionality.
+         */
+        Mage::dispatchEvent(
+            'postnl_checkout_option_conversion_before', 
+            array(
+                'conversion_object' => $conversionObject,
+            )
+        );
+        
+        return $conversionObject->getConversionArray();;
     }
     
     /**
