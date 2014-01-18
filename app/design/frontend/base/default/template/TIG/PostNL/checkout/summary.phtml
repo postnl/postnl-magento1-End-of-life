@@ -38,12 +38,12 @@
  */	
 ?>
 <?php $_quote             = $this->getQuote(); ?>
-<?php $_order              = $this->getPostnlOrder(); ?>
+<?php $_order             = $this->getPostnlOrder(); ?>
 <?php $_itemCollection    = $this->getItems(); ?>
 <?php $_billingAddress    = $_quote->getBillingAddress(); ?>
 <?php $_shippingAddress   = $_quote->getShippingAddress(); ?>
 <?php $_pakjeGemakAddress = $this->getPakjeGemakAddress(); ?>
-
+<?php $_paymentOption     = $this->getPaymentOption(); ?>
 <div class="order-page">
     <div class="page-title">
         <h1><?php echo $this->__('Checkout Summary'); ?></h1>
@@ -163,11 +163,25 @@
     </div>
 </div>
 <script type="text/javascript">
-    document.observe('dom:loaded', function() {
-        if ($('payment_form_<?php echo $_quote->getPayment()->getMethod(); ?>')) {
-            $('payment_form_<?php echo $_quote->getPayment()->getMethod(); ?>').show();
-        }
-        
-        paymentForm = new VarienForm('payment_form');
-    });
+    //<![CDATA[
+        document.observe('dom:loaded', function() {
+            if ($('payment_form_<?php echo $_quote->getPayment()->getMethod(); ?>')) {
+                $('payment_form_<?php echo $_quote->getPayment()->getMethod(); ?>').show();
+            }
+            
+            paymentForm = new VarienForm('payment_form');
+            
+            <?php if ($_paymentOption !== false): ?>
+                var paymentOption = $$('option[value="<?php echo $_paymentOption; ?>"]');
+                paymentOption.each(function(element) {
+                    element.selected = true;
+                });
+                
+                var paymentInput = $$('input[value="<?php echo $_paymentOption; ?>"]');
+                paymentInput.each(function(element) {
+                    element.checked = true;
+                });
+            <?php endif; ?>
+        });
+    //]]>
 </script>

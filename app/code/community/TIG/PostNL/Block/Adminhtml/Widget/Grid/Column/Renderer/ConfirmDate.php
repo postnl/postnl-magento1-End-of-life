@@ -60,21 +60,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
             return parent::render($row);
         }
         
-        /**
-         * If the shipment is confirmed, render that
-         */
-        $postnlShipmentModel = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
-        if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentModel::CONFIRM_STATUS_CONFIRMED) {
-            return Mage::helper('postnl')->__('Confirmed');
-        }
-        
-        /**
-         * Check if a previous confirmation has expired
-         */
-        if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentModel::CONFIRM_STATUS_CONFIRM_EXPIRED) {
-            return Mage::helper('postnl')->__('Confirmation expired');
-        }
-        
         $value = $row->getData($this->getColumn()->getIndex());
         $now = date('Ymd', Mage::getModel('core/date')->gmtTimestamp());
         
