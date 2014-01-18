@@ -37,7 +37,7 @@ The current global barcode type as supplied by PostNL. Must contain 2 letters.,T
 Global Barcode Range,Global Barcode Range
 Your global barcode range as supplied by PostNL. Must contain 4 digits.,Your global barcode range as supplied by PostNL. Must contain 4 digits.
 These fields are only required if you wish to use PostNL Checkout.,These fields are only required if you wish to use PostNL Checkout.
-Webshop ID,Webshop ID
+Webshop External ID,Webshop External ID
 Public Webshop ID,Public Webshop ID
 These fields contain your contact information for PostNL.,These fields contain your contact information for PostNL.
 Company Name,Company Name
@@ -571,3 +571,5 @@ One or more fields are missing. Please fill these fields and try again.,One or m
 "Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL.","Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL."
 "This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error.","This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error."
 Validate account settings,Validate account settings
+Unconfirmed,Unconfirmed
+Confirm Status,Confirm Status

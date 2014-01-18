@@ -33,54 +33,56 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
-{
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmStatus 
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
+{    
     /**
-     * Returns an option array for optional shipment grid columns
-     * 
-     * @return array
+     * Additional column names used
      */
-    public function toOptionArray()
+    const SHIPPING_METHOD_COLUMN = 'shipping_method';
+    
+    /**
+     * Renders the column value as a Yes or No value
+     *
+     * @param Varien_Object $row
+     * 
+     * @return string
+     */
+    public function render(Varien_Object $row)
     {
-        $helper = Mage::helper('postnl');
-        $columns = array(
-            array(
-                'value' => 'parcel_count',
-                'label' => $helper->__('Number of Parcels')
-            ),
-            array(
-                'value' => 'shipping_description',
-                'label' => $helper->__('Shipping Method')
-            ),
-            array(
-                'value' => 'shipment_type',
-                'label' => $helper->__('Shipment Type')
-            ),
-            array(
-                'value' => 'confirm_date',
-                'label' => $helper->__('Send Date')
-            ),
-            array(
-                'value' => 'confirm_status',
-                'label' => $helper->__('Confirm Status')
-            ),
-            array(
-                'value' => 'labels_printed',
-                'label' => $helper->__('Labels Printed')
-            ),
-            array(
-                'value' => 'barcode',
-                'label' => $helper->__('Barcode')
-            ),
-            array(
-                'value' => 'shipping_phase',
-                'label' => $helper->__('Shipping Phase')
-            ),
-        );
+        /**
+         * The shipment was not shipped using PostNL
+         */
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
+        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+            return parent::render($row);
+        }
         
-        return $columns;
+        /**
+         * Check if any data is available
+         */
+        $value = $row->getData($this->getColumn()->getIndex());
+        if (is_null($value) || $value === '') {
+            return parent::render($row);
+        }
+        
+        $postnlShipmentClass = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
+        if ($value == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
+            $value = Mage::helper('postnl')->__('Confirmed');
+            return $value;
+        }
+        
+        if ($value == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
+            $value = Mage::helper('postnl')->__('Unconfirmed');
+            return $value;
+        }
+        
+        $value = Mage::helper('postnl')->__('Confirmation Expired');
+        
+        return $value;
     }
 }

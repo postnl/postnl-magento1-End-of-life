@@ -285,6 +285,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          */
         $postnlPaymentMethods = Mage::helper('postnl/checkout')->getCheckoutPaymentMethods();
         $methodName = array_search($postnlPaymentData->Code, $postnlPaymentMethods);
+        $optionValue = $postnlPaymentData->Optie;
         
         /**
          * Check if the payment method chosen is allowed
@@ -308,6 +309,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $payment = $quote->removePayment()
                          ->getPayment();
         
+        Mage::register('postnl_payment_data', array('method' => $methodCode, 'option' => $optionValue));
+        
         /**
          * if we only need to set the payment method, do so and we'll be finished
          */
@@ -322,11 +325,25 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          * Otherwise we need to form the payment data array containing all relevant payment data
          */
         $paymentData = Mage::app()->getRequest()->getPost('payment', array());
-        $paymentData['checks'] = Mage_Payment_Model_Method_Abstract::CHECK_USE_CHECKOUT
-            | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_COUNTRY
-            | Mage_Payment_Model_Method_Abstract::CHECK_USE_FOR_CURRENCY
-            | Mage_Payment_Model_Method_Abstract::CHECK_ORDER_TOTAL_MIN_MAX
-            | Mage_Payment_Model_Method_Abstract::CHECK_ZERO_TOTAL;
+        
+        /**
+         * Extra checks used by Magento
+         * 
+         * @since Magento v1.13
+         */
+        $paymentMethodAbstractClass = Mage::getConfig()->getModelClassName('payment/method_abstract');
+        if (defined($paymentMethodAbstractClass . '::CHECK_USE_CHECKOUT')
+            && defined($paymentMethodAbstractClass . '::CHECK_USE_FOR_COUNTRY')
+            && defined($paymentMethodAbstractClass . '::CHECK_USE_FOR_CURRENCY')
+            && defined($paymentMethodAbstractClass . '::CHECK_ORDER_TOTAL_MIN_MAX')
+            && defined($paymentMethodAbstractClass . '::CHECK_ZERO_TOTAL')
+        ) {
+            $paymentData['checks'] = $paymentMethodAbstractClass::CHECK_USE_CHECKOUT
+                            | $paymentMethodAbstractClass::CHECK_USE_FOR_COUNTRY
+                            | $paymentMethodAbstractClass::CHECK_USE_FOR_CURRENCY
+                            | $paymentMethodAbstractClass::CHECK_ORDER_TOTAL_MIN_MAX
+                            | $paymentMethodAbstractClass::CHECK_ZERO_TOTAL;
+        }
             
         if ($quote->isVirtual()) {
             $quote->getBillingAddress()->setPaymentMethod($methodCode);
@@ -341,7 +358,6 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          * If the chosen payment method has an optional field (like bank selection for iDEAL) we have to check system / config in
          * order to map it to a form field the payment method would expect.
          */
-        $optionValue = $postnlPaymentData->Optie;
         if ($optionValue) {
             $field = Mage::getStoreConfig(
                 self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_option_field', 
