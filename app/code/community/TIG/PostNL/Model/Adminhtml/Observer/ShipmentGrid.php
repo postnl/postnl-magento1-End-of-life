@@ -316,7 +316,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 array(
                     'type'           => 'date',
                     'header'         => $helper->__('Send Date'),
-                    'align'          => 'left',
                     'index'          => 'confirm_date',
                     'filter_index'   => 'postnl_shipment.confirm_date',
                     'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_confirmDate',
@@ -336,7 +335,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'confirm_status',
                 array(
                     'header'         => $helper->__('Confirm Status'),
-                    'align'          => 'left',
                     'type'           => 'options',
                     'index'          => 'confirm_status',
                     'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_confirmStatus',
@@ -358,7 +356,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'labels_printed',
                 array(
                     'header'         => $helper->__('Labels printed'),
-                    'align'          => 'left',
                     'type'           => 'options',
                     'index'          => 'labels_printed',
                     'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_yesNo',
@@ -502,7 +499,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 $class = 'grid-severity-notice';
                 break;
             case $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED:
-            case $postnlShipmentClass::CONFIRM_STATUS_CONFIR_EXPIREDD:
+            case $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED:
                 $class = 'grid-severity-critical';
                 break;
             default:

@@ -719,7 +719,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         
         $logMessage = "Request sent:\n"
                     . $requestXml
-                    . "\nResponse recieved:\n"
+                    . "\nResponse received:\n"
                     . $responseXML;
         
         $file = self::POSTNL_LOG_DIRECTORY . DS . self::CIF_DEBUG_LOG_FILE;
@@ -756,12 +756,12 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             $errorNumbers = $exception->getErrorNumbers();
             if (!empty($errorNumbers)) {
                 $errorNumbers = implode(', ', $errorNumbers);
-                $logMessage .= "Error numbers recieved: {$errorNumbers}\n";
+                $logMessage .= "Error numbers received: {$errorNumbers}\n";
             }
             
             $logMessage .= "<<< REQUEST SENT >>>\n"
                         . $requestXml
-                        . "\n<<< RESPONSE RECIEVED >>>\n"
+                        . "\n<<< RESPONSE RECEIVED >>>\n"
                         . $responseXML;
         } else {
             $logMessage = "\n" . $exception->__toString();

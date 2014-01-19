@@ -43,35 +43,13 @@
 <?php $_checkoutEnabled = $this->isCheckoutEnabled(); ?>
 <?php $_helper = Mage::helper('postnl'); ?>
 
-<?php if ($_testEnabled && !$_liveEnabled): ?>
+<?php if (!$_liveEnabled): ?>
     <?php $_liveConfigErrors = $this->getLiveConfigErrors(); ?>
-    <div class="module-message warning">
-        <h4>[POSTNL-0001] <?php echo $this->__('You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0001'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
+    <div class="module-message error">
+        <h4>[POSTNL-0002] <?php echo $this->__('You have not yet fully configured the extension. You must complete this process before you can use it.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0002'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
         <?php if ($_liveConfigErrors): ?>
             <ul class="postnl-errors">
                 <?php foreach ($_liveConfigErrors as $_errorData): ?>
-                    <li>
-                        <?php $_code = $_errorData['code']; ?>
-                        <?php $_error = $_errorData['message']; ?>
-                        <?php if (!is_int($_code)): ?>[<?php echo $_code; ?>] <?php endif; ?><?php echo $_error; ?>
-                        <?php $_errorUrl = $_helper->getErrorUrl($_code); ?>
-                        <?php if ($_errorUrl): ?>
-                            <a href="<?php echo $_helper->getErrorUrl($_code); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
-                        <?php endif; ?>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
-    </div>
-<?php endif; ?>
-
-<?php if (!$_liveEnabled && !$_testEnabled): ?>
-    <?php $_testConfigErrors = $this->getTestConfigErrors(); ?>
-    <div class="module-message error">
-        <h4>[POSTNL-0002] <?php echo $this->__('You have not yet fully configured the extension. You must complete this process before you can use it.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0002'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
-        <?php if ($_testConfigErrors): ?>
-            <ul class="postnl-errors">
-                <?php foreach ($_testConfigErrors as $_errorData): ?>
                     <li>
                         <?php $_code = $_errorData['code']; ?>
                         <?php $_error = $_errorData['message']; ?>

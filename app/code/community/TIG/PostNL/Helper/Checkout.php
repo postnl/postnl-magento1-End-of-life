@@ -535,10 +535,14 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 
                 $label      = (string) $section->groups->$group->fields->$field->label;
                 $groupLabel = (string) $section->groups->$group->label;
+                $groupName = $section->groups->$group->getName();
+                
                 $errors[] = array(
                     'code'    => 'POSTNL-0034',
                     'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
                 );
+                
+                $this->saveConfigState(array('postnl_' . $groupName => 1));
             }
         }
         
@@ -572,6 +576,9 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 'message' => $this->__('You need to enable at least one payment method.'),
             )
         );
+        
+        $this->saveConfigState(array('postnl_checkout_payment_methods' => 1));
+        
         Mage::register(
             'postnl_is_configured_checkout_errors', 
             $errors

@@ -61,11 +61,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         $varDir = Mage::getConfig()->getVarDir('locks');
         $file = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
         
-        if (is_file($file)) {
-            $this->_lockFile = fopen($file, 'w');
-        } else {
-            $this->_lockFile = fopen($file, 'x');
-        }
+        $this->_lockFile = fopen($file, 'w');
         
         $timestamp = Mage::getModel('core/date')->gmtTimestamp();
         fwrite($this->_lockFile, date('r', $timestamp));

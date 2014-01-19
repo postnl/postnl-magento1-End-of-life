@@ -189,7 +189,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $response = Mage::helper('core')->jsonEncode($responseArray);
             
             /**
-             * Save a new PostNL order containing the current quote ID as well as the recieved order token
+             * Save a new PostNL order containing the current quote ID as well as the received order token
              */
             $quote = Mage::getSingleton('checkout/session')->getQuote();
             $postnlOrder = Mage::getModel('postnl_checkout/order');
@@ -253,7 +253,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $orderDetails = $cif->readOrder();
             
             /**
-             * Update the quote with the recieved order details
+             * Update the quote with the received order details
              */
             $service = Mage::getModel('postnl_checkout/service');
             $service->setQuote($quote)

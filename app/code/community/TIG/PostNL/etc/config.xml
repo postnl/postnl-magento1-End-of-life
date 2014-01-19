@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.0.6</version>
+			<version>1.1.0</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -366,7 +366,7 @@
                 <handling_type>F</handling_type> <!-- Fixed -->
                 <handling_fee/>
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
-                <sallowspecific>0</sallowspecific> <!-- Allow only specific countries -->
+                <sallowspecific>1</sallowspecific> <!-- Allow only specific countries -->
                 <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,Sk,ES,CZ,SE</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
                 <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
             </postnl>
@@ -519,7 +519,7 @@
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
         		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
         		<send_statistics>1</send_statistics> <!-- Send extension usage statistics to PostNL -->
-        		<recieve_updates>1</recieve_updates> <!-- Automatically recieve updates regarding the PostNL extension -->
+        		<receive_updates>1</receive_updates> <!-- Automatically receive updates regarding the PostNL extension -->
         		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
         		<feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
         		<show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
@@ -544,7 +544,7 @@
         
         <!-- Stability of this release -->
         <stability>
-            <postnl>beta</postnl>
+            <postnl>stable</postnl>
         </stability>
     
         <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to 
@@ -732,7 +732,7 @@
                 <type>error</type>
             </POSTNL-0036>
             <POSTNL-0037>
-                <message>Invalid UpdateOrder response recieved!</message>
+                <message>Invalid UpdateOrder response received!</message>
                 <url>http://kb.totalinternetgroup.nl/topic/31133667</url>
                 <type>error</type>
             </POSTNL-0037>
@@ -907,7 +907,7 @@
                 <type>error</type>
             </POSTNL-0071>
             <POSTNL-0072>
-                <message>Invalid confirm response recieved: %s</message>
+                <message>Invalid confirm response received: %s</message>
                 <url>http://kb.totalinternetgroup.nl/topic/31976783</url>
                 <type>error</type>
             </POSTNL-0072>

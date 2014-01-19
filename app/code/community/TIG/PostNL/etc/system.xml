@@ -337,17 +337,17 @@
                    </fields>
                 </general>
                 <cif translate="label comment" module="postnl">
-                    <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.]]></comment>
+                    <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>Account Settings</label>
                     <sort_order>500</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
-                    <show_in_store>0</show_in_store>
+                    <show_in_store>1</show_in_store>
                     <fields>
                         <customer_number translate="label tooltip" module="postnl">
                             <label>Customer Number</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have recieved an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
@@ -358,7 +358,7 @@
                         <customer_code translate="label comment tooltip" module="postnl">
                             <label>Customer Code</label>
                             <comment>Your customer code as supplied by PostNL. Must contain between 3 and 4 letters.</comment>
-                            <tooltip>If you are a contract customer of PostNL, you will have recieved an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
@@ -368,7 +368,7 @@
                         </customer_code>
                         <live_username translate="label tooltip" module="postnl">
                             <label>Username</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have recieved an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -378,7 +378,7 @@
                         </live_username>
                         <live_password translate="label tooltip" module="postnl">
                             <label>Password</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have recieved an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>40</sort_order>
@@ -421,7 +421,7 @@
                         <collection_location translate="label comment tooltip" module="postnl">
                             <label>BLS (location) Code</label>
                             <comment>The internal code of the nearest PostNL sorting centre. Must contain 6 numbers.</comment>
-                            <tooltip>If you are a contract customer of PostNL, you will have recieved an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
@@ -490,12 +490,12 @@
                             <show_in_store>0</show_in_store>
                         </checkout_ids_header>
                         <checkout_infobox translate="comment" module="postnl">
-                            <comment><![CDATA[You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.]]></comment>
+                            <comment><![CDATA[You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
                             <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                         </checkout_infobox>
                         <use_checkout translate="label comment" module="postnl">
                             <label>Use PostNL Checkout</label>
@@ -505,7 +505,7 @@
                             <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                         </use_checkout>
                         <webshop_id translate="label" module="postnl">
                             <label>Webshop External ID</label>
@@ -571,7 +571,7 @@
                         <weight_per_parcel translate="label comment tooltip" module="postnl">
                             <label>Maximum weight per parcel</label>
                             <comment>Determine the maximum weight of each parcel. If a shipment's total weight exceeds this, the shipment will be spread out over multiple parcels.</comment>
-                            <tooltip>This only applies to Dutch shipments. Each parcel needs to be shipped seperately and will recieve it's own shipping label.</tooltip>
+                            <tooltip>This only applies to Dutch shipments. Each parcel needs to be shipped seperately and will receive it's own shipping label.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1362,7 +1362,7 @@
                     </fields>
                 </cif_globalpack_settings>
                 <checkout translate="label" module="postnl">
-                    <comment><![CDATA[Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.</p><p>By using PostNL Checkout you can offer your customers the option to easily choose their desired delivery date. They will be able to choose when and where they want their order delivered. They may choose to have the order delivered to their home (on a specific day at a specific time) or to have it delivered to their nearest post office.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then recieve all necessary information in order to configure this feature.]]></comment>
+                    <comment><![CDATA[Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.</p><p>By using PostNL Checkout you can offer your customers the option to easily choose their desired delivery date. They will be able to choose when and where they want their order delivered. They may choose to have the order delivered to their home (on a specific day at a specific time) or to have it delivered to their nearest post office.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>PostNL Checkout Settings</label>
                     <sort_order>1200</sort_order>
@@ -2578,8 +2578,8 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </send_statistics>
-                        <recieve_updates translate="label comment" module="postnl">
-                            <label>Recieve notifications from PostNL regarding updates and promotions</label>
+                        <receive_updates translate="label comment" module="postnl">
+                            <label>Receive notifications from PostNL regarding updates and promotions</label>
                             <comment>PostNL may periodically send important updates regarding new versions of the PostNL extension or important security updates in the same manner as Magento. Disable this setting to no longer ecieve these notifications.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
@@ -2588,7 +2588,7 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
-                        </recieve_updates>
+                        </receive_updates>
                         <show_error_details_in_frontend translate="label comment" module="postnl">
                             <label>Show error details in the frontend</label>
                             <comment>If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.</comment>
