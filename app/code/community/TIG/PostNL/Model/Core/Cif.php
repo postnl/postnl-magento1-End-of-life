@@ -894,8 +894,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
         
         /**
-         * Determine which address to use. Currently only 'Sender' and 'Reciever' are fully supported.
-         * Other possible address types will use the default 'reciever' address.
+         * Determine which address to use. Currently only 'Sender' and 'Receiver' are fully supported.
+         * Other possible address types will use the default 'receiver' address.
          */
         $streetData = false;
         switch ($addressType) {
@@ -942,7 +942,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $address = new Varien_Object($returnAddress);
                 break;
             case 'PakjeGemak': //no break
-            case 'Reciever': //no break
+            case 'Receiver': //no break
             default:
                 $address = $shippingAddress;
                 break;

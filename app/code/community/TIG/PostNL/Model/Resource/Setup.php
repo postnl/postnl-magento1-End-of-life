@@ -164,7 +164,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $inbox->addNotice(
                   '[POSTNL-0083] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
                   '[POSTNL-0083] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
-                  'http://servicedesk.totalinternetgroup.nl/entries/31921907', 
+                  'http://kb.totalinternetgroup.nl/topic/31921907', 
                   true
               )
               ->save();
@@ -288,7 +288,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
             $inbox->addCritical(
                       $message,
                       $message,
-                      'http://servicedesk.totalinternetgroup.nl/entries/31925577', 
+                      'http://kb.totalinternetgroup.nl/topic/31925577', 
                       true
                   )
                   ->save();
@@ -311,7 +311,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
             $inbox->addCritical(
                       $message,
                       $message,
-                      'http://servicedesk.totalinternetgroup.nl/entries/31925577',
+                      'http://kb.totalinternetgroup.nl/topic/31925577',
                       true
                   )
                   ->save();

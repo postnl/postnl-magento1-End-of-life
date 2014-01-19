@@ -229,6 +229,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             $file = fopen($path, 'r+');
             flock($file, LOCK_UN);
+            fclose($file);
             
             /**
              * The file should contain a date
