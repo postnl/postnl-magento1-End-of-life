@@ -445,7 +445,7 @@ class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         
         if ($responseXML) {
             /**
-             * If we recieved a response, parse it for errors and create an appropriate exception
+             * If we received a response, parse it for errors and create an appropriate exception
              */
             $errorResponse = new DOMDocument();
             $errorResponse->loadXML($responseXML);

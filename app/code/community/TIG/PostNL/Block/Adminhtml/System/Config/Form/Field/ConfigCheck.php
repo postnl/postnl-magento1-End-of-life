@@ -146,9 +146,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck extends TI
      */
     public function getGlobalConfigErrors()
     {
-        $configErrors = Mage::registry('postnl_is_configured_global_test_errors');
+        $configErrors = Mage::registry('postnl_is_configured_global_errors');
         if (is_null($configErrors)) {
-            $configErrors = Mage::registry('postnl_enabled_global_test_errors');
+            $configErrors = Mage::registry('postnl_enabled_global_errors');
         }
         
         return $configErrors;

@@ -1415,7 +1415,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * The response was not valid; throw an exception
          */
         throw new TIG_PostNL_Exception(
-            Mage::helper('postnl')->__('Invalid confirm response recieved: %s', var_export($result, true)),
+            Mage::helper('postnl')->__('Invalid confirm response received: %s', var_export($result, true)),
             'POSTNL-0072'
         );
     }
