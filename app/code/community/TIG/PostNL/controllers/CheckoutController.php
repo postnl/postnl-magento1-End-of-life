@@ -622,6 +622,20 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             return false;
         }
         
+        /**
+         * Check if the quote actually has any items
+         */
+        if (Mage::helper('checkout/cart')->getItemsCount() < 1) {
+            if ($addErrors) {
+                Mage::helper('postnl')->addSessionMessage('checkout/session', 'POSTNL-0112', 'error', 
+                    $this->__('Your shopping cart is empty. Please add a product and try again.')
+                );
+            }
+            
+            $postnlOrder->setIsActive(false)->save();
+            return false;
+        }
+        
         return true;
     }
 }
