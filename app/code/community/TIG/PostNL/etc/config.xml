@@ -544,7 +544,7 @@
         
         <!-- Stability of this release -->
         <stability>
-            <postnl>stable</postnl>
+            <postnl>beta</postnl>
         </stability>
     
         <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to 
@@ -1097,12 +1097,12 @@
             </POSTNL-0110>
             <POSTNL-0111>
                 <message>Unable to retrieve barcode data.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/38561927</url>
                 <type>error</type>
             </POSTNL-0111>
             <POSTNL-0112>
                 <message>Your shopping cart is empty. Please add a product and try again.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/38561597</url>
                 <type>error</type>
             </POSTNL-0112>
             
