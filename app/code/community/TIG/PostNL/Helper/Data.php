@@ -590,7 +590,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         } else {
             $modeFields = $this->getLiveModeRequiredFields();
         }
-        $requiredFields = array_merge($baseFields, $modeFields);
+        $requiredFields = array_merge($modeFields, $baseFields);
         
         /**
          * If this check pertains to a global shipment, get the global shipments required fields as well

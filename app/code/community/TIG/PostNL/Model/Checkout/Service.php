@@ -285,7 +285,6 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          */
         $postnlPaymentMethods = Mage::helper('postnl/checkout')->getCheckoutPaymentMethods();
         $methodName = array_search($postnlPaymentData->Code, $postnlPaymentMethods);
-        $optionValue = $postnlPaymentData->Optie;
         
         /**
          * Check if the payment method chosen is allowed
@@ -300,7 +299,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * Get the Magento payment method code associated with this method
          */
-        $methodCode = Mage::getStoreConfig(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method', $quote->getStoreId());
+        $methodCode  = Mage::getStoreConfig(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method', $quote->getStoreId());
+        $optionValue = $postnlPaymentData->Optie;
         
         
         /**

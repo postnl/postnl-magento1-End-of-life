@@ -38,7 +38,6 @@
  */
 class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Model_Feed
 {
-    const XML_PATH_SEND_STATISTICS = 'postnl/advanced/send_statistics';
     const XML_PATH_FEED_USE_HTTPS  = 'postnl/advanced/feed_use_https';
     const XML_PATH_FEED_URL        = 'postnl/advanced/feed_url';
 
