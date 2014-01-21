@@ -38,21 +38,14 @@
  */
 class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
 {
-    /**
-     * Flag to dtermine if the process is locked
-     * 
-     * @var null | boolean
-     */
     protected $_isLocked = null;
     
     /**
      * Get lock file resource
      *
-     * @param boolean $asFile
-     * 
-     * @return resource | TIG_PostNL_Model_Core_Shipment_Process
+     * @return resource | TIG_Buckaroo3Extended_Model_Process
      */
-    protected function _getLockFile($asPath = false)
+    protected function _getLockFile()
     {
         if ($this->_lockFile !== null) {
             return $this->_lockFile;
@@ -61,14 +54,18 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         $varDir = Mage::getConfig()->getVarDir('locks');
         $file = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
         
-        $this->_lockFile = fopen($file, 'w');
-        
-        $timestamp = Mage::getModel('core/date')->gmtTimestamp();
-        fwrite($this->_lockFile, date('r', $timestamp));
-        
-        if ($asPath === true) {
-            return $file;
+        if (is_file($file)) {
+            if($this->_lockIsExpired()){
+                unlink($file);//remove file 
+                $this->_lockFile = fopen($file, 'x');//create new lock file
+            }else{
+                $this->_lockFile = fopen($file, 'w');
+            }
+        } else {
+            $this->_lockFile = fopen($file, 'x');
         }
+        
+        fwrite($this->_lockFile, date('r'));
         
         return $this->_lockFile;
     }
@@ -77,7 +74,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
      * Lock process without blocking.
      * This method allow protect multiple process running and fast lock validation.
      *
-     * @return TIG_PostNL_Model_Core_Shipment_Process
+     * @return TIG_Buckaroo3Extended_Model_Process
      */
     public function lock()
     {
@@ -91,7 +88,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     /**
      * Lock and block process
      * 
-     * @return TIG_PostNL_Model_Core_Shipment_Process
+     * @return TIG_Buckaroo3Extended_Model_Process
      */
     public function lockAndBlock()
     {
@@ -106,7 +103,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     /**
      * Unlock process
      *
-     * @return TIG_PostNL_Model_Core_Shipment_Process
+     * @return TIG_Buckaroo3Extended_Model_Process
      */
     public function unlock()
     {
@@ -114,7 +111,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         $file = $this->_getLockFile();
         
         flock($file, LOCK_UN);
-        fclose($file);
+        fclose($file); 
         
         //remove lockfile
         $varDir   = Mage::getConfig()->getVarDir('locks');
@@ -135,20 +132,17 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
             return $this->_isLocked;
         }
         
-        $fp = $this->_getLockFile();
-        if (flock($fp, LOCK_EX | LOCK_NB)) {
-            flock($fp, LOCK_UN);
+        $varDir   = Mage::getConfig()->getVarDir('locks');
+        $lockFile = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
+        
+        if (!is_file($lockFile)) {
             return false;
         }
-        fclose($fp);
         
         //if the lock exists and exists for longer then 5minutes then remove lock & return false
         if($this->_lockIsExpired()){
-            $varDir   = Mage::getConfig()->getVarDir('locks');
-            $lockFile = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
             @unlink($lockFile);
             
-            $this->_getLockFile();//create new lock file
             return false;
         }
         
@@ -160,34 +154,33 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
      * 
      * @return bool
      */
-    protected function _lockIsExpired()
-    {
-        $file = $this->_getLockFile(true);
+    protected function _lockIsExpired(){
+        $varDir     = Mage::getConfig()->getVarDir('locks');
+        $file       = $varDir . DS . 'postnl_process_'.$this->getId().'.lock';
         
         if(!is_file($file)){
-            $fp = fopen($file, 'x');
-            fwrite($fp, date('r'));
-            fclose($fp);
             return false;
         }
+        
         
         $fiveMinAgo = time() - 300;//300
         $contents   = file_get_contents($file);
         $time       = strtotime($contents);
         
         if($time <= $fiveMinAgo){
-            $fp = fopen($file,'w');
-            flock($fp, LOCK_UN);
-            fclose($fp);
-            @unlink($file);
             return true;
         }
         
         return false;
     }
-
-    public function __destruct()
+    
+    public function __desctruct()
     {
+        $varDir   = Mage::getConfig()->getVarDir('locks');
+        $lockFile = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
         
+        if (is_file($lockFile)) {
+            @unlink($lockFile);
+        }
     }
 }

@@ -301,6 +301,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (is_null($process)) {
             $process = Mage::getModel('postnl_core/shipment_process')
                            ->setId($this->getId());
+            
             $this->setProcess($process);
         }
 
@@ -766,7 +767,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $process = $this->getProcess();
         $process->lockAndBlock();
-        
+        Mage::log('locked: ' . $this->getId(), null, 'LOCK.log', true);
+        $this->isLocked();
+        $this->isLocked();
         return $this;
     }
     
@@ -779,6 +782,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $process = $this->getProcess();
         $process->unlock();
+        Mage::log('unlocked: ' . $this->getId(), null, 'LOCK.log', true);
         
         return $this;
     }
@@ -792,6 +796,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $process = $this->getProcess();
         $isLocked = $process->isLocked();
+        Mage::log('islocked(' . $this->getId() . '): ' . var_export($isLocked, true), null, 'LOCK.log', true);
         
         return $isLocked;
     }
