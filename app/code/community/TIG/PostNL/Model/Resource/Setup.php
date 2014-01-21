@@ -173,16 +173,18 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     }
     
     /**
-     * generate a random cron expression for the status update cron for this merchant and store it in the database
+     * Generate a random cron expression for the status update cron for this merchant and store it in the database
      * 
      * @return TIG_PostNL_Model_Resource_Setup
      */
     public function generateShippingStatusCronExpr()
     {
         /**
-         * Generate random values for the cron expression
+         * Generate semi-random values for the cron expression
          */
         $cronMorningHour   = mt_rand(10, 12);
+        $cronMorningHour  += Mage::getModel('core/date')->getGmtOffset('hours');
+        
         $cronAfternoonHour = $cronMorningHour + 4; //4 hours after the morning update
         $cronMinute        = mt_rand(0, 59);
         
