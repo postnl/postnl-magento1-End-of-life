@@ -185,4 +185,9 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         
         return false;
     }
+
+    public function __destruct()
+    {
+        
+    }
 }
