@@ -337,7 +337,7 @@
                    </fields>
                 </general>
                 <cif translate="label comment" module="postnl">
-                    <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.]]></comment>
+                    <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <label>Account Settings</label>
                     <sort_order>500</sort_order>
@@ -347,7 +347,7 @@
                     <fields>
                         <customer_number translate="label tooltip" module="postnl">
                             <label>Customer Number</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
@@ -358,7 +358,7 @@
                         <customer_code translate="label comment tooltip" module="postnl">
                             <label>Customer Code</label>
                             <comment>Your customer code as supplied by PostNL. Must contain between 3 and 4 letters.</comment>
-                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
@@ -368,7 +368,7 @@
                         </customer_code>
                         <live_username translate="label tooltip" module="postnl">
                             <label>Username</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -378,7 +378,7 @@
                         </live_username>
                         <live_password translate="label tooltip" module="postnl">
                             <label>Password</label>
-                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                             <sort_order>40</sort_order>
@@ -421,7 +421,7 @@
                         <collection_location translate="label comment tooltip" module="postnl">
                             <label>BLS (location) Code</label>
                             <comment>The internal code of the nearest PostNL sorting centre. Must contain 6 numbers.</comment>
-                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at +31(0)23-567 59 53</tooltip>
+                            <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
