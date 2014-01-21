@@ -241,7 +241,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             if ($timestamp < $maxTimestamp) {
                 $helper->cronLog("Deleting file: {$path}.");
-                unlink($path);
+                @unlink($path);
             }
         }
         
@@ -376,8 +376,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 $postnlShipment->updateShippingStatus()
                                ->save();
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                $postnlShipment->unlock();
+                
                 $this->_parseErrorCodes($e, $postnlShipment);
             } catch (Exception $e) {
+                $postnlShipment->unlock();
+                
                 Mage::helper('postnl')->logException($e);
             }
         }
