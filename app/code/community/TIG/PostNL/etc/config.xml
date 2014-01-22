@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.0.7</version>
+			<version>1.1.0</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -544,7 +544,7 @@
         
         <!-- Stability of this release -->
         <stability>
-            <postnl>beta</postnl>
+            <postnl>stable</postnl>
         </stability>
     
         <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to 
