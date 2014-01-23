@@ -99,7 +99,7 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         /**
          * Check if the extension may send statistics to the extension control system
          */
-        if (!Mage::helper('postnl/webservices')->canRecieveUpdates()) {
+        if (!Mage::helper('postnl/webservices')->canReceiveUpdates()) {
             return $this;
         }
                

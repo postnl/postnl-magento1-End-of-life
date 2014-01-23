@@ -130,13 +130,19 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         
         if ($this->isTestMode()) {
             $password = Mage::getStoreConfig(self::XML_PATH_TEST_PASSWORD, $storeId);
+            
+            $password = trim($password);
             $password = sha1(Mage::helper('core')->decrypt($password));
+            
             return $password;
         }
         
         $password = Mage::getStoreConfig(self::XML_PATH_LIVE_PASSWORD, $storeId);
+        
+        $password = trim($password);
         $password = sha1(Mage::helper('core')->decrypt($password));
-        return trim($password);
+        
+        return $password;
     }
     
     /**
@@ -150,6 +156,11 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      */
     public function isTestMode($storeId = false)
     {
+        if ($this->hasTestMode()) {
+            $testMode = $this->getTestMode();
+            return $testMode;
+        }
+        
         if ($storeId === false) {
             $storeId = $this->getStoreId();
         }
@@ -169,15 +180,19 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * @param string $wsdlType Which wsdl to use
      * @param string $method The method that will be called
      * @param array $soapParams An array of parameters to be sent
+     * @param boolean|string $username
+     * @param boolean|string $password
      * 
      * @return object
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function call($wsdlType, $method, $soapParams = null)
+    public function call($wsdlType, $method, $soapParams = null, $username = false, $password = false)
     {
         try {
-            if (!$this->_getUserName() || !$this->_getPassword()) {
+            if ($username !== false && $password !== false
+                && (!$this->_getUserName() || !$this->_getPassword())
+            ) {
                 throw new TIG_PostNL_Exception(
                     Mage::helper('postnl')->__('No username or password set.'),
                     'POSTNL-0052'
@@ -218,7 +233,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             /**
              * Add SOAP header
              */
-            $header = $this->_getSoapHeader();
+            $header = $this->_getSoapHeader($username, $password);
             $client->addSoapInputHeader($header, true); //permanent header
             
             /**
@@ -328,13 +343,21 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * Builds soap headers array for CIF authentication
      * 
+     * @param boolean|string $username
+     * @param boolean|string $password
+     * 
      * @return array
      */
-    protected function _getSoapHeader()
+    protected function _getSoapHeader($username = false, $password = false)
     {
+        if ($username === false || $password === false) {
+            $username = $this->_getUserName();
+            $password = $this->_getPassWord();
+        }
+        
         $namespace = self::HEADER_SECURITY_NAMESPACE;
-        $node1     = new SoapVar($this->_getUserName(), XSD_STRING,      null, null, 'Username',      $namespace);
-        $node2     = new SoapVar($this->_getPassWord(), XSD_STRING,      null, null, 'Password',      $namespace);
+        $node1     = new SoapVar($username, XSD_STRING,      null, null, 'Username',      $namespace);
+        $node2     = new SoapVar($password, XSD_STRING,      null, null, 'Password',      $namespace);
         $token     = new SoapVar(array($node1, $node2), SOAP_ENC_OBJECT, null, null, 'UsernameToken', $namespace);
         $security  = new SoapVar(array($token),         SOAP_ENC_OBJECT, null, null, 'Security',      $namespace);
         $header   = new SOAPHeader($namespace, 'Security', $security, false);
@@ -422,7 +445,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         
         if ($responseXML) {
             /**
-             * If we recieved a response, parse it for errors and create an appropriate exception
+             * If we received a response, parse it for errors and create an appropriate exception
              */
             $errorResponse = new DOMDocument();
             $errorResponse->loadXML($responseXML);
