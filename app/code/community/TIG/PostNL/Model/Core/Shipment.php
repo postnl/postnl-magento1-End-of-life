@@ -1343,6 +1343,36 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         return $labels;
     }
+
+    /**
+     * Manually confirms a shipment without communicating with PostNL. This should be used if you wish to update the confirmation
+     * status in Magento, while actually confirming the shipment through other means, such as parcelware.
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function manuallyConfirm()
+    {
+        if (!$this->canConfirm()) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The confirm action is currently unavailable.'),
+                'POSTNL-0109'
+            );
+        }
+        
+        $this->lock();
+        
+        Mage::dispatchEvent('postnl_shipment_confirm_before', array('shipment' => $this));
+
+        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
+             ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
+        
+        Mage::dispatchEvent('postnl_shipment_confirm_after', array('shipment' => $this));
+        
+        $this->unlock();
+        return $this;
+    }
     
     /**
      * Confirm the shipment with PostNL without generating new labels

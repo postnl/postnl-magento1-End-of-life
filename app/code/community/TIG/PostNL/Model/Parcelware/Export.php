@@ -61,13 +61,14 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $this->setStoreId(Mage_Core_Model_App::ADMIN_STORE_ID);
         
         $helper = Mage::helper('postnl/parcelware');
+        $autoConfirmEnabled = $helper->isAutoConfirmEnabled();
         
         /**
          * Prepare a transaction save object. We're going to edit all the postbl shipments that we're going to export, however
          * we want all of them to be saved at the same time AFTER the export has been generated.
          */
         $transactionSave = Mage::getModel('core/resource_transaction');
-                               
+        
         $content = array();
         foreach ($postnlShipments as $postnlShipment) {
             /**
@@ -78,9 +79,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             /**
              * If auto_confirm is enabled, confirm each shipment manually. Please note that we do not yet save these shipments.
              */
-            if ($helper->isAutoConfirmEnabled() === true && !$postnlShipment->isConfirmed()) {
-                $postnlShipment->setConfirmStatus($postnlShipment::CONFIRM_STATUS_CONFIRMED)
-                               ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
+            if ($autoConfirmEnabled === true && !$postnlShipment->isConfirmed()) {
+                $postnlShipment->manuallyConfirm();
             }
             
             /**
@@ -292,10 +292,10 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         
         $globalPackData = array(
             'ShipmentType'           => $shipmentType, // Gift / Documents / Commercial Goods / Commercial Sample / Returned Goods
-            'HandleAsNonDeliverable' => 'false',
-            'Invoice'                => 'false',
-            'Certificate'            => 'false',
-            'License'                => 'false',
+            'HandleAsNonDeliverable' => 0,
+            'Invoice'                => 0,
+            'Certificate'            => 0,
+            'License'                => 0,
             'Currency'               => 'EUR',
         );
         
@@ -303,7 +303,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
          * Check if the shipment should be treated as abandoned when it can't be delivered or if it should be returned to the sender
          */
         if ($postnlShipment->getTreatAsAbandoned()) {
-            $globalPackData['HandleAsNonDeliverable'] = 'true';
+            $globalPackData['HandleAsNonDeliverable'] = 1;
         }
         
         /**
@@ -327,8 +327,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
          */
         $invoiceRequiredShipmentTypes = $this->getInvoiceRequiredShipmentTypes();
         if (in_array($shipmentType, $invoiceRequiredShipmentTypes)
-            || ($globalPackData['License'] == 'false'
-                && $globalPackData['Certificate'] == 'false'
+            || ($globalPackData['License'] == 0
+                && $globalPackData['Certificate'] == 0
             )
         ) {
             $shipmentId = $shipment->getIncrementId();
@@ -370,7 +370,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
                 'Product_' . $itemCount . '_Quantity'        => $item->getQty(),
                 'Product_' . $itemCount . '_Weight'          => $itemWeight * $item->getQty(),
                 'Product_' . $itemCount . '_Value'           => ($this->_getCustomsValue($item) * $item->getQty()),
-                'Product_' . $itemCount . '_HSTariffNr'      => $this->_getHSTariff($item),
+                'Product_' . $itemCount . '_HSTariffNr'      => (string) $this->_getHSTariff($item),
                 'Product_' . $itemCount . '_CountryOfOrigin' => $this->_getCountryOfOrigin($item),
             );
             
@@ -453,6 +453,25 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $csvHeaders = array_merge($csvHeaders, $globalPackHeaders);
 
         return $csvHeaders;
+    }
+    
+    /**
+     * Get a shipment item's HS tariff.
+     * 
+     * @param Mage_Sales_Model_Order_Shipment_item
+     * 
+     * @return string
+     * 
+     * @see TIG_PostNL_Model_Core_Cif::_getHSTariff()
+     */
+    protected function _getHSTariff($shipmentItem)
+    {
+        $hsTariff = parent::_getHSTariff($shipmentItem);
+        if ($hsTariff == '000000') {
+            return '';
+        }
+        
+        return $hsTariff;
     }
 
     /**
