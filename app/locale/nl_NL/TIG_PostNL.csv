@@ -580,3 +580,15 @@ Unconfirmed,Niet Voorgemeld
 Confirm Status,Voormeld Status
 A4,A4
 A6,A6
+PostNL - Create parcelware export,PostNL - Maak parcelware export
+Exported to parcelware,Geëxporteerd naar parcelware
+Parcelware Export Settings,Parcelware Export Instellingen
+This is where you can configure your parcelware export.,Hier kunt u uw parcelware export voorkeuren opegeven.
+Enable parcelware export,Activeer parcelware export
+Parcelware export is disabled. Activate parcdelware export in order to edit these settings. Please note that you can only activate parcelware export from the global level.,Parcelware export is gedeactiveerd. Activeer parcelware export om deze instellingen te kunnen aanpassen. Houd er rekening mee dat parcelware export enkel vanuit op globaal niveau kunt activeren.
+Automatically confirm exported shipments,Geëxporteerde zeningen automatisch voormelden
+"If set to yes, shipments that have been exported will be confirmed in Magento.","Indien deze instelling op ja staat, zullen zendingen die geëxporteerd zijn automatisch in Magento voorgemeld worden."
+This does NOT actually confirm the shipment with PostNL. It only updates the status in Magento to prevent you from accidentally confirming it in Magento after you've exported it to parcelware.,Dit meldt zendingen NIET voor bij PostNL. Het zorgt er enkel voor dat de voormeld status in Magento aangepast wordt. Dit voorkomt dat u per ongeluk zendingen nogmaals voormeldt bij PostNL nadat deze geëxporteerd zijn.
+Contract reference number,Contract referentie nummer
+Contract name,Contract naam
+Sender address reference number,Afzender adres referentie nummer

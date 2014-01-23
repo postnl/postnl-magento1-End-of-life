@@ -700,7 +700,7 @@
                     </fields>
                 </cif_labels_and_confirming>
                 <parcelware_export translate="label comment" module="postnl">
-                    <label>Parcelware export Settings</label>
+                    <label>Parcelware Export Settings</label>
                     <comment>This is where you can configure your parcelware export.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>700</sort_order>
@@ -740,6 +740,9 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
+                            <depends>
+                                <active>1</active>
+                            </depends>
                         </auto_confirm>
                         <contract_ref_nr translate="label" module="postnl">
                             <label>Contract reference number</label>
