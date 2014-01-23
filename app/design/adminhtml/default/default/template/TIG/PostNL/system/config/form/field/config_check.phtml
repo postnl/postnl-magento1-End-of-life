@@ -67,7 +67,7 @@
 
 <?php if (!$_globalEnabled && ($_liveEnabled || $_testEnabled)): ?>
     <?php $_globalConfigErrors = $this->getGlobalConfigErrors(); ?>
-    <div class="module-message info">
+    <div class="module-message warning">
         <h4>[POSTNL-0003] <?php echo $this->__('You have not yet configured the extension to use GlobalPack shipments. Please complete this process  if you wish to ship parcels to outside the EU.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0003'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
         <?php if ($_globalConfigErrors): ?>
             <ul class="postnl-errors">
@@ -89,7 +89,7 @@
 
 <?php if (!$_checkoutEnabled && ($_liveEnabled || $_testEnabled)): ?>
     <?php $_checkoutConfigErrors = $this->getCheckoutConfigErrors(); ?>
-    <div class="module-message info">
+    <div class="module-message warning">
         <h4>[POSTNL-0004] <?php echo $this->__('You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0004'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
         <?php if ($_checkoutConfigErrors): ?>
             <ul class="postnl-errors">
