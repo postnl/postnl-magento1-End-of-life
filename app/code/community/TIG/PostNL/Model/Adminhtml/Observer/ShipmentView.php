@@ -93,7 +93,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          */
         $printShippingLabelUrl = $this->getPrintShippingLabelUrl($shipment->getId());
         $block->addButton('print_shipping_label', array(
-            'label'   => Mage::helper('postnl')->__('PostNL - Print shipping label'),
+            'label'   => Mage::helper('postnl')->__('PostNL - Print Shipping Label'),
             'onclick' => "setLocation('{$printShippingLabelUrl}')",
             'class'   => 'download',
         ));
@@ -107,7 +107,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          * Update the send tracking info button so that it sends our info, instead of the default
          */
         $resendTrackAndTraceUrl = $this->getResendTrackAndTraceUrl($shipment->getId());
-        $block->updateButton('save', 'label', Mage::helper('postnl')->__('PostNL - Send tracking information'));
+        $block->updateButton('save', 'label', Mage::helper('postnl')->__('PostNL - Send Tracking Information'));
         $block->updateButton('save', 'onclick', 
             "deleteConfirm('"
                 . Mage::helper('sales')->__('Are you sure you want to send PostNL tracking information to the customer?')
