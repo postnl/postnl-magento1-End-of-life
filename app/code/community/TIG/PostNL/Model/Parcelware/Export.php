@@ -186,6 +186,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
          */
         $addressData   = $this->_getAddressData($postnlShipment, $shipment);
         $referenceData = $this->_getReferenceData();
+        $extraCover    = array($postnlShipment->getExtraCoverAmount());
         
         /**
          * If this is part of a multi-colli shipment, we need to get slightly different parameters.
@@ -226,6 +227,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             $addressData, 
             $shipmentData, 
             $referenceData, 
+            $extraCover,
             $globalPackData
         );
         
@@ -405,6 +407,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             'ContractReference',
             'ContractName',
             'SenderReference',
+            'InsuredAmount',
         );
         
         if (!$this->getIsGlobal()) {
