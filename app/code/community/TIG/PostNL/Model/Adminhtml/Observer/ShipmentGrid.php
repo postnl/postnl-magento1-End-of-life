@@ -230,6 +230,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $createdAtColumn = $block->getColumn('created_at');
         $createdAtColumn->setFilterIndex('main_table.created_at');
         
+        $massactionColumn = $block->getColumn('massaction');
+        $massactionColumn->setFilterIndex('main_table.entity_id');
+        
         return $this;
     }
     
