@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.0.3</version>
+			<version>1.1.0</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -356,17 +356,19 @@
         <carriers>
             <postnl>
                 <active>0</active> <!-- disabled -->
-                <sallowspecific>0</sallowspecific> <!-- Allow all countries -->
-                <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
-                <name>PostNL</name> <!-- PostNL -->
-                <price>5.00</price> <!-- 5.00 (in base currency) -->
                 <title>PostNL</title> <!-- PostNL -->
+                <name>PostNL</name> <!-- PostNL -->
+                <rate_type>flat</rate_type> <!-- Flat rate -->
                 <type>I</type> <!-- Price is calculated per item -->
-                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
-                <handling_type>F</handling_type> <!-- Fixed -->
+                <price>5.00</price> <!-- 5.00 (in base currency) -->
                 <condition_name>package_weight</condition_name> <!-- Package weight -->
                 <include_virtual_price>1</include_virtual_price> <!-- Include virtual price -->
-                <rate_type>flat</rate_type>
+                <handling_type>F</handling_type> <!-- Fixed -->
+                <handling_fee/>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
+                <sallowspecific>1</sallowspecific> <!-- Allow only specific countries -->
+                <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,Sk,ES,CZ,SE</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
+                <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
             </postnl>
         </carriers>
         <postnl>
@@ -385,8 +387,10 @@
                 <test_username/>
                 <test_password/>
         		<collection_location/>
+        		<use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
         		<global_barcode_type/>
         		<global_barcode_range/>
+        		<use_checkout>0</use_checkout> <!-- Do not use PostNL Checkout -->
                 <webshop_id/>
                 <public_webshop_id/>
         	</cif>
@@ -399,7 +403,7 @@
                 <custom_shipment_reference/>
                 <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
                 <show_shipment_type_column>1</show_shipment_type_column> <!-- Show the shipment type column -->
-                <shipping_grid_columns>shipping_description,shipment_type,labels_printed,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
+                <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
                 <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
@@ -459,7 +463,7 @@
         		<hs_tariff_attribute/>
         		<customs_value_attribute>price</customs_value_attribute> <!-- price attribute -->
         		<country_of_origin_attribute>country_of_manufacture</country_of_origin_attribute> <!-- country of manufacture attribute -->
-        		<description_attribute>short_description</description_attribute> <!-- short description attribute -->
+        		<description_attribute>name</description_attribute> <!-- name attribute -->
         		<product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
         		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
         	</cif_globalpack_settings>
@@ -515,7 +519,7 @@
         		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
         		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
         		<send_statistics>1</send_statistics> <!-- Send extension usage statistics to PostNL -->
-        		<recieve_updates>1</recieve_updates> <!-- Automatically recieve updates regarding the PostNL extension -->
+        		<receive_updates>1</receive_updates> <!-- Automatically receive updates regarding the PostNL extension -->
         		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
         		<feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
         		<show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
@@ -540,7 +544,7 @@
         
         <!-- Stability of this release -->
         <stability>
-            <postnl>beta</postnl>
+            <postnl>stable</postnl>
         </stability>
     
         <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to 
@@ -549,32 +553,32 @@
             <!-- These are errors that are generated by this extension -->
             <POSTNL-0001>
                 <message>You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31114923</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31114923</url>
                 <type>warning</type>
             </POSTNL-0001>
             <POSTNL-0002>
                 <message>You have not yet fully configured the extension. You must complete this process before you can use it.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31565256</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31565256</url>
                 <type>error</type>
             </POSTNL-0002>
             <POSTNL-0003>
                 <message>You have not yet configured the extension to use GlobalPack shipments. Please complete this process if you wish to ship parcels to outside the EU.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31566436</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31566436</url>
                 <type>notice</type>
             </POSTNL-0003>
             <POSTNL-0004>
                 <message>You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31567046</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31567046</url>
                 <type>notice</type>
             </POSTNL-0004>
             <POSTNL-0005>
                 <message>You currently do not use split street lines. Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31080848</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31080848</url>
                 <type>warning</type>
             </POSTNL-0005>
             <POSTNL-0006>
                 <message>PostNL: It appears that your cron is not working properly. PostNL requires the cron to be active in order to function.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31060037</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31060037</url>
                 <type>warning</type>
             </POSTNL-0006>
             <POSTNL-0007>
@@ -584,22 +588,22 @@
             </POSTNL-0007>
             <POSTNL-0008>
                 <message>Please fill in your unique and private keys and try again.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31079168</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31079168</url>
                 <type>error</type>
             </POSTNL-0008>
             <POSTNL-0009>
                 <message>This action cannot be used on non-PostNL shipments.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31061687</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31061687</url>
                 <type>error</type>
             </POSTNL-0009>
             <POSTNL-0010>
                 <message>An error occurred while processing this action.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31062917</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31062917</url>
                 <type>error</type>
             </POSTNL-0010>
             <POSTNL-0011>
                 <message>Please select one or more orders.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31570156</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31570156</url>
                 <type>error</type>
             </POSTNL-0011>
             <POSTNL-0012>
@@ -609,427 +613,427 @@
             </POSTNL-0012>
             <POSTNL-0013>
                 <message>Please select one or more shipments.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31120533</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31120533</url>
                 <type>error</type>
             </POSTNL-0013>
             <POSTNL-0014>
                 <message>You can print a maximum of 200 labels at once.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31083628</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31083628</url>
                 <type>error</type>
             </POSTNL-0014>
             <POSTNL-0015>
                 <message>Order #%s cannot be shipped at this time.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31083718</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31083718</url>
                 <type>error</type>
             </POSTNL-0015>
             <POSTNL-0016>
                 <message>For EU shipments you may only confirm a shipment after it's labels have been printed.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31573296</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31573296</url>
                 <type>error</type>
             </POSTNL-0016>
             <POSTNL-0017>
                 <message>This shipment has already been confirmed.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31066127</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31066127</url>
                 <type>error</type>
             </POSTNL-0017>
             <POSTNL-0018>
                 <message>This shipment cannot be confirmed at this time.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31123903</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31123903</url>
                 <type>error</type>
             </POSTNL-0018>
             <POSTNL-0019>
                 <message>PostNL replied with the following warnings: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31573886</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31573886</url>
                 <type>warning</type>
             </POSTNL-0019>
             <POSTNL-0020>
                 <message>Error code %s: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31086988</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31086988</url>
                 <type>warning</type>
             </POSTNL-0020>
             <POSTNL-0021>
                 <message>An error occurred while processing your order. Please try again</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31085978</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31085978</url>
                 <type>error</type>
             </POSTNL-0021>
             <POSTNL-0022>
                 <message>Unable to set Payment Method.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31086728</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31086728</url>
                 <type>error</type>
             </POSTNL-0022>
             <POSTNL-0023>
                 <message>Your order has been cancelled. Please try again.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31069277</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31069277</url>
                 <type>notice</type>
             </POSTNL-0023>
             <POSTNL-0024>
                 <message>Unfortunately the checkout process cannot be finished. Please try again.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31069397</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31069397</url>
                 <type>error</type>
             </POSTNL-0024>
             <POSTNL-0025>
                 <message>Unfortunately no PostNL Checkout order could be found. Please try again.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31069667</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31069667</url>
                 <type>error</type>
             </POSTNL-0025>
             <POSTNL-0026>
                 <message>It seems your cart has been changed since you started the checkout process. Please try again.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31126613</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31126613</url>
                 <type>error</type>
             </POSTNL-0026>
             <POSTNL-0027>
                 <message>You have not yet enabled PostNL Checkout.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31576976</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31576976</url>
                 <type>error</type>
             </POSTNL-0027>
             <POSTNL-0028>
                 <message>You need to enable at least one payment method.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31070197</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31070197</url>
                 <type>error</type>
             </POSTNL-0028>
             <POSTNL-0029>
                 <message>Unable to get valid barcodetype for postnl shipment id #%s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31147298</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31147298</url>
                 <type>error</type>
             </POSTNL-0029>
             <POSTNL-0030>
                 <message>You have not yet enabled the extension.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31185593</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31185593</url>
                 <type>error</type>
             </POSTNL-0030>
             <POSTNL-0031>
                 <message>The PostNL shipping method has not been enabled.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31129647</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31129647</url>
                 <type>error</type>
             </POSTNL-0031>
             <POSTNL-0032>
                 <message>The shop's base currency code must be set to EUR for PostNL to function.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31129917</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31129917</url>
                 <type>error</type>
             </POSTNL-0032>
             <POSTNL-0033>
                 <message>The extension has not been activated.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31186323</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31186323</url>
                 <type>error</type>
             </POSTNL-0033>
             <POSTNL-0034>
                 <message>%s > %s is required.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31186983</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31186983</url>
                 <type>error</type>
             </POSTNL-0034>
             <POSTNL-0035>
                 <message>Invalid Magento edition detected: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31131717</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31131717</url>
                 <type>error</type>
             </POSTNL-0035>
             <POSTNL-0036>
                 <message>Invalid rate type requested: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31150488</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31150488</url>
                 <type>error</type>
             </POSTNL-0036>
             <POSTNL-0037>
-                <message>Invalid UpdateOrder response recieved!</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31133667</url>
+                <message>Invalid UpdateOrder response received!</message>
+                <url>http://kb.totalinternetgroup.nl/topic/31133667</url>
                 <type>error</type>
             </POSTNL-0037>
             <POSTNL-0038>
                 <message>Invalid PingStatus response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31638656</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31638656</url>
                 <type>error</type>
             </POSTNL-0038>
             <POSTNL-0039>
                 <message>No quote available to initiate PostNL Checkout.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31639136</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31639136</url>
                 <type>error</type>
             </POSTNL-0039>
             <POSTNL-0040>
                 <message>Invalid PrepareOrder response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31191183</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31191183</url>
                 <type>error</type>
             </POSTNL-0040>
             <POSTNL-0041>
                 <message>Invalid ReadOrder response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31191443</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31191443</url>
                 <type>error</type>
             </POSTNL-0041>
             <POSTNL-0042>
                 <message>Invalid ConfirmOrder response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31191933</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31191933</url>
                 <type>error</type>
             </POSTNL-0042>
             <POSTNL-0043>
                 <message>Invalid reference type requested: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31640636</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31640636</url>
                 <type>error</type>
             </POSTNL-0043>
             <POSTNL-0044>
                 <message>Invalid object specified: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31641096</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31641096</url>
                 <type>error</type>
             </POSTNL-0044>
             <POSTNL-0045>
                 <message>OrderToken missing for quote #%s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31662856</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31662856</url>
                 <type>error</type>
             </POSTNL-0045>
             <POSTNL-0046>
                 <message>This PostNL Checkout order cannot be cancelled: it has no associated magento order.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31157957</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31157957</url>
                 <type>error</type>
             </POSTNL-0046>
             <POSTNL-0047>
                 <message>This PostNL Checkout order cannot be cancelled: it has already been canceled.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31177418</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31177418</url>
                 <type>error</type>
             </POSTNL-0047>
             <POSTNL-0048>
                 <message>Selected payment method %s is not available.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31158587</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31158587</url>
                 <type>error</type>
             </POSTNL-0048>
             <POSTNL-0049>
                 <message>Unable to create an order for quote #%s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31215003</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31215003</url>
                 <type>error</type>
             </POSTNL-0049>
             <POSTNL-0050>
                 <message>Invalid quote supplied.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31215543</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31215543</url>
                 <type>error</type>
             </POSTNL-0050>
             <POSTNL-0051>
                 <message>Invalid data supplied.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31216003</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31216003</url>
                 <type>error</type>
             </POSTNL-0051>
             <POSTNL-0052>
                 <message>No username or password set.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31216113</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31216113</url>
                 <type>error</type>
             </POSTNL-0052>
             <POSTNL-0053>
                 <message>Chosen wsdl type is not supported: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31178198</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31178198</url>
                 <type>error</type>
             </POSTNL-0053>
             <POSTNL-0054>
                 <message>Invalid barcode response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31664456</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31664456</url>
                 <type>error</type>
             </POSTNL-0054>
             <POSTNL-0055>
                 <message>Invalid shippingStatus response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31664246</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31664246</url>
                 <type>error</type>
             </POSTNL-0055>
             <POSTNL-0056>
                 <message>Invalid confirmShipment response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31923588</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31923588</url>
                 <type>error</type>
             </POSTNL-0056>
             <POSTNL-0057>
                 <message>Invalid generateLabels response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31906367</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31906367</url>
                 <type>error</type>
             </POSTNL-0057>
             <POSTNL-0058>
                 <message>Invalid generateLabelsWithoutConfirm response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31923208</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31923208</url>
                 <type>error</type>
             </POSTNL-0058>
             <POSTNL-0059>
                 <message>Invalid housnumber supplied: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32412636</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32412636</url>
                 <type>error</type>
             </POSTNL-0059>
             <POSTNL-0060>
                 <message>Invalid full street supplied: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31924308</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31924308</url>
                 <type>error</type>
             </POSTNL-0060>
             <POSTNL-0061>
                 <message>Invalid barcodetype requested: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31924098</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31924098</url>
                 <type>error</type>
             </POSTNL-0061>
             <POSTNL-0062>
                 <message>Invalid printer type requested: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32413996</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32413996</url>
                 <type>error</type>
             </POSTNL-0062>
             <POSTNL-0063>
                 <message>Unable to match barcode to shippingStatus response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31910007</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31910007</url>
                 <type>error</type>
             </POSTNL-0063>
             <POSTNL-0064>
                 <message>Maximum amount of labels exceeded. Maximum allowed: 200. Requested: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31925938</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31925938</url>
                 <type>error</type>
             </POSTNL-0064>
             <POSTNL-0065>
                 <message>Invalid label type supplied: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31910337</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31910337</url>
                 <type>error</type>
             </POSTNL-0065>
             <POSTNL-0066>
                 <message>Temporary template file already exists: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32415756</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32415756</url>
                 <type>error</type>
             </POSTNL-0066>
             <POSTNL-0067>
                 <message>Invalid counter: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31973693</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31973693</url>
                 <type>error</type>
             </POSTNL-0067>
             <POSTNL-0068>
                 <message>Number of parcels not allowed. Amount requested: %s, maximum allowed: %s.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31973693</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31973693</url>
                 <type>error</type>
             </POSTNL-0068>
             <POSTNL-0069>
                 <message>The generateBarcodes action is currently unavailable.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32416446</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32416446</url>
                 <type>error</type>
             </POSTNL-0069>
             <POSTNL-0070>
                 <message>Unable to generate barcode for this shipment: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31974103</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31974103</url>
                 <type>error</type>
             </POSTNL-0070>
             <POSTNL-0071>
                 <message>The confirmAndPrintLabel action returned an invalid response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31928088</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31928088</url>
                 <type>error</type>
             </POSTNL-0071>
             <POSTNL-0072>
-                <message>Invalid confirm response recieved: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31976783</url>
+                <message>Invalid confirm response received: %s</message>
+                <url>http://kb.totalinternetgroup.nl/topic/31976783</url>
                 <type>error</type>
             </POSTNL-0072>
             <POSTNL-0073>
                 <message>The updateShippingStatus action is currently unavailable.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31930018</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31930018</url>
                 <type>error</type>
             </POSTNL-0073>
             <POSTNL-0074>
                 <message>The updateCompleteShippingStatus action is currently unavailable.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31930488</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31930488</url>
                 <type>error</type>
             </POSTNL-0074>
             <POSTNL-0075>
                 <message>Unable to add tracking info: no barcode or shipment available.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31977793</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31977793</url>
                 <type>error</type>
             </POSTNL-0075>
             <POSTNL-0076>
                 <message>The sendTrackAndTraceEmail action is currently unavailable.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31930908</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31930908</url>
                 <type>error</type>
             </POSTNL-0076>
             <POSTNL-0077>
                 <message>Unable to send track and trace email for shipment #%s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31977863</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31977863</url>
                 <type>error</type>
             </POSTNL-0077>
             <POSTNL-0078>
                 <message>Product code %s is not allowed for this shipment.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31978843</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31978843</url>
                 <type>error</type>
             </POSTNL-0078>
             <POSTNL-0079>
                 <message>Invalid activateWebshop response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31978413</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31978413</url>
                 <type>error</type>
             </POSTNL-0079>
             <POSTNL-0080>
                 <message>Unable to update statistics. This feature has been disabled.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31978413</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31978413</url>
                 <type>error</type>
             </POSTNL-0080>
             <POSTNL-0081>
                 <message>No private or unique key found. Unable to complete the request.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31979763</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31979763</url>
                 <type>error</type>
             </POSTNL-0081>
             <POSTNL-0082>
                 <message>Invalid updateStatistics response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31918757</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31918757</url>
                 <type>error</type>
             </POSTNL-0082>
             <POSTNL-0083>
                 <message>PostNL extension has been successfully updated to version %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31921907</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31921907</url>
                 <type>notice</type>
             </POSTNL-0083>
             <POSTNL-0084>
                 <message>Unable to save shipping_status cron expression: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31940658</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31940658</url>
                 <type>error</type>
             </POSTNL-0084>
             <POSTNL-0085>
                 <message>Unable to save update_statistics cron expression: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31925327</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31925327</url>
                 <type>error</type>
             </POSTNL-0085>
             <POSTNL-0086>
                 <message>The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31925577</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31925577</url>
                 <type>warning</type>
             </POSTNL-0086>
             <POSTNL-0087>
                 <message>Wrong message type</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31566016</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31566016</url>
                 <type>error</type>
             </POSTNL-0087>
             <POSTNL-0088>
                 <message>Invalid session requested.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32430366</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32430366</url>
                 <type>error</type>
             </POSTNL-0088>
             <POSTNL-0089>
                 <message>No message supplied.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31925967</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31925967</url>
                 <type>error</type>
             </POSTNL-0089>
             <POSTNL-0090>
                 <message>No message type supplied.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31988933</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31988933</url>
                 <type>error</type>
             </POSTNL-0090>
             <POSTNL-0091>
                 <message>Missing country of origin value for product #%s.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31988983</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31988983</url>
                 <type>error</type>
             </POSTNL-0091>
             <POSTNL-0092>
                 <message>Missing customs value for product #%s.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32432746</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32432746</url>
                 <type>error</type>
             </POSTNL-0092>
             <POSTNL-0093>
                 <message>Missing customs description for product #%s.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31944008</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31944008</url>
                 <type>error</type>
             </POSTNL-0093>
             <POSTNL-0094>
                 <message>Invalid message type requested: %s.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/33566806</url>
+                <url>http://kb.totalinternetgroup.nl/topic/33566806</url>
                 <type>error</type>
             </POSTNL-0094>
             <POSTNL-0095>
                 <message>Config form fieldset clone model required to be able to clone fields</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/33059188</url>
+                <url>http://kb.totalinternetgroup.nl/topic/33059188</url>
                 <type>error</type>
             </POSTNL-0095>
             <POSTNL-0096>
                 <message>Unable to read directory: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/33063203</url>
+                <url>http://kb.totalinternetgroup.nl/topic/33063203</url>
                 <type>error</type>
             </POSTNL-0096>
             <POSTNL-0097>
                 <message>Invalid UpdateOrder response: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/33064418</url>
+                <url>http://kb.totalinternetgroup.nl/topic/33064418</url>
                 <type>error</type>
             </POSTNL-0097>
             
@@ -1038,64 +1042,79 @@
             <POSTNL-0100>
                 <!-- This error is generated by CIF, however we have designated it an error code -->
                 <message>The user is not authorized for this barcode</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32435446</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32435446</url>
                 <type>error</type>
             </POSTNL-0100>
             <POSTNL-0101>
                 <message>The quote's total weight is below the miniumum required to use PostNL Checkout.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32433656</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32433656</url>
                 <type>notice</type>
             </POSTNL-0101>
             <POSTNL-0102>
                 <message>One or more items in the cart are out of stock.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31993743</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31993743</url>
                 <type>notice</type>
             </POSTNL-0102>
             <POSTNL-0103>
                 <message>PostNL Checkout has been disabled.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/31947888</url>
+                <url>http://kb.totalinternetgroup.nl/topic/31947888</url>
                 <type>notice</type>
             </POSTNL-0103>
             <POSTNL-0104>
                 <message>The quote is virtual.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32436016</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32436016</url>
                 <type>notice</type>
             </POSTNL-0104>
             <POSTNL-0105>
                 <message>The quote's grand total is below the minimum amount required.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32759156</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32759156</url>
                 <type>notice</type>
             </POSTNL-0105>
             <POSTNL-0106>
                 <message>No standard product options are enabled. At least 1 option must be active.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32288438</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32288438</url>
                 <type>notice</type>
             </POSTNL-0106>
             <POSTNL-0107>
                 <message>You have not yet enabled the PostNL extension.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32266563</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32266563</url>
                 <type>notice</type>
             </POSTNL-0107>
             <POSTNL-0108>
                 <message>Invalid address type supplied: %s</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32295088</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32295088</url>
                 <type>error</type>
             </POSTNL-0108>
             <POSTNL-0109>
                 <message>The confirm action is currently unavailable.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32772946</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32772946</url>
                 <type>error</type>
             </POSTNL-0109>
             <POSTNL-0110>
                 <message>The confirmAndGenerateLabel action is currently unavailable.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32279277</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32279277</url>
                 <type>error</type>
             </POSTNL-0110>
+            <POSTNL-0111>
+                <message>Unable to retrieve barcode data.</message>
+                <url>http://kb.totalinternetgroup.nl/topic/38561927</url>
+                <type>error</type>
+            </POSTNL-0111>
+            <POSTNL-0112>
+                <message>Your shopping cart is empty. Please add a product and try again.</message>
+                <url>http://kb.totalinternetgroup.nl/topic/38561597</url>
+                <type>error</type>
+            </POSTNL-0112>
+            <POSTNL-0113>
+                <message>An error occurred while updating the PostNL Checkout order.</message>
+                <url/>
+                <type>warning</type>
+            </POSTNL-0113>
             
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>
                 <message>Combilabel was not processed successfully for shipment with barcode %s. Normal label is generated and product code for shipment changed to 4944.</message>
-                <url>http://servicedesk.totalinternetgroup.nl/entries/32432076</url>
+                <url>http://kb.totalinternetgroup.nl/topic/32432076</url>
                 <type>warning</type>
             </LIRS_0>
         </errors>

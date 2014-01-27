@@ -60,7 +60,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
                     );
                 }
                 catch (Exception $e) {
-                    Mage::logException($e);
+                    Mage::helper('postnl')->logException($e);
                 }
             }
             $format = self::$_format;
@@ -81,9 +81,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
             try {
                 $data = Mage::app()->getLocale()
                     ->date($data, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
-            }
-            catch (Exception $e)
-            {
+            } catch (Exception $e) {
                 $data = Mage::app()->getLocale()
                     ->date($data, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
             }

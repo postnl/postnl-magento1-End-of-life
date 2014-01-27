@@ -65,7 +65,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck exte
         if ($request->getParam('store')) {
             $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, $request->getparam('store'));
         } elseif ($request->getParam('website')) {
-            $website = Mage::getModel('core/website')->load($request->getparam('website'), 'name');
+            $website = Mage::getModel('core/website')->load($request->getparam('website'), 'code');
             $splitStreet = (bool) $website->getConfig(self::XML_PATH_SPLIT_STREET, $website->getId());
         } else {
             $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, Mage_Core_Model_App::ADMIN_STORE_ID);

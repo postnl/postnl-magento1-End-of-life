@@ -42,6 +42,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      * XML path to checkout on/off switch
      */
     const XML_PATH_CHECKOUT_ACTIVE = 'postnl/checkout/active';
+    const XML_PATH_USE_CHECKOUT    = 'postnl/cif/use_checkout';
     
     /**
      * XML path to all PostNL Checkout payment methods.
@@ -98,6 +99,38 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     );
     
     /**
+     * Array containing conversions between PostNL CHeckout payment option fields and those used by Magento payment methods.
+     * This array should be extended as time goes on in order to support as many payment methods as possible.
+     * 
+     * @var array
+     */
+    protected $_optionConversionArray = array(
+        'sisow' => array(
+            '0031' => '01',
+            '0721' => '05',
+            '0021' => '06',
+            '0751' => '07',
+            '0761' => '02',
+            '0771' => '08',
+            '0091' => '04',
+            '0511' => '09',
+            '0161' => '10',
+         ),
+         'buckaroo3extended_ideal' => array(
+            '0031' => 'ABNANL2A',
+            '0081' => 'FRBKNL2L',
+            '0721' => 'INGBNL2A',
+            '0021' => 'RABONL2U',
+            '0751' => 'SNSBNL2A',
+            '0761' => 'ASNBNL21',
+            '0771' => 'RBRBNL21',
+            '0091' => 'FRBKNL2L',
+            '0511' => 'TRIONL2U',
+            '0161' => 'FVLBNL22',
+         ),
+    );
+    
+    /**
      * Gets a list of payment methods supported by PostNL Checkout
      * 
      * @return array
@@ -117,6 +150,33 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     {
         $requiredFields = $this->_checkoutRequiredFields;
         return $requiredFields;
+    }
+    
+    /**
+     * Returns a conversion array used to convert PostNL Checkout payment method fields to those used by Magento payment methods.
+     * 
+     * @return array
+     */
+    public function getOptionConversionArray()
+    {
+        $conversionArray = array(
+            'conversion_array' => $this->_optionConversionArray
+        );
+        
+        $conversionObject = new Varien_Object($conversionArray);
+        
+        /**
+         * You can observe this event in order to add (or modify) conversion options. This prevents you from having to overload 
+         * this helper if you want to change this functionality.
+         */
+        Mage::dispatchEvent(
+            'postnl_checkout_option_conversion_before', 
+            array(
+                'conversion_object' => $conversionObject,
+            )
+        );
+        
+        return $conversionObject->getConversionArray();;
     }
     
     /**
@@ -384,6 +444,12 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
         
+        $useCheckout = Mage::getStoreConfigFlag(self::XML_PATH_USE_CHECKOUT, $storeId);
+        
+        if (!$useCheckout) {
+            return false;
+        }
+        
         $isActive = Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ACTIVE, $storeId);
         return $isActive;
     }
@@ -467,12 +533,16 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 $field = $fieldParts[2];
                 $group = $fieldParts[1];
                 
-                $label = $section->groups->$group->fields->$field->label;
-                $groupLabel = $section->groups->$group->label;
+                $label      = (string) $section->groups->$group->fields->$field->label;
+                $groupLabel = (string) $section->groups->$group->label;
+                $groupName = $section->groups->$group->getName();
+                
                 $errors[] = array(
                     'code'    => 'POSTNL-0034',
                     'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
                 );
+                
+                $this->saveConfigState(array('postnl_' . $groupName => 1));
             }
         }
         
@@ -506,6 +576,9 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 'message' => $this->__('You need to enable at least one payment method.'),
             )
         );
+        
+        $this->saveConfigState(array('postnl_checkout_payment_methods' => 1));
+        
         Mage::register(
             'postnl_is_configured_checkout_errors', 
             $errors

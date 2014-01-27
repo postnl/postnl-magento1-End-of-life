@@ -776,11 +776,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         }
         
         /**
-         * If the shipment does not have a barcode, generate one
+         * If the shipment does not have a main barcode, generate new barcodes
          */
         if (!$postnlShipment->getMainBarcode()) {
-            $postnlShipment->generateBarcode()
-                           ->addTrackingCodeToShipment();
+            $postnlShipment->generateBarcodes();
         }
         
         if ($postnlShipment->getConfirmStatus() === $postnlShipment::CONFIRM_STATUS_CONFIRMED) {
@@ -804,8 +803,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                        ->addTrackingCodeToShipment()
                        ->save();
         
-        $labels = $postnlShipment->getLabels();
-        return $labels;
+        return $this;
     }
     
     /**
@@ -851,7 +849,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     }
     
     /**
-     * Checks if any warnings were recieved while processing the action in CIF. If any warnings are found they are
+     * Checks if any warnings were received while processing the action in CIF. If any warnings are found they are
      * added to the adminhtml session as a notice.
      * 
      * @return TIG_PostNL_Adminhtml_ShipmentController
