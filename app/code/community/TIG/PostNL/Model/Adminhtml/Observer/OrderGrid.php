@@ -77,7 +77,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      * 
      * @param Varien_Event_Observer $observer
      * 
-     * @return TIG_PostNL_Model_Adminhtml_OrderGridObserver
+     * @return TIG_PostNL_Model_Adminhtml_OrderGrid
      * 
      * @event adminhtml_block_html_before
      * 

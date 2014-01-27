@@ -89,6 +89,9 @@
                 <class>TIG_PostNL_Model_Checkout</class>
                 <resourceModel>postnl_checkout_resource</resourceModel>
             </postnl_checkout>
+            <postnl_addressvalidation>
+                <class>TIG_PostNL_Model_AddressValidation</class>
+            </postnl_addressvalidation>
             <postnl_parcelware>
                 <class>TIG_PostNL_Model_Parcelware</class>
             </postnl_parcelware>
@@ -253,6 +256,24 @@
     </adminhtml>
     
     <frontend>
+        <events>
+            <core_block_abstract_to_html_before>
+                <observers>
+                    <!-- Adds the postcode check functionality by overloading the billing address template for onepage checkout -->
+                    <checkout_onepage_billing_postcodecheck>
+                        <type>singleton</type>
+                        <class>postnl_addressvalidation/observer_onepage</class>
+                        <method>billingAddressPostcodeCheck</method>
+                    </checkout_onepage_billing_postcodecheck>
+                    <!-- Adds the postcode check functionality by overloading the shipping address template for onepage checkout -->
+                    <checkout_onepage_shipping_postcodecheck>
+                        <type>singleton</type>
+                        <class>postnl_addressvalidation/observer_onepage</class>
+                        <method>shippingAddressPostcodeCheck</method>
+                    </checkout_onepage_shipping_postcodecheck>
+                </observers>
+            </core_block_abstract_to_html_before>
+        </events>
 		<layout>
             <updates>
                 <postnl>

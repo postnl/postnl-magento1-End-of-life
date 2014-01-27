@@ -70,6 +70,25 @@
         </reference>
     </checkout_cart_index>
     
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/postcodecheck_switch.js</file>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/postcodecheck.css</file>
+            </action>
+        </reference>
+        <reference name="checkout.onepage.billing">
+            <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>
+        </reference>
+        <reference name="checkout.onepage.shipping">
+            <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>
+        </reference>
+    </checkout_onepage_index>
+    
     <postnl_checkout_summary>
         <reference name="head">
             <action method="addItem">
