@@ -57,7 +57,8 @@
                     </div>
         <?php endif; ?>
                 </li>
-        <?php echo $this->getChild('postnl_postcodecheck')
+        <?php echo $this->getChild('postnl_billing_postcodecheck')
+                        ->setAddressType('billing')
                         ->setAddress($this->getAddress())
                         ->setCountryHtmlSelect($this->getCountryHtmlSelect('billing'))
                         ->toHtml(); ?>

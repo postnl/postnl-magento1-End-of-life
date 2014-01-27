@@ -42,6 +42,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
      * The block classes that we want to edit
      */
     const BILLING_ADDRESS_BLOCK_NAME = 'checkout/onepage_billing';
+    const SHIPPING_ADDRESS_BLOCK_NAME = 'checkout/onepage_shipping';
     
     /**
      * Gets the classname for the onepage checkout billing address block that we want to alter
@@ -57,6 +58,23 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
         $blockClass = Mage::getConfig()->getBlockClassName(self::BILLING_ADDRESS_BLOCK_NAME);
         
         $this->setBillingAddressBlockClass($blockClass);
+        return $blockClass;
+    }
+    
+    /**
+     * Gets the classname for the onepage checkout shipping address block that we want to alter
+     * 
+     * @return string
+     */
+    public function getShippingAddressBlockClass()
+    {
+        if ($this->hasShippingAddressBlockClass()) {
+            return $this->getData('shipping_address_block_class');
+        }
+        
+        $blockClass = Mage::getConfig()->getBlockClassName(self::SHIPPING_ADDRESS_BLOCK_NAME);
+        
+        $this->setShippingAddressBlockClass($blockClass);
         return $blockClass;
     }
     
@@ -94,6 +112,44 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
         }
         
         $block->setTemplate('TIG/PostNL/checkout/onepage/billing.phtml');
+        
+        return $this;
+    }
+    
+    /**
+     * Alters the template of the onepage checkout shipping address block if the postcode check functionality is active.
+     * 
+     * @param Varien_Event_Observer $observer
+     * 
+     * @return TIG_PostNL_Model_AddressValidation_Observer_Onepage
+     * 
+     * @event core_block_abstract_to_html_before
+     * 
+     * @observer checkout_onepage_shipping_postcodecheck
+     * 
+     */
+    public function shippingAddressPostcodeCheck(Varien_Event_Observer $observer)
+    {
+        /**
+         * Check if the extension is active
+         */
+        if (!Mage::helper('postnl')->isEnabled()) {
+            return $this;
+        }
+        
+        /**
+         * Checks if the current block is the one we want to edit.
+         * 
+         * Unfortunately there is no unique event for this block
+         */
+        $block = $observer->getBlock();
+        $blockClass = $this->getShippingAddressBlockClass();
+        
+        if (get_class($block) !== $blockClass) {
+            return $this;
+        }
+        
+        $block->setTemplate('TIG/PostNL/checkout/onepage/shipping.phtml');
         
         return $this;
     }

@@ -265,6 +265,12 @@
                         <class>postnl_addressvalidation/observer_onepage</class>
                         <method>billingAddressPostcodeCheck</method>
                     </checkout_onepage_billing_postcodecheck>
+                    <!-- Adds the postcode check functionality by overloading the shipping address template for onepage checkout -->
+                    <checkout_onepage_shipping_postcodecheck>
+                        <type>singleton</type>
+                        <class>postnl_addressvalidation/observer_onepage</class>
+                        <method>shippingAddressPostcodeCheck</method>
+                    </checkout_onepage_shipping_postcodecheck>
                 </observers>
             </core_block_abstract_to_html_before>
         </events>

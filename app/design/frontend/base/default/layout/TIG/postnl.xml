@@ -82,7 +82,10 @@
             </action>
         </reference>
         <reference name="checkout.onepage.billing">
-            <block type="core/template" name="postnl_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>
+            <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>
+        </reference>
+        <reference name="checkout.onepage.shipping">
+            <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>
         </reference>
     </checkout_onepage_index>
     
