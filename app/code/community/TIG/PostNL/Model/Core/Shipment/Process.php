@@ -38,6 +38,8 @@
  */
 class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
 {
+    protected $_own = false;
+    
     protected $_isLocked = null;
     
     /**
@@ -65,7 +67,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
             $this->_lockFile = fopen($file, 'x');
         }
         
-        fwrite($this->_lockFile, date('r'));
+        fwrite($this->_lockFile, date('r', Mage::getModel('core/date')->gmtTimestamp()));
         
         return $this->_lockFile;
     }
@@ -79,6 +81,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     public function lock()
     {
         $this->_isLocked = true;
+        $this->_own = true;
         
         flock($this->_getLockFile(), LOCK_EX | LOCK_NB);
 
@@ -108,6 +111,8 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     public function unlock()
     {
         $this->_isLocked = false;
+        $this->_own = false;
+        
         $file = $this->_getLockFile();
         
         flock($file, LOCK_UN);
@@ -132,19 +137,30 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
             return $this->_isLocked;
         }
         
+        if ($this->_own === true) {
+            $this->_isLocked = false;
+            
+            return false;
+        }
+        
         $varDir   = Mage::getConfig()->getVarDir('locks');
         $lockFile = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
         
         if (!is_file($lockFile)) {
+            $this->_isLocked = false;
+            
             return false;
         }
         
         //if the lock exists and exists for longer then 5minutes then remove lock & return false
         if($this->_lockIsExpired()){
             @unlink($lockFile);
+            $this->_isLocked = false;
             
             return false;
         }
+        
+        $this->_isLocked = true;
         
         return true;
     }
@@ -162,19 +178,25 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
             return false;
         }
         
+        $fiveMinAgo = Mage::getModel('core/date')->gmtTimestamp();
         
-        $fiveMinAgo = time() - 300;//300
         $contents   = file_get_contents($file);
-        $time       = strtotime($contents);
+        $lockTime   = strtotime($contents);
+        $lockExpiration = $lockTime + 300; //300s = 5min
         
-        if($time <= $fiveMinAgo){
+        if($lockExpiration <= $fiveMinAgo){
             return true;
         }
         
         return false;
     }
     
-    public function __desctruct()
+    /**
+     * Destroy the lock file if it still exists
+     * 
+     * @return void
+     */
+    public function __destruct()
     {
         $varDir   = Mage::getConfig()->getVarDir('locks');
         $lockFile = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';

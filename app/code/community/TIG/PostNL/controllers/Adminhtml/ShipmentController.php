@@ -803,8 +803,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                        ->addTrackingCodeToShipment()
                        ->save();
         
-        $labels = $postnlShipment->getLabels();
-        return $labels;
+        return $this;
     }
     
     /**
