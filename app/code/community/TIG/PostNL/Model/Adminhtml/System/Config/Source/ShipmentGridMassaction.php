@@ -36,55 +36,35 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
+class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridMassAction
 {
     /**
-     * Returns an option array for optional shipment grid columns
+     * Returns an option array for available shipment grid mass actions
      * 
      * @return array
      */
     public function toOptionArray()
     {
         $helper = Mage::helper('postnl');
-        $columns = array(
+        $options = array(
             array(
-                'value' => 'parcel_count',
-                'label' => $helper->__('Number of Parcels')
+                'value' => 'postnl_print_labels_and_confirm',
+                'label' => $helper->__('Print shipping labels & confirm shipment'),
             ),
             array(
-                'value' => 'shipping_description',
-                'label' => $helper->__('Shipping Method')
+                'value' => 'postnl_print_labels',
+                'label' => $helper->__('Print shipping labels'),
             ),
             array(
-                'value' => 'shipment_type',
-                'label' => $helper->__('Shipment Type')
+                'value' => 'postnl_confirm_shipments',
+                'label' => $helper->__('Confirm shipments'),
             ),
             array(
-                'value' => 'confirm_date',
-                'label' => $helper->__('Send Date')
-            ),
-            array(
-                'value' => 'confirm_status',
-                'label' => $helper->__('Confirm Status')
-            ),
-            array(
-                'value' => 'labels_printed',
-                'label' => $helper->__('Labels Printed')
-            ),
-            array(
-                'value' => 'barcode',
-                'label' => $helper->__('Barcode')
-            ),
-            array(
-                'value' => 'shipping_phase',
-                'label' => $helper->__('Shipping Phase')
-            ),
-            array(
-                'value' => 'is_parcelware_exported',
-                'label' => $helper->__('Exported to parcelware')
+                'value' => 'postnl_parcelware_export',
+                'label' => $helper->__('Parcelware export'),
             ),
         );
         
-        return $columns;
+        return $options;
     }
 }

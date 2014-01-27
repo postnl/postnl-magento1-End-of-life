@@ -280,7 +280,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     public function getStoreId()
     {
-        if ($this->getData('store_id')) {
+        if ($this->hasStoreId()) {
             return $this->getData('store_id');
         }
 
@@ -1147,10 +1147,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * use Enterprise, in customers > attributes > manage customer address attributes. 
      * 
      * @param Mage_Sales_Model_Order_Address $address
+     * @param boolean $allowFullStreet
      * 
      * @return array
      */
-    protected function _getStreetData($address)
+    protected function _getStreetData($address, $allowFullStreet = true)
     {
         $storeId = $this->getStoreId();
         $splitStreet = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_STREET, $storeId);
@@ -1179,7 +1180,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Select countries don't have to split their street values into seperate part
          */
-        if (in_array($address->getCountry(), $allowedFullStreetCountries)) {
+        if ($allowFullStreet === true 
+            && in_array($address->getCountry(), $allowedFullStreetCountries)
+        ) {
             $streetData = array(
                 'streetname'           => '',
                 'housenumber'          => '',

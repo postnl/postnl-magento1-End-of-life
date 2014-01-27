@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.1.0</version>
+			<version>1.2.0</version>
 		</TIG_PostNL>
 	</modules>
 	
@@ -89,6 +89,9 @@
                 <class>TIG_PostNL_Model_Checkout</class>
                 <resourceModel>postnl_checkout_resource</resourceModel>
             </postnl_checkout>
+            <postnl_parcelware>
+                <class>TIG_PostNL_Model_Parcelware</class>
+            </postnl_parcelware>
             
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
@@ -408,6 +411,13 @@
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
                 <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
         	</cif_labels_and_confirming>
+        	<parcelware_export>
+        	    <active>0</active> <!-- Inactive -->
+        	    <auto_confirm>0</auto_confirm> <!-- Do not auto confirm -->
+        	    <contract_ref_nr/>
+        	    <contract_name/>
+        	    <sender_ref_nr/>
+        	</parcelware_export>
         	<cif_address>
         		<split_street>1</split_street> <!-- split street -->
         		<streetname_field>1</streetname_field> <!-- first address line -->
@@ -512,7 +522,7 @@
                 <afterpay_method/>
         	</checkout_payment_methods>
         	<advanced>
-        	    <allow_test_mode>0</allow_test_mode>
+                <allow_test_mode>0</allow_test_mode> <!-- Do not allow test mode -->
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
@@ -544,7 +554,7 @@
         
         <!-- Stability of this release -->
         <stability>
-            <postnl>stable</postnl>
+            <postnl>dev</postnl>
         </stability>
     
         <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to 

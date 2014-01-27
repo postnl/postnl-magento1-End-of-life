@@ -36,31 +36,20 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_ShipmentGridMassAction
-{
-    /**
-     * Returns an option array for available shipment grid mass actions
-     * 
-     * @return array
-     */
-    public function toOptionArray()
-    {
-        $helper = Mage::helper('postnl');
-        $options = array(
-            array(
-                'value' => 'postnl_print_labels_and_confirm',
-                'label' => $helper->__('Print shipping labels & confirm shipment'),
-            ),
-            array(
-                'value' => 'postnl_print_labels',
-                'label' => $helper->__('Print shipping labels'),
-            ),
-            array(
-                'value' => 'postnl_confirm_shipments',
-                'label' => $helper->__('Confirm shipments'),
-            ),
-        );
-        
-        return $options;
-    }
-}
+ 
+$installer = $this;
+
+$installer->startSetup();
+
+$installer->getConnection()
+    ->addColumn($installer->getTable('postnl_core/shipment'),
+    'is_parcelware_exported',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+        'nullable' => false,
+        'default'  => 0,
+        'comment'  => 'Is Parcelware Exported'
+    )
+);
+
+$installer->endSetup();

@@ -36,11 +36,7 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
- 
- /**
-  * Base CIF model. Contains general code for communicating with the CIF API
-  */
-class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Varien_Object
+abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Varien_Object
 {
     /**
      * Wsdl location
