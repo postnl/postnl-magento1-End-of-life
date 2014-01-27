@@ -301,6 +301,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (is_null($process)) {
             $process = Mage::getModel('postnl_core/shipment_process')
                            ->setId($this->getId());
+            
             $this->setProcess($process);
         }
 
@@ -388,7 +389,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getExtraCoverAmount()
     {
-        if ($this->getData('extra_cover_amount')) {
+        if ($this->hasData('extra_cover_amount')) {
             return $this->getData('extra_cover_amount');
         }
         
@@ -655,6 +656,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         return $barcodeCollection->getItems();
     }
+
+    /**
+     * Alias for magic getIsParcelwareExported()
+     * 
+     * @return string
+     */
+    public function getIsExported()
+    {
+        return $this->getIsParcelwareExported();
+    }
     
     /****************************************************************************************************************************
      * SETTER METHODS
@@ -752,6 +763,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $this->setData('parcel_count', $count);
         return $this;
     }
+
+    /**
+     * Alias for magic setIsParcelwareExported()
+     * 
+     * @param mixed $isExported
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setIsExported($isExported)
+    {
+        return $this->setIsParcelwareExported($isExported);
+    }
     
     /****************************************************************************************************************************
      * SHIPMENT LOCKING AND UNLOCKING FUNCTIONS
@@ -767,6 +790,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $process = $this->getProcess();
         $process->lockAndBlock();
         
+        $this->isLocked();
+        $this->isLocked();
         return $this;
     }
     
@@ -987,6 +1012,28 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Alias for isParcelwareExported()
+     * 
+     * @return boolean
+     */
+    public function isExported()
+    {
+        return $this->isParcelwareExported();
+    }
+
+    /**
+     * Checks if this shipment has been exported to parcelware
+     * 
+     * @return boolean
+     */
+    public function isParcelwareExported()
+    {
+        $isExported = (bool) $this->getIsParcelwareExported();
+        
+        return $isExported;
+    }
+    
+    /**
      * Checks if the current entity may generate a barcode.
      * 
      * @return boolean
@@ -1144,9 +1191,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         /**
-         * If this shipment consists of a single parcel or if it's an international shipment we only need the main barcode
+         * If this shipment consists of a single parcel we only need the main barcode
          */
-        if ($parcelCount < 2 || $this->isGlobalShipment()) {
+        if ($parcelCount < 2) {
             Mage::dispatchEvent('postnl_shipment_generatebarcode_after', array('shipment' => $this));
             $this->unlock();
             
@@ -1299,6 +1346,36 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         
         return $labels;
     }
+
+    /**
+     * Manually confirms a shipment without communicating with PostNL. This should be used if you wish to update the confirmation
+     * status in Magento, while actually confirming the shipment through other means, such as parcelware.
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function manuallyConfirm()
+    {
+        if (!$this->canConfirm()) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The confirm action is currently unavailable.'),
+                'POSTNL-0109'
+            );
+        }
+        
+        $this->lock();
+        
+        Mage::dispatchEvent('postnl_shipment_confirm_before', array('shipment' => $this));
+
+        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
+             ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
+        
+        Mage::dispatchEvent('postnl_shipment_confirm_after', array('shipment' => $this));
+        
+        $this->unlock();
+        return $this;
+    }
     
     /**
      * Confirm the shipment with PostNL without generating new labels
@@ -1415,7 +1492,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * The response was not valid; throw an exception
          */
         throw new TIG_PostNL_Exception(
-            Mage::helper('postnl')->__('Invalid confirm response recieved: %s', var_export($result, true)),
+            Mage::helper('postnl')->__('Invalid confirm response received: %s', var_export($result, true)),
             'POSTNL-0072'
         );
     }
@@ -1970,6 +2047,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
         
         if ($this->isGlobalShipment()) {
+            if (!$cifHelper->isGlobalAllowed()) {
+                throw new TIG_PostNL_Exception(
+                    $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
+                    'POSTNL-0078'
+                );
+            }
+            
             $allowedProductCodes = $cifHelper->getGlobalProductCodes();
         }
         

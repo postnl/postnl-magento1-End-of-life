@@ -162,9 +162,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         
         $inbox = Mage::getModel('postnl/inbox');
         $inbox->addNotice(
-                  '[POSTNL-0083-N] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
-                  '[POSTNL-0083-N] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
-                  'http://servicedesk.totalinternetgroup.nl/entries/31921907', 
+                  '[POSTNL-0083] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
+                  '[POSTNL-0083] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
+                  'http://kb.totalinternetgroup.nl/topic/31921907', 
                   true
               )
               ->save();
@@ -173,16 +173,18 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     }
     
     /**
-     * generate a random cron expression for the status update cron for this merchant and store it in the database
+     * Generate a random cron expression for the status update cron for this merchant and store it in the database
      * 
      * @return TIG_PostNL_Model_Resource_Setup
      */
     public function generateShippingStatusCronExpr()
     {
         /**
-         * Generate random values for the cron expression
+         * Generate semi-random values for the cron expression
          */
         $cronMorningHour   = mt_rand(10, 12);
+        $cronMorningHour  += Mage::getModel('core/date')->getGmtOffset('hours');
+        
         $cronAfternoonHour = $cronMorningHour + 4; //4 hours after the morning update
         $cronMinute        = mt_rand(0, 59);
         
@@ -280,7 +282,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         
         $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/' . $edition);
         if ($supportedVersions === false) {
-            $message = '[POSTNL-0086-W] ' 
+            $message = '[POSTNL-0086] ' 
                      . $helper->__(
                            'The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.'
                        );
@@ -288,7 +290,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
             $inbox->addCritical(
                       $message,
                       $message,
-                      'http://servicedesk.totalinternetgroup.nl/entries/31925577', 
+                      'http://kb.totalinternetgroup.nl/topic/31925577', 
                       true
                   )
                   ->save();
@@ -303,7 +305,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $installedMagentoVersion = $installedMagentoVersionInfo['major'] . '.' . $installedMagentoVersionInfo['minor'];
         
         if (!in_array($installedMagentoVersion, $supportedVersionArray)) {
-            $message = '[POSTNL-0086-W] ' 
+            $message = '[POSTNL-0086] ' 
                      . $helper->__(
                            'The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.'
                        );
@@ -311,7 +313,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
             $inbox->addCritical(
                       $message,
                       $message,
-                      'http://servicedesk.totalinternetgroup.nl/entries/31925577',
+                      'http://kb.totalinternetgroup.nl/topic/31925577',
                       true
                   )
                   ->save();

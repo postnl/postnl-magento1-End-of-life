@@ -33,47 +33,82 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Model_Feed
+class TIG_PostNL_Helper_Parcelware extends TIG_PostNL_Helper_Data
 {
-    const XML_PATH_FEED_USE_HTTPS  = 'postnl/advanced/feed_use_https';
-    const XML_PATH_FEED_URL        = 'postnl/advanced/feed_url';
-
     /**
-     * Retrieve feed url
-     *
-     * @return string
+     * XML path to auto confirm setting
      */
-    public function getFeedUrl()
+    const XML_PATH_AUTO_CONFIRM = 'postnl/parcelware_export/auto_confirm';
+    
+    /**
+     * XML path to the active/inactive setting
+     */
+    const XML_PATH_ACTIVE = 'postnl/parcelware_export/active';
+    
+    /**
+     * AutoConfirmEnabled flag
+     *
+     * @var boolean|null $_autoConfirmEnabled
+     */
+    protected $_autoConfirmEnabled = null;
+    
+    /**
+     * Gets the autoConfirmEnabled flag
+     * 
+     * @return boolean|null
+     */
+    public function getAutoConfirmEnabled()
     {
-        if (!is_null($this->_feedUrl)) {
-            return $this->_feedUrl;
-        }
-        
-        $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        
-        $scheme = 'http://';
-        $useHttps = Mage::getStoreConfigFlag(self::XML_PATH_FEED_USE_HTTPS, $adminStoreId);
-        if ($useHttps) {
-            $scheme = 'https://';
-        }
-        
-        $feedUrl = $scheme . Mage::getStoreConfig(self::XML_PATH_FEED_URL, $adminStoreId);
-        
-        $this->setFeedurl($feedUrl);        
-        return $feedUrl;
+        return $this->_autoConfirmEnabled;
     }
     
     /**
-     * Set the feed url
+     * Sets the autoConfirmEnabled flag
      * 
-     * @return TIG_PostNL_Model_ExtensionControl_Feed
+     * @param boolean $autoConfirmEnabled
+     * 
+     * @return TIG_PostNL_Helper_Parcelware
      */
-    public function setFeedUrl($feedUrl)
+    public function setAutoConfirmEnabled($autoConfirmEnabled)
     {
-        $this->_feedUrl = $feedUrl;
+        $this->_autoConfirmEnabled = $autoConfirmEnabled;
+        
         return $this;
+    }
+    
+    /**
+     * Check to see if parcelware export functionality is enabled.
+     * 
+     * @todo implement this method
+     */
+    public function isParcelwareExportEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+        
+        $active = Mage::getStoreConfigFlag(self::XML_PATH_ACTIVE, $storeId);
+        
+        return $active;
+    }
+    
+    /**
+     * Checks if auto confirm is enabled
+     * 
+     * @return boolean
+     */
+    public function isAutoConfirmEnabled()
+    {
+        if ($this->getAutoConfirmEnabled() !== null) {
+            return $this->getAutoConfirmEnabled();
+        }
+        
+        $autoConfirmEnabled = Mage::getStoreConfigFlag(self::XML_PATH_AUTO_CONFIRM, Mage_Core_Model_App::ADMIN_STORE_ID);
+        
+        $this->setAutoConfirmEnabled($autoConfirmEnabled);
+        return $autoConfirmEnabled;
     }
 }

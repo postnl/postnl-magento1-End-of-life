@@ -594,6 +594,57 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     }
     
     /**
+     * Creates a parcelware export file based on the selected shipments
+     * 
+     * @return TIG_PostNL_Adminhtml_ShipmentController
+     */
+    public function massCreateParcelwareExportAction()
+    {
+        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
+        $helper = Mage::helper('postnl');
+        
+        /**
+         * Check if a shipment was selected
+         */
+        if (!is_array($shipmentIds)) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0013', 'error',
+                $this->__('Please select one or more shipments.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+        
+        try {
+            /**
+             * Load the shipments and check if they are valid
+             */
+            $shipments = $this->_loadAndCheckShipments($shipmentIds, true);
+            
+            $parcelwareExportModel = Mage::getModel('postnl_parcelware/export');
+            $csvContents = $parcelwareExportModel->exportShipments($shipments);
+            
+            $this->_prepareDownloadResponse('PostNL_Parcelware_Export.csv', $csvContents);
+        } catch (TIG_PostNL_Exception $e) {
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            $helper->logException($e);
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error', 
+                $this->__('An error occurred while processing this action.')
+            );
+            
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+        
+        $this->_redirect('adminhtml/sales_shipment/index');
+        return $this;
+    }
+    
+    /**
      * Creates a shipment of an order containing all available items
      * 
      * @param int $orderId
@@ -776,11 +827,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         }
         
         /**
-         * If the shipment does not have a barcode, generate one
+         * If the shipment does not have a main barcode, generate new barcodes
          */
         if (!$postnlShipment->getMainBarcode()) {
-            $postnlShipment->generateBarcode()
-                           ->addTrackingCodeToShipment();
+            $postnlShipment->generateBarcodes();
         }
         
         if ($postnlShipment->getConfirmStatus() === $postnlShipment::CONFIRM_STATUS_CONFIRMED) {
@@ -804,14 +854,15 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                        ->addTrackingCodeToShipment()
                        ->save();
         
-        $labels = $postnlShipment->getLabels();
-        return $labels;
+        return $this;
     }
     
     /**
      * Load an array of shipments based on an array of shipmentIds and check if they're shipped using PostNL
      * 
-     * @param array $shipmentIds
+     * @param array|int $shipmentIds
+     * @param boolean $loadPostnlShipments Flag that determines whether the shipments will be loaded as Mage_Sales_Model_Shipment
+     *                                     or TIG_PostNL_Model_Core_Shipment objects
      * 
      * @return array
      * 
@@ -851,7 +902,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     }
     
     /**
-     * Checks if any warnings were recieved while processing the action in CIF. If any warnings are found they are
+     * Checks if any warnings were received while processing the action in CIF. If any warnings are found they are
      * added to the adminhtml session as a notice.
      * 
      * @return TIG_PostNL_Adminhtml_ShipmentController

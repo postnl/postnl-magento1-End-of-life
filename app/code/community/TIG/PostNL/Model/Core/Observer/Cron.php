@@ -220,11 +220,16 @@ class TIG_PostNL_Model_Core_Observer_Cron
         
         $helper->cronLog("{$fileCount} locks found.");
         foreach ($files as $path) {
+            if (!is_file($path)) {
+                continue;
+            }
+            
             /**
              * First we must open and unlock the file
              */
             $file = fopen($path, 'r+');
             flock($file, LOCK_UN);
+            fclose($file);
             
             /**
              * The file should contain a date
@@ -236,7 +241,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             if ($timestamp < $maxTimestamp) {
                 $helper->cronLog("Deleting file: {$path}.");
-                unlink($path);
+                @unlink($path);
             }
         }
         
@@ -364,6 +369,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 $helper->cronLog("Updating shipping status for shipment #{$postnlShipment->getShipment()->getId()}");
                 
                 if (!$postnlShipment->canUpdateShippingStatus()) {
+                    $postnlShipment->unlock();
                     $helper->cronLog("Updating shipment #{$postnlShipment->getShipment()->getId()} is not allowed. Continuing with next shipment.");
                     continue;
                 }
@@ -371,8 +377,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 $postnlShipment->updateShippingStatus()
                                ->save();
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                $postnlShipment->unlock();
+                
                 $this->_parseErrorCodes($e, $postnlShipment);
             } catch (Exception $e) {
+                $postnlShipment->unlock();
+                
                 Mage::helper('postnl')->logException($e);
             }
         }

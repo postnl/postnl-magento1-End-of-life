@@ -280,7 +280,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     public function getStoreId()
     {
-        if ($this->getData('store_id')) {
+        if ($this->hasStoreId()) {
             return $this->getData('store_id');
         }
 
@@ -326,6 +326,66 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Barcode', 
             'GenerateBarcode',
             $soapParams
+        );
+        
+        if (!is_object($response) 
+            || !isset($response->Barcode)
+        ) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid barcode response: %s', "\n" . var_export($response, true)),
+                'POSTNL-0054'
+            );
+        }
+        
+        return $response->Barcode;
+    }
+
+    /**
+     * Requests a new barcode from CIF as a ping request. This can be used to validate account settings or to check if the CIF
+     * service is up and running. This is not meant to be used to generate an actual barcode for a shipment. Use the
+     * generateBarcode method for that.
+     * 
+     * The generateBarcode CIF call was chosena s it is the simplest CIF function available.
+     * 
+     * @param array $data Array containing all data required for the request.
+     * 
+     * @return string
+     * 
+     * @throws TIG_PostNL_Exception
+     */
+    public function generateBarcodePing($data)
+    {
+        $this->setStoreId(Mage_Core_Model_App::ADMIN_STORE_ID);
+        
+        $barcode = $this->_getBarcodeData('NL');
+        
+        $message  = $this->_getMessage('');
+        $range    = $barcode['range'];
+        $type     = $barcode['type'];
+        $serie    = $barcode['serie'];
+        
+        $customer = array(
+            'CustomerCode'       => $data['customerCode'],
+            'CustomerNumber'     => $data['customerNumber'],
+            'CollectionLocation' => $data['locationCode'],
+        );
+        
+        $soapParams = array(
+            'Message'  => $message,
+            'Customer' => $customer,
+            'Barcode'  => array(
+                'Type'  => $type,
+                'Range' => $range,
+                'Serie' => $serie,
+            ),
+        );
+        
+        $response = $this->call(
+            'Barcode', 
+            'GenerateBarcode',
+            $soapParams,
+            $data['username'],
+            $data['password']
         );
         
         if (!is_object($response) 
@@ -834,8 +894,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
         
         /**
-         * Determine which address to use. Currently only 'Sender' and 'Reciever' are fully supported.
-         * Other possible address types will use the default 'reciever' address.
+         * Determine which address to use. Currently only 'Sender' and 'Receiver' are fully supported.
+         * Other possible address types will use the default 'receiver' address.
          */
         $streetData = false;
         switch ($addressType) {
@@ -882,7 +942,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $address = new Varien_Object($returnAddress);
                 break;
             case 'PakjeGemak': //no break
-            case 'Reciever': //no break
+            case 'Receiver': //no break
             default:
                 $address = $shippingAddress;
                 break;
@@ -974,6 +1034,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 );
         }
 
+        if (!$type || !$range) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to retrieve barcode data.'),
+                'POSTNL-0111'
+            );
+        }
+        
         $barcodeData = array(
             'type'  => $type,
             'range' => $range,
@@ -1080,10 +1147,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * use Enterprise, in customers > attributes > manage customer address attributes. 
      * 
      * @param Mage_Sales_Model_Order_Address $address
+     * @param boolean $allowFullStreet
      * 
      * @return array
      */
-    protected function _getStreetData($address)
+    protected function _getStreetData($address, $allowFullStreet = true)
     {
         $storeId = $this->getStoreId();
         $splitStreet = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_STREET, $storeId);
@@ -1112,7 +1180,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Select countries don't have to split their street values into seperate part
          */
-        if (in_array($address->getCountry(), $allowedFullStreetCountries)) {
+        if ($allowFullStreet === true 
+            && in_array($address->getCountry(), $allowedFullStreetCountries)
+        ) {
             $streetData = array(
                 'streetname'           => '',
                 'housenumber'          => '',
@@ -1230,6 +1300,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _splitHousenumber($housenumber)
     {
+        $housenumber = trim($housenumber);
+        
         $result = preg_match(self::SPLIT_HOUSENUMBER_REGEX, $housenumber, $matches);
         if (!$result || !is_array($matches)) {
             throw new TIG_PostNL_Exception(

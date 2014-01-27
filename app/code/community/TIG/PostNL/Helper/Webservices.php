@@ -54,9 +54,9 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     const XML_PATH_SEND_STATISTICS = 'postnl/advanced/send_statistics';
     
     /**
-     * XML path to recieveUpdates on/off switch
+     * XML path to receiveUpdates on/off switch
      */
-    const XML_PATH_RECIEVE_UPDATES = 'postnl/advanced/recieve_updates';
+    const XML_PATH_RECEIVE_UPDATES = 'postnl/advanced/receive_updates';
     
     /**
      * Log filename to log all webservices exceptions
@@ -113,16 +113,16 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     }
     
     /**
-     * Checks whether the module may automatically recieve updates regarding the module or promotions
+     * Checks whether the module may automatically receive updates regarding the module or promotions
      * 
      * @return boolean
      */
-    public function canRecieveUpdates()
+    public function canReceiveUpdates()
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         
-        $recieveUpdates =  Mage::getStoreConfigFlag(self::XML_PATH_RECIEVE_UPDATES);
-        if (!$recieveUpdates) {
+        $receiveUpdates =  Mage::getStoreConfigFlag(self::XML_PATH_RECEIVE_UPDATES);
+        if (!$receiveUpdates) {
             return false;
         }
         
@@ -172,7 +172,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
         
         $logMessage = "Request sent:\n"
                     . $requestXml
-                    . "\nResponse recieved:\n"
+                    . "\nResponse received:\n"
                     . $responseXML;
         
         $file = self::POSTNL_LOG_DIRECTORY . DS . self::WEBSERVICES_DEBUG_LOG_FILE;
@@ -209,19 +209,19 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
             $errorNumbers = $exception->getErrorNumbers();
             if (!empty($errorNumbers)) {
                 $errorNumbers = implode(', ', $errorNumbers);
-                $logMessage .= "Error numbers recieved: {$errorNumbers}\n";
+                $logMessage .= "Error numbers received: {$errorNumbers}\n";
             }
             
             $logMessage .= "<<< REQUEST SENT >>>\n"
                         . $requestXml
-                        . "\n<<< RESPONSE RECIEVED >>>\n"
+                        . "\n<<< RESPONSE RECEIVED >>>\n"
                         . $responseXML;
         } else {
             $logMessage = "\n" . $exception->__toString();
         }
         
         $file = self::POSTNL_LOG_DIRECTORY . DS . self::WEBSERVICES_EXCEPTION_LOG_FILE;
-        $this->log($logMessage, Zend_Log::ERR, $file);
+        $this->log($logMessage, Zend_Log::ERR, $file, false, true);
         
         return $this;
     }

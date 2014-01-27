@@ -192,12 +192,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
             '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
             array(
-                'confirm_date'   => 'postnl_shipment.confirm_date',
-                'main_barcode'   => 'postnl_shipment.main_barcode',
-                'confirm_status' => 'postnl_shipment.confirm_status',
-                'labels_printed' => 'postnl_shipment.labels_printed',
-                'shipping_phase' => 'postnl_shipment.shipping_phase',
-                'parcel_count'   => 'postnl_shipment.parcel_count',
+                'confirm_date'           => 'postnl_shipment.confirm_date',
+                'main_barcode'           => 'postnl_shipment.main_barcode',
+                'confirm_status'         => 'postnl_shipment.confirm_status',
+                'labels_printed'         => 'postnl_shipment.labels_printed',
+                'shipping_phase'         => 'postnl_shipment.shipping_phase',
+                'parcel_count'           => 'postnl_shipment.parcel_count',
+                'is_parcelware_exported' => 'postnl_shipment.is_parcelware_exported',
             )
         );
         
@@ -229,6 +230,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         
         $createdAtColumn = $block->getColumn('created_at');
         $createdAtColumn->setFilterIndex('main_table.created_at');
+        
+        $massactionColumn = $block->getColumn('massaction');
+        $massactionColumn->setFilterIndex('main_table.entity_id');
         
         return $this;
     }
@@ -310,36 +314,59 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $after = 'shipment_type';
         }
         
-        $block->addColumnAfter(
-            'confirm_date',
-            array(
-                'type'           => 'date',
-                'header'         => $helper->__('Send Date'),
-                'align'          => 'left',
-                'index'          => 'confirm_date',
-                'filter_index'   => 'postnl_shipment.confirm_date',
-                'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_confirmDate',
-                'width'          => '150px',
-                'frame_callback' => array($this, 'decorateConfirmDate'),
-            ),
-            $after
-        );
+        if (in_array('confirm_date', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'confirm_date',
+                array(
+                    'type'           => 'date',
+                    'header'         => $helper->__('Send Date'),
+                    'index'          => 'confirm_date',
+                    'filter_index'   => 'postnl_shipment.confirm_date',
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_confirmDate',
+                    'width'          => '150px',
+                    'frame_callback' => array($this, 'decorateConfirmDate'),
+                ),
+                $after
+            );
+            
+            $after = 'confirm_date';
+        }
         
-        $after = 'confirm_date';
+        if (in_array('confirm_status', $columnsToDisplay)) {
+            $postnlShipmentClass = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
+            
+            $block->addColumnAfter(
+                'confirm_status',
+                array(
+                    'header'         => $helper->__('Confirm Status'),
+                    'type'           => 'options',
+                    'index'          => 'confirm_status',
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_confirmStatus',
+                    'frame_callback' => array($this, 'decorateConfirmStatus'),
+                    'options'        => array(
+                        $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED       => $helper->__('Confirmed'),
+                        $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED     => $helper->__('Unconfirmed'),
+                        $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED => $helper->__('Confirmation Expired'),
+                    ),
+                ),
+                $after
+            );
+            
+            $after = 'confirm_status';
+        }
         
         if (in_array('labels_printed', $columnsToDisplay)) {
             $block->addColumnAfter(
                 'labels_printed',
                 array(
                     'header'         => $helper->__('Labels printed'),
-                    'align'          => 'left',
                     'type'           => 'options',
                     'index'          => 'labels_printed',
                     'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_yesNo',
-                    'frame_callback' => array($this, 'decorateLabelsPrinted'),
+                    'frame_callback' => array($this, 'decorateYesNo'),
                     'options'        => array(
-                        1 => Mage::helper('postnl')->__('Yes'),
-                        0 => Mage::helper('postnl')->__('No'),
+                        1 => $helper->__('Yes'),
+                        0 => $helper->__('No'),
                     ),
                 ),
                 $after
@@ -348,18 +375,41 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $after = 'labels_printed';
         }
         
-        $block->addColumnAfter(
-            'barcode',
-            array(
-                'header'   => $helper->__('Track & Trace'),
-                'align'    => 'left',
-                'index'    => 'main_barcode',
-                'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_barcode',
-            ),
-            $after
-        );
+        if (in_array('is_parcelware_exported', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'is_parcelware_exported',
+                array(
+                    'header'         => $helper->__('Exported to parcelware'),
+                    'align'          => 'left',
+                    'type'           => 'options',
+                    'index'          => 'is_parcelware_exported',
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_yesNo',
+                    'frame_callback' => array($this, 'decorateYesNo'),
+                    'options'        => array(
+                        1 => $helper->__('Yes'),
+                        0 => $helper->__('No'),
+                    ),
+                ),
+                $after
+            );
+            
+            $after = 'is_parcelware_exported';
+        }
         
-        $after = 'barcode';
+        if (in_array('barcode', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'barcode',
+                array(
+                    'header'   => $helper->__('Track & Trace'),
+                    'align'    => 'left',
+                    'index'    => 'main_barcode',
+                    'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_barcode',
+                ),
+                $after
+            );
+            
+            $after = 'barcode';
+        }
         
         if (in_array('shipping_phase', $columnsToDisplay)) {
             $block->addColumnAfter(
@@ -450,6 +500,41 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     }
     
     /**
+     * Decorates the confirm_status column
+     * 
+     * @param string | null $value
+     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     * @param boolean $isExport
+     * 
+     * @return string
+     */
+    public function decorateConfirmStatus($value, $row, $column, $isExport)
+    {
+        if ($isExport) {
+            return $value;
+        }
+        
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        switch ($row->getData($column->getIndex())) {
+            case null: //rows with no value (non-PostNL shipments)
+                $class = '';
+                break;
+            case $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED:
+                $class = 'grid-severity-notice';
+                break;
+            case $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED:
+            case $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED:
+                $class = 'grid-severity-critical';
+                break;
+            default:
+                $class = '';
+                break;
+        }
+        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
+    }
+    
+    /**
      * Decorates the labels_printed column
      * 
      * @param string | null $value
@@ -459,7 +544,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * 
      * @return string
      */
-    public function decorateLabelsPrinted($value, $row, $column, $isExport)
+    public function decorateYesNo($value, $row, $column, $isExport)
     {
         if ($isExport) {
             return $value;
@@ -532,24 +617,32 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     protected function _addMassaction($block)
     {
+        $helper = Mage::helper('postnl');
+        $adminhtmlHelper = Mage::helper('adminhtml');
+        
         $massactionBlock = $block->getMassactionBlock();
         
         /**
          * Build all the mass action option arrays
          */
         $printAndConfirmOptions = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels & confirm shipment'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
+            'label'=> $helper->__('PostNL - Print shipping labels & confirm shipment'),
+            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
         );
         
         $printOptions = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
+            'label'=> $helper->__('PostNL - Print shipping labels'),
+            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
         );
         
         $confirmOptions = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Confirm shipments'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massConfirm'),
+            'label'=> $helper->__('PostNL - Confirm shipments'),
+            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massConfirm'),
+        );
+        
+        $parcelWareOptions = array(
+            'label' => $helper->__('PostNL - Create parcelware export'),
+            'url'   => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massCreateParcelwareExport')
         );
         
         /**
@@ -573,6 +666,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case 'postnl_confirm_shipments':
                 $confirmOptions['selected'] = true;
                 break;
+            case 'postnl_parcelware_export':
+                $parcelWareOptions['selected'] = true;
+                break;
             // no default
         }
         
@@ -593,6 +689,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'postnl_confirm_shipments',
             $confirmOptions
         );
+        
+        $parcelwareExportEnabled = Mage::helper('postnl/parcelware')->isParcelwareExportEnabled();
+        if ($parcelwareExportEnabled) {
+            $massactionBlock->addItem(
+                'postnl_parcelware_export',
+                $parcelWareOptions
+            );
+        }
         
         return $this;
     }
@@ -701,7 +805,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
         
         /**
-         * Lastly, filter out all orders who are being shipped to the Netherlands or other EU countries
+         * Lastly, filter out all orders that are being shipped to the Netherlands or other EU countries
          */
         $collection->addFieldToFilter('country_id', array('neq' => 'NL'));
         $collection->addFieldToFilter('country_id', array('nin' => $euCountries));
