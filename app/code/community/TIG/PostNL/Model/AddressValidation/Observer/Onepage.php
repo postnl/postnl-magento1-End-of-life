@@ -95,7 +95,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
         /**
          * Check if the extension is active
          */
-        if (!Mage::helper('postnl')->isEnabled()) {
+        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled()) {
             return $this;
         }
         
@@ -133,7 +133,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
         /**
          * Check if the extension is active
          */
-        if (!Mage::helper('postnl')->isEnabled()) {
+        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled()) {
             return $this;
         }
         

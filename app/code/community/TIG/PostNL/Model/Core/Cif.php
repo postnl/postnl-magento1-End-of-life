@@ -56,11 +56,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Constants containing XML paths to cif address configuration options
      */
-    const XML_PATH_SPLIT_STREET                = 'postnl/cif_address/split_street';
-    const XML_PATH_STREETNAME_FIELD            = 'postnl/cif_address/streetname_field';
-    const XML_PATH_HOUSENUMBER_FIELD           = 'postnl/cif_address/housenr_field';
-    const XML_PATH_SPLIT_HOUSENUMBER           = 'postnl/cif_address/split_housenr';
-    const XML_PATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
     const XML_PATH_AREA_FIELD                  = 'postnl/cif_address/area_field';
     const XML_PATH_BUILDING_NAME_FIELD         = 'postnl/cif_address/building_name_field';
     const XML_PATH_DEPARTMENT_FIELD            = 'postnl/cif_address/department_field';
@@ -1154,7 +1149,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getStreetData($address, $allowFullStreet = true)
     {
         $storeId = $this->getStoreId();
-        $splitStreet = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_STREET, $storeId);
+        $splitStreet = Mage::helper('postnl/addressValidation')->useSplitStreet($storeId);
         
         /**
          * Website uses multi-line address mode
@@ -1210,8 +1205,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getMultiLineStreetData($address)
     {
         $storeId = $this->getStoreId();
-        $streetnameField = (int) Mage::getStoreConfig(self::XML_PATH_STREETNAME_FIELD, $storeId);
-        $housenumberField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_FIELD, $storeId);
+        $addressHelper = Mage::helper('postnl/addressValidation');
+        
+        $streetnameField = $addressHelper->getStreetnameField($storeId);;
+        $housenumberField = $addressHelper->getHousenumberField($storeId);;
         
         $streetname = $address->getStreet($streetnameField);
         $housenumber = $address->getStreet($housenumberField);
@@ -1226,9 +1223,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Split the housenumber into a number and an extension
          */
-        $splitHouseNumber = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_HOUSENUMBER, $storeId);
+        $splitHouseNumber = $addressHelper->useSplitHousenumber();
         if ($splitHouseNumber) {
-            $housenumberExtensionField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);
+            $housenumberExtensionField = $addressHelper->getHousenumberExtensionField();
             $housenumberExtension = $address->getStreet($housenumberExtensionField);
         } else {
             $housenumberParts = $this->_splitHousenumber($housenumber);
