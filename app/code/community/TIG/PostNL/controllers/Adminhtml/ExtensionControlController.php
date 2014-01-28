@@ -144,8 +144,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         
         $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__(
-                'Your webshop has been registered. You should receive an email on the email address you specify shortly. 
-                Please read this email carefully as it contains instructions on how to finish the extension activation procedure.'
+                'Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.'
             )
         );
         
