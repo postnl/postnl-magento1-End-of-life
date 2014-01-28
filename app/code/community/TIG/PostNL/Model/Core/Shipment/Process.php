@@ -61,11 +61,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         $varDir = Mage::getConfig()->getVarDir('locks');
         $file = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
         
-        if (is_file($file)) {
-            $this->_lockFile = fopen($file, 'w');
-        } else {
-            $this->_lockFile = fopen($file, 'x');
-        }
+        $this->_lockFile = fopen($file, 'w');
         
         $timestamp = Mage::getModel('core/date')->gmtTimestamp();
         fwrite($this->_lockFile, date('r', $timestamp));
@@ -117,12 +113,13 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         $this->_isLocked = false;
         $file = $this->_getLockFile();
         
-        flock($file, LOCK_UN);  
+        flock($file, LOCK_UN);
+        fclose($file);
         
         //remove lockfile
         $varDir   = Mage::getConfig()->getVarDir('locks');
         $lockFile = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
-        unlink($lockFile);
+        @unlink($lockFile);
         
         return $this;
     }
@@ -143,12 +140,13 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
             flock($fp, LOCK_UN);
             return false;
         }
+        fclose($fp);
         
         //if the lock exists and exists for longer then 5minutes then remove lock & return false
         if($this->_lockIsExpired()){
             $varDir   = Mage::getConfig()->getVarDir('locks');
             $lockFile = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
-            unlink($lockFile);
+            @unlink($lockFile);
             
             $this->_getLockFile();//create new lock file
             return false;
@@ -180,10 +178,16 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         if($time <= $fiveMinAgo){
             $fp = fopen($file,'w');
             flock($fp, LOCK_UN);
-            unlink($file);
+            fclose($fp);
+            @unlink($file);
             return true;
         }
         
         return false;
+    }
+
+    public function __destruct()
+    {
+        
     }
 }

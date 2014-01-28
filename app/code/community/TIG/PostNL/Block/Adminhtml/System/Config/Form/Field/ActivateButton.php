@@ -66,7 +66,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
         $html = $this->getLayout()->createBlock('adminhtml/widget_button')
                      ->setId($element->getHtmlId())
                      ->setType('button')
-                     ->setClass('scalable')
+                     ->setClass('scalable postnl-button')
                      ->setLabel($label)
                      ->setOnClick("activatePostNL()")
                      ->toHtml();

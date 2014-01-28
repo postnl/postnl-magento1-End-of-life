@@ -55,7 +55,7 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
     protected $_requestXml;
     
     /**
-     * XML recieved in response
+     * XML received in response
      * 
      * @var string The XML string CIF returned
      */

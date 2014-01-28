@@ -56,7 +56,7 @@
                         <ul class="postnl-config-warning">
                             <li><?php echo $this->__("You should make sure that each product you intend to ship using PostNL has a correct value for it's weight attribute. You can select a unit of measurement for this attribute in the 'Confirming & Label Settings' tab below. If you do not do this, PostNL may charge you extra when a parcel turns out to weigh significantly more than expected or they may even refuse your shipment."); ?></li>
                             <li><?php echo $this->__("Make sure the PostNL shipping method is configured under system > config > shipping methods > PostNL. Only shipments made using this shipping method will be able to use PostNL's services. You may choose to charge either a flat rate or a table rate-based shipping fee. In the case of the latter, the table rates you have added under the Table Rate shipping method will be used. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.", 'http://www.magentocommerce.com/knowledge-base/entry/how-do-i-set-up-table-rate-shipping'); ?></li>
-                            <li><?php echo $this->__("You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.", 'http://servicedesk.totalinternetgroup.nl/entries/31080848'); ?></li>
+                            <li><?php echo $this->__("You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.", 'http://kb.totalinternetgroup.nl/topic/31080848'); ?></li>
                         </ul>
                     </div>
                 </td>
@@ -80,7 +80,6 @@
                                     <li><?php echo $this->__("Make sure you have your PostNL account info with you. You will need the following info: username & password, customer number, customer code, and BLS code. You need to enter these in the 'Account Settings' tab.");?></li>
                                     <li><?php echo $this->__("First enter your username and password. Depending on the status of your account, you may either enter the 'test' or 'live' version of these fields. Please note: if you do not enter the 'live' fields, you will only be able to create test shipments.");?></li>
                                     <li><?php echo $this->__('Next enter your customer number, customer code and BLS code. If you are unsure about which information to enter here, please contact PostNL.'); ?></li>
-                                    <li><?php echo $this->__('Now enter your company name, your contact name and your email address.'); ?></li>
                                 </ol>
                             </li>
                             <li><strong><?php echo $this->__('Enter a sender and return address');?></strong>
@@ -137,16 +136,16 @@
                         <h3><?php echo $this->__('Support');?></h3>
                         <p><?php echo $this->__('The extension is developed by Total Internet Group, commissioned by PostNL. Depending on the nature of the issue or question you should contact either PostNL or Total Internet Group.');?></p>
                         <h4><?php echo $this->__('PostNL account information and PostNL services');?></h4>
-                        <p><?php echo $this->__('For questions related to your PostNL account, please contact your PostNL account manager.');?></p>
+                        <p><?php echo $this->__('For questions related to your PostNL account and PostNL delivery options, please contact PostNL.');?></p>
                         <p><a href="http://www.postnl.nl" target="_blank"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>" alt="" /></a></p>
                         <table class="contact">
                              <tr>
                                 <td class="first"><?php echo $this->__('PostNL:');?></td>
-                                <td class="last"><a target="_blank" href="http://www.postnl.nl/voorthuis/klantenservice/">http://www.postnl.nl/voorthuis/klantenservice/</a></td>
+                                <td class="last"><a target="_blank" href="http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties">http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties</a></td>
                             </tr>
                             <tr>
                                 <td class="first"><?php echo $this->__('Phone:');?></td>
-                                <td class="last">+31(0)88-86-86-868 </td>
+                                <td class="last">058-2333343</td>
                             </tr>
                         </table>
                         <h4><?php echo $this->__('Extension support and configuration questions');?></h4>
@@ -158,12 +157,16 @@
                                 <td class="last"><a target="_blank" href="http://servicedesk.totalinternetgroup.nl/forums">http://servicedesk.totalinternetgroup.nl/forums</a></td>
                             </tr>
                              <tr>
-                                <td class="first"><?php echo $this->__('Online support form:');?></td>
+                                <td class="first"><?php echo $this->__('Request help directly:');?></td>
                                 <td class="last"><a target="_blank" href="http://servicedesk.totalinternetgroup.nl/requests/new">http://servicedesk.totalinternetgroup.nl/requests/new</a></td>
                             </tr>
                             <tr>
                                 <td class="first"><?php echo $this->__('Email:');?></td>
                                 <td class="last"><a href="mailto:servicedesk@totalinternetgroup.nl">servicedesk@totalinternetgroup.nl</a></td>
+                            </tr>
+                            <tr>
+                                <td class="first"><?php echo $this->__('Phone:');?></td>
+                                <td class="last">+31(0)20 – 21 81 001</td>
                             </tr>
                         </table>
                     </div>
@@ -172,7 +175,7 @@
                         <p><?php echo $this->__('A list of documents regarding the extension.');?></p>
                         <ul>
                             <li><a class="pdf" target="_blank" href="<?php echo $this->getSkinUrl('media/TIG/PostNL/manual.pdf')?>" title="<?php echo $this->__('View the installation and configuration manual.');?>"><?php echo $this->__('Installation and configuration manual');?></a></li>
-                            <li><a target="_blank" href="" title="<?php echo $this->__('View the complete changelog of the extension.');?>"><?php echo $this->__('Full changelog');?></a></li>
+                            <li><a target="_blank" href="http://servicedesk.totalinternetgroup.nl/entries/38584893" title="<?php echo $this->__('View the complete changelog of the extension.');?>"><?php echo $this->__('Full changelog');?></a></li>
                         </ul>
                     </div>
                 </td>

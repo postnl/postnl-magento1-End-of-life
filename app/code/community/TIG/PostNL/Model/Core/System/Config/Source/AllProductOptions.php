@@ -317,21 +317,23 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
          * Check each eu option to see if it's supprted
          */
         $availableGlobalOptions = array();
-        foreach ($options['global_options']['value'] as $option) {
-            if (!in_array($option['value'], $supportedOptionsArray)) {
-                continue;
+        if ($helper->isGlobalAllowed()) {
+            foreach ($options['global_options']['value'] as $option) {
+                if (!in_array($option['value'], $supportedOptionsArray)) {
+                    continue;
+                }
+                
+                if (isset($option['isExtraCover']) && $withExtraCover !== true) {
+                    continue;
+                }
+                
+                if ($codesOnly === true) {
+                    $availableOptions[] = $option['value'];
+                    continue;
+                }
+                
+                $availableGlobalOptions[] = $option;
             }
-            
-            if (isset($option['isExtraCover']) && $withExtraCover !== true) {
-                continue;
-            }
-            
-            if ($codesOnly === true) {
-                $availableOptions[] = $option['value'];
-                continue;
-            }
-            
-            $availableGlobalOptions[] = $option;
         }
             
         /**

@@ -124,6 +124,30 @@ class TIG_PostNL_Block_Checkout_Summary extends Mage_Sales_Block_Items_Abstract
         return $shippingDescription;
     }
     
+    public function getPaymentOption()
+    {
+        $paymentData = Mage::registry('postnl_payment_data');
+        $methodCode = $paymentData['method'];
+        $optionValue = $paymentData['option'];
+        
+        if (!$optionValue) {
+            return false;
+        }
+        
+        $optionConversionArray = Mage::helper('postnl/checkout')->getOptionConversionArray();
+        if (!array_key_exists($methodCode, $optionConversionArray)) {
+            return $optionValue;
+        }
+        
+        $methodArray = $optionConversionArray[$methodCode];
+        if (!array_key_exists($optionValue, $methodArray)) {
+            return $optionValue;
+        }
+        
+        $convertedOption = $methodArray[$optionValue];
+        return $convertedOption;
+    }
+    
     /**
      * Gets the PostNL order associated with the current quote
      * 

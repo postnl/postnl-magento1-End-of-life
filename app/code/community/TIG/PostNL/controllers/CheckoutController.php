@@ -189,7 +189,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $response = Mage::helper('core')->jsonEncode($responseArray);
             
             /**
-             * Save a new PostNL order containing the current quote ID as well as the recieved order token
+             * Save a new PostNL order containing the current quote ID as well as the received order token
              */
             $quote = Mage::getSingleton('checkout/session')->getQuote();
             $postnlOrder = Mage::getModel('postnl_checkout/order');
@@ -253,7 +253,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $orderDetails = $cif->readOrder();
             
             /**
-             * Update the quote with the recieved order details
+             * Update the quote with the received order details
              */
             $service = Mage::getModel('postnl_checkout/service');
             $service->setQuote($quote)
@@ -615,6 +615,20 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             if ($addErrors) {
                 Mage::helper('postnl')->addSessionMessage('checkout/session', 'POSTNL-0026', 'error', 
                     $this->__('It seems your cart has been changed since you started the checkout process. Please try again.')
+                );
+            }
+            
+            $postnlOrder->setIsActive(false)->save();
+            return false;
+        }
+        
+        /**
+         * Check if the quote actually has any items
+         */
+        if (Mage::helper('checkout/cart')->getItemsCount() < 1) {
+            if ($addErrors) {
+                Mage::helper('postnl')->addSessionMessage('checkout/session', 'POSTNL-0112', 'error', 
+                    $this->__('Your shopping cart is empty. Please add a product and try again.')
                 );
             }
             

@@ -48,6 +48,10 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
         $helper = Mage::helper('postnl');
         $columns = array(
             array(
+                'value' => 'parcel_count',
+                'label' => $helper->__('Number of Parcels')
+            ),
+            array(
                 'value' => 'shipping_description',
                 'label' => $helper->__('Shipping Method')
             ),
@@ -56,16 +60,24 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
                 'label' => $helper->__('Shipment Type')
             ),
             array(
+                'value' => 'confirm_date',
+                'label' => $helper->__('Send Date')
+            ),
+            array(
+                'value' => 'confirm_status',
+                'label' => $helper->__('Confirm Status')
+            ),
+            array(
                 'value' => 'labels_printed',
                 'label' => $helper->__('Labels Printed')
             ),
             array(
-                'value' => 'shipping_phase',
-                'label' => $helper->__('Shipping Phase')
+                'value' => 'barcode',
+                'label' => $helper->__('Barcode')
             ),
             array(
-                'value' => 'parcel_count',
-                'label' => $helper->__('Number of Parcels')
+                'value' => 'shipping_phase',
+                'label' => $helper->__('Shipping Phase')
             ),
         );
         
