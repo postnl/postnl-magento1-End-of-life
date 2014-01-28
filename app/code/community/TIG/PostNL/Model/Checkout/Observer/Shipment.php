@@ -64,14 +64,34 @@ class TIG_PostNL_Model_Checkout_Observer_Shipment
             return $this;
         }
         
-        $cif = Mage::getModel('postnl_checkout/cif');
-        $result = $cif->updateOrder($postnlOrder);
-        
-        if (!isset($result->Succes) || $result->Succes != 'true') {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid UpdateOrder response received!'),
-                'POSTNL-0037'
+        try {
+            $cif = Mage::getModel('postnl_checkout/cif');
+            $result = $cif->updateOrder($postnlOrder);
+            
+            if (!isset($result->Succes) || $result->Succes != 'true') {
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('Invalid UpdateOrder response received!'),
+                    'POSTNL-0037'
+                );
+            }
+        } catch (TIG_PostNL_CIF_Exception $e) {
+            $helper = Mage::helper('postnl');
+            $helper->addSessionMessage(
+                'adminhtml/session', 
+                'POSTNL-0113',
+                'notice',
+                $helper->__('An error occurred while updating the PostNL Checkout order: %s', $e->getMessage())
             );
+            return $this;
+        } catch (Exception $e) {
+            $helper = Mage::helper('postnl');
+            $helper->addSessionMessage(
+                'adminhtml/session', 
+                'POSTNL-0113',
+                'notice',
+                $helper->__('An error occurred while updating the PostNL Checkout order.')
+            );
+            return $this;
         }
         
         return $this;
