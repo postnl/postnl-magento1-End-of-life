@@ -254,8 +254,30 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                             | $paymentMethodAbstractClass::CHECK_ZERO_TOTAL;
         }
         
-        $quote->getPayment()->setMethod($data['method'])->importData($data);
-        $quote->getPayment()->getMethodInstance()->assignData($data);
+        $paymentDataObject = new Varien_Object();
+        $paymentDataObject->setPaymentData($data);
+        
+        Mage::dispatchEvent(
+            'postnl_checkout_set_payment_before', 
+            array(
+                'payment'             => $quote->getPayment(),
+                'quote'               => $quote,
+                'payment_data_object' => $paymentDataObject,
+            )
+        );
+        
+        $paymentData = $paymentDataObject->getPaymentData();
+        
+        $quote->getPayment()->setMethod($data['method'])->importData($paymentData);
+        $quote->getPayment()->getMethodInstance()->assignData($paymentData);
+        
+        Mage::dispatchEvent(
+            'postnl_checkout_set_payment_after', 
+            array(
+                'payment'             => $quote->getPayment(),
+                'quote'               => $quote,
+            )
+        );
         
         $quote->save();
         
@@ -295,13 +317,31 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                 'POSTNL-0048'
             );
         }
-
+        
+        if ($methodOnly === true) {
+            $this->_processPaymentMethod($methodName, $quote);
+            return $this;
+        }
+        
+        $this->_processPaymentData($postnlPaymentData, $methodName, $quote);
+        return $this;
+    }
+    
+    /**
+     * Process a chosen payment method
+     * 
+     * @param string $methodName
+     * @param Mage_Sales_Model_Quote $quote
+     * 
+     * @return TIG_PostNL_Exception
+     */
+    protected function _processPaymentMethod($methodName, $quote)
+    {
         /**
          * Get the Magento payment method code associated with this method
          */
-        $methodCode  = Mage::getStoreConfig(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method', $quote->getStoreId());
-        $optionValue = $postnlPaymentData->Optie;
-        
+        $methodCode = Mage::getStoreConfig(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method', $quote->getStoreId());
+        Mage::register('postnl_payment_data', array('method' => $methodCode));
         
         /**
          * Remove any current payment associtaed with the quote and get a new one
@@ -309,22 +349,34 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $payment = $quote->removePayment()
                          ->getPayment();
         
-        Mage::register('postnl_payment_data', array('method' => $methodCode, 'option' => $optionValue));
+        $payment->setMethod($methodCode);
+        $quote->save();
         
-        /**
-         * if we only need to set the payment method, do so and we'll be finished
-         */
-        if ($methodOnly) {
-            $payment->setMethod($methodCode);
-            $quote->save();
-            
-            return $this;
-        }
-        
+        return $this;
+    }
+
+    /**
+     * Process a chosen payment method with extra payment data
+     * 
+     * @param StdClass $postnlPaymentData
+     * @param string $methodName
+     * @param Mage_Sales_Model_Quote $quote
+     * 
+     * @return TIG_PostNL_Exception
+     */
+    protected function _processPaymentData($postnlPaymentData, $methodName, $quote)
+    {
         /**
          * Otherwise we need to form the payment data array containing all relevant payment data
          */
         $paymentData = Mage::app()->getRequest()->getPost('payment', array());
+        
+        $optionValue = $postnlPaymentData->Optie;
+        
+        /**
+         * Get the payment method code associated with the chosen payment method
+         */
+        $methodCode = Mage::getStoreConfig(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method', $quote->getStoreId());
         
         /**
          * Extra checks used by Magento
@@ -373,11 +425,33 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             }
         }
         
+        $paymentDataObject = new Varien_Object();
+        $paymentDataObject->setPaymentData($paymentData);
+        
+        Mage::dispatchEvent(
+            'postnl_checkout_set_payment_before', 
+            array(
+                'payment'             => $quote->getPayment(),
+                'quote'               => $quote,
+                'payment_data_object' => $paymentDataObject,
+            )
+        );
+        
+        $paymentData = $paymentDataObject->getPaymentData();
+        
         /**
          * Import the payment data, save the payment, and then save the quote
          */
         $payment->importData($paymentData);
-                
+        
+        Mage::dispatchEvent(
+            'postnl_checkout_set_payment_after', 
+            array(
+                'payment'             => $quote->getPayment(),
+                'quote'               => $quote,
+            )
+        );
+        
         $quote->save();
         
         return $this;
