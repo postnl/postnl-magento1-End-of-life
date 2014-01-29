@@ -74,7 +74,7 @@
         <reference name="head">
             <action method="addItem">
                 <type>skin_js</type>
-                <file>js/TIG/PostNL/postcodecheck_switch.js</file>
+                <file>js/TIG/PostNL/postcodecheck_checkout.js</file>
             </action>
             <action method="addItem">
                 <type>skin_css</type>
@@ -108,4 +108,20 @@
             </block>
         </reference>
     </postnl_checkout_summary>
+    
+    <customer_address_form>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/postcodecheck_addressbook.js</file>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/postcodecheck.css</file>
+            </action>
+        </reference>
+        <reference name="customer_address_edit">
+            <block type="core/template" name="postnl_postcodecheck" template="TIG/PostNL/customer/address/postcode_check.phtml"/>
+        </reference>
+    </customer_address_form>
 </layout>

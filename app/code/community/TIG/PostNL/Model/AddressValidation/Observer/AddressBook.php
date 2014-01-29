@@ -36,50 +36,32 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
+class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Object
 {
     /**
-     * The block classes that we want to edit
+     * The block class that we want to edit
      */
-    const BILLING_ADDRESS_BLOCK_NAME = 'checkout/onepage_billing';
-    const SHIPPING_ADDRESS_BLOCK_NAME = 'checkout/onepage_shipping';
+    const ADDRESS_COMMUNITY_BLOCK_NAME  = 'customer/address_edit';
     
     /**
      * Current environment for the postcode check
      */
-    const POSTCODECHECK_ENV = 'checkout';
+    const POSTCODECHECK_ENV = 'addressbook';
     
     /**
-     * Gets the classname for the onepage checkout billing address block that we want to alter
+     * Gets the classname for the addressbook block that we want to edit.
      * 
      * @return string
      */
-    public function getBillingAddressBlockClass()
+    public function getAddressBlockClass()
     {
-        if ($this->hasBillingAddressBlockClass()) {
-            return $this->getData('billing_address_block_class');
+        if ($this->hasAddressBlockClass()) {
+            return $this->getData('address_block_class');
         }
         
-        $blockClass = Mage::getConfig()->getBlockClassName(self::BILLING_ADDRESS_BLOCK_NAME);
+        $blockClass = Mage::getConfig()->getBlockClassName(self::ADDRESS_COMMUNITY_BLOCK_NAME);
         
-        $this->setBillingAddressBlockClass($blockClass);
-        return $blockClass;
-    }
-    
-    /**
-     * Gets the classname for the onepage checkout shipping address block that we want to alter
-     * 
-     * @return string
-     */
-    public function getShippingAddressBlockClass()
-    {
-        if ($this->hasShippingAddressBlockClass()) {
-            return $this->getData('shipping_address_block_class');
-        }
-        
-        $blockClass = Mage::getConfig()->getBlockClassName(self::SHIPPING_ADDRESS_BLOCK_NAME);
-        
-        $this->setShippingAddressBlockClass($blockClass);
+        $this->setAddressBlockClass($blockClass);
         return $blockClass;
     }
     
@@ -88,14 +70,14 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
      * 
      * @param Varien_Event_Observer $observer
      * 
-     * @return TIG_PostNL_Model_AddressValidation_Observer_Onepage
+     * @return TIG_PostNL_Model_AddressValidation_Observer_AddressBook
      * 
      * @event core_block_abstract_to_html_before
      * 
      * @observer checkout_onepage_billing_postcodecheck
      * 
      */
-    public function billingAddressPostcodeCheck(Varien_Event_Observer $observer)
+    public function addressBookPostcodeCheck(Varien_Event_Observer $observer)
     {
         /**
          * Check if the extension is active
@@ -110,51 +92,13 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
          * Unfortunately there is no unique event for this block
          */
         $block = $observer->getBlock();
-        $blockClass = $this->getBillingAddressBlockClass();
+        $blockClass = $this->getAddressBlockClass();
        
         if (get_class($block) !== $blockClass) {
             return $this;
         }
         
-        $block->setTemplate('TIG/PostNL/checkout/onepage/billing.phtml');
-        
-        return $this;
-    }
-    
-    /**
-     * Alters the template of the onepage checkout shipping address block if the postcode check functionality is active.
-     * 
-     * @param Varien_Event_Observer $observer
-     * 
-     * @return TIG_PostNL_Model_AddressValidation_Observer_Onepage
-     * 
-     * @event core_block_abstract_to_html_before
-     * 
-     * @observer checkout_onepage_shipping_postcodecheck
-     * 
-     */
-    public function shippingAddressPostcodeCheck(Varien_Event_Observer $observer)
-    {
-        /**
-         * Check if the extension is active
-         */
-        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled()) {
-            return $this;
-        }
-        
-        /**
-         * Checks if the current block is the one we want to edit.
-         * 
-         * Unfortunately there is no unique event for this block
-         */
-        $block = $observer->getBlock();
-        $blockClass = $this->getShippingAddressBlockClass();
-        
-        if (get_class($block) !== $blockClass) {
-            return $this;
-        }
-        
-        $block->setTemplate('TIG/PostNL/checkout/onepage/shipping.phtml');
+        $block->setTemplate('TIG/PostNL/customer/address/edit.phtml');
         
         return $this;
     }
