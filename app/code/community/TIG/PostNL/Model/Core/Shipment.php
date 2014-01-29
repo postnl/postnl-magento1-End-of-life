@@ -309,20 +309,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
     
     /**
-     * Sets the process used for locking and unlocking this shipment
-     * 
-     * @param TIG_PostNL_Model_Core_Shipment_Process
-     * 
-     * @return TIG_PostNL_Model_Core_Shipment
-     */
-    public function setProcess(TIG_PostNL_Model_Core_Shipment_Process $process)
-    {
-        $this->_process = $process;
-        
-        return $this;
-    }
-    
-    /**
      * Get an array of labels that have to be saved together
      * 
      * @return array
@@ -667,6 +653,28 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this->getIsParcelwareExported();
     }
     
+    /**
+     * Gets a PostNL order associated with this shipment (if any exist)
+     * 
+     * @return boolean|TIG_PostNL_Model_Checkout_Order
+     */
+    public function getPostnlOrder()
+    {
+        if ($this->hasPostnlOrder()) {
+            return $this->getData('postnl_order');
+        }
+        
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($this->getOrderId(), 'order_id');
+        if (!$postnlOrder->getId()) {
+            $this->setPostnlOrder(false);
+            
+            return false;
+        }
+        
+        $this->setPostnlOrder($postnlOrder);
+        return $postnlOrder;
+    }
+    
     /****************************************************************************************************************************
      * SETTER METHODS
      ***************************************************************************************************************************/
@@ -774,6 +782,20 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function setIsExported($isExported)
     {
         return $this->setIsParcelwareExported($isExported);
+    }
+    
+    /**
+     * Sets the process used for locking and unlocking this shipment
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment_Process
+     * 
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    public function setProcess(TIG_PostNL_Model_Core_Shipment_Process $process)
+    {
+        $this->_process = $process;
+        
+        return $this;
     }
     
     /****************************************************************************************************************************
@@ -964,7 +986,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return true;
         }
         
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($this->getOrderId(), 'order_id');
+        $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder->getId() && $postnlOrder->getIsPakjeGemak()) {
             return true;
         }
@@ -1355,25 +1377,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * 
      * @throws TIG_PostNL_Exception
      */
-    public function manuallyConfirm()
+    public function registerConfirmation()
     {
-        if (!$this->canConfirm()) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('The confirm action is currently unavailable.'),
-                'POSTNL-0109'
-            );
-        }
-        
-        $this->lock();
-        
-        Mage::dispatchEvent('postnl_shipment_confirm_before', array('shipment' => $this));
+        Mage::dispatchEvent('postnl_shipment_register_confirmation_before', array('shipment' => $this));
 
         $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
              ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
         
-        Mage::dispatchEvent('postnl_shipment_confirm_after', array('shipment' => $this));
+        Mage::dispatchEvent('postnl_shipment_register_confirmation_after', array('shipment' => $this));
         
-        $this->unlock();
         return $this;
     }
     
@@ -1408,8 +1420,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if ($parcelCount < 2) {
             $this->_confirm();
 
-            $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-                 ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
+            $this->registerConfirmation();
             
             Mage::dispatchEvent('postnl_shipment_confirm_after', array('shipment' => $this));
             
@@ -1424,8 +1435,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->_confirm($i);
         }
 
-        $this->setConfirmStatus(self::CONFIRM_STATUS_CONFIRMED)
-             ->setConfirmedAt(Mage::getModel('core/date')->gmtTimestamp());
+        $this->registerConfirmation();
         
         Mage::dispatchEvent('postnl_shipment_confirm_after', array('shipment' => $this));
         

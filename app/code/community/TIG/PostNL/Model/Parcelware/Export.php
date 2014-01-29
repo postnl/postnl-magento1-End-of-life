@@ -80,7 +80,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
              * If auto_confirm is enabled, confirm each shipment manually. Please note that we do not yet save these shipments.
              */
             if ($autoConfirmEnabled === true && !$postnlShipment->isConfirmed()) {
-                $postnlShipment->manuallyConfirm();
+                $postnlShipment->registerConfirmation();
             }
             
             /**
@@ -184,21 +184,41 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         /**
          * Get the address and reference data for this shipment. These are simple associative arrays
          */
-        $addressData   = $this->_getAddressData($postnlShipment, $shipment);
-        $referenceData = $this->_getReferenceData();
-        $extraCover    = array($postnlShipment->getExtraCoverAmount());
+        $addressData    = $this->_getAddressData($postnlShipment, $shipment);
+        $pakjeGemakData = $this->_getPakjeGemakAddressData($postnlShipment, $shipment);
+        $referenceData  = $this->_getReferenceData();
+        $extraCover     = array($postnlShipment->getExtraCoverAmount());
+        
+        /**
+         * Get the current GMT timestamp as a point of reference
+         */
+        $now = Mage::getModel('core/date')->gmtTimestamp();
+        
+        /**
+         * Get the confirm and delivery dates for this shipment
+         */
+        $deliveryDate = '';
+        $confirmDate  = date('Y-m-d', strtotime($postnlShipment->getConfirmDate(), $now));
+        
+        $postnlOrder = $postnlShipment->getPostnlOrder();
+        
+        if ($postnlOrder !== false) {
+            $deliveryDate = date('Y-m-d', strtotime($postnlOrder->getDeliveryDate(), $now));
+        }
         
         /**
          * If this is part of a multi-colli shipment, we need to get slightly different parameters.
          */
         if ($parcelCount) {
-                $shipmentData = array(
-                    'ProductCodeDelivery' => $postnlShipment->getProductCode(),
-                    'Barcode'             => $postnlShipment->getBarcode($count),
-                    'MainBarcode'         => $postnlShipment->getMainBarcode(),
-                    'GroupSequence'       => $count + 1,
-                    'GroupCount'          => $parcelCount,
-                );
+            $shipmentData = array(
+                'ProductCodeDelivery' => $postnlShipment->getProductCode(),
+                'Barcode'             => $postnlShipment->getBarcode($count),
+                'MainBarcode'         => $postnlShipment->getMainBarcode(),
+                'GroupSequence'       => $count + 1,
+                'GroupCount'          => $parcelCount,
+                'ConfirmDate'         => $confirmDate,
+                'DeliveryDate'        => $deliveryDate,
+            );
         } else {
             $shipmentData = array(
                 'ProductCodeDelivery' => $postnlShipment->getProductCode(),
@@ -206,6 +226,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
                 'MainBarcode'         => $postnlShipment->getMainBarcode(),
                 'GroupSequence'       => 1,
                 'GroupCount'          => 1,
+                'ConfirmDate'         => $confirmDate,
+                'DeliveryDate'        => $deliveryDate,
             );
         }
         
@@ -225,7 +247,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
          */
         $shipmentData = array_merge(
             $addressData, 
-            $shipmentData, 
+            $pakjeGemakData,
+            $shipmentData,
             $referenceData, 
             $extraCover,
             $globalPackData
@@ -235,7 +258,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * Get all address data for a given shipment
+     * Get all address data for the recipient of a shipment.
      * 
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      * @param Mage_Sales_Model_Shipments $shipment
@@ -257,6 +280,49 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             'Zipcode'     => $address->getPostcode(),
             'City'        => $address->getCity(),
             'Countrycode' => $address->getCountryId(),
+        );
+        
+        return $data;
+    }
+    
+    /**
+     * Get address data for PakjeGemak (post office) addresses.
+     * 
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * @param Mage_Sales_Model_Shipments $shipment
+     * 
+     * @return array
+     */
+    protected function _getPakjeGemakAddressData($postnlShipment, $shipment)
+    {
+        $pakjeGemakAddress = $postnlShipment->getPakjeGemakAddress();
+        
+        /**
+         * If there is no PakjeGemak address to export, return an empty array.
+         */
+        if (!$pakjeGemakAddress) {
+            $data = array(
+                'PG_CompanyName' => '',
+                'PG_Street'      => '',
+                'PG_HouseNr'     => '',
+                'PG_HouseNrExt'  => '',
+                'PG_Zipcode'     => '',
+                'PG_City'        => '',
+                'PG_Countrycode' => '',
+            );
+            
+            return $data;
+        }
+        
+        $streetData = $this->_getStreetData($pakjeGemakAddress, false);
+        $data = array(
+            'PG_CompanyName' => $pakjeGemakAddress->getName(), //PostNL Checkout stores the company name in the lastname field
+            'PG_Street'      => $streetData['streetname'],
+            'PG_HouseNr'     => $streetData['housenumber'],
+            'PG_HouseNrExt'  => $streetData['housenumberExtension'],
+            'PG_Zipcode'     => $pakjeGemakAddress->getPostcode(),
+            'PG_City'        => $pakjeGemakAddress->getCity(),
+            'PG_Countrycode' => $pakjeGemakAddress->getCountryId(),
         );
         
         return $data;
@@ -399,11 +465,20 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             'Zipcode',
             'City',
             'Countrycode',
+            'PG_CompanyName',
+            'PG_Street',
+            'PG_HouseNr',
+            'PG_HouseNrExt',
+            'PG_Zipcode',
+            'PG_City',
+            'PG_Countrycode',
             'ProductCodeDelivery',
             'Barcode',
             'MainBarcode',
             'GroupSequence',
             'GroupCount',
+            'ConfirmDate',
+            'DeliveryDate',
             'ContractReference',
             'ContractName',
             'SenderReference',
