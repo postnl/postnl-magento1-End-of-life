@@ -192,12 +192,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
             '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
             array(
-                'confirm_date'   => 'postnl_shipment.confirm_date',
-                'main_barcode'   => 'postnl_shipment.main_barcode',
-                'confirm_status' => 'postnl_shipment.confirm_status',
-                'labels_printed' => 'postnl_shipment.labels_printed',
-                'shipping_phase' => 'postnl_shipment.shipping_phase',
-                'parcel_count'   => 'postnl_shipment.parcel_count',
+                'confirm_date'           => 'postnl_shipment.confirm_date',
+                'main_barcode'           => 'postnl_shipment.main_barcode',
+                'confirm_status'         => 'postnl_shipment.confirm_status',
+                'labels_printed'         => 'postnl_shipment.labels_printed',
+                'shipping_phase'         => 'postnl_shipment.shipping_phase',
+                'parcel_count'           => 'postnl_shipment.parcel_count',
+                'is_parcelware_exported' => 'postnl_shipment.is_parcelware_exported',
             )
         );
         
@@ -362,7 +363,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'type'           => 'options',
                     'index'          => 'labels_printed',
                     'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_yesNo',
-                    'frame_callback' => array($this, 'decorateLabelsPrinted'),
+                    'frame_callback' => array($this, 'decorateYesNo'),
                     'options'        => array(
                         1 => $helper->__('Yes'),
                         0 => $helper->__('No'),
@@ -372,6 +373,27 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             );
             
             $after = 'labels_printed';
+        }
+        
+        if (in_array('is_parcelware_exported', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'is_parcelware_exported',
+                array(
+                    'header'         => $helper->__('Exported to parcelware'),
+                    'align'          => 'left',
+                    'type'           => 'options',
+                    'index'          => 'is_parcelware_exported',
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_yesNo',
+                    'frame_callback' => array($this, 'decorateYesNo'),
+                    'options'        => array(
+                        1 => $helper->__('Yes'),
+                        0 => $helper->__('No'),
+                    ),
+                ),
+                $after
+            );
+            
+            $after = 'is_parcelware_exported';
         }
         
         if (in_array('barcode', $columnsToDisplay)) {
@@ -522,7 +544,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * 
      * @return string
      */
-    public function decorateLabelsPrinted($value, $row, $column, $isExport)
+    public function decorateYesNo($value, $row, $column, $isExport)
     {
         if ($isExport) {
             return $value;
@@ -595,24 +617,32 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     protected function _addMassaction($block)
     {
+        $helper = Mage::helper('postnl');
+        $adminhtmlHelper = Mage::helper('adminhtml');
+        
         $massactionBlock = $block->getMassactionBlock();
         
         /**
          * Build all the mass action option arrays
          */
         $printAndConfirmOptions = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels & confirm shipment'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
+            'label'=> $helper->__('PostNL - Print shipping labels & confirm shipment'),
+            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
         );
         
         $printOptions = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Print shipping labels'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
+            'label'=> $helper->__('PostNL - Print shipping labels'),
+            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
         );
         
         $confirmOptions = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Confirm shipments'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massConfirm'),
+            'label'=> $helper->__('PostNL - Confirm shipments'),
+            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massConfirm'),
+        );
+        
+        $parcelWareOptions = array(
+            'label' => $helper->__('PostNL - Create parcelware export'),
+            'url'   => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massCreateParcelwareExport')
         );
         
         /**
@@ -636,6 +666,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case 'postnl_confirm_shipments':
                 $confirmOptions['selected'] = true;
                 break;
+            case 'postnl_parcelware_export':
+                $parcelWareOptions['selected'] = true;
+                break;
             // no default
         }
         
@@ -656,6 +689,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'postnl_confirm_shipments',
             $confirmOptions
         );
+        
+        $parcelwareExportEnabled = Mage::helper('postnl/parcelware')->isParcelwareExportEnabled();
+        if ($parcelwareExportEnabled) {
+            $massactionBlock->addItem(
+                'postnl_parcelware_export',
+                $parcelWareOptions
+            );
+        }
         
         return $this;
     }

@@ -369,6 +369,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 $helper->cronLog("Updating shipping status for shipment #{$postnlShipment->getShipment()->getId()}");
                 
                 if (!$postnlShipment->canUpdateShippingStatus()) {
+                    $postnlShipment->unlock();
                     $helper->cronLog("Updating shipment #{$postnlShipment->getShipment()->getId()} is not allowed. Continuing with next shipment.");
                     continue;
                 }

@@ -1,29 +1,29 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -36,7 +36,7 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */	
+ */
 -->
 <layout version="0.1.0">
     <default>
@@ -47,13 +47,13 @@
             </action>
         </reference>
     </default>
-    
+
     <sales_order_shipment>
         <reference name="my.account.wrapper">
             <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
         </reference>
     </sales_order_shipment>
-    
+
     <checkout_cart_index>
         <reference name="head">
             <action method="addItem">
@@ -69,7 +69,45 @@
             <block type="core/template" name="postnl_spinner" template="TIG/PostNL/checkout/cart/spinner.phtml"/>
         </reference>
     </checkout_cart_index>
-    
+
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/postcodecheck_checkout.js</file>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/postcodecheck.css</file>
+            </action>
+        </reference>
+        <reference name="checkout.onepage.billing">
+            <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>
+        </reference>
+        <reference name="checkout.onepage.shipping">
+            <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>
+        </reference>
+    </checkout_onepage_index>
+
+    <onestepcheckout_index_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/postcodecheck_checkout.js</file>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/postcodecheck.css</file>
+            </action>
+        </reference>
+        <reference name="onestepcheckout.billing.address">
+            <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/onestepcheckout/postcode_check.phtml"/>
+        </reference>
+        <reference name="onestepcheckout.shipping.address">
+            <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/onestepcheckout/postcode_check.phtml"/>
+        </reference>
+    </onestepcheckout_index_index>
+
     <postnl_checkout_summary>
         <reference name="head">
             <action method="addItem">
@@ -89,4 +127,20 @@
             </block>
         </reference>
     </postnl_checkout_summary>
+
+    <customer_address_form>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/postcodecheck_addressbook.js</file>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/postcodecheck.css</file>
+            </action>
+        </reference>
+        <reference name="customer_address_edit">
+            <block type="core/template" name="postnl_postcodecheck" template="TIG/PostNL/customer/address/postcode_check.phtml"/>
+        </reference>
+    </customer_address_form>
 </layout>

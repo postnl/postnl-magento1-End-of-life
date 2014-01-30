@@ -583,4 +583,17 @@ A6,A6
 PostNL - Print Shipping Label,PostNL - Print Verzendlabel
 PostNL - Send Tracking Information,PostNL - Verstuur Track & Trace Informatie
 No status history available.,Geen status geschiedenis informatie beschikbaar.
+PostNL - Create parcelware export,PostNL - Maak parcelware export
+Exported to parcelware,Geëxporteerd naar parcelware
+Parcelware Export Settings,Parcelware Export Instellingen
+This is where you can configure your parcelware export.,Hier kunt u uw parcelware export voorkeuren opegeven.
+Enable parcelware export,Activeer parcelware export
+Parcelware export is disabled. Activate parcdelware export in order to edit these settings. Please note that you can only activate parcelware export from the global level.,Parcelware export is gedeactiveerd. Activeer parcelware export om deze instellingen te kunnen aanpassen. Houd er rekening mee dat parcelware export enkel vanuit op globaal niveau kunt activeren.
+Automatically confirm exported shipments,Geëxporteerde zeningen automatisch voormelden
+"If set to yes, shipments that have been exported will be confirmed in Magento.","Indien deze instelling op ja staat, zullen zendingen die geëxporteerd zijn automatisch in Magento voorgemeld worden."
+This does NOT actually confirm the shipment with PostNL. It only updates the status in Magento to prevent you from accidentally confirming it in Magento after you've exported it to parcelware.,Dit meldt zendingen NIET voor bij PostNL. Het zorgt er enkel voor dat de voormeld status in Magento aangepast wordt. Dit voorkomt dat u per ongeluk zendingen nogmaals voormeldt bij PostNL nadat deze geëxporteerd zijn.
+Contract reference number,Contract referentie nummer
+Contract name,Contract naam
+Sender address reference number,Afzender adres referentie nummer
 Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.,Uw webshop is geregistreerd. U ontvangt binnen enkele minuten een e-mail op het opgegeven e-mailadres. Lees deze e-mail s.v.p. aandachtig. Hierin staat aangegeven hoe u de activatieprocedure kunt afronden.
+

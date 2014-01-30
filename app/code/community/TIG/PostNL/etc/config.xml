@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -36,15 +36,15 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
+ */
 -->
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.1.1</version>
+			<version>1.2.0</version>
 		</TIG_PostNL>
 	</modules>
-	
+
 	<global>
 		<blocks>
         	<!-- Block definitions per submodule -->
@@ -89,7 +89,13 @@
                 <class>TIG_PostNL_Model_Checkout</class>
                 <resourceModel>postnl_checkout_resource</resourceModel>
             </postnl_checkout>
-            
+            <postnl_addressvalidation>
+                <class>TIG_PostNL_Model_AddressValidation</class>
+            </postnl_addressvalidation>
+            <postnl_parcelware>
+                <class>TIG_PostNL_Model_Parcelware</class>
+            </postnl_parcelware>
+
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
                 <class>TIG_PostNL_Model_Resource</class>
@@ -173,7 +179,7 @@
             </email>
         </template>
 	</global>
-	
+
     <admin>
         <routers>
             <postnl>
@@ -185,7 +191,7 @@
             </postnl>
         </routers>
     </admin>
-    
+
     <adminhtml>
 		<events>
 			<adminhtml_block_html_before>
@@ -248,8 +254,38 @@
             </modules>
         </translate>
     </adminhtml>
-    
+
     <frontend>
+        <events>
+            <core_block_abstract_to_html_before>
+                <observers>
+                    <!-- Adds the postcode check functionality by overloading the billing address template for onepage checkout -->
+                    <checkout_onepage_billing_postcodecheck>
+                        <type>singleton</type>
+                        <class>postnl_addressvalidation/observer_onepage</class>
+                        <method>billingAddressPostcodeCheck</method>
+                    </checkout_onepage_billing_postcodecheck>
+                    <!-- Adds the postcode check functionality by overloading the shipping address template for onepage checkout -->
+                    <checkout_onepage_shipping_postcodecheck>
+                        <type>singleton</type>
+                        <class>postnl_addressvalidation/observer_onepage</class>
+                        <method>shippingAddressPostcodeCheck</method>
+                    </checkout_onepage_shipping_postcodecheck>
+                    <!-- Adds the postcode check functionality by overloading the address template for Idev's OneStepCheckout -->
+                    <onestepcheckout_postcodecheck>
+                        <type>singleton</type>
+                        <class>postnl_addressvalidation/observer_oneStepCheckout</class>
+                        <method>addressPostcodeCheck</method>
+                    </onestepcheckout_postcodecheck>
+                    <!-- Adds the postcode check functionality by overloading the customer address edit form -->
+                    <customer_address_edit_postcodecheck>
+                        <type>singleton</type>
+                        <class>postnl_addressvalidation/observer_addressBook</class>
+                        <method>addressBookPostcodeCheck</method>
+                    </customer_address_edit_postcodecheck>
+                </observers>
+            </core_block_abstract_to_html_before>
+        </events>
 		<layout>
             <updates>
                 <postnl>
@@ -267,7 +303,7 @@
             </modules>
         </translate>
     </frontend>
-    
+
     <crontab>
         <jobs>
         	<!-- remove old temporary label files (by default files older than 5 min will be deleted) -->
@@ -349,7 +385,7 @@
             </postnl_remove_old_labels>
         </jobs>
     </crontab>
-    
+
     <!-- Default configuration values. You can edit most of these in system/config -->
     <!-- If a setting is specified here it does not guarantee it's availability in system/config. It does mean you can override it by creating an entry in the core_config_data table -->
     <default>
@@ -408,7 +444,17 @@
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
                 <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
         	</cif_labels_and_confirming>
+        	<parcelware_export>
+        	    <active>0</active> <!-- Inactive -->
+        	    <auto_confirm>0</auto_confirm> <!-- Do not auto confirm -->
+        	    <contract_ref_nr/>
+        	    <contract_name/>
+        	    <sender_ref_nr/>
+        	</parcelware_export>
         	<cif_address>
+        	    <use_postcode_check>0</use_postcode_check> <!-- Do not use postcode check functionality -->
+        	    <postcode_check_in_checkout>1</postcode_check_in_checkout> <!-- Use postcode check on the checkout page -->
+        	    <postcode_check_in_addressbook>1</postcode_check_in_addressbook> <!-- Use postcode check in the customer's addressbook -->
         		<split_street>1</split_street> <!-- split street -->
         		<streetname_field>1</streetname_field> <!-- first address line -->
         		<housenr_field>2</housenr_field> <!-- second address line -->
@@ -431,7 +477,7 @@
         		<postcode/>
         		<city/>
         		<region/>
-        		<country>NL</country> <!-- All sender's must be located in the Netherlands -->
+        		<country>NL</country> <!-- All sender addresses must be located in the Netherlands -->
         	</cif_sender_address>
         	<cif_return_address>
         	    <use_sender_address>1</use_sender_address> <!-- use the sender address as the return address -->
@@ -512,7 +558,7 @@
                 <afterpay_method/>
         	</checkout_payment_methods>
         	<advanced>
-        	    <allow_test_mode>0</allow_test_mode>
+                <allow_test_mode>0</allow_test_mode> <!-- Do not allow test mode -->
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
@@ -531,7 +577,7 @@
         	</advanced>
         </postnl>
     </default>
-    
+
     <!-- Custom TiG config values -->
     <tig>
         <!-- Version compatibility per Magento edition -->
@@ -541,13 +587,13 @@
                 <community>1.6,1.7,1.8</community>
             </postnl>
         </compatibility>
-        
+
         <!-- Stability of this release -->
         <stability>
-            <postnl>stable</postnl>
+            <postnl>dev</postnl>
         </stability>
-    
-        <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to 
+
+        <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to
             the associated knowledge base article and a 'type' (whether it's an error, warning or notice) -->
         <errors>
             <!-- These are errors that are generated by this extension -->
@@ -1036,9 +1082,9 @@
                 <url>http://kb.totalinternetgroup.nl/topic/33064418</url>
                 <type>error</type>
             </POSTNL-0097>
-            
+
             <!-- Note: errors 0098 and 0099 are missing. They will be added later. They have no special significance, we just forgot them :) -->
-            
+
             <POSTNL-0100>
                 <!-- This error is generated by CIF, however we have designated it an error code -->
                 <message>The user is not authorized for this barcode</message>
@@ -1110,7 +1156,7 @@
                 <url/>
                 <type>warning</type>
             </POSTNL-0113>
-            
+
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>
                 <message>Combilabel was not processed successfully for shipment with barcode %s. Normal label is generated and product code for shipment changed to 4944.</message>

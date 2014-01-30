@@ -36,73 +36,70 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
- 
-/**
- * General exception class for TIG_PostNL extension
- * 
- * @see Mage_Core_Exception
- */
-class TIG_PostNL_Exception extends Mage_Core_Exception
+class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Object
 {
     /**
-     * Our error codes are strings, however the core Exception class only accepts integers, so we need to overload it.
-     * 
-     * @param string $message
-     * @param mixed $code
-     * @param Exception|null $previous
-     * 
-     * @return void
-     * 
-     * @see Exception::__construct()
-     * 
-     * @link http://www.php.net/manual/en/exception.construct.php
+     * The block class that we want to edit
      */
-    public function __construct($message, $code = 0, Exception $previous = null)
+    const ADDRESS_COMMUNITY_BLOCK_NAME  = 'customer/address_edit';
+    
+    /**
+     * Current environment for the postcode check
+     */
+    const POSTCODECHECK_ENV = 'addressbook';
+    
+    /**
+     * Gets the classname for the addressbook block that we want to edit.
+     * 
+     * @return string
+     */
+    public function getAddressBlockClass()
     {
-        parent::__construct($message, 0, $previous);
-        
-        /**
-         * Replace the code with the actual, non-integer code
-         */
-        if ($code !== 0) {
-            $code = (string) $code;
-            $this->code = $code;
+        if ($this->hasAddressBlockClass()) {
+            return $this->getData('address_block_class');
         }
+        
+        $blockClass = Mage::getConfig()->getBlockClassName(self::ADDRESS_COMMUNITY_BLOCK_NAME);
+        
+        $this->setAddressBlockClass($blockClass);
+        return $blockClass;
     }
     
     /**
-     * Custom __toString method that includes the error code, if preset.
+     * Alters the template of the onepage checkout billing address block if the postcode check functionality is active.
      * 
-     * @return string
+     * @param Varien_Event_Observer $observer
      * 
-     * @see Exception::__toString()
+     * @return TIG_PostNL_Model_AddressValidation_Observer_AddressBook
      * 
-     * @link http://www.php.net/manual/en/exception.tostring.php
+     * @event core_block_abstract_to_html_before
+     * 
+     * @observer checkout_onepage_billing_postcodecheck
+     * 
      */
-    public function __toString()
+    public function addressBookPostcodeCheck(Varien_Event_Observer $observer)
     {
-        $string = "exception '" 
-                . __CLASS__ 
-                . "' with message '" 
-                . $this->getMessage()
-                . "'";
-        
-        $code = $this->getCode();
-        if ($code !== 0 && !empty($code)) {
-            $string .= " and code: '" 
-                     . $this->getCode() 
-                     . "'";
+        /**
+         * Check if the extension is active
+         */
+        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
+            return $this;
         }
         
-        $string .= " in " 
-                 . $this->getFile() 
-                 . ':' 
-                 . $this->getLine() 
-                 . PHP_EOL 
-                 . 'Stack trace:'
-                 . PHP_EOL
-                 . $this->getTraceAsString();
-                
-        return $string;
+        /**
+         * Checks if the current block is the one we want to edit.
+         * 
+         * Unfortunately there is no unique event for this block
+         */
+        $block = $observer->getBlock();
+        $blockClass = $this->getAddressBlockClass();
+       
+        if (get_class($block) !== $blockClass) {
+            return $this;
+        }
+        
+        $block->setTemplate('TIG/PostNL/customer/address/edit.phtml');
+        
+        return $this;
     }
 }

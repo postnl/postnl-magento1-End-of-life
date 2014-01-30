@@ -36,73 +36,79 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
- 
-/**
- * General exception class for TIG_PostNL extension
- * 
- * @see Mage_Core_Exception
- */
-class TIG_PostNL_Exception extends Mage_Core_Exception
+class TIG_PostNL_Helper_Parcelware extends TIG_PostNL_Helper_Data
 {
     /**
-     * Our error codes are strings, however the core Exception class only accepts integers, so we need to overload it.
-     * 
-     * @param string $message
-     * @param mixed $code
-     * @param Exception|null $previous
-     * 
-     * @return void
-     * 
-     * @see Exception::__construct()
-     * 
-     * @link http://www.php.net/manual/en/exception.construct.php
+     * XML path to auto confirm setting
      */
-    public function __construct($message, $code = 0, Exception $previous = null)
+    const XML_PATH_AUTO_CONFIRM = 'postnl/parcelware_export/auto_confirm';
+    
+    /**
+     * XML path to the active/inactive setting
+     */
+    const XML_PATH_ACTIVE = 'postnl/parcelware_export/active';
+    
+    /**
+     * AutoConfirmEnabled flag
+     *
+     * @var boolean|null $_autoConfirmEnabled
+     */
+    protected $_autoConfirmEnabled = null;
+    
+    /**
+     * Gets the autoConfirmEnabled flag
+     * 
+     * @return boolean|null
+     */
+    public function getAutoConfirmEnabled()
     {
-        parent::__construct($message, 0, $previous);
-        
-        /**
-         * Replace the code with the actual, non-integer code
-         */
-        if ($code !== 0) {
-            $code = (string) $code;
-            $this->code = $code;
-        }
+        return $this->_autoConfirmEnabled;
     }
     
     /**
-     * Custom __toString method that includes the error code, if preset.
+     * Sets the autoConfirmEnabled flag
      * 
-     * @return string
+     * @param boolean $autoConfirmEnabled
      * 
-     * @see Exception::__toString()
-     * 
-     * @link http://www.php.net/manual/en/exception.tostring.php
+     * @return TIG_PostNL_Helper_Parcelware
      */
-    public function __toString()
+    public function setAutoConfirmEnabled($autoConfirmEnabled)
     {
-        $string = "exception '" 
-                . __CLASS__ 
-                . "' with message '" 
-                . $this->getMessage()
-                . "'";
+        $this->_autoConfirmEnabled = $autoConfirmEnabled;
         
-        $code = $this->getCode();
-        if ($code !== 0 && !empty($code)) {
-            $string .= " and code: '" 
-                     . $this->getCode() 
-                     . "'";
+        return $this;
+    }
+    
+    /**
+     * Check to see if parcelware export functionality is enabled.
+     * 
+     * @todo implement this method
+     */
+    public function isParcelwareExportEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = Mage::app()->getStore()->getId();
         }
         
-        $string .= " in " 
-                 . $this->getFile() 
-                 . ':' 
-                 . $this->getLine() 
-                 . PHP_EOL 
-                 . 'Stack trace:'
-                 . PHP_EOL
-                 . $this->getTraceAsString();
-                
-        return $string;
+        $active = Mage::getStoreConfigFlag(self::XML_PATH_ACTIVE, $storeId);
+        
+        return $active;
+    }
+    
+    /**
+     * Checks if auto confirm is enabled
+     * 
+     * @return boolean
+     */
+    public function isAutoConfirmEnabled()
+    {
+        if ($this->getAutoConfirmEnabled() !== null) {
+            return $this->getAutoConfirmEnabled();
+        }
+        
+        $autoConfirmEnabled = Mage::getStoreConfigFlag(self::XML_PATH_AUTO_CONFIRM, Mage_Core_Model_App::ADMIN_STORE_ID);
+        
+        $this->setAutoConfirmEnabled($autoConfirmEnabled);
+        return $autoConfirmEnabled;
     }
 }

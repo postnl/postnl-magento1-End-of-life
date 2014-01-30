@@ -36,31 +36,27 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_ShipmentGridMassAction
+class TIG_PostNL_Model_AddressValidation_Webservices extends TIG_PostNL_Model_AddressValidation_Webservices_Abstract
 {
     /**
-     * Returns an option array for available shipment grid mass actions
+     * Validates and enriches the postcode and housenumber with a city and streetname
      * 
-     * @return array
+     * @param string $postcode
+     * @param string $housenumber
+     * 
+     * @return StdClass
      */
-    public function toOptionArray()
+    public function getAdresxpressPostcode($postcode, $housenumber)
     {
-        $helper = Mage::helper('postnl');
-        $options = array(
-            array(
-                'value' => 'postnl_print_labels_and_confirm',
-                'label' => $helper->__('Print shipping labels & confirm shipment'),
-            ),
-            array(
-                'value' => 'postnl_print_labels',
-                'label' => $helper->__('Print shipping labels'),
-            ),
-            array(
-                'value' => 'postnl_confirm_shipments',
-                'label' => $helper->__('Confirm shipments'),
-            ),
+        $soapParams = array(
+            'gebruikersnaam' => 'tpgpost030',
+            'wachtwoord' => 'YlymZYgq',
+            'postcode' => '2491DA',
+            'huisnummer' => '52'
         );
         
-        return $options;
+        $result = $this->call('getAdresxpressPostcode', $soapParams);
+        
+        return $result;
     }
 }

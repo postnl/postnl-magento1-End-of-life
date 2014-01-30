@@ -36,12 +36,12 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Varien_Object
+class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Object
 {
     /**
      * Wsdl location
      */
-    const WEBSERVICE_WSDL_URL = 'http://api.tigpostnl.nl/soap?wsdl';
+    const WEBSERVICE_WSDL_URL = 'http://www.cendris.nl/webservices/services/soap_rpcenc?wsdl';
 
     /**
      * Calls a webservice method
@@ -60,7 +60,7 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
             $wsdl = self::WEBSERVICE_WSDL_URL;
             
             /**
-             * Array of soap options used when connecting to CIF
+             * Array of soap options used when connecting to the webservice
              */
             $soapOptions = array(
                 'soap_version' => SOAP_1_1,
@@ -93,20 +93,32 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
              */
             $response = $client->__call(
                 $method,
-                array(
-                    $method => $soapParams,
-                )
+                $soapParams
             );
             
             Mage::helper('postnl/webservices')->logWebserviceCall($client);
             return $response;
         } catch(SoapFault $e) {
             /**
-             * Only Soap exceptions are caught. Other exceptions must be caught by the caller
+             * Log a possible SoapFault exception.
              */
             Mage::helper('postnl/webservices')->logWebserviceException($e);
             
             throw $e;
         }
+        // } catch (SoapFault $e) {
+            // $cifHelper = Mage::helper('postnl/cif');
+//         
+            // /**
+             // * Get the request and response XML data
+             // */
+            // if ($client) {
+                // $requestXML  = $cifHelper->formatXml($client->getLastRequest());
+                // $responseXML = $cifHelper->formatXml($client->getLastResponse());
+            // }
+            // echo '<pre>';var_dump(htmlentities($requestXML));
+            // var_dump(htmlentities($responseXML));
+            // exit;
+        // }
     }
 }

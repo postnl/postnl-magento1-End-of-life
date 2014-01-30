@@ -237,9 +237,9 @@
                     </fields>
                 </support>
                 <general translate="label comment" module="postnl">
+                    <label>General Settings</label>
                     <comment>Here you can enable or disable the entire extension. This is also where you register your extension for use.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <label>General Settings</label>
                     <sort_order>400</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -337,9 +337,9 @@
                    </fields>
                 </general>
                 <cif translate="label comment" module="postnl">
+                    <label>Account Settings</label>
                     <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <label>Account Settings</label>
                     <sort_order>500</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -533,9 +533,9 @@
                    </fields>
                 </cif>
                 <cif_labels_and_confirming translate="label comment" module="postnl">
+                    <label>Confirming &amp; Label Printing Settings</label>
                     <comment>Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track &amp; trace email to your customers.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <label>Confirming &amp; Label Printing Settings</label>
                     <sort_order>600</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -657,7 +657,7 @@
                         <shipping_grid_massaction_default translate="label" module="postnl">
                             <label>Select a default option for the shipment grid mass action</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_shipmentGridMassaction</source_model>
+                            <source_model>postnl_adminhtml/system_config_source_shipmentGridMassaction</source_model>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
@@ -699,54 +699,142 @@
                         </track_and_trace_email_template>
                     </fields>
                 </cif_labels_and_confirming>
-                <cif_address translate="label comment" module="postnl">
-                    <comment>This is where you configure the way the extension handles addresses entered by your customers. If these settings are not configured correctly, PostNL cannot guarantee that all addresses will be printed in the correct format.</comment>
+                <parcelware_export translate="label comment" module="postnl">
+                    <label>Parcelware Export Settings</label>
+                    <comment>This is where you can configure your parcelware export.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <label>Address Settings</label>
                     <sort_order>700</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
-                    <show_in_store>0</show_in_store>
+                    <show_in_store>1</show_in_store>
                     <fields>
-                        <split_street translate="label tooltip" module="postnl">
-                            <label>Split street parts</label>
-                            <tooltip>If you do not use split street lines and you wish to ship to outside the EU, there is a strong possibility that PostNL will be unable to properly parse the address. This may result in the shipment being refused or it may even lead to the shipment being delivered at the wrong address!</tooltip>
+                        <active translate="label" module="postnl">
+                            <label>Enable parcelware export</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                        </active>
+                        <parcelware_export_disabled_header translate="label" module="postnl">
+                            <label>Parcelware export is disabled. Activate parcdelware export in order to edit these settings. Please note that you can only activate parcelware export from the global level.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>0</active>
+                            </depends>
+                        </parcelware_export_disabled_header>
+                        <auto_confirm translate="label comment tooltip" module="postnl">
+                            <label>Automatically confirm exported shipments</label>
+                            <comment>If set to yes, shipments that have been exported will be confirmed in Magento.</comment>
+                            <tooltip>This does NOT actually confirm the shipment with PostNL. It only updates the status in Magento to prevent you from accidentally confirming it in Magento after you've exported it to parcelware.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </auto_confirm>
+                        <contract_ref_nr translate="label" module="postnl">
+                            <label>Contract reference number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>postnl-validate-empty</validate>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </contract_ref_nr>
+                        <contract_name translate="label" module="postnl">
+                            <label>Contract name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>postnl-validate-empty</validate>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </contract_name>
+                        <sender_ref_nr translate="label" module="postnl">
+                            <label>Sender address reference number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>postnl-validate-empty</validate>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </sender_ref_nr>
+                    </fields>
+                </parcelware_export>
+                <cif_address translate="label comment" module="postnl">
+                    <label>Address Settings</label>
+                    <comment>This is where you configure the way the extension handles addresses entered by your customers. If these settings are not configured correctly, PostNL cannot guarantee that all addresses will be printed in the correct format.</comment>
+                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <sort_order>800</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <use_postcode_check translate="label comment tooltip" module="postnl">
+                            <label>Use postcode check</label>
+                            <comment>Using this feature will allow customers to only enter their postcode and housenumber, the extension will then automatically validate these fields and enter the correct streetname and city. This only works for Dutch addresses.</comment>
+                            <tooltip>This will affect the layout of the Magento address forms in your checkout and customer account pages. This will also force your store to use atleast 3 address lines. Only default Magento onepage checkout and the Idev OneStepCheckout extensions are supported.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                             <validate>validate-select</validate>
-                        </split_street>
-                        <streetname_field translate="label" module="postnl">
-                            <label>Streetname field</label>
+                        </use_postcode_check>
+                        <postcode_check_in_checkout translate="label comment tooltip" module="postnl">
+                            <label>Use postcode check on checkout page</label>
+                            <comment>If enabled the postcode check functionality will be added to your checkout page.</comment>
+                            <tooltip>Please note that only Magento's onepage checkout and Idev's OneStepCheckout are supported.</tooltip>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_streetField</source_model>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                             <depends>
-                                <split_street>1</split_street>
+                                <use_postcode_check>1</use_postcode_check>
                             </depends>
                             <validate>validate-select</validate>
-                        </streetname_field>
-                        <housenr_field translate="label" module="postnl">
-                            <label>Housenr. field</label>
+                        </postcode_check_in_checkout>
+                        <postcode_check_in_addressbook translate="label comment" module="postnl">
+                            <label>Use postcode check in customer's address book</label>
+                            <comment>If enabled the postcode check functionality will be added to the customer's address book.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_streetField</source_model>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                             <depends>
-                                <split_street>1</split_street>
+                                <use_postcode_check>1</use_postcode_check>
                             </depends>
                             <validate>validate-select</validate>
-                        </housenr_field>
-                        <split_housenr translate="label" module="postnl">
-                            <label>Split house number parts</label>
+                        </postcode_check_in_addressbook>
+                        <split_street translate="label tooltip" module="postnl">
+                            <label>Split street parts</label>
+                            <tooltip>If you do not use split street lines and you wish to ship to outside the EU, there is a strong possibility that PostNL will be unable to properly parse the address. This may result in the shipment being refused or it may even lead to the shipment being delivered at the wrong address!</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>40</sort_order>
@@ -754,12 +842,12 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
-                                <split_street>1</split_street>
+                                <use_postcode_check>0</use_postcode_check>
                             </depends>
                             <validate>validate-select</validate>
-                        </split_housenr>
-                        <housenr_extension_field translate="label" module="postnl">
-                            <label>Housenr. extension field</label>
+                        </split_street>
+                        <streetname_field translate="label" module="postnl">
+                            <label>Streetname field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetField</source_model>
                             <sort_order>50</sort_order>
@@ -768,14 +856,57 @@
                             <show_in_store>0</show_in_store>
                             <depends>
                                 <split_street>1</split_street>
+                                <use_postcode_check>0</use_postcode_check>
+                            </depends>
+                            <validate>validate-select</validate>
+                        </streetname_field>
+                        <housenr_field translate="label" module="postnl">
+                            <label>Housenr. field</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_streetField</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <split_street>1</split_street>
+                                <use_postcode_check>0</use_postcode_check>
+                            </depends>
+                            <validate>validate-select</validate>
+                        </housenr_field>
+                        <split_housenr translate="label" module="postnl">
+                            <label>Split house number parts</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <split_street>1</split_street>
+                                <use_postcode_check>0</use_postcode_check>
+                            </depends>
+                            <validate>validate-select</validate>
+                        </split_housenr>
+                        <housenr_extension_field translate="label" module="postnl">
+                            <label>Housenr. extension field</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_streetField</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <split_street>1</split_street>
                                 <split_housenr>1</split_housenr>
+                                <use_postcode_check>0</use_postcode_check>
                             </depends>
                             <validate>validate-select</validate>
                         </housenr_extension_field>
                         <optional_street_fields_header translate="label" module="postnl">
                             <label>The following fields are optional and should remain empty, unless you specifically use these fields in your checkout configuration.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -784,7 +915,7 @@
                             <label>Area field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -793,7 +924,7 @@
                             <label>Building name field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -802,7 +933,7 @@
                             <label>Department field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -812,7 +943,7 @@
                             <tooltip>Doorcodes are often used in foreign addresses such as those used in France and Singapore.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -821,7 +952,7 @@
                             <label>Floor field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -830,18 +961,18 @@
                             <label>Remark field</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_streetFieldWithDefault</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </remark_field>
                    </fields>
                 </cif_address>
-                <cif_sender_address translate="label" module="postnl">
+                <cif_sender_address translate="label comment" module="postnl">
+                    <label>Sender Address</label>
                     <comment>This is where you enter your address. This is required for the extension to work.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <label>Sender Address</label>
-                    <sort_order>800</sort_order>
+                    <sort_order>900</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -934,11 +1065,11 @@
                         </region>
                     </fields>
                 </cif_sender_address>
-                <cif_return_address translate="label" module="postnl">
+                <cif_return_address translate="label comment" module="postnl">
+                    <label>Return Address</label>
                     <comment>You may specify a separate return address for shipments that could not be delivered. If you do not wish to specify a separate return address, your sender address will be used.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <label>Return Address</label>
-                    <sort_order>900</sort_order>
+                    <sort_order>1000</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -1073,11 +1204,11 @@
                         </region>
                     </fields>
                 </cif_return_address>
-                <cif_product_options translate="label" module="postnl">
+                <cif_product_options translate="label comment" module="postnl">
+                    <label>Product Options</label>
                     <comment>Here you can specify which PostNL product options you have a contract for. Also you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments. Please note that if you select a product option which is not covered by your PostNL contract it will result in an error.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <label>Product Options</label>
-                    <sort_order>1000</sort_order>
+                    <sort_order>1100</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
@@ -1156,11 +1287,11 @@
                         </default_pakjegemak_product_option>
                     </fields>
                 </cif_product_options>
-                <cif_globalpack_settings translate="label" module="postnl"> translate="label comment" module="postnl">
+                <cif_globalpack_settings translate="label comment" module="postnl"> translate="label comment" module="postnl">
+                    <label>GlobalPack Settings</label>
                     <comment>Here you can specify the way GlobalPack shipments are handled. This is very important if you want to ship products to outside the EU. Otherwise you can safely ignore these settings.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <label>GlobalPack Settings</label>
-                    <sort_order>1100</sort_order>
+                    <sort_order>1200</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
@@ -1361,11 +1492,11 @@
                         </product_sorting_direction>
                     </fields>
                 </cif_globalpack_settings>
-                <checkout translate="label" module="postnl">
+                <checkout translate="label comment" module="postnl">
+                    <label>PostNL Checkout Settings</label>
                     <comment><![CDATA[Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.</p><p>By using PostNL Checkout you can offer your customers the option to easily choose their desired delivery date. They will be able to choose when and where they want their order delivered. They may choose to have the order delivered to their home (on a specific day at a specific time) or to have it delivered to their nearest post office.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <label>PostNL Checkout Settings</label>
-                    <sort_order>1200</sort_order>
+                    <sort_order>1300</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -1718,10 +1849,10 @@
                     </fields>
                 </checkout>
                 <checkout_payment_methods translate="label comment" module="postnl">
+                    <label>PostNL Checkout Payment Settings</label>
                     <comment>This is where you specify which payment options will be presented to your customers in PostNL Checkout. At least one of these must be activated for PostNL Checkout to work.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <label>PostNL Checkout Payment Settings</label>
-                    <sort_order>1300</sort_order>
+                    <sort_order>1400</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -2504,11 +2635,11 @@
                         </klarna_method>
                     </fields>
                 </checkout_payment_methods>
-                <advanced translate="label" module="postnl">
+                <advanced translate="label comment" module="postnl">
+                    <label>Advanced Settings</label>
                     <comment>These settings are intended for advanced users only! If you're not 100% sure what you're doing, please do not touch these settings.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <label>Advanced Settings</label>
-                    <sort_order>1400</sort_order>
+                    <sort_order>1500</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
