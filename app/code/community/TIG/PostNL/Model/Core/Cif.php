@@ -1212,6 +1212,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         $streetname = $address->getStreet($streetnameField);
         $housenumber = $address->getStreet($housenumberField);
+        $housenumber = trim($housenumber);
 
         /**
          * If street or housenr fields are empty, use alternative options to obtain the address data
@@ -1910,10 +1911,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
           * For custom references we need to replace several optional variables
           */
          if ($referenceType == 'custom') {
+             $store = Mage::getModel('core/store')->load($storeId);
+
              $reference = str_replace('{{var shipment_increment_id}}', $shipment->getIncrementId(), $reference);
              $reference = str_replace('{{var order_increment_id}}', $shipment->getOrder()->getIncrementId(), $reference);
-
-             $store = Mage::getModel('core/store')->load($storeId);
              $reference = str_replace('{{var store_frontend_name}}', $store->getFrontendName(), $reference);
          }
 
