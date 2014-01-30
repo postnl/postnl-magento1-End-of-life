@@ -16,49 +16,13 @@ $dataHelper = Mage::helper('onestepcheckout');
         </div>';
     ?>
 
-<?php if(!$this->settings['exclude_address']):?>
-    <?php if(Mage::getStoreConfig('onestepcheckout/exclude_fields/enable_address_fields')):?>
-        <?php
-        $addressFields = '';
-            for ($_i=1, $_n=$this->helper('customer/address')->getStreetLines(); $_i<=$_n; $_i++){
 
-                    $addressFields .= '<div class="input-box input-address-short'.((in_array('address', $formErrors)) ? ' input-error' : '').'">
-                    <label for="shipping:street'.$_i.'">'.$this->__('Street Address '.$_i).' <span class="required">*</span></label><br />
-                    <input type="text" title="'.$this->__('Street Address '.$_i).'" name="shipping[street][]" id="shipping:street'.$_i.'" value="'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getStreet($_i)).'" class="required-entry input-text onestepcheckout-address-line" />
-                    </div>';
-            }
-            $shippingFields['street'] = $addressFields;
-        ?>
-    <?php else:?>
-        <?php
-        $addressFields = '';
-            for ($_i=1, $_n=$this->helper('customer/address')->getStreetLines(); $_i<=$_n; $_i++){
-
-                    $addressFields .= '<input type="text" title="'.$this->__('Street Address '.$_i).'" name="shipping[street][]" id="shipping:street'.$_i.'" value="'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getStreet($_i)).'" class="'.(($_i == 1)? 'required-entry ' : '').'input-text onestepcheckout-address-line" />';
-                    $addressFields .= (($_i != $this->helper('customer/address')->getStreetLines()) ? '<br/>': '');
-            }
-            $shippingFields['street'] = '
-                <div class="input-box input-address'.((in_array('address', $formErrors)) ? ' input-error' : '').'">
-                    <label for="shipping:street1">'.$this->__('Address').' <span class="required">*</span></label><br />
-                    '.$addressFields.'
-                </div>';
-        ?>
-    <?php endif; ?>
-<?php endif; ?>
-
-<?php if(!$this->settings['exclude_country_id']):?>
-<?php
-$shippingFields['country_id'] = '
-    <div class="input-box input-country'.((in_array('country', $formErrors)) ? ' input-error' : '').'">
-        <label for="shipping:country_id">'.$this->__('Country').' <span class="required">*</span></label><br />
-            '.$this->getCountryHtmlSelect('shipping').'
-    </div>';
+<?php $shippingFields['street'] = $this->getChild('postnl_shipping_postcodecheck')
+                                      ->setAddressType('shipping')
+                                      ->setAddress($this->getQuote()->getBillingAddress())
+                                      ->setCountryHtmlSelect($this->getCountryHtmlSelect('shipping'))
+                                      ->toHtml();
 ?>
-<?php else: ?>
-<?php $shippingFields['country_id'] = '
-    <input type="hidden" name="shipping[country_id]" id="shipping:country_id" value="'.$this->settings['default_country'].'" />';
-?>
-<?php endif; ?>
 <?php if(!$this->settings['exclude_region'] ): ?>
     <?php $shippingFields['region_id'] = '
         <div class="input-box input-region'.((in_array('region', $formErrors)) ? ' input-error' : '').'">
@@ -70,22 +34,6 @@ $shippingFields['country_id'] = '
                 $("shipping:region_id").setAttribute("defaultValue",  "'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getRegionId()).'");
             </script>
             <input type="text" id="shipping:region" name="shipping[region]" value="'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getRegion()).'"  title="'.$this->__('State/Province').'" class="required-entry input-text" style="display:none" />
-        </div>';
-    ?>
-<?php endif; ?>
-<?php if(!$this->settings['exclude_city']):?>
-    <?php $shippingFields['city'] = '
-        <div class="input-box input-city'.((in_array('city', $formErrors)) ? ' input-error' : '').'">
-            <label for="shipping:city">'.$this->__('City').' <span class="required">*</span></label><br/>
-            <input type="text" name="shipping[city]" value="'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getCity()).'" title="'.$this->__('City').'" class="required-entry input-text" id="shipping:city" />
-        </div>';
-    ?>
-<?php endif; ?>
-<?php if(!$this->settings['exclude_zip']): ?>
-    <?php $shippingFields['postcode'] = '
-        <div class="input-box input-postcode'.((in_array('postcode', $formErrors)) ? ' input-error' : '').'" >
-            <label for="shipping:postcode">'.$this->__('Zip/Postal Code').' <span class="required">*</span></label><br />
-            <input type="text" title="'.$this->__('Zip/Postal Code').'" name="shipping[postcode]" id="shipping:postcode" value="'.$dataHelper->clearDash($this->getQuote()->getShippingAddress()->getPostcode()).'" class="validate-zip-international required-entry input-text" />
         </div>';
     ?>
 <?php endif; ?>
