@@ -32,7 +32,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 document.observe('dom:loaded', function() {
@@ -147,7 +147,7 @@ document.observe('dom:loaded', function() {
 			return false;
 		}
 		
-		if ($('country_id').getValue() != 'NL') {
+		if ($('country').getValue() != 'NL') {
 			return false;
 		}
 		
@@ -161,12 +161,12 @@ document.observe('dom:loaded', function() {
             onSuccess: function(response) {
                 if (response.responseText == 'error') {
             		$('postnl_address_error').show();
-                	changePostcodeCheckDisabledFields(false, addressType);
+                	changePostcodeCheckDisabledFields(false);
                 }
             },
             onFailure: function(response) {
             	$('postnl_address_error').show();
-            	changePostcodeCheckDisabledFields(false, addressType);
+            	changePostcodeCheckDisabledFields(false);
             }
         });
         
