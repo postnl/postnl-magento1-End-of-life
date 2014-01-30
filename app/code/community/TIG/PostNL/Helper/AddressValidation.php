@@ -53,6 +53,12 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const XML_PATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
     
     /**
+     * XML paths to flags that dtermine which environment allows the postcode check functionality
+     */
+    const XML_PATH_POSTCODE_CHECK_IN_CHECKOUT    = 'postnl/cif_address/postcode_check_in_checkout';
+    const XML_PATH_POSTCODE_CHECK_IN_ADDRESSBOOK = 'postnl/cif_address/postcode_check_in_addressbook';
+    
+    /**
      * Checks whether the given store uses split address lines.
      * 
      * @param int|null $storeId
@@ -182,7 +188,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
      * 
      * @return boolean
      */
-    public function isPostcodeCheckEnabled($storeId = null)
+    public function isPostcodeCheckEnabled($storeId = null, $environment = false)
     {
         if (is_null($storeId)) {
             $storeId = Mage::app()->getStore()->getId();
@@ -198,6 +204,23 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             return false;
         }
         
-        return true;
+        /**
+         * Check to see if the postcode check functionality is allowed for the specified environment.
+         */
+        $environmentAllowed = false;
+        switch ($environment) {
+            case 'checkout':
+                $environmentAllowed = Mage::getStoreConfigFlag(self::XML_PATH_POSTCODE_CHECK_IN_CHECKOUT, $storeId);
+                break;
+            case 'addressbook':
+                $environmentAllowed = Mage::getStoreConfigFlag(self::XML_PATH_POSTCODE_CHECK_IN_ADDRESSBOOK, $storeId);
+                break;
+            case false:
+                $environmentAllowed = true;
+                break;
+            //no default
+        }
+        
+        return $environmentAllowed;
     }
 }

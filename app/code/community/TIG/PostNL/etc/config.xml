@@ -271,6 +271,12 @@
                         <class>postnl_addressvalidation/observer_onepage</class>
                         <method>shippingAddressPostcodeCheck</method>
                     </checkout_onepage_shipping_postcodecheck>
+                    <!-- Adds the postcode check functionality by overloading the customer address edit form -->
+                    <customer_address_edit_postcodecheck>
+                        <type>singleton</type>
+                        <class>postnl_addressvalidation/observer_addressBook</class>
+                        <method>addressBookPostcodeCheck</method>
+                    </customer_address_edit_postcodecheck>
                 </observers>
             </core_block_abstract_to_html_before>
         </events>
@@ -440,6 +446,9 @@
         	    <sender_ref_nr/>
         	</parcelware_export>
         	<cif_address>
+        	    <use_postcode_check>0</use_postcode_check> <!-- Do not use postcode check functionality -->
+        	    <postcode_check_in_checkout>1</postcode_check_in_checkout> <!-- Use postcode check on the checkout page -->
+        	    <postcode_check_in_addressbook>1</postcode_check_in_addressbook> <!-- Use postcode check in the customer's addressbook -->
         		<split_street>1</split_street> <!-- split street -->
         		<streetname_field>1</streetname_field> <!-- first address line -->
         		<housenr_field>2</housenr_field> <!-- second address line -->
@@ -462,7 +471,7 @@
         		<postcode/>
         		<city/>
         		<region/>
-        		<country>NL</country> <!-- All sender's must be located in the Netherlands -->
+        		<country>NL</country> <!-- All sender addresses must be located in the Netherlands -->
         	</cif_sender_address>
         	<cif_return_address>
         	    <use_sender_address>1</use_sender_address> <!-- use the sender address as the return address -->

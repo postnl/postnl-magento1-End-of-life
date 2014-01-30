@@ -33,19 +33,19 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
  
 /**
- * General exception class for TIG_PostNL module
+ * General exception class for TIG_PostNL extension
  * 
  * @see Mage_Core_Exception
  */
 class TIG_PostNL_Exception extends Mage_Core_Exception
 {
     /**
-     * Our codes are string, however the core Exception class only accepts integers, so we need to overload it.
+     * Our error codes are strings, however the core Exception class only accepts integers, so we need to overload it.
      * 
      * @param string $message
      * @param mixed $code
