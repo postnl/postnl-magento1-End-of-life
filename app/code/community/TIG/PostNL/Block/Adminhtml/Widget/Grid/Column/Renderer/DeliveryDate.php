@@ -36,63 +36,45 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
 {
     /**
-     * Returns an option array for optional shipment grid columns
-     *
-     * @return array
+     * Additional column names used
      */
-    public function toOptionArray()
-    {
-        $helper = Mage::helper('postnl');
-        $columns = array(
-            array(
-                'value' => 'parcel_count',
-                'label' => $helper->__('Number of Parcels')
-            ),
-            array(
-                'value' => 'shipping_description',
-                'label' => $helper->__('Shipping Method')
-            ),
-            array(
-                'value' => 'shipment_type',
-                'label' => $helper->__('Shipment Type')
-            ),
-            array(
-                'value' => 'product_code',
-                'label' => $helper->__('Shipping Product')
-            ),
-            array(
-                'value' => 'confirm_date',
-                'label' => $helper->__('Send Date')
-            ),
-            array(
-                'value' => 'delivery_date',
-                'label' => $helper->__('Delivery Date')
-            ),
-            array(
-                'value' => 'confirm_status',
-                'label' => $helper->__('Confirm Status')
-            ),
-            array(
-                'value' => 'labels_printed',
-                'label' => $helper->__('Labels Printed')
-            ),
-            array(
-                'value' => 'is_parcelware_exported',
-                'label' => $helper->__('Exported to parcelware')
-            ),
-            array(
-                'value' => 'barcode',
-                'label' => $helper->__('Barcode')
-            ),
-            array(
-                'value' => 'shipping_phase',
-                'label' => $helper->__('Shipping Phase')
-            ),
-        );
+    const SHIPPING_METHOD_COLUMN = 'shipping_method';
+    const CONFIRM_DATE_COLUMN    = 'confirm_date';
 
-        return $columns;
+    /**
+     * Renders column.
+     *
+     * @param Varien_Object $row
+     *
+     * @return string
+     */
+    public function render(Varien_Object $row)
+    {
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
+        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+            return parent::render($row);
+        }
+
+        $value = $row->getData($this->getColumn()->getIndex());
+
+        /**
+         * If no delivery date is specified, calculate the date as being 1 day after the confirm date
+         */
+        if (!$value) {
+            $confirmDate  = $row->getData(self::CONFIRM_DATE_COLUMN);
+            $deliveryDate = date('Y-m-d H:i:s', strtotime($confirmDate . ' + 1 day'));
+
+            $row->setData($this->getColumn()->getIndex(), $deliveryDate);
+        }
+
+        /**
+         * Finally, simply render the date
+         */
+        return parent::render($row);
     }
 }

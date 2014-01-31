@@ -36,63 +36,52 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Anchor
+    extends Varien_Data_Form_Element_Link
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
-    /**
-     * Returns an option array for optional shipment grid columns
-     *
-     * @return array
-     */
-    public function toOptionArray()
+    public function getElementHtml()
     {
-        $helper = Mage::helper('postnl');
-        $columns = array(
-            array(
-                'value' => 'parcel_count',
-                'label' => $helper->__('Number of Parcels')
-            ),
-            array(
-                'value' => 'shipping_description',
-                'label' => $helper->__('Shipping Method')
-            ),
-            array(
-                'value' => 'shipment_type',
-                'label' => $helper->__('Shipment Type')
-            ),
-            array(
-                'value' => 'product_code',
-                'label' => $helper->__('Shipping Product')
-            ),
-            array(
-                'value' => 'confirm_date',
-                'label' => $helper->__('Send Date')
-            ),
-            array(
-                'value' => 'delivery_date',
-                'label' => $helper->__('Delivery Date')
-            ),
-            array(
-                'value' => 'confirm_status',
-                'label' => $helper->__('Confirm Status')
-            ),
-            array(
-                'value' => 'labels_printed',
-                'label' => $helper->__('Labels Printed')
-            ),
-            array(
-                'value' => 'is_parcelware_exported',
-                'label' => $helper->__('Exported to parcelware')
-            ),
-            array(
-                'value' => 'barcode',
-                'label' => $helper->__('Barcode')
-            ),
-            array(
-                'value' => 'shipping_phase',
-                'label' => $helper->__('Shipping Phase')
-            ),
-        );
+        $originalData = $this->getElement()->getOriginalData();
+        $anchorName = $originalData['anchor_name'];
 
-        return $columns;
+        $html = $this->getBeforeElementHtml();
+        $html .= '<a name="' . $anchorName . '"></a>';
+        $html .= $this->getAfterElementHtml();
+
+        return $html;
+    }
+
+    /**
+     * Get the element's HTML ID
+     *
+     * @return string
+     */
+    public function getHtmlId()
+    {
+        if (!$this->getElement()) {
+            return '';
+        }
+
+        $element = $this->getElement();
+        $id = $element->getHtmlId();
+
+        return $id;
+    }
+
+    /**
+     * Render field html
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @return string
+     */
+    public function render(Varien_Data_Form_Element_Abstract $element)
+    {
+        $this->setElement($element);
+
+        $this->setBeforeElementHtml('<tr id="row_' . $this->getHtmlId() . '"><td colspan="5">');
+        $this->setAfterElementHtml('</tr></td>');
+
+        return $this->getElementHtml();
     }
 }

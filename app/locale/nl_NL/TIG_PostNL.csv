@@ -116,7 +116,7 @@ Use HS Tariff,Gebruik het HS tarief
 Enable this field to specify a product attribute to use as the product's HS tariff.,Activeer dit veld om de atributen te specificeren om als HS tarief te gebruiken
 HS Tariff attribute,HS tarief
 The product attribute used to determine the product's HS tariff.,Het productattribuut wat gebruikt wordt om het HS tarief van het product te bepalen
-Customs value attribute,Douane waarde 
+Customs value attribute,Douane waarde
 The product attribute used to determine product's customs value.,Het productattribuut wat gebruikt wordt om de waarde voor de douane van het product te bepalen
 Country of origin attribute,Land van herkomst
 The product attribute used to determine the product's country of origin.,Het productattribuut wat gebruikt wordt om het land van herkomst van het product te bepalen
@@ -249,7 +249,7 @@ Activate the extension,Activeer de extensie
 Mijnpakket,Mijnpakket
 View this shipment in mijnpakket,Bekijk deze zending in Mijnpakket
 Wrong message type,Verkeerd bericht type
-Are you sure you want to send PostNL tracking information to the customer?,Weet u zeker dat u de PostNL track & trace informatie naar de klant wilt versturen?
+Are you sure you want to send PostNL tracking information to the customer?,Weet u zeker dat u de PostNL traceer informatie naar de klant wilt zenden?
 Send Date,Verzenddatum
 Labels printed,Labels geprint
 Track & Trace,Track & trace
@@ -390,7 +390,7 @@ PostNL Checkout is not available due to the following reasons:,PostNL Checkout i
 Click here for more information from the TiG knowledgebase.,Klik hier voor meer informatie in de TiG knowledgebase.
 This action cannot be used on non-PostNL shipments.,Deze actie kan niet gedaan worden op niet-PostNL zendingen.
 This shipment cannot be confirmed at this time.,Deze zending kan niet voorgemeld worden.
-For EU shipments you may only confirm a shipment after it's labels have been printed.,Europese verzendingen kunnen alleen voorgemeld worden als de labels zijn uitgeprint. 
+For EU shipments you may only confirm a shipment after it's labels have been printed.,Europese verzendingen kunnen alleen voorgemeld worden als de labels zijn uitgeprint.
 Show error details in the frontend,Toon error details in de frontend
 "If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.","Indien deze instelling op 'ja' staat, zullen ook in de frontend bij de meeste errors een foutcode en link naar de TiG knowledgebase getoond worden. Dit is nuttig wanneer u de extensie moet debuggen, echter zou nooit aan mogen staan in een productie omgeving."
 The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.,De PostNL extensie is niet compatibel met uw Magento versie! Dit kan onverwachtte problemen veroorzaken.
@@ -435,7 +435,7 @@ Documents,Documenten
 Commercial Goods,Commerciële Goederen
 Commercial Sample,Commercieel Monster
 Returned Goods,Geretourneerde Goederen
-An error occurred while processing your request: ,Er is een fout opgetreden tijdens het verwerken van uw verzoek: 
+An error occurred while processing your request: ,Er is een fout opgetreden tijdens het verwerken van uw verzoek:
 OrderToken missing for quote #%s,OrderToken is niet aanwezig voor quote #%s
 Unable to create an order for quote #%s,Kan geen order creëren voor quote #%s
 Invalid quote supplied.,Ongeldige quote meegeleverd.
@@ -532,14 +532,14 @@ The confirmAndGenerateLabel action is currently unavailable.,De confirmAndGenera
 Invalid message type requested: %s,Ongeldig bericht type gekozen: %s
 Unable to read directory: %s,Kan folder niet lezen: %s
 Invalid UpdateOrder response: %s,Ongeldige UpdateOrder ontvangen: %s
-"Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.","Hier kunt u uw PostNL account gegevens invullen.</p><p>Voor het gebruik van de extensie dient u zich <a 
-href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' 
+"Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.","Hier kunt u uw PostNL account gegevens invullen.</p><p>Voor het gebruik van de extensie dient u zich <a
+href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank'
 title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen. Indien u de e-mail die deze gegevens bevat niet meer kunt vinden, neem dan contact op met uw PostNL account manager."
 "You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.","Deze gegevens vindt u in uw <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>Checkout instellingen</a> bij PostNL.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is een gratis service, wel dient u zich <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen."
 ONLY CHANGE THESE SETTINGS WITH DIRECT INSTRUCTION FROM POSTNL OR TOTAL INTERNET GROUP,PAS DEZE INSTELLINGEN ENKEL AAN MET DIRECTE INSTRUCTIES VAN POSTNL OF TOTAL INTERNET GROUP
 "Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature.","Klanten die gebruik maken van deze feature zullen ingeschreven worden op de nieuwsbrief van uw webshop, niet op de nieuwsbrief van PostNL. Houd er rekenen mee dat extensies van derden die de Magento nieuwsbrief functionaliteit aanpassen mogelijk zullen conflicteren met deze feature."
 Doorcodes are often used in foreign addresses such as those used in France and Singapore.,Deurcodes worden veelal gebruikt in buitenlandse addressen zoals addressen uit Frankrijk en Singapore.
-"Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.</p><p>By using PostNL Checkout you can offer your customers the option to easily choose their desired delivery date. They will be able to choose when and where they want their order delivered. They may choose to have the order delivered to their home (on a specific day at a specific time) or to have it delivered to their nearest post office.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.","Hier kunt u PostNL Checkout activeren of deactiveren en alle onderdelen van PostNL Checkout configureren</p><p>Met de PostNL Checkout kunt u uw klanten tijdens hun bestelling eenvoudig de gewenste bezorging laten kiezen. Zijn kunnen dan zélf kiezen waar en wanneer zij hun bestelling willen ontvangen, bijv thuis (dagkeuze en tijdvak) of zelf ophalen op een Postkantoor.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is een gratis service, wel dient u zich <a 
+"Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.</p><p>By using PostNL Checkout you can offer your customers the option to easily choose their desired delivery date. They will be able to choose when and where they want their order delivered. They may choose to have the order delivered to their home (on a specific day at a specific time) or to have it delivered to their nearest post office.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.","Hier kunt u PostNL Checkout activeren of deactiveren en alle onderdelen van PostNL Checkout configureren</p><p>Met de PostNL Checkout kunt u uw klanten tijdens hun bestelling eenvoudig de gewenste bezorging laten kiezen. Zijn kunnen dan zélf kiezen waar en wanneer zij hun bestelling willen ontvangen, bijv thuis (dagkeuze en tijdvak) of zelf ophalen op een Postkantoor.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is een gratis service, wel dient u zich <a
 href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014'
  target='_blank' title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen.
 "
@@ -589,11 +589,21 @@ Parcelware Export Settings,Parcelware Export Instellingen
 This is where you can configure your parcelware export.,Hier kunt u uw parcelware export voorkeuren opegeven.
 Enable parcelware export,Activeer parcelware export
 Parcelware export is disabled. Activate parcdelware export in order to edit these settings. Please note that you can only activate parcelware export from the global level.,Parcelware export is gedeactiveerd. Activeer parcelware export om deze instellingen te kunnen aanpassen. Houd er rekening mee dat parcelware export enkel vanuit op globaal niveau kunt activeren.
-Automatically confirm exported shipments,Geëxporteerde zeningen automatisch voormelden
+Automatically confirm exported shipments,Geëxporteerde zendingen automatisch voormelden
 "If set to yes, shipments that have been exported will be confirmed in Magento.","Indien deze instelling op ja staat, zullen zendingen die geëxporteerd zijn automatisch in Magento voorgemeld worden."
 This does NOT actually confirm the shipment with PostNL. It only updates the status in Magento to prevent you from accidentally confirming it in Magento after you've exported it to parcelware.,Dit meldt zendingen NIET voor bij PostNL. Het zorgt er enkel voor dat de voormeld status in Magento aangepast wordt. Dit voorkomt dat u per ongeluk zendingen nogmaals voormeldt bij PostNL nadat deze geëxporteerd zijn.
 Contract reference number,Contract referentie nummer
 Contract name,Contract naam
 Sender address reference number,Afzender adres referentie nummer
-Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.,Uw webshop is geregistreerd. U ontvangt binnen enkele minuten een e-mail op het opgegeven e-mailadres. Lees deze e-mail s.v.p. aandachtig. Hierin staat aangegeven hoe u de activatieprocedure kunt afronden.
-
+Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.,Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.
+Product option,Product optie
+Use postcode check,Gebruik postode check
+"Using this feature will allow customers to only enter their postcode and housenumber, the extension will then automatically validate these fields and enter the correct streetname and city. This only works for Dutch addresses.","Indien u gebruik maakt van deze feature, zullen klanten enkel hun postcode en huisnummer moeten invullen. De postcode check controleert vervolgens of deze waardes valide zijn en zal de adres gegevens aanvullen met de bijbehorende straat- en plaatsnaam. Deze feature is enkel beschikbaar voor Nederlandse adressen."
+This will affect the layout of the Magento address forms in your checkout and customer account pages. This will also force your store to use atleast 3 address lines. Only default Magento onepage checkout and the Idev OneStepCheckout extension are supported.,Dit zal de layout van de Magento adres formulieren aanpassen op de checkout en klant adresboek pagina's. Dit zal ook geforceerd minimaal 3 adresregels gebruiken. Enkel de standaard Magento onepage checkout en Idev's OneStepCheckout extensie worden ondersteund.
+Use postcode check on checkout page,Gebruik de postcode check op de checkout pagina
+If enabled the postcode check functionality will be added to your checkout page.,"Indien deze optie gebruikt wordt, zal de postcode check functionaliteit aan de checkout pagina toegevoegd worden."
+Please note that only Magento's onepage checkout and Idev's OneStepCheckout are supported.,Houd er rekening mee dat enkel Magento's onepage checkout en Idev's OneStepCheckout ondersteund worden.
+Use postcode check in customer's address book,Gebruik de postcode check op de checkout pagina
+If enabled the postcode check functionality will be added to the customer's address book.,"Indien deze optie gebruikt wordt, zal de postcode check functionaliteit toegevoegd worden aan het adresboek in de klantaccount."
+Shipping Product,Verzendproduct
+Delivery Date,Bezorgdatum
