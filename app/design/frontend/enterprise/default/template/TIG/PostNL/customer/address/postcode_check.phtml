@@ -106,7 +106,7 @@
     <input type="hidden" name="street[]" id="street2" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(2)) ?>"/>
     <input type="hidden" name="street[]" id="street3" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(3)) ?>"/>
     <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
-        <input type="hidden" name="street[]" id="street<?php echo $_i ?>" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet($_i)) ?>""/>
+        <input type="hidden" name="street[]" id="street<?php echo $_i ?>" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet($_i)) ?>"/>
     <?php endfor; ?>
 </div>
 
