@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -36,7 +36,7 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */     
+ */
 -->
 <config>
     <sections>
@@ -643,6 +643,14 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </show_shipment_type_column>
+                        <shipping_grid_columns_anchor>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_anchor</frontend_model>
+                            <anchor_name>shipment_grid_columns</anchor_name>
+                            <sort_order>95</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </shipping_grid_columns_anchor>
                         <shipping_grid_columns translate="label comment" module="postnl">
                             <label>Optional Shipment grid columns</label>
                             <comment>Select which optional columns to show in the shipment grid.</comment>
@@ -794,7 +802,7 @@
                         <use_postcode_check translate="label comment tooltip" module="postnl">
                             <label>Use postcode check</label>
                             <comment>Using this feature will allow customers to only enter their postcode and housenumber, the extension will then automatically validate these fields and enter the correct streetname and city. This only works for Dutch addresses.</comment>
-                            <tooltip>This will affect the layout of the Magento address forms in your checkout and customer account pages. This will also force your store to use atleast 3 address lines. Only default Magento onepage checkout and the Idev OneStepCheckout extensions are supported.</tooltip>
+                            <tooltip>This will affect the layout of the Magento address forms in your checkout and customer account pages. This will also force your store to use atleast 3 address lines. Only default Magento onepage checkout and the Idev OneStepCheckout extension are supported.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>10</sort_order>
