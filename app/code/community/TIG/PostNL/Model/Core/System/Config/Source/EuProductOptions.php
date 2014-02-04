@@ -58,11 +58,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
                 'value' => '4952',
                 'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
             ),
-            array(
+            /**
+             * This option has been removed in v1.2.0
+             *
+             * @deprecated v1.1.2
+             */
+            /*array(
                 'value' => '4955',
                 'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
                 'isBelgiumOnly' => true,
-            ),
+            ),*/
             /**
              * These are not currently implemented
              *

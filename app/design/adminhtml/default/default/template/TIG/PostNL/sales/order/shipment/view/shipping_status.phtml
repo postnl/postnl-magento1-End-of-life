@@ -33,31 +33,32 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
+<?php $_helper = $this->helper('postnl'); ?>
 <?php $_shipment = Mage::registry('current_shipment'); ?>
 <?php $_progressStatus = $this->getShippingStatus($_shipment) ?>
 <div id="postnl_status_bar" class="progress-wrapper <?php echo $_progressStatus; ?>">
     <div class="progress progress-collection">
         <span class="begin"></span>
-        <strong><?php echo $this->__('Reported at PostNL') ?></strong>
+        <strong><?php echo $_helper->__('Reported at PostNL') ?></strong>
         <span class="seperator"></span>
     </div>
 
     <div class="progress progress-distribution">
-        <strong><?php echo $this->__('Sorted') ?></strong>
+        <strong><?php echo $_helper->__('Sorted') ?></strong>
         <span class="seperator"></span>
     </div>
 
     <div class="progress progress-transit">
-        <strong><?php echo $this->__('In Distribution') ?></strong>
+        <strong><?php echo $_helper->__('In Distribution') ?></strong>
         <span class="seperator"></span>
     </div>
 
     <div class="progress progress-delivered">
-        <strong><?php echo $this->__('Delivered') ?></strong>
+        <strong><?php echo $_helper->__('Delivered') ?></strong>
         <span class="end"></span>
     </div>
 </div>

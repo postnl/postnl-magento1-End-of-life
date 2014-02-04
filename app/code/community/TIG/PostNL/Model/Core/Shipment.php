@@ -179,7 +179,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Retrieves the linked Shipment's shipping address
      *
-     * @return Mage_Sales_Model_Order_Address | null
+     * @return Mage_Sales_Model_Order_Address|null
      */
     public function getShippingAddress()
     {
@@ -201,7 +201,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets an optional address with the pakje_gemak address type
      *
-     * @return boolean | Mage_Sales_Model_Order_Address
+     * @return boolean|Mage_Sales_Model_Order_Address
      */
     public function getPakjeGemakAddress()
     {
@@ -276,7 +276,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets a PostNL helper object
      *
-     * @return TIG_PostNL_Helper_Data
+     * @return TIG_PostNL_Helper_*
      */
     public function getHelper($type = 'data')
     {
@@ -698,7 +698,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param int $amount
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return boolean|TIG_PostNL_Model_Core_Shipment
      */
     public function setExtraCoverAmount($amount)
     {
@@ -708,7 +708,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $productCode = $this->getProductCode();
         $extraCoverProductCodes = $this->getExtraCoverProductCodes();
         if (!in_array($productCode, $extraCoverProductCodes)) {
-            return $this;
+            return false;
         }
 
         $this->setData('extra_cover_amount', $amount);
@@ -986,11 +986,20 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return true;
         }
 
+        /**
+         * If the order was placed using PostNL Checkout, we can check if it was a PakjeGEmak order directly.
+         */
         $postnlOrder = $this->getPostnlOrder();
-        if ($postnlOrder->getId() && $postnlOrder->getIsPakjeGemak()) {
+        if ($postnlOrder
+            && $postnlOrder->getId()
+            && $postnlOrder->getIsPakjeGemak()
+        ) {
             return true;
         }
 
+        /**
+         * Otherwise we need to check the product code by comparing it to known PakjeGemak product codes.
+         */
         $pakjeGemakProductCodes = $this->getHelper('cif')->getPakjeGemakProductCodes();
         $productCode = $this->getData('product_code');
 

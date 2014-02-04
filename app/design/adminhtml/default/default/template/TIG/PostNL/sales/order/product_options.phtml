@@ -33,13 +33,13 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
-
+<?php $_helper                   = $this->helper('postnl'); ?>
 <?php $_extraCoverProductOptions = $this->getExtraCoverProductOptions(); ?>
-<?php $_globalPackOption = $this->getGlobalPackProductOption(); ?>
+<?php $_globalPackOption         = $this->getGlobalPackProductOption(); ?>
 <script type ="text/javascript">
 //<![CDATA[
     document.observe('dom:loaded', function() {
@@ -117,25 +117,27 @@
             overlayHideEffectOptions : null,
             open : function() {
                 content = "<form id='postnl_extra_cover_form' name='postnl_extra_cover_form'>"; //form element is only to enable Varien form validation
-                content += "<p>"
-                        +  "<label for='extra_cover_value'><?php echo $this->__('Extra cover amount (in increments of 500)'); ?></label>"
-                        +  "<input id='extra_cover_value'type='text' name='extra_cover_value' class='input-text required-entry validate-increment-500 validate-not-negative-number' value='0'/>"
-                        +  "</p>";
 
                 if (selectedProductOption.value == globalPackOption) {
-                   content += "<p>"
-                           +  "<label for='globalpack_shipment_type'><?php echo $this->__('Shipment type'); ?></label>"
-                           +  "<select id='globalpack_shipment_type' type='text' name='globalpack_shipment_type' class='validate-select required-field'>"
-                   <?php foreach ($this->getShipmentTypes() as $type => $label): ?>
-                           +  "<option value='<?php echo $type; ?>'><?php echo $this->__($label); ?></option>"
-                   <?php endforeach; ?>
-                           +  "</select>"
-                           +  "</p>";
+                    content += "<input id='extra_cover_value'type='hidden' name='extra_cover_value' class='input-text' value='200'/>"
+                    content += "<p>"
+                            +  "<label for='globalpack_shipment_type'><?php echo $_helper->__('Shipment type'); ?></label>"
+                            +  "<select id='globalpack_shipment_type' type='text' name='globalpack_shipment_type' class='validate-select required-field'>"
+                    <?php foreach ($this->getShipmentTypes() as $type => $label): ?>
+                            +  "<option value='<?php echo $type; ?>'><?php echo $_helper->__($label); ?></option>"
+                    <?php endforeach; ?>
+                            +  "</select>"
+                            +  "</p>";
 
-                   content += "<p>"
-                           +  "<label for='globalpack_treat_as_abandoned'><?php echo $this->__('Treat as abandoned'); ?></label>"
-                           +  "<input id='globalpack_treat_as_abandoned' name='globalpack_treat_as_abandoned' type='checkbox' value='1'/>"
-                           +  "</p>";
+                    content += "<p>"
+                            +  "<label for='globalpack_treat_as_abandoned'><?php echo $_helper->__('Treat as abandoned'); ?></label>"
+                            +  "<input id='globalpack_treat_as_abandoned' name='globalpack_treat_as_abandoned' type='checkbox' value='1'/>"
+                            +  "</p>";
+                } else {
+                    content += "<p>"
+                            +  "<label for='extra_cover_value'><?php echo $_helper->__('Extra cover amount (in increments of 500)'); ?></label>"
+                            +  "<input id='extra_cover_value'type='text' name='extra_cover_value' class='input-text required-entry validate-increment-500 validate-not-negative-number' value='0'/>"
+                            +  "</p>";
                 }
 
                 content += "</form>";
@@ -153,7 +155,7 @@
                     closable:true,
                     className:"magento",
                     windowClassName:"popup-window",
-                    title:'<?php echo $this->__('Please fill out these additional fields.'); ?>',
+                    title:'<?php echo $_helper->__('Please fill out these additional fields.'); ?>',
                     width:410,
                     height:120,
                     zIndex:1000,

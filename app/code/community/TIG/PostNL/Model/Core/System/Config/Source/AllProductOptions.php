@@ -175,11 +175,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'value' => '4952',
                         'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
                     ),
-                    '4955' => array(
-                        'value' => '4955',
-                        'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                    /**
+                     * This option has been removed in v1.2.0
+                     *
+                     * @deprecated v1.1.2
+                     */
+                    /*'4955' => array(
+                        'value'         => '4955',
+                        'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
                         'isBelgiumOnly' => true,
-                    ),
+                    ),*/
                     /**
                      * These are not currently implemented
                      *
@@ -202,6 +207,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'value'        => '4945',
                         'label'        => $helper->__('GlobalPack'),
                         'isExtraCover' => true,
+                        'extraCover'   => 200,
                     ),
                 ),
             ),
