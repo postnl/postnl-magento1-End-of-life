@@ -45,10 +45,24 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
     const MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY = '1.12.0.0';
 
     /**
-     * Creates the system > config > edit form for the PostNL section.
+     * Gets the fieldset parameter from the GET superglobal if available.
      *
-     * The only reason we have a custom form, rather than the default Adminhtml form is because the default form doesn't allow
-     * for 'forwards' field dependency.
+     * @return null|string
+     */
+    public function getFieldsetParam()
+    {
+        if ($this->hasFieldsetParam()) {
+            return $this->getData('fieldset_param');
+        }
+
+        $fieldsetparam = Mage::app()->getRequest()->getParam('fieldset');
+
+        $this->setFieldsetParam($fieldsetparam);
+        return $fieldsetparam;
+    }
+
+    /**
+     * Creates the system > config > edit form for the PostNL section.
      *
      * Due to the way the form is initialized, each fieldset is initialized with it's fields in order. Due to this order a field
      * can only depend on a field that is in the same fieldset or in a fieldset that is already initialized. An example:
@@ -139,6 +153,14 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
             }
             if (!empty($group->expanded)) {
                 $fieldsetConfig['expanded'] = (bool)$group->expanded;
+            }
+
+            /**
+             * Added support for a 'fieldset' URL parameter that forces a certain fieldset to the expanded state.
+             */
+            $fieldsetParam = $this->getFieldsetParam();
+            if ($fieldsetParam && $fieldsetParam == $group->getName()) {
+                $fieldsetConfig['expanded'] = true;
             }
 
             $fieldset = new Varien_Data_Form_Element_Fieldset($fieldsetConfig);

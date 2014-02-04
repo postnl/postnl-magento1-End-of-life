@@ -200,6 +200,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'parcel_count'           => 'postnl_shipment.parcel_count',
                 'is_parcelware_exported' => 'postnl_shipment.is_parcelware_exported',
                 'product_code'           => 'postnl_shipment.product_code',
+                'extra_cover_amount'     => 'postnl_shipment.extra_cover_amount',
             )
         );
 
@@ -334,6 +335,22 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $after = 'product_code';
         }
 
+        if (in_array('extra_cover_amount', $columnsToDisplay)) {
+            $block->addColumnAfter(
+                'extra_cover_amount',
+                array(
+                    'header'           => $helper->__('Extra Cover'),
+                    'align'            => 'left',
+                    'index'            => 'extra_cover_amount',
+                    'type'             => 'currency',
+                    'currency_code'    => Mage::app()->getStore()->getBaseCurrencyCode(), //returns the base currency code for the admin store
+                ),
+                $after
+            );
+
+            $after = 'extra_cover_amount';
+        }
+
         if (in_array('confirm_date', $columnsToDisplay)) {
             $block->addColumnAfter(
                 'confirm_date',
@@ -396,7 +413,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $block->addColumnAfter(
                 'labels_printed',
                 array(
-                    'header'         => $helper->__('Labels printed'),
+                    'header'         => $helper->__('Labels Printed'),
                     'type'           => 'options',
                     'index'          => 'labels_printed',
                     'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_yesNo',
@@ -416,7 +433,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $block->addColumnAfter(
                 'is_parcelware_exported',
                 array(
-                    'header'         => $helper->__('Exported to parcelware'),
+                    'header'         => $helper->__('Exported to Parcelware'),
                     'align'          => 'left',
                     'type'           => 'options',
                     'index'          => 'is_parcelware_exported',

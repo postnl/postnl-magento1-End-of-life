@@ -633,30 +633,31 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </show_grid_options>
+                        <shipping_grid_columns_anchor>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_anchor</frontend_model>
+                            <anchor_name>shipment_grid_columns</anchor_name>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </shipping_grid_columns_anchor>
                         <show_shipment_type_column translate="label comment" module="postnl">
                             <label>Show shipment type column in order grid</label>
                             <comment>This will add a column to the order grid allowing you to identify whether the order is domestic, EU or global.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </show_shipment_type_column>
-                        <shipping_grid_columns_anchor>
-                            <frontend_model>postnl_adminhtml/system_config_form_field_anchor</frontend_model>
-                            <anchor_name>shipment_grid_columns</anchor_name>
-                            <sort_order>95</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </shipping_grid_columns_anchor>
-                        <shipping_grid_columns translate="label comment" module="postnl">
+                        <shipping_grid_columns translate="label comment tooltip" module="postnl">
                             <label>Optional Shipment grid columns</label>
                             <comment>Select which optional columns to show in the shipment grid.</comment>
+                            <tooltip>Selecting too many columns may cause the shipment grid to no longer fit on your monitor.</tooltip>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_shipmentGridColumns</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -666,7 +667,7 @@
                             <label>Select a default option for the shipment grid mass action</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_shipmentGridMassaction</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -675,7 +676,7 @@
                         <email_header translate="label" module="postnl">
                             <label>These fields are used to configure the track &amp; trace email that may be automatically emailed to customers after a shipment has been confirmed.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -685,7 +686,7 @@
                             <comment>If enabled, a track &amp; trace eemail will be sent to the customer roughly 20 minutes after a shipment has been confirmed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -696,7 +697,7 @@
                             <comment>You can customize the track &amp; trace email in system > transactional emails.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_template</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

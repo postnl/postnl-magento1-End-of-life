@@ -249,9 +249,9 @@ TIG_PostNL::Activate the extension,Activeer de extensie
 TIG_PostNL::Mijnpakket,Mijnpakket
 TIG_PostNL::View this shipment in mijnpakket,Bekijk deze zending in Mijnpakket
 TIG_PostNL::Wrong message type,Verkeerd bericht type
-TIG_PostNL::Are you sure you want to send PostNL tracking information to the customer?,Weet u zeker dat u de PostNL track & trace informatie naar de klant wilt versturen?
+TIG_PostNL::Are you sure you want to send PostNL tracking information to the customer?,Weet u zeker dat u de PostNL traceer informatie naar de klant wilt zenden?
 TIG_PostNL::Send Date,Verzenddatum
-TIG_PostNL::Labels printed,Labels geprint
+TIG_PostNL::Labels Printed,Labels Geprint
 TIG_PostNL::Track & Trace,Track & trace
 TIG_PostNL::Shipping Phase,Verzendfase
 TIG_PostNL::Print label,Print label
@@ -299,7 +299,8 @@ TIG_PostNL::carat,Karat
 TIG_PostNL::Mite,Mite
 TIG_PostNL::Grain,Grain
 TIG_PostNL::Street line,Straat regel
-TIG_PostNL::Extra Cover,Extra dekking
+TIG_PostNL::Extra Cover,Extra Dekking
+TIG_PostNL::Extra cover,Extra dekking
 TIG_PostNL::Extra cover + Return when not home,Extra dekking + Retour indien niet thuis
 TIG_PostNL::Signature on delivery,Handtekening bij ontvangst
 TIG_PostNL::Signature on delivery + Delivery to stated address only,Handtekening bij ontvangst + Lever alleen aan opgegeven adres
@@ -583,4 +584,29 @@ TIG_PostNL::A6,A6
 TIG_PostNL::PostNL - Print Shipping Label,PostNL - Print Verzendlabel
 TIG_PostNL::PostNL - Send Tracking Information,PostNL - Verstuur Track & Trace Informatie
 TIG_PostNL::No status history available.,Geen status geschiedenis informatie beschikbaar.
-TIG_PostNL::Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.,Uw webshop is geregistreerd. U ontvangt binnen enkele minuten een e-mail op het opgegeven e-mailadres. Lees deze e-mail s.v.p. aandachtig. Hierin staat aangegeven hoe u de activatieprocedure kunt afronden.
+TIG_PostNL::PostNL - Create parcelware export,PostNL - Maak parcelware export
+TIG_PostNL::Exported to Parcelware,Geëxporteerd naar Parcelware
+TIG_PostNL::Parcelware Export Settings,Parcelware Export Instellingen
+TIG_PostNL::This is where you can configure your parcelware export.,Hier kunt u uw parcelware export voorkeuren opegeven.
+TIG_PostNL::Enable parcelware export,Activeer parcelware export
+TIG_PostNL::Parcelware export is disabled. Activate parcdelware export in order to edit these settings. Please note that you can only activate parcelware export from the global level.,Parcelware export is gedeactiveerd. Activeer parcelware export om deze instellingen te kunnen aanpassen. Houd er rekening mee dat parcelware export enkel vanuit op globaal niveau kunt activeren.
+TIG_PostNL::Automatically confirm exported shipments,Geëxporteerde zendingen automatisch voormelden
+"TIG_PostNL::If set to yes, shipments that have been exported will be confirmed in Magento.","Indien deze instelling op ja staat, zullen zendingen die geëxporteerd zijn automatisch in Magento voorgemeld worden."
+TIG_PostNL::This does NOT actually confirm the shipment with PostNL. It only updates the status in Magento to prevent you from accidentally confirming it in Magento after you've exported it to parcelware.,Dit meldt zendingen NIET voor bij PostNL. Het zorgt er enkel voor dat de voormeld status in Magento aangepast wordt. Dit voorkomt dat u per ongeluk zendingen nogmaals voormeldt bij PostNL nadat deze geëxporteerd zijn.
+TIG_PostNL::Contract reference number,Contract referentie nummer
+TIG_PostNL::Contract name,Contract naam
+TIG_PostNL::Sender address reference number,Afzender adres referentie nummer
+TIG_PostNL::Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.,Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.
+TIG_PostNL::Product option,Product optie
+TIG_PostNL::Use postcode check,Gebruik postode check
+"TIG_PostNL::Using this feature will allow customers to only enter their postcode and housenumber, the extension will then automatically validate these fields and enter the correct streetname and city. This only works for Dutch addresses.","Indien u gebruik maakt van deze feature, zullen klanten enkel hun postcode en huisnummer moeten invullen. De postcode check controleert vervolgens of deze waardes valide zijn en zal de adres gegevens aanvullen met de bijbehorende straat- en plaatsnaam. Deze feature is enkel beschikbaar voor Nederlandse adressen."
+TIG_PostNL::This will affect the layout of the Magento address forms in your checkout and customer account pages. This will also force your store to use atleast 3 address lines. Only default Magento onepage checkout and the Idev OneStepCheckout extension are supported.,Dit zal de layout van de Magento adres formulieren aanpassen op de checkout en klant adresboek pagina's. Dit zal ook geforceerd minimaal 3 adresregels gebruiken. Enkel de standaard Magento onepage checkout en Idev's OneStepCheckout extensie worden ondersteund.
+TIG_PostNL::Use postcode check on checkout page,Gebruik de postcode check op de checkout pagina
+TIG_PostNL::If enabled the postcode check functionality will be added to your checkout page.,"Indien deze optie gebruikt wordt, zal de postcode check functionaliteit aan de checkout pagina toegevoegd worden."
+TIG_PostNL::Please note that only Magento's onepage checkout and Idev's OneStepCheckout are supported.,Houd er rekening mee dat enkel Magento's onepage checkout en Idev's OneStepCheckout ondersteund worden.
+TIG_PostNL::Use postcode check in customer's address book,Gebruik de postcode check op de checkout pagina
+TIG_PostNL::If enabled the postcode check functionality will be added to the customer's address book.,"Indien deze optie gebruikt wordt, zal de postcode check functionaliteit toegevoegd worden aan het adresboek in de klantaccount."
+TIG_PostNL::Shipping Product,Verzendproduct
+TIG_PostNL::Delivery Date,Bezorgdatum
+TIG_PostNL::Customize this grid.,Pas dit overzicht aan.
+TIG_PostNL::Selecting too many columns may cause the shipment grid to no longer fit on your monitor.,"Indien u teveel kolommen selecteert, kan dit er toe leiden dat het overzicht niet langer op uw beeldscherm past."

@@ -33,10 +33,11 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
+<?php $_helper = $this->helper('postnl'); ?>
 <?php $_activateUrl = $this->getUrl('postnl/adminhtml_extensionControl/activate', array('_secure' => true)); ?>
 <?php $_validateUrl = $this->getUrl('postnl/adminhtml_config/validateAccount', array('_secure' => true)); ?>
 <?php $_website = Mage::app()->getRequest()->getParam('website'); ?>
@@ -62,16 +63,16 @@
                 onComplete: function(response) {
                     response = response.responseText;
                     if (response == 'ok') {
-                        alert('<?php echo $this->__('Account settings have been succesfully validated. Please save this page to keep these settings.'); ?>');
+                        alert('<?php echo $_helper->__('Account settings have been succesfully validated. Please save this page to keep these settings.'); ?>');
                         return;
                     }
 
                     if (response == 'missing_data') {
-                        alert('<?php echo $this->__('One or more fields are missing. Please fill these fields and try again.'); ?>');
+                        alert('<?php echo $_helper->__('One or more fields are missing. Please fill these fields and try again.'); ?>');
                         return;
                     }
 
-                    alert('<?php echo $this->__('Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL.'); ?>');
+                    alert('<?php echo $_helper->__('Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL.'); ?>');
                     return;
                 }
             });

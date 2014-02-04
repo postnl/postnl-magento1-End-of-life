@@ -64,6 +64,10 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
                 'label' => $helper->__('Shipping Product')
             ),
             array(
+                'value' => 'extra_cover_amount',
+                'label' => $helper->__('Extra Cover')
+            ),
+            array(
                 'value' => 'confirm_date',
                 'label' => $helper->__('Send Date')
             ),
@@ -81,7 +85,7 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridColumns
             ),
             array(
                 'value' => 'is_parcelware_exported',
-                'label' => $helper->__('Exported to parcelware')
+                'label' => $helper->__('Exported to Parcelware')
             ),
             array(
                 'value' => 'barcode',
