@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -47,34 +47,35 @@
 <?php $_addressType = $this->hasAddressType() ? $this->getAddressType() : 'billing'; ?>
 <?php $_streetValidationClass = $this->helper('customer/address')->getAttributeValidationClass('street'); ?>
 <?php $_streetValidationClassNotRequired = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
-<li class="fields">
-    <div class="field">
-        <label for="country_id" class="required"><em>*</em><?php echo $this->__('Country') ?></label>
-        <div class="input-box">
-            <?php echo $this->getCountryHtmlSelect() ?>
-        </div>
+<li>
+    <label for="country_id" class="required"><em>*</em><?php echo $this->__('Country') ?></label>
+    <div class="input-box">
+        <?php echo $this->getCountryHtmlSelect() ?>
     </div>
-    <div class="field">
+</li>
+<li class="fields" id="ca_postnl">
+    <div class="field field-postcode">
         <label for="zip" class="required"><em>*</em><?php echo $this->__('Zip/Postal Code') ?></label>
         <div class="input-box">
             <input type="text" title="<?php echo $this->__('Zip/Postal Code') ?>" name="postcode" id="zip" value="<?php echo $this->escapeHtml($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" />
         </div>
     </div>
-</li>
-<li>
-    <label for="virtual_street2" class="required"><em>*</em><?php echo $this->__('Housenumber') ?></label>
-    <div class="input-box">
-        <input type="text" name="virtual_street[]" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(2)) ?>" title="<?php echo $this->__('Housenumber') ?>" id="virtual_street2" class="input-text <?php echo $_streetValidationClass ?>" />
+    <div class="field field-housenumber">
+        <label for="virtual_street2" class="required"><em>*</em><?php echo $this->__('Housenumber') ?></label>
+        <div class="input-box">
+            <input type="text" name="virtual_street[]" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(2)) ?>" title="<?php echo $this->__('Housenumber') ?>" id="virtual_street2" class="input-text <?php echo $_streetValidationClass ?>" />
+        </div>
     </div>
-</li>
-<li>
-    <label for="virtual_street3" class="required"><em>*</em><?php echo $this->__('Housenumber extension') ?></label>
-    <div class="input-box">
-        <input type="text" name="virtual_street[]" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(3)) ?>" title="<?php echo $this->__('Housenumber extension') ?>" id="virtual_street3" class="input-text <?php echo $_streetValidationClassNotRequired ?>" />
+
+    <div class="field field-extension">
+        <label for="virtual_street3"><?php echo $this->__('Extension') ?></label>
+        <div class="input-box">
+            <input type="text" name="virtual_street[]" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(3)) ?>" title="<?php echo $this->__('Extension') ?>" id="virtual_street3" class="input-text <?php echo $_streetValidationClassNotRequired ?>" />
+        </div>
     </div>
-</li>
-<li style="display:none;" id="postnl_address_error">
-    <p class="validation-advice"><?php echo $this->__('Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.'); ?></p>
+    <div class="postnl validation-advice" style="display:none;" id="postnl_address_error">
+        <?php echo $this->__('Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.'); ?>
+    </div>
 </li>
 <li>
     <label for="virtual_street1" class="required"><em>*</em><?php echo $this->__('Street Address') ?></label>
@@ -105,7 +106,7 @@
     <input type="hidden" name="street[]" id="street2" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(2)) ?>"/>
     <input type="hidden" name="street[]" id="street3" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(3)) ?>"/>
     <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
-        <input type="hidden" name="street[]" id="street<?php echo $_i ?>" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet($_i)) ?>""/>
+        <input type="hidden" name="street[]" id="street<?php echo $_i ?>" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet($_i)) ?>"/>
     <?php endfor; ?>
 </div>
 
@@ -115,17 +116,17 @@
         $('virtual_street<?php echo $_i; ?>').observe('change', function(event) {
             var element = Event.element(event);
             var value = element.getValue();
-            
+
             $('street<?php echo $_i; ?>').setValue(value);
         });
         $('virtual_street<?php echo $_i; ?>').observe('change', function(event) {
             var element = Event.element(event);
             var value = element.getValue();
-            
+
             $('street<?php echo $_i; ?>').setValue(value);
         });
     <?php endfor; ?>
-    
+
     var postcodecheckUrl = '<?php echo $this->getUrl('postnl/addressValidation/postcodeCheck', array('_secure' => true)); ?>';
 //]]>
 </script>

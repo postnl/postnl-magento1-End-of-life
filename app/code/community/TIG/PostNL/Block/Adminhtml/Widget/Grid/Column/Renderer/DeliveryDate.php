@@ -33,77 +33,48 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
+    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
 {
     /**
-     * @var array
+     * Additional column names used
      */
-    protected $_options;
+    const SHIPPING_METHOD_COLUMN = 'shipping_method';
+    const CONFIRM_DATE_COLUMN    = 'confirm_date';
 
     /**
-     * Get the stored options array
+     * Renders column.
      *
-     * @return array
+     * @param Varien_Object $row
+     *
+     * @return string
      */
-    public function getOptions()
+    public function render(Varien_Object $row)
     {
-        return $this->_options;
-    }
-
-    /**
-     * Store the options array
-     *
-     * @param array $options
-     *
-     * @return TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
-     */
-    public function setOptions($options)
-    {
-        $this->_options = $options;
-
-        return $this;
-    }
-
-    /**
-     * Checks if an option array has been stored
-     *
-     * @return boolean
-     */
-    public function hasOptions()
-    {
-        $options = $this->_options;
-        if (empty($options)) {
-            return false;
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
+        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+            return parent::render($row);
         }
 
-        return true;
-    }
+        $value = $row->getData($this->getColumn()->getIndex());
 
-    /**
-     * Get an option array of all CMS pages available
-     *
-     * @return array
-     */
-    public function toOptionArray()
-    {
-        if ($this->hasOptions()) {
-            return $this->getOptions();
+        /**
+         * If no delivery date is specified, calculate the date as being 1 day after the confirm date
+         */
+        if (!$value) {
+            $confirmDate  = $row->getData(self::CONFIRM_DATE_COLUMN);
+            $deliveryDate = date('Y-m-d H:i:s', strtotime($confirmDate . ' + 1 day'));
 
+            $row->setData($this->getColumn()->getIndex(), $deliveryDate);
         }
 
-        $options = array(
-            '' => Mage::helper('postnl')->__('-- none --'),
-        );
-
-        $pageOptions = Mage::getResourceModel('cms/page_collection')->load()
-                                                                    ->toOptionIdArray();
-
-        $options = array_merge($options, $pageOptions);
-        $this->setOptions($options);
-
-        return $options;
+        /**
+         * Finally, simply render the date
+         */
+        return parent::render($row);
     }
 }

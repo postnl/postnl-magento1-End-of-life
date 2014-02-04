@@ -33,77 +33,55 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Anchor
+    extends Varien_Data_Form_Element_Link
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
-    /**
-     * @var array
-     */
-    protected $_options;
-
-    /**
-     * Get the stored options array
-     *
-     * @return array
-     */
-    public function getOptions()
+    public function getElementHtml()
     {
-        return $this->_options;
+        $originalData = $this->getElement()->getOriginalData();
+        $anchorName = $originalData['anchor_name'];
+
+        $html = $this->getBeforeElementHtml();
+        $html .= '<a name="' . $anchorName . '"></a>';
+        $html .= $this->getAfterElementHtml();
+
+        return $html;
     }
 
     /**
-     * Store the options array
+     * Get the element's HTML ID
      *
-     * @param array $options
-     *
-     * @return TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
+     * @return string
      */
-    public function setOptions($options)
+    public function getHtmlId()
     {
-        $this->_options = $options;
-
-        return $this;
-    }
-
-    /**
-     * Checks if an option array has been stored
-     *
-     * @return boolean
-     */
-    public function hasOptions()
-    {
-        $options = $this->_options;
-        if (empty($options)) {
-            return false;
+        if (!$this->getElement()) {
+            return '';
         }
 
-        return true;
+        $element = $this->getElement();
+        $id = $element->getHtmlId();
+
+        return $id;
     }
 
     /**
-     * Get an option array of all CMS pages available
+     * Render field html
      *
-     * @return array
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @return string
      */
-    public function toOptionArray()
+    public function render(Varien_Data_Form_Element_Abstract $element)
     {
-        if ($this->hasOptions()) {
-            return $this->getOptions();
+        $this->setElement($element);
 
-        }
+        $this->setBeforeElementHtml('<tr id="row_' . $this->getHtmlId() . '"><td colspan="5">');
+        $this->setAfterElementHtml('</tr></td>');
 
-        $options = array(
-            '' => Mage::helper('postnl')->__('-- none --'),
-        );
-
-        $pageOptions = Mage::getResourceModel('cms/page_collection')->load()
-                                                                    ->toOptionIdArray();
-
-        $options = array_merge($options, $pageOptions);
-        $this->setOptions($options);
-
-        return $options;
+        return $this->getElementHtml();
     }
 }

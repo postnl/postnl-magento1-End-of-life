@@ -36,74 +36,20 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
-{
-    /**
-     * @var array
-     */
-    protected $_options;
+?>
+<?php $_helper = $this->helper('postnl'); ?>
+<span id="postnl_customize_grid_link">
+    <a href="<?php echo $this->getUrl('adminhtml/system_config/edit', array('section' => 'postnl', 'fieldset' => 'cif_labels_and_confirming', '_secure' => true, '_fragment' => 'shipment_grid_columns')); ?>" target="_blank"><?php echo $_helper->__('Customize this grid.'); ?></a>
+</span>
 
-    /**
-     * Get the stored options array
-     *
-     * @return array
-     */
-    public function getOptions()
-    {
-        return $this->_options;
-    }
+<script type="text/javascript">
+//<![CDATA[
+    document.observe('dom:loaded', function() {
+        var link = $('postnl_customize_grid_link');
 
-    /**
-     * Store the options array
-     *
-     * @param array $options
-     *
-     * @return TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
-     */
-    public function setOptions($options)
-    {
-        $this->_options = $options;
-
-        return $this;
-    }
-
-    /**
-     * Checks if an option array has been stored
-     *
-     * @return boolean
-     */
-    public function hasOptions()
-    {
-        $options = $this->_options;
-        if (empty($options)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Get an option array of all CMS pages available
-     *
-     * @return array
-     */
-    public function toOptionArray()
-    {
-        if ($this->hasOptions()) {
-            return $this->getOptions();
-
-        }
-
-        $options = array(
-            '' => Mage::helper('postnl')->__('-- none --'),
-        );
-
-        $pageOptions = Mage::getResourceModel('cms/page_collection')->load()
-                                                                    ->toOptionIdArray();
-
-        $options = array_merge($options, $pageOptions);
-        $this->setOptions($options);
-
-        return $options;
-    }
-}
+        $('sales_shipment_grid').insert({
+            before: link
+        });
+    });
+//]]>
+</script>
