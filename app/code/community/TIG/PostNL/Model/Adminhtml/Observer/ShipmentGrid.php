@@ -282,9 +282,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $block->addColumnAfter(
                 'shipping_description',
                 array(
-                    'header'    => $helper->__('Shipping Method'),
-                    'align'     => 'left',
-                    'index'     => 'shipping_description',
+                    'header'           => $helper->__('Shipping Method'),
+                    'align'            => 'left',
+                    'index'            => 'shipping_description',
+                    'renderer'         => 'postnl_adminhtml/widget_grid_column_renderer_shippingDescription',
+                    'column_css_class' => 'nobr',
+                    'options'          => Mage::getModel('postnl_core/system_config_source_allProductOptions')
+                                              ->getAvailableOptions(false, true, false, false, true, false),
                 ),
                 $after
             );
