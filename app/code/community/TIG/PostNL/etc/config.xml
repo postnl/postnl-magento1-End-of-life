@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -36,15 +36,15 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */		
+ */
 -->
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.1.1</version>
+			<version>1.1.2</version>
 		</TIG_PostNL>
 	</modules>
-	
+
 	<global>
 		<blocks>
         	<!-- Block definitions per submodule -->
@@ -89,7 +89,7 @@
                 <class>TIG_PostNL_Model_Checkout</class>
                 <resourceModel>postnl_checkout_resource</resourceModel>
             </postnl_checkout>
-            
+
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
                 <class>TIG_PostNL_Model_Resource</class>
@@ -173,7 +173,7 @@
             </email>
         </template>
 	</global>
-	
+
     <admin>
         <routers>
             <postnl>
@@ -185,7 +185,7 @@
             </postnl>
         </routers>
     </admin>
-    
+
     <adminhtml>
 		<events>
 			<adminhtml_block_html_before>
@@ -248,7 +248,7 @@
             </modules>
         </translate>
     </adminhtml>
-    
+
     <frontend>
 		<layout>
             <updates>
@@ -267,7 +267,7 @@
             </modules>
         </translate>
     </frontend>
-    
+
     <crontab>
         <jobs>
         	<!-- remove old temporary label files (by default files older than 5 min will be deleted) -->
@@ -349,7 +349,7 @@
             </postnl_remove_old_labels>
         </jobs>
     </crontab>
-    
+
     <!-- Default configuration values. You can edit most of these in system/config -->
     <!-- If a setting is specified here it does not guarantee it's availability in system/config. It does mean you can override it by creating an entry in the core_config_data table -->
     <default>
@@ -531,7 +531,7 @@
         	</advanced>
         </postnl>
     </default>
-    
+
     <!-- Custom TiG config values -->
     <tig>
         <!-- Version compatibility per Magento edition -->
@@ -541,13 +541,13 @@
                 <community>1.6,1.7,1.8</community>
             </postnl>
         </compatibility>
-        
+
         <!-- Stability of this release -->
         <stability>
             <postnl>stable</postnl>
         </stability>
-    
-        <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to 
+
+        <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to
             the associated knowledge base article and a 'type' (whether it's an error, warning or notice) -->
         <errors>
             <!-- These are errors that are generated by this extension -->
@@ -1036,9 +1036,9 @@
                 <url>http://kb.totalinternetgroup.nl/topic/33064418</url>
                 <type>error</type>
             </POSTNL-0097>
-            
+
             <!-- Note: errors 0098 and 0099 are missing. They will be added later. They have no special significance, we just forgot them :) -->
-            
+
             <POSTNL-0100>
                 <!-- This error is generated by CIF, however we have designated it an error code -->
                 <message>The user is not authorized for this barcode</message>
@@ -1107,10 +1107,10 @@
             </POSTNL-0112>
             <POSTNL-0113>
                 <message>An error occurred while updating the PostNL Checkout order.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/38931193</url>
                 <type>warning</type>
             </POSTNL-0113>
-            
+
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>
                 <message>Combilabel was not processed successfully for shipment with barcode %s. Normal label is generated and product code for shipment changed to 4944.</message>
