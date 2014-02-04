@@ -117,7 +117,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             return 1;
         }
 
-        $streetnameField = (int) Mage::getStoreConfigFlag(self::XML_PATH_STREETNAME_FIELD, $storeId);
+        $streetnameField = (int) Mage::getStoreConfig(self::XML_PATH_STREETNAME_FIELD, $storeId);
         return $streetnameField;
     }
 
@@ -139,7 +139,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             return 2;
         }
 
-        $housenumberField = (int) Mage::getStoreConfigFlag(self::XML_PATH_HOUSENUMBER_FIELD, $storeId);
+        $housenumberField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_FIELD, $storeId);
         return $housenumberField;
     }
 
@@ -160,7 +160,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             return 3;
         }
 
-        $housenumberExtensionField = (int) Mage::getStoreConfigFlag(self::XML_PATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);
+        $housenumberExtensionField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);
         return $housenumberExtensionField;
     }
 
