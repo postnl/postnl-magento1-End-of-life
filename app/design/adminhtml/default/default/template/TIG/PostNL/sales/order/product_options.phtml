@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -45,15 +45,15 @@
     document.observe('dom:loaded', function() {
         var productOptions = '<?php echo json_encode($_extraCoverProductOptions); ?>';
         var globalPackOption = '<?php echo $_globalPackOption; ?>';
-        
+
         Object.extend(sales_order_grid_massactionJsObject, {
             apply: function(skipPostNLCheck) {
-                
+
                 if(varienStringArray.count(this.checkedString) == 0) {
                     alert(this.errorText);
                     return;
                 }
-        
+
                 /**
                  * Additional PostNL functionality
                  */
@@ -67,14 +67,14 @@
                             return;
                         }
                         selectedProductOption = productOptionSelect[productOptionSelect.selectedIndex];
-                        
+
                         if (productOptions.indexOf(selectedProductOption.value) > -1) {
                             extraCoverDialog.open();
                             return;
                         }
                     }
                 }
-                
+
                 /**
                  * original apply method
                  */
@@ -86,19 +86,19 @@
                 this.currentItem = item;
                 var fieldName = (item.field ? item.field : this.formFieldName);
                 var fieldsHtml = '';
-        
+
                 if(this.currentItem.confirm && !window.confirm(this.currentItem.confirm)) {
                     return;
                 }
-        
+
                 this.formHiddens.update('');
                 new Insertion.Bottom(this.formHiddens, this.fieldTemplate.evaluate({name: fieldName, value: this.checkedString}));
                 new Insertion.Bottom(this.formHiddens, this.fieldTemplate.evaluate({name: 'massaction_prepare_key', value: fieldName}));
-        
+
                 if(!this.validator.validate()) {
                     return;
                 }
-        
+
                 if(this.useAjax && item.url) {
                     new Ajax.Request(item.url, {
                         'method': 'post',
@@ -111,7 +111,7 @@
                 }
             }
         });
-        
+
         var extraCoverDialog = {
             overlayShowEffectOptions : null,
             overlayHideEffectOptions : null,
@@ -121,7 +121,7 @@
                         +  "<label for='extra_cover_value'><?php echo $this->__('Extra cover amount (in increments of 500)'); ?></label>"
                         +  "<input id='extra_cover_value'type='text' name='extra_cover_value' class='input-text required-entry validate-increment-500 validate-not-negative-number' value='0'/>"
                         +  "</p>";
-                
+
                 if (selectedProductOption.value == globalPackOption) {
                    content += "<p>"
                            +  "<label for='globalpack_shipment_type'><?php echo $this->__('Shipment type'); ?></label>"
@@ -131,13 +131,13 @@
                    <?php endforeach; ?>
                            +  "</select>"
                            +  "</p>";
-                           
+
                    content += "<p>"
                            +  "<label for='globalpack_treat_as_abandoned'><?php echo $this->__('Treat as abandoned'); ?></label>"
                            +  "<input id='globalpack_treat_as_abandoned' name='globalpack_treat_as_abandoned' type='checkbox' value='1'/>"
                            +  "</p>";
                 }
-                
+
                 content += "</form>";
                 this.openDialogWindow(content);
             },
@@ -146,7 +146,7 @@
                 this.overlayHideEffectOptions = Windows.overlayHideEffectOptions;
                 Windows.overlayShowEffectOptions = {duration:0};
                 Windows.overlayHideEffectOptions = {duration:0};
-        
+
                 Dialog.confirm(content, {
                     draggable:true,
                     resizable:true,
@@ -173,20 +173,20 @@
                 if(!extraCoverValidation.validate()){
                     return false;
                 }
-                
+
                 $('extra_cover_value').hide();
                 $('sales_order_grid_massaction-form').insert($('extra_cover_value'));
-                
+
                 if ($('globalpack_shipment_type')) {
                     $('globalpack_shipment_type').hide();
                     $('sales_order_grid_massaction-form').insert($('globalpack_shipment_type'));
                 }
-                
+
                 if ($('globalpack_treat_as_abandoned')) {
                     $('globalpack_treat_as_abandoned').hide();
                     $('sales_order_grid_massaction-form').insert($('globalpack_treat_as_abandoned'));
                 }
-                
+
                 $('extra-options-dialog').hide();
                 sales_order_grid_massactionJsObject.apply(true);
             },

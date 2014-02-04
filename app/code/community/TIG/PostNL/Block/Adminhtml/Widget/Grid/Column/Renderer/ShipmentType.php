@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -36,20 +36,20 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType 
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
-{    
+{
     /**
      * Additional column names used
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
     const IS_PAKJE_GEMAK_COLUMN  = 'is_pakje_gemak';
-    
+
     /**
      * Renders the column value as a shipment type value (Domestic, EPS or GlobalPack)
      *
      * @param Varien_Object $row
-     * 
+     *
      * @return string
      */
     public function render(Varien_Object $row)
@@ -62,7 +62,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         if (!in_array($shippingMethod, $postnlShippingMethods)) {
             return '';
         }
-        
+
         /**
          * Check if any data is available
          */
@@ -70,13 +70,13 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         if (is_null($value) || $value === '') {
             return '';
         }
-        
+
         if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak</div>";
             $renderedValue .= Mage::helper('postnl')->__('Post Office');
             return $renderedValue;
         }
-        
+
         /**
          * Check if this order is domestic
          */
@@ -85,7 +85,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
             $renderedValue .= Mage::helper('postnl')->__('Domestic');
             return $renderedValue;
         }
-        
+
         /**
          * Check if this order's shipping address is in an EU country
          */
@@ -95,22 +95,22 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
             $renderedValue .= Mage::helper('postnl')->__('EPS');
             return $renderedValue;
         }
-        
+
         /**
          * If none of the above, it's an international order
          */
         $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>global_pack</div>";
         $renderedValue .= Mage::helper('postnl')->__('GlobalPack');
-        
+
         return $renderedValue;
     }
 
     /**
      * Renders the <col> element of the column. Added check for $this->getColumn()->getDisplay() == 'none' that causes the
      * entire element to be hidden
-     * 
+     *
      * @return string
-     * 
+     *
      * @see Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract::renderProperty()
      */
     public function renderProperty()
@@ -120,7 +120,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         ) {
             return 'style="display:none;"';
         }
-        
+
         $out = '';
         $width = $this->_defaultWidth;
 

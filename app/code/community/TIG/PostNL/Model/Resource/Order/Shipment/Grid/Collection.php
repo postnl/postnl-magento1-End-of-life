@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -40,9 +40,9 @@ class TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection extends Mage_Sale
 {
     /**
      * Fix for grid pager count believing there is only 1 item when $collection->getSelect()->groupBy() has been used
-     * 
+     *
      * @see Mage_Core_Model_Resource_Db_Collection_Abstract::getSelectCountSql()
-     * 
+     *
      * @return Zend_Db_Select
      */
     public function getSelectCountSql()
@@ -65,33 +65,33 @@ class TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection extends Mage_Sale
         }
         return $countSelect;
     }
-    
+
     /**
      * Fix for getSize not re-counting the number of records in a collection after clear() had been called
-     * 
+     *
      * @return Varien_Data_Collection
      */
     public function clear()
     {
         $this->_setIsLoaded(false);
         $this->_totalRecords = null;
-        
+
         $this->_items = array();
         return $this;
     }
-    
+
     /**
      * Replace the select by a given select object.
      * This effectively copies another collection (not entirely, but close enough for our purposes).
-     * 
+     *
      * @param Varien_db_Select $select
-     * 
+     *
      * @return TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection
      */
     public function setSelect($select)
     {
         $this->_select = $select;
-        
+
         return $this;
     }
 }
