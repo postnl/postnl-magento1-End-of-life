@@ -226,7 +226,7 @@ Order #%s cannot be shipped at this time.,Order #%s cannot be shipped at this ti
 PostNL replied with the following warnings:,PostNL replied with the following warnings:
 Error code %s:,Error code %s:
 An error occurred whilst processing your request:,An error occurred whilst processing your request:
-Your webshop has been registered. You should receive an email on the email address you specify shortly. ,Your webshop has been registered. You should receive an email on the email address you specify shortly. 
+Your webshop has been registered. You should receive an email on the email address you specify shortly. ,Your webshop has been registered. You should receive an email on the email address you specify shortly.
 Please read this email carefully as it contains instructions on how to finish the extension activation procedure.,Please read this email carefully as it contains instructions on how to finish the extension activation procedure.
 Please fill in your unique and private keys and try again.,Please fill in your unique and private keys and try again.
 The extension has been successfully activated!,The extension has been successfully activated!
@@ -435,7 +435,7 @@ Documents,Documents
 Commercial Goods,Commercial Goods
 Commercial Sample,Commercial Sample
 Returned Goods,Returned Goods
-An error occurred while processing your request: ,An error occurred while processing your request: 
+An error occurred while processing your request: ,An error occurred while processing your request:
 OrderToken missing for quote #%s,OrderToken missing for quote #%s
 Unable to create an order for quote #%s,Unable to create an order for quote #%s
 Invalid quote supplied.,Invalid quote supplied.

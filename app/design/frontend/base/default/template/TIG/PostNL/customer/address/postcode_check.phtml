@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -53,7 +53,7 @@
         <?php echo $this->getCountryHtmlSelect() ?>
     </div>
 </li>
-<li class="fields" id="ca_postnl_ce"> 
+<li class="fields" id="ca_postnl_ce">
     <div class="field field-postcode">
         <label for="<?php echo $_addressType; ?>:postcode" class="required"><em>*</em><?php echo $this->__('Zip/Postal Code') ?></label>
         <div class="input-box">
@@ -115,17 +115,17 @@
         $('virtual:<?php echo $_addressType; ?>:street<?php echo $_i; ?>').observe('change', function(event) {
             var element = Event.element(event);
             var value = element.getValue();
-            
+
             $('<?php echo $_addressType; ?>:street<?php echo $_i; ?>').setValue(value);
         });
         $('virtual:<?php echo $_addressType; ?>:street<?php echo $_i; ?>').observe('change', function(event) {
             var element = Event.element(event);
             var value = element.getValue();
-            
+
             $('<?php echo $_addressType; ?>:street<?php echo $_i; ?>').setValue(value);
         });
     <?php endfor; ?>
-    
+
     var postcodecheckUrl = '<?php echo $this->getUrl('postnl/addressValidation/postcodeCheck', array('_secure' => true)); ?>';
 //]]>
 </script>

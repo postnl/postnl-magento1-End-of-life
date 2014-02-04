@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -42,31 +42,31 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
      * XML path to extensioncontrol email setting
      */
     const XML_PATH_EMAIL = 'postnl/general/email';
-    
+
     /**
      * XML path to 'is_activated' flag
      */
     const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
-    
+
     /**
      * XML paths for security keys
      */
     const XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY  = 'postnl/general/unique_key';
     const XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY = 'postnl/general/private_key';
-    
+
     /**
      * XML path for active setting
      */
     const XML_PATH_ACTIVE = 'postnl/general/active';
-    
+
     /**
      * Error code for 'website already exists' error
      */
     const SHOP_ALREADY_REGISTERED_FAULTCODE = 'API-2-6';
-    
+
     /**
      * Activate the extension by registering it with the extension control service
-     * 
+     *
      * @return TIG_PostNL_Adminhtml_ExtensionControlController
      */
     public function activateAction()
@@ -77,24 +77,24 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         } elseif ($activationStatus == 1) {
             $this->_updateStatistics();
         }
-        
+
         Mage::helper('postnl')->saveConfigState(array('postnl_general' => 1));
-        
+
         Mage::app()->cleanCache();
-        
+
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
     }
-    
+
     /**
      * Registers a new webshop
-     * 
+     *
      * @return TIG_PostNL_Adminhtml_ExtensionControlController
      */
     protected function _registerWebshop()
     {
         $groups = $this->getRequest()->getParam('groups');
-        
+
         /**
          * Get the last email address entered if available. Immediately save it as well.
          */
@@ -102,14 +102,14 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         if (isset($groups['general']['fields']['email']['value'])) {
             $email = $groups['general']['fields']['email']['value'];
             Mage::getModel('core/config')->saveConfig(self::XML_PATH_EMAIL, $email);
-        
+
             /**
              * reinit configuration
              */
             Mage::getConfig()->reinit();
             Mage::app()->reinitStores();
         }
-        
+
         $helper = Mage::helper('postnl');
         $webservice = Mage::getModel('postnl_extensioncontrol/webservices');
         try {
@@ -124,10 +124,10 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
              */
             if (isset($e->faultcode) && $e->faultcode == self::SHOP_ALREADY_REGISTERED_FAULTCODE) {
                 Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 1);
-                
+
                 return $this->_updateStatistics();
             }
-            
+
             $helper = Mage::helper('postnl');
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -135,31 +135,31 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         } catch (Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
-            
+
             return $this;
         }
-        
+
         Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 1);
-        
-        
+
+
         $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__(
                 'Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.'
             )
         );
-        
+
         return $this;
     }
-    
+
     /**
      * Activates the webshop by attempting a single updateStatistics call
-     * 
+     *
      * @return TIG_PostNL_Adminhtml_ExtensionControlController
      */
     protected function _updateStatistics()
     {
         $groups = $this->getRequest()->getParam('groups');
-        
+
         /**
          * If either the unique key or the private key were just entered without saving the config first, we need to encrypt and
          * save them.
@@ -170,7 +170,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
              * Get the general fields array
              */
             $generalFields = $groups['general']['fields'];
-            
+
             /**
              * Check if the 'active' option was set and is a valid value (not empty)
              */
@@ -178,11 +178,11 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
                 $active = $generalFields['active']['value'];
                 if (!empty($active)) {
                     Mage::getModel('core/config')->saveConfig(self::XML_PATH_ACTIVE, $active);
-                    
+
                     $configChanged = true;
                 }
             }
-            
+
             /**
              * Check if the unique key was set and is a valid value (not empty and not just asterisks)
              */
@@ -194,11 +194,11 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
                      */
                     $encryptedUniqueKey = Mage::helper('postnl/webservices')->encryptValue($uniqueKey);
                     Mage::getModel('core/config')->saveConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, $encryptedUniqueKey);
-                    
+
                     $configChanged = true;
                 }
             }
-            
+
             /**
              * Do the same for the private key
              */
@@ -210,7 +210,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
                      */
                     $encryptedPrivateKey = Mage::helper('postnl/webservices')->encryptValue($privateKey);
                     Mage::getModel('core/config')->saveConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, $encryptedPrivateKey);
-                    
+
                     $configChanged = true;
                 }
             }
@@ -223,7 +223,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             Mage::getConfig()->reinit();
             Mage::app()->reinitStores();
         }
-        
+
         /**
          * If either the unique or private key was not saved, get it from the config
          */
@@ -231,20 +231,20 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         if (!isset($uniqueKey)) {
             $uniqueKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, $adminStoreId);
         }
-        
+
         if (!isset($privateKey)) {
             $privateKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, $adminStoreId);
         }
-        
+
         $helper = Mage::helper('postnl');
-        
+
         if (!$uniqueKey || !$privateKey) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0008', 'notice',
                 $this->__('Please fill in your unique and private keys and try again.')
             );
             return $this;
         }
-        
+
         /**
          * Try to update the shop's statistics once in order to fully activate the extension
          */
@@ -254,33 +254,33 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         } catch (Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
-            
+
             return $this;
         }
-        
+
         Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 2);
-        
+
         $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__('The extension has been successfully activated!')
         );
-        
+
         return $this;
     }
-    
+
     /**
      * Deactivates the module so it can be reactivated under a different name. It will reactivate itself automatically if not
      * settings are altered.
-     * 
+     *
      * @return TIG_PostNL_Adminhtml_ExtensionControlController
      */
     public function showActivationFieldsAction()
     {
         Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 0);
-        
+
         Mage::helper('postnl')->saveConfigState(array('postnl_general' => 1));
-        
+
         Mage::app()->cleanCache();
-        
+
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;
     }
