@@ -35,214 +35,260 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-document.observe('dom:loaded', function() {
-	if ($('billing:country_id')) {
-		var countryId = $('billing:country_id').getValue();
-		var postcode = $('billing:postcode').getValue();
-		var housenumber = $('billing:street2').getValue();
+PostnlPostcodecheck = new Class.create({
+    errorCounter: 0,
+    errorMax: 3,
+    timeoutDelay: 3,
 
-		changePostcodeCheckDisabledFields(countryId, 'billing');
-		checkPostcode(postcode, housenumber, 'billing');
+    inProgressRequest: false,
 
-		$('billing:street1').setValue(
-			$('virtual:billing:street1').getValue()
-		);
+    initialize: function(postcodecheckUrl, addressType, countryField, postcodeField, streetnameField, housenumberField, housenumberExtensionField, cityField, virtualPrefix = 'virtual:') {
+        this.postcodecheckUrl          = postcodecheckUrl;
+        this.addressType               = addressType;
+        this.countryField              = countryField;
+        this.postcodeField             = postcodeField;
+        this.streetnameField           = streetnameField;
+        this.housenumberField          = housenumberField;
+        this.housenumberExtensionField = housenumberExtensionField;
+        this.cityField                 = cityField;
+        this.virtualPrefix             = virtualPrefix;
 
-		$('billing:street2').setValue(
-			$('virtual:billing:street2').getValue()
-		);
+        $(streetnameField).setValue(
+            $(virtualPrefix + streetnameField).getValue()
+        );
 
-		$('billing:street3').setValue(
-			$('virtual:billing:street3').getValue()
-		);
-	}
+        $(housenumberField).setValue(
+            $(virtualPrefix + housenumberField).getValue()
+        );
 
-	$('billing:country_id').observe('change', function(event) {
-		var countryId = this.getValue();
+        $(housenumberExtensionField).setValue(
+            $(virtualPrefix + housenumberExtensionField).getValue()
+        );
 
-		changePostcodeCheckDisabledFields(countryId, 'billing');
-	});
+        var countryId   = $(countryField).getValue();
+        var postcode    = $(postcodeField).getValue();
+        var housenumber = $(housenumberField).getValue();
+    },
 
-	$('billing:postcode').observe('change', function(event) {
-		var postcode = this.getValue();
-	    var housenumber = $('virtual:billing:street2').getValue();
+    registerObservers: function() {
+        var postcodecheckUrl          = this.postcodecheckUrl;
+        var addressType               = this.addressType;
+        var countryField              = this.countryField;
+        var postcodeField             = this.postcodeField;
+        var streetnameField           = this.streetnameField;
+        var housenumberField          = this.housenumberField;
+        var housenumberExtensionField = this.housenumberExtensionField;
+        var cityField                 = this.cityField;
+        var virtualPrefix             = this.virtualPrefix;
 
-	    checkPostcode(postcode, housenumber, 'billing');
-	});
+        var countryId   = $(countryField).getValue();
+        var postcode    = $(postcodeField).getValue();
+        var housenumber = $(housenumberField).getValue();
 
-	$('virtual:billing:street1').observe('change', function(event) {
-		var value = this.getValue();
+        var postcodeCheck = this;
+        $(countryField).observe('change', function(event) {
+            countryId = this.getValue();
 
-		$('billing:street1').setValue(value);
-	});
+            $('postnl_address_error_' + addressType).hide();
+            $('postnl_address_missing_' + addressType).hide();
+            $('postnl_address_invalid_' + addressType).hide();
 
-	$('virtual:billing:street2').observe('change', function(event) {
-		var value = this.getValue();
+            postcodeCheck.changePostcodeCheckDisabledFields(countryId);
 
-		$('billing:street2').setValue(value);
+            if (countryId == 'NL') {
+                postcode = $(postcodeField).getValue();
+                housenumber = $(virtualPrefix + housenumberField).getValue();
 
-	    var postcode = $('billing:postcode').getValue();
-		var housenumber = this.getValue();
-
-	    checkPostcode(postcode, housenumber, 'billing');
-	});
-
-	$('virtual:billing:street3').observe('change', function(event) {
-		var value = this.getValue();
-
-		$('billing:street3').setValue(value);
-	});
-
-	if ($('shipping:country_id')) {
-		var countryId = $('shipping:country_id').getValue();
-		var postcode = $('shipping:postcode').getValue();
-		var housenumber = $('shipping:street2').getValue();
-
-		changePostcodeCheckDisabledFields(countryId, 'shipping');
-		checkPostcode(postcode, housenumber, 'shipping');
-
-		$('shipping:street1').setValue(
-			$('virtual:shipping:street1').getValue()
-		);
-
-		$('shipping:street2').setValue(
-			$('virtual:shipping:street2').getValue()
-		);
-
-		$('shipping:street3').setValue(
-			$('virtual:shipping:street3').getValue()
-		);
-	}
-
-	$('shipping:country_id').observe('change', function(event) {
-		var countryId = this.getValue();
-
-		changePostcodeCheckDisabledFields(countryId, 'shipping');
-	});
-
-	$('shipping:postcode').observe('change', function(event) {
-		var postcode = this.getValue();
-	    var housenumber = $('virtual:shipping:street2').getValue();
-
-	    checkPostcode(postcode, housenumber, 'shipping');
-	});
-
-	$('virtual:shipping:street1').observe('change', function(event) {
-		var value = this.getValue();
-
-		$('shipping:street1').setValue(value);
-	});
-
-	$('virtual:shipping:street2').observe('change', function(event) {
-		var value = this.getValue();
-
-		$('shipping:street2').setValue(value);
-
-	    var postcode = $('shipping:postcode').getValue();
-		var housenumber = this.getValue();
-
-	    checkPostcode(postcode, housenumber, 'shipping');
-	});
-
-	$('virtual:shipping:street3').observe('change', function(event) {
-		var value = this.getValue();
-
-		$('shipping:street3').setValue(value);
-	});
-
-	/**
-	 * Updates the street name and city fields. They will be either enabled or disabled based on the countryId parameter.
-	 *
-     * @param string countryId|boolean
-     * @param string addressType
-     *
-     * @return void|boolean
-	 */
-	function changePostcodeCheckDisabledFields(countryId, addressType) {
-		/**
-		 * Only the billing and shipping address types are currently supported
-		 */
-		if (addressType != 'billing' && addressType != 'shipping') {
-			return false;
-		}
-
-		var streetLine = $('virtual:' + addressType + ':street1');
-		var city = $(addressType + ':city');
-
-		/**
-		 * For the Netherlands we need to disable the streetline and city fields.
-		 */
-		if (countryId == 'NL') {
-			streetLine.readOnly = true;
-			streetLine.addClassName('postnl-readonly');
-
-			city.readOnly = true;
-			city.addClassName('postnl-readonly');
-
-			return;
-		}
-
-		/**
-		 * For all other countries we need to make sure they're enabled instead.
-		 */
-		streetLine.readOnly = false;
-		streetLine.removeClassName('postnl-readonly');
-
-		city.readOnly = false;
-		city.removeClassName('postnl-readonly');
-
-		return;
-	}
-
-	/**
-	 * Validates the postcode and housenumber combination. If valid, a streetname and city will be returned. Otherwise the
-	 * customer will have to manually enter his/her streetname and housenumber.
-	 *
-	 * @param string postcode
-	 * @param int|string housenumber
-	 * @param string addressType
-	 *
-	 * @return boolean|void
-	 */
-	function checkPostcode(postcode, housenumber, addressType) {
-		if (typeof postcodecheckUrl === 'undefined') {
-			return false;
-		}
-
-		/**
-		 * Only the billing and shipping address types are currently supported
-		 */
-		if (addressType != 'billing' && addressType != 'shipping') {
-			return false;
-		}
-
-		if (!postcode.length || !housenumber.length) {
-			return false;
-		}
-
-		if ($(addressType + ':country_id').getValue() != 'NL') {
-			return false;
-		}
-
-    	$('postnl_address_error_' + addressType).hide();
-		new Ajax.Request(postcodecheckUrl,{
-            method: 'post',
-            parameters: {
-            	postcode: postcode,
-            	housenumber: housenumber
-            },
-            onSuccess: function(response) {
-                if (response.responseText == 'error') {
-            		$('postnl_address_error_' + addressType).show();
-                	changePostcodeCheckDisabledFields(false, addressType);
-                }
-            },
-            onFailure: function(response) {
-            	$('postnl_address_error_' + addressType).show();
-            	changePostcodeCheckDisabledFields(false, addressType);
+                postcodeCheck.checkPostcode(postcode, housenumber);
             }
         });
 
-		return;
-	}
+        $(postcodeField).observe('change', function(event) {
+            var postcode = this.getValue();
+            var housenumber = $(virtualPrefix + housenumberField).getValue();
+
+            postcodeCheck.checkPostcode(postcode, housenumber);
+        });
+
+        $(virtualPrefix + streetnameField).observe('change', function(event) {
+            var value = this.getValue();
+
+            $(streetnameField).setValue(value);
+        });
+
+        $(virtualPrefix + housenumberField).observe('change', function(event) {
+            var value = this.getValue();
+
+            $(housenumberField).setValue(value);
+
+            var postcode = $(postcodeField).getValue();
+            var housenumber = this.getValue();
+
+            postcodeCheck.checkPostcode(postcode, housenumber);
+        });
+
+        $(virtualPrefix + housenumberExtensionField).observe('change', function(event) {
+            var value = this.getValue();
+
+            $(housenumberExtensionField).setValue(value);
+        });
+
+        this.changePostcodeCheckDisabledFields(countryId);
+        this.checkPostcode(postcode, housenumber);
+    },
+
+    checkPostcode: function(postcode, housenumber) {
+        var postcodecheckUrl = this.postcodecheckUrl;
+        var addressType = this.addressType;
+
+        if (typeof postcodecheckUrl === 'undefined') {
+            return false;
+        }
+
+        /**
+         * Only the billing and shipping address types are currently supported
+         */
+        if (addressType != 'billing' && addressType != 'shipping') {
+            return false;
+        }
+
+        if (!postcode.length || !housenumber.length) {
+            return false;
+        }
+
+        if ($(this.countryField).getValue() != 'NL') {
+            return false;
+        }
+
+        $('postnl_address_error_' + addressType).hide();
+        $('postnl_address_missing_' + addressType).hide();
+        $('postnl_address_invalid_' + addressType).hide();
+        $('postnl_postcodecheck_spinner_' + addressType).show();
+
+        var postcodeCheck = this;
+
+        if (this.inProgressRequest) {
+            this.inProgressAborted = true;
+            this.inProgressRequest.transport.abort();
+            this.inProgressRequest = false;
+            this.inProgressAborted = false;
+        }
+
+        var request = new Ajax.PostnlRequest(postcodecheckUrl,{
+            method: 'post',
+            parameters: {
+                postcode: postcode,
+                housenumber: housenumber
+            },
+            onSuccess: function(response) {
+                if (response.responseText == 'error') {
+                    $('postnl_address_error_' + addressType).show();
+                    postcodeCheck.changePostcodeCheckDisabledFields(false);
+
+                    postcodeCheck.inProgressRequest = false;
+                    $('postnl_postcodecheck_spinner_' + addressType).hide();
+
+                    return;
+                }
+
+                if (response.responseText == 'missing_data') {
+                    $('postnl_address_missing_' + addressType).show();
+
+                    postcodeCheck.inProgressRequest = false;
+                    $('postnl_postcodecheck_spinner_' + addressType).hide();
+
+                    return;
+                }
+
+                if (response.responseText == 'invalid_data') {
+                    $('postnl_address_invalid_' + addressType).show();
+                    postcodeCheck.errorCounter = postcodeCheck.errorCounter + 1;
+
+                    if (postcodeCheck.errorMax && postcodeCheck.errorCounter >= postcodeCheck.errorMax) {
+                        postcodeCheck.changePostcodeCheckDisabledFields(false, addressType);
+                    }
+
+                    postcodeCheck.inProgressRequest = false;
+                    $('postnl_postcodecheck_spinner_' + addressType).hide();
+
+                    return;
+                }
+
+                var data = eval('(' + response.responseText + ')');
+
+                $(postcodeCheck.virtualPrefix + postcodeCheck.streetnameField).setValue(data['streetname']);
+                $(postcodeCheck.streetnameField).setValue(data['streetname']);
+                $(postcodeCheck.cityField).setValue(data['city']);
+
+                postcodeCheck.inProgressRequest = false;
+                $('postnl_postcodecheck_spinner_' + addressType).hide();
+
+                return;
+            },
+            onFailure: function(response) {
+                if (postcodeCheck.inProgressAborted) {
+                    return false;
+                }
+
+                $('postnl_address_error_' + addressType).show();
+                postcodeCheck.changePostcodeCheckDisabledFields(false);
+
+                postcodeCheck.inProgressRequest = false;
+                $('postnl_postcodecheck_spinner_' + addressType).hide();
+
+                return;
+            },
+            onTimeout: function(response) {
+                $('postnl_address_error_' + addressType).show();
+                postcodeCheck.changePostcodeCheckDisabledFields(false);
+
+                postcodeCheck.inProgressRequest = false;
+                $('postnl_postcodecheck_spinner_' + addressType).hide();
+
+                return;
+            },
+            timeoutDelay: postcodeCheck.timeoutDelay
+        });
+        this.inProgressRequest = request;
+
+        return;
+    },
+
+    changePostcodeCheckDisabledFields: function(countryId) {
+        var addressType = this.addressType;
+
+        /**
+         * Only the billing and shipping address types are currently supported
+         */
+        if (addressType != 'billing' && addressType != 'shipping') {
+            return false;
+        }
+
+        var streetLine = $(this.virtualPrefix + this.streetnameField);
+        var city = $(this.cityField);
+
+        /**
+         * For the Netherlands we need to disable the streetline and city fields.
+         */
+        if (countryId == 'NL') {
+            streetLine.readOnly = true;
+            streetLine.addClassName('postnl-readonly');
+
+            city.readOnly = true;
+            city.addClassName('postnl-readonly');
+
+            return;
+        }
+
+        /**
+         * For all other countries we need to make sure they're enabled instead.
+         */
+        streetLine.readOnly = false;
+        streetLine.removeClassName('postnl-readonly');
+
+        city.readOnly = false;
+        city.removeClassName('postnl-readonly');
+
+        return;
+    }
 });

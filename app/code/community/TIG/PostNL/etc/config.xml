@@ -455,6 +455,8 @@
         	    <use_postcode_check>0</use_postcode_check> <!-- Do not use postcode check functionality -->
         	    <postcode_check_in_checkout>1</postcode_check_in_checkout> <!-- Use postcode check on the checkout page -->
         	    <postcode_check_in_addressbook>1</postcode_check_in_addressbook> <!-- Use postcode check in the customer's addressbook -->
+        		<postcode_check_max_attempts>3</postcode_check_max_attempts> <!-- Allow 3 attempts before disabling postcode check -->
+        		<postcode_check_timeout>3</postcode_check_timeout> <!-- Postcode check will time-out after 3 seconds -->
         		<split_street>1</split_street> <!-- split street -->
         		<streetname_field>1</streetname_field> <!-- first address line -->
         		<housenr_field>2</housenr_field> <!-- second address line -->
@@ -575,6 +577,12 @@
         		<cif_version_barcode>1_0</cif_version_barcode> <!-- v1.0 -->
                 <cif_version_checkout>2_1</cif_version_checkout> <!-- v2.1 -->
         	</advanced>
+
+        	<!-- Login data for the postcode check functionality. DO NOT CHANGE THIS UNLESS SPECIFICALLY INSTRUCTED TO DO SO BY POSTNL OR TIG -->
+        	<cendris>
+        	    <username>tpgpost030</username>
+        	    <password>Post2014!</password>
+        	</cendris>
         </postnl>
     </default>
 

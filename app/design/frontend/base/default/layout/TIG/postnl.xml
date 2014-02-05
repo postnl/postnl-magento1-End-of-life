@@ -74,6 +74,10 @@
         <reference name="head">
             <action method="addItem">
                 <type>skin_js</type>
+                <file>js/TIG/PostNL/ajax.js</file>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
                 <file>js/TIG/PostNL/postcodecheck_checkout.js</file>
             </action>
             <action method="addItem">
@@ -91,6 +95,10 @@
 
     <onestepcheckout_index_index>
         <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/ajax.js</file>
+            </action>
             <action method="addItem">
                 <type>skin_js</type>
                 <file>js/TIG/PostNL/postcodecheck_checkout.js</file>

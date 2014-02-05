@@ -36,7 +36,7 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Object
+class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
 {
     /**
      * Wsdl location
@@ -63,10 +63,8 @@ class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Obj
              * Array of soap options used when connecting to the webservice
              */
             $soapOptions = array(
-                // 'soap_version' => SOAP_1_1,
-                // 'features'     => SOAP_SINGLE_ELEMENT_ARRAYS,
-                'trace' => true,
-                'cache_wsdl' => WSDL_CACHE_NONE,
+                'soap_version' => SOAP_1_1,
+                'features'     => SOAP_SINGLE_ELEMENT_ARRAYS,
             );
 
             /**
@@ -74,7 +72,7 @@ class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Obj
              * wsdl cache.
              */
             try {
-                $client  = new SoapClient(
+                $client  = new Zend_Soap_Client(
                     $wsdl,
                     $soapOptions
                 );
@@ -89,44 +87,24 @@ class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Obj
                     $soapOptions
                 );
             }
-            echo '<pre>';
-            var_dump($method, $soapParams);
-            // exit;
+
             /**
              * Call the SOAP method
              */
-            // $response = $client->__call(
-                // $method,
-                // $soapParams
-            // );
+            $response = $client->__call(
+                $method,
+                $soapParams
+            );
 
-            $response = $client->getAdresxpressPostcode('159767', 'Cendris2014!', '1705LN', 21);
-
-            var_dump($response);exit;
             Mage::helper('postnl/webservices')->logWebserviceCall($client);
             return $response;
-        // } catch(SoapFault $e) {
-            // /**
-             // * Log a possible SoapFault exception.
-             // */
-            // Mage::helper('postnl/webservices')->logWebserviceException($e);
-//
-            // throw $e;
-        // }
-        } catch (Exception $e) {
-            $cifHelper = Mage::helper('postnl/cif');
-
+        } catch(SoapFault $e) {
             /**
-             * Get the request and response XML data
+             * Log a possible SoapFault exception.
              */
-            if ($client) {
-                $requestXML  = $cifHelper->formatXml($client->__getLastRequest());
-                $responseXML = $cifHelper->formatXml($client->__getLastResponse());
-            }
+            Mage::helper('postnl/webservices')->logWebserviceException($e);
 
-            echo '<pre>';var_dump(htmlentities($requestXML));
-            var_dump(htmlentities($responseXML));
-            exit;
+            throw $e;
         }
     }
 }
