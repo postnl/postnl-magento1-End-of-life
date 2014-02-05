@@ -36,7 +36,7 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Object
+class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
 {
     /**
      * Wsdl location
@@ -106,19 +106,5 @@ class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Obj
 
             throw $e;
         }
-        // } catch (SoapFault $e) {
-            // $cifHelper = Mage::helper('postnl/cif');
-//
-            // /**
-             // * Get the request and response XML data
-             // */
-            // if ($client) {
-                // $requestXML  = $cifHelper->formatXml($client->getLastRequest());
-                // $responseXML = $cifHelper->formatXml($client->getLastResponse());
-            // }
-            // echo '<pre>';var_dump(htmlentities($requestXML));
-            // var_dump(htmlentities($responseXML));
-            // exit;
-        // }
     }
 }

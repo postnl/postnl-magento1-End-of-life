@@ -59,6 +59,12 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const XML_PATH_POSTCODE_CHECK_IN_ADDRESSBOOK = 'postnl/cif_address/postcode_check_in_addressbook';
 
     /**
+     * XML paths that control some features of postcode check
+     */
+    const XML_PATH_POSTCODE_CHECK_MAX_ATTEMPTS = 'postnl/cif_address/postcode_check_max_attempts';
+    const XML_PATH_POSTCODE_CHECK_TIMEOUT     = 'postnl/cif_address/postcode_check_timeout';
+
+    /**
      * Checks whether the given store uses split address lines.
      *
      * @param int|null $storeId
@@ -162,6 +168,45 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
 
         $housenumberExtensionField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);
         return $housenumberExtensionField;
+    }
+
+    /**
+     * Gets the number of seconds before postcode check times out.
+     *
+     * @param int|null $storeId
+     *
+     * @return int
+     */
+    public function getPostcodeCheckTimeoutDelay($storeId = null)
+    {
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $timeout = (int) Mage::getStoreConfig(self::XML_PATH_POSTCODE_CHECK_TIMEOUT, $storeId);
+        return $timeout;
+    }
+
+    /**
+     * Gets the number of times a customer may attempt to enter their postcode and housenumber before postcode check disables
+     * itself.
+     *
+     * @param int|null $storeId
+     *
+     * @return string|int
+     */
+    public function getPostcodeCheckMaxAttempts($storeId = null)
+    {
+        if (is_null($storeId)) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $maxAttempts = (int) Mage::getStoreConfig(self::XML_PATH_POSTCODE_CHECK_MAX_ATTEMPTS, $storeId);
+        if (!$maxAttempts) {
+            return 'false';
+        }
+
+        return $maxAttempts;
     }
 
     /**

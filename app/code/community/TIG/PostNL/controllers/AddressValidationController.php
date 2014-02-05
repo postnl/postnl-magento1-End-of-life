@@ -50,27 +50,27 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
         /**
          * Get the address data from the $_POST superglobal
          */
-        $address = $this->getRequest()->getPost();
-        if (!$address
-            || !isset($address['postcode'])
-            || !isset($address['housenumber'])
+        $data = $this->getRequest()->getPost();
+        if (!$data
+            || !isset($data['postcode'])
+            || !isset($data['housenumber'])
         ) {
             $this->getResponse()
-                 ->setBody('missing data');
+                 ->setBody('missing_data');
 
             return $this;
         }
 
-        $postcode = $address['postcode'];
-        $housenumber = $address['housenumber'];
+        $postcode = $data['postcode'];
+        $housenumber = $data['housenumber'];
 
         /**
          * Load the Cendris webservice and perform an getAdresxpressPostcode request
          */
-        $webservice = Mage::getModel('postnl_addressvalidation/webservices');
+        $cendris = Mage::getModel('postnl_addressvalidation/cendris');
 
         try {
-            $result = $webservice->getAdresxpressPostcode($postcode, $housenumber);
+            $result = $cendris->getAdresxpressPostcode($postcode, $housenumber);
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
 
@@ -81,24 +81,25 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
         }
 
         /**
-         * @todo add check to see if result is valid
+         * Make sure the required data is present.
+         * If not, it means the supplied housenumber and postcode combination could not be found.
          */
+        if (!isset($result->woonplaats)
+            || !$result->woonplaats
+            || !isset($result->straatnaam)
+            || !$result->straatnaam
+        ) {
+            $this->getResponse()
+                 ->setBody('invalid_data');
+
+            return $this;
+        }
 
         /**
          * Get the city and streetname from the response
          */
-        $city = $result->woonplaats;
+        $city       = $result->woonplaats;
         $streetname = $result->straatnaam;
-
-        /**
-         * If either the city or streetname is empty we have an invalid response
-         */
-        if (empty($city) || empty($streetname)) {
-            $this->getResponse()
-                 ->setBody('error');
-
-            return $this;
-        }
 
         /**
          * Add the resulting city and streetname to an array and JSON encode it
