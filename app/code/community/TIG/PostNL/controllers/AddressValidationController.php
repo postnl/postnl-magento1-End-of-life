@@ -64,6 +64,9 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
         $postcode = $data['postcode'];
         $housenumber = $data['housenumber'];
 
+        $postcode = str_replace(' ', '', $postcode);
+        $housenumber = str_replace(' ', '', $housenumber);
+
         /**
          * Load the Cendris webservice and perform an getAdresxpressPostcode request
          */

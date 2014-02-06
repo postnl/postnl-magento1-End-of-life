@@ -65,6 +65,16 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const XML_PATH_POSTCODE_CHECK_TIMEOUT     = 'postnl/cif_address/postcode_check_timeout';
 
     /**
+     * Log filename to log all cendris exceptions
+     */
+    const CENDRIS_EXCEPTION_LOG_FILE = 'TIG_PostNL_Cendris_Exception.log';
+
+    /**
+     * Log filename to log cendris calls
+     */
+    const CENDRIS_DEBUG_LOG_FILE = 'TIG_PostNL_Cendris_Debug.log';
+
+    /**
      * Checks whether the given store uses split address lines.
      *
      * @param int|null $storeId
@@ -267,5 +277,81 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
         }
 
         return $environmentAllowed;
+    }
+
+    /**
+     * Logs a cendris request and response for debug purposes.
+     *
+     * @param SoapClient $client
+     *
+     * @return TIG_PostNL_Helper_Webservices
+     *
+     * @see Mage::log()
+     *
+     * @todo add additional debug options
+     */
+    public function logCendrisCall($client)
+    {
+        if (!$this->isLoggingEnabled()) {
+            return $this;
+        }
+
+        $this->createLogDir();
+
+        $requestXml = $this->formatXml($client->getLastRequest());
+        $responseXML = $this->formatXml($client->getLastResponse());
+
+        $logMessage = 'Request sent:'
+                    . PHP_EOL
+                    . $requestXml
+                    . PHP_EOL
+                    . 'Response received:'
+                    . PHP_EOL
+                    . $responseXML;
+
+        $file = self::POSTNL_LOG_DIRECTORY . DS . self::CENDRIS_DEBUG_LOG_FILE;
+        $this->log($logMessage, Zend_Log::DEBUG, $file);
+
+        return $this;
+    }
+
+    /**
+     * Logs a cendris exception in the database and/or a log file
+     *
+     * @param Mage_Core_Exception|TIG_PostNL_Exception $exception
+     * @param SoapClient|boolean $client
+     *
+     * @return TIG_PostNL_Helper_Webservices
+     *
+     * @see Mage::logException()
+     *
+     * @todo add additional debug options
+     */
+    public function logCendrisException($exception, $client = false)
+    {
+        if (!$this->isExceptionLoggingEnabled()) {
+            return $this;
+        }
+
+        $logMessage = PHP_EOL . $exception->__toString();
+
+        if ($client) {
+            $requestXml = $this->formatXml($client->getLastRequest());
+            $responseXML = $this->formatXml($client->getLastResponse());
+
+            $logMessage .= PHP_EOL
+                         . 'Request sent:'
+                         . PHP_EOL
+                         . $requestXml
+                         . PHP_EOL
+                         . 'Response received:'
+                         . PHP_EOL
+                         . $responseXML;
+        }
+
+        $file = self::POSTNL_LOG_DIRECTORY . DS . self::CENDRIS_EXCEPTION_LOG_FILE;
+        $this->log($logMessage, Zend_Log::ERR, $file, false, true);
+
+        return $this;
     }
 }

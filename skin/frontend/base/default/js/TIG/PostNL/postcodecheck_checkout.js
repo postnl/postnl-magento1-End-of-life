@@ -160,6 +160,25 @@ PostnlPostcodecheck = new Class.create({
             return false;
         }
 
+        var inputValid = true;
+
+        if (!Validation.validate($(this.postcodeField))) {
+            inputValid = false;
+        }
+
+        if (!Validation.validate($(this.virtualPrefix + this.housenumberField))) {
+            inputValid = false;
+        }
+
+        if (!inputValid) {
+            return false;
+        }
+
+        $(this.cityField).readOnly = true;
+        $(this.cityField).addClassName('postnl-readonly');
+        $(this.virtualPrefix + this.streetnameField).readOnly = true;
+        $(this.virtualPrefix + this.streetnameField).addClassName('postnl-readonly');
+
         $('postnl_address_error_' + addressType).hide();
         $('postnl_address_missing_' + addressType).hide();
         $('postnl_address_invalid_' + addressType).hide();
@@ -277,6 +296,10 @@ PostnlPostcodecheck = new Class.create({
             city.readOnly = true;
             city.addClassName('postnl-readonly');
 
+            if (!$(this.postcodeField).hasClassName('postnl-validate-postcode')) {
+                $(this.postcodeField).addClassName('postnl-validate-postcode')
+            }
+
             return;
         }
 
@@ -288,6 +311,10 @@ PostnlPostcodecheck = new Class.create({
 
         city.readOnly = false;
         city.removeClassName('postnl-readonly');
+
+        if ($(this.postcodeField).hasClassName('postnl-validate-postcode')) {
+            $(this.postcodeField).removeClassName('postnl-validate-postcode')
+        }
 
         return;
     }
