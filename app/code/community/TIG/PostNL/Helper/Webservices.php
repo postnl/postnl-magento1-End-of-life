@@ -64,7 +64,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     const WEBSERVICES_EXCEPTION_LOG_FILE = 'TIG_PostNL_Webservices_Exception.log';
 
     /**
-     * Log filename to webservices CIF calls
+     * Log filename to log webservices calls
      */
     const WEBSERVICES_DEBUG_LOG_FILE = 'TIG_PostNL_Webservices_Debug.log';
 
@@ -148,8 +148,6 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     /**
      * Logs a webservice request and response for debug purposes.
      *
-     * N.B.: if file logging is enabled, the log will be forced
-     *
      * @param SoapClient $client
      *
      * @return TIG_PostNL_Helper_Webservices
@@ -157,7 +155,6 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
      * @see Mage::log()
      *
      * @todo add additional debug options
-     *
      */
     public function logWebserviceCall($client)
     {
@@ -184,9 +181,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     /**
      * Logs a webservice exception in the database and/or a log file
      *
-     * N.B.: if file logging is enabled, the log will be forced
-     *
-     * @param Mage_Core_Exception | TIG_PostNL_Model_Core_Webservices_Exception $exception
+     * @param Mage_Core_Exception|TIG_PostNL_Exception $exception
      *
      * @return TIG_PostNL_Helper_Webservices
      *
@@ -200,25 +195,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
             return $this;
         }
 
-        if ($exception instanceof TIG_PostNL_Model_Core_Webservices_Exception) {
-            $requestXml = $this->formatXml($exception->getRequestXml());
-            $responseXML = $this->formatXml($exception->getResponseXml());
-
-            $logMessage = '';
-
-            $errorNumbers = $exception->getErrorNumbers();
-            if (!empty($errorNumbers)) {
-                $errorNumbers = implode(', ', $errorNumbers);
-                $logMessage .= "Error numbers received: {$errorNumbers}\n";
-            }
-
-            $logMessage .= "<<< REQUEST SENT >>>\n"
-                        . $requestXml
-                        . "\n<<< RESPONSE RECEIVED >>>\n"
-                        . $responseXML;
-        } else {
-            $logMessage = "\n" . $exception->__toString();
-        }
+        $logMessage = "\n" . $exception->__toString();
 
         $file = self::POSTNL_LOG_DIRECTORY . DS . self::WEBSERVICES_EXCEPTION_LOG_FILE;
         $this->log($logMessage, Zend_Log::ERR, $file, false, true);

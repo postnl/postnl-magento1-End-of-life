@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Adminhtml_System_Config_Backend_ValidateAccount extends Mage_Core_Model_Config_Data
+class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount extends Mage_Core_Model_Config_Data
 {
     /**
      * Xpaths used to get PostNL account credentials.

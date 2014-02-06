@@ -96,13 +96,16 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
                 $soapParams
             );
 
-            Mage::helper('postnl/webservices')->logWebserviceCall($client);
+            Mage::helper('postnl/addressValidation')->logCendrisCall($client);
             return $response;
         } catch(SoapFault $e) {
             /**
              * Log a possible SoapFault exception.
              */
-            Mage::helper('postnl/webservices')->logWebserviceException($e);
+            if (!isset($client)) {
+                $client = false;
+            }
+            Mage::helper('postnl/addressValidation')->logCendrisException($e, $client);
 
             throw $e;
         }
