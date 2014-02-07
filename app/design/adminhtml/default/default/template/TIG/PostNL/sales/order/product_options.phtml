@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -33,27 +33,27 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
-
+<?php $_helper                   = $this->helper('postnl'); ?>
 <?php $_extraCoverProductOptions = $this->getExtraCoverProductOptions(); ?>
-<?php $_globalPackOption = $this->getGlobalPackProductOption(); ?>
+<?php $_globalPackOption         = $this->getGlobalPackProductOption(); ?>
 <script type ="text/javascript">
 //<![CDATA[
     document.observe('dom:loaded', function() {
         var productOptions = '<?php echo json_encode($_extraCoverProductOptions); ?>';
         var globalPackOption = '<?php echo $_globalPackOption; ?>';
-        
+
         Object.extend(sales_order_grid_massactionJsObject, {
             apply: function(skipPostNLCheck) {
-                
+
                 if(varienStringArray.count(this.checkedString) == 0) {
                     alert(this.errorText);
                     return;
                 }
-        
+
                 /**
                  * Additional PostNL functionality
                  */
@@ -67,14 +67,14 @@
                             return;
                         }
                         selectedProductOption = productOptionSelect[productOptionSelect.selectedIndex];
-                        
+
                         if (productOptions.indexOf(selectedProductOption.value) > -1) {
                             extraCoverDialog.open();
                             return;
                         }
                     }
                 }
-                
+
                 /**
                  * original apply method
                  */
@@ -86,19 +86,19 @@
                 this.currentItem = item;
                 var fieldName = (item.field ? item.field : this.formFieldName);
                 var fieldsHtml = '';
-        
+
                 if(this.currentItem.confirm && !window.confirm(this.currentItem.confirm)) {
                     return;
                 }
-        
+
                 this.formHiddens.update('');
                 new Insertion.Bottom(this.formHiddens, this.fieldTemplate.evaluate({name: fieldName, value: this.checkedString}));
                 new Insertion.Bottom(this.formHiddens, this.fieldTemplate.evaluate({name: 'massaction_prepare_key', value: fieldName}));
-        
+
                 if(!this.validator.validate()) {
                     return;
                 }
-        
+
                 if(this.useAjax && item.url) {
                     new Ajax.Request(item.url, {
                         'method': 'post',
@@ -111,33 +111,35 @@
                 }
             }
         });
-        
+
         var extraCoverDialog = {
             overlayShowEffectOptions : null,
             overlayHideEffectOptions : null,
             open : function() {
                 content = "<form id='postnl_extra_cover_form' name='postnl_extra_cover_form'>"; //form element is only to enable Varien form validation
-                content += "<p>"
-                        +  "<label for='extra_cover_value'><?php echo $this->__('Extra cover amount (in increments of 500)'); ?></label>"
-                        +  "<input id='extra_cover_value'type='text' name='extra_cover_value' class='input-text required-entry validate-increment-500 validate-not-negative-number' value='0'/>"
-                        +  "</p>";
-                
+
                 if (selectedProductOption.value == globalPackOption) {
-                   content += "<p>"
-                           +  "<label for='globalpack_shipment_type'><?php echo $this->__('Shipment type'); ?></label>"
-                           +  "<select id='globalpack_shipment_type' type='text' name='globalpack_shipment_type' class='validate-select required-field'>"
-                   <?php foreach ($this->getShipmentTypes() as $type => $label): ?>
-                           +  "<option value='<?php echo $type; ?>'><?php echo $this->__($label); ?></option>"
-                   <?php endforeach; ?>
-                           +  "</select>"
-                           +  "</p>";
-                           
-                   content += "<p>"
-                           +  "<label for='globalpack_treat_as_abandoned'><?php echo $this->__('Treat as abandoned'); ?></label>"
-                           +  "<input id='globalpack_treat_as_abandoned' name='globalpack_treat_as_abandoned' type='checkbox' value='1'/>"
-                           +  "</p>";
+                    content += "<input id='extra_cover_value'type='hidden' name='extra_cover_value' class='input-text' value='200'/>"
+                    content += "<p>"
+                            +  "<label for='globalpack_shipment_type'><?php echo $_helper->__('Shipment type'); ?></label>"
+                            +  "<select id='globalpack_shipment_type' type='text' name='globalpack_shipment_type' class='validate-select required-field'>"
+                    <?php foreach ($this->getShipmentTypes() as $type => $label): ?>
+                            +  "<option value='<?php echo $type; ?>'><?php echo $_helper->__($label); ?></option>"
+                    <?php endforeach; ?>
+                            +  "</select>"
+                            +  "</p>";
+
+                    content += "<p>"
+                            +  "<label for='globalpack_treat_as_abandoned'><?php echo $_helper->__('Treat as abandoned'); ?></label>"
+                            +  "<input id='globalpack_treat_as_abandoned' name='globalpack_treat_as_abandoned' type='checkbox' value='1'/>"
+                            +  "</p>";
+                } else {
+                    content += "<p>"
+                            +  "<label for='extra_cover_value'><?php echo $_helper->__('Extra cover amount (in increments of 500)'); ?></label>"
+                            +  "<input id='extra_cover_value'type='text' name='extra_cover_value' class='input-text required-entry validate-increment-500 validate-not-negative-number' value='0'/>"
+                            +  "</p>";
                 }
-                
+
                 content += "</form>";
                 this.openDialogWindow(content);
             },
@@ -146,14 +148,14 @@
                 this.overlayHideEffectOptions = Windows.overlayHideEffectOptions;
                 Windows.overlayShowEffectOptions = {duration:0};
                 Windows.overlayHideEffectOptions = {duration:0};
-        
+
                 Dialog.confirm(content, {
                     draggable:true,
                     resizable:true,
                     closable:true,
                     className:"magento",
                     windowClassName:"popup-window",
-                    title:'<?php echo $this->__('Please fill out these additional fields.'); ?>',
+                    title:'<?php echo $_helper->__('Please fill out these additional fields.'); ?>',
                     width:410,
                     height:120,
                     zIndex:1000,
@@ -173,20 +175,20 @@
                 if(!extraCoverValidation.validate()){
                     return false;
                 }
-                
+
                 $('extra_cover_value').hide();
                 $('sales_order_grid_massaction-form').insert($('extra_cover_value'));
-                
+
                 if ($('globalpack_shipment_type')) {
                     $('globalpack_shipment_type').hide();
                     $('sales_order_grid_massaction-form').insert($('globalpack_shipment_type'));
                 }
-                
+
                 if ($('globalpack_treat_as_abandoned')) {
                     $('globalpack_treat_as_abandoned').hide();
                     $('sales_order_grid_massaction-form').insert($('globalpack_treat_as_abandoned'));
                 }
-                
+
                 $('extra-options-dialog').hide();
                 sales_order_grid_massactionJsObject.apply(true);
             },

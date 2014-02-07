@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -47,6 +47,11 @@
 <?php $_addressType = $this->hasAddressType() ? $this->getAddressType() : 'billing'; ?>
 <?php $_streetValidationClass = $this->helper('customer/address')->getAttributeValidationClass('street'); ?>
 <?php $_streetValidationClassNotRequired = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
+
+<?php $_postnlHelper = Mage::helper('postnl/addressValidation'); ?>
+
+<?php $_timeoutDelay = $_postnlHelper->getPostcodeCheckTimeoutDelay(); ?>
+<?php $_maxAttempts  = $_postnlHelper->getPostcodeCheckMaxAttempts(); ?>
 <li>
     <label for="<?php echo $_addressType; ?>:country_id" class="required"><em>*</em><?php echo $this->__('Country') ?></label>
     <div class="input-box">
@@ -57,13 +62,13 @@
     <div class="field field-postcode">
         <label for="<?php echo $_addressType; ?>:postcode" class="required"><em>*</em><?php echo $this->__('Zip/Postal Code') ?></label>
         <div class="input-box">
-            <input type="text" title="<?php echo $this->__('Zip/Postal Code') ?>" name="<?php echo $_addressType; ?>[postcode]" id="<?php echo $_addressType; ?>:postcode" value="<?php echo $this->escapeHtml($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" />
+            <input type="text" title="<?php echo $this->__('Zip/Postal Code') ?>" name="<?php echo $_addressType; ?>[postcode]" id="<?php echo $_addressType; ?>:postcode" value="<?php echo $this->escapeHtml($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international postnl-validate-postcode <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" />
         </div>
     </div>
     <div class="field field-housenumber">
         <label for="<?php echo $_addressType; ?>:street2" class="required"><em>*</em><?php echo $this->__('Housenumber') ?></label>
         <div class="input-box">
-            <input type="text" title="<?php echo $this->__('Housenumber') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street2" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(2)) ?>" class="input-text <?php echo $_streetValidationClass ?>" />
+            <input type="text" title="<?php echo $this->__('Housenumber') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street2" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(2)) ?>" class="input-text postnl-validate-housenumber <?php echo $_streetValidationClass ?>" />
         </div>
     </div>
     <div class="field field-extension">
@@ -73,7 +78,13 @@
         </div>
     </div>
     <div class="postnl validation-advice" style="display:none;" id="postnl_address_error_<?php echo $_addressType; ?>">
-        <?php echo $this->__('Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.'); ?>
+        <?php echo $_postnlHelper->__('Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.'); ?>
+    </div>
+    <div class="postnl validation-advice" style="display:none;" id="postnl_address_missing_<?php echo $_addressType; ?>">
+        <?php echo $_postnlHelper->__('Please enter a postcode and housenumber.'); ?>
+    </div>
+    <div class="postnl validation-advice" style="display:none;" id="postnl_address_invalid_<?php echo $_addressType; ?>">
+        <?php echo $_postnlHelper->__('Your postcode/housenumber combination could not be found. Please make sure you have entered a valid postcode and housenumber and try again.'); ?>
     </div>
 </li>
 <li>
@@ -109,23 +120,41 @@
     <?php endfor; ?>
 </div>
 
+<div id="postnl_postcodecheck_spinner_<?php echo $_addressType ?>" style="display:none;">
+    <img src="<?php echo $this->getSkinUrl('onestepcheckout/images/ajax-loader.gif'); ?>"/>
+</div>
+
 <script type="text/javascript">
 //<![CDATA[
     <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
         $('virtual:<?php echo $_addressType; ?>:street<?php echo $_i; ?>').observe('change', function(event) {
             var element = Event.element(event);
             var value = element.getValue();
-            
+
             $('<?php echo $_addressType; ?>:street<?php echo $_i; ?>').setValue(value);
         });
         $('virtual:<?php echo $_addressType; ?>:street<?php echo $_i; ?>').observe('change', function(event) {
             var element = Event.element(event);
             var value = element.getValue();
-            
+
             $('<?php echo $_addressType; ?>:street<?php echo $_i; ?>').setValue(value);
         });
     <?php endfor; ?>
-    
-    var postcodecheckUrl = '<?php echo $this->getUrl('postnl/addressValidation/postcodeCheck', array('_secure' => true)); ?>';
+
+    document.observe('dom:loaded', function() {
+        var postcodeCheck<?php echo $_addressType; ?> = new PostnlPostcodecheck(
+            '<?php echo $this->getUrl('postnl/addressValidation/postcodeCheck', array('_secure' => true)); ?>',
+            '<?php echo $_addressType; ?>',
+            '<?php echo $_addressType; ?>:country_id',
+            '<?php echo $_addressType; ?>:postcode',
+            '<?php echo $_addressType; ?>:street1',
+            '<?php echo $_addressType; ?>:street2',
+            '<?php echo $_addressType; ?>:street3',
+            '<?php echo $_addressType; ?>:city'
+        );
+        postcodeCheck<?php echo $_addressType; ?>.errorMax = <?php echo $_maxAttempts; ?>;
+        postcodeCheck<?php echo $_addressType; ?>.timeoutDelay = '<?php echo $_timeoutDelay; ?>';
+        postcodeCheck<?php echo $_addressType; ?>.registerObservers();
+    });
 //]]>
 </script>

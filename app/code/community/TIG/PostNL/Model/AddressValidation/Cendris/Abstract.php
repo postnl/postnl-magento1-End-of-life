@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -36,7 +36,7 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Object
+class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
 {
     /**
      * Wsdl location
@@ -45,20 +45,20 @@ class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Obj
 
     /**
      * Calls a webservice method
-     * 
+     *
      * @param string
      * @param string $method The method that will be called
      * @param array $soapParams An array of parameters to be sent
-     * 
+     *
      * @return object
-     * 
+     *
      * @throws TIG_PostNL_Exception
      */
     public function call($method, $soapParams)
     {
         try {
             $wsdl = self::WEBSERVICE_WSDL_URL;
-            
+
             /**
              * Array of soap options used when connecting to the webservice
              */
@@ -66,14 +66,14 @@ class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Obj
                 'soap_version' => SOAP_1_1,
                 'features'     => SOAP_SINGLE_ELEMENT_ARRAYS,
             );
-            
+
             /**
              * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without using the
              * wsdl cache.
              */
             try {
                 $client  = new Zend_Soap_Client(
-                    $wsdl, 
+                    $wsdl,
                     $soapOptions
                 );
             } catch (Exception $e) {
@@ -81,13 +81,13 @@ class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Obj
                  * Disable wsdl cache and try again
                  */
                 $soapOptions['cache_wsdl'] = WSDL_CACHE_NONE;
-                
+
                 $client  = new Zend_Soap_Client(
-                    $wsdl, 
+                    $wsdl,
                     $soapOptions
                 );
             }
-            
+
             /**
              * Call the SOAP method
              */
@@ -95,30 +95,19 @@ class TIG_PostNL_Model_AddressValidation_Webservices_Abstract extends Varien_Obj
                 $method,
                 $soapParams
             );
-            
-            Mage::helper('postnl/webservices')->logWebserviceCall($client);
+
+            Mage::helper('postnl/addressValidation')->logCendrisCall($client);
             return $response;
         } catch(SoapFault $e) {
             /**
              * Log a possible SoapFault exception.
              */
-            Mage::helper('postnl/webservices')->logWebserviceException($e);
-            
+            if (!isset($client)) {
+                $client = false;
+            }
+            Mage::helper('postnl/addressValidation')->logCendrisException($e, $client);
+
             throw $e;
         }
-        // } catch (SoapFault $e) {
-            // $cifHelper = Mage::helper('postnl/cif');
-//         
-            // /**
-             // * Get the request and response XML data
-             // */
-            // if ($client) {
-                // $requestXML  = $cifHelper->formatXml($client->getLastRequest());
-                // $responseXML = $cifHelper->formatXml($client->getLastResponse());
-            // }
-            // echo '<pre>';var_dump(htmlentities($requestXML));
-            // var_dump(htmlentities($responseXML));
-            // exit;
-        // }
     }
 }

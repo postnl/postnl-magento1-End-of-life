@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -33,11 +33,12 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
 
+<?php $_helper               = $this->helper('postnl'); ?>
 <?php $_shipment             = $this->getShipment(); ?>
 <?php $_productOptions       = $this->getProductOptions(); ?>
 <?php $_defaultProductOption = $this->getDefaultProductOption(); ?>
@@ -47,49 +48,55 @@
 <?php $_parcelCount          = $this->getParcelCount(); ?>
 
 <p id="postnl_product_option_container">
-    <label class="normal" for="postnl_product_option"><?php echo $this->__('PostNL Shipping Options'); ?></label>
+    <label class="normal" for="postnl_product_option"><?php echo $_helper->__('PostNL Shipping Options'); ?></label>
     <select id="postnl_product_option" class="select required-entry" name="postnl[product_option]">
         <?php foreach($_productOptions as $_option): ?>
             <?php if (isset($_option['isBelgiumOnly']) && $_isBelgium === false): ?>
                 <?php continue; ?>
             <?php endif; ?>
-            
+
             <?php $_extraCoverClass = '';?>
             <?php if (isset($_option['isExtraCover']) && $_option['isExtraCover'] === true): ?>
                <?php $_extraCoverClass = 'extra_cover';?>
             <?php endif; ?>
-            
+
             <?php $_selected = ''; ?>
             <?php if ($_option['value'] == $_defaultProductOption): ?>
                 <?php $_selected = 'selected="selected"'; ?>
             <?php endif; ?>
             <option class="<?php echo $_extraCoverClass; ?>" <?php echo $_selected; ?> value="<?php echo $_option['value']; ?>">
-                <?php echo $this->__($_option['label']); ?>
+                <?php echo $_helper->__($_option['label']); ?>
             </option>
         <?php endforeach; ?>
     </select>
 </p>
-<p id="postnl_extra_cover_container">
-    <label class="normal" for="postnl_extra_cover"><?php echo $this->__('Extra cover amount (in increments of 500)'); ?></label>
-    <input type="text" name="postnl[extra_cover_amount]" class="input-text required-entry validate-increment-500 validate-not-negative-number" id="postnl_extra_cover"/>
-</p>
+<?php if ($_isGlobalPackShipment): ?>
+    <p id="postnl_extra_cover_container" style="display:none;">
+        <input type="hidden" name="postnl[extra_cover_amount]" class="input-text" id="postnl_extra_cover" value="200"/>
+    </p>
+<?php else: ?>
+    <p id="postnl_extra_cover_container">
+        <label class="normal" for="postnl_extra_cover"><?php echo $_helper->__('Extra cover amount (in increments of 500)'); ?></label>
+        <input type="text" name="postnl[extra_cover_amount]" class="input-text required-entry validate-increment-500 validate-not-negative-number" id="postnl_extra_cover"/>
+    </p>
+<?php endif; ?>
 <?php if ($_isDutchShipment): ?>
 <p id="postnl_parcel_count_container">
-    <label class="normal" for="postnl_parcel_count"><?php echo $this->__('Number of parcels'); ?></label>
+    <label class="normal" for="postnl_parcel_count"><?php echo $_helper->__('Number of parcels'); ?></label>
     <input type="text" name="postnl[parcel_count]" class="input-text validate-digits validate-not-negative-number required-entry" id="postnl_parcel_count" value="<?php echo $_parcelCount; ?>"/>
 </p>
 <?php endif; ?>
 <?php if ($_isGlobalPackShipment): ?>
     <p id="postnl_shipment_type_container">
-        <label class="normal" for="postnl_shipment_type"><?php echo $this->__('Shipment type'); ?></label>
+        <label class="normal" for="postnl_shipment_type"><?php echo $_helper->__('Shipment type'); ?></label>
         <select name="postnl[shipment_type]" class="validate-select required-field" id="postnl_shipment_type">
             <?php foreach ($this->getShipmentTypes() as $type => $label): ?>
-                <option value="<?php echo $type; ?>"><?php echo $this->__($label); ?></option>
+                <option value="<?php echo $type; ?>"><?php echo $_helper->__($label); ?></option>
             <?php endforeach; ?>
         </select>
     </p>
     <p id="postnl_treat_as_abandoned_container">
-        <label class="normal" for="postnl_treat_as_abandoned"><?php echo $this->__('Treat as abandoned'); ?></label>
+        <label class="normal" for="postnl_treat_as_abandoned"><?php echo $_helper->__('Treat as abandoned'); ?></label>
         <input type="checkbox" name="postnl[treat_as_abandoned]" id="postnl_treat_as_abandoned" value="1"/>
     </p>
 <?php endif; ?>
