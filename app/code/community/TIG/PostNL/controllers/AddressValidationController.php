@@ -75,6 +75,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
          * Remove spaces from housenumber and postcode fields.
          */
         $postcode = str_replace(' ', '', $postcode);
+        $postcode = strtoupper($postcode);
         $housenumber = str_replace(' ', '', $housenumber);
 
         /**
