@@ -42,11 +42,18 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
      * Validates and enriches a postcode/housenumber combination. This will result in the address's city and streetname if valid.
      *
      * @return TIG_PostNL_AddressValidationController
-     *
-     * @todo add check to see if response is valid
      */
     public function postcodeCheckAction()
     {
+        /**
+         * This action may only be called using AJAX requests
+         */
+        if (!$this->getRequest()->isAjax()) {
+            $this->_redirect('');
+
+            return $this;
+        }
+
         /**
          * Get the address data from the $_POST superglobal
          */
@@ -64,8 +71,29 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
         $postcode = $data['postcode'];
         $housenumber = $data['housenumber'];
 
+        /**
+         * Remove spaces from housenumber and postcode fields.
+         */
         $postcode = str_replace(' ', '', $postcode);
         $housenumber = str_replace(' ', '', $housenumber);
+
+        /**
+         * Get validation classes for the postcode and housenumber values
+         */
+        $postcodeValidator = new Zend_Validate_PostCode('nl_NL');
+        $housenumberValidator = new Zend_Validate_Digits();
+
+        /**
+         * Make sure the input is valid
+         */
+        if (!$postcodeValidator->isValid($postcode)
+            || !$housenumberValidator->isValid($housenumber)
+        ) {
+            $this->getResponse()
+                 ->setBody('invalid_data');
+
+            return $this;
+        }
 
         /**
          * Load the Cendris webservice and perform an getAdresxpressPostcode request
