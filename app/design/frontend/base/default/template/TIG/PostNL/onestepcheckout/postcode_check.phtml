@@ -172,7 +172,7 @@
         );
         postcodeCheck<?php echo $_addressType; ?>.errorMax = <?php echo $_maxAttempts; ?>;
         postcodeCheck<?php echo $_addressType; ?>.timeoutDelay = '<?php echo $_timeoutDelay; ?>';
-        postcodeCheck<?php echo $_addressType; ?>.registerObservers();
+        postcodeCheck<?php echo $_addressType; ?>.init();
     });
 //]]>
 </script>
