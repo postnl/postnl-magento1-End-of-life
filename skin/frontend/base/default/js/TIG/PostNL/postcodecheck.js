@@ -42,17 +42,7 @@ PostnlPostcodecheck = new Class.create({
 
     inProgressRequest: false,
 
-    initialize: function(
-        postcodecheckUrl,
-        addressType,
-        countryField,
-        postcodeField,
-        streetnameField,
-        housenumberField,
-        housenumberExtensionField,
-        cityField,
-        virtualPrefix = 'virtual:'
-    ) {
+    initialize: function(postcodecheckUrl, addressType, countryField, postcodeField, streetnameField, housenumberField, housenumberExtensionField, cityField, virtualPrefix) {
         this.postcodecheckUrl          = postcodecheckUrl;
         this.addressType               = addressType;
         this.countryField              = countryField;
