@@ -36,13 +36,23 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 PostnlPostcodecheck = new Class.create({
-    errorCounter: 0,
-    errorMax: 3,
-    timeoutDelay: 3,
+    errorCounter : 0,
+    errorMax     : 3,
+    timeoutDelay : 3,
 
     inProgressRequest: false,
 
-    initialize: function(postcodecheckUrl, addressType, countryField, postcodeField, streetnameField, housenumberField, housenumberExtensionField, cityField, virtualPrefix = 'virtual:') {
+    initialize: function(
+        postcodecheckUrl,
+        addressType,
+        countryField,
+        postcodeField,
+        streetnameField,
+        housenumberField,
+        housenumberExtensionField,
+        cityField,
+        virtualPrefix = 'virtual:'
+    ) {
         this.postcodecheckUrl          = postcodecheckUrl;
         this.addressType               = addressType;
         this.countryField              = countryField;
@@ -52,21 +62,9 @@ PostnlPostcodecheck = new Class.create({
         this.housenumberExtensionField = housenumberExtensionField;
         this.cityField                 = cityField;
         this.virtualPrefix             = virtualPrefix;
-
-        $(streetnameField).setValue(
-            $(virtualPrefix + streetnameField).getValue()
-        );
-
-        $(housenumberField).setValue(
-            $(virtualPrefix + housenumberField).getValue()
-        );
-
-        $(housenumberExtensionField).setValue(
-            $(virtualPrefix + housenumberExtensionField).getValue()
-        );
     },
 
-    registerObservers: function() {
+    init: function() {
         var postcodecheckUrl          = this.postcodecheckUrl;
         var addressType               = this.addressType;
         var countryField              = this.countryField;
@@ -77,9 +75,35 @@ PostnlPostcodecheck = new Class.create({
         var cityField                 = this.cityField;
         var virtualPrefix             = this.virtualPrefix;
 
-        var countryId   = $(countryField).getValue();
-        var postcode    = $(postcodeField).getValue();
-        var housenumber = $(housenumberField).getValue();
+        if (!$(streetnameField).getValue() && $(virtualPrefix + streetnameField).getValue()) {
+            $(streetnameField).setValue(
+                $(virtualPrefix + streetnameField).getValue()
+            );
+        } else if ($(streetnameField).getValue() && !$(virtualPrefix + streetnameField).getValue()) {
+            $(virtualPrefix + streetnameField).setValue(
+                $(streetnameField).getValue()
+            );
+        }
+
+        if (!$(housenumberField).getValue() && $(virtualPrefix + housenumberField).getValue()) {
+            $(housenumberField).setValue(
+                $(virtualPrefix + housenumberField).getValue()
+            );
+        } else if ($(housenumberField).getValue() && !$(virtualPrefix + housenumberField).getValue()) {
+            $(virtualPrefix + housenumberField).setValue(
+                $(housenumberField).getValue()
+            );
+        }
+
+        if (!$(housenumberExtensionField).getValue() && $(virtualPrefix + housenumberExtensionField).getValue()) {
+            $(housenumberExtensionField).setValue(
+                $(virtualPrefix + housenumberExtensionField).getValue()
+            );
+        } else if ($(housenumberExtensionField).getValue() && !$(virtualPrefix + housenumberExtensionField).getValue()) {
+            $(virtualPrefix + housenumberExtensionField).setValue(
+                $(housenumberExtensionField).getValue()
+            );
+        }
 
         var postcodeCheck = this;
         $(countryField).observe('change', function(event) {
@@ -128,6 +152,10 @@ PostnlPostcodecheck = new Class.create({
 
             $(housenumberExtensionField).setValue(value);
         });
+
+        var countryId   = $(countryField).getValue();
+        var postcode    = $(postcodeField).getValue();
+        var housenumber = $(virtualPrefix + housenumberField).getValue();
 
         this.changePostcodeCheckDisabledFields(countryId);
         this.checkPostcode(postcode, housenumber);
@@ -201,6 +229,10 @@ PostnlPostcodecheck = new Class.create({
                     $('postnl_address_error_' + addressType).show();
                     postcodeCheck.changePostcodeCheckDisabledFields(false);
 
+                    $(postcodeCheck.virtualPrefix + postcodeCheck.streetnameField).setValue('');
+                    $(postcodeCheck.streetnameField).setValue('');
+                    $(postcodeCheck.cityField).setValue('');
+
                     postcodeCheck.inProgressRequest = false;
                     $('postnl_postcodecheck_spinner_' + addressType).hide();
 
@@ -223,6 +255,10 @@ PostnlPostcodecheck = new Class.create({
                     if (postcodeCheck.errorMax && postcodeCheck.errorCounter >= postcodeCheck.errorMax) {
                         postcodeCheck.changePostcodeCheckDisabledFields(false, addressType);
                     }
+
+                    $(postcodeCheck.virtualPrefix + postcodeCheck.streetnameField).setValue('');
+                    $(postcodeCheck.streetnameField).setValue('');
+                    $(postcodeCheck.cityField).setValue('');
 
                     postcodeCheck.inProgressRequest = false;
                     $('postnl_postcodecheck_spinner_' + addressType).hide();
@@ -250,6 +286,10 @@ PostnlPostcodecheck = new Class.create({
 
                 $('postnl_address_error_' + addressType).show();
                 postcodeCheck.changePostcodeCheckDisabledFields(false);
+
+                $(postcodeCheck.virtualPrefix + postcodeCheck.streetnameField).setValue('');
+                $(postcodeCheck.streetnameField).setValue('');
+                $(postcodeCheck.cityField).setValue('');
 
                 postcodeCheck.inProgressRequest = false;
                 $('postnl_postcodecheck_spinner_' + addressType).hide();
