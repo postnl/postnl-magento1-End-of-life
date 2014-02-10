@@ -78,7 +78,7 @@ class TIG_PostNL_Fpdi extends FPDI
         $this->AddPage($orientation, $format); // create landscape
 
         $this->increasePageCount();
-        if($orientation == 'L' || true)
+        if($orientation == 'L')
         {
             $this->rotatedPage[$this->getPageCount()] = -90; // set to portrait before output
         }
@@ -127,34 +127,34 @@ class TIG_PostNL_Fpdi extends FPDI
 
     function _putpages()
     {
-        $nb=$this->page;
+        $nb = $this->page;
         if(!empty($this->AliasNbPages))
         {
-            //Replace number of pages
+            // Replace number of pages
             for($n=1;$n<=$nb;$n++)
-                $this->pages[$n]=str_replace($this->AliasNbPages,$nb,$this->pages[$n]);
+                $this->pages[$n] = str_replace($this->AliasNbPages,$nb,$this->pages[$n]);
         }
         if($this->DefOrientation=='P')
         {
-            @$wPt=$this->DefPageFormat[0]*$this->k;
-            @$hPt=$this->DefPageFormat[1]*$this->k;
+            $wPt = $this->DefPageSize[0]*$this->k;
+            $hPt = $this->DefPageSize[1]*$this->k;
         }
         else
         {
-            @$wPt=$this->DefPageFormat[1]*$this->k;
-            @$hPt=$this->DefPageFormat[0]*$this->k;
+            $wPt = $this->DefPageSize[1]*$this->k;
+            $hPt = $this->DefPageSize[0]*$this->k;
         }
-        $filter=($this->compress) ? '/Filter /FlateDecode ' : '';
+        $filter = ($this->compress) ? '/Filter /FlateDecode ' : '';
         for($n=1;$n<=$nb;$n++)
         {
-            //Page
+            // Page
             $this->_newobj();
             $this->_out('<</Type /Page');
             $this->_out('/Parent 1 0 R');
             if(isset($this->PageSizes[$n]))
                 $this->_out(sprintf('/MediaBox [0 0 %.2F %.2F]',$this->PageSizes[$n][0],$this->PageSizes[$n][1]));
 
-            // START MOD PAGE ROTATION
+             // START MOD PAGE ROTATION
             if (isset($this->rotatedPage[$n])) {
                 $this->_out('/Rotate '.$this->rotatedPage[$n]);
             }
@@ -163,39 +163,41 @@ class TIG_PostNL_Fpdi extends FPDI
             $this->_out('/Resources 2 0 R');
             if(isset($this->PageLinks[$n]))
             {
-                //Links
-                $annots='/Annots [';
+                // Links
+                $annots = '/Annots [';
                 foreach($this->PageLinks[$n] as $pl)
                 {
-                    $rect=sprintf('%.2F %.2F %.2F %.2F',$pl[0],$pl[1],$pl[0]+$pl[2],$pl[1]-$pl[3]);
-                    $annots.='<</Type /Annot /Subtype /Link /Rect ['.$rect.'] /Border [0 0 0] ';
+                    $rect = sprintf('%.2F %.2F %.2F %.2F',$pl[0],$pl[1],$pl[0]+$pl[2],$pl[1]-$pl[3]);
+                    $annots .= '<</Type /Annot /Subtype /Link /Rect ['.$rect.'] /Border [0 0 0] ';
                     if(is_string($pl[4]))
-                        $annots.='/A <</S /URI /URI '.$this->_textstring($pl[4]).'>>>>';
+                        $annots .= '/A <</S /URI /URI '.$this->_textstring($pl[4]).'>>>>';
                     else
                     {
-                        $l=$this->links[$pl[4]];
-                        $h=isset($this->PageSizes[$l[0]]) ? $this->PageSizes[$l[0]][1] : $hPt;
-                        $annots.=sprintf('/Dest [%d 0 R /XYZ 0 %.2F null]>>',1+2*$l[0],$h-$l[1]*$this->k);
+                        $l = $this->links[$pl[4]];
+                        $h = isset($this->PageSizes[$l[0]]) ? $this->PageSizes[$l[0]][1] : $hPt;
+                        $annots .= sprintf('/Dest [%d 0 R /XYZ 0 %.2F null]>>',1+2*$l[0],$h-$l[1]*$this->k);
                     }
                 }
                 $this->_out($annots.']');
             }
+            if($this->PDFVersion>'1.3')
+                $this->_out('/Group <</Type /Group /S /Transparency /CS /DeviceRGB>>');
             $this->_out('/Contents '.($this->n+1).' 0 R>>');
             $this->_out('endobj');
-            //Page content
-            $p=($this->compress) ? gzcompress($this->pages[$n]) : $this->pages[$n];
+            // Page content
+            $p = ($this->compress) ? gzcompress($this->pages[$n]) : $this->pages[$n];
             $this->_newobj();
             $this->_out('<<'.$filter.'/Length '.strlen($p).'>>');
             $this->_putstream($p);
             $this->_out('endobj');
         }
-        //Pages root
-        $this->offsets[1]=strlen($this->buffer);
+        // Pages root
+        $this->offsets[1] = strlen($this->buffer);
         $this->_out('1 0 obj');
         $this->_out('<</Type /Pages');
-        $kids='/Kids [';
+        $kids = '/Kids [';
         for($i=0;$i<$nb;$i++)
-            $kids.=(3+2*$i).' 0 R ';
+            $kids .= (3+2*$i).' 0 R ';
         $this->_out($kids.']');
         $this->_out('/Count '.$nb);
         $this->_out(sprintf('/MediaBox [0 0 %.2F %.2F]',$wPt,$hPt));
