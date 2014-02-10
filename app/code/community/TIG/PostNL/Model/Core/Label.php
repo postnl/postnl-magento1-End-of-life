@@ -231,7 +231,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         /**
          * Output the label as a download response
          */
-        $pdf->Output('PostNL Shipping Labels.pdf', 'D');
+        $pdf->Output('PostNL Shipping Labels.pdf', 'I');
 
         Varien_Profiler::stop('tig::postnl::core::label_createpdf');
 
