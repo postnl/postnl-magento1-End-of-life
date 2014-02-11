@@ -2,30 +2,6 @@
 .postnl-readonly { background:#dadada !important; }
 /* ======================================================================================= */
 
-/* Customer Account EE =================================================================== */
-#ca_postnl { padding-left:240px; }
-#ca_postnl .field { float:left; width:128px; clear:none !important; }
-#ca_postnl label { float:none; }
-#ca_postnl .input-text { width:117px; }
-#ca_postnl .validation-advice { width:128px; }
-#ca_postnl .field-postcode { width:129px; }
-#ca_postnl .input-box.validation-error { padding-right:149px; }
-#ca_postnl .field-postcode .input-text { width:118px; }
-#ca_postnl .postnl.validation-advice { width:380px; margin-bottom:9px; padding:0 !important; }
-/* ======================================================================================= */
-
-/* One Page Checkout EE ================================================================== */
-#opc_postnl { padding-left:240px; }
-#opc_postnl .field { float:left; width:128px; clear:none !important; }
-#opc_postnl label { float:none; }
-#opc_postnl .input-text { width:117px; }
-#opc_postnl .validation-advice { width:128px; }
-#opc_postnl .input-box.validation-error { padding-right:148px; }
-#opc_postnl .field-postcode { width:129px; }
-#opc_postnl .field-postcode .input-text { width:118px; }
-#opc_postnl .postnl.validation-advice { width:380px; margin-bottom:9px; padding:0 !important; }
-/* ======================================================================================= */
-
 /* One Page Checkout CE ================================================================== */
 #opc_postnl_ce .field { float:left; width:180px; }
 #opc_postnl_ce .input-box { width:170px; }
