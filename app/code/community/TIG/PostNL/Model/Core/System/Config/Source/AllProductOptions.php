@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -42,12 +42,12 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
      * XML path to supported options configuration setting
      */
     const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
-    
+
     /**
      * Returns an option array for all possible PostNL product options
-     * 
+     *
      * @return array
-     * 
+     *
      * @todo implement COD
      */
     public function toOptionArray()
@@ -63,8 +63,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     ),
                     /**
                      * These are not currently implemented
-                     * 
-                     * TODO implement these options
+                     *
+                     * @todo implement these options
                      */
                     /*'3086' => array(
                         'value' => '3086',
@@ -127,8 +127,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 'value' => array(
                     /**
                      * These are not currently implemented
-                     * 
-                     * TODO implement these options
+                     *
+                     * @todo implement these options
                      */
                     /*'3535' => array(
                         'value' => '3535',
@@ -173,6 +173,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'value' => '4952',
                         'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
                     ),
+                    /**
+                     * This option will be removed in v1.2.0
+                     *
+                     * @deprecated v1.1.2
+                     */
                     '4955' => array(
                         'value' => '4955',
                         'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
@@ -180,8 +185,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     ),
                     /**
                      * These are not currently implemented
-                     * 
-                     * TODO implement these options
+                     *
+                     * @todo implement these options
                      */
                     /*'4950' => array(
                         'value' => '4950',
@@ -204,20 +209,20 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 ),
             ),
         );
-        
+
         $this->_markDefault($availableOptions);
-        
+
         return $availableOptions;
     }
-    
+
     /**
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
-     * 
+     *
      * @param boolean $withDefault Determines whether or not a 'default' option is prepended to the array
      * @param boolean $witHExtraCover Flag whether or not to include extra cover options
      * @param boolean|int $storeId
      * @param boolean $codesOnly
-     * 
+     *
      * @return array
      */
     public function getAvailableOptions($withDefault = false, $withExtraCover = true, $storeId = false, $codesOnly = false)
@@ -225,15 +230,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
-        
+
         $helper = Mage::helper('postnl');
         $options = $this->toOptionArray();
-        
+
         /**
          * Get a list of all possible options
          */
         $availableOptions = array();
-        
+
         /**
          * prepend the 'default' option
          */
@@ -243,13 +248,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 'label' => $helper->__('Use default'),
             );
         }
-        
+
         /**
          * Get the list of supported product options from the shop's configuration
          */
         $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
         $supportedOptionsArray = explode(',', $supportedOptions);
-        
+
         /**
          * Check each standard option to see if it's supprted
          */
@@ -258,19 +263,19 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
             }
-            
+
             if (isset($option['isExtraCover']) && $withExtraCover !== true) {
                 continue;
             }
-            
+
             if ($codesOnly === true) {
                 $availableOptions[] = $option['value'];
                 continue;
             }
-            
+
             $availableStandardOptions[] = $option;
         }
-        
+
         /**
          * Check each pakje gemak option to see if it's supprted
          */
@@ -279,19 +284,19 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
             }
-            
+
             if (isset($option['isExtraCover']) && $withExtraCover !== true) {
                 continue;
             }
-            
+
             if ($codesOnly === true) {
                 $availableOptions[] = $option['value'];
                 continue;
             }
-            
+
             $availablePakjeGemakOptions[] = $option;
         }
-        
+
         /**
          * Check each eu option to see if it's supprted
          */
@@ -300,19 +305,19 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
             }
-            
+
             if (isset($option['isExtraCover']) && $withExtraCover !== true) {
                 continue;
             }
-            
+
             if ($codesOnly === true) {
                 $availableOptions[] = $option['value'];
                 continue;
             }
-            
+
             $availableEuOptions[] = $option;
         }
-        
+
         /**
          * Check each eu option to see if it's supprted
          */
@@ -322,20 +327,20 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 if (!in_array($option['value'], $supportedOptionsArray)) {
                     continue;
                 }
-                
+
                 if (isset($option['isExtraCover']) && $withExtraCover !== true) {
                     continue;
                 }
-                
+
                 if ($codesOnly === true) {
                     $availableOptions[] = $option['value'];
                     continue;
                 }
-                
+
                 $availableGlobalOptions[] = $option;
             }
         }
-            
+
         /**
          * If we only need the codes, we can return the $availableOptions array. Otherwise, we need to order and merge the
          * other arrays
@@ -343,7 +348,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         if ($codesOnly === true) {
             return $availableOptions;
         }
-        
+
         /**
          * group all available options
          */
@@ -353,34 +358,34 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 'value' => $availableStandardOptions,
             );
         }
-        
+
         if (!empty($availablePakjeGemakOptions)) {
             $availableOptions['pakjegemak_options'] = array(
                 'label' => $helper->__('Post Office options'),
                 'value' => $availablePakjeGemakOptions,
             );
         }
-        
+
         if (!empty($availableEuOptions)) {
             $availableOptions['eu_options'] = array(
                 'label' => $helper->__('EU options'),
                 'value' => $availableEuOptions,
             );
         }
-        
+
         if (!empty($availableGlobalOptions)) {
             $availableOptions['global_options'] = array(
                 'label' => $helper->__('Global options'),
                 'value' => $availableGlobalOptions,
             );
         }
-        
+
         return $availableOptions;
     }
-    
+
     /**
      * Get the list of available product options that have extra cover
-     * 
+     *
      * @return array
      */
     public function getExtraCoverOptions($valuesOnly = false)
@@ -389,7 +394,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
          * Get all available options
          */
         $availableOptions = $this->getAvailableOptions(false, true);
-        
+
         /**
          * Loop through each optGroup and then each option to see if any of them have the isExtraCover flag.
          * Add these to the array of extra cover options.
@@ -400,49 +405,49 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 /**
                  * Add the whole option (value, label and flags)
                  */
-                if (isset($option['isExtraCover']) 
+                if (isset($option['isExtraCover'])
                     && $option['isExtraCover']
                     && $valuesOnly !== true
                 ) {
                     $extraCoverOptions[] = $option;
                     continue;
                 }
-                
+
                 /**
                  * Only add the value
                  */
-                if (isset($option['isExtraCover']) 
+                if (isset($option['isExtraCover'])
                     && $option['isExtraCover']
                     && $valuesOnly === true
                 ) {
                     $extraCoverOptions[] = $option['value'];
                     continue;
                 }
-                
+
                 continue;
             }
         }
-        
+
         return $extraCoverOptions;
     }
-    
+
     /**
      * Marks the default values in the option array
-     * 
+     *
      * @param array &$options
-     * 
+     *
      * @return array
      */
     protected function _markDefault(&$options)
     {
         $helper = Mage::helper('postnl/cif');
-        
+
         /**
          * Get an array of all default options
          */
         $defaultOptions = $helper->getDefaultProductOptions();
-        
-        
+
+
         /**
          * Mark each default option as default if it is present in the available options array
          */
@@ -452,28 +457,28 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         ) {
             $options['standard_options']['value'][$defaultOptions['dutch']]['label'] .= ' ' . $helper->__('(default)');
         }
-        
-        if (isset($options['pakjegemak_options']) 
+
+        if (isset($options['pakjegemak_options'])
             && isset($options['pakjegemak_options']['value'])
             && isset($options['pakjegemak_options']['value'][$defaultOptions['eu']])
         ) {
             $options['pakjegemak_options']['value'][$defaultOptions['pakjegemak']]['label'] .= ' ' . $helper->__('(default)');
         }
-        
-        if (isset($options['eu_options']) 
+
+        if (isset($options['eu_options'])
             && isset($options['eu_options']['value'])
             && isset($options['eu_options']['value'][$defaultOptions['eu']])
         ) {
             $options['eu_options']['value'][$defaultOptions['eu']]['label'] .= ' ' . $helper->__('(default)');
         }
-        
-        if (isset($options['global_options']) 
+
+        if (isset($options['global_options'])
             && isset($options['global_options']['value'])
             && isset($options['global_options']['value'][$defaultOptions['global']])
         ) {
             $options['global_options']['value'][$defaultOptions['global']]['label'] .= ' ' . $helper->__('(default)');
         }
-        
+
         return $options;
     }
 }
