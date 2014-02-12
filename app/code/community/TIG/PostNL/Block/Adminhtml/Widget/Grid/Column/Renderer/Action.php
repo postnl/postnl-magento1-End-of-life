@@ -86,11 +86,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
      * Checks if a certain action is allowed for this row
      *
      * @param Mage_Sales_Model_Order_Shipment $row
-     * @param array $action
+     * @param array &$action
      *
      * @return boolean
      */
-    protected function _isActionAllowed($row, $action)
+    protected function _isActionAllowed($row, &$action)
     {
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
 
@@ -103,9 +103,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
             && $action['is_postnl']
             && !in_array($shippingMethod, $postnlShippingMethods)
         ) {
+            unset($action['is_postnl']);
             return false;
         }
-
+        
+        unset($action['is_postnl']);
         return true;
     }
 

@@ -83,7 +83,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * merge the labels and print them
              */
             $labelModel = Mage::getModel('postnl_core/label');
-            $labelModel->createPdf($labels);
+            $output = $labelModel->createPdf($labels);
+            
+            $this->getResponse()
+                 ->setHttpResponseCode(200)
+                 ->setHeader('Pragma', 'public', true)
+                 ->setHeader('Cache-Control', 'private, max-age=0, must-revalidate', true)
+                 ->setHeader('Content-type', 'application/pdf', true)
+                 ->setHeader('Content-Disposition', 'inline; filename="PostNL Shipping Labels.pdf"')
+                 ->setHeader('Last-Modified', date('r'));
+            
+            $this->getResponse()->setBody($output);
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -439,7 +449,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * The label wills be base64 encoded strings. Convert these to a single pdf
              */
             $label = Mage::getModel('postnl_core/label');
-            $label->createPdf($labels);
+            $output = $label->createPdf($labels);
+            
+            $this->getResponse()
+                 ->setHttpResponseCode(200)
+                 ->setHeader('Pragma', 'public', true)
+                 ->setHeader('Cache-Control', 'private, max-age=0, must-revalidate', true)
+                 ->setHeader('Content-type', 'application/pdf', true)
+                 ->setHeader('Content-Disposition', 'inline; filename="PostNL Shipping Labels.pdf"')
+                 ->setHeader('Last-Modified', date('r'));
+            
+            $this->getResponse()->setBody($output);
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -512,7 +532,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * The label wills be base64 encoded strings. Convert these to a single pdf
              */
             $label = Mage::getModel('postnl_core/label');
-            $label->createPdf($labels);
+            $output = $label->createPdf($labels);
+            
+            $this->getResponse()
+                 ->setHttpResponseCode(200)
+                 ->setHeader('Pragma', 'public', true)
+                 ->setHeader('Cache-Control', 'private, max-age=0, must-revalidate', true)
+                 ->setHeader('Content-type', 'application/pdf', true)
+                 ->setHeader('Content-Disposition', 'inline; filename="PostNL Shipping Labels.pdf"')
+                 ->setHeader('Last-Modified', date('r'));
+            
+            $this->getResponse()->setBody($output);
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
