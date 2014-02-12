@@ -239,11 +239,13 @@ PostnlPostcodecheck = new Class.create({
                 }
 
                 if (response.responseText == 'invalid_data') {
-                    $('postnl_address_invalid_' + addressType).show();
                     postcodeCheck.errorCounter = postcodeCheck.errorCounter + 1;
 
                     if (postcodeCheck.errorMax && postcodeCheck.errorCounter >= postcodeCheck.errorMax) {
+                        $('postnl_address_error_' + addressType).show();
                         postcodeCheck.changePostcodeCheckDisabledFields(false, addressType);
+                    } else {
+                        $('postnl_address_invalid_' + addressType).show();
                     }
 
                     $(postcodeCheck.virtualPrefix + postcodeCheck.streetnameField).setValue('');
