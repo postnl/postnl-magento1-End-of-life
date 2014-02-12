@@ -48,12 +48,16 @@
 <?php $_streetValidationClass = $this->helper('customer/address')->getAttributeValidationClass('street'); ?>
 <?php $_streetValidationClassNotRequired = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
 
-<?php $dataHelper = Mage::helper('onestepcheckout'); ?>
+<?php $_dataHelper = Mage::helper('onestepcheckout'); ?>
+<?php $_postnlHelper = Mage::helper('postnl/addressValidation'); ?>
+
+<?php $_timeoutDelay = $_postnlHelper->getPostcodeCheckTimeoutDelay(); ?>
+<?php $_maxAttempts  = $_postnlHelper->getPostcodeCheckMaxAttempts(); ?>
 
 <li class="clearfix">
     <div class="input-box input-country">
         <label for="<?php echo $_addressType; ?>:country_id">
-            <?php echo $this->__('Country') ?>
+            <?php echo $_dataHelper->__('Country') ?>
             <span class="required">*</span>
         </label>
         <br />
@@ -63,48 +67,57 @@
 <li class="clearfix" id="osc_postnl">
     <div class="input-box input-postcode">
         <label for="<?php echo $_addressType; ?>:postcode">
-            <?php echo $this->__('Zip/Postal Code') ?>
+            <?php echo $_dataHelper->__('Zip/Postal Code') ?>
             <span class="required">*</span>
         </label>
         <br />
-        <input type="text" title="<?php echo $this->__('Zip/Postal Code') ?>" name="<?php echo $_addressType; ?>[postcode]" id="<?php echo $_addressType; ?>:postcode" value="<?php echo $dataHelper->clearDash($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" />
+        <input type="text" title="<?php echo $_dataHelper->__('Zip/Postal Code') ?>" name="<?php echo $_addressType; ?>[postcode]" id="<?php echo $_addressType; ?>:postcode" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" />
     </div>
     <div class="input-box input-housenumber">
         <label for="<?php echo $_addressType; ?>:street2">
-            <?php echo $this->__('Housenumber') ?>
+            <?php echo $_postnlHelper->__('Housenumber') ?>
             <span class="required">*</span>
         </label>
         <br />
-        <input type="text" title="<?php echo $this->__('Housenumber') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street2" value="<?php echo $dataHelper->clearDash($this->getAddress()->getStreet(2)) ?>" class="input-text <?php echo $_streetValidationClass ?> onestepcheckout-address-line" />
+        <input type="text" title="<?php echo $_postnlHelper->__('Housenumber') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street2" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getStreet(2)) ?>" class="input-text <?php echo $_streetValidationClass ?> onestepcheckout-address-line" />
     </div>
     <div class="input-box input-extension">
         <label for="<?php echo $_addressType; ?>:street3">
-            <?php echo $this->__('Extension') ?>
+            <?php echo $_postnlHelper->__('Extension') ?>
         </label>
         <br />
-        <input type="text" title="<?php echo $this->__('Extension') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street3" value="<?php echo $dataHelper->clearDash($this->getAddress()->getStreet(3)) ?>" class="input-text <?php echo $_streetValidationClassNotRequired ?> onestepcheckout-address-line" />
+        <input type="text" title="<?php echo $_postnlHelper->__('Extension') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street3" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getStreet(3)) ?>" class="input-text <?php echo $_streetValidationClassNotRequired ?> onestepcheckout-address-line" />
+    </div>
+    <div id="postnl_postcodecheck_spinner_<?php echo $_addressType ?>" class="postnl-loading" style="display:none;">
+        <img src="<?php echo $this->getSkinUrl('onestepcheckout/images/ajax-loader.gif'); ?>"/>
     </div>
     <div class="validation-advice" style="display:none;" id="postnl_address_error_<?php echo $_addressType; ?>">
-        <?php echo $this->__('Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.'); ?>
+        <?php echo $_postnlHelper->__('Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.'); ?>
+    </div>
+    <div class="validation-advice" style="display:none;" id="postnl_address_missing_<?php echo $_addressType; ?>">
+        <?php echo $_postnlHelper->__('Please enter a postcode and housenumber.'); ?>
+    </div>
+    <div class="validation-advice" style="display:none;" id="postnl_address_invalid_<?php echo $_addressType; ?>">
+        <?php echo $_postnlHelper->__('Your postcode/housenumber combination could not be found. Please make sure you have entered a valid postcode and housenumber and try again.'); ?>
     </div>
 </li>
 <li class="clearfix">
     <div class="input-box input-address">
         <label for="<?php echo $_addressType; ?>:street1" class="required">
-            <?php echo $this->__('Street name') ?>
+            <?php echo $_postnlHelper->__('Street name') ?>
             <span class="required">*</span>
         </label>
-        <input type="text" title="<?php echo $this->__('Street name') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street1" value="<?php echo $dataHelper->clearDash($this->getAddress()->getStreet(1)) ?>" class="input-text <?php echo $_streetValidationClass ?> <?php echo $_readOnlyClass; ?> onestepcheckout-address-line" <?php echo $_readOnly; ?>/>
+        <input type="text" title="<?php echo $_postnlHelper->__('Street name') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street1" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getStreet(1)) ?>" class="input-text <?php echo $_streetValidationClass ?> <?php echo $_readOnlyClass; ?> onestepcheckout-address-line" <?php echo $_readOnly; ?>/>
     </div>
 </li>
 <li class="clearfix">
     <div class="input-box input-city">
         <label for="<?php echo $_addressType; ?>:city">
-            <?php echo $this->__('City') ?>
+            <?php echo $_dataHelper->__('City') ?>
             <span class="required">*</span>
         </label>
         <br />
-        <input type="text" title="<?php echo $this->__('City') ?>" name="<?php echo $_addressType; ?>[city]" value="<?php echo $dataHelper->clearDash($this->getAddress()->getCity()) ?>" class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('city') ?> <?php echo $_readOnlyClass; ?>" id="<?php echo $_addressType; ?>:city" <?php echo $_readOnly; ?>/>
+        <input type="text" title="<?php echo $_dataHelper->__('City') ?>" name="<?php echo $_addressType; ?>[city]" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getCity()) ?>" class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('city') ?> <?php echo $_readOnlyClass; ?>" id="<?php echo $_addressType; ?>:city" <?php echo $_readOnly; ?>/>
     </div>
 </li>
 <?php /* Only street lines 4+ will be used as expected. Street lines 1, 2 and 3 are used for the postcode check. */ ?>
@@ -113,7 +126,7 @@
         <li class="clearfix">
             <div class="input-box input-address">
     <?php endif; ?>
-    <input type="text" title="<?php echo $this->__('Street Address %s', $_i) ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street<?php echo $_i ?>" value="<?php echo $dataHelper->clearDash($this->getAddress()->getStreet($_i)) ?>" class="input-text <?php echo $_streetValidationClassNotRequired ?> onestepcheckout-address-line" />
+    <input type="text" title="<?php echo $_dataHelper->__('Street Address %s', $_i) ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street<?php echo $_i ?>" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getStreet($_i)) ?>" class="input-text <?php echo $_streetValidationClassNotRequired ?> onestepcheckout-address-line" />
     <?php if ($_i <= $_n): ?>
             </div>
         </li>
@@ -129,7 +142,6 @@
         <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street<?php echo $_i ?>"/>
     <?php endfor; ?>
 </div>
-
 <script type="text/javascript">
 //<![CDATA[
     <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
@@ -147,6 +159,21 @@
         });
     <?php endfor; ?>
 
-    var postcodecheckUrl = '<?php echo $this->getUrl('postnl/addressValidation/postcodeCheck', array('_secure' => true)); ?>';
+    document.observe('dom:loaded', function() {
+        var postcodeCheck<?php echo $_addressType; ?> = new PostnlPostcodecheck(
+            '<?php echo $this->getUrl('postnl/addressValidation/postcodeCheck', array('_secure' => true)); ?>',
+            '<?php echo $_addressType; ?>',
+            '<?php echo $_addressType; ?>:country_id',
+            '<?php echo $_addressType; ?>:postcode',
+            '<?php echo $_addressType; ?>:street1',
+            '<?php echo $_addressType; ?>:street2',
+            '<?php echo $_addressType; ?>:street3',
+            '<?php echo $_addressType; ?>:city',
+            'virtual:'
+        );
+        postcodeCheck<?php echo $_addressType; ?>.errorMax = <?php echo $_maxAttempts; ?>;
+        postcodeCheck<?php echo $_addressType; ?>.timeoutDelay = '<?php echo $_timeoutDelay; ?>';
+        postcodeCheck<?php echo $_addressType; ?>.init();
+    });
 //]]>
 </script>
