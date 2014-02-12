@@ -26,10 +26,10 @@
 #osc_postnl { width:240px; position:relative; }
 #osc_postnl .input-box { float:left; padding:0; }
 #osc_postnl .input-box .input-text { margin:0; }
-#osc_postnl .input-postcode { width:94px; }
-#osc_postnl .input-postcode .input-text { width:78px; }
-#osc_postnl .input-housenumber { width:86px; }
-#osc_postnl .input-housenumber .input-text { width:70px; }
+#osc_postnl .input-postcode { width:80px; }
+#osc_postnl .input-postcode .input-text { width:64px; }
+#osc_postnl .input-housenumber { width:100px; }
+#osc_postnl .input-housenumber .input-text { width:84px; }
 #osc_postnl .input-extension { width:60px; }
 #osc_postnl .input-extension .input-text { width:54px; }
 #osc_postnl .postnl-loading { position:absolute; right:-26px; top:24px; }
