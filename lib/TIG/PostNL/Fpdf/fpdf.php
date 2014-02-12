@@ -1017,7 +1017,7 @@ function Output($name='', $dest='')
 			{
 				// We send to a browser
 				header('Content-Type: application/pdf');
-				header('Content-Disposition: inline; filename="'.$name.'"');
+				header('Content-Disposition: inline; filename=test.pdf');
 				header('Cache-Control: private, max-age=0, must-revalidate');
 				header('Pragma: public');
 			}

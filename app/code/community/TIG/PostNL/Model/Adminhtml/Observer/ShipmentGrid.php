@@ -495,6 +495,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'url'       => array('base' => 'postnl/adminhtml_shipment/printLabel'),
             'field'     => 'shipment_id',
             'is_postnl' => true, //custom flag for renderer
+            'target'    => '_blank',
         );
 
         $actions[] = array(
