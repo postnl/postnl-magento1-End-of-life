@@ -617,7 +617,7 @@ TIG_PostNL::Maximum number of attempts,Maximum aantal pogingen
 TIG_PostNL::Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.,Uw postcode/huisnummer combinatie is niet gevonden. Vul s.v.p. handmatig uw straatnaam en woonplaats in.
 TIG_PostNL::Please enter a postcode and housenumber.,Vul s.v.p. een postcode en huisnummer in.
 TIG_PostNL::Your postcode/housenumber combination could not be found. Please make sure you have entered a valid postcode and housenumber and try again.,Uw postcode/huisnummer combinatie is niet gevonden. Controleer s.v.p. of u uw huisnummer en postcode correct ingevuld heeft.
-"TIG_PostNL::Please enter a valid postcode. A valid postcode contains 4 numbers and 2 letters, for example: 1000XX.","Vul s.v.p. een correcte postcode in. Een correcte postcode bevat 4 cijfers en 2 letters, bijvoorbeeld 1000XX."
+"TIG_PostNL::Please enter a valid postcode. A valid postcode contains 4 numbers and 2 letters without spaces, for example: 1000XX.","Vul s.v.p. een correcte postcode in. Een correcte postcode bevat 4 cijfers en 2 letters zonder spaties, bijvoorbeeld 1000XX."
 TIG_PostNL::Please enter a valid housenumber. Housenumbers may only contain digits.,Vul s.v.p. een correct huisnummer in. Huisnummers mogen enkel cijfers bevatten.
 TIG_PostNL::Country,Land
 TIG_PostNL::Zip/Postal Code,Postcode
