@@ -86,7 +86,7 @@
                         'onComplete': this.onMassactionComplete.bind(this)
                     });
                 } else if(item.url) {
-                    if (item.id == 'postnl_print_labels_and_confirm') {
+                    if (item.id == 'postnl_print_labels_and_confirm' || item.id == 'postnl_print_labels') {
                         this.form.setAttribute('target', '_blank');
                     } else {
                         this.form.setAttribute('target', '');
