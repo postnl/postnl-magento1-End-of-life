@@ -2772,7 +2772,7 @@
                             <show_in_store>0</show_in_store>
                         </cif_versions_infobox>
                         <cif_version_shippingstatus translate="label" module="postnl">
-                            <label>ShippingStatus Webservice version</label>
+                            <label>ShippingStatus webservice version</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2780,7 +2780,7 @@
                             <show_in_store>0</show_in_store>
                         </cif_version_shippingstatus>
                         <cif_version_confirming translate="label" module="postnl">
-                            <label>Confirming Webservice version</label>
+                            <label>Confirming webservice version</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2788,7 +2788,7 @@
                             <show_in_store>0</show_in_store>
                         </cif_version_confirming>
                         <cif_version_labelling translate="label" module="postnl">
-                            <label>Labelling Webservice version</label>
+                            <label>Labelling webservice version</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2796,7 +2796,7 @@
                             <show_in_store>0</show_in_store>
                         </cif_version_labelling>
                         <cif_version_barcode translate="label" module="postnl">
-                            <label>Barcode Webservice version</label>
+                            <label>Barcode webservice version</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2804,13 +2804,29 @@
                             <show_in_store>0</show_in_store>
                         </cif_version_barcode>
                         <cif_version_checkout translate="label" module="postnl">
-                            <label>Checkout Webservice version</label>
+                            <label>Checkout webservice version</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </cif_version_checkout>
+                        <cif_version_deliverydate translate="label" module="postnl">
+                            <label>Delivery date webservice version</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>160</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_version_deliverydate>
+                        <cif_version_timeframe translate="label" module="postnl">
+                            <label>Timeframe webservice version</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>170</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_version_timeframe>
                     </fields>
                 </advanced>
             </groups>
