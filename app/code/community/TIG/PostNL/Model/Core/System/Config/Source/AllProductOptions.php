@@ -66,7 +66,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     /**
                      * These are not currently implemented
                      *
-                     * TODO implement these options
+                     * @todo implement these options
                      */
                     /*'3086' => array(
                         'value' => '3086',
@@ -130,7 +130,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     /**
                      * These are not currently implemented
                      *
-                     * TODO implement these options
+                     * @todo implement these options
                      */
                     /*'3535' => array(
                         'value' => '3535',
@@ -188,7 +188,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     /**
                      * These are not currently implemented
                      *
-                     * TODO implement these options
+                     * @todo implement these options
                      */
                     /*'4950' => array(
                         'value' => '4950',
