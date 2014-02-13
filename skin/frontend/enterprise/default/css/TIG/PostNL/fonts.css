@@ -1,0 +1,21 @@
+@font-face {
+    font-family: 'postnlmedium';
+    src: url('postnl-medium-webfont.eot');
+    src: url('postnl-medium-webfont.eot?#iefix') format('embedded-opentype'),
+         url('postnl-medium-webfont.woff') format('woff'),
+         url('postnl-medium-webfont.ttf') format('truetype'),
+         url('postnl-medium-webfont.svg#postnlmedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'postnllight';
+    src: url('postnl-light-webfont.eot');
+    src: url('postnl-light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('postnl-light-webfont.woff') format('woff'),
+         url('postnl-light-webfont.ttf') format('truetype'),
+         url('postnl-light-webfont.svg#postnllight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
