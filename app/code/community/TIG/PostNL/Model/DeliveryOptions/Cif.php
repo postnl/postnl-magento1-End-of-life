@@ -141,4 +141,37 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         echo '<pre>';var_dump($response);exit;
     }
+
+    public function getNearestLocations($data)
+    {
+        if (empty($data)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('No data available for GetEveningTimeframes request.'),
+                'POSTNL-0117'
+            );
+        }
+
+        $startDate = $data['deliveryDate'];
+
+        $soapParams = array(
+            'Timeframe' => array(
+                'PostalCode'  => $data['postcode'],
+                'HouseNumber' => $data['housenumber'],
+                'StartDate'   => $startDate,
+                'EndDate'     => $endDate,
+            ),
+            'Message' => $this->_getMessage('')
+        );
+
+        /**
+         * Send the SOAP request
+         */
+        $response = $this->call(
+            'timeframe',
+            'GetEveningTimeframes',
+            $soapParams
+        );
+
+        echo '<pre>';var_dump($response);exit;
+    }
 }
