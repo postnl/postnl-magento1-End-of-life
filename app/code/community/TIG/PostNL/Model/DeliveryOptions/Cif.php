@@ -38,6 +38,12 @@
  */
 class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 {
+    /**
+     * Delivery option codes.
+     */
+    const PAKJEGEMAK_DELIVERY_OPTION         = 'PG';
+    const PAKJEGEMAK_EXPRESS_DELIVERY_OPTION = 'PGE';
+    const PAKKETAUTOMAAT_DELIVERY_OPTION     = 'PA';
 
     /**
      * Check if the module is set to test mode
@@ -139,9 +145,28 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $soapParams
         );
 
-        echo '<pre>';var_dump($response);exit;
+        if (!isset($response->Timeframes)
+            || !isset($response->Timeframes->Timeframe)
+        ) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid response for GetEveningTimeframes request: %s', $response),
+                'POSTNL-0122'
+            );
+        }
+
+        return $response->Timeframes->Timeframe;
     }
 
+    /**
+     * Gets nearby post office locations. This service can be based off of a postcode or a set of coordinates. Results may
+     * include PakjeGemak, PakjeGemak Express or pakket automaat locations based on the configuration of the extension.
+     *
+     * @param string $postcode
+     *
+     * @return string
+     *
+     * @throws TIG_PostNL_Exception
+     */
     public function getNearestLocations($data)
     {
         if (empty($data)) {
@@ -151,27 +176,110 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             );
         }
 
-        $startDate = $data['deliveryDate'];
+        $location = $this->_getLocation($data);
+        $message  = $this->_getMessage('');
 
         $soapParams = array(
-            'Timeframe' => array(
-                'PostalCode'  => $data['postcode'],
-                'HouseNumber' => $data['housenumber'],
-                'StartDate'   => $startDate,
-                'EndDate'     => $endDate,
-            ),
-            'Message' => $this->_getMessage('')
+            'Location' => $location,
+            'Message'  => $message,
         );
 
         /**
          * Send the SOAP request
          */
         $response = $this->call(
-            'timeframe',
-            'GetEveningTimeframes',
+            'location',
+            'GetNearestLocations',
             $soapParams
         );
 
-        echo '<pre>';var_dump($response);exit;
+        if (!isset($response->GetLocationsResult)
+            || !isset($response->GetLocationsResult->ResponseLocation)
+        ) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid response for GetNearestLocations request: %s', $response),
+                'POSTNL-0123'
+            );
+        }
+
+        return $response->GetLocationsResult->ResponseLocation;
+    }
+
+    /**
+     * Gets the location SOAP parameter array.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function _getLocation($data)
+    {
+        /**
+         * Start building the location array by adding the available delivery options.
+         */
+        $location = array(
+            'DeliveryOptions' => $this->_getDeliveryOptions(),
+        );
+
+        /**
+         * Next we add the desired delivery date. If none is specified, we set it to tomorrow.
+         */
+        if (isset($data['deliveryDate'])) {
+            $location['DeliveryDate'] = $data['deliveryDate'];
+        } else {
+            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
+            $location['DeliveryDate'] = date('d-m-Y', $tomorrow);
+        }
+
+        /**
+         * If an opening time was specified, add that as well.
+         */
+        if (isset($data['openingTime'])) {
+            $location['OpeningTime'] = $data['openingTime'];
+        }
+
+        /**
+         * Add the postcode if available.
+         */
+        if (isset($data['postcode'])) {
+            $location['Postalcode'] = $data['postcode'];
+        }
+
+        /**
+         * Add coordinates if both a latitude and longitude are available.
+         */
+        if (isset($data['lat']) && isset($data['long'])) {
+            $location['Coordinates'] = array(
+                'Latitude'  => $data['lat'],
+                'Longitude' => $data['long'],
+            );
+        }
+
+        return $location;
+    }
+
+    /**
+     * Gets an array of allowed delivery options.
+     *
+     * @return array
+     */
+    protected function _getDeliveryOptions()
+    {
+        $deliveryOptions = array();
+
+        $helper = Mage::helper('postnl/deliveryOptions');
+        if ($helper->canUsePakjeGemak()) {
+            $deliveryOptions[] = self::PAKJEGEMAK_DELIVERY_OPTION;
+        }
+
+        if ($helper->canUsePakjeGemakExpress()) {
+            $deliveryOptions[] = self::PAKJEGEMAK_EXPRESS_DELIVERY_OPTION;
+        }
+
+        if ($helper->canUsePakketAutomaat()) {
+            $deliveryOptions[] = self::PAKKETAUTOMAAT_DELIVERY_OPTION;
+        }
+
+        return $deliveryOptions;
     }
 }

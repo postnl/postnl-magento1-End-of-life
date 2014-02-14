@@ -66,7 +66,19 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
      */
     public function getDeliveryDateAction()
     {
+        /**
+         * This action may only be called using AJAX requests
+         */
+        if (!$this->getRequest()->isAjax()) {
+            $this->_redirect('');
+
+            return $this;
+        }
+
         if (!$this->_canUseDeliveryOptions()) {
+            $this->getResponse()
+                 ->setBody('not_allowed');
+
             return $this;
         }
 
@@ -83,28 +95,73 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
      */
     public function getEveningTimeframesAction()
     {
+        /**
+         * This action may only be called using AJAX requests
+         */
+        if (!$this->getRequest()->isAjax()) {
+            $this->_redirect('');
+
+            return $this;
+        }
+
         if (!$this->_canUseDeliveryOptions()) {
+            $this->getResponse()
+                 ->setBody('not_allowed');
+
             return $this;
         }
 
         $storeId = Mage::app()->getStore()->getId();
 
         $postData = $this->getRequest()->getPost();
-        $postcode = /*$postData['postcode']*/'1043AJ';
-        $housenumber = /*$postData['housenumber']*/'8';
-        $deliveryDate = /*$postData['deliveryDate']*/date('d-m-Y', Mage::getSingleton('core/date')->timestamp());
-
-        $data = array(
-            'postcode' => $postcode,
-            'housenumber' => $housenumber,
-            'deliveryDate' => $deliveryDate,
+        $postData =  array(
+            'postcode'    => '1394GA',
+            'housenumber' => 43,
         );
 
-        $cif = Mage::getModel('postnl_deliveryoptions/cif');
-        $response = $cif->setStoreId($storeId)
-                        ->getEveningTimeframes($data);
+        try {
+            $data = $this->_getTimeframePostData($postData);
+        } catch (Exception $e) {
+            Mage::helper('postnl/deliveryOptions')->logException($e);
 
-        echo '<pre>';var_dump($response);
+            $this->getResponse()
+                 ->setBody('invalid_data');
+
+            return $this;
+        }
+
+        try {
+            $cif = Mage::getModel('postnl_deliveryoptions/cif');
+            $response = $cif->setStoreId($storeId)
+                            ->getEveningTimeframes($data);
+        } catch (Exception $e) {
+            Mage::helper('postnl/deliveryOptions')->logException($e);
+
+            $this->getResponse()
+                 ->setBody('error');
+
+            return $this;
+        }
+
+        if (!is_array($response)) {
+            $this->getResponse()
+                 ->setBody('error');
+
+            return $this;
+        }
+
+        echo '<pre>';var_dump($response);exit;
+
+        $timeframes = Mage::helper('core')->jsonEncode($response);
+
+        /**
+         * Return the result as a json response
+         */
+        $this->getResponse()
+             ->setHeader('Content-type', 'application/x-json')
+             ->setBody($response);
+
+        return $this;
     }
 
     /**
@@ -114,9 +171,23 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
      */
     public function getNearestLocationsAction()
     {
-        if (!$this->_canUseDeliveryOptions()) {
+        /**
+         * This action may only be called using AJAX requests
+         */
+        if (!$this->getRequest()->isAjax()) {
+            $this->_redirect('');
+
             return $this;
         }
+
+        if (!$this->_canUseDeliveryOptions()) {
+            $this->getResponse()
+                 ->setBody('not_allowed');
+
+            return $this;
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
 
         $postData = $this->getRequest()->getPost();
 
@@ -124,8 +195,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          * TEMPORARY DEBUG CODE
          */
         $postData = array(
-            'lat' => '52.0130280656751',
-            'long' => '5.10134310565209',
+            'postcode' => '1055GH',
         );
 
         try {
@@ -139,11 +209,122 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $this;
         }
 
-        $cif = Mage::getModel('postnl_deliveryoptions/cif');
-        $response = $cif->setStoreId($storeId)
-                        ->getNearestLocations($data);
+        try {
+            $cif = Mage::getModel('postnl_deliveryoptions/cif');
+            $response = $cif->setStoreId($storeId)
+                            ->getNearestLocations($data);
+        } catch (Exception $e) {
+            Mage::helper('postnl/deliveryOptions')->logException($e);
 
-        echo '<pre>';var_dump($response);
+            $this->getResponse()
+                 ->setBody('error');
+
+            return $this;
+        }
+
+        if (!is_array($response)) {
+            $this->getResponse()
+                 ->setBody('error');
+
+            return $this;
+        }
+
+        $locations = Mage::helper('core')->jsonEncode($response);
+
+        /**
+         * Return the result as a json response
+         */
+        $this->getResponse()
+             ->setHeader('Content-type', 'application/x-json')
+             ->setBody($locations);
+        echo $locations;exit;
+        return $this;
+    }
+
+    protected function _getTimeframePostData($postData)
+    {
+        /**
+         * The getEveningTimeframes action requires a postcode and a housenumber.
+         */
+        if (!isset($postData['postcode']) || !isset($postData['housenumber'])) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid arguments supplied. getEveningTimeframes requires a postcode and a housenumber.'
+                ),
+                'POSTNL-0124'
+            );
+        }
+
+        $postcode    = $postData['postcode'];
+        $housenumber = $postData['housenumber'];
+
+        /**
+         * Remove spaces from housenumber and postcode fields.
+         */
+        $postcode    = str_replace(' ', '', $postcode);
+        $postcode    = strtoupper($postcode);
+        $housenumber = trim($housenumber);
+
+        /**
+         * Get validation classes for the postcode and housenumber values.
+         */
+        $postcodeValidator    = new Zend_Validate_PostCode('nl_NL');
+        $housenumberValidator = new Zend_Validate_Digits();
+
+        /**
+         * Validate the postcode.
+         */
+        if (!$postcodeValidator->isValid($postcode)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid postcode supplied for getEveningTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.',
+                    $postcode
+                ),
+                'POSTNL-0125'
+            );
+        }
+
+        /**
+         * Validate the housenumber.
+         */
+        if (!$housenumberValidator->isValid($housenumber)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid housenumber supplied for getEveningTimeframes request: %s Housenumbers may only contain digits.',
+                    $housenumber
+                ),
+                'POSTNL-0126'
+            );
+        }
+
+        /**
+         * Get the delivery date. If it was supplied, we need to validate it. Otherwise we take tomorrow as the delivery day.
+         */
+        if (array_key_exists('deliveryDate', $postData)) {
+            $deliveryDate = $postData['deliveryDate'];
+
+            $validator = new Zend_Validate_Date(array('format' => 'd-m-Y'));
+            if (!$validator->isValid($deliveryDate)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'Invalid delivery date supplied: %s',
+                        $deliveryDate
+                    ),
+                    'POSTNL-0121'
+                );
+            }
+        } else {
+            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
+            $deliveryDate = date('d-m-Y', $tomorrow);
+        }
+
+        $data = array(
+            'postcode'     => $postcode,
+            'housenumber'  => $housenumber,
+            'deliveryDate' => $deliveryDate,
+        );
+
+        return $data;
     }
 
     /**
@@ -171,6 +352,9 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             );
         }
 
+        /**
+         * Get the delivery date. If it was supplied, we need to validate it. Otherwise we take tomorrow as the delivery day.
+         */
         if (array_key_exists('deliveryDate', $postData)) {
             $deliveryDate = $postData['deliveryDate'];
 
@@ -178,14 +362,15 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             if (!$validator->isValid($deliveryDate)) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
-                        'Invalid delivery date supplied for getNearestLocations request: %s',
+                        'Invalid delivery date supplied: %s',
                         $deliveryDate
                     ),
                     'POSTNL-0121'
                 );
             }
         } else {
-            $deliveryDate = date('d-m-Y', Mage::getModel('core/date')->timestamp());
+            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
+            $deliveryDate = date('d-m-Y', $tomorrow);
         }
 
         /**

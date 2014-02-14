@@ -2827,6 +2827,14 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </cif_version_timeframe>
+                        <cif_version_location translate="label" module="postnl">
+                            <label>Location webservice version</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>180</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cif_version_location>
                     </fields>
                 </advanced>
             </groups>

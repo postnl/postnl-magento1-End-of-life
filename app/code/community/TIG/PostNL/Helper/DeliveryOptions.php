@@ -39,6 +39,54 @@
 class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 {
     /**
+     * Checks if PakjeGemak is available.
+     *
+     * @param int|boolean $storeId
+     *
+     * @return boolean
+     */
+    public function canUsePakjeGemak($storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if PakjeGemak Express is available.
+     *
+     * @param int|boolean $storeId
+     *
+     * @return boolean
+     */
+    public function canUsePakjeGemakExpress($storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if 'pakket automaat' is available.
+     *
+     * @param int|boolean $storeId
+     *
+     * @return boolean
+     */
+    public function canUsePakketAutomaat($storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        return true;
+    }
+
+    /**
      * Check if PostNL delivery options may be used based on a quote.
      *
      * @param Mage_Sales_Model_Quote $quote
