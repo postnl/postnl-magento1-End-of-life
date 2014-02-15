@@ -1,0 +1,336 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php $_postcode     = '1394GA'; ?>
+<?php $_housenumber  = 43; ?>
+<?php $_deliveryDate = $this->getDeliveryDate(); ?>
+<div id="postnl_delivery_options" class="col2-set">
+    <div class="title">
+        <h2><?php echo $this->__('Delivery Options'); ?></h2>
+    </div>
+    <div id="postnl_delivery" class="col-1">
+        <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+        <ul class="option-list" id="timeframes">
+            <li class="location">
+                <span class="bkg">
+                    <span class="bkg">
+                        <div class="content">
+                            <span class="name"><?php echo Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getStreetFull(); ?></span>
+                        </div>
+                    </span>
+                </span>
+            </li>
+            <!-- <li class="option">
+                <a href="#" class="data">
+                    <span class="bkg">
+                        <span class="bkg">
+                            <div class="content">
+                                <span class="day-date">
+                                    <span class="day">Di</span>
+                                    <span class="date">19-08</span>
+                                </span>
+                                <span class="faux-radio"></span>
+                                <span class="time">16:00 - 19:00</span>
+                                <span class="comment">vandaag + &euro;19,95</span>
+                            </div>
+                        </span>
+                    </span>
+                 </a>
+            </li>
+            <li class="option">
+                <a href="#" class="data">
+                    <span class="bkg">
+                        <span class="bkg">
+                            <div class="content">
+                                <span class="day-date">
+                                    <span class="day">Wo</span>
+                                    <span class="date">20-08</span>
+                                </span>
+                                <span class="faux-radio"></span>
+                                <span class="time">09:00 - 19:00</span>
+                            </div>
+                        </span>
+                    </span>
+                 </a>
+            </li>
+            <li class="option">
+                <a href="#" class="data">
+                    <span class="bkg">
+                        <span class="bkg">
+                            <div class="content">
+                                <span class="day-date">
+                                    <span class="day">Do</span>
+                                    <span class="date">21-08</span>
+                                </span>
+                                <span class="faux-radio"></span>
+                                <span class="time">09:00 - 19:00</span>
+                            </div>
+                        </span>
+                    </span>
+                 </a>
+            </li>
+            <li class="option active">
+                <a href="#" class="data">
+                    <span class="bkg">
+                        <span class="bkg">
+                            <div class="content">
+                                <span class="day-date"></span>
+                                <span class="faux-radio"></span>
+                                <span class="time">19:00 - 21:00</span>
+                                <span class="comment">avond + &euro;3,00</span>
+                            </div>
+                        </span>
+                    </span>
+                 </a>
+            </li>
+            <li class="option">
+                <a href="#" class="data">
+                    <span class="bkg">
+                        <span class="bkg">
+                            <div class="content">
+                                <span class="day-date">
+                                    <span class="day">Vr</span>
+                                    <span class="date">22-08</span>
+                                </span>
+                                <span class="faux-radio"></span>
+                                <span class="time">09:00 - 19:00</span>
+                            </div>
+                        </span>
+                    </span>
+                 </a>
+            </li>
+            <li class="option">
+                <a href="#" class="data">
+                    <span class="bkg">
+                        <span class="bkg">
+                            <div class="content">
+                                <span class="day-date">
+                                    <span class="day">Za</span>
+                                    <span class="date">23-08</span>
+                                </span>
+                                <span class="faux-radio"></span>
+                                <span class="time">09:00 - 19:00</span>
+                            </div>
+                        </span>
+                    </span>
+                 </a>
+            </li>
+            <li class="option">
+                <a href="#" class="data">
+                    <span class="bkg">
+                        <span class="bkg">
+                            <div class="content">
+                                <span class="day-date">
+                                    <span class="day">Di</span>
+                                    <span class="date">26-08</span>
+                                </span>
+                                <span class="faux-radio"></span>
+                                <span class="time">09:00 - 19:00</span>
+                            </div>
+                        </span>
+                    </span>
+                 </a>
+            </li> -->
+        </ul>
+    </div>
+    <div id="postnl_pickup" class="col-2">
+        <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+        <ul class="option-list" id="pgelocation">
+            <!-- <li class="location">
+                <span class="bkg">
+                    <span class="bkg">
+                        <div class="content">
+                            <span class="name">Albert Heijn</span>
+                            <small class="kind">Postkantoor</small>
+                            <a href="#" class="more-info" title="<?php echo $this->__('More Info'); ?>"><?php echo $this->__('More Info'); ?></a>
+                        </div>
+                    </span>
+                </span>
+            </li>
+            <li class="option">
+                <a href="#" class="data">
+                    <span class="bkg">
+                        <span class="bkg">
+                            <div class="content">
+                                <span class="day-date">
+                                    <span class="day">Di</span>
+                                    <span class="date">19-08</span>
+                                </span>
+                                <span class="faux-radio"></span>
+                                <span class="time">vanaf 8:30</span>
+                                <span class="comment">extra vroeg + &euro;3,00</span>
+                            </div>
+                        </span>
+                    </span>
+                </a>
+            </li> -->
+        </ul>
+        <ul class="option-list" id="pglocation">
+            <!-- <li class="location">
+                <span class="bkg">
+                    <span class="bkg">
+                        <div class="content">
+                            <span class="name">Bruna</span>
+                            <small class="kind">Postkantoor</small>
+                            <a href="#" class="more-info" title="<?php echo $this->__('More Info'); ?>"><?php echo $this->__('More Info'); ?></a>
+                        </div>
+                    </span>
+                </span>
+            </li>
+            <li class="option">
+                <a href="#" class="data">
+                    <span class="bkg">
+                        <span class="bkg">
+                            <div class="content">
+                                <span class="day-date">
+                                    <span class="day">Wo</span>
+                                    <span class="date">20-08</span>
+                                </span>
+                                <span class="faux-radio"></span>
+                                <span class="time">vanaf 16:00</span>
+                            </div>
+                        </span>
+                    </span>
+                </a>
+            </li> -->
+        </ul>
+        <ul class="option-list" id="palocation">
+            <!-- <li class="location">
+                <span class="bkg">
+                    <span class="bkg">
+                        <div class="content">
+                            <span class="name">Pakket Automaat</span>
+                            <a href="#" class="more-info" title="<?php echo $this->__('More Info'); ?>"><?php echo $this->__('More Info'); ?></a>
+                        </div>
+                    </span>
+                </span>
+            </li>
+            <li class="option">
+                <a href="#" class="data">
+                    <span class="bkg">
+                        <span class="bkg">
+                            <div class="content">
+                                <span class="day-date">
+                                    <span class="day">Wo</span>
+                                    <span class="date">20-08</span>
+                                </span>
+                                <span class="faux-radio"></span>
+                                <span class="time">vanaf 16:00</span>
+                                <span class="comment">24/7 beschikbaar</span>
+                            </div>
+                        </span>
+                    </span>
+                </a>
+            </li> -->
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+    var weekdays = new Array(7);
+    weekdays[0] = '<?php echo $this->__('Su'); ?>';
+    weekdays[1] = '<?php echo $this->__('Mo'); ?>';
+    weekdays[2] = '<?php echo $this->__('Tu'); ?>';
+    weekdays[3] = '<?php echo $this->__('We'); ?>';
+    weekdays[4] = '<?php echo $this->__('Th'); ?>';
+    weekdays[5] = '<?php echo $this->__('Fr'); ?>';
+    weekdays[6] = '<?php echo $this->__('Sa'); ?>';
+
+    deliveryOptions = new PostnlDeliveryOptions(
+        '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
+        '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
+        '<?php echo $_postcode; ?>',
+        '<?php echo $_housenumber; ?>',
+        '<?php echo $_deliveryDate; ?>'
+    );
+
+    deliveryOptions.eveningExtraCosts = '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getBaseCurrencyCode())->toCurrency(2); ?>';
+    deliveryOptions.expressExtraCosts = '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getBaseCurrencyCode())->toCurrency(2.5); ?>';
+    deliveryOptions.weekdays = weekdays;
+    deliveryOptions.init();
+//]]>
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
