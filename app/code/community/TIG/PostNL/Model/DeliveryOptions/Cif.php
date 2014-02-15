@@ -111,7 +111,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getEveningTimeframes($data)
+    public function getDeliveryTimeframes($data)
     {
         if (empty($data)) {
             throw new TIG_PostNL_Exception(
@@ -141,7 +141,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
          */
         $response = $this->call(
             'timeframe',
-            'GetEveningTimeframes',
+            'GetDeliveryTimeframes',
             $soapParams
         );
 

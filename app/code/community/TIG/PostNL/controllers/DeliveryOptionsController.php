@@ -64,36 +64,36 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
      *
      * @return TIG_PostNL_DeliveryOptionsController
      */
-    public function getDeliveryDateAction()
-    {
-        /**
-         * This action may only be called using AJAX requests
-         */
-        if (!$this->getRequest()->isAjax()) {
-            $this->_redirect('');
-
-            return $this;
-        }
-
-        if (!$this->_canUseDeliveryOptions()) {
-            $this->getResponse()
-                 ->setBody('not_allowed');
-
-            return $this;
-        }
-
-        $storeId = Mage::app()->getStore()->getId();
-
-        $data = $this->getRequest()->getPost();
-        $postcode = $data['postcode'];
-    }
+    // public function getDeliveryDateAction()
+    // {
+        // /**
+         // * This action may only be called using AJAX requests
+         // */
+        // if (!$this->getRequest()->isAjax()) {
+            // $this->_redirect('');
+//
+            // return $this;
+        // }
+//
+        // if (!$this->_canUseDeliveryOptions()) {
+            // $this->getResponse()
+                 // ->setBody('not_allowed');
+//
+            // return $this;
+        // }
+//
+        // $storeId = Mage::app()->getStore()->getId();
+//
+        // $data = $this->getRequest()->getPost();
+        // $postcode = $data['postcode'];
+    // }
 
     /**
      * Get possible evening delivery time frames based on an earliest possible delivery date.
      *
      * @return TIG_PostNL_DeliveryOptionsController
      */
-    public function getEveningTimeframesAction()
+    public function getDeliveryTimeframesAction()
     {
         /**
          * This action may only be called using AJAX requests
@@ -113,14 +113,14 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         $storeId = Mage::app()->getStore()->getId();
 
-        $postData = $this->getRequest()->getPost();
-        $postData =  array(
+        $params = $this->getRequest()->getParams();
+        $params =  array(
             'postcode'    => '1394GA',
             'housenumber' => 43,
         );
 
         try {
-            $data = $this->_getTimeframePostData($postData);
+            $data = $this->_getTimeframePostData($params);
         } catch (Exception $e) {
             Mage::helper('postnl/deliveryOptions')->logException($e);
 
@@ -133,7 +133,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         try {
             $cif = Mage::getModel('postnl_deliveryoptions/cif');
             $response = $cif->setStoreId($storeId)
-                            ->getEveningTimeframes($data);
+                            ->getDeliveryTimeframes($data);
         } catch (Exception $e) {
             Mage::helper('postnl/deliveryOptions')->logException($e);
 
@@ -150,8 +150,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $this;
         }
 
-        echo '<pre>';var_dump($response);exit;
-
         $timeframes = Mage::helper('core')->jsonEncode($response);
 
         /**
@@ -159,7 +157,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          */
         $this->getResponse()
              ->setHeader('Content-type', 'application/x-json')
-             ->setBody($response);
+             ->setBody($timeframes);
 
         return $this;
     }
@@ -237,16 +235,16 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $this->getResponse()
              ->setHeader('Content-type', 'application/x-json')
              ->setBody($locations);
-        echo $locations;exit;
+
         return $this;
     }
 
-    protected function _getTimeframePostData($postData)
+    protected function _getTimeframePostData($params)
     {
         /**
          * The getEveningTimeframes action requires a postcode and a housenumber.
          */
-        if (!isset($postData['postcode']) || !isset($postData['housenumber'])) {
+        if (!isset($params['postcode']) || !isset($params['housenumber'])) {
             throw new TIG_PostNL_Exception(
                 $this->__(
                     'Invalid arguments supplied. getEveningTimeframes requires a postcode and a housenumber.'
@@ -255,8 +253,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             );
         }
 
-        $postcode    = $postData['postcode'];
-        $housenumber = $postData['housenumber'];
+        $postcode    = $params['postcode'];
+        $housenumber = $params['housenumber'];
 
         /**
          * Remove spaces from housenumber and postcode fields.
@@ -300,8 +298,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         /**
          * Get the delivery date. If it was supplied, we need to validate it. Otherwise we take tomorrow as the delivery day.
          */
-        if (array_key_exists('deliveryDate', $postData)) {
-            $deliveryDate = $postData['deliveryDate'];
+        if (array_key_exists('deliveryDate', $params)) {
+            $deliveryDate = $params['deliveryDate'];
 
             $validator = new Zend_Validate_Date(array('format' => 'd-m-Y'));
             if (!$validator->isValid($deliveryDate)) {

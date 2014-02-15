@@ -60,6 +60,9 @@
             <postnl_checkout>
                 <class>TIG_PostNL_Block_Checkout</class>
             </postnl_checkout>
+            <postnl_deliveryoptions>
+                <class>TIG_PostNL_Block_DeliveryOptions</class>
+            </postnl_deliveryoptions>
 		</blocks>
 		<helpers>
 			<postnl>
