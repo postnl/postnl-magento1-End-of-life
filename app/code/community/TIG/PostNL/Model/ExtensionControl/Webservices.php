@@ -88,11 +88,6 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     const SUCCESS_MESSAGE = 'success';
 
     /**
-     * Encryption method used for extension control communication
-     */
-    const ENCRYPTION_METHOD = 'bf-cbc';
-
-    /**
      * Activates the webshop. This will trigger a private key and a unique key to be sent to the specified e-mail, which must be
      * entered into system config by the merchant in order to finish the activation process.
      *
@@ -129,7 +124,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     }
 
     /**
-     * Updates the ExtensionControl server with updated statistics
+     * Updates the ExtensionControl server with updated statistics.
      *
      * @param boolean $forceUpdate
      *
@@ -138,7 +133,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     public function updateStatistics($forceUpdate = false)
     {
         $canSendStatictics = Mage::helper('postnl/webservices')->canSendStatistics();
-        if (!$forceUpdate && !$canSendStatictics) {
+        if ($forceUpdate !== true && !$canSendStatictics) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Unable to update statistics. This feature has been disabled.'),
                 'POSTNL-0080'
@@ -174,17 +169,40 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $data = array_merge($versionData, $websiteData);
 
         /**
-         * Serialize and encrypt the data using the private and unique keys
+         * Serialize the data so we can encrypt it.
          */
         $serializedData = serialize($data);
 
-        $encryptedData = openssl_encrypt(
+        /**
+         * Prepare the private key for encryption and get the IV (initialization vector) we'll use with mcrypt.
+         *
+         * @link http://www.php.net/manual/en/function.mcrypt-get-iv-size.php
+         * @link http://www.php.net/manual/en/function.mcrypt-create-iv.php
+         */
+        $mcryptKey = pack('H*', $privateKey);
+        $ivSize    = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+        $iv        = mcrypt_create_iv($ivSize, MCRYPT_RAND);
+
+        /**
+         * Encrypt the data.
+         *
+         * @link http://www.php.net/manual/en/function.mcrypt-encrypt.php
+         */
+        $encryptedData = mcrypt_encrypt(
+            MCRYPT_RIJNDAEL_256,
+            $mcryptKey,
             $serializedData,
-            self::ENCRYPTION_METHOD,
-            $privateKey,
-            0,
-            substr($uniqueKey, 0, 8)
+            MCRYPT_MODE_CBC,
+            $iv
         );
+
+        /**
+         * Prepend the IV, so the server can decrypt it later.
+         * Contrary to what some people may believe, sending the IV with the encrypted data does NOT constitute a
+         * security risk {@link http://www.php.net/manual/en/function.mcrypt-create-iv.php}.
+         */
+        $encryptedData = $iv . $encryptedData;
+        $encryptedData = base64_encode($encryptedData);
 
         /**
          * Build the SOAP parameter array
@@ -225,7 +243,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     }
 
     /**
-     * Gets information about the Magento vrsion and edition as well as the vrsion of the currently installed PosTNL extension.
+     * Gets information about the Magento vrsion and edition as well as the version of the currently installed PostNL extension.
      *
      * @return array
      */
