@@ -1,13 +1,15 @@
 /* Generic =============================================================================== */
-#postnl_delivery_options { background:#fff; font:12px/1 'postnllight', Arial, sans-serif; padding:17px 17px 11px; color:#333; text-rendering:optimizeLegibility; }
-#postnl_delivery_options *, #postnl_delivery_options *:before, #postnl_delivery_options *:after { -moz-box-sizing:border-box; -webkit-box-sizing:border-box; box-sizing:border-box; }
+#postnl_delivery_options { background:#fff; font:12px/1 'postnllight', Arial, sans-serif; padding:17px 17px 11px; color:#333334; text-rendering:optimizeLegibility; }
+#postnl_delivery_options *, 
+#postnl_delivery_options *:before, 
+#postnl_delivery_options *:after { -moz-box-sizing:border-box; -webkit-box-sizing:border-box; box-sizing:border-box; }
 
 /* Styling */
 #postnl_delivery_options h2,
 #postnl_delivery_options h3 { font-family:'postnlmedium', Arial, sans-serif; margin:0; line-height:1; }
 #postnl_delivery_options .title { height:54px; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_postnl.png) 100% 0 no-repeat; }
 #postnl_delivery_options .title h2 { font-size:17px; color:#ed8c00; padding-top:11px; }
-#postnl_delivery_options .sub-title { font-size:14px; color:#333; margin-bottom:9px; }
+#postnl_delivery_options .sub-title { font-size:14px; color:#333334; margin-bottom:9px; }
 
 /* Layout */
 #postnl_delivery_options .col-1,
@@ -17,39 +19,62 @@
 /* ======================================================================================= */
 
 /* Option List ========================================================================== */
-#postnl_delivery_options .option-list { margin-bottom:6px; }
+#postnl_delivery_options .option-list { margin-bottom:6px; position:relative; }
 #postnl_delivery_options .option-list .bkg { display:block; padding:0 0 0 8px; background-position:0 0; }
 #postnl_delivery_options .option-list .bkg .bkg { padding:0 8px 0 0; background-position:100% 0; }
-#postnl_delivery_options .option-list .content { position:relative; }
-#postnl_delivery_options .option-list .content span { display:block; float:left; height:auto; }
 
 /* Location */
-#postnl_delivery_options .option-list .location { color:#fff; height:24px; margin:0 0 2px; }
-#postnl_delivery_options .option-list .location .bkg { height:24px; background-image:url(../../../images/TIG/PostNL/deliveryoptions/bkg_location.gif); }
-#postnl_delivery_options .option-list .location .name { font:14px/23px 'postnlmedium', Arial, sans-serif; }
-#postnl_delivery_options .option-list .location .kind { color:#eaeaeb; font-size:12px; line-height:23px; margin-left:6px; }
-#postnl_delivery_options .option-list .location .more-info { position:absolute; top:0; right:-7px; display:block; width:24px; height:24px; text-indent:-999em; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) 5px no-repeat; }
+#postnl_delivery_options .location { color:#fff; height:24px; margin:0 0 2px; }
+#postnl_delivery_options .location .bkg { height:24px; background-image:url(../../../images/TIG/PostNL/deliveryoptions/bkg_location.gif); }
+#postnl_delivery_options .location .location-name { font:14px/23px 'postnlmedium', Arial, sans-serif; }
+#postnl_delivery_options .location .location-type { color:#eaeaeb; font-size:12px; line-height:23px; margin-left:6px; }
+#postnl_delivery_options .location .location-info { float:right; }
+#postnl_delivery_options .location .location-info > span { margin-right:-7px; display:block; width:24px; height:24px; text-indent:-999em; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) -2px 5px no-repeat; }
+#postnl_delivery_options .location .location-info:hover > span { width:31px; background-position:5px -41px; }
+#postnl_delivery_options .location .location-info:hover .tooltip { display:block !important; }
 
 /* Option */
-#postnl_delivery_options .option-list .option { display:block; height:38px; margin:0 0 2px; overflow:hidden; }
-#postnl_delivery_options .option-list .option a { display:block; }
-#postnl_delivery_options .option-list .option a .bkg { height:38px; background-image:url(../../../images/TIG/PostNL/deliveryoptions/bkg_option.gif); }
-#postnl_delivery_options .option-list .option:hover a .bkg { background-position:0 100%; }
-#postnl_delivery_options .option-list .option:hover a .bkg .bkg { background-position:100% 100%; }
+#postnl_delivery_options .option-dd, 
+#postnl_delivery_options .option-radio, 
+#postnl_delivery_options .option-time, 
+#postnl_delivery_options .option-comment { display:block; float:left; height:38px; }
 
-/* Day-Date */
-#postnl_delivery_options .option-list .option .day-date { width:34px; margin:6px 0; }
-#postnl_delivery_options .option-list .option .day-date span { display:block; }
-#postnl_delivery_options .option-list .option .day-date .day { font:14px/1 'postnlmedium', Arial, sans-serif; }
-#postnl_delivery_options .option-list .option .day-date .date { font-size:11px; line-height:1; }
+#postnl_delivery_options .option { display:block; height:38px; margin:0 0 2px; overflow:hidden; }
+#postnl_delivery_options .option a { display:block; text-decoration:none; }
+#postnl_delivery_options .option .bkg { height:38px; background-image:url(../../../images/TIG/PostNL/deliveryoptions/bkg_option.gif); }
+#postnl_delivery_options .option:hover .bkg { background-position:0 100%; }
+#postnl_delivery_options .option:hover .bkg .bkg { background-position:100% 100%; }
 
-/* Faux Radio Button */
-#postnl_delivery_options .option-list .option .faux-radio { width:26px; height:38px; margin-right:8px; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_radio.png) 0 -32px no-repeat; }
-#postnl_delivery_options .option-list .option.active .faux-radio { background-position:0 2px; }
+#postnl_delivery_options .option-dd { width:34px; margin:6px 0; }
+#postnl_delivery_options .option-dd span { display:block; }
+#postnl_delivery_options .option-dd .option-day { font:14px/1 'postnlmedium', Arial, sans-serif; }
+#postnl_delivery_options .option-dd .option-date { font-size:11px; line-height:1; }
 
-/* Time */
-#postnl_delivery_options .option-list .option .time { line-height:36px; }
+#postnl_delivery_options .option-radio { width:26px; height:38px; margin-right:8px; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_radio.png) 0 -32px no-repeat; }
+#postnl_delivery_options .option.active .option-radio { background-position:0 2px; }
 
-/* Comment */
-#postnl_delivery_options .option-list .option .comment { color:#f05a22; line-height:36px; margin-left:6px; }
+#postnl_delivery_options .option-time { line-height:36px; }
+
+#postnl_delivery_options .option-comment { color:#f05a22; line-height:36px; margin-left:6px; }
+
+/* Add Location*/
+#postnl_delivery_options .add-location { display:block; height:22px; text-align:right; border-bottom:1px solid #bbbbbc; }
+#postnl_delivery_options .add-location a { display:inline-block; text-decoration:none; margin:1px 8px 0 0; height:14px; padding-right:21px; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_add-location.png) 100% 0 no-repeat;  }
+#postnl_delivery_options .add-location a:hover { text-decoration:underline; }
+
+/* Tooltip */
+#postnl_delivery_options .tooltip { display:none; position:absolute; z-index:500; top:-18px; right:27px; width:264px; background:#f2f2f2; padding:12px 16px 16px; cursor:default; border-radius:3px; -webkit-border-radius:3px; -moz-border-radius:3px;  }
+
+#postnl_delivery_options .tooltip-header span { display:block; font:14px/18px 'postnlmedium', Arial, sans-serif; }
+
+#postnl_delivery_options .tooltip-divider { height:0px; border:none; border-bottom:1px solid #bbbbbc; margin:12px -8px 7px; }
+
+#postnl_delivery_options .tooltip-content .business-hours { line-height:17px; }
+#postnl_delivery_options .tooltip-content .business-hours tbody th { width:36px; }
+
 /* ======================================================================================= */
+
+/* Add Location Pop-up =================================================================== */
+
+/* ======================================================================================= */
+.#postnl_delivery_options .option .content:after { content:'.'; display:block; height:0; width:0; line-height:0; overflow:hidden; clear:both; }
