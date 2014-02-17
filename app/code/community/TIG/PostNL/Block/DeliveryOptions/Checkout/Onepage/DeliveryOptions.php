@@ -57,6 +57,45 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     }
 
     /**
+     * Checks whether PakjeGemak locations are allowed.
+     *
+     * @return boolean
+     */
+    public function canUsePakjeGemak()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $canUsePakjeGemak = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemak();
+        return $canUsePakjeGemak;
+    }
+
+    /**
+     * Checks whether PakjeGemak Express locations are allowed.
+     *
+     * @return boolean
+     */
+    public function canUsePakjeGemakExpress()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $canUsePakjeGemakExpress = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemakExpress();
+        return $canUsePakjeGemakExpress;
+    }
+
+    /**
+     * Checks whether Pakket Automaat locations are allowed.
+     *
+     * @return boolean
+     */
+    public function canUsePakketAutomaat()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUsePakketAutomaat();
+        return $canUsePakketAutomaat;
+    }
+
+    /**
      * get the first possible delivery date from PostNL.
      *
      * @param string $postcode

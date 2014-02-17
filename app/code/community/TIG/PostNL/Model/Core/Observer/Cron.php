@@ -581,6 +581,29 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         /**
          * Get all postnl shipments that have been confirmed over 20 minutes ago whose track & trace e-mail has not yet been sent
+         *
+         * Resulting SQL:
+         * SELECT `main_table` . *
+         * FROM `tig_postnl_shipment` AS `main_table`
+         * WHERE (
+         *     confirm_status = '{$confirmedStatus}'
+         * )
+         * AND (
+         *     labels_printed =1
+         * )
+         * AND (
+         *     confirmed_at <= '{$twentyMinutesAgo}'
+         * )
+         * AND (
+         *     (
+         *         (
+         *             track_and_trace_email_sent IS NULL
+         *         )
+         *         OR (
+         *             track_and_trace_email_sent = '0'
+         *         )
+         *     )
+         * )
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter(

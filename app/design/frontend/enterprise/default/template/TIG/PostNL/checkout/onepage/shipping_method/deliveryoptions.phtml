@@ -263,26 +263,24 @@
 </div>
 <script type="text/javascript">
 //<![CDATA[
-    var weekdays = new Array(7);
-    weekdays[0] = '<?php echo $this->__('Su'); ?>';
-    weekdays[1] = '<?php echo $this->__('Mo'); ?>';
-    weekdays[2] = '<?php echo $this->__('Tu'); ?>';
-    weekdays[3] = '<?php echo $this->__('We'); ?>';
-    weekdays[4] = '<?php echo $this->__('Th'); ?>';
-    weekdays[5] = '<?php echo $this->__('Fr'); ?>';
-    weekdays[6] = '<?php echo $this->__('Sa'); ?>';
+    var options = {
+        eveningExtraCosts : '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getBaseCurrencyCode())->toCurrency(1); ?>',
+        expressExtraCosts : '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getBaseCurrencyCode())->toCurrency(1.5); ?>',
+        allowPg           : true,
+        allowPge          : true,
+        allowPa           : true,
+        allowTimeframes   : true
+    };
 
     deliveryOptions = new PostnlDeliveryOptions(
         '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
         '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
         '<?php echo $_postcode; ?>',
         '<?php echo $_housenumber; ?>',
-        '<?php echo $_deliveryDate; ?>'
+        '<?php echo $_deliveryDate; ?>',
+        options
     );
 
-    deliveryOptions.eveningExtraCosts = '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getBaseCurrencyCode())->toCurrency(2); ?>';
-    deliveryOptions.expressExtraCosts = '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getBaseCurrencyCode())->toCurrency(2.5); ?>';
-    deliveryOptions.weekdays = weekdays;
     deliveryOptions.init();
 //]]>
 </script>

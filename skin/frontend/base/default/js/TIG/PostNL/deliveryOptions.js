@@ -48,14 +48,31 @@ PostnlDeliveryOptions = new Class.create({
 
     selectedOption : false,
 
-    initialize : function(timeframesUrl, locationsUrl, postcode, housenumber, deliveryDate) {
+    initialize : function(timeframesUrl, locationsUrl, postcode, housenumber, deliveryDate, options) {
         this.timeframesUrl = timeframesUrl;
         this.locationsUrl  = locationsUrl;
         this.postcode      = postcode;
         this.housenumber   = housenumber;
         this.deliveryDate  = deliveryDate;
 
+        if (options) {
+            this.options = options;
+        } else {
+            this.options = {};
+        }
+
+        var weekdays = new Array(7);
+        weekdays[0] = Translator.translate('Su');
+        weekdays[1] = Translator.translate('Mo');
+        weekdays[2] = Translator.translate('Tu');
+        weekdays[3] = Translator.translate('We');
+        weekdays[4] = Translator.translate('Th');
+        weekdays[5] = Translator.translate('Fr');
+        weekdays[6] = Translator.translate('Sa');
+
+        this.weekdays = weekdays;
         this.weekdaysProcessed = new Array();
+        console.log(this);
     },
 
     init : function() {
@@ -127,6 +144,7 @@ PostnlDeliveryOptions = new Class.create({
     	var processedLocations = new Array();
 
     	var deliveryOptions = this;
+    	var options = this.options;
 
     	var n = 0;
     	var max = locations.length;
@@ -141,7 +159,7 @@ PostnlDeliveryOptions = new Class.create({
 
     		var type = location.value.DeliveryOptions.string;
 
-    		if (!processedPG && type.indexOf('PG') != -1) {
+    		if (options.allowPg && !processedPG && type.indexOf('PG') != -1) {
     			var postnlLocation = new PostnlDeliveryOptions.Location(location.value, location.key, deliveryOptions, 'PG');
     			deliveryOptions.pgLocation = postnlLocation;
 
@@ -149,7 +167,7 @@ PostnlDeliveryOptions = new Class.create({
     			processedPG = true;
     		}
 
-    		if (!processedPGE && type.indexOf('PGE') != -1) {
+    		if (options.allowPge && !processedPGE && type.indexOf('PGE') != -1) {
     			var postnlLocation = new PostnlDeliveryOptions.Location(location.value, location.key, deliveryOptions, 'PGE');
     			deliveryOptions.pgeLocation = postnlLocation;
 
@@ -157,7 +175,7 @@ PostnlDeliveryOptions = new Class.create({
     			processedPGE = true;
     		}
 
-    		if (!processedPA && type.indexOf('PA') != -1) {
+    		if (options.allowPa && !processedPA && type.indexOf('PA') != -1) {
     			var postnlLocation = new PostnlDeliveryOptions.Location(location.value, location.key, deliveryOptions, 'PGA');
     			deliveryOptions.paLocation = postnlLocation;
 
@@ -172,6 +190,8 @@ PostnlDeliveryOptions = new Class.create({
     },
 
     renderLocations : function() {
+        $('postnl_pickup').show();
+
     	$$('#pgelocation li').each(function(element) {
     		element.remove();
     	});
@@ -182,16 +202,26 @@ PostnlDeliveryOptions = new Class.create({
     		element.remove();
     	});
 
-    	if (this.pgeLocation) {
-    		this.pgeLocation.render('pgelocation');
+        if (this.options.allowPge) {
+        	if (this.pgeLocation) {
+        		this.pgeLocation.render('pgelocation');
+        	}
     	}
 
-    	if (this.pgLocation) {
-    		this.pgLocation.render('pglocation');
+        if (this.options.allowPg) {
+        	if (this.pgLocation) {
+        		this.pgLocation.render('pglocation');
+        	}
     	}
 
-    	if (this.paLocation) {
-    		this.paLocation.render('palocation');
+        if (this.options.allowPa) {
+        	if (this.paLocation) {
+        		this.paLocation.render('palocation');
+        	}
+    	}
+
+    	if (!this.pgeLocation && !this.pgLocation && !this.paLocation) {
+    	    $('postnl_pickup').hide();
     	}
 
     	return this;
@@ -225,12 +255,17 @@ PostnlDeliveryOptions = new Class.create({
     		if (n++ > 6) {
     			return;
     		}
+
+    		if (n > 1 && !deliveryOptions.options.allowTimeframes) {
+    		    return;
+    		}
     		var postnlTimeframe = new PostnlDeliveryOptions.Timeframe(timeframe.value, timeframe.key, deliveryOptions);
 
     		parsedTimeframes.push(postnlTimeframe);
     	});
 
     	this.timeframes = parsedTimeframes;
+
     	return this;;
     },
 
@@ -244,6 +279,9 @@ PostnlDeliveryOptions = new Class.create({
     	this.timeframes.each(function(timeframe) {
     		timeframe.render('timeframes');
     	});
+
+        this.timeframes[0].select();
+
     	return this;
     },
 
@@ -378,7 +416,14 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
 		var type = this.type;
 
 		if (type == 'PGE') {
-			commentHtml = Translator.translate('early delivery') + ' + ' + this.deliveryOptions.expressExtraCosts;
+            var extraCosts = this.deliveryOptions.options.expressExtraCosts;
+            var extraCostHtml = '';
+
+            if (extraCosts) {
+                extraCostHtml += ' + ' + extraCosts;
+            }
+
+			commentHtml = Translator.translate('early delivery') + extraCostHtml;
 		} else if (type == 'PA') {
 			commentHtml = '24/7 ' + Translator.translate('beschikbaar');
 		}
@@ -438,11 +483,11 @@ PostnlDeliveryOptions.Timeframe = new Class.create(PostnlDeliveryOptions.Option,
 	getCommentHtml : function() {
 		var comment = '';
 		if (this.type == 'Avond') {
-			var extraCosts = this.deliveryOptions.eveningExtraCosts;
+			var extraCosts = this.deliveryOptions.options.eveningExtraCosts;
 			var extraCostHtml = '';
 
 			if (extraCosts) {
-				extraCostHtml += ' + ' + this.deliveryOptions.eveningExtraCosts;
+				extraCostHtml += ' + ' + extraCosts;
 			}
 
 			comment = '<span class="comment">' + Translator.translate('evening') + extraCostHtml + '</span>';

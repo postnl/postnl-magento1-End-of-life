@@ -39,6 +39,13 @@
 class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 {
     /**
+     * Xpaths to various possible location settings.
+     */
+    const XPATH_ENABLE_PAKJEGEMAK                  = 'postnl/delivery_options/enable_pakjegemak';
+    const XPATH_ENABLE_PAKJEGEMAK_EXPRESS          = 'postnl/delivery_options/enable_pakjegemak_express';
+    const XPATH_ENABLE_PACKAGE_DISPENSER_LOCATIONS = 'postnl/delivery_options/enable_package_dispenser_locations';
+
+    /**
      * Checks if PakjeGemak is available.
      *
      * @param int|boolean $storeId
@@ -51,7 +58,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        return true;
+        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK, $storeId);
+
+        return $enabled;
     }
 
     /**
@@ -67,7 +76,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        return true;
+        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK_EXPRESS, $storeId);
+
+        return $enabled;
     }
 
     /**
@@ -83,7 +94,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        return true;
+        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PACKAGE_DISPENSER_LOCATIONS, $storeId);
+
+        return $enabled;
     }
 
     /**

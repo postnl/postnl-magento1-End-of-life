@@ -521,6 +521,18 @@
         		<product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
         		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
         	</cif_globalpack_settings>
+        	<delivery_options>
+        	    <active>0</active>
+        	    <shipping_duration>1</shipping_duration>
+        	    <cutoff_time/>
+        	    <enable_timeframes>1</enable_timeframes>
+        	    <enable_evening_timeframes>0</enable_evening_timeframes>
+        	    <evening_timeframe_fee>2</evening_timeframe_fee>
+        	    <enable_pakjegemak>1</enable_pakjegemak>
+        	    <enable_pakjegemak_express>0</enable_pakjegemak_express>
+        	    <early_delivery_fee>2</early_delivery_fee>
+        	    <enable_package_dispenser_locations>0</enable_package_dispenser_locations>
+        	</delivery_options>
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
         	    <mode>0</mode> <!-- Live mode -->
