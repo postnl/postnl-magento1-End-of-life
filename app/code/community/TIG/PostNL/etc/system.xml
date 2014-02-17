@@ -1516,11 +1516,159 @@
                         </product_sorting_direction>
                     </fields>
                 </cif_globalpack_settings>
+                <delivery_options translate="label comment" module="postnl">
+                    <label>PostNL Delivery Options</label>
+                    <comment><![CDATA[Here you can configure your PostNL delivery options. Possible delivery options include next day delivery, delivery at a specified date, delivery to a post office nearby etc.]]></comment>
+                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <sort_order>1400</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label" module="postnl">
+                            <label>Enable PostNL delivery options</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <shipping_duration translate="label comment" module="postnl">
+                            <label>Shipping duration</label>
+                            <comment>The number of days shipping will take after a customer finishes their order.</comment>
+                            <source_model>postnl_deliveryoptions/system_config_source_shippingDuration</source_model>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </shipping_duration>
+                        <cutoff_time translate="label comment" module="postnl">
+                            <label>Order cut-off time</label>
+                            <comment>When an order is placed after this time, another day will be added to the shipping duration.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_deliveryoptions/system_config_source_cutOffTime</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </cutoff_time>
+                        <enable_timeframes translate="label comment" module="postnl">
+                            <label>Enable timeframes</label>
+                            <comment>Timeframes allow customers to specify on which date and at which time they want their order delivered.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </enable_timeframes>
+                        <enable_evening_timeframes translate="label comment" module="postnl">
+                            <label>Enable evening timeframes</label>
+                            <comment>Whether or not customers may pick an evening timeframe.</comment>
+                            <tooltip>Evening timeframes may not be available in all areas.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                                <enable_timeframes>1</enable_timeframes>
+                            </depends>
+                        </enable_evening_timeframes>
+                        <evening_timeframe_fee translate="label comment tooltip" module="postnl">
+                            <label>Evening timeframe fee</label>
+                            <comment>Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs.</comment>
+                            <tooltip>This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for evening timeframes.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-digits-range digits-range-0-2</validate>
+                            <depends>
+                                <active>1</active>
+                                <enable_timeframes>1</enable_timeframes>
+                                <enable_evening_timeframes>1</enable_evening_timeframes>
+                            </depends>
+                        </evening_timeframe_fee>
+                        <enable_pakjegemak translate="label comment" module="postnl">
+                            <label>Enable post office locations</label>
+                            <comment>Whether or not customers may choose to have their order delivered to a nearby post office.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </enable_pakjegemak>
+                        <enable_pakjegemak_express translate="label comment" module="postnl">
+                            <label>Enable early delivery locations</label>
+                            <comment>Whether or not customers may choose an 'early delivery' location.</comment>
+                            <tooltip>Not all post offces may support early delivery.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                                <enable_postoffice_locations>1</enable_postoffice_locations>
+                            </depends>
+                        </enable_pakjegemak_express>
+                        <early_delivery_fee translate="label comment tooltip" module="postnl">
+                            <label>Early delivery fee</label>
+                            <comment>Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs.</comment>
+                            <tooltip>This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-digits-range digits-range-0-2</validate>
+                            <depends>
+                                <active>1</active>
+                                <enable_postoffice_locations>1</enable_postoffice_locations>
+                                <enable_early_delivery_locations>1</enable_early_delivery_locations>
+                            </depends>
+                        </early_delivery_fee>
+                        <enable_package_dispenser_locations translate="label comment tooltip" module="postnl">
+                            <label>Enable package dispenser locations</label>
+                            <comment>Whether or not customers may choose to have their order delivered to a parcel dispenser.</comment>
+                            <tooltip>Parcel dispensers are available at certain NS train stations across the Netherlands.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </enable_package_dispenser_locations>
+                    </fields>
+                </delivery_options>
                 <checkout translate="label comment" module="postnl">
                     <label>PostNL Checkout Settings</label>
                     <comment><![CDATA[Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.</p><p>By using PostNL Checkout you can offer your customers the option to easily choose their desired delivery date. They will be able to choose when and where they want their order delivered. They may choose to have the order delivered to their home (on a specific day at a specific time) or to have it delivered to their nearest post office.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1300</sort_order>
+                    <sort_order>1400</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -1876,7 +2024,7 @@
                     <label>PostNL Checkout Payment Settings</label>
                     <comment>This is where you specify which payment options will be presented to your customers in PostNL Checkout. At least one of these must be activated for PostNL Checkout to work.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1400</sort_order>
+                    <sort_order>1500</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -2663,7 +2811,7 @@
                     <label>Advanced Settings</label>
                     <comment>These settings are intended for advanced users only! If you're not 100% sure what you're doing, please do not touch these settings.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1500</sort_order>
+                    <sort_order>1600</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
