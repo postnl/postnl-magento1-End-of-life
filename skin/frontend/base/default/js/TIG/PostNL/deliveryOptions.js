@@ -38,30 +38,30 @@
 PostnlDeliveryOptions = new Class.create({
     eveningExtraCosts : 1,
     expressExtraCosts : 1,
-    
+
     pgLocation  : false,
     pgeLocation : false,
     paLocation  : false,
-    
+
     timeframes : false,
     locations  : false,
 
     selectedOption : false,
-    
+
     initialize : function(timeframesUrl, locationsUrl, postcode, housenumber, deliveryDate) {
         this.timeframesUrl = timeframesUrl;
         this.locationsUrl  = locationsUrl;
         this.postcode      = postcode;
         this.housenumber   = housenumber;
         this.deliveryDate  = deliveryDate;
-        
+
         this.weekdaysProcessed = new Array();
     },
 
     init : function() {
         this.getTimeframes(this.postcode, this.deliveryDate);
         this.getLocations(this.postcode, this.housenumber, this.deliveryDate);
-        
+
         return this;
     },
 
@@ -76,14 +76,14 @@ PostnlDeliveryOptions = new Class.create({
                 isAjax       : true
             },
             onSuccess: function(response) {
-                responseText = response.responseText;
+                var responseText = response.responseText;
                 if (responseText == 'not_allowed' || responseText == 'invalid_data' || responseText == 'error') {
                     alert(responseText);
                     return;
                 }
 
                 var timeframes = responseText.evalJSON(true);
-                
+
                 PostnlDeliveryOptions.parseTimeframes(timeframes)
                                      .renderTimeframes();
                 return;
@@ -104,14 +104,14 @@ PostnlDeliveryOptions = new Class.create({
                 isAjax       : true
             },
             onSuccess: function(response) {
-                responseText = response.responseText;
+                var responseText = response.responseText;
                 if (responseText == 'not_allowed' || responseText == 'invalid_data' || responseText == 'error') {
                     alert(responseText);
                     return;
                 }
 
                 var locations = responseText.evalJSON(true);
-                
+
                 PostnlDeliveryOptions.parseLocations(locations)
                                      .renderLocations();
                 return;
@@ -119,58 +119,58 @@ PostnlDeliveryOptions = new Class.create({
         });
         return this;
     },
-    
+
     parseLocations : function(locations) {
     	var processedPG = false;
     	var processedPGE = false;
     	var processedPA = false;
     	var processedLocations = new Array();
-    	
+
     	var deliveryOptions = this;
-    	
+
     	var n = 0;
     	var max = locations.length;
     	$H(locations).each(function(location) {
     		if (n++ >= max) {
     			return;
     		}
-    		
+
     		if (processedPG && processedPGE && processedPA) {
     			return;
     		}
-    		
+
     		var type = location.value.DeliveryOptions.string;
-    		
+
     		if (!processedPG && type.indexOf('PG') != -1) {
     			var postnlLocation = new PostnlDeliveryOptions.Location(location.value, location.key, deliveryOptions, 'PG');
     			deliveryOptions.pgLocation = postnlLocation;
-    			
+
     			processedLocations[location.key] = postnlLocation;
     			processedPG = true;
     		}
-    		
+
     		if (!processedPGE && type.indexOf('PGE') != -1) {
     			var postnlLocation = new PostnlDeliveryOptions.Location(location.value, location.key, deliveryOptions, 'PGE');
     			deliveryOptions.pgeLocation = postnlLocation;
-    			
+
     			processedLocations[location.key] = postnlLocation;
     			processedPGE = true;
     		}
-    		
+
     		if (!processedPA && type.indexOf('PA') != -1) {
     			var postnlLocation = new PostnlDeliveryOptions.Location(location.value, location.key, deliveryOptions, 'PGA');
     			deliveryOptions.paLocation = postnlLocation;
-    			
+
     			processedLocations[location.key] = postnlLocation;
     			processedPA = true;
     		}
     	});
-    	
+
     	this.locations = processedLocations;
-    	
+
     	return this;
     },
-    
+
     renderLocations : function() {
     	$$('#pgelocation li').each(function(element) {
     		element.remove();
@@ -181,25 +181,25 @@ PostnlDeliveryOptions = new Class.create({
     	$$('#palocation li').each(function(element) {
     		element.remove();
     	});
-    	
+
     	if (this.pgeLocation) {
     		this.pgeLocation.render('pgelocation');
     	}
-    	
+
     	if (this.pgLocation) {
     		this.pgLocation.render('pglocation');
     	}
-    	
+
     	if (this.paLocation) {
     		this.paLocation.render('palocation');
     	}
-    	
+
     	return this;
     },
-    
+
     selectLocation : function(element) {
     	var locations = this.locations;
-    	
+
     	locations.each(function(location) {
     		if (element && location.element.identify() == element.identify()) {
     			this.selectedOption = location;
@@ -208,48 +208,48 @@ PostnlDeliveryOptions = new Class.create({
     			location.unSelect();
     		}
     	});
-    	
+
     	if (element) {
     		this.selectTimeframe(false);
     	}
-    	
+
     	return false;
     },
-    
+
     parseTimeframes : function(timeframes) {
     	var parsedTimeframes = new Array();
     	var deliveryOptions = this;
-    	
+
     	var n = 0;
     	$H(timeframes).each(function(timeframe) {
     		if (n++ > 6) {
     			return;
     		}
     		var postnlTimeframe = new PostnlDeliveryOptions.Timeframe(timeframe.value, timeframe.key, deliveryOptions);
-    		
+
     		parsedTimeframes.push(postnlTimeframe);
     	});
-    	
+
     	this.timeframes = parsedTimeframes;
     	return this;;
     },
-    
+
     renderTimeframes : function() {
     	$$('#timeframes li.option').each(function(element) {
     		element.remove();
     	});
-    	
+
     	this.weekdaysProcessed = new Array();
-    	
+
     	this.timeframes.each(function(timeframe) {
     		timeframe.render('timeframes');
     	});
     	return this;
     },
-    
+
     selectTimeframe : function(element) {
-    	timeframes = this.timeframes;
-    	
+    	var timeframes = this.timeframes;
+
     	timeframes.each(function(timeframe) {
     		if (element && timeframe.element.identify() == element.identify()) {
     			this.selectedOption = timeframe;
@@ -258,46 +258,46 @@ PostnlDeliveryOptions = new Class.create({
     			timeframe.unSelect();
     		}
     	});
-    	
+
     	if (element) {
     		this.selectLocation(false);
     	}
-    	
+
     	return false;
     }
 });
 
 PostnlDeliveryOptions.Option = new Class.create({
+	element : false,
+
 	select : function() {
 		var element = this.element;
 		if (!element) {
 			return this;
 		}
-		
+
 		if (!element.hasClassName('active')) {
 			element.addClassName('active');
 		}
-		
+
 		return this;
 	},
-	
+
 	unSelect : function() {
 		var element = this.element;
 		if (!element) {
 			return this;
 		}
-		
+
 		if (element.hasClassName('active')) {
 			element.removeClassName('active');
 		}
-		
+
 		return this;
 	}
 });
 
 PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, {
-	element : false,
-	
 	initialize : function(location, locationIndex, deliveryOptions, type) {
 		this.address = location.Address;
 		this.distance = location.Distance;
@@ -305,30 +305,30 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
 		this.longitude = location.Longitude;
 		this.name = location.Name;
 		this.openingHours = location.OpeningHours;
-		
+
 		this.locationIndex = locationIndex;
-		
+
 		this.deliveryOptions = deliveryOptions;
-		
+
 		this.type = type;
 	},
-	
+
 	render : function(parent) {
 		var date = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-		
+
 		var html = '<li class="location">';
 		html += '<span class="bkg">';
 		html += '<span class="bkg">';
 		html += '<div class="content">';
 		html += '<span class="name">' + this.name + '</span>';
-		
+
 		if (this.type == 'PG' || this.type == 'PGE') {
-			html += '<small class="kind">Postkantoor</small>';
+			html += '<small class="kind">' + Translator.translate('Post Office') + '</small>';
 		} else {
-			html += '<small class="kind">Pakket Automaat</small>';
+			html += '<small class="kind">' + Translator.translate('Package Dispenser') + '</small>';
 		}
-		
-		html += '<a href="#" class="more-info" title="More Info">More Info</a>';
+
+		html += '<a href="#" class="more-info" title="' + Translator.translate('More Info') + '">' + Translator.translate('More Info') + '</a>';
 		html += '</div>';
 		html += '</span>';
 		html += '</span>';
@@ -340,70 +340,68 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
 		html += '<div class="content">';
 		html += '<span class="day-date">';
 		html += '<span class="day">' + this.deliveryOptions.weekdays[date.getDay()] + '</span>';
-		html += '<span class="date">' + date.getDate() + '-' + ("0" + (date.getMonth() + 1)).slice(-2) + '</span>';
+		html += '<span class="date">' + date.getDate() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '</span>';
 		html += '</span>';
 		html += '<span class="faux-radio"></span>';
-		
+
 		if (this.type == 'PGE') {
-			html += '<span class="time">vanaf 8:30</span>';
+			html += '<span class="time">' + Translator.translate('from') + ' 8:30</span>';
 		} else {
-			html += '<span class="time">vanaf 16:00</span>';
+			html += '<span class="time">' + Translator.translate('from') + ' 16:00</span>';
 		}
-		
+
 		html += '<span class="comment">' + this.getCommentHtml() + '</span>';
 		html += '</div>';
 		html += '</span>';
 		html += '</span>';
 		html += '</a>';
 		html += '</li>';
-		
+
 		$(parent).insert({
 			bottom: html
 		});
-		
+
 		var element = $('location_' + this.locationIndex);
 		element.observe('click', function(event) {
 			event.stop();
-			
+
 			deliveryOptions.selectLocation(this);
 		});
-		
+
 		this.element = element;
-		
+
 		return this;
 	},
-	
+
 	getCommentHtml : function() {
 		var commentHtml = '';
 		var type = this.type;
-		
+
 		if (type == 'PGE') {
-			commentHtml = 'extra vroeg + ' + this.deliveryOptions.expressExtraCosts;
+			commentHtml = Translator.translate('early delivery') + ' + ' + this.deliveryOptions.expressExtraCosts;
 		} else if (type == 'PA') {
-			commentHtml = '24/7 beschikbaar';
+			commentHtml = '24/7 ' + Translator.translate('beschikbaar');
 		}
-		
+
 		return commentHtml;
 	}
 });
 
 PostnlDeliveryOptions.Timeframe = new Class.create(PostnlDeliveryOptions.Option, {
-	element : false,
-	
 	initialize : function(timeframe, timeframeIndex, deliveryOptions) {
 		this.date = timeframe.Date;
 		this.from = timeframe.Timeframes.TimeframeTimeFrame[0].From;
 		this.to   = timeframe.Timeframes.TimeframeTimeFrame[0].To;
 		this.type = timeframe.Timeframes.TimeframeTimeFrame[0].TimeframeType;
-		
+
 		this.timeframeIndex = timeframeIndex;
-		
+
 		this.deliveryOptions = deliveryOptions;
 	},
-	
+
 	render : function(parent) {
 		var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5), this.date.substring(0, 2));
-		
+
 		var html = '<li class="option" id="timeframe_' + this.timeframeIndex + '">';
 		html += '<a href="#" class="data">';
 		html += '<span class="bkg">';
@@ -420,52 +418,52 @@ PostnlDeliveryOptions.Timeframe = new Class.create(PostnlDeliveryOptions.Option,
 		html += '</span>';
 		html += '</a>';
 		html += '</li>';
-		
+
 		$(parent).insert({
 			bottom: html
 		});
-		
+
 		var element = $('timeframe_' + this.timeframeIndex);
 		element.observe('click', function(event) {
 			event.stop();
-			
+
 			deliveryOptions.selectTimeframe(this);
 		});
-		
+
 		this.element = element;
-		
+
 		return this;
 	},
-	
+
 	getCommentHtml : function() {
 		var comment = '';
 		if (this.type == 'Avond') {
 			var extraCosts = this.deliveryOptions.eveningExtraCosts;
 			var extraCostHtml = '';
-			
+
 			if (extraCosts) {
 				extraCostHtml += ' + ' + this.deliveryOptions.eveningExtraCosts;
 			}
-			
-			comment = '<span class="comment">avond' + extraCostHtml + '</span>';
+
+			comment = '<span class="comment">' + Translator.translate('evening') + extraCostHtml + '</span>';
 		}
-		
+
 		return comment;
 	},
-	
+
 	getWeekdayHtml : function() {
 		var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5), this.date.substring(0, 2));
-		
+
 		var daysProcessed = this.deliveryOptions.weekdaysProcessed;
 		var weekdayHtml = '';
 		if (daysProcessed.indexOf(date.getDay()) == -1) {
 			var weekdays = this.deliveryOptions.weekdays;
-			
+
 			daysProcessed.push(date.getDay());
 			weekdayHtml = '<span class="day">' + weekdays[date.getDay()] + '</span>';
 			weekdayHtml += '<span class="date">' + this.date.substring(0, 5) + '</span>';
 		}
-		
+
 		return weekdayHtml;
 	}
 });
