@@ -190,22 +190,34 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     protected function _modifyColumns($block)
     {
         $incrementIdColumn = $block->getColumn('real_order_id');
-        $incrementIdColumn->setFilterIndex('main_table.increment_id');
+        if ($incrementIdColumn) {
+            $incrementIdColumn->setFilterIndex('main_table.increment_id');
+        }
 
         $massactionColumn = $block->getColumn('massaction');
-        $massactionColumn->setFilterIndex('main_table.entity_id');
+        if ($incrementIdColumn) {
+            $massactionColumn->setFilterIndex('main_table.entity_id');
+        }
 
         $statusColumn = $block->getColumn('status');
-        $statusColumn->setFilterIndex('main_table.status');
+        if ($incrementIdColumn) {
+            $statusColumn->setFilterIndex('main_table.status');
+        }
 
         $createdAtColumn = $block->getColumn('created_at');
-        $createdAtColumn->setFilterIndex('main_table.created_at');
+        if ($incrementIdColumn) {
+            $createdAtColumn->setFilterIndex('main_table.created_at');
+        }
 
         $baseGrandTotalColumn = $block->getColumn('base_grand_total');
-        $baseGrandTotalColumn->setFilterIndex('main_table.base_grand_total');
+        if ($incrementIdColumn) {
+            $baseGrandTotalColumn->setFilterIndex('main_table.base_grand_total');
+        }
 
         $grandTotalColumn = $block->getColumn('grand_total');
-        $grandTotalColumn->setFilterIndex('main_table.grand_total');
+        if ($incrementIdColumn) {
+            $grandTotalColumn->setFilterIndex('main_table.grand_total');
+        }
 
         return $this;
     }
