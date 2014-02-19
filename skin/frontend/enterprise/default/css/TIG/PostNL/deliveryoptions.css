@@ -5,10 +5,11 @@
 #postnl_delivery_options *:after { -moz-box-sizing:border-box; -webkit-box-sizing:border-box; box-sizing:border-box; }
 
 /* Styling */
+#postnl_delivery_options h2 { font-size:17px; color:#ed8c00; }
 #postnl_delivery_options h2,
 #postnl_delivery_options h3 { font-family:'postnlmedium', Arial, sans-serif; margin:0; line-height:1; }
 #postnl_delivery_options .title { height:54px; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_postnl.png) 100% 0 no-repeat; }
-#postnl_delivery_options .title h2 { font-size:17px; color:#ed8c00; padding-top:11px; }
+#postnl_delivery_options .title h2 { padding-top:11px; }
 #postnl_delivery_options .sub-title { font-size:14px; color:#333334; margin-bottom:9px; }
 
 /* Layout */
@@ -75,6 +76,232 @@
 /* ======================================================================================= */
 
 /* Add Location Pop-up =================================================================== */
+#postnl_add_location .popup-overlay { background:rgba(255, 255, 255, .7); position:fixed; z-index:5000; width:100%; height:100%; top:0; left:0; }
 
+#postnl_add_location .popup-window { background:#fff; -webkit-box-shadow:0 0 12px 0 #a6a6a6; box-shadow:0 0 12px 0 #a6a6a6; -moz-box-shadow:0 0 12px 0 #a6a6a6; border-radius:3px; -webkit-border-radius:3px; -moz-border-radius:3px; position:absolute; z-index:6000; width:700px; height:545px; overflow:hidden; top:50%; left:50%; margin:-273px 0 0 -350px; }
+
+#postnl_add_location .popup-header { height:80px; padding:17px 17px 0; position:relative; }
+#postnl_add_location .popup-header h2 {  }
+
+#postnl_add_location .search-location, 
+#postnl_add_location .search-location .input-text,
+#postnl_add_location .search-location .button{ float:left; }
+#postnl_add_location .search-location .input-text { display:block; width:186px; height:26px; padding:0 12px; border:none; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_location-search_input.gif) 0 0 no-repeat; color:#575756; font:12px/24px 'postnllight', Arial, sans-serif; text-rendering: optimizeLegibility; }
+#postnl_add_location .search-location .button {  }
+
+#postnl_add_location .location-options { float:left; }
+#postnl_add_location .location-options li { display:block; float:left; }
+
+#postnl_add_location .btn-close { position:absolute; top:17px; right:17px; }
+
+#postnl_add_location .popup-content { height:265px; }
+
+#postnl_add_location .popup-footer { height:200px; padding:17px 17px 0; }
 /* ======================================================================================= */
-.#postnl_delivery_options .option .content:after { content:'.'; display:block; height:0; width:0; line-height:0; overflow:hidden; clear:both; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#postnl_add_location .popup-header:after,
+#postnl_delivery_options .option .content:after { content:'.'; display:block; height:0; width:0; line-height:0; overflow:hidden; clear:both; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
