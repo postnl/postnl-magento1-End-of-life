@@ -105,8 +105,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         $currentCollection = $block->getCollection();
-
-        $select = $currentCollection->getSelect();
+        $select = $currentCollection->getSelect()->reset(Zend_Db_Select::WHERE);
 
         /**
          * replace the collection, as the default collection has a bug preventing it from being reset.
@@ -123,6 +122,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $this->setBlock($block);
 
         $this->_joinCollection($collection);
+        $this->_modifyColumns($block);
         $this->_addColumns($block);
         $this->_applySortAndFilter($collection);
         $this->_addMassaction($block);
@@ -176,6 +176,48 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'is_pakje_gemak' => 'postnl_order.is_pakje_gemak',
             )
         );
+
+        return $this;
+    }
+
+    /**
+     * Modifies existing columns to prevent issues with the new collections.
+     *
+     * @param Mage_Adminhtml_Block_Sales_Order_Grid $block
+     *
+     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     */
+    protected function _modifyColumns($block)
+    {
+        $incrementIdColumn = $block->getColumn('real_order_id');
+        if ($incrementIdColumn) {
+            $incrementIdColumn->setFilterIndex('main_table.increment_id');
+        }
+
+        $massactionColumn = $block->getColumn('massaction');
+        if ($incrementIdColumn) {
+            $massactionColumn->setFilterIndex('main_table.entity_id');
+        }
+
+        $statusColumn = $block->getColumn('status');
+        if ($incrementIdColumn) {
+            $statusColumn->setFilterIndex('main_table.status');
+        }
+
+        $createdAtColumn = $block->getColumn('created_at');
+        if ($incrementIdColumn) {
+            $createdAtColumn->setFilterIndex('main_table.created_at');
+        }
+
+        $baseGrandTotalColumn = $block->getColumn('base_grand_total');
+        if ($incrementIdColumn) {
+            $baseGrandTotalColumn->setFilterIndex('main_table.base_grand_total');
+        }
+
+        $grandTotalColumn = $block->getColumn('grand_total');
+        if ($incrementIdColumn) {
+            $grandTotalColumn->setFilterIndex('main_table.grand_total');
+        }
 
         return $this;
     }
