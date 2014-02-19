@@ -1,368 +1,376 @@
-<div id="postnl_delivery_options" class="col2-set">
+<div id="postnl_delivery_options">
     <div class="title">
         <h2><?php echo $this->__('Delivery Options'); ?></h2>
     </div>
-    <div id="postnl_delivery" class="col-1">
-        <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
-        <ul class="option-list">
-            <li class="location">
-                <span class="bkg">
-                    <span class="bkg">
-                        <div class="content">
-                            <span class="location-name"><?php echo Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getStreetFull(); ?></span>
-                        </div>
-                    </span>
-                </span>
-            </li>
-            <li class="option">
-                <a href="#">
+    <div class="col2-set">
+        <div id="postnl_delivery" class="col-1">
+            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+            <ul class="option-list">
+                <li class="location">
                     <span class="bkg">
                         <span class="bkg">
                             <div class="content">
-                                <span class="option-dd">
-                                    <span class="option-day">Di</span>
-                                    <span class="option-date">19-08</span>
-                                </span>
-                                <span class="option-radio"></span>
-                                <span class="option-time">16:00 - 19:00</span>
-                                <span class="option-comment">vandaag + &euro;19,95</span>
+                                <span class="location-name"><?php echo Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getStreetFull(); ?></span>
                             </div>
                         </span>
                     </span>
-                 </a>
-            </li>
-            <li class="option">
-                <a href="#">
+                </li>
+                <li class="option">
+                    <a href="#">
+                        <span class="bkg">
+                            <span class="bkg">
+                                <div class="content">
+                                    <span class="option-dd">
+                                        <span class="option-day">Di</span>
+                                        <span class="option-date">19-08</span>
+                                    </span>
+                                    <span class="option-radio"></span>
+                                    <span class="option-time">16:00 - 19:00</span>
+                                    <span class="option-comment">vandaag + &euro;19,95</span>
+                                </div>
+                            </span>
+                        </span>
+                     </a>
+                </li>
+                <li class="option">
+                    <a href="#">
+                        <span class="bkg">
+                            <span class="bkg">
+                                <div class="content">
+                                    <span class="option-dd">
+                                        <span class="option-day">Wo</span>
+                                        <span class="option-date">20-08</span>
+                                    </span>
+                                    <span class="option-radio"></span>
+                                    <span class="option-time">09:00 - 16:00</span>
+                                </div>
+                            </span>
+                        </span>
+                     </a>
+                </li>
+                <li class="option">
+                    <a href="#">
+                        <span class="bkg">
+                            <span class="bkg">
+                                <div class="content">
+                                    <span class="option-dd">
+                                        <span class="option-day">Do</span>
+                                        <span class="option-date">21-08</span>
+                                    </span>
+                                    <span class="option-radio"></span>
+                                    <span class="option-time">09:00 - 16:00</span>
+                                </div>
+                            </span>
+                        </span>
+                     </a>
+                </li>
+                <li class="option active">
+                    <a href="#">
+                        <span class="bkg">
+                            <span class="bkg">
+                                <div class="content">
+                                    <span class="option-dd"></span>
+                                    <span class="option-radio"></span>
+                                    <span class="option-time">19:00 - 21:00</span>
+                                    <span class="option-comment">avond + &euro;3,00</span>
+                                </div>
+                            </span>
+                        </span>
+                     </a>
+                </li>
+                <li class="option">
+                    <a href="#">
+                        <span class="bkg">
+                            <span class="bkg">
+                                <div class="content">
+                                    <span class="option-dd">
+                                        <span class="option-day">Vr</span>
+                                        <span class="option-date">22-08</span>
+                                    </span>
+                                    <span class="option-radio"></span>
+                                    <span class="option-time">09:00 - 16:00</span>
+                                </div>
+                            </span>
+                        </span>
+                     </a>
+                </li>
+                <li class="option">
+                    <a href="#">
+                        <span class="bkg">
+                            <span class="bkg">
+                                <div class="content">
+                                    <span class="option-dd">
+                                        <span class="option-day">Za</span>
+                                        <span class="option-date">23-08</span>
+                                    </span>
+                                    <span class="option-radio"></span>
+                                    <span class="option-time">09:00 - 16:00</span>
+                                </div>
+                            </span>
+                        </span>
+                     </a>
+                </li>
+                <li class="option">
+                    <a href="#">
+                        <span class="bkg">
+                            <span class="bkg">
+                                <div class="content">
+                                    <span class="option-dd">
+                                        <span class="option-day">Di</span>
+                                        <span class="option-date">26-08</span>
+                                    </span>
+                                    <span class="option-radio"></span>
+                                    <span class="option-time">09:00 - 16:00</span>
+                                </div>
+                            </span>
+                        </span>
+                     </a>
+                </li>
+            </ul>
+        </div>
+        <div id="postnl_pickup" class="col-2">
+            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+            <ul class="option-list">
+                <li class="location">
                     <span class="bkg">
                         <span class="bkg">
                             <div class="content">
-                                <span class="option-dd">
-                                    <span class="option-day">Wo</span>
-                                    <span class="option-date">20-08</span>
-                                </span>
-                                <span class="option-radio"></span>
-                                <span class="option-time">09:00 - 16:00</span>
+                                <span class="location-name">Albert Heijn</span>
+                                <span class="location-type">Postkantoor</span>
+                                <a href="#" onclick="return false;" class="location-info">
+                                    <span title="<?php echo $this->__('More Info'); ?>"><?php echo $this->__('More Info'); ?></span>
+                                    <div class="tooltip">
+                                        <div class="tooltip-header">
+                                            <span class="location-name">Albert Heijn</span>
+                                            <span class="location-address">Nieuwe Binnenweg 288 te Rotterdam</span>
+                                        </div>
+                                        <hr class="tooltip-divider" />
+                                        <div class="tooltip-content">
+                                            <table class="business-hours">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="2"><?php echo $this->__('Business Hours'); ?>:</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Ma</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Di</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Wo</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Do</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Vr</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Za</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Zo</th>
+                                                        <td>12:00 - 20:00</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         </span>
                     </span>
-                 </a>
-            </li>
-            <li class="option">
-                <a href="#">
+                </li>
+                <li class="option">
+                    <a href="#">
+                        <span class="bkg">
+                            <span class="bkg">
+                                <div class="content">
+                                    <span class="option-dd">
+                                        <span class="option-day">Di</span>
+                                        <span class="option-date">19-08</span>
+                                    </span>
+                                    <span class="option-radio"></span>
+                                    <span class="option-time">vanaf 8:30</span>
+                                    <span class="option-comment">extra vroeg + &euro;3,00</span>
+                                </div>
+                            </span>
+                        </span>
+                     </a>
+                </li>
+            </ul>
+            <ul class="option-list">
+                <li class="location">
                     <span class="bkg">
                         <span class="bkg">
                             <div class="content">
-                                <span class="option-dd">
-                                    <span class="option-day">Do</span>
-                                    <span class="option-date">21-08</span>
-                                </span>
-                                <span class="option-radio"></span>
-                                <span class="option-time">09:00 - 16:00</span>
+                                <span class="location-name">Bruna</span>
+                                <span class="location-type">Postkantoor</span>
+                                <a href="#" onclick="return false;" class="location-info">
+                                    <span title="<?php echo $this->__('More Info'); ?>"><?php echo $this->__('More Info'); ?></span>
+                                    <div class="tooltip">
+                                        <div class="tooltip-header">
+                                            <span class="location-name">Bruna</span>
+                                            <span class="location-address">Nieuwe Binnenweg 288 te Rotterdam</span>
+                                        </div>
+                                        <hr class="tooltip-divider" />
+                                        <div class="tooltip-content">
+                                            <table class="business-hours">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="2"><?php echo $this->__('Business Hours'); ?>:</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Ma</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Di</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Wo</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Do</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Vr</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Za</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Zo</th>
+                                                        <td>12:00 - 20:00</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         </span>
                     </span>
-                 </a>
-            </li>
-            <li class="option">
-                <a href="#">
+                </li>
+                <li class="option">
+                    <a href="#">
+                        <span class="bkg">
+                            <span class="bkg">
+                                <div class="content">
+                                    <span class="option-dd">
+                                        <span class="option-day">Di</span>
+                                        <span class="option-date">20-08</span>
+                                    </span>
+                                    <span class="option-radio"></span>
+                                    <span class="option-time">vanaf 16:00</span>
+                                </div>
+                            </span>
+                        </span>
+                     </a>
+                </li>
+            </ul>
+            <ul class="option-list">
+                <li class="location">
                     <span class="bkg">
                         <span class="bkg">
                             <div class="content">
-                                <span class="option-dd"></span>
-                                <span class="option-radio"></span>
-                                <span class="option-time">19:00 - 21:00</span>
-                                <span class="option-comment">avond + &euro;3,00</span>
+                                <span class="location-name">Pakket Automaat</span>
+                                <a href="#" onclick="return false;" class="location-info">
+                                    <span title="<?php echo $this->__('More Info'); ?>"><?php echo $this->__('More Info'); ?></span>
+                                    <div class="tooltip">
+                                        <div class="tooltip-header">
+                                            <span class="location-name">Pakket Automaat</span>
+                                            <span class="location-address">Nieuwe Binnenweg 288 te Rotterdam</span>
+                                        </div>
+                                        <hr class="tooltip-divider" />
+                                        <div class="tooltip-content">
+                                            <table class="business-hours">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="2"><?php echo $this->__('Business Hours'); ?>:</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Ma</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Di</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Wo</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Do</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Vr</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Za</th>
+                                                        <td>08:00 - 21:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Zo</th>
+                                                        <td>12:00 - 20:00</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         </span>
                     </span>
-                 </a>
-            </li>
-            <li class="option">
-                <a href="#">
-                    <span class="bkg">
+                </li>
+                <li class="option">
+                    <a href="#">
                         <span class="bkg">
-                            <div class="content">
-                                <span class="option-dd">
-                                    <span class="option-day">Vr</span>
-                                    <span class="option-date">22-08</span>
-                                </span>
-                                <span class="option-radio"></span>
-                                <span class="option-time">09:00 - 16:00</span>
-                            </div>
+                            <span class="bkg">
+                                <div class="content">
+                                    <span class="option-dd">
+                                        <span class="option-day">Wo</span>
+                                        <span class="option-date">20-08</span>
+                                    </span>
+                                    <span class="option-radio"></span>
+                                    <span class="option-time">vanaf 16:00</span>
+                                    <span class="option-comment">24/7 beschikbaar</span>
+                                </div>
+                            </span>
                         </span>
-                    </span>
-                 </a>
-            </li>
-            <li class="option">
-                <a href="#">
-                    <span class="bkg">
-                        <span class="bkg">
-                            <div class="content">
-                                <span class="option-dd">
-                                    <span class="option-day">Za</span>
-                                    <span class="option-date">23-08</span>
-                                </span>
-                                <span class="option-radio"></span>
-                                <span class="option-time">09:00 - 16:00</span>
-                            </div>
-                        </span>
-                    </span>
-                 </a>
-            </li>
-            <li class="option">
-                <a href="#">
-                    <span class="bkg">
-                        <span class="bkg">
-                            <div class="content">
-                                <span class="option-dd">
-                                    <span class="option-day">Di</span>
-                                    <span class="option-date">26-08</span>
-                                </span>
-                                <span class="option-radio"></span>
-                                <span class="option-time">09:00 - 16:00</span>
-                            </div>
-                        </span>
-                    </span>
-                 </a>
-            </li>
-        </ul>
+                     </a>
+                </li>
+            </ul>
+            <ul class="option-list">
+                <li class="add-location">
+                    <a id="add-location-link" href="#" ><?php echo $this->__('Choose a different pickup location'); ?></a>
+                </li>
+            </ul>
+            
+        </div>
     </div>
-    <div id="postnl_pickup" class="col-2">
-        <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
-        <ul class="option-list">
-            <li class="location">
-                <span class="bkg">
-                    <span class="bkg">
-                        <div class="content">
-                            <span class="location-name">Albert Heijn</span>
-                            <span class="location-type">Postkantoor</span>
-                            <a href="#" onclick="return:false;" class="location-info">
-                                <span title="<?php echo $this->__('More Info'); ?>"><?php echo $this->__('More Info'); ?></span>
-                                <div class="tooltip">
-                                    <div class="tooltip-header">
-                                        <span class="location-name">Albert Heijn</span>
-                                        <span class="location-address">Nieuwe Binnenweg 288 te Rotterdam</span>
-                                    </div>
-                                    <hr class="tooltip-divider" />
-                                    <div class="tooltip-content">
-                                        <table class="business-hours">
-                                            <thead>
-                                                <tr>
-                                                    <th colspan="2"><?php echo $this->__('Business Hours'); ?>:</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <th>Ma</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Di</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Wo</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Do</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Vr</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Za</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Zo</th>
-                                                    <td>12:00 - 20:00</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </span>
-                </span>
-            </li>
-            <li class="option">
-                <a href="#">
-                    <span class="bkg">
-                        <span class="bkg">
-                            <div class="content">
-                                <span class="option-dd">
-                                    <span class="option-day">Di</span>
-                                    <span class="option-date">19-08</span>
-                                </span>
-                                <span class="option-radio"></span>
-                                <span class="option-time">vanaf 8:30</span>
-                                <span class="option-comment">extra vroeg + &euro;3,00</span>
-                            </div>
-                        </span>
-                    </span>
-                 </a>
-            </li>
-        </ul>
-        <ul class="option-list">
-            <li class="location">
-                <span class="bkg">
-                    <span class="bkg">
-                        <div class="content">
-                            <span class="location-name">Bruna</span>
-                            <span class="location-type">Postkantoor</span>
-                            <a href="#" onclick="return:false;" class="location-info">
-                                <span title="<?php echo $this->__('More Info'); ?>"><?php echo $this->__('More Info'); ?></span>
-                                <div class="tooltip">
-                                    <div class="tooltip-header">
-                                        <span class="location-name">Bruna</span>
-                                        <span class="location-address">Nieuwe Binnenweg 288 te Rotterdam</span>
-                                    </div>
-                                    <hr class="tooltip-divider" />
-                                    <div class="tooltip-content">
-                                        <table class="business-hours">
-                                            <thead>
-                                                <tr>
-                                                    <th colspan="2"><?php echo $this->__('Business Hours'); ?>:</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <th>Ma</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Di</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Wo</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Do</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Vr</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Za</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Zo</th>
-                                                    <td>12:00 - 20:00</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </span>
-                </span>
-            </li>
-            <li class="option">
-                <a href="#">
-                    <span class="bkg">
-                        <span class="bkg">
-                            <div class="content">
-                                <span class="option-dd">
-                                    <span class="option-day">Di</span>
-                                    <span class="option-date">20-08</span>
-                                </span>
-                                <span class="option-radio"></span>
-                                <span class="option-time">vanaf 16:00</span>
-                            </div>
-                        </span>
-                    </span>
-                 </a>
-            </li>
-        </ul>
-        <ul class="option-list">
-            <li class="location">
-                <span class="bkg">
-                    <span class="bkg">
-                        <div class="content">
-                            <span class="location-name">Pakket Automaat</span>
-                            <a href="#" onclick="return:false;" class="location-info">
-                                <span title="<?php echo $this->__('More Info'); ?>"><?php echo $this->__('More Info'); ?></span>
-                                <div class="tooltip">
-                                    <div class="tooltip-header">
-                                        <span class="location-name">Pakket Automaat</span>
-                                        <span class="location-address">Nieuwe Binnenweg 288 te Rotterdam</span>
-                                    </div>
-                                    <hr class="tooltip-divider" />
-                                    <div class="tooltip-content">
-                                        <table class="business-hours">
-                                            <thead>
-                                                <tr>
-                                                    <th colspan="2"><?php echo $this->__('Business Hours'); ?>:</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <th>Ma</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Di</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Wo</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Do</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Vr</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Za</th>
-                                                    <td>08:00 - 21:00</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Zo</th>
-                                                    <td>12:00 - 20:00</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </span>
-                </span>
-            </li>
-            <li class="option">
-                <a href="#">
-                    <span class="bkg">
-                        <span class="bkg">
-                            <div class="content">
-                                <span class="option-dd">
-                                    <span class="option-day">Wo</span>
-                                    <span class="option-date">20-08</span>
-                                </span>
-                                <span class="option-radio"></span>
-                                <span class="option-time">vanaf 16:00</span>
-                                <span class="option-comment">24/7 beschikbaar</span>
-                            </div>
-                        </span>
-                    </span>
-                 </a>
-            </li>
-            <li class="add-location">
-                <a href="#"><?php echo $this->__('Choose a different pickup location'); ?></a>
-            </li>
-        </ul>
-    </div>
+    
+    <?php echo $this->getChildHtml('postnl.add.location') ?>
+       
 </div>
