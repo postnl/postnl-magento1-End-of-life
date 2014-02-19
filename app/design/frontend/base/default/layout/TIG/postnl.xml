@@ -90,6 +90,9 @@
                 <type>skin_css</type>
                 <file>css/TIG/PostNL/postcodecheck.css</file>
             </action>
+            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/livepipe.js</file></action>
+            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/slider.js</file></action>
+            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/scrollbar.js</file></action>
             <block type="core/template" name="poswtnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
         </reference>
         <reference name="checkout.onepage.billing">
@@ -103,7 +106,9 @@
 <!-- Individual blocks for Progress steps begins -->
     <checkout_onepage_shippingmethod>
         <block type="checkout/onepage_shipping_method_available" name="root" output="toHtml" template="TIG/PostNL/checkout/onepage/shipping_method/available.phtml">
-            <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.delivery.options" template="TIG/PostNL/checkout/onepage/shipping_method/deliveryoptions.phtml" />
+            <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.delivery.options" template="TIG/PostNL/checkout/onepage/shipping_method/deliveryoptions.phtml">
+                <block type="core/template" name="postnl.add.location" template="TIG/PostNL/checkout/onepage/shipping_method/addlocation.phtml" />
+            </block>
         </block>
     </checkout_onepage_shippingmethod>
 

@@ -1,0 +1,44 @@
+<?php 
+$_postCode = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getPostcode();
+$_houseNumber = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getStreet(2);
+$_extension = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getStreet(3); 
+?>
+<div id="postnl_add_location">
+    <div class="popup-overlay">
+        <div class="popup-window">
+            
+            <div class="popup-header">
+                <h2><?php echo $this->__('Select Post Office'); ?></h2>
+                <div class="search-location">
+                    <form>
+                        <input type="text" class="input-text" name="" value="<?php echo $_postCode . ', ' . $_houseNumber . $_extension ?>" />
+                        <button type="button" class="button btn-search"><span><span><?php echo $this->__('Search'); ?></span></span></button>
+                    </form>
+                </div>
+                <ul class="location-options">
+                    <li>
+                        <a href="javascript:void(0);"><?php echo $this->__('Early Pickup');?></a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);"><?php echo $this->__('Opened In The Evening');?></a>
+                    </li>
+                </ul>
+                <a href="javascript:void(0);" id="close_popup" class="btn-close"><?php echo $this->__('Close'); ?></a>
+            </div>
+                        
+            <div class="popup-content">
+                <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/tmp_maps.jpg'); ?>" alt="" />
+            </div>
+            
+            
+            <div class="popup-footer">
+                <h2><?php echo $this->__('Pickup locations found'); ?></h2>
+                
+                <div class="button-set">
+                    <button type="button btn-save" class="button"><span><span><?php echo $this->__('Save'); ?></span></span></button>
+                </div>
+            </div>
+        
+        </div>
+    </div>
+</div>

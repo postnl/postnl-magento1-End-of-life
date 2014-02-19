@@ -66,10 +66,13 @@
         <ul class="option-list" id="palocation"></ul>
         <ul class="option-list" id="custom_location">
             <li class="add-location">
-                <a href="javascript:void(0);"><?php echo $this->__('choose a different pickup location'); ?></a>
+                <a id="add-location-link" href="#" ><?php echo $this->__('Choose a different pickup location'); ?></a>
             </li>
         </ul>
     </div>
+
+    <?php echo $this->getChildHtml('postnl.add.location') ?>
+
 </div>
 <script type="text/javascript">
 //<![CDATA[
