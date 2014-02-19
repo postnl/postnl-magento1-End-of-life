@@ -61,4 +61,34 @@
     <package_dispenser translate="message" module="postnl">
         <message>Package Dispenser</message>
     </package_dispenser>
+    <monday_short translate="message" module="postnl">
+        <message>Mo</message>
+    </monday_short>
+    <tuesday_short translate="message" module="postnl">
+        <message>Tu</message>
+    </tuesday_short>
+    <wednesday_short translate="message" module="postnl">
+        <message>We</message>
+    </wednesday_short>
+    <thursday_short translate="message" module="postnl">
+        <message>Th</message>
+    </thursday_short>
+    <friday_short translate="message" module="postnl">
+        <message>Fr</message>
+    </friday_short>
+    <saturday_short translate="message" module="postnl">
+        <message>Sa</message>
+    </saturday_short>
+    <sunday_short translate="message" module="postnl">
+        <message>Su</message>
+    </sunday_short>
+    <in_city translate="message" module="postnl">
+        <message>in</message>
+    </in_city>
+    <business_hours translate="message" module="postnl">
+        <message>Business Hours</message>
+    </business_hours>
+    <closed translate="message" module="postnl">
+        <message>Closed</message>
+    </closed>
 </jstranslator>

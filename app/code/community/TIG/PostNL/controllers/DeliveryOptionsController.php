@@ -60,35 +60,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     }
 
     /**
-     * Get the first possible delivery date based on the shop's cut-off time.
-     *
-     * @return TIG_PostNL_DeliveryOptionsController
-     */
-    // public function getDeliveryDateAction()
-    // {
-        // /**
-         // * This action may only be called using AJAX requests
-         // */
-        // if (!$this->getRequest()->isAjax()) {
-            // $this->_redirect('');
-//
-            // return $this;
-        // }
-//
-        // if (!$this->_canUseDeliveryOptions()) {
-            // $this->getResponse()
-                 // ->setBody('not_allowed');
-//
-            // return $this;
-        // }
-//
-        // $storeId = Mage::app()->getStore()->getId();
-//
-        // $data = $this->getRequest()->getPost();
-        // $postcode = $data['postcode'];
-    // }
-
-    /**
      * Get possible evening delivery time frames based on an earliest possible delivery date.
      *
      * @return TIG_PostNL_DeliveryOptionsController
@@ -113,11 +84,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         $storeId = Mage::app()->getStore()->getId();
 
-        $params = $this->getRequest()->getParams();
-        $params =  array(
-            'postcode'    => '1394GA',
-            'housenumber' => 43,
-        );
+        $params = $this->getRequest()->getPost();
 
         try {
             $data = $this->_getTimeframePostData($params);
@@ -189,13 +156,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         $postData = $this->getRequest()->getPost();
 
-        /**
-         * TEMPORARY DEBUG CODE
-         */
-        $postData = array(
-            'postcode' => '1055GH',
-        );
-
         try {
             $data = $this->_getLocationPostData($postData);
         } catch (Exception $e) {
@@ -239,6 +199,15 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         return $this;
     }
 
+    /**
+     * Parses and validates data for the getNearestLocations request.
+     *
+     * @param array $params
+     *
+     * @return array
+     *
+     * @throws TIG_PostNL_Exception
+     */
     protected function _getTimeframePostData($params)
     {
         /**
@@ -376,6 +345,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          */
         if (array_key_exists('postcode', $postData)) {
             $postcode = $postData['postcode'];
+            $postcode = strtoupper($postcode);
 
             $validator = new Zend_Validate_PostCode('nl_NL');
             if (!$validator->isValid($postcode)) {
@@ -389,7 +359,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             }
 
             $data = array(
-                'postcode'     => $postData['postcode'],
+                'postcode'     => $postcode,
                 'deliveryDate' => $deliveryDate,
             );
             return $data;

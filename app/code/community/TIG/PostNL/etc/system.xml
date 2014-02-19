@@ -1560,12 +1560,37 @@
                                 <active>1</active>
                             </depends>
                         </cutoff_time>
+                        <allow_sunday_sorting translate="label comment tooltip" module="postnl">
+                            <label>Allow weekend sorting</label>
+                            <comment>Weekend sorting is a special service where shipments are sorted by PostNL during the weekend, allowing shipments to be delivered on monday. If you enable this field, but weekend sorting is not available for your webshop, parcels will NOT be delivered the next monday.</comment>
+                            <tooltip>Please ask your PostNL account manager if this service is available for your webshop.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </allow_sunday_sorting>
+                        <sunday_cutoff_time translate="label comment" module="postnl">
+                            <label>Weekend cut-off time</label>
+                            <comment>When an order is placed after this time on sunday, another day will be added to the shipping duration.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_deliveryoptions/system_config_source_cutOffTime</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                                <allow_sunday_sorting>1</allow_sunday_sorting>
+                            </depends>
+                        </sunday_cutoff_time>
                         <enable_timeframes translate="label comment" module="postnl">
                             <label>Enable timeframes</label>
                             <comment>Timeframes allow customers to specify on which date and at which time they want their order delivered.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1579,7 +1604,7 @@
                             <tooltip>Evening timeframes may not be available in all areas.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1593,7 +1618,7 @@
                             <comment>Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs.</comment>
                             <tooltip>This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for evening timeframes.</tooltip>
                             <frontend_type>text</frontend_type>
-                            <sort_order>60</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1609,7 +1634,7 @@
                             <comment>Whether or not customers may choose to have their order delivered to a nearby post office.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1623,45 +1648,45 @@
                             <tooltip>Not all post offces may support early delivery.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>1</active>
-                                <enable_postoffice_locations>1</enable_postoffice_locations>
-                            </depends>
-                        </enable_pakjegemak_express>
-                        <early_delivery_fee translate="label comment tooltip" module="postnl">
-                            <label>Early delivery fee</label>
-                            <comment>Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs.</comment>
-                            <tooltip>This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-digits-range digits-range-0-2</validate>
-                            <depends>
-                                <active>1</active>
-                                <enable_postoffice_locations>1</enable_postoffice_locations>
-                                <enable_early_delivery_locations>1</enable_early_delivery_locations>
-                            </depends>
-                        </early_delivery_fee>
-                        <enable_package_dispenser_locations translate="label comment tooltip" module="postnl">
-                            <label>Enable package dispenser locations</label>
-                            <comment>Whether or not customers may choose to have their order delivered to a parcel dispenser.</comment>
-                            <tooltip>Parcel dispensers are available at certain NS train stations across the Netherlands.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <active>1</active>
+                                <enable_pakjegemak>1</enable_pakjegemak>
                             </depends>
-                        </enable_package_dispenser_locations>
+                        </enable_pakjegemak_express>
+                        <pakjegemak_express_fee translate="label comment tooltip" module="postnl">
+                            <label>Early delivery fee</label>
+                            <comment>Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs.</comment>
+                            <tooltip>This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>110</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-digits-range digits-range-0-2</validate>
+                            <depends>
+                                <active>1</active>
+                                <enable_pakjegemak>1</enable_pakjegemak>
+                                <enable_pakjegemak_express>1</enable_pakjegemak_express>
+                            </depends>
+                        </pakjegemak_express_fee>
+                        <enable_pakketautomaat_locations translate="label comment tooltip" module="postnl">
+                            <label>Enable package dispenser locations</label>
+                            <comment>Whether or not customers may choose to have their order delivered to a parcel dispenser.</comment>
+                            <tooltip>Parcel dispensers are available at certain NS train stations across the Netherlands.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>120</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </enable_pakketautomaat_locations>
                     </fields>
                 </delivery_options>
                 <checkout translate="label comment" module="postnl">
