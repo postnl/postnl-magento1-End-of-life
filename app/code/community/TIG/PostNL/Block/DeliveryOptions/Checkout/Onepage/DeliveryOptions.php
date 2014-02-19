@@ -39,6 +39,12 @@
 class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends Mage_Core_Block_Template
 {
     /**
+     * Xpaths to extra fee config settings.
+     */
+    const XPATH_EVENING_TIMEFRAME_FEE  = 'postnl/delivery_options/evening_timeframe_fee';
+    const XPATH_PAKJEGEMAK_EXPRESS_FEE = 'postnl/delivery_options/pakjegemak_express_fee';
+
+    /**
      * Make sure we have a delivery date as this is required for all further requests.
      *
      * @return Mage_Core_Block_Template::_construct()
@@ -46,6 +52,8 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     protected function _construct()
     {
         $shippingAddress = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress();
+        $this->setShippingAddress($shippingAddress);
+
         $postcode = $shippingAddress->getPostcode();
 
         $this->setPostcode($postcode);
@@ -54,6 +62,84 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
         $this->setDeliveryDate($deliveryDate);
 
         return parent::_construct();
+    }
+
+    /**
+     * Get the currenct store's base currency.
+     *
+     * @return string
+     */
+    public function getBaseCurrency()
+    {
+        if ($this->hasBaseCurrency()) {
+            return $this->getData('base_currency');
+        }
+
+        $baseCurrency  = Mage::app()->getStore()->getBaseCurrencyCode();
+
+        $this->setBaseCurrency($baseCurrency);
+        return $baseCurrency;
+    }
+
+    /**
+     * Get the fee charged for evening timeframes.
+     *
+     * @return float
+     */
+    public function getEveningFee()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
+        return $eveningFee;
+    }
+
+    /**
+     * Get the fee charged for PakjeGemak Express.
+     *
+     * @return float
+     */
+    public function getExpressFee()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
+        return $expressFee;
+    }
+
+    /**
+     * Get either the evening or the express fee as a currency value.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getFeeText($type)
+    {
+        switch ($type) {
+            case 'evening':
+                $fee = $this->getEveningFee();
+                break;
+            case 'express':
+                $fee = $this->getExpressFee();
+                break;
+            default:
+                return '';
+        }
+
+        /**
+         * If no fee is entered or an invalid value was entered, return an empty string.
+         */
+        if (!$fee || $fee > 2 || $fee < 0) {
+            return '';
+        }
+
+        $baseCurrency = $this->getBaseCurrency();
+        $currencyModel = Mage::app()->getLocale()->currency($baseCurrency);
+
+        $feeText = $currencyModel->toCurrency($fee);
+
+        return $feeText;
     }
 
     /**
@@ -96,17 +182,47 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     }
 
     /**
+     * Checks whether timeframes are allowed.
+     *
+     * @return boolean
+     */
+    public function canUseTimeframes()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUseTimeframes();
+        return $canUsePakketAutomaat;
+    }
+
+    /**
+     * Checks whether evening timeframes are allowed.
+     *
+     * @return boolean
+     */
+    public function canUseEveningTimeframes()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUseEveningTimeframes();
+        return $canUsePakketAutomaat;
+    }
+
+    /**
      * get the first possible delivery date from PostNL.
      *
      * @param string $postcode
      *
      * @return string
-     *
-     * @todo implement this method
      */
     protected function _getDeliveryDate($postcode)
     {
-        return date('d-m-Y', strtotime('tomorrow'));
+        $storeId = Mage::app()->getStore()->getId();
+
+        $cif = Mage::getModel('postnl_deliveryoptions/cif');
+        $response = $cif->setStoreId(Mage::app()->getStore()->getId())
+                        ->getDeliveryDate($postcode);
+
+        return $response;
     }
 }
 

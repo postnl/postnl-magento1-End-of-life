@@ -39,11 +39,13 @@
 class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 {
     /**
-     * Xpaths to various possible location settings.
+     * Xpaths to various possible delivery option settings.
      */
-    const XPATH_ENABLE_PAKJEGEMAK                  = 'postnl/delivery_options/enable_pakjegemak';
-    const XPATH_ENABLE_PAKJEGEMAK_EXPRESS          = 'postnl/delivery_options/enable_pakjegemak_express';
-    const XPATH_ENABLE_PACKAGE_DISPENSER_LOCATIONS = 'postnl/delivery_options/enable_package_dispenser_locations';
+    const XPATH_ENABLE_PAKJEGEMAK               = 'postnl/delivery_options/enable_pakjegemak';
+    const XPATH_ENABLE_PAKJEGEMAK_EXPRESS       = 'postnl/delivery_options/enable_pakjegemak_express';
+    const XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS = 'postnl/delivery_options/enable_pakketautomaat_locations';
+    const XPATH_ENABLE_TIMEFRAMES               = 'postnl/delivery_options/enable_timeframes';
+    const XPATH_ENABLE_EVENING_TIMEFRAMES       = 'postnl/delivery_options/enable_evening_timeframes';
 
     /**
      * Checks if PakjeGemak is available.
@@ -94,7 +96,43 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PACKAGE_DISPENSER_LOCATIONS, $storeId);
+        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS, $storeId);
+
+        return $enabled;
+    }
+
+    /**
+     * Checks if timeframes are available.
+     *
+     * @param int|boolean $storeId
+     *
+     * @return boolean
+     */
+    public function canUseTimeframes($storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_TIMEFRAMES, $storeId);
+
+        return $enabled;
+    }
+
+    /**
+     * Checks if evening timeframes are available.
+     *
+     * @param int|boolean $storeId
+     *
+     * @return boolean
+     */
+    public function canUseEveningTimeframes($storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EVENING_TIMEFRAMES, $storeId);
 
         return $enabled;
     }

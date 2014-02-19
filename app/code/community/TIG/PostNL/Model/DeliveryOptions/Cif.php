@@ -46,6 +46,14 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const PAKKETAUTOMAAT_DELIVERY_OPTION     = 'PA';
 
     /**
+     * Config options used by the getDeliveryDate service.
+     */
+    const XPATH_SHIPPING_DURATION    = 'postnl/delivery_options/shipping_duration';
+    const XPATH_CUTOFF_TIME          = 'postnl/delivery_options/cutoff_time';
+    const XPATH_ALLOW_SUNDAY_SORTING = 'postnl/delivery_options/allow_sunday_sorting';
+    const XPATH_SUNDAY_CUTOFF_TIME   = 'postnl/delivery_options/sunday_cutoff_time';
+
+    /**
      * Check if the module is set to test mode
      *
      * @see TIG_PostNL_Helper_Checkout::isTestMode()
@@ -77,7 +85,17 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             );
         }
 
-        $soapParams = array();
+        $soapParams = array(
+            'GetDeliveryDate' => array(
+                'Postalcode'                 => $postcode,
+                'ShippingDate'               => date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp()),
+                'ShippingDuration'           => $this->_getShippingDuration(),
+                'CutOffTime'                 => $this->_getCutOffTime(),
+                'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
+                'CutOffTimeForSundaySorting' => $this->_getSundaySortingCutOffTime(),
+            ),
+            'Message' => $this->_getMessage('')
+        );
 
         /**
          * Send the SOAP request
@@ -89,9 +107,8 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         );
 
         if (!is_object($response)
-            || !isset($response->Checkout)
-            || !is_object($response->Checkout)
-            || !isset($response->Checkout->OrderToken)
+            || !isset($response->DeliveryDate)
+            || !is_string($response->DeliveryDate)
         ) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Invalid GetDeliveryDate response: %s', "\n" . var_export($response, true)),
@@ -99,7 +116,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             );
         }
 
-        return $response;
+        return $response->DeliveryDate;
     }
 
     /**
@@ -203,6 +220,82 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         return $response->GetLocationsResult->ResponseLocation;
+    }
+
+    /**
+     * Gets the shipping duration for the specified storeview.
+     *
+     * @return int
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getShippingDuration()
+    {
+        $storeId = $this->getStoreId();
+
+        $shippingDuration = (int) Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
+        if ($shippingDuration > 14 || $shippingDuration < 1) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__(
+                    'Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.',
+                    $shippingDuration
+                ),
+                'POSTNL-0127'
+            );
+        }
+
+        return $shippingDuration;
+    }
+
+    /**
+     * Gets the regular cut-off time for this storeview.
+     *
+     * @return string
+     */
+    protected function _getCutOffTime()
+    {
+        $storeId = $this->getStoreId();
+
+        $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
+        if (!$cutOffTime) {
+            $cutOffTime = '23:59:59';
+        }
+
+        return $cutOffTime;
+    }
+
+    /**
+     * Checks whether sunday sorting is allowed for this storeview.
+     *
+     * @return string
+     */
+    protected function _getSundaySortingAllowed()
+    {
+        $storeId = $this->getStoreId();
+
+        $allowSundaySorting = Mage::getStoreConfigFlag(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+        if ($allowSundaySorting === true) {
+            return 'true';
+        }
+
+        return 'false';
+    }
+
+    /**
+     * Gets the regular cut-off time for this storeview.
+     *
+     * @return string
+     */
+    protected function _getSundaySortingCutOffTime()
+    {
+        $storeId = $this->getStoreId();
+
+        $cutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
+        if (!$cutOffTime) {
+            $cutOffTime = '23:59:59';
+        }
+
+        return $cutOffTime;
     }
 
     /**
