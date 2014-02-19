@@ -106,23 +106,27 @@ PostnlDeliveryOptions = new Class.create({
         var PostnlDeliveryOptions = this;
 
         new Ajax.PostnlRequest(PostnlDeliveryOptions.timeframesUrl,{
-            method: 'post',
-            parameters: {
+            method : 'post',
+            parameters : {
                 postcode     : postcode,
                 housenumber  : housenumber,
                 deliveryDate : deliveryDate,
                 isAjax       : true
             },
-            onSuccess: function(response) {
+            onSuccess : function(response) {
                 /**
                  * Check that the response is valid.
                  *
                  * @todo expand error handling.
                  */
                 var responseText = response.responseText;
-                if (responseText == 'not_allowed' || responseText == 'invalid_data' || responseText == 'error') {
-                    alert(responseText);
-                    return;
+                if (responseText == 'not_allowed'
+                    || responseText == 'invalid_data'
+                    || responseText == 'error'
+                ) {
+                    PostnlDeliveryOptions.showDefaultTimeframe();
+
+                    return false;
                 }
 
                 /**
@@ -136,221 +140,20 @@ PostnlDeliveryOptions = new Class.create({
                 PostnlDeliveryOptions.parseTimeframes(timeframes)
                                      .renderTimeframes();
                 return;
-            }
-        });
-        return this;
-    },
-
-    /**
-     * Get all possible delivery locations for a specified postcode, housenumber and delivery date.
-     *
-     * The result may contain up to 20 locations, however we will end up using a maximum of 3.
-     *
-     * @param string postcode
-     * @param string deliveryDate
-     *
-     * @return PostnlDeliveryOptions
-     */
-    getLocations : function(postcode, housenumber, deliveryDate) {
-        var PostnlDeliveryOptions = this;
-
-        new Ajax.PostnlRequest(PostnlDeliveryOptions.locationsUrl,{
-            method: 'post',
-            parameters: {
-                postcode     : postcode,
-                housenumber  : housenumber,
-                deliveryDate : deliveryDate,
-                isAjax       : true
             },
-            onSuccess: function(response) {
-                /**
-                 * Check that the response is valid.
-                 *
-                 * @todo expand error handling.
-                 */
-                var responseText = response.responseText;
-                if (responseText == 'not_allowed' || responseText == 'invalid_data' || responseText == 'error') {
-                    alert(responseText);
-                    return;
-                }
+            onFailure : function(response) {
+                PostnlDeliveryOptions.showDefaultTimeframe();
 
-                /**
-                 * Eval the resulting JSON in sanitize mode.
-                 */
-                var locations = responseText.evalJSON(true);
-
-                /**
-                 * Parse and render the result.
-                 */
-                PostnlDeliveryOptions.parseLocations(locations)
-                                     .renderLocations();
-                return;
+                return false;
             }
         });
         return this;
-    },
-
-    /**
-     * Parse PostNL delivery locations. We need to filter out unneeded locations so we only end up with the ones closest to the
-     * chosen postcode and housenumber.
-     *
-     * @param array locations.
-     *
-     * @return PostnlDeliveryOptions
-     */
-    parseLocations : function(locations) {
-    	var processedPG = false;
-    	var processedPGE = false;
-    	var processedPA = false;
-    	var processedLocations = new Array();
-
-    	var deliveryOptions = this;
-    	var options = this.options;
-
-        for(var n = 0, l = locations.length; n < l; n++) {
-            /**
-             * If we already have a PakjeGemak, PakjeGemak Express and parcel dispenser location, we're finished and can ignore
-             * the remaining locations.
-             */
-    		if (processedPG && processedPGE && processedPA) {
-    			break;
-    		}
-
-            /**
-             * Get the type of location. Can be PG, PGE or PA.
-             */
-    		var type = locations[n].DeliveryOptions.string;
-
-            /**
-             * If we can add a PG location, we don't already have a PG location and this is a PG location; add it as the chosen
-             * PG location.
-             *
-             * N.B. that a single location can be used as both PG, PGE and PA.
-             */
-    		if (options.allowPg && !processedPG && type.indexOf('PG') != -1) {
-    		    /**
-    		     * Instantiate a new PostnlDeliveryOptions.Location object with this location's parameters.
-    		     */
-    			var postnlPgLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PG');
-
-    			/**
-    			 * Register this location as the chosen PG location.
-    			 */
-    			deliveryOptions.pgLocation = postnlPgLocation;
-    			processedLocations[n]      = postnlPgLocation;
-    			processedPG                = true;
-    		}
-
-            /**
-             * If we can add a PGE location, we don't already have a PGE location and this is a PGE location; add it as the chosen
-             * PGE location.
-             *
-             * N.B. that a single location can be used as both PG, PGE and PA.
-             */
-    		if (options.allowPge && !processedPGE && type.indexOf('PGE') != -1) {
-                /**
-                 * Instantiate a new PostnlDeliveryOptions.Location object with this location's parameters.
-                 */
-    			var postnlPgeLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PGE');
-
-                /**
-                 * Register this location as the chosen PGE location.
-                 */
-    			deliveryOptions.pgeLocation = postnlPgeLocation;
-    			processedLocations[n]       = postnlPgeLocation;
-    			processedPGE                = true;
-    		}
-
-            /**
-             * If we can add a PA location, we don't already have a PA location and this is a PA location; add it as the chosen
-             * PA location.
-             *
-             * N.B. that a single location can be used as both PG, PGE and PA.
-             */
-    		if (options.allowPa && !processedPA && type.indexOf('PA') != -1) {
-                /**
-                 * Instantiate a new PostnlDeliveryOptions.Location object with this location's parameters.
-                 */
-    			var postnlPaLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PA');
-
-                /**
-                 * Register this location as the chosen PA location.
-                 */
-    			deliveryOptions.paLocation = postnlPaLocation;
-    			processedLocations[n]      = postnlPaLocation;
-    			processedPA                = true;
-    		}
-    	}
-
-        /**
-         * Register all selected locations.
-         */
-    	this.locations = processedLocations;
-
-    	return this;
-    },
-
-    renderLocations : function() {
-        $('postnl_pickup').show();
-
-    	$$('#pgelocation li').each(function(element) {
-    		element.remove();
-    	});
-    	$$('#pglocation li').each(function(element) {
-    		element.remove();
-    	});
-    	$$('#palocation li').each(function(element) {
-    		element.remove();
-    	});
-
-        if (this.options.allowPge) {
-        	if (this.pgeLocation) {
-        		this.pgeLocation.render('pgelocation');
-        	}
-    	}
-
-        if (this.options.allowPg) {
-        	if (this.pgLocation) {
-        		this.pgLocation.render('pglocation');
-        	}
-    	}
-
-        if (this.options.allowPa) {
-        	if (this.paLocation) {
-        		this.paLocation.render('palocation');
-        	}
-    	}
-
-    	if (!this.pgeLocation && !this.pgLocation && !this.paLocation) {
-    	    $('postnl_pickup').hide();
-    	}
-
-    	return this;
-    },
-
-    selectLocation : function(element) {
-    	var locations = this.locations;
-
-    	locations.each(function(location) {
-    		if (element && location.element.identify() == element.identify()) {
-    			this.selectedOption = location;
-    			location.select();
-    		} else {
-    			location.unSelect();
-    		}
-    	});
-
-    	if (element) {
-    		this.selectTimeframe(false);
-    	}
-
-    	return false;
     },
 
     parseTimeframes : function(timeframes) {
-    	var parsedTimeframes = new Array();
+        var parsedTimeframes = new Array();
 
-    	for(var n = 0, o = 0, l = timeframes.length; n < l; n++) {
+        for(var n = 0, o = 0, l = timeframes.length; n < l; n++) {
             if (o >= 1 && !this.options.allowTimeframes) {
                 break;
             }
@@ -369,46 +172,314 @@ PostnlDeliveryOptions = new Class.create({
 
                 parsedTimeframes.push(postnlTimeframe);
             }
-    	}
+        }
 
-    	this.timeframes = parsedTimeframes;
+        this.timeframes = parsedTimeframes;
 
-    	return this;;
+        return this;;
     },
 
     renderTimeframes : function() {
-    	$$('#timeframes li.option').each(function(element) {
-    		element.remove();
-    	});
+        $$('#timeframes li.option').each(function(element) {
+            element.remove();
+        });
 
-    	this.weekdaysProcessed = new Array();
+        this.weekdaysProcessed = new Array();
 
-    	this.timeframes.each(function(timeframe) {
-    		timeframe.render('timeframes');
-    	});
+        this.timeframes.each(function(timeframe) {
+            timeframe.render('timeframes');
+        });
 
         this.timeframes[0].select();
 
-    	return this;
+        return this;
+    },
+
+    showDefaultTimeframe : function() {
+        var fakeTimeframe = {
+            From          : '09:00:00',
+            To            : '18:00:00',
+            TimeframeType : 'Overdag'
+        }
+
+        var postnlTimeframe = new PostnlDeliveryOptions.Timeframe(this.deliveryDate, fakeTimeframe, 0, this);
+        this.timeframes = new Array(postnlTimeframe);
+
+        this.renderTimeframes();
+
+        return this;
     },
 
     selectTimeframe : function(element) {
-    	var timeframes = this.timeframes;
+        var timeframes = this.timeframes;
 
-    	timeframes.each(function(timeframe) {
-    		if (element && timeframe.element.identify() == element.identify()) {
-    			this.selectedOption = timeframe;
-    			timeframe.select();
-    		} else {
-    			timeframe.unSelect();
-    		}
-    	});
+        timeframes.each(function(timeframe) {
+            if (element && timeframe.element.identify() == element.identify()) {
+                this.selectedOption = timeframe;
+                timeframe.select();
+            } else {
+                timeframe.unSelect();
+            }
+        });
 
-    	if (element) {
-    		this.selectLocation(false);
-    	}
+        if (element) {
+            this.selectLocation(false);
+        }
 
-    	return false;
+        return false;
+    },
+
+    /**
+     * Get all possible delivery locations for a specified postcode, housenumber and delivery date.
+     *
+     * The result may contain up to 20 locations, however we will end up using a maximum of 3.
+     *
+     * @param string postcode
+     * @param string deliveryDate
+     *
+     * @return PostnlDeliveryOptions
+     */
+    getLocations : function(postcode, housenumber, deliveryDate) {
+        var PostnlDeliveryOptions = this;
+
+        new Ajax.PostnlRequest(PostnlDeliveryOptions.locationsUrl,{
+            method : 'post',
+            parameters : {
+                postcode     : postcode,
+                housenumber  : housenumber,
+                deliveryDate : deliveryDate,
+                isAjax       : true
+            },
+            onSuccess : function(response) {
+                /**
+                 * Check that the response is valid.
+                 *
+                 * @todo expand error handling.
+                 */
+                var responseText = response.responseText;
+                if (responseText == 'not_allowed'
+                    || responseText == 'invalid_data'
+                    || responseText == 'error'
+                ) {
+                    PostnlDeliveryOptions.hideLocations();
+
+                    return false;
+                }
+
+                /**
+                 * Eval the resulting JSON in sanitize mode.
+                 */
+                var locations = responseText.evalJSON(true);
+
+                /**
+                 * Parse and render the result.
+                 */
+                PostnlDeliveryOptions.parseLocations(locations)
+                                     .renderLocations();
+                return;
+            },
+            onFailure : function(response) {
+                PostnlDeliveryOptions.hideLocations();
+
+                return false;
+            }
+        });
+        return this;
+    },
+
+    /**
+     * Parse PostNL delivery locations. We need to filter out unneeded locations so we only end up with the ones closest to the
+     * chosen postcode and housenumber.
+     *
+     * @param array locations.
+     *
+     * @return PostnlDeliveryOptions
+     */
+    parseLocations : function(locations) {
+        var processedPG = false;
+        var processedPGE = false;
+        var processedPA = false;
+        var processedLocations = new Array();
+
+        var deliveryOptions = this;
+        var options = this.options;
+
+        for(var n = 0, l = locations.length; n < l; n++) {
+            /**
+             * If we already have a PakjeGemak, PakjeGemak Express and parcel dispenser location, we're finished and can ignore
+             * the remaining locations.
+             */
+            if (processedPG && processedPGE && processedPA) {
+                break;
+            }
+
+            /**
+             * Get the type of location. Can be PG, PGE or PA.
+             */
+            var type = locations[n].DeliveryOptions.string;
+
+            if (
+                (options.allowPg && !processedPG && type.indexOf('PG') != -1)
+                && (options.allowPge && !processedPGE && type.indexOf('PGE') != -1)
+            ) {
+                /**
+                 * Instantiate a new PostnlDeliveryOptions.Location object with this location's parameters.
+                 */
+                var postnlPgeLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PGE');
+                var postnlPgLocation = new PostnlDeliveryOptions.Location(locations[n], n+1, deliveryOptions, 'PG');
+
+                postnlPgeLocation.child = postnlPgLocation;
+                postnlPgLocation.parent = postnlPgeLocation;
+
+                /**
+                 * Register this location as the chosen PGE location.
+                 */
+                deliveryOptions.pgeLocation = postnlPgeLocation;
+                deliveryOptions.pgLocation  = postnlPgLocation;
+
+                processedPGE                = true;
+                processedPG                 = true;
+
+                processedLocations.push(postnlPgeLocation);
+                processedLocations.push(postnlPgLocation);
+                continue;
+            }
+
+            /**
+             * If we can add a PGE location, we don't already have a PGE location and this is a PGE location; add it as the chosen
+             * PGE location.
+             */
+            if (options.allowPge && !processedPGE && type.indexOf('PGE') != -1) {
+                /**
+                 * Instantiate a new PostnlDeliveryOptions.Location object with this location's parameters.
+                 */
+                var postnlPgeLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PGE');
+
+                /**
+                 * Register this location as the chosen PGE location.
+                 */
+                deliveryOptions.pgeLocation = postnlPgeLocation;
+                processedPGE                = true;
+
+                processedLocations.push(postnlPgeLocation);
+                continue;
+            }
+
+            /**
+             * If we can add a PG location, we don't already have a PG location and this is a PG location; add it as the chosen
+             * PG location.
+             */
+            if (options.allowPg && !processedPG && type.indexOf('PG') != -1) {
+                /**
+                 * Instantiate a new PostnlDeliveryOptions.Location object with this location's parameters.
+                 */
+                var postnlPgLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PG');
+
+                /**
+                 * Register this location as the chosen PG location.
+                 */
+                deliveryOptions.pgLocation = postnlPgLocation;
+                processedPG                = true;
+
+                processedLocations.push(postnlPgLocation);
+                continue;
+            }
+
+            /**
+             * If we can add a PA location, we don't already have a PA location and this is a PA location; add it as the chosen
+             * PA location.
+             *
+             * N.B. that a single location can be used as both PG, PGE and PA.
+             */
+            if (options.allowPa && !processedPA && type.indexOf('PA') != -1) {
+                /**
+                 * Instantiate a new PostnlDeliveryOptions.Location object with this location's parameters.
+                 */
+                var postnlPaLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PA');
+
+                /**
+                 * Register this location as the chosen PA location.
+                 */
+                deliveryOptions.paLocation = postnlPaLocation;
+                processedPA                = true;
+
+                processedLocations.push(postnlPaLocation);
+                continue;
+            }
+        }
+
+        this.locations = processedLocations;
+
+        return this;
+    },
+
+    renderLocations : function() {
+        $('postnl_pickup').show();
+
+        $$('#pgelocation li').each(function(element) {
+            element.remove();
+        });
+        $$('#pglocation li').each(function(element) {
+            element.remove();
+        });
+        $$('#palocation li').each(function(element) {
+            element.remove();
+        });
+
+        if (this.options.allowPge && this.pgeLocation && !this.pgeLocation.isChild()) {
+            this.pgeLocation.render('pgelocation');
+
+            if (this.pgeLocation.child) {
+                this.pgeLocation.child.render('pgelocation');
+            }
+        }
+
+        if (this.options.allowPg && this.pgLocation && !this.pgLocation.isChild()) {
+            this.pgLocation.render('pglocation');
+
+            if (this.pgLocation.child) {
+                this.pgLocation.child.render('pglocation');
+            }
+        }
+
+        if (this.options.allowPa && this.paLocation && !this.paLocation.isChild()) {
+            this.paLocation.render('palocation');
+
+            if (this.paLocation.child) {
+                this.paLocation.child.render('palocation');
+            }
+        }
+
+        if (!this.pgeLocation && !this.pgLocation && !this.paLocation) {
+            $('postnl_pickup').hide();
+        }
+
+        return this;
+    },
+
+    hideLocations : function() {
+        $('postnl_pickup').hide();
+
+        return this;
+    },
+
+    selectLocation : function(element) {
+        var locations = this.locations;
+
+        locations.each(function(location) {
+            if (element && location.element.identify() == element.identify()) {
+                this.selectedOption = location;
+                location.select();
+            } else {
+                location.unSelect();
+            }
+        });
+
+        if (element) {
+            this.selectTimeframe(false);
+        }
+
+        return false;
     }
 });
 
@@ -418,43 +489,43 @@ PostnlDeliveryOptions = new Class.create({
  * Contains functionality to select and unselect delivery options.
  */
 PostnlDeliveryOptions.Option = new Class.create({
-	element : false,
+    element : false,
 
     /**
      * Select an element by adding the 'active' class.
      *
      * @return PostnlDeliveryOptions.Option
      */
-	select : function() {
-		var element = this.element;
-		if (!element) {
-			return this;
-		}
+    select : function() {
+        var element = this.element;
+        if (!element) {
+            return this;
+        }
 
-		if (!element.hasClassName('active')) {
-			element.addClassName('active');
-		}
+        if (!element.hasClassName('active')) {
+            element.addClassName('active');
+        }
 
-		return this;
-	},
+        return this;
+    },
 
     /**
      * Unselect an option by removing the 'active' class.
      *
      * @return PostnlDeliveryOptions.Option
      */
-	unSelect : function() {
-		var element = this.element;
-		if (!element) {
-			return this;
-		}
+    unSelect : function() {
+        var element = this.element;
+        if (!element) {
+            return this;
+        }
 
-		if (element.hasClassName('active')) {
-			element.removeClassName('active');
-		}
+        if (element.hasClassName('active')) {
+            element.removeClassName('active');
+        }
 
-		return this;
-	}
+        return this;
+    }
 });
 
 /**
@@ -462,20 +533,24 @@ PostnlDeliveryOptions.Option = new Class.create({
  * of location and any html elements associated to this location.
  */
 PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, {
-	initialize : function(location, locationIndex, deliveryOptions, type) {
-		this.address      = location.Address;
-		this.distance     = location.Distance;
-		this.latitude     = location.Latitude;
-		this.longitude    = location.Longitude;
-		this.name         = location.Name;
-		this.openingHours = location.OpeningHours;
+    renderHeader : true,
+    child        : false,
+    parent       : false,
 
-		this.locationIndex = locationIndex;
+    initialize : function(location, locationIndex, deliveryOptions, type) {
+        this.address      = location.Address;
+        this.distance     = location.Distance;
+        this.latitude     = location.Latitude;
+        this.longitude    = location.Longitude;
+        this.name         = location.Name;
+        this.openingHours = location.OpeningHours;
 
-		this.deliveryOptions = deliveryOptions;
+        this.locationIndex = locationIndex;
 
-		this.type = type;
-	},
+        this.deliveryOptions = deliveryOptions;
+
+        this.type = type;
+    },
 
     /**
      * Render the location and attach it to the supplied parent element.
@@ -484,56 +559,69 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
      *
      * @return PostnlDeliveryOptions.Location
      */
-	render : function(parent) {
-		var date = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+    render : function(parent) {
+        var deliveryDate = deliveryOptions.deliveryDate;
+        var date = new Date(deliveryDate.substring(6, 10), deliveryDate.substring(3, 5), deliveryDate.substring(0, 2));
+        var id = 'location_' + this.locationIndex;
+        if (this.isChild()) {
+            id += '_child';
+        }
 
         /**
          * Get the html for this location.
          */
-		var html = '<li class="location">';
-		html += '<span class="bkg">';
-		html += '<span class="bkg">';
-		html += '<div class="content">';
-		html += '<span class="location-name">' + this.name + '</span>';
+        var html = '';
 
-		if (this.type == 'PG' || this.type == 'PGE') {
-			html += '<span class="location-type">' + Translator.translate('Post Office') + '</span>';
-		} else {
-			html += '<span class="location-type">' + Translator.translate('Package Dispenser') + '</span>';
-		}
+        if (!this.isChild()) {
+            html += '<li class="location">';
+            html += '<span class="bkg">';
+            html += '<span class="bkg">';
+            html += '<div class="content">';
+            html += '<span class="location-name">' + this.name + '</span>';
 
-        html += '<a href="javascript:void(0);" class="location-info">';
-		html += '<span>' + Translator.translate('More Info') + '</span>';
-		html += this.getTooltipHtml();
-		html += '</a>';
-		html += '</div>';
-		html += '</span>';
-		html += '</span>';
-		html += '</li>';
+            if (this.type == 'PG' || this.type == 'PGE') {
+                html += '<span class="location-type">' + Translator.translate('Post Office') + '</span>';
+            } else {
+                html += '<span class="location-type">' + Translator.translate('Package Dispenser') + '</span>';
+            }
 
-		html += '<li class="option" id="location_' + this.locationIndex + '">';
-		html += '<a href="#">';
-		html += '<span class="bkg">';
-		html += '<span class="bkg">';
-		html += '<div class="content">';
-		html += '<span class="option-dd">';
-		html += '<span class="option-day">' + this.deliveryOptions.weekdays[date.getDay()] + '</span>';
-		html += '<span class="option-date">' + date.getDate() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '</span>';
-		html += '</span>';
-		html += '<span class="option-radio"></span>';
+            html += '<a href="javascript:void(0);" class="location-info">';
+            html += '<span>' + Translator.translate('More Info') + '</span>';
+            html += this.getTooltipHtml();
+            html += '</a>';
+            html += '</div>';
+            html += '</span>';
+            html += '</span>';
+            html += '</li>';
+        }
 
-		if (this.type == 'PGE') {
-			html += '<span class="option-time">' + Translator.translate('from') + ' 8:30</span>';
-		} else {
-			html += '<span class="option-time">' + Translator.translate('from') + ' 16:00</span>';
-		}
+        html += '<li class="option" id="' + id + '">';
+        html += '<a href="#">';
+        html += '<span class="bkg">';
+        html += '<span class="bkg">';
+        html += '<div class="content">';
+        html += '<span class="option-dd">';
 
-		html += '<span class="option-comment">' + this.getCommentHtml() + '</span>';
-		html += '</div>';
-		html += '</span>';
-		html += '</span>';
-		html += '</a>';
-		html += '</li>';
+        if (!this.isChild()) {
+            html += '<span class="option-day">' + this.deliveryOptions.weekdays[date.getDay()] + '</span>';
+            html += '<span class="option-date">' + date.getDate() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '</span>';
+        }
+
+        html += '</span>';
+        html += '<span class="option-radio"></span>';
+
+        if (this.type == 'PGE') {
+            html += '<span class="option-time">' + Translator.translate('from') + ' 8:30</span>';
+        } else {
+            html += '<span class="option-time">' + Translator.translate('from') + ' 16:00</span>';
+        }
+
+        html += '<span class="option-comment">' + this.getCommentHtml() + '</span>';
+        html += '</div>';
+        html += '</span>';
+        html += '</span>';
+        html += '</a>';
+        html += '</li>';
 
         /**
          * If an element's id was supplied, get the parent element.
@@ -545,31 +633,31 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
         /**
          * Attach the location to the bottom of the parent element.
          */
-		parent.insert({
-			bottom: html
-		});
+        parent.insert({
+            bottom: html
+        });
 
         /**
          * Get the newly created element and observe it's 'click' event.
          */
-		var element = $('location_' + this.locationIndex);
-		element.observe('click', function(event) {
-			event.stop();
+        var element = $(id);
+        element.observe('click', function(event) {
+            event.stop();
 
             if (this.hasClassName('active')) {
                 return true;
             }
 
-			deliveryOptions.selectLocation(this);
-		});
+            deliveryOptions.selectLocation(this);
+        });
 
         /**
          * Add the newly created element to this location, so we can retreive it later.
          */
-		this.element = element;
+        this.element = element;
 
-		return this;
-	},
+        return this;
+    },
 
     /**
      * Gets the comment html for this location. The comment contains any additional fees incurred by choosing this option and, in
@@ -577,14 +665,14 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
      *
      * @return string
      */
-	getCommentHtml : function() {
-		var commentHtml = '';
-		var type = this.type;
+    getCommentHtml : function() {
+        var commentHtml = '';
+        var type = this.type;
 
         /**
          * Additional fees may only be charged for PakjeGemak Express locations.
          */
-		if (type == 'PGE') {
+        if (type == 'PGE') {
             var extraCosts = this.deliveryOptions.options.expressFee;
             var extraCostHtml = '';
 
@@ -592,13 +680,13 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
                 extraCostHtml += ' + ' + extraCosts;
             }
 
-			commentHtml = Translator.translate('early delivery') + extraCostHtml;
-		} else if (type == 'PA') {
-			commentHtml = '24/7 ' + Translator.translate('available');
-		}
+            commentHtml = Translator.translate('early delivery') + extraCostHtml;
+        } else if (type == 'PA') {
+            commentHtml = '24/7 ' + Translator.translate('available');
+        }
 
-		return commentHtml;
-	},
+        return commentHtml;
+    },
 
     /**
      * Create the html for this location's tooltip. The tooltip contains address information as well as information regarding
@@ -606,14 +694,14 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
      *
      * @return string
      */
-	getTooltipHtml : function() {
-	    /**
-	     * Get the base tooltip html and the address info.
-	     */
-	    var address = this.address;
+    getTooltipHtml : function() {
+        /**
+         * Get the base tooltip html and the address info.
+         */
+        var address = this.address;
 
-	    var html = '<div class="tooltip">';
-	    html += '<div class="tooltip-header">';
+        var html = '<div class="tooltip">';
+        html += '<div class="tooltip-header">';
         html += '<span class="location-name">' + this.name + '</span>';
         html += '<span class="location-address">' + address.Street + ' ' + address.HouseNr + ' ' + Translator.translate('in') + ' ' + address.City + '</span>';
         html += '</div>';
@@ -726,92 +814,100 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
         html += '</div>';
 
         return html;
-	}
+    },
+
+    isChild : function() {
+        if (this.parent !== false) {
+            return true;
+        }
+
+        return false;
+    }
 });
 
 PostnlDeliveryOptions.Timeframe = new Class.create(PostnlDeliveryOptions.Option, {
-	initialize : function(date, timeframe, timeframeIndex, deliveryOptions) {
-		this.date = date;
-		this.from = timeframe.From;
-		this.to   = timeframe.To;
-		this.type = timeframe.TimeframeType;
+    initialize : function(date, timeframe, timeframeIndex, deliveryOptions) {
+        this.date = date;
+        this.from = timeframe.From;
+        this.to   = timeframe.To;
+        this.type = timeframe.TimeframeType;
 
-		this.timeframeIndex = timeframeIndex;
+        this.timeframeIndex = timeframeIndex;
 
-		this.deliveryOptions = deliveryOptions;
-	},
+        this.deliveryOptions = deliveryOptions;
+    },
 
-	render : function(parent) {
-		var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5), this.date.substring(0, 2));
+    render : function(parent) {
+        var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5), this.date.substring(0, 2));
 
-		var html = '<li class="option" id="timeframe_' + this.timeframeIndex + '">';
-		html += '<a href="#">';
-		html += '<span class="bkg">';
-		html += '<span class="bkg">';
-		html += '<div class="content">';
-		html += '<span class="option-dd">';
-		html += this.getWeekdayHtml();
-		html += '</span>';
-		html += '<span class="option-radio"></span>';
-		html += '<span class="option-time">' + this.from.substring(0, 5) + ' - ' + this.to.substring(0, 5) + '</span>';
-		html += this.getCommentHtml();
-		html += '</div>';
-		html += '</span>';
-		html += '</span>';
-		html += '</a>';
-		html += '</li>';
+        var html = '<li class="option" id="timeframe_' + this.timeframeIndex + '">';
+        html += '<a href="#">';
+        html += '<span class="bkg">';
+        html += '<span class="bkg">';
+        html += '<div class="content">';
+        html += '<span class="option-dd">';
+        html += this.getWeekdayHtml();
+        html += '</span>';
+        html += '<span class="option-radio"></span>';
+        html += '<span class="option-time">' + this.from.substring(0, 5) + ' - ' + this.to.substring(0, 5) + '</span>';
+        html += this.getCommentHtml();
+        html += '</div>';
+        html += '</span>';
+        html += '</span>';
+        html += '</a>';
+        html += '</li>';
 
-		$(parent).insert({
-			bottom: html
-		});
+        $(parent).insert({
+            bottom: html
+        });
 
-		var element = $('timeframe_' + this.timeframeIndex);
-		element.observe('click', function(event) {
-			event.stop();
+        var element = $('timeframe_' + this.timeframeIndex);
+        element.observe('click', function(event) {
+            event.stop();
 
             if (this.hasClassName('active')) {
                 return true;
             }
 
-			deliveryOptions.selectTimeframe(this);
-		});
+            deliveryOptions.selectTimeframe(this);
+        });
 
-		this.element = element;
+        this.element = element;
 
-		return this;
-	},
+        return this;
+    },
 
-	getCommentHtml : function() {
-		var comment = '';
-		if (this.type == 'Avond') {
-			var extraCosts = this.deliveryOptions.options.eveningFee;
-			var extraCostHtml = '';
+    getCommentHtml : function() {
+        var comment = '';
+        if (this.type == 'Avond') {
+            var extraCosts = this.deliveryOptions.options.eveningFee;
+            var extraCostHtml = '';
 
-			if (extraCosts) {
-				extraCostHtml += ' + ' + extraCosts;
-			}
+            if (extraCosts) {
+                extraCostHtml += ' + ' + extraCosts;
+            }
 
-			comment = '<span class="option-comment">' + Translator.translate('evening') + extraCostHtml + '</span>';
-		}
+            comment = '<span class="option-comment">' + Translator.translate('evening') + extraCostHtml + '</span>';
+        }
 
-		return comment;
-	},
+        return comment;
+    },
 
-	getWeekdayHtml : function() {
-		var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5), this.date.substring(0, 2));
+    getWeekdayHtml : function() {
+        var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5), this.date.substring(0, 2));
 
-		var datesProcessed = this.deliveryOptions.datesProcessed;
-		var weekdayHtml = '';
-		if (datesProcessed.indexOf(date.getTime()) == -1) {
-			var weekdays = this.deliveryOptions.weekdays;
+        var datesProcessed = this.deliveryOptions.datesProcessed;
+        var weekdayHtml = '';
+        if (datesProcessed.indexOf(date.getTime()) == -1) {
+            var weekdays = this.deliveryOptions.weekdays;
 
-			this.deliveryOptions.datesProcessed.push(date.getTime());
-			weekdayHtml = '<span class="option-day">' + weekdays[date.getDay()] + '</span>';
-			weekdayHtml += '<span class="option-date">' + this.date.substring(0, 5) + '</span>';
-		}
+            this.deliveryOptions.datesProcessed.push(date.getTime());
+            weekdayHtml = '<span class="option-day">' + weekdays[date.getDay()] + '</span>';
+            weekdayHtml += '<span class="option-date">' + this.date.substring(0, 5) + '</span>';
+        }
 
-		return weekdayHtml;
-	}
+        return weekdayHtml;
+    }
 });
 
 if (!Array.prototype.indexOf) {
