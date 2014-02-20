@@ -77,7 +77,7 @@ PostnlDeliveryOptions = new Class.create({
         weekdays[6] = Translator.translate('Sa');
 
         this.weekdays = weekdays;
-        this.datesProcessed = new Array();
+        this.datesProcessed = [];
 
         return this;
     },
@@ -94,11 +94,108 @@ PostnlDeliveryOptions = new Class.create({
         return this;
     },
 
+    registerObservers : function() {
+        var postnlDeliveryOptions = this;
+
+        $('custom_location').observe('click', this.openAddLocationWindow.bind(this));
+        $('close_popup').observe('click', this.closeAddLocationWindow.bind(this));
+        $('search-button').observe('click', this.addressSearch.bind(this));
+
+        return this;
+    },
+
+    initMap : function() {
+        var mapOptions = {
+            zoom: 15,
+            center: new google.maps.LatLng(52.3702157, 4.895167899999933), //Amsterdam
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+        this.map = new google.maps.Map($('map-div'), mapOptions);
+
+        var address = this.fullAddress;
+        console.log(address);
+        this.panMapToAddress(address);
+
+        return this;
+    },
+
+    panMapToAddress : function(address) {
+        var map = this.map;
+
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode(
+            {
+                'address': address
+            },
+            function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    var latlng = new google.maps.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng());
+                    map.panTo(latlng);
+                }
+            }
+        );
+
+        return this;
+    },
+
+    getAddLocationWindow : function() {
+        if (this.options && this.options.addLocationWindow) {
+            var addLocationWindow = this.options.addLocationWindow;
+            if (typeof addLocationWindow == 'string') {
+                return $(addLocationWindow);
+            }
+
+            return addLocationWindow;
+        }
+
+        return $('postnl_add_location');
+    },
+
+    openAddLocationWindow : function(event) {
+        if (event) {
+            event.stop();
+        }
+
+        this.getAddLocationWindow().show();
+
+        if (this.map) {
+            var center = this.map.getCenter();
+            google.maps.event.trigger(this.map, "resize");
+            this.map.setCenter(center);
+        }
+
+        return this;
+    },
+
+    closeAddLocationWindow : function(event) {
+        if (event) {
+            event.stop();
+        }
+
+        this.getAddLocationWindow().hide();
+
+        return this;
+    },
+
+    addressSearch : function(event) {
+        if (event) {
+            event.stop();
+        }
+
+        var address = $('search-field').getValue();
+
+        this.panMapToAddress(address);
+
+        return this;
+    },
+
     /**
      * Get all possible delivery timeframes for a specified postcode, housenumber and delivery date.
      *
-     * @param string postcode
-     * @param string deliveryDate
+     * @param postcode
+     * @param housenumber
+     * @param deliveryDate
      *
      * @return PostnlDeliveryOptions
      */
@@ -139,9 +236,9 @@ PostnlDeliveryOptions = new Class.create({
                  */
                 PostnlDeliveryOptions.parseTimeframes(timeframes)
                                      .renderTimeframes();
-                return;
+                return this;
             },
-            onFailure : function(response) {
+            onFailure : function() {
                 PostnlDeliveryOptions.showDefaultTimeframe();
 
                 return false;
@@ -151,7 +248,7 @@ PostnlDeliveryOptions = new Class.create({
     },
 
     parseTimeframes : function(timeframes) {
-        var parsedTimeframes = new Array();
+        var parsedTimeframes = [];
 
         for(var n = 0, o = 0, l = timeframes.length; n < l; n++) {
             if (o >= 1 && !this.options.allowTimeframes) {
@@ -176,7 +273,7 @@ PostnlDeliveryOptions = new Class.create({
 
         this.timeframes = parsedTimeframes;
 
-        return this;;
+        return this;
     },
 
     renderTimeframes : function() {
@@ -184,7 +281,7 @@ PostnlDeliveryOptions = new Class.create({
             element.remove();
         });
 
-        this.weekdaysProcessed = new Array();
+        this.weekdaysProcessed = [];
 
         this.timeframes.each(function(timeframe) {
             timeframe.render('timeframes');
@@ -200,7 +297,7 @@ PostnlDeliveryOptions = new Class.create({
             From          : '09:00:00',
             To            : '18:00:00',
             TimeframeType : 'Overdag'
-        }
+        };
 
         var postnlTimeframe = new PostnlDeliveryOptions.Timeframe(this.deliveryDate, fakeTimeframe, 0, this);
         this.timeframes = new Array(postnlTimeframe);
@@ -234,8 +331,9 @@ PostnlDeliveryOptions = new Class.create({
      *
      * The result may contain up to 20 locations, however we will end up using a maximum of 3.
      *
-     * @param string postcode
-     * @param string deliveryDate
+     * @param postcode
+     * @param housenumber
+     * @param deliveryDate
      *
      * @return PostnlDeliveryOptions
      */
@@ -276,9 +374,9 @@ PostnlDeliveryOptions = new Class.create({
                  */
                 PostnlDeliveryOptions.parseLocations(locations)
                                      .renderLocations();
-                return;
+                return this;
             },
-            onFailure : function(response) {
+            onFailure : function() {
                 PostnlDeliveryOptions.hideLocations();
 
                 return false;
@@ -291,7 +389,7 @@ PostnlDeliveryOptions = new Class.create({
      * Parse PostNL delivery locations. We need to filter out unneeded locations so we only end up with the ones closest to the
      * chosen postcode and housenumber.
      *
-     * @param array locations.
+     * @param locations.
      *
      * @return PostnlDeliveryOptions
      */
@@ -299,7 +397,11 @@ PostnlDeliveryOptions = new Class.create({
         var processedPG = false;
         var processedPGE = false;
         var processedPA = false;
-        var processedLocations = new Array();
+        var processedLocations = [];
+
+        var postnlPgeLocation;
+        var postnlPgLocation;
+        var postnlPaLocation;
 
         var deliveryOptions = this;
         var options = this.options;
@@ -325,8 +427,8 @@ PostnlDeliveryOptions = new Class.create({
                 /**
                  * Instantiate a new PostnlDeliveryOptions.Location object with this location's parameters.
                  */
-                var postnlPgeLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PGE');
-                var postnlPgLocation = new PostnlDeliveryOptions.Location(locations[n], n+1, deliveryOptions, 'PG');
+                postnlPgeLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PGE');
+                postnlPgLocation = new PostnlDeliveryOptions.Location(locations[n], n+1, deliveryOptions, 'PG');
 
                 postnlPgeLocation.child = postnlPgLocation;
                 postnlPgLocation.parent = postnlPgeLocation;
@@ -353,7 +455,7 @@ PostnlDeliveryOptions = new Class.create({
                 /**
                  * Instantiate a new PostnlDeliveryOptions.Location object with this location's parameters.
                  */
-                var postnlPgeLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PGE');
+                postnlPgeLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PGE');
 
                 /**
                  * Register this location as the chosen PGE location.
@@ -373,7 +475,7 @@ PostnlDeliveryOptions = new Class.create({
                 /**
                  * Instantiate a new PostnlDeliveryOptions.Location object with this location's parameters.
                  */
-                var postnlPgLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PG');
+                postnlPgLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PG');
 
                 /**
                  * Register this location as the chosen PG location.
@@ -395,7 +497,7 @@ PostnlDeliveryOptions = new Class.create({
                 /**
                  * Instantiate a new PostnlDeliveryOptions.Location object with this location's parameters.
                  */
-                var postnlPaLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PA');
+                postnlPaLocation = new PostnlDeliveryOptions.Location(locations[n], n, deliveryOptions, 'PA');
 
                 /**
                  * Register this location as the chosen PA location.
@@ -404,7 +506,6 @@ PostnlDeliveryOptions = new Class.create({
                 processedPA                = true;
 
                 processedLocations.push(postnlPaLocation);
-                continue;
             }
         }
 
@@ -555,7 +656,7 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
     /**
      * Render the location and attach it to the supplied parent element.
      *
-     * @param string|object parent The parent element. May either be an element object or an element's id.
+     * @param parent The parent element. May either be an element object or an element's id.
      *
      * @return PostnlDeliveryOptions.Location
      */
@@ -649,6 +750,7 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
             }
 
             deliveryOptions.selectLocation(this);
+            return true;
         });
 
         /**
@@ -838,8 +940,6 @@ PostnlDeliveryOptions.Timeframe = new Class.create(PostnlDeliveryOptions.Option,
     },
 
     render : function(parent) {
-        var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5), this.date.substring(0, 2));
-
         var html = '<li class="option" id="timeframe_' + this.timeframeIndex + '">';
         html += '<a href="#">';
         html += '<span class="bkg">';
@@ -870,6 +970,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create(PostnlDeliveryOptions.Option,
             }
 
             deliveryOptions.selectTimeframe(this);
+            return true;
         });
 
         this.element = element;

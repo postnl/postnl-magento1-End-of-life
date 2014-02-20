@@ -175,6 +175,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Get an array of standard product codes
      *
+     * @param bool $storeId
+     *
      * @return array
      */
     public function getStandardProductCodes($storeId = false)
@@ -185,6 +187,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
 
     /**
      * Get an array of pakjegemak product codes
+     *
+     * @param bool $storeId
      *
      * @return array
      */
@@ -197,6 +201,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Get an array of eu product codes
      *
+     * @param bool $storeId
+     *
      * @return array
      */
     public function getEuProductCodes($storeId = false)
@@ -207,6 +213,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
 
     /**
      * Get an array of global product codes
+     *
+     * @param bool $storeId
      *
      * @return array
      */
@@ -261,7 +269,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * - EU
      * - GLOBAL
      *
-     * @var Mage_Sales_Model_Order_Shipment
+     * @param TIG_PostNL_Model_Core_Shipment $shipment
      *
      * @return string | TIG_PostNL_Helper_Cif
      *
@@ -288,8 +296,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             $this->__('Unable to get valid barcodetype for postnl shipment id #%s', $shipment->getId()),
             'POSTNL-0029'
         );
-
-        return $this;
     }
 
     /**
@@ -347,7 +353,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Check if a given shipment is PakjeGemak
      *
-     * @param TIG_PostNL_Model_Core_Shipment | Mage_Sales_Model_Order_Shipment $shipment
+     * @param TIG_PostNL_Model_Core_Shipment|Mage_Sales_Model_Order_Shipment $shipment
      *
      * @return boolean
      *
@@ -657,9 +663,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             case 'pound':
                 $returnWeight = $weight * 0.45359237;
                 break;
-            case 'shortton':
-                $returnWeight = $weight * 907;
-                break;
             case 'ounce':
                 $returnWeight = $weight * 0.028349523125;
                 break;
@@ -699,7 +702,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * N.B.: if file logging is enabled, the log will be forced
      *
-     * @param SoapClient $client
+     * @param Zend_Soap_Client $client
      *
      * @return TIG_PostNL_Helper_Cif
      *

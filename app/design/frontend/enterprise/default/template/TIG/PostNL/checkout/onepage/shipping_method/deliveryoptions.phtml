@@ -66,7 +66,7 @@
         <ul class="option-list" id="palocation"></ul>
         <ul class="option-list" id="custom_location">
             <li class="add-location">
-                <a id="add-location-link" href="#" ><?php echo $this->__('Choose a different pickup location'); ?></a>
+                <a id="add-location-link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
             </li>
         </ul>
     </div>
@@ -79,11 +79,11 @@
     var options = {
         eveningFee             : '<?php echo $this->getFeeText('evening'); ?>',
         expressFee             : '<?php echo $this->getFeeText('express'); ?>',
-        allowPg                : <?php echo $this->canUsePakjeGemak() ? 'true' : 'false'; ?>,
+        allowPg                : <?php echo $this->canUsePakjeGemak()        ? 'true' : 'false'; ?>,
         allowPge               : <?php echo $this->canUsePakjeGemakExpress() ? 'true' : 'false'; ?>,
-        allowPa                : <?php echo $this->canUsePakketAutomaat() ? 'true' : 'false'; ?>,
-        allowTimeframes        : <?php echo $this->canUseTimeframes() ? 'true' : 'false'; ?>,
-        allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>
+        allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
+        allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
+        allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
     };
 
     deliveryOptions = new PostnlDeliveryOptions(
@@ -95,6 +95,9 @@
         options
     );
 
-    deliveryOptions.showOptions();
+    deliveryOptions.fullAddress = "<?php echo $_address->getStreet1() . ' ' . $_address->getStreet2() . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>";
+    deliveryOptions.registerObservers()
+                   .showOptions()
+                   .initMap();
 //]]>
 </script>
