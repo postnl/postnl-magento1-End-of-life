@@ -93,7 +93,8 @@
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/livepipe.js</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/slider.js</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/scrollbar.js</file></action>
-            <block type="core/template" name="poswtnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
+            <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
+            <block type="core/template" name="postnl_google_maps_api" template="TIG/PostNL/delivery_options/google_maps_api.phtml"/>
         </reference>
         <reference name="checkout.onepage.billing">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>

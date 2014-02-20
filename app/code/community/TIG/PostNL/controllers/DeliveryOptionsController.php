@@ -199,6 +199,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         return $this;
     }
 
+    public function getLocationsInAreaAction()
+    {
+        echo 'test';exit;
+    }
+
     /**
      * Parses and validates data for the getNearestLocations request.
      *
