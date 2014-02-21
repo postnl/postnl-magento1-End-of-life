@@ -111,12 +111,11 @@ PostnlDeliveryOptions = new Class.create({
     },
 
     registerObservers : function() {
-        var postnlDeliveryOptions = this;
-
         $('custom_location').observe('click', this.openAddLocationWindow.bind(this));
         $('close_popup').observe('click', this.closeAddLocationWindow.bind(this));
         $('search-button').observe('click', this.addressSearch.bind(this));
         $('search-field').observe('keydown', this.addressSearch.bind(this));
+        $('location_save').observe('click', this.saveLocation.bind(this));
 
         $$('.location-option-checkbox').each(function(element) {
             element.observe('click', function() {
@@ -176,7 +175,28 @@ PostnlDeliveryOptions = new Class.create({
 
         var address = $('search-field').getValue();
 
-        this.deliveryOptionsMap.panMapToAddress(address);
+        this.deliveryOptionsMap.panMapToAddress(address, true);
+
+        return this;
+    },
+
+    saveLocation : function() {
+        var customLocation = this.deliveryOptionsMap.selectedMarker.location;
+        if (!customLocation) {
+            return this;
+        }
+
+        $$('#customlocation li').each(function(element) {
+            element.remove();
+        });
+
+        this.customLocation = customLocation;
+
+        this.locations.push(customLocation);
+        customLocation.render('customlocation');
+
+        this.selectLocation(customLocation.element);
+        this.closeAddLocationWindow();
 
         return this;
     },
@@ -504,7 +524,8 @@ PostnlDeliveryOptions = new Class.create({
     },
 
     renderLocations : function() {
-        $('postnl_pickup').show();
+        var pickUpList = $('postnl_pickup');
+        pickUpList.show();
 
         $$('#pgelocation li').each(function(element) {
             element.remove();
@@ -541,7 +562,7 @@ PostnlDeliveryOptions = new Class.create({
         }
 
         if (!this.pgeLocation && !this.pgLocation && !this.paLocation) {
-            $('postnl_pickup').hide();
+            pickUpList.hide();
         }
 
         return this;
@@ -600,7 +621,7 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         this.map = new google.maps.Map($('map-div'), mapOptions);
 
-        this.panMapToAddress(this.fullAddress);
+        this.panMapToAddress(this.fullAddress, true);
 
         this.registerMapObservers();
     },
@@ -619,7 +640,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         return this;
     },
 
-    panMapToAddress : function(address) {
+    panMapToAddress : function(address, addMarker) {
         var map = this.map;
         var errorDiv = $('search-field-error');
         errorDiv.hide();
@@ -637,6 +658,15 @@ PostnlDeliveryOptions.Map = new Class.create({
                     map.setZoom(15);
 
                     this.getLocationsWithinBounds();
+
+                    if (addMarker) {
+                        var marker = new google.maps.Marker({
+                            position  : latlng,
+                            map       : map,
+                            title     : address,
+                            draggable : false
+                        });
+                    }
                 } else {
                     errorDiv.show();
                 }
@@ -676,7 +706,8 @@ PostnlDeliveryOptions.Map = new Class.create({
                 if (responseText == 'not_allowed'
                     || responseText == 'invalid_data'
                     || responseText == 'error'
-                    ) {
+                    || responseText == 'no_result'
+                ) {
                     return this;
                 }
 
@@ -726,13 +757,20 @@ PostnlDeliveryOptions.Map = new Class.create({
                 icon      : this.deliveryOptions.getMapIcon()
             });
 
-            var parsedLocation = new PostnlDeliveryOptions.Location(location, parsedLocations.length + 1, this.deliveryOptions, 'custom');
+            var parsedLocation = new PostnlDeliveryOptions.Location(
+                location,
+                parsedLocations.length + 1,
+                this.deliveryOptions,
+                'PG'
+            );
             parsedLocation.marker = marker;
 
             marker.locationCode = location.LocationCode;
             marker.location = parsedLocation;
 
-            google.maps.event.addListener(marker, "click", this.selectMarker.bind(this, marker));
+            google.maps.event.addListener(marker, "click", this.selectMarker.bind(this, marker, true));
+            google.maps.event.addListener(marker, "mouseover", this.markerOnMouseOver.bind(this, marker));
+            google.maps.event.addListener(marker, "mouseout", this.markerOnMouseOut.bind(this, marker));
 
             markers.push(marker);
             parsedLocations.push(parsedLocation);
@@ -790,7 +828,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         return this;
     },
 
-    selectMarker : function(marker, event) {
+    selectMarker : function(marker, scrollTo, event) {
         if (this.selectedMarker
             && this.selectedMarker.location.mapElement.identify() == marker.location.mapElement.identify()
         ) {
@@ -800,6 +838,10 @@ PostnlDeliveryOptions.Map = new Class.create({
         marker.setIcon(this.deliveryOptions.getMapIconSelected());
         marker.location.mapElement.addClassName('selected');
 
+        if (scrollTo) {
+            $('map-locations').scrollTop = 36 * (marker.location.locationIndex - 2);
+        }
+
         if (this.selectedMarker) {
             this.selectedMarker.setIcon(this.deliveryOptions.getMapIcon());
             this.selectedMarker.location.mapElement.removeClassName('selected');
@@ -807,6 +849,26 @@ PostnlDeliveryOptions.Map = new Class.create({
         this.selectedMarker = marker;
 
         this.map.panTo(marker.getPosition());
+
+        return this;
+    },
+
+    markerOnMouseOver : function(marker) {
+        if (!this.selectedMarker
+            || this.selectedMarker.location.mapElement.identify() != marker.location.mapElement.identify()
+            ) {
+            marker.setIcon(this.deliveryOptions.getMapIconSelected());
+        }
+
+        return this;
+    },
+
+    markerOnMouseOut : function(marker) {
+        if (!this.selectedMarker
+            || this.selectedMarker.location.mapElement.identify() != marker.location.mapElement.identify()
+            ) {
+            marker.setIcon(this.deliveryOptions.getMapIcon());
+        }
 
         return this;
     }
@@ -1028,7 +1090,26 @@ PostnlDeliveryOptions.Location = new Class.create(PostnlDeliveryOptions.Option, 
         element.observe('click', function(event) {
             event.stop();
 
-            google.maps.event.trigger(this.marker, 'click');
+            this.oldCenter = this.marker.getPosition();
+
+            this.deliveryOptions.deliveryOptionsMap.selectMarker(this.marker, false, event);
+        }.bind(this));
+
+        element.observe('mouseover', function(event) {
+            event.stop();
+
+            this.oldCenter = this.deliveryOptions.deliveryOptionsMap.map.getCenter();
+            this.deliveryOptions.deliveryOptionsMap.map.setCenter(this.marker.getPosition());
+
+            google.maps.event.trigger(this.marker, 'mouseover');
+        }.bind(this));
+
+        element.observe('mouseout', function(event) {
+            event.stop();
+
+            this.deliveryOptions.deliveryOptionsMap.map.setCenter(this.oldCenter);
+
+            google.maps.event.trigger(this.marker, 'mouseout');
         }.bind(this));
 
         this.mapElement = element;

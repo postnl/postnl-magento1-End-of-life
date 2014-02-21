@@ -75,6 +75,10 @@
             <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions.css</stylesheet></action>
             <action method="addCss"><stylesheet>fonts/TIG/PostNL/fonts.css</stylesheet></action>
             <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/postcodecheck.css</file>
+            </action>
+            <action method="addItem">
                 <type>skin_js</type>
                 <file>js/TIG/PostNL/ajax.js</file>
             </action>
@@ -86,13 +90,10 @@
                 <type>skin_js</type>
                 <file>js/TIG/PostNL/postcodecheck.js</file>
             </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <file>css/TIG/PostNL/postcodecheck.css</file>
-            </action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/livepipe.js</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/slider.js</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/scrollbar.js</file></action>
+            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/placeholder.min.js</file></action>
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="core/template" name="postnl_google_maps_api" template="TIG/PostNL/delivery_options/google_maps_api.phtml"/>
         </reference>
