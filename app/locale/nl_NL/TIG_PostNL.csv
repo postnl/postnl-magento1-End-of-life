@@ -116,7 +116,7 @@ TIG_PostNL::Use HS Tariff,Gebruik het HS tarief
 TIG_PostNL::Enable this field to specify a product attribute to use as the product's HS tariff.,Activeer dit veld om de atributen te specificeren om als HS tarief te gebruiken
 TIG_PostNL::HS Tariff attribute,HS tarief
 TIG_PostNL::The product attribute used to determine the product's HS tariff.,Het productattribuut wat gebruikt wordt om het HS tarief van het product te bepalen
-TIG_PostNL::Customs value attribute,Douane waarde
+TIG_PostNL::Customs value attribute,Douane waarde 
 TIG_PostNL::The product attribute used to determine product's customs value.,Het productattribuut wat gebruikt wordt om de waarde voor de douane van het product te bepalen
 TIG_PostNL::Country of origin attribute,Land van herkomst
 TIG_PostNL::The product attribute used to determine the product's country of origin.,Het productattribuut wat gebruikt wordt om het land van herkomst van het product te bepalen
@@ -223,7 +223,7 @@ TIG_PostNL::Please select one or more shipments.,Selecteer a.u.b. een of meer ze
 TIG_PostNL::You can print a maximum of 200 labels at once.,U kunt maximaal 200 labels printen
 TIG_PostNL::The shipments have been confirmed successfully.,De zendingen zijn succesvol voorgemeld.
 TIG_PostNL::Order #%s cannot be shipped at this time.,Order #%s kan niet worden verzonden
-TIG_PostNL::PostNL replied with the following warnings:,PostNL komt met de volgende waarschuwing:
+TIG_PostNL::PostNL replied with the following warnings:,PostNL geeft de volgende waarschuwing(en):
 TIG_PostNL::Error code %s:,Foutcode %s:
 TIG_PostNL::An error occurred whilst processing your request:,Een fout is opgetreden tijdensn het verwerken van uw aanvraag
 TIG_PostNL::Your webshop has been registered. You should receive an email on the email address you specify shortly. ,Uw webshop is geregistreerd. U ontvangt een e-mail op het door u opgegeven adres
@@ -391,7 +391,7 @@ TIG_PostNL::PostNL Checkout is not available due to the following reasons:,PostN
 TIG_PostNL::Click here for more information from the TiG knowledgebase.,Klik hier voor meer informatie in de TiG knowledgebase.
 TIG_PostNL::This action cannot be used on non-PostNL shipments.,Deze actie kan niet gedaan worden op niet-PostNL zendingen.
 TIG_PostNL::This shipment cannot be confirmed at this time.,Deze zending kan niet voorgemeld worden.
-TIG_PostNL::For EU shipments you may only confirm a shipment after it's labels have been printed.,Europese verzendingen kunnen alleen voorgemeld worden als de labels zijn uitgeprint.
+TIG_PostNL::For EU shipments you may only confirm a shipment after it's labels have been printed.,Europese verzendingen kunnen alleen voorgemeld worden als de labels zijn uitgeprint. 
 TIG_PostNL::Show error details in the frontend,Toon error details in de frontend
 "TIG_PostNL::If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.","Indien deze instelling op 'ja' staat, zullen ook in de frontend bij de meeste errors een foutcode en link naar de TiG knowledgebase getoond worden. Dit is nuttig wanneer u de extensie moet debuggen, echter zou nooit aan mogen staan in een productie omgeving."
 TIG_PostNL::The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.,De PostNL extensie is niet compatibel met uw Magento versie! Dit kan onverwachtte problemen veroorzaken.
@@ -436,7 +436,7 @@ TIG_PostNL::Documents,Documenten
 TIG_PostNL::Commercial Goods,Commerciële Goederen
 TIG_PostNL::Commercial Sample,Commercieel Monster
 TIG_PostNL::Returned Goods,Geretourneerde Goederen
-TIG_PostNL::An error occurred while processing your request: ,Er is een fout opgetreden tijdens het verwerken van uw verzoek:
+TIG_PostNL::An error occurred while processing your request: ,Er is een fout opgetreden tijdens het verwerken van uw verzoek: 
 TIG_PostNL::OrderToken missing for quote #%s,OrderToken is niet aanwezig voor quote #%s
 TIG_PostNL::Unable to create an order for quote #%s,Kan geen order creëren voor quote #%s
 TIG_PostNL::Invalid quote supplied.,Ongeldige quote meegeleverd.
@@ -533,14 +533,14 @@ TIG_PostNL::The confirmAndGenerateLabel action is currently unavailable.,De conf
 TIG_PostNL::Invalid message type requested: %s,Ongeldig bericht type gekozen: %s
 TIG_PostNL::Unable to read directory: %s,Kan folder niet lezen: %s
 TIG_PostNL::Invalid UpdateOrder response: %s,Ongeldige UpdateOrder ontvangen: %s
-"TIG_PostNL::Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.","Hier kunt u uw PostNL account gegevens invullen.</p><p>Voor het gebruik van de extensie dient u zich <a
-href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank'
+"TIG_PostNL::Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.","Hier kunt u uw PostNL account gegevens invullen.</p><p>Voor het gebruik van de extensie dient u zich <a 
+href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' 
 title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen. Indien u de e-mail die deze gegevens bevat niet meer kunt vinden, neem dan contact op met uw PostNL account manager."
 "TIG_PostNL::You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.","Deze gegevens vindt u in uw <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>Checkout instellingen</a> bij PostNL.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is een gratis service, wel dient u zich <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen."
 TIG_PostNL::ONLY CHANGE THESE SETTINGS WITH DIRECT INSTRUCTION FROM POSTNL OR TOTAL INTERNET GROUP,PAS DEZE INSTELLINGEN ENKEL AAN MET DIRECTE INSTRUCTIES VAN POSTNL OF TOTAL INTERNET GROUP
 "TIG_PostNL::Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature.","Klanten die gebruik maken van deze feature zullen ingeschreven worden op de nieuwsbrief van uw webshop, niet op de nieuwsbrief van PostNL. Houd er rekenen mee dat extensies van derden die de Magento nieuwsbrief functionaliteit aanpassen mogelijk zullen conflicteren met deze feature."
 TIG_PostNL::Doorcodes are often used in foreign addresses such as those used in France and Singapore.,Deurcodes worden veelal gebruikt in buitenlandse addressen zoals addressen uit Frankrijk en Singapore.
-"TIG_PostNL::Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.</p><p>By using PostNL Checkout you can offer your customers the option to easily choose their desired delivery date. They will be able to choose when and where they want their order delivered. They may choose to have the order delivered to their home (on a specific day at a specific time) or to have it delivered to their nearest post office.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.","Hier kunt u PostNL Checkout activeren of deactiveren en alle onderdelen van PostNL Checkout configureren</p><p>Met de PostNL Checkout kunt u uw klanten tijdens hun bestelling eenvoudig de gewenste bezorging laten kiezen. Zijn kunnen dan zélf kiezen waar en wanneer zij hun bestelling willen ontvangen, bijv thuis (dagkeuze en tijdvak) of zelf ophalen op een Postkantoor.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is een gratis service, wel dient u zich <a
+"TIG_PostNL::Here you can enable or disable PostNL Checkout as well as completely customize all of it's facets.</p><p>By using PostNL Checkout you can offer your customers the option to easily choose their desired delivery date. They will be able to choose when and where they want their order delivered. They may choose to have the order delivered to their home (on a specific day at a specific time) or to have it delivered to their nearest post office.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.","Hier kunt u PostNL Checkout activeren of deactiveren en alle onderdelen van PostNL Checkout configureren</p><p>Met de PostNL Checkout kunt u uw klanten tijdens hun bestelling eenvoudig de gewenste bezorging laten kiezen. Zijn kunnen dan zélf kiezen waar en wanneer zij hun bestelling willen ontvangen, bijv thuis (dagkeuze en tijdvak) of zelf ophalen op een Postkantoor.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is een gratis service, wel dient u zich <a 
 href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014'
  target='_blank' title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen.
 "
@@ -651,4 +651,17 @@ TIG_PostNL::Sa,Za
 TIG_PostNL::in,te
 TIG_PostNL::Business Hours,Openingstijden
 TIG_PostNL::Closed,Gesloten
+TIG_PostNL::Delivery Options,Bezorgopties
+TIG_PostNL::Delivery,Bezorgen
+TIG_PostNL::or Pickup,of Ophalen
+TIG_PostNL::More Info,Meer informatie
+TIG_PostNL::Business Hours,Openingstijden
 TIG_PostNL::choose a different pickup location,kies een ander ophaal punt
+TIG_PostNL::Select Post Office,Postkantoor kiezen
+TIG_PostNL::Search,Zoeken
+TIG_PostNL::early pickup,extra vroeg ophalen
+TIG_PostNL::opened in the evening,'s avonds open
+TIG_PostNL::Close,Sluiten
+TIG_PostNL::Pickup locations found,Gevonden ophaal locaties
+TIG_PostNL::business hours,openingstijden
+TIG_PostNL::Save,Bewaren

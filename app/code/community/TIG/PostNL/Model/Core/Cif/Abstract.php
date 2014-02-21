@@ -216,8 +216,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             );
 
             /**
-             * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without using the
-             * wsdl cache.
+             * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without
+             * using the wsdl cache.
              */
             try {
                 $client  = new Zend_Soap_Client(
@@ -451,17 +451,22 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      */
     protected function _handleCifException($e, $client = null)
     {
-        $cifHelper = Mage::helper('postnl/cif');
+        $cifHelper   = Mage::helper('postnl/cif');
+        $responseXML = false;
+        $requestXML  = false;
+        $exception   = new Exception;
 
         /**
          * Get the request and response XML data
+         *
+         * @var Zend_Soap_Client $client
          */
         if ($client) {
             $requestXML  = $cifHelper->formatXml($client->getLastRequest());
             $responseXML = $cifHelper->formatXml($client->getLastResponse());
         }
 
-        if ($responseXML) {
+        if ($responseXML && $requestXML) {
             /**
              * If we received a response, parse it for errors and create an appropriate exception
              */

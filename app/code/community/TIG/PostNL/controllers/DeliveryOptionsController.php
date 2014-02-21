@@ -201,11 +201,71 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
     public function getLocationsInAreaAction()
     {
-        echo 'test';exit;
+        /**
+         * This action may only be called using AJAX requests
+         */
+        if (!$this->getRequest()->isAjax()) {
+            $this->_redirect('');
+
+            return $this;
+        }
+
+        if (!$this->_canUseDeliveryOptions()) {
+            $this->getResponse()
+                 ->setBody('not_allowed');
+
+            return $this;
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+
+        $postData = $this->getRequest()->getPost();
+
+        try {
+            $data = $this->_getLocationInAreaPostData($postData);
+        } catch (Exception $e) {
+            Mage::helper('postnl/deliveryOptions')->logException($e);
+
+            $this->getResponse()
+                 ->setBody('invalid_data');
+
+            return $this;
+        }
+
+        try {
+            $cif = Mage::getModel('postnl_deliveryoptions/cif');
+            $response = $cif->setStoreId($storeId)
+                            ->getLocationsInArea($data);
+        } catch (Exception $e) {
+            Mage::helper('postnl/deliveryOptions')->logException($e);
+
+            $this->getResponse()
+                 ->setBody('error');
+
+            return $this;
+        }
+
+        if (!is_array($response)) {
+            $this->getResponse()
+                 ->setBody('error');
+
+            return $this;
+        }
+
+        $locations = Mage::helper('core')->jsonEncode($response);
+
+        /**
+         * Return the result as a json response
+         */
+        $this->getResponse()
+             ->setHeader('Content-type', 'application/x-json')
+             ->setBody($locations);
+
+        return $this;
     }
 
     /**
-     * Parses and validates data for the getNearestLocations request.
+     * Parses and validates data for the GetDeliveryTimeframes request.
      *
      * @param array $params
      *
@@ -216,12 +276,12 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     protected function _getTimeframePostData($params)
     {
         /**
-         * The getEveningTimeframes action requires a postcode and a housenumber.
+         * The GetDeliveryTimeframes action requires a postcode and a housenumber.
          */
         if (!isset($params['postcode']) || !isset($params['housenumber'])) {
             throw new TIG_PostNL_Exception(
                 $this->__(
-                    'Invalid arguments supplied. getEveningTimeframes requires a postcode and a housenumber.'
+                    'Invalid arguments supplied. GetDeliveryTimeframes requires a postcode and a housenumber.'
                 ),
                 'POSTNL-0124'
             );
@@ -249,7 +309,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!$postcodeValidator->isValid($postcode)) {
             throw new TIG_PostNL_Exception(
                 $this->__(
-                    'Invalid postcode supplied for getEveningTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.',
+                    'Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.',
                     $postcode
                 ),
                 'POSTNL-0125'
@@ -262,7 +322,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!$housenumberValidator->isValid($housenumber)) {
             throw new TIG_PostNL_Exception(
                 $this->__(
-                    'Invalid housenumber supplied for getEveningTimeframes request: %s Housenumbers may only contain digits.',
+                    'Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain digits.',
                     $housenumber
                 ),
                 'POSTNL-0126'
@@ -392,6 +452,95 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $data = array(
             'lat'          => $postData['lat'],
             'long'         => $postData['long'],
+            'deliveryDate' => $deliveryDate,
+        );
+
+        return $data;
+    }
+
+    /**
+     * Gets and validates data for the getLocationsInArea request.
+     *
+     * @param array $postData
+     *
+     * @return array
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getLocationInAreaPostData($postData)
+    {
+        if (!isset($postData['northEastLat'])
+            || !isset($postData['northEastLng'])
+            || !isset($postData['southWestLat'])
+            || !isset($postData['southWestLng'])
+        ) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid arguments supplied. getNearestLocationsInArea requires two sets of coordinates.'
+                ),
+                'POSTNL-0128'
+            );
+        }
+
+        $northEastLat = $postData['northEastLat'];
+        $northEastLng = $postData['northEastLng'];
+        $southWestLat = $postData['southWestLat'];
+        $southWestLng = $postData['southWestLng'];
+
+        $latValidator  = new Zend_Validate_Regex(array('pattern' => self::LATITUDE_REGEX));
+        $longValidator = new Zend_Validate_Regex(array('pattern' => self::LONGITUDE_REGEX));
+        if (!$latValidator->isValid($northEastLat) || !$longValidator->isValid($northEastLng)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid NE coordinates supplied for getLocationsInArea request. lat: %s, long: %s',
+                    $northEastLat,
+                    $northEastLng
+                ),
+                'POSTNL-0129'
+            );
+        }
+
+        if (!$latValidator->isValid($southWestLat) || !$longValidator->isValid($southWestLng)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid SW coordinates supplied for getLocationsInArea request. lat: %s, long: %s',
+                    $southWestLat,
+                    $southWestLng
+                ),
+                'POSTNL-0130'
+            );
+        }
+
+        /**
+         * Get the delivery date. If it was supplied, we need to validate it. Otherwise we take tomorrow as the delivery day.
+         */
+        if (array_key_exists('deliveryDate', $postData)) {
+            $deliveryDate = $postData['deliveryDate'];
+
+            $validator = new Zend_Validate_Date(array('format' => 'd-m-Y'));
+            if (!$validator->isValid($deliveryDate)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'Invalid delivery date supplied: %s',
+                        $deliveryDate
+                    ),
+                    'POSTNL-0121'
+                );
+            }
+        } else {
+            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
+            $deliveryDate = date('d-m-Y', $tomorrow);
+        }
+
+        $data = array(
+            'northEast'    => array(
+                'lat'  => $northEastLat,
+                'long' => $northEastLng,
+            ),
+            'southWest'    => array(
+                'lat'  => $southWestLat,
+                'long' => $southWestLng,
+            ),
             'deliveryDate' => $deliveryDate,
         );
 
