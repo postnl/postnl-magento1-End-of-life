@@ -36,69 +36,37 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
+<?php $_helper = Mage::helper('postnl'); ?>
 <div id="postnl_add_location" style="display:none;">
     <div class="popup-overlay">
         <div class="popup-window">
             <div class="popup-header">
-                <h2><?php echo Mage::helper('postnl')->__('Select Post Office'); ?></h2>
+                <h2><?php echo $_helper->__('Select Post Office'); ?></h2>
                 <div class="search-location">
                     <form>
                         <input type="text" class="input-text" name="" id="search-field"/>
-                        <button type="button" class="button btn-search" id="search-button"><span><span><?php echo $this->__('Search'); ?></span></span></button>
+                        <button type="button" class="button btn-search" id="search-button"><span><span><?php echo $_helper->__('Search'); ?></span></span></button>
+                        <div style="display:none;" id="search-field-error" class="validation-advice"><?php echo $_helper->__('Address not found.'); ?></div>
                     </form>
                 </div>
                 <ul class="location-options">
                     <li>
-                        <a href="javascript:void(0);"><?php echo Mage::helper('postnl')->__('early pickup');?></a>
+                        <a href="javascript:void(0);" class="location-option-checkbox"><?php echo $_helper->__('early pickup');?></a>
                     </li>
                     <li>
-                        <a href="javascript:void(0);" class="selected"><?php echo Mage::helper('postnl')->__('opened in the evening');?></a>
+                        <a href="javascript:void(0);" class="selected location-option-checkbox"><?php echo $_helper->__('opened in the evening');?></a>
                     </li>
                 </ul>
-                <a href="javascript:void(0);" title="<?php echo Mage::helper('postnl')->__('Close'); ?>" id="close_popup" class="btn-close"><?php echo Mage::helper('postnl')->__('Close'); ?></a>
+                <a href="javascript:void(0);" title="<?php echo $_helper->__('Close'); ?>" id="close_popup" class="btn-close"><?php echo $_helper->__('Close'); ?></a>
             </div>
             <div class="popup-map" id="map-div"></div>
-            
+
             <div class="popup-content">
-                <h2><?php echo Mage::helper('postnl')->__('Pickup locations found'); ?></h2>
-                
-                <ul class="location-list">
-                    <li class="location">
-                        <a href="javascript:void(0);">
-                            <div class="content">
-                                <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/tmp_bruna.png'); ?>" class="location-icon" alt="Bruna" />
-                                <strong class="location-name">Bruna</strong>
-                                <span class="location-address">Nieuwe Binnenweg 42, Rotterdam</span>
-                                <span class="location-distance">234 m</span>
-                                <a href="javascript:void(0);" class="location-info"><?php echo Mage::helper('postnl')->__('business hours'); ?></a>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="location selected">
-                        <a href="javascript:void(0);">
-                            <div class="content">
-                                <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/tmp_ah.png'); ?>" class="location-icon" alt="Albert Heijn" />
-                                <strong class="location-name">Albert Heijn</strong>
-                                <span class="location-address">Oudedijk 427, Rotterdam</span>
-                                <span class="location-distance">2.1 km</span>
-                                <a href="javascript:void(0);" class="location-info"><?php echo Mage::helper('postnl')->__('business hours'); ?></a>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="location">
-                        <a href="javascript:void(0);">
-                            <div class="content">
-                                <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/tmp_ah.png'); ?>" class="location-icon" alt="Albert Heijn" />
-                                <strong class="location-name">Albert Heijn</strong>
-                                <span class="location-address">Scheep Timmermanslaan 23, Rotterdam</span>
-                                <span class="location-distance">2.1 km</span>
-                                <a href="javascript:void(0);" class="location-info"><?php echo Mage::helper('postnl')->__('business hours'); ?></a>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
+                <h2><?php echo $_helper->__('Pickup locations found'); ?></h2>
+
+                <ul class="location-list" id="map-locations" style="overflow:scroll;"></ul>
                 <div class="button-set">
-                    <button type="button" class="button btn-save next"><span><span><?php echo Mage::helper('postnl')->__('Save'); ?></span></span></button>
+                    <button type="button" class="button btn-save next"><span><span><?php echo $_helper->__('Save'); ?></span></span></button>
                 </div>
             </div>
 

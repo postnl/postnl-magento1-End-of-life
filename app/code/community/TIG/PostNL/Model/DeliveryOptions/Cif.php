@@ -56,9 +56,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     /**
      * Check if the module is set to test mode
      *
-     * @see TIG_PostNL_Helper_Checkout::isTestMode()
+     * @param bool $storeId
      *
      * @return boolean
+     *
+     * @see TIG_PostNL_Helper_Checkout::isTestMode()
      */
     public function isTestMode($storeId = false)
     {
@@ -132,7 +134,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     {
         if (empty($data)) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('No data available for GetEveningTimeframes request.'),
+                Mage::helper('postnl')->__('No data available for request.'),
                 'POSTNL-0117'
             );
         }
@@ -166,7 +168,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             || !isset($response->Timeframes->Timeframe)
         ) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid response for GetEveningTimeframes request: %s', $response),
+                Mage::helper('postnl')->__('Invalid response for getDeliveryTimeframes request: %s', $response),
                 'POSTNL-0122'
             );
         }
@@ -178,7 +180,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
      * Gets nearby post office locations. This service can be based off of a postcode or a set of coordinates. Results may
      * include PakjeGemak, PakjeGemak Express or pakket automaat locations based on the configuration of the extension.
      *
-     * @param string $postcode
+     * @param $data
      *
      * @return string
      *
@@ -188,7 +190,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     {
         if (empty($data)) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('No data available for GetEveningTimeframes request.'),
+                Mage::helper('postnl')->__('No data available for request.'),
                 'POSTNL-0117'
             );
         }
@@ -215,6 +217,53 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         ) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Invalid response for GetNearestLocations request: %s', $response),
+                'POSTNL-0123'
+            );
+        }
+
+        return $response->GetLocationsResult->ResponseLocation;
+    }
+
+    /**
+     * gets post office locations within a specific area, marked by a set of coordinates.
+     *
+     * @param $data
+     *
+     * @return string
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function getLocationsInArea($data)
+    {
+        if (empty($data)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('No data available for request.'),
+                'POSTNL-0117'
+            );
+        }
+
+        $location = $this->_getLocation($data);
+        $message  = $this->_getMessage('');
+
+        $soapParams = array(
+            'Location' => $location,
+            'Message'  => $message,
+        );
+
+        /**
+         * Send the SOAP request
+         */
+        $response = $this->call(
+            'location',
+            'GetLocationsInArea',
+            $soapParams
+        );
+
+        if (!isset($response->GetLocationsResult)
+            || !isset($response->GetLocationsResult->ResponseLocation)
+        ) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid response for getLocationsInArea request: %s', $response),
                 'POSTNL-0123'
             );
         }
@@ -345,6 +394,27 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             $location['Coordinates'] = array(
                 'Latitude'  => $data['lat'],
                 'Longitude' => $data['long'],
+            );
+        }
+
+        /**
+         * Add coordinates for an area marked by two sets of coordinates.
+         *
+         * Please note that PostNL uses NW and SE, while google maps uses NE and SW.
+         */
+        if (isset($data['northEast']['lat'])
+            && isset($data['northEast']['long'])
+            && isset($data['southWest']['lat'])
+            && isset($data['southWest']['long'])
+        ) {
+            $location['CoordinatesNorthWest'] = array(
+                'Latitude'  => $data['northEast']['lat'],
+                'Longitude' => $data['southWest']['long'],
+            );
+
+            $location['CoordinatesSouthEast'] = array(
+                'Latitude'  => $data['southWest']['lat'],
+                'Longitude' => $data['northEast']['long'],
             );
         }
 

@@ -37,6 +37,11 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
+<?php
+/**
+ * @var Mage_Sales_Model_Quote_Address $_address
+ */
+?>
 <?php $_address       = $this->getShippingAddress(); ?>
 <?php $_postcode      = $_address->getPostcode(); ?>
 <?php $_housenumber   = $_address->getStreet2(); ?>
@@ -52,7 +57,7 @@
                 <span class="bkg">
                     <span class="bkg">
                         <div class="content">
-                            <span class="location-name"><?php echo Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getStreetFull(); ?></span>
+                            <span class="location-name"><?php echo $_address->getStreetFull(); ?></span>
                         </div>
                     </span>
                 </span>
@@ -76,7 +81,8 @@
 </div>
 <script type="text/javascript">
 //<![CDATA[
-    var options = {
+    var options;
+    options = {
         eveningFee             : '<?php echo $this->getFeeText('evening'); ?>',
         expressFee             : '<?php echo $this->getFeeText('express'); ?>',
         allowPg                : <?php echo $this->canUsePakjeGemak()        ? 'true' : 'false'; ?>,
@@ -84,11 +90,14 @@
         allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
         allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
+        mapIcon                : '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/LOCATION_CIRCLE.png'); ?>',
+        mapIconSelected        : '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/LOCATION_DROPPIN.png'); ?>'
     };
 
     deliveryOptions = new PostnlDeliveryOptions(
         '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
         '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
+        '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
         '<?php echo $_postcode; ?>',
         '<?php echo $_housenumber; ?>',
         '<?php echo $_deliveryDate; ?>',
