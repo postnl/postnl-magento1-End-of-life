@@ -260,7 +260,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         );
 
         if (!isset($response->GetLocationsResult)
-            || !isset($response->GetLocationsResult->ResponseLocation)
+            || !isset($response->GetLocationsResult)
         ) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Invalid response for getLocationsInArea request: %s', $response),

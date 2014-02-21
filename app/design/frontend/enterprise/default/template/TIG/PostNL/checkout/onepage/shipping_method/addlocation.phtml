@@ -43,8 +43,8 @@
             <div class="popup-header">
                 <h2><?php echo $_helper->__('Select Post Office'); ?></h2>
                 <div class="search-location">
-                    <form>
-                        <input type="text" class="input-text" name="" id="search-field"/>
+                    <form action="#" method="post">
+                        <input type="text" class="input-text" name="" id="search-field" placeholder="<?php echo $_helper->__('Search by zipcode or address'); ?>"/>
                         <button type="button" class="button btn-search" id="search-button"><span><span><?php echo $_helper->__('Search'); ?></span></span></button>
                         <div style="display:none;" id="search-field-error" class="validation-advice"><?php echo $_helper->__('Address not found.'); ?></div>
                     </form>
@@ -66,7 +66,7 @@
 
                 <ul class="location-list" id="map-locations" style="overflow:scroll;"></ul>
                 <div class="button-set">
-                    <button type="button" class="button btn-save next"><span><span><?php echo $_helper->__('Save'); ?></span></span></button>
+                    <button type="button" class="button btn-save next" id="location_save"><span><span><?php echo $_helper->__('Save'); ?></span></span></button>
                 </div>
             </div>
 

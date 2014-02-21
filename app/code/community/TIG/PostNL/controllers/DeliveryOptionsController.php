@@ -180,6 +180,13 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $this;
         }
 
+        if (is_null($response)) {
+            $this->getResponse()
+                 ->setBody('no_result');
+
+            return $this;
+        }
+
         if (!is_array($response)) {
             $this->getResponse()
                  ->setBody('error');
