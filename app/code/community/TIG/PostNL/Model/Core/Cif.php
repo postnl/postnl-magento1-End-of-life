@@ -398,16 +398,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Retrieves the latest shipping status of a shipment from CIF
      *
-     * @param TIG_PostNL_Model_Core_Shipment $shipment
+     * @param $postnlShipment
+     *
+     * @throws TIG_PostNL_Exception
+     * @internal param \TIG_PostNL_Model_Core_Shipment $shipment
      *
      * @return StdClass
      *
-     * @throws TIG_PostNL_Exception
      */
     public function getShipmentStatus($postnlShipment)
     {
-        $shipment = $postnlShipment->getShipment();
-
         $barcode  = $postnlShipment->getMainBarcode();
         $message  = $this->_getMessage($barcode);
         $customer = $this->_getCustomer();
@@ -461,16 +461,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Retrieves the latest shipping status of a shipment from CIF including full status history
      *
-     * @param TIG_PostNL_Model_Core_Shipment $shipment
+     * @param $postnlShipment
+     * @throws TIG_PostNL_Exception
+     * @internal param \TIG_PostNL_Model_Core_Shipment $shipment
      *
      * @return StdClass
      *
-     * @throws TIG_PostNL_Exception
      */
     public function getCompleteShipmentStatus($postnlShipment)
     {
-        $shipment = $postnlShipment->getShipment();
-
         $barcode  = $postnlShipment->getMainBarcode();
         $message  = $this->_getMessage($barcode);
         $customer = $this->_getCustomer();
@@ -481,12 +480,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Shipment' => array(
                 'Barcode'   => $barcode,
             ),
-        );
-
-        $response = $this->call(
-            'ShippingStatus',
-            'CurrentStatus',
-            $soapParams
         );
 
         $response = $this->call(
@@ -524,12 +517,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Confirms the choen shipment without generating labels
      *
-     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param        $postnlShipment
      * @param string $barcode
      *
+     * @param bool   $mainBarcode
+     * @param bool   $shipmentNumber
+     * @throws TIG_PostNL_Exception
+     * @internal param \Mage_Sales_Model_Order_Shipment $shipment
      * @return array
      *
-     * @throws TIG_PostNL_Exception
      */
     public function confirmShipment($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false)
     {
@@ -587,12 +583,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Generates shipping labels for the chosen shipment
      *
-     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param        $postnlShipment
+     * @param        $barcode
+     * @param bool   $mainBarcode
+     * @param bool   $shipmentNumber
      * @param string $printerType The printertype used. Currently only 'GraphicFile|PDF' is fully supported
      *
+     * @throws TIG_PostNL_Exception
+     * @internal param \Mage_Sales_Model_Order_Shipment $shipment
      * @return array
      *
-     * @throws TIG_PostNL_Exception
      */
     public function generateLabels($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false, $printerType = 'GraphicFile|PDF')
     {
@@ -646,12 +646,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Generates shipping labels for the chosen shipment without confirming it
      *
-     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param        $postnlShipment
+     * @param        $barcode
+     * @param bool   $mainBarcode
+     * @param bool   $shipmentNumber
      * @param string $printerType The printertype used. Currently only 'GraphicFile|PDF' is fully supported
      *
+     * @throws TIG_PostNL_Exception
+     * @internal param \Mage_Sales_Model_Order_Shipment $shipment
      * @return array
      *
-     * @throws TIG_PostNL_Exception
      */
     public function generateLabelsWithoutConfirm($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false, $printerType = 'GraphicFile|PDF')
     {
@@ -705,6 +709,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets the Message parameter
      *
+     * @param       $barcode
      * @param array $extra An array of additional parameters to add
      *
      * @return array
@@ -757,11 +762,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Creates the CIF shipment object based on a PostNL shipment
      *
-     * @param TIG_PostNL_Model_Core_Shipment $shipment
+     * @param      $postnlShipment
+     * @param      $barcode
+     * @param bool $mainBarcode
+     * @param bool $shipmentNumber
+     * @internal param \TIG_PostNL_Model_Core_Shipment $shipment
      *
      * @return array
      *
-     * @todo modify to support OVM and PostNL checkout shipments
+     * @todo     modify to support OVM and PostNL checkout shipments
      */
     protected function _getShipment($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false)
     {
@@ -873,9 +882,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets an array containing required address data
      *
-     * @param string $shippingAddress
-     * @param Mage_Sales_Model_Order_Address $address
+     * @param             $addressType
+     * @param bool|string $shippingAddress
      *
+     * @throws TIG_PostNL_Exception
      * @return array
      */
     protected function _getAddress($addressType, $shippingAddress= false)
@@ -1048,11 +1058,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Generates the CIF amount object containing the shipment's insured amount (if any)
      *
-     * @param TIG_PostNL_Model_Core_Shipment $shipment
+     * @param $postnlShipment
+     * @internal param \TIG_PostNL_Model_Core_Shipment $shipment
      *
      * @return array
      *
-     * @todo implement COD
+     * @todo     implement COD
      */
     protected function _getAmount($postnlShipment)
     {
@@ -1105,6 +1116,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Creates the CIF group object
      *
+     * @param int  $groupCount
+     * @param bool $mainBarcode
+     * @param bool $shipmentNumber
      * @return array
      */
     protected function _getGroup($groupCount = 1, $mainBarcode = false, $shipmentNumber = false)
@@ -1476,7 +1490,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Place the item's sorting value in a temporary array where the key is the item's ID
          */
-        $sortingValue = array();
         foreach ($items as $item) {
             $product = $item->getOrderItem()->getProduct();
             $sortingAttributeValue = $product->getDataUsingMethod($sortingAttribute);
@@ -1542,7 +1555,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get a shipment item's country of origin
      *
-     * @param Mage_Sales_Model_Order_Shipment_item
+     * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return string
      */
@@ -1573,7 +1588,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get a shipment item's customs value
      *
-     * @param Mage_Sales_Model_Order_Shipment_item
+     * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return string
      */
@@ -1604,7 +1621,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get a shipment item's customs description
      *
-     * @param Mage_Sales_Model_Order_Shipment_item
+     * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return string
      */
@@ -1734,6 +1753,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get the area field from an address if enabled
      *
+     * @param $address
      * @return string
      */
     protected function _getArea($address)
@@ -1757,6 +1777,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get the area building name from an address if enabled
      *
+     * @param $address
      * @return string
      */
     protected function _getBuildingName($address)
@@ -1780,6 +1801,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get the department field from an address if enabled
      *
+     * @param $address
      * @return string
      */
     protected function _getDepartment($address)
@@ -1803,6 +1825,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get the doorcode field from an address if enabled
      *
+     * @param $address
      * @return string
      */
     protected function _getDoorcode($address)
@@ -1826,6 +1849,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get the floor field from an address if enabled
      *
+     * @param $address
      * @return string
      */
     protected function _getFloor($address)
@@ -1849,6 +1873,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get the remark field from an address if enabled
      *
+     * @param $address
      * @return string
      */
     protected function _getRemark($address)

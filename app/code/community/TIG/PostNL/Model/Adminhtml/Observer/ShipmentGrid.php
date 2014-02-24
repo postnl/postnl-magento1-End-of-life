@@ -672,7 +672,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Sales_Shipment_Grid $block
      *
-     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
      */
     protected function _addMassaction($block)
     {
@@ -765,7 +765,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      *
-     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
      */
     protected function _applySortAndFilter($collection)
     {
@@ -795,7 +795,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      * @param array $filter Array of filters to be added
      *
-     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
      */
     protected function _filterCollection($collection, $filter)
     {
@@ -879,7 +879,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
-     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
      */
     protected function _addColumnFilterToCollection($column)
     {
@@ -909,7 +909,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * @param string $sort The column that the collection is sorted by
      * @param string $dir The direction that is used to sort the collection
      *
-     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
      */
     protected function _sortCollection($collection, $sort, $dir)
     {
@@ -930,7 +930,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
-     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
      */
     protected function _setCollectionOrder($column)
     {

@@ -134,7 +134,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Adds additional joins to the collection that will be used by newly added columns
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
      *
      * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
      */

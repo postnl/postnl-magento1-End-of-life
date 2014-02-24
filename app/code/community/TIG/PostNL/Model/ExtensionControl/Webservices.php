@@ -128,6 +128,8 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      *
      * @param boolean $forceUpdate
      *
+     * @throws TIG_PostNL_Exception
+     *
      * @return TIG_PostNL_Model_ExtensionControl_Webservices
      */
     public function updateStatistics($forceUpdate = false)

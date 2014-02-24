@@ -45,7 +45,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     /**
      * Get lock file resource
      *
-     * @return resource | TIG_Buckaroo3Extended_Model_Process
+     * @return resource | TIG_PostNL_Model_Core_Shipment_Process
      */
     protected function _getLockFile()
     {
@@ -76,7 +76,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
      * Lock process without blocking.
      * This method allow protect multiple process running and fast lock validation.
      *
-     * @return TIG_Buckaroo3Extended_Model_Process
+     * @return TIG_PostNL_Model_Core_Shipment_Process
      */
     public function lock()
     {
@@ -91,7 +91,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     /**
      * Lock and block process
      *
-     * @return TIG_Buckaroo3Extended_Model_Process
+     * @return TIG_PostNL_Model_Core_Shipment_Process
      */
     public function lockAndBlock()
     {
@@ -106,7 +106,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     /**
      * Unlock process
      *
-     * @return TIG_Buckaroo3Extended_Model_Process
+     * @return TIG_PostNL_Model_Core_Shipment_Process
      */
     public function unlock()
     {

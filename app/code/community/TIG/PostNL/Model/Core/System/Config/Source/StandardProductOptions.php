@@ -136,7 +136,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
 
-        $helper = Mage::helper('postnl');
         $options = $this->toOptionArray();
 
         /**
@@ -153,7 +152,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
         /**
          * Check each standard option to see if it's supprted
          */
-        $availableStandardOptions = array();
         foreach ($options as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;

@@ -357,6 +357,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Check if the module is set to test mode
      *
+     * @param bool $storeId
+     *
      * @return boolean
      */
     public function isTestMode($storeId = false)
@@ -677,11 +679,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Based on Mage_Core_Model_Config::getModuleDir()
      *
      * @param string $dir The directory in question
-     * @param string $module The module for which the directory is needed
+     * @param string $moduleName
+     * @internal param string $module The module for which the directory is needed
      *
      * @return string
      *
-     * @see Mage_Core_Model_Config::getModuleDir()
+     * @see      Mage_Core_Model_Config::getModuleDir()
      */
     public function getModuleDir($dir, $moduleName = 'TIG_PostNL')
     {

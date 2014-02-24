@@ -148,7 +148,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     /**
      * Logs a webservice request and response for debug purposes.
      *
-     * @param SoapClient $client
+     * @param Zend_Soap_Client $client
      *
      * @return TIG_PostNL_Helper_Webservices
      *
@@ -181,7 +181,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     /**
      * Logs a webservice exception in the database and/or a log file
      *
-     * @param Mage_Core_Exception|TIG_PostNL_Exception $exception
+     * @param Mage_Core_Exception|TIG_PostNL_Exception|SoapFault $exception
      *
      * @return TIG_PostNL_Helper_Webservices
      *

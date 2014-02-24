@@ -263,6 +263,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Check if the module is set to test mode
      *
+     * @param bool $storeId
+     *
      * @return boolean
      */
     public function isTestMode($storeId = false)

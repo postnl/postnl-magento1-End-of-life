@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -42,7 +42,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * XML path to public webshop ID setting
      */
     const XML_PATH_WEBSHOP_ID = 'postnl/cif/webshop_id';
-    
+
     /**
      * Constants containing XML paths to cif address configuration options
      */
@@ -57,21 +57,21 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     const XML_PATH_DOORCODE_FIELD              = 'postnl/cif_address/doorcode_field';
     const XML_PATH_FLOOR_FIELD                 = 'postnl/cif_address/floor_field';
     const XML_PATH_REMARK_FIELD                = 'postnl/cif_address/remark_field';
-    
+
     /**
      * XML path to all PostNL Checkout payment settings
      * N.B. missing last part os it will return an array of settings
      */
     const XML_PATH_PAYMENT_METHODS = 'postnl/checkout_payment_methods';
-    
+
     /**
      * Newly added 'pakje_gemak' address type
      */
     const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
-    
+
     /**
      * Gets the currently used quote object
-     * 
+     *
      * @return Mage_Sales_Model_Quote
      */
     public function getQuote()
@@ -81,20 +81,20 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         }
 
         $quote = Mage::getSingleton('checkout/session')->getQuote();
-        
+
         $this->setQuote($quote);
         return $quote;
     }
-    
+
     /**
      * Updates a quote with the given PostNL order data. Each part of the data is used to replace the data normally acquired
      * during checkout.
-     * 
+     *
      * @param StdClass $data
      * @param Mage_Sales_Model_Quote | null $quote
-     * 
+     *
      * @return TIG_PostNL_Model_Checkout_Service
-     * 
+     *
      * @throws TIG_PostNL_Exception
      */
     public function updateQuoteAddresses($data, $quote = null)
@@ -105,11 +105,11 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         if (is_null($quote)) {
             $quote = $this->getQuote();
         }
-        
+
         $this->setStoreId($quote->getStoreId());
-        
+
         $this->_verifyData($data, $quote);
-        
+
         /**
          * Get consumer data
          */
@@ -121,31 +121,31 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         } else {
             $phone = preg_replace("/[^0-9]/", '', $phone);
         }
-        
+
         /**
          * Remove all existing addresses, we're going to add new ones
          */
         $this->_removeAllQuoteAddresses($quote);
-        
+
         /**
          * Parse the shippingaddresses
          */
         $delivery = $data->Bezorging;
         $shippingAddressData = $delivery->Geadresseerde;
-        
+
         $shippingAddress = Mage::getModel('sales/quote_address');
         $shippingAddress->setAddressType($shippingAddress::TYPE_SHIPPING)
                         ->setEmail($email)
                         ->setPhone($phone);
-                        
+
         $shippingAddress = $this->_parseAddress($shippingAddress, $shippingAddressData);
-        
+
         $shippingMethod = Mage::helper('postnl/carrier')->getCurrentPostnlShippingMethod();
         if (!$shippingAddress->getShippingMethod()) {
             $shippingAddress->setCollectShippingRates(true)
                             ->setShippingMethod($shippingMethod);
         }
-        
+
         /**
          * Parse the billing address
          */
@@ -154,9 +154,9 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $billingAddress->setAddressType($billingAddress::TYPE_BILLING)
                        ->setEmail($email)
                        ->setPhone($phone);
-                       
+
         $billingAddress = $this->_parseAddress($billingAddress, $billingAddressData);
-        
+
         /**
          * If a servicelocation was set, add that as a third address
          */
@@ -166,17 +166,17 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK)
                               ->setEmail($email)
                               ->setPhone($phone);
-                              
+
             $pakjeGemakAddress = $this->_parseAddress($pakjeGemakAddress, $serviceLocationData);
-            
+
             $quote->addAddress($pakjeGemakAddress);
-            
+
             /**
              * Register that this is a PakjeGemak order
              */
             Mage::register('quote_is_pakje_gemak', 1);
         }
-        
+
         /**
          * Update the quote's addresses
          */
@@ -185,19 +185,19 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
               ->setBillingAddress($billingAddress)
               ->collectTotals()
               ->save();
-        
+
         return $this;
     }
-    
+
     /**
      * Updates a quote with the given payment data (from PostNL or magento).
-     * 
+     *
      * @param mixed $data
      * @param boolean $isOrderdetails Flag whether or not the supplied data was sent by PostNL and not by magento
      * @param boolean $methodOnly Flag whether or not to only set the payment method. If false, all data will be set for the
      * chosen payment method.
      * @param Mage_Sales_Model_Quote | null $quote
-     * 
+     *
      * @return TIG_PostNL_Model_Checkout_Service
      */
     public function updateQuotePayment($data, $isOrderdetails = true, $methodOnly = false, $quote = null)
@@ -208,19 +208,19 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         if (is_null($quote)) {
             $quote = $this->getQuote();
         }
-        
+
         $this->setStoreId($quote->getStoreId());
-        
+
         /**
          * If the payment data is sent by PostNL we need to process it accordingly
          */
         if ($isOrderdetails) {
             $this->_verifyData($data, $quote);
             $this->_processPostnlPaymentData($data, $methodOnly, $quote);
-            
+
             return $this;
         }
-        
+
         /**
          * Otherwise, we need to process the data as we would with a regular checkout procedure
          */
@@ -234,10 +234,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         if (!$quote->isVirtual() && $quote->getShippingAddress()) {
             $quote->getShippingAddress()->setCollectShippingRates(true);
         }
-        
+
         /**
          * Extra checks used by Magento
-         * 
+         *
          * @since Magento v1.13
          */
         $paymentMethodAbstractClass = Mage::getConfig()->getModelClassName('payment/method_abstract');
@@ -253,46 +253,46 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                             | $paymentMethodAbstractClass::CHECK_ORDER_TOTAL_MIN_MAX
                             | $paymentMethodAbstractClass::CHECK_ZERO_TOTAL;
         }
-        
+
         $paymentDataObject = new Varien_Object();
         $paymentDataObject->setPaymentData($data);
-        
+
         Mage::dispatchEvent(
-            'postnl_checkout_set_payment_before', 
+            'postnl_checkout_set_payment_before',
             array(
                 'payment'             => $quote->getPayment(),
                 'quote'               => $quote,
                 'payment_data_object' => $paymentDataObject,
             )
         );
-        
+
         $paymentData = $paymentDataObject->getPaymentData();
-        
+
         $quote->getPayment()->setMethod($data['method'])->importData($paymentData);
         $quote->getPayment()->getMethodInstance()->assignData($paymentData);
-        
+
         Mage::dispatchEvent(
-            'postnl_checkout_set_payment_after', 
+            'postnl_checkout_set_payment_after',
             array(
                 'payment'             => $quote->getPayment(),
                 'quote'               => $quote,
             )
         );
-        
+
         $quote->save();
-        
+
         return $this;
     }
 
     /**
-     * Processes PostNL payment data 
-     * 
+     * Processes PostNL payment data
+     *
      * @param StdClass $data
      * @param boolean $methodOnly
      * @param Mage_Sales_Model_Quote $quote
-     * 
+     *
      * @return TIG_PostNL_Model_Checkout_Service
-     * 
+     *
      * @throws TIG_PostNL_Exception
      */
     protected function _processPostnlPaymentData($data, $methodOnly, $quote)
@@ -301,13 +301,13 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          * Get the payment data PostNL supplied
          */
         $postnlPaymentData = $data->BetaalMethode;
-        
+
         /**
          * Check if the plugin supports the chosen payment method
          */
         $postnlPaymentMethods = Mage::helper('postnl/checkout')->getCheckoutPaymentMethods();
         $methodName = array_search($postnlPaymentData->Code, $postnlPaymentMethods);
-        
+
         /**
          * Check if the payment method chosen is allowed
          */
@@ -317,22 +317,22 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                 'POSTNL-0048'
             );
         }
-        
+
         if ($methodOnly === true) {
             $this->_processPaymentMethod($methodName, $quote);
             return $this;
         }
-        
+
         $this->_processPaymentData($postnlPaymentData, $methodName, $quote);
         return $this;
     }
-    
+
     /**
      * Process a chosen payment method
-     * 
+     *
      * @param string $methodName
      * @param Mage_Sales_Model_Quote $quote
-     * 
+     *
      * @return TIG_PostNL_Exception
      */
     protected function _processPaymentMethod($methodName, $quote)
@@ -342,26 +342,26 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          */
         $methodCode = Mage::getStoreConfig(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method', $quote->getStoreId());
         Mage::register('postnl_payment_data', array('method' => $methodCode));
-        
+
         /**
          * Remove any current payment associtaed with the quote and get a new one
          */
         $payment = $quote->removePayment()
                          ->getPayment();
-        
+
         $payment->setMethod($methodCode);
         $quote->save();
-        
+
         return $this;
     }
 
     /**
      * Process a chosen payment method with extra payment data
-     * 
+     *
      * @param StdClass $postnlPaymentData
      * @param string $methodName
      * @param Mage_Sales_Model_Quote $quote
-     * 
+     *
      * @return TIG_PostNL_Exception
      */
     protected function _processPaymentData($postnlPaymentData, $methodName, $quote)
@@ -370,17 +370,17 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
          * Otherwise we need to form the payment data array containing all relevant payment data
          */
         $paymentData = Mage::app()->getRequest()->getPost('payment', array());
-        
+
         $optionValue = $postnlPaymentData->Optie;
-        
+
         /**
          * Get the payment method code associated with the chosen payment method
          */
         $methodCode = Mage::getStoreConfig(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method', $quote->getStoreId());
-        
+
         /**
          * Extra checks used by Magento
-         * 
+         *
          * @since Magento v1.13
          */
         $paymentMethodAbstractClass = Mage::getConfig()->getModelClassName('payment/method_abstract');
@@ -396,26 +396,26 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                             | $paymentMethodAbstractClass::CHECK_ORDER_TOTAL_MIN_MAX
                             | $paymentMethodAbstractClass::CHECK_ZERO_TOTAL;
         }
-            
+
         if ($quote->isVirtual()) {
             $quote->getBillingAddress()->setPaymentMethod($methodCode);
         } else {
             $quote->getShippingAddress()->setPaymentMethod($methodCode);
             $quote->getShippingAddress()->setCollectShippingRates(true);
         }
-        
+
         $paymentData['method'] = $methodCode;
-        
+
         /**
          * If the chosen payment method has an optional field (like bank selection for iDEAL) we have to check system / config in
          * order to map it to a form field the payment method would expect.
          */
         if ($optionValue) {
             $field = Mage::getStoreConfig(
-                self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_option_field', 
+                self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_option_field',
                 $quote->getStoreId()
             );
-            
+
             /**
              * If a field name is specified we add the option to the payment data as well as to the super global POST array
              */
@@ -424,45 +424,45 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                 $_POST[$field] = $optionValue;
             }
         }
-        
+
         $paymentDataObject = new Varien_Object();
         $paymentDataObject->setPaymentData($paymentData);
-        
+
         Mage::dispatchEvent(
-            'postnl_checkout_set_payment_before', 
+            'postnl_checkout_set_payment_before',
             array(
                 'payment'             => $quote->getPayment(),
                 'quote'               => $quote,
                 'payment_data_object' => $paymentDataObject,
             )
         );
-        
+
         $paymentData = $paymentDataObject->getPaymentData();
-        
+
         /**
          * Import the payment data, save the payment, and then save the quote
          */
         $payment->importData($paymentData);
-        
+
         Mage::dispatchEvent(
-            'postnl_checkout_set_payment_after', 
+            'postnl_checkout_set_payment_after',
             array(
                 'payment'             => $quote->getPayment(),
                 'quote'               => $quote,
             )
         );
-        
+
         $quote->save();
-        
+
         return $this;
     }
 
     /**
      * Adds the customer to the quote if a customer is currently logged in. Also updates the customer's DOB if possible.
-     * 
+     *
      * @param StdClass $data
      * @param Mage_Sales_Model_Quote | null $quote
-     * 
+     *
      * @return TIG_PostNL_Model_Checkout_Service
      */
     public function updateQuoteCustomer($data, $quote = null)
@@ -473,34 +473,34 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         if (is_null($quote)) {
             $quote = $this->getQuote();
         }
-        
+
         /**
          * Load the current customer if the user is logged in
          */
         $customer = Mage::getSingleton('customer/session')->getCustomer();
         $customerId = $customer->getId();
-        
+
         /**
          * If there is no customer we don't have to do anything
          */
         if(!$customerId) {
             return $this;
         }
-        
+
         /**
          * Add the customer to the quote
          */
         $quote->setCustomerId($customerId);
         $quote->getShippingAddress()->setCustomerId($customerId);
         $quote->getBillingAddress()->setCustomerId($customerId);
-        
+
         /**
          * If the customer already has a DOB we're finished
          */
         if ($customer->getDob()) {
             return $this;
         }
-        
+
         /**
          * Check if PostNL returned a DOB for the customer
          */
@@ -511,25 +511,28 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         ) {
             $dob = $data->Consument->GeboorteDatum;
         }
-        
+
         if (!isset($dob)) {
             return $this;
         }
-        
+
         /**
          * Update the customer with the DOB and save
          */
         $customer->setDob(strtotime($dob))
                  ->save();
-        
+
         return $this;
     }
 
     /**
      * Updates the PostNL order with the selected options
-     * 
-     * @param StdClass $orderDetails
-     * 
+     *
+     * @param      $data
+     * @param null $quote
+     *
+     * @internal param \StdClass $orderDetails
+     *
      * @return TIG_PostNL_Model_Checkout_Service
      */
     public function updatePostnlOrder($data, $quote = null)
@@ -540,14 +543,14 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         if (is_null($quote)) {
             $quote = $this->getQuote();
         }
-        
+
         $this->setStoreId($quote->getStoreId());
-        
+
         $this->_verifyData($data, $quote);
-                
+
         $postnlOrder = Mage::getModel('postnl_checkout/order');
         $postnlOrder->load($quote->getId(), 'quote_id');
-        
+
         /**
          * If a confirm date has been specified, save it with the PostNL Order object so we can reference it later
          */
@@ -562,7 +565,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $postnlOrder->setConfirmDate($delivery->VerzendDatum)
                         ->setDeliveryDate($delivery->Datum);
         }
-        
+
         /**
          * If a specific product code is needed to ship this order, save it as well
          */
@@ -572,28 +575,28 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         ) {
             $postnlOrder->setProductCode($data->Bezorging->ProductCode);
         }
-        
+
         /**
          * Check if this is a PakjeGemak order. If so, save the PostNL Order as such
          */
         if (Mage::registry('quote_is_pakje_gemak')) {
             $postnlOrder->setIsPakjeGemak(1);
-            
+
             Mage::unRegister('quote_is_pakje_gemak');
         }
-        
+
         $postnlOrder->save();
-        
+
         return $this;
     }
 
     /**
      * Converts a quote to it's order
-     * 
+     *
      * @param Mage_Sales_Model_Quote $quote
-     * 
+     *
      * @return Mage_Sales_Model_Order
-     * 
+     *
      * @throws TIG_PostNL_Exception
      */
     public function saveOrder($quote = null)
@@ -604,24 +607,24 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         if (is_null($quote)) {
             $quote = $this->getQuote();
         }
-        
+
         Mage::dispatchEvent('postnl_checkout_save_order_before',
             array(
                 'quote' => $quote
             )
         );
-        
+
         $quoteService = Mage::getModel('sales/service_quote', $quote);
         $quoteService->submitAll();
         $order = $quoteService->getOrder();
-        
+
         if(empty($order)) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Unable to create an order for quote #%s', $quote->getId()),
                 'POSTNL-0049'
             );
         }
-                
+
         /**
          * If a pakje_gemak address is present, add it to the order as well
          */
@@ -630,16 +633,16 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             if ($address->getAddressType() != self::ADDRESS_TYPE_PAKJEGEMAK) {
                 continue;
             }
-            
+
             $address->load($address->getId());
             $orderAddress = Mage::getModel('sales/convert_quote')->addressToOrderAddress($address);
-            
+
             $order->addAddress($orderAddress);
-            
+
             $orderAddress->save();
             break;
         }
-        
+
         /**
          * Save the customer's name
          */
@@ -647,53 +650,53 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $order->setCustomerFirstname($billingAddress->getFirstname())
               ->setCustomerLastname($billingAddress->getLastname())
               ->save();
-        
+
         Mage::dispatchEvent('checkout_type_onepage_save_order_after',
             array(
-                'order' => $order, 
+                'order' => $order,
                 'quote' => $quote
             )
         );
-        
+
         Mage::dispatchEvent('postnl_checkout_save_order_after',
             array(
-                'order' => $order, 
+                'order' => $order,
                 'quote' => $quote
             )
         );
-        
+
         $quote->setIsActive(false)
               ->save();
-        
+
         $postnlOrder = Mage::getModel('postnl_checkout/order');
         $postnlOrder->load($quote->getId(), 'quote_id')
                     ->setOrderId($order->getId())
                     ->setIsActive(false)
                     ->save();
-        
+
         $checkoutSession = Mage::getSingleton('checkout/session');
         $checkoutSession->setLastSuccessQuoteId($order->getQuoteId())
                         ->setLastRealOrderId($order->getRealOrderId())
                         ->setLastQuoteId($order->getQuoteId())
                         ->setLastOrderId($order->getId());
-        
+
         Mage::dispatchEvent(
             'checkout_submit_all_after',
             array(
-                'order' => $order, 
-                'quote' => $quote, 
+                'order' => $order,
+                'quote' => $quote,
                 'recurring_profiles' => null
             )
         );
-        
+
         return $order;
     }
-    
+
     /**
      * Confirms a PostNL order with PostNL.
-     * 
+     *
      * @param Mage_Sales_Model_Quote
-     * 
+     *
      * @return TIG_PostNL_Model_Checkout_Service
      */
     public function confirmPostnlOrder($quote = null)
@@ -704,33 +707,33 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         if (is_null($quote)) {
             $quote = $this->getQuote();
         }
-        
+
         $postnlOrder = Mage::getModel('postnl_checkout/order')
                            ->load($quote->getId(), 'quote_id');
-                           
+
         $cif = Mage::getModel('postnl_checkout/cif');
         $cif->confirmOrder($postnlOrder);
-        
+
         return $this;
     }
-    
+
     /**
      * Parses a PostNL Checkout address into a varien object that can be used by Magento
-     * 
+     *
      * @param Mage_Sales_Model_Quote_Address $address
      * @param StdClass $addressData
-     * 
+     *
      * @return Mage_Sales_Model_Quote_Address
      */
     protected function _parseAddress($address, $addressData)
     {
         $storeId = $this->getStoreId();
-        
+
         /**
          * First parse the street data (streetname, house nr. house nr. ext.)
-         */        
+         */
         $address = $this->_parseStreetData($address, $addressData);
-        
+
         /**
          * Parse optional address fields
          */
@@ -739,27 +742,27 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $doorcodeField     = Mage::getStoreConfig(self::XML_PATH_DOORCODE_FIELD, $storeId);
         $floorField        = Mage::getStoreConfig(self::XML_PATH_FLOOR_FIELD, $storeId);
         $areaField         = Mage::getStoreConfig(self::XML_PATH_AREA_FIELD, $storeId);
-        
+
         if ($buildingNameField) {
             $address->setData('street' . $buildingNameField, $addressData->Gebouw);
         }
-        
+
         if ($departmentField) {
             $address->setData('street' . $departmentField, $addressData->Afdeling);
         }
-        
+
         if ($doorcodeField) {
             $address->setData('street' . $doorcodeField, $addressData->Deurcode);
         }
-        
+
         if ($floorField) {
             $address->setData('street' . $floorField, $addressData->Verdieping);
         }
-        
+
         if ($areaField) {
             $address->setData('street' . $areaField, $addressData->Wijk);
         }
-        
+
         /**
          * Parse the remaining simple fields that require no additional logic
          */
@@ -769,86 +772,85 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $country    = $addressData->Land;
         $city       = $addressData->Plaats;
         $postcode   = $addressData->Postcode;
-        
+
         $address->setFirstname($firstname)
                 ->setLastname($lastname)
                 ->setMiddelname($middlename)
                 ->setCountryId($country)
                 ->setCity($city)
                 ->setPostcode($postcode);
-        
+
         if (!$address->getCountryId()) {
             $address->setCountryId('NL');
         }
-        
+
         $address->setShouldIgnoreValidation(true);
-        
+
         return $address;
     }
-    
+
     /**
      * Add optional service location data to the shipping address. This ovverrides the previously set address data.
      * nto a varien object that can be used by Magento
-     * 
+     *
      * @param Mage_Sales_Model_Quote_Address $address
-     * @param StdClass $addressData
-     * 
+     * @param                                $serviceLocationData
+     * @internal param \StdClass $addressData
+     *
      * @return Mage_Sales_Model_Quote_Address
      */
     protected function _addServiceLocationData($address, $serviceLocationData)
     {
-        $storeId = $this->getStoreId();
-        
         /**
          * First parse the street data (streetname, house nr. house nr. ext.)
-         */        
+         */
         $address = $this->_parseStreetData($address, $serviceLocationData);
-        
+
         /**
          * Remove any company data that may have been set, this could cause confusion when delivering the package to a service
          * location with a different company name
          */
         $address->setCompany(false);
-        
+
         return $address;
     }
 
     /**
      * Parses street data and returns an address object containing properly formatted street lines.
-     * 
+     *
      * @param Mage_Sales_Model_Quote_Address $address
      * @param StdClass $addressData
-     * 
+     *
      * @return Mage_Sales_Model_Quote_Address
      */
     protected function _parseStreetData($address, $addressData)
     {
         $storeId = $this->getStoreId();
         $splitStreet = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_STREET, $storeId);
-        
+
         if (!$splitStreet) {
             /**
              * If the store uses single line addresses, merge the street fields
              */
             $streetData = $addressData->Straat . PHP_EOL . $addressData->Huisnummer . PHP_EOL . $addressData->HuisnummerExt;
-            
+
             $address->setStreet($streetData);
             return $address;
         }
-        
+
         $streetData = array();
-        
+
         /**
          * If the store uses multiple address lines, check which part of the address goes where
          */
         $streetnameField = Mage::getStoreConfig(self::XML_PATH_STREETNAME_FIELD, $storeId);
         $housenumberField = Mage::getStoreCOnfig(self::XML_PATH_HOUSENUMBER_FIELD, $storeId);
-        
+
         /**
          * Set the streetname to the appropriate field
          */
         $streetData[$streetnameField] = $addressData->Straat;
-        
+
         /**
          * Check if the store splits housenumber and housenumber extensions as well. Place them in appriopriate fields
          */
@@ -861,24 +863,24 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $streetData[$housenumberField] = $addressData->Huisnummer;
             $streetData[$housenumberExtensionField] = $addressData->HuisnummerExt;
         }
-        
+
         /**
          * Sort the street data according to the field numbers and set it
          */
         ksort($streetData);
         $address->setStreet($streetData);
-        
+
         return $address;
     }
-    
+
     /**
      * Verifies the validity of the supplied data
-     * 
+     *
      * @param StdClass $data
      * @param Mage_Sales_Model_Quote $quote
-     * 
+     *
      * @return TIG_PostNL_Model_Checkout_Service
-     * 
+     *
      * @throws TIG_PostNL_Exception
      */
     protected function _verifyData($data, $quote)
@@ -889,35 +891,35 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $quoteId = $data->Order->ExtRef;
         if ($quote->getId() != $quoteId) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid quote supplied.'), 
+                Mage::helper('postnl')->__('Invalid quote supplied.'),
                 'POSTNL-0050'
             );
         }
-        
+
         /**
          * Verify the webshop ID to make sure this message was not meant for another shop
          */
         $dataWebshopId = $data->Webshop->IntRef;
         $webshopId = Mage::getStoreConfig(self::XML_PATH_WEBSHOP_ID, $this->getStoreId());
         $webshopId = Mage::helper('core')->decrypt($webshopId);
-        
+
         if ($webshopId != $dataWebshopId) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid data supplied.'), 
+                Mage::helper('postnl')->__('Invalid data supplied.'),
                 'POSTNL-0051'
             );
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Removes all addresses associated with a quote. The quote's regular method to remove all addresses (removeAllAddresses())
      * effectively resets the addresses rather than removing them (replaces each address by a default one of the same type). We
      * specifically want to delete the optional PakjeGemak address as well.
-     * 
+     *
      * @param Mage_Sales_Model_Quote &$quote
-     * 
+     *
      * @return TIG_PostNL_Model_Checkout_Service
      */
     protected function _removeAllQuoteAddresses(&$quote)
@@ -931,12 +933,12 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
                 $address->isDeleted(true);
             }
         }
-        
+
         /**
          * Reset all remaining address types (by default only billing and shipping will remain)
          */
         $quote->removeAllAddresses();
-        
+
         return $this;
     }
 }

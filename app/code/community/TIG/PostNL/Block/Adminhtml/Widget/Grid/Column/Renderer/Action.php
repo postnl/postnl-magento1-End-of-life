@@ -106,7 +106,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
             unset($action['is_postnl']);
             return false;
         }
-        
+
         unset($action['is_postnl']);
         return true;
     }
@@ -123,7 +123,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
     {
         $helper = Mage::helper('postnl');
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
-        $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
 
         $euCountries = Mage::helper('postnl/cif')->getEuCountries();
         $countryId = $row->getData(self::COUNTRY_ID_COLUMN);

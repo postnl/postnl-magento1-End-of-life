@@ -73,7 +73,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
      * We have split the initialization of fieldsets and fields. This way Magento will first initialize all fieldsets and then
      * init all fields. So when field_a is initialized, fieldset_b is already available and the dependency will work.
      *
-     * @return TIG_PostNL_Block_Adminhtml_System_Config_Edit_Form
+     * @return TIG_PostNL_Block_Adminhtml_System_Config_Form
      */
     public function initForm()
     {
@@ -127,10 +127,12 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
     /**
      * Init config group
      *
-     * @param Varien_Data_Form $form
-     * @param Varien_Simplexml_Element $group
-     * @param Varien_Simplexml_Element $section
+     * @param Varien_Data_Form                       $form
+     * @param Varien_Simplexml_Element               $group
+     * @param Varien_Simplexml_Element               $section
      * @param Varien_Data_Form_Element_Fieldset|null $parentElement
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return void
      */

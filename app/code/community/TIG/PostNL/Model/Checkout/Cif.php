@@ -74,6 +74,8 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @see TIG_PostNL_Helper_Checkout::isTestMode()
      *
+     * @param bool $storeId
+     *
      * @return boolean
      */
     public function isTestMode($storeId = false)
@@ -224,6 +226,8 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @param Mage_Sales_Model_Quote $quote
      *
+     * @throws TIG_PostNL_Exception
+     *
      * @return StdClass
      */
     public function readOrder($quote =  null)
@@ -272,6 +276,8 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Confirms the PostNL order.
      *
      * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return StdClass
      */

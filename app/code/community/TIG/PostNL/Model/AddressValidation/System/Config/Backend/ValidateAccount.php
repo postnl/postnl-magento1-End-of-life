@@ -90,6 +90,8 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
     /**
      * Check that PostNL account settings have been entered and are valid before saving this field.
      *
+     * @throws TIG_PostNL_Exception
+     *
      * @return Mage_Core_Model_Abstract
      *
      * @see Mage_Core_Model_Abstract::_beforeSave()
@@ -183,8 +185,6 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
      */
     protected function _getIsTestMode()
     {
-        $groups = $this->getGroups();
-
         $testModeAllowed = $this->_getConfigValue(self::XPATH_ALLOW_TEST_MODE);
         if (!$testModeAllowed) {
             return false;
