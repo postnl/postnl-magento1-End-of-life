@@ -53,6 +53,9 @@ class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
     /**
      * Load a barcode object based on a postnl shipment Id and a barcode number
      *
+     * @param $parentId
+     * @param $barcodeNumber
+     *
      * @return TIG_PostNL_Model_Core_Shipment_Barcode
      */
     public function loadByParentAndBarcodeNumber($parentId, $barcodeNumber)

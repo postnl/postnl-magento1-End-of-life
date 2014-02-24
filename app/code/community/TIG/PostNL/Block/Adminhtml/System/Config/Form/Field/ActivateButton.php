@@ -48,6 +48,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
     /**
      * Gets the element's html. In this case: a button redirecting the user to the extensionControl controller
      *
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
      * @return string
      */
     protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
@@ -77,6 +79,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
     /**
      * Render the element without a scope label
      *
+     * @param Varien_Data_Form_Element_Abstract $element
      * @return string
      *
      * @see parent::render()

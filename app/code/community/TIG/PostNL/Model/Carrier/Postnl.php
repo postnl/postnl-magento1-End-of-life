@@ -103,8 +103,9 @@ class TIG_PostNL_Model_Carrier_Postnl
     /**
      * Collect shipping rate
      *
-     * @param Mage_Shipping_Model_Rate_Request $data
+     * @param Mage_Shipping_Model_Rate_Request $request
      *
+     * @throws TIG_PostNL_Exception
      * @return Mage_Shipping_Model_Rate_Result|void
      */
     public function collectRates(Mage_Shipping_Model_Rate_Request $request)

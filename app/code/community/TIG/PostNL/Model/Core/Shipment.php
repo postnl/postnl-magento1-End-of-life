@@ -276,7 +276,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets a PostNL helper object
      *
-     * @return TIG_PostNL_Helper_*
+     * @param string $type
+     *
+     * @return Mage_Core_Helper_abstract
      */
     public function getHelper($type = 'data')
     {
@@ -747,6 +749,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param int $count
      *
+     * @throws TIG_PostNL_Exception
+     *
      * @return TIG_PostNL_Model_Core_Shipment
      */
     public function setParcelCount($count)
@@ -1081,6 +1085,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Checks if the current entity can be confirmed.
      *
+     * @param bool $skipEuCheck
      * @return boolean
      */
     public function canConfirm($skipEuCheck = false)
@@ -1329,9 +1334,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Get a shipping label from PostNL for a single parcel or a whole shipment
      *
-     * @param boolean $confirm Whether or not to also confirm the shipment
-     * @param int | null $barcodeNumber An optional barcode number. If this parameter is null, the main barcode will be used
+     * @param boolean       $confirm       Whether or not to also confirm the shipment
+     * @param bool|int|null $barcodeNumber An optional barcode number. If this parameter is null, the main barcode will be used
      *
+     * @throws TIG_PostNL_Exception
      * @return array
      */
     protected function _generateLabel($confirm = false, $barcodeNumber = false)
@@ -1343,7 +1349,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         if ($barcodeNumber === false) {
             $barcode = $mainBarcode;
-            $mainbarcode = false;
         } else {
             $barcode = $this->getBarcode($barcodeNumber);
             $barcodeNumber++; //while barcode numbers start at 0, shipment numbers start at 1
@@ -1361,7 +1366,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'The confirmAndPrintLabel action returned an invalid response: %s',
-                    var_export($response, true)
+                    var_export($result, true)
                 ),
                 'POSTNL-0071'
             );
@@ -1455,11 +1460,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Confirms the shipment using CIF
      *
-     * @param int | null $barcodeNumber
-     *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @param bool|int|null $barcodeNumber
      *
      * @throws TIG_PostNL_Exception
+     * @return TIG_PostNL_Model_Core_Shipment
+     *
      */
     protected function _confirm($barcodeNumber = false)
     {
@@ -1470,7 +1475,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         if ($barcodeNumber === false) {
             $barcode = $mainBarcode;
-            $mainbarcode = false;
         } else {
             $barcode = $this->getBarcode($barcodeNumber);
             $barcodeNumber++; //while barcode numbers start at 0, shipment numbers start at 1
@@ -1621,8 +1625,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Update this shipment's status history
      *
-     * @param StdClass $oldStatuses
-     *
+     * @throws TIG_PostNL_Exception
      * @return TIG_PostNL_Model_Core_Shipment
      */
     public function updateCompleteShippingStatus()
@@ -1731,10 +1734,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Save the Mage_Sales_Order_Shipment object and the TIG_PostNL_Model_Core_Shipment objects simultaneously
          */
-        $transactionSave = Mage::getModel('core/resource_transaction')
-                               ->addObject($this)
-                               ->addObject($shipment)
-                               ->save();
+        Mage::getModel('core/resource_transaction')
+            ->addObject($this)
+            ->addObject($shipment)
+            ->save();
 
         return $this;
     }
@@ -1744,6 +1747,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * can track their shipment.
      *
      * @param boolean $ignoreAlreadySent Flag to ignore the 'already sent' check
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return TIG_PostNL_Model_Core_Shipment
      */
@@ -1756,7 +1761,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             );
         }
 
-        $oldStoreId = Mage::app()->getStore()->getId();
         $storeId = $this->getStoreId();
 
         $template = Mage::getStoreConfig(self::XML_PATH_TRACK_AND_TRACE_EMAIL_TEMPLATE, $storeId);
@@ -2111,6 +2115,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Checks if a given product code is only allowed for a specific country
      *
+     * @param $code
      * @return boolean|array Either false if the code is not restricted, or otherwise an array of allowed country IDs
      */
     protected function _isCodeRestricted($code)

@@ -189,12 +189,13 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * @param boolean|string $username
      * @param boolean|string $password
      *
-     * @return object
+     * @return object|boolean
      *
      * @throws TIG_PostNL_Exception
      */
     public function call($wsdlType, $method, $soapParams = null, $username = false, $password = false)
     {
+        $client = null;
         try {
             if ($username !== false && $password !== false
                 && (!$this->_getUserName() || !$this->_getPassword())
@@ -216,8 +217,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             );
 
             /**
-             * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without
-             * using the wsdl cache.
+             * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without using the
+             * wsdl cache.
              */
             try {
                 $client  = new Zend_Soap_Client(
@@ -262,9 +263,13 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         } catch(SoapFault $e) {
             /**
              * Only Soap exceptions are caught. Other exceptions must be caught by the caller
+             *
+             * @throws TIG_PostNL_Exception
              */
             $this->_handleCifException($e, $client);
         }
+
+        return false;
     }
 
     /**
@@ -451,22 +456,21 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      */
     protected function _handleCifException($e, $client = null)
     {
-        $cifHelper   = Mage::helper('postnl/cif');
+        $cifHelper = Mage::helper('postnl/cif');
+        $exception = new TIG_PostNL_Model_Core_Cif_Exception($e->getMessage(), null, $e);
+
+        $requestXML = false;
         $responseXML = false;
-        $requestXML  = false;
-        $exception   = new Exception;
 
         /**
          * Get the request and response XML data
-         *
-         * @var Zend_Soap_Client $client
          */
         if ($client) {
             $requestXML  = $cifHelper->formatXml($client->getLastRequest());
             $responseXML = $cifHelper->formatXml($client->getLastResponse());
         }
 
-        if ($responseXML && $requestXML) {
+        if (!empty($responseXML)) {
             /**
              * If we received a response, parse it for errors and create an appropriate exception
              */
@@ -483,16 +487,11 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             }
 
             $errorNumbers = $errorResponse->getElementsByTagNameNS(self::CIF_ERROR_NAMESPACE, 'ErrorNumber');
-            if ($exception && $errorNumbers) {
+            if (isset($exception) && $errorNumbers) {
                 foreach ($errorNumbers as $errorNumber) {
                     $exception->addErrorNumber($errorNumber->nodeValue);
                 }
             }
-        } else {
-            /**
-             * Create a general exception
-             */
-             $exception = new TIG_PostNL_Model_Core_Cif_Exception($e->getMessage(), null, $e);
         }
 
         /**

@@ -102,6 +102,9 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     /**
      * Returns the PostNL shipping method
      *
+     * @param null $storeId
+     *
+     * @throws TIG_PostNL_Exception
      * @return string
      */
     public function getCurrentPostnlShippingMethod($storeId = null)

@@ -175,6 +175,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     /**
      * Generate a random cron expression for the status update cron for this merchant and store it in the database
      *
+     * @throws TIG_PostNL_Exception
+     *
      * @return TIG_PostNL_Model_Resource_Setup
      */
     public function generateShippingStatusCronExpr()
@@ -221,6 +223,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     /**
      * Generates a semi-random cron expression for the update statistics cron. This is done to spread out the number of calls
      * across each day.
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return TIG_PostNL_Model_Resource_Setup
      */

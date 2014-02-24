@@ -71,6 +71,8 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
     /**
      * Set $_requestXml to specified value
      *
+     * @param $xml
+     *
      * @return TIG_PostNL_Model_Core_Cif_Exception
      */
     public function setRequestXml($xml)
@@ -83,6 +85,7 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
     /**
      * Set $_responseXml to specified value
      *
+     * @param $xml
      * @return TIG_PostNL_Model_Core_Cif_Exception
      */
     public function setResponseXml($xml)
