@@ -107,96 +107,7 @@ PostnlDeliveryOptions = new Class.create({
         this.getTimeframes(this.postcode, this.housenumber, this.deliveryDate);
         this.getLocations(this.postcode, this.housenumber, this.deliveryDate);
 
-        return this;
-    },
-
-    registerObservers : function() {
-        $('custom_location').observe('click', this.openAddLocationWindow.bind(this));
-        $('close_popup').observe('click', this.closeAddLocationWindow.bind(this));
-        $('search-button').observe('click', this.addressSearch.bind(this));
-        $('search-field').observe('keydown', this.addressSearch.bind(this));
-        $('location_save').observe('click', this.saveLocation.bind(this));
-
-        $$('.location-option-checkbox').each(function(element) {
-            element.observe('click', function() {
-                this.toggleClassName('selected');
-            });
-        });
-
-        return this;
-    },
-
-    initMap : function() {
         this.deliveryOptionsMap = new PostnlDeliveryOptions.Map(this.fullAddress, this);
-
-        return this;
-    },
-
-    getAddLocationWindow : function() {
-        if (this.options && this.options.addLocationWindow) {
-            var addLocationWindow = this.options.addLocationWindow;
-            if (typeof addLocationWindow == 'string') {
-                return $(addLocationWindow);
-            }
-
-            return addLocationWindow;
-        }
-
-        return $('postnl_add_location');
-    },
-
-    openAddLocationWindow : function(event) {
-        if (event) {
-            event.stop();
-        }
-
-        this.getAddLocationWindow().show();
-        this.deliveryOptionsMap.triggerResize();
-
-        return this;
-    },
-
-    closeAddLocationWindow : function(event) {
-        if (event) {
-            event.stop();
-        }
-
-        this.getAddLocationWindow().hide();
-
-        return this;
-    },
-
-    addressSearch : function(event) {
-        if (event.keyCode && event.keyCode != Event.KEY_RETURN) {
-            return this;
-        } else if (event) {
-            event.stop();
-        }
-
-        var address = $('search-field').getValue();
-
-        this.deliveryOptionsMap.panMapToAddress(address, true, true);
-
-        return this;
-    },
-
-    saveLocation : function() {
-        var customLocation = this.deliveryOptionsMap.selectedMarker.location;
-        if (!customLocation) {
-            return this;
-        }
-
-        $$('#customlocation li').each(function(element) {
-            element.remove();
-        });
-
-        this.customLocation = customLocation;
-
-        this.locations.push(customLocation);
-        customLocation.render('customlocation');
-
-        this.selectLocation(customLocation.element);
-        this.closeAddLocationWindow();
 
         return this;
     },
@@ -219,40 +130,40 @@ PostnlDeliveryOptions = new Class.create({
                 deliveryDate : deliveryDate,
                 isAjax       : true
             },
-            onSuccess : function(response) {
-                /**
-                 * Check that the response is valid.
-                 *
-                 * @todo expand error handling.
-                 */
-                var responseText = response.responseText;
-                if (responseText == 'not_allowed'
-                    || responseText == 'invalid_data'
-                    || responseText == 'error'
-                ) {
-                    this.showDefaultTimeframe();
-
-                    return false;
-                }
-
-                /**
-                 * Eval the resulting JSON in sanitize mode.
-                 */
-                var timeframes = responseText.evalJSON(true);
-
-                /**
-                 * Parse and render the result.
-                 */
-                this.parseTimeframes(timeframes)
-                                     .renderTimeframes();
-                return this;
-            }.bind(this),
-            onFailure : function() {
-                this.showDefaultTimeframe();
-
-                return false;
-            }.bind(this)
+            onSuccess : this.processGetTimeframesSuccess.bind(this),
+            onFailure : this.showDefaultTimeframe.bind(this)
         });
+
+        return this;
+    },
+
+    processGetTimeframesSuccess : function(response) {
+        /**
+         * Check that the response is valid.
+         *
+         * @todo expand error handling.
+         */
+        var responseText = response.responseText;
+        if (responseText == 'not_allowed'
+            || responseText == 'invalid_data'
+            || responseText == 'error'
+            ) {
+            this.showDefaultTimeframe();
+
+            return false;
+        }
+
+        /**
+         * Eval the resulting JSON in sanitize mode.
+         */
+        var timeframes = responseText.evalJSON(true);
+
+        /**
+         * Parse and render the result.
+         */
+        this.parseTimeframes(timeframes)
+            .renderTimeframes();
+
         return this;
     },
 
@@ -315,6 +226,10 @@ PostnlDeliveryOptions = new Class.create({
     },
 
     selectTimeframe : function(element) {
+        if (!element) {
+            return this;
+        }
+
         var timeframes = this.timeframes;
 
         timeframes.each(function(timeframe) {
@@ -326,11 +241,19 @@ PostnlDeliveryOptions = new Class.create({
             }
         });
 
-        if (element) {
-            this.selectLocation(false);
-        }
+        this.unSelectLocation();
 
         return false;
+    },
+
+    unSelectTimeframe : function() {
+        var timeframes = this.timeframes;
+
+        timeframes.each(function(timeframe) {
+            timeframe.unSelect();
+        });
+
+        return this;
     },
 
     /**
@@ -353,47 +276,47 @@ PostnlDeliveryOptions = new Class.create({
                 deliveryDate : deliveryDate,
                 isAjax       : true
             },
-            onSuccess : function(response) {
-                /**
-                 * Check that the response is valid.
-                 *
-                 * @todo expand error handling.
-                 */
-                var responseText = response.responseText;
-                if (responseText == 'not_allowed'
-                    || responseText == 'invalid_data'
-                    || responseText == 'error'
-                ) {
-                    this.hideLocations();
-
-                    return false;
-                }
-
-                /**
-                 * Eval the resulting JSON in sanitize mode.
-                 */
-                var locations = responseText.evalJSON(true);
-
-                /**
-                 * Add the location to the map interface as markers.
-                 */
-                if (this.deliveryOptionsMap) {
-                    this.deliveryOptionsMap.addMarkers(locations);
-                }
-
-                /**
-                 * Parse and render the result.
-                 */
-                this.parseLocations(locations)
-                    .renderLocations();
-                return this;
-            }.bind(this),
-            onFailure : function() {
-                this.hideLocations();
-
-                return false;
-            }.bind(this)
+            onSuccess : this.processGetLocationsSuccess.bind(this),
+            onFailure : this.hideLocations.bind(this)
         });
+
+        return this;
+    },
+
+    processGetLocationsSuccess : function(response) {
+        /**
+         * Check that the response is valid.
+         *
+         * @todo expand error handling.
+         */
+        var responseText = response.responseText;
+        if (responseText == 'not_allowed'
+            || responseText == 'invalid_data'
+            || responseText == 'error'
+            ) {
+            this.hideLocations();
+
+            return false;
+        }
+
+        /**
+         * Eval the resulting JSON in sanitize mode.
+         */
+        var locations = responseText.evalJSON(true);
+
+        /**
+         * Add the location to the map interface as markers.
+         */
+        if (this.deliveryOptionsMap) {
+            this.deliveryOptionsMap.addMarkers(locations);
+        }
+
+        /**
+         * Parse and render the result.
+         */
+        this.parseLocations(locations)
+            .renderLocations();
+
         return this;
     },
 
@@ -535,6 +458,10 @@ PostnlDeliveryOptions = new Class.create({
     },
 
     selectLocation : function(element) {
+        if (!element) {
+            return this;
+        }
+
         var locations = this.locations;
 
         locations.each(function(location) {
@@ -556,14 +483,36 @@ PostnlDeliveryOptions = new Class.create({
                     location.unSelect(index);
                 }
             }
+
             return true;
         });
 
-        if (element) {
-            this.selectTimeframe(false);
-        }
+        this.unSelectTimeframe();
 
-        return true;
+        return this;
+    },
+
+    unSelectLocation : function() {
+        var locations = this.locations;
+
+        locations.each(function(location) {
+            if (!location.elements) {
+                return false;
+            }
+
+            var elements = location.elements;
+            for(var index in elements) {
+                if (!elements.hasOwnProperty(index)) {
+                    continue;
+                }
+
+                location.unSelect(index);
+            }
+
+            return true;
+        });
+
+        return this;
     }
 });
 
@@ -587,13 +536,22 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
         ];
         var mapOptions = {
-            zoom             : 16,
-            center           : new google.maps.LatLng(52.3702157, 4.895167899999933), //Amsterdam
-            mapTypeId        : google.maps.MapTypeId.ROADMAP,
-            styles           : myStyles,
-            disableDefaultUI : true,
-            minZoom          : 11,
-            maxZoom          : 18
+            zoom               : 16,
+            minZoom            : 12,
+            maxZoom            : 18,
+            center             : new google.maps.LatLng(52.3702157, 4.895167899999933), //Amsterdam
+            mapTypeId          : google.maps.MapTypeId.ROADMAP,
+            styles             : myStyles,
+            panControl         : false,
+            mapTypeControl     : false,
+            scaleControl       : false,
+            streetViewControl  : false,
+            overviewMapControl : false,
+            zoomControl        : true,
+            zoomControlOptions : {
+                style    : google.maps.ZoomControlStyle.SMALL,
+                position : google.maps.ControlPosition.LEFT_TOP
+            }
         };
 
         this.map = new google.maps.Map($('map-div'), mapOptions);
@@ -606,20 +564,28 @@ PostnlDeliveryOptions.Map = new Class.create({
             this.markers = [];
         }
 
-        this.panMapToAddress(this.fullAddress, true, false);
+        this.searchAndPanToAddress(this.fullAddress, true, false);
 
-        this.registerMapObservers();
+        this.registerObservers();
     },
 
-    registerMapObservers : function () {
+    registerObservers : function () {
         var map = this.map;
 
-        google.maps.event.addListener(map, 'dragend', function() {
-            this.getNearestLocations();
-        }.bind(this));
+        $('custom_location').observe('click', this.openAddLocationWindow.bind(this));
+        $('close_popup').observe('click', this.closeAddLocationWindow.bind(this));
+        $('search-button').observe('click', this.addressSearch.bind(this));
+        $('search-field').observe('keydown', this.addressSearch.bind(this));
+        $('location_save').observe('click', this.saveLocation.bind(this));
+
+        $$('.location-option-checkbox').each(function(element) {
+            element.observe('click', function() {
+                this.toggleClassName('selected');
+            });
+        });
 
         google.maps.event.addListener(map, 'zoom_changed', function() {
-            this.getNearestLocations();
+            this.getLocationsWithinBounds();
         }.bind(this));
 
         google.maps.event.addListener(map, 'dragstart', function() {
@@ -628,54 +594,188 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         google.maps.event.addListener(map, 'dragend', function() {
             this.beingDragged = false;
+
+            this.getLocationsWithinBounds();
         }.bind(this));
 
         return this;
     },
 
-    panMapToAddress : function(address, addMarker, getLocations) {
-        var map = this.map;
-        var errorDiv = $('search-field-error');
-        errorDiv.hide();
+    getAddLocationWindow : function() {
+        if (this.deliveryOptions.options && this.deliveryOptions.options.addLocationWindow) {
+            var addLocationWindow = this.deliveryOptions.options.addLocationWindow;
+            if (typeof addLocationWindow == 'string') {
+                return $(addLocationWindow);
+            }
 
+            return addLocationWindow;
+        }
+
+        return $('postnl_add_location');
+    },
+
+    openAddLocationWindow : function(event) {
+        if (event) {
+            event.stop();
+        }
+
+        this.getAddLocationWindow().show();
+        this.triggerResize();
+
+        return this;
+    },
+
+    closeAddLocationWindow : function(event) {
+        if (event) {
+            event.stop();
+        }
+
+        this.getAddLocationWindow().hide();
+
+        return this;
+    },
+
+    addressSearch : function(event) {
+        if (event.keyCode && event.keyCode != Event.KEY_RETURN) {
+            return this;
+        } else if (event) {
+            event.stop();
+        }
+
+        var address = $('search-field').getValue();
+        if (!address) {
+            return this;
+        }
+
+        this.searchAndPanToAddress(address, true, true);
+
+        return this;
+    },
+
+    saveLocation : function() {
+        var customLocation = this.selectedMarker.location;
+        if (!customLocation) {
+            return this;
+        }
+
+        $$('#customlocation li').each(function(element) {
+            element.remove();
+        });
+
+        this.deliveryOptions.customLocation = customLocation;
+
+        this.deliveryOptions.locations.push(customLocation);
+        customLocation.render('customlocation');
+
+        this.deliveryOptions.selectLocation(customLocation.element);
+        this.closeAddLocationWindow();
+
+        return this;
+    },
+
+    searchAndPanToAddress : function(address, addMarker, getLocations) {
+        this.geocode(address, this.panMapToAddress.bind(this, addMarker, getLocations), this.showSearchErrorDiv);
+
+        return this;
+    },
+
+    geocode : function(address, successCallback, failureCallback) {
         var geocoder = new google.maps.Geocoder();
         geocoder.geocode(
             {
-                'address' : address,
-                'region'  : 'nl'
+                address                : address,
+                bounds                 : this.map.getBounds(),
+                componentRestrictions  : {
+                    country : 'NL'
+                }
             },
             function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
-                    var latlng = new google.maps.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng());
-                    map.panTo(latlng);
-                    if (map.getZoom() < 15) {
-                        map.setZoom(15);
-                    }
-
-                    if (getLocations) {
-                        this.removeMarkers();
-                        this.getNearestLocations();
-                    }
-
-                    if (addMarker) {
-                        if (this.searchLocationMarker) {
-                            this.searchLocationMarker.setMap(null);
-                        }
-
-                        searchLocationMarker = new google.maps.Marker({
-                            position  : latlng,
-                            map       : map,
-                            title     : address,
-                            draggable : false
-                        });
-
-                        this.searchLocationMarker = searchLocationMarker;
-                    }
+                    successCallback.call(this, results, status);
                 } else {
-                    errorDiv.show();
+                    failureCallback.call(this, results, status);
                 }
             }.bind(this)
         );
+    },
+
+    panMapToAddress : function(addMarker, getLocations, results) {
+        this.hideSearchErrorDiv();
+        var selectedResult = false;
+
+        results.each(function(result) {
+            var components = result.address_components;
+            components.each(function(component) {
+                if (selectedResult !== false) {
+                    return false;
+                }
+
+                if (component.short_name == 'NL') {
+                    if (selectedResult !== false) {
+                        return false;
+                    }
+
+                    selectedResult = result;
+
+                    return true;
+                }
+            });
+        });
+
+        if (selectedResult === false) {
+            this.showSearchErrorDiv();
+
+            return this;
+        }
+
+        var map = this.map;
+        var latlng = new google.maps.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng());
+        map.panTo(latlng);
+        if (map.getZoom() < 15) {
+            map.setZoom(15);
+        }
+
+        if (getLocations) {
+            this.removeMarkers();
+            this.getNearestLocations();
+        }
+
+        if (addMarker) {
+            var searchLocationMarker;
+
+            if (this.searchLocationMarker) {
+                this.searchLocationMarker.setMap(null);
+            }
+
+            searchLocationMarker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                title: selectedResult.formatted_address,
+                draggable: false
+            });
+
+            this.searchLocationMarker = searchLocationMarker;
+        }
+
+        return this;
+    },
+
+    getSearchErrorDiv : function() {
+        if (this.deliveryOptions.options.searchErrorDiv) {
+            return this.deliveryOptions.options.searchErrorDiv;
+        }
+
+        return $('search-field-error');;
+    },
+
+    hideSearchErrorDiv : function() {
+        this.getSearchErrorDiv().hide();
+
+        return this;
+    },
+
+    showSearchErrorDiv : function() {
+        this.getSearchErrorDiv().show();
 
         return this;
     },
@@ -792,12 +892,18 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
 
             var markerLatLng = new google.maps.LatLng(location.Latitude, location.Longitude);
+            var markerTitle = location.Name + ', ' + location.Address.Street + ' ' + location.Address.HouseNr;
+            if (location.Address.HouseNrExt) {
+                markerTitle += ' ' + location.Address.HouseNrExt;
+            }
+
             var marker = new google.maps.Marker({
                 position  : markerLatLng,
                 map       : this.map,
-                title     : location.Name,
+                title     : markerTitle,
                 animation : google.maps.Animation.DROP,
                 draggable : false,
+                clickable : true,
                 icon      : this.deliveryOptions.getMapIcon()
             });
 
@@ -812,7 +918,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             marker.locationCode = location.LocationCode;
             marker.location = parsedLocation;
 
-            google.maps.event.addListener(marker, "click", this.selectMarker.bind(this, marker, true));
+            google.maps.event.addListener(marker, "click", this.selectMarker.bind(this, marker, true, true));
             google.maps.event.addListener(marker, "mouseover", this.markerOnMouseOver.bind(this, marker));
             google.maps.event.addListener(marker, "mouseout", this.markerOnMouseOut.bind(this, marker));
 
@@ -827,7 +933,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         this.renderLocations(newLocations);
 
         if (!this.selectedMarker) {
-            google.maps.event.trigger(markers[0], 'click');
+            this.selectMarker(markers[0], false, false);
         }
 
         return this;
@@ -888,7 +994,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         return this;
     },
 
-    selectMarker : function(marker, scrollTo, event) {
+    selectMarker : function(marker, scrollTo, panTo) {
         if (this.selectedMarker
             && this.selectedMarker.location.mapElement.identify() == marker.location.mapElement.identify()
         ) {
@@ -909,7 +1015,9 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
         this.selectedMarker = marker;
 
-        this.map.panTo(marker.getPosition());
+        if (panTo) {
+            this.map.panTo(marker.getPosition());
+        }
 
         return this;
     },
@@ -1241,11 +1349,12 @@ PostnlDeliveryOptions.Location = new Class.create({
         }
         addressText += ', ' + this.address.City;
 
-        var distance = this.distance;
+        var distance = parseInt(this.distance);
         var distanceText = '';
-        if (distance < 1000) {
+
+        if (distance < 1000 && distance > 0) {
             distanceText = distance + ' m';
-        } else {
+        } else if (distance > 0) {
             distanceText = parseFloat(Math.round(distance / 100) / 10).toFixed(1) + ' km';
         }
 
@@ -1283,26 +1392,33 @@ PostnlDeliveryOptions.Location = new Class.create({
 
             this.oldCenter = this.marker.getPosition();
 
-            this.deliveryOptions.deliveryOptionsMap.selectMarker(this.marker, false, event);
+            this.deliveryOptions.deliveryOptionsMap.selectMarker(this.marker, false, true, event);
         }.bind(this));
 
         element.observe('mouseover', function() {
-            if (this.deliveryOptions.deliveryOptionsMap.beingDragged) {
+            var map = this.deliveryOptions.deliveryOptionsMap;
+            if (map.beingDragged) {
                 return this;
             }
 
-            this.oldCenter = this.deliveryOptions.deliveryOptionsMap.map.getCenter();
-            this.deliveryOptions.deliveryOptionsMap.map.setCenter(this.marker.getPosition());
+            if (!map.map.getBounds().contains(this.marker.getPosition())) {
+                this.oldCenter = map.map.getCenter();
+                map.map.setCenter(this.marker.getPosition());
+            }
 
             google.maps.event.trigger(this.marker, 'mouseover');
         }.bind(this));
 
         element.observe('mouseout', function() {
+            var map = this.deliveryOptions.deliveryOptionsMap;
             if (this.deliveryOptions.deliveryOptionsMap.beingDragged) {
                 return this;
             }
 
-            this.deliveryOptions.deliveryOptionsMap.map.setCenter(this.oldCenter);
+            if (this.oldCenter) {
+                map.map.setCenter(this.oldCenter);
+                this.oldCenter = false;
+            }
 
             google.maps.event.trigger(this.marker, 'mouseout');
         }.bind(this));
