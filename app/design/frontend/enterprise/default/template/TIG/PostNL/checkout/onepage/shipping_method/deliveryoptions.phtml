@@ -106,8 +106,6 @@
     );
 
     deliveryOptions.fullAddress = "<?php echo $_address->getStreet1() . ' ' . $_address->getStreet2() . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>";
-    deliveryOptions.registerObservers()
-                   .showOptions()
-                   .initMap();
+    deliveryOptions.showOptions();
 //]]>
 </script>

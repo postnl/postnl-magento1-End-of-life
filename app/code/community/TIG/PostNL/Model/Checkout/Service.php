@@ -194,9 +194,9 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      *
      * @param mixed $data
      * @param boolean $isOrderdetails Flag whether or not the supplied data was sent by PostNL and not by magento
-     * @param boolean $methodOnly Flag whether or not to only set the payment method. If false, all data will be set for the
-     * chosen payment method.
-     * @param Mage_Sales_Model_Quote | null $quote
+     * @param boolean $methodOnly Flag whether or not to only set the payment method. If false, all data will be set
+     *                            for the chosen payment method.
+     * @param Mage_Sales_Model_Quote|null $quote
      *
      * @return TIG_PostNL_Model_Checkout_Service
      */
@@ -230,7 +230,9 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $quote->getShippingAddress()->setPaymentMethod(isset($data['method']) ? $data['method'] : null);
         }
 
-        // shipping totals may be affected by payment method
+        /**
+         * shipping totals may be affected by payment method
+         */
         if (!$quote->isVirtual() && $quote->getShippingAddress()) {
             $quote->getShippingAddress()->setCollectShippingRates(true);
         }
@@ -442,7 +444,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * Import the payment data, save the payment, and then save the quote
          */
-        $payment->importData($paymentData);
+        $quote->getPayment()->importData($paymentData);
 
         Mage::dispatchEvent(
             'postnl_checkout_set_payment_after',
