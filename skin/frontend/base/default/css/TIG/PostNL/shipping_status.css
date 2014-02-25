@@ -7,8 +7,8 @@
 .status-transit { background-position:0 -102px; }
 .status-delivered { background-position:0 -136px; }
 
-.status-collection .progress-collection, 
-.status-distribution .progress-collection, 
+.status-collection .progress-collection,
+.status-distribution .progress-collection,
 .status-distribution .progress-distribution ,
 .status-transit .progress-collection,
 .status-transit .progress-distribution,
@@ -16,6 +16,6 @@
 .status-delivered .progress-collection,
 .status-delivered .progress-distribution,
 .status-delivered .progress-transit,
-.status-delivered .progress-delivered { color:#fff; }   
+.status-delivered .progress-delivered { color:#fff; }
 
 .hidden { display:none !important; }

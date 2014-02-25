@@ -46,11 +46,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     /**
      * Returns an option array for all possible PostNL product options
      *
+     * @param boolean $markDefault Flag that determines whether default options will be marked as such.
+     *
      * @return array
      *
      * @todo implement COD
      */
-    public function toOptionArray()
+    public function toOptionArray($markDefault = true)
     {
         $helper = Mage::helper('postnl');
         $availableOptions = array(
@@ -174,15 +176,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
                     ),
                     /**
-                     * This option will be removed in v1.2.0
+                     * This option has been removed in v1.2.0
                      *
                      * @deprecated v1.1.2
                      */
-                    '4955' => array(
-                        'value' => '4955',
-                        'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                    /*'4955' => array(
+                        'value'         => '4955',
+                        'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
                         'isBelgiumOnly' => true,
-                    ),
+                    ),*/
                     /**
                      * These are not currently implemented
                      *
@@ -205,12 +207,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'value'        => '4945',
                         'label'        => $helper->__('GlobalPack'),
                         'isExtraCover' => true,
+                        'extraCover'   => 200,
                     ),
                 ),
             ),
         );
 
-        $this->_markDefault($availableOptions);
+        if ($markDefault) {
+            $this->_markDefault($availableOptions);
+        }
 
         return $availableOptions;
     }
@@ -218,21 +223,29 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     /**
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
-     * @param boolean $withDefault Determines whether or not a 'default' option is prepended to the array
-     * @param boolean $witHExtraCover Flag whether or not to include extra cover options
+     * @param boolean     $withDefault Determines whether or not a 'default' option is prepended to the array
+     * @param bool        $withExtraCover
      * @param boolean|int $storeId
-     * @param boolean $codesOnly
+     * @param boolean     $codesOnly   Flag that dtermines whether to only return the product codes and not the labels
+     * @param boolean     $flat        FLag that dtermines whether to return a flat 'code => label' array
+     * @param boolean     $markDefault Flag that determines whether default options will be marked as such.
      *
+     * @internal param bool $witHExtraCover Flag whether or not to include extra cover options
      * @return array
      */
-    public function getAvailableOptions($withDefault = false, $withExtraCover = true, $storeId = false, $codesOnly = false)
-    {
+    public function getAvailableOptions($withDefault = false,
+        $withExtraCover = true,
+        $storeId        = false,
+        $codesOnly      = false,
+        $flat           = false,
+        $markDefault    = true
+    ) {
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
 
         $helper = Mage::helper('postnl');
-        $options = $this->toOptionArray();
+        $options = $this->toOptionArray($markDefault);
 
         /**
          * Get a list of all possible options
@@ -273,6 +286,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
 
+            if ($flat === true) {
+                $availableOptions[$option['value']] = $option['label'];
+                continue;
+            }
+
             $availableStandardOptions[] = $option;
         }
 
@@ -294,6 +312,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
 
+            if ($flat === true) {
+                $availableOptions[$option['value']] = $option['label'];
+                continue;
+            }
+
             $availablePakjeGemakOptions[] = $option;
         }
 
@@ -312,6 +335,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
 
             if ($codesOnly === true) {
                 $availableOptions[] = $option['value'];
+                continue;
+            }
+
+            if ($flat === true) {
+                $availableOptions[$option['value']] = $option['label'];
                 continue;
             }
 
@@ -337,6 +365,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     continue;
                 }
 
+                if ($flat === true) {
+                    $availableOptions[$option['value']] = $option['label'];
+                    continue;
+                }
+
                 $availableGlobalOptions[] = $option;
             }
         }
@@ -345,7 +378,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
          * If we only need the codes, we can return the $availableOptions array. Otherwise, we need to order and merge the
          * other arrays
          */
-        if ($codesOnly === true) {
+        if ($codesOnly === true || $flat === true) {
             return $availableOptions;
         }
 
@@ -385,6 +418,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
 
     /**
      * Get the list of available product options that have extra cover
+     *
+     * @param bool $valuesOnly
      *
      * @return array
      */

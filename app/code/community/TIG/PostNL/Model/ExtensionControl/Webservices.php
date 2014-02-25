@@ -36,6 +36,18 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+
+/**
+ * Primary webservices class. Contains all methods used to communicate with the extensioncontrol webservice.
+ *
+ * @category   TIG
+ * @package    TIG_PostNL
+ * @subpackage TIG_PostNL_ExtensionControl
+ * @copyright  Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license    http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * @version    v1.2.0
+ * @since      v1.0.0
+ */
 class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_ExtensionControl_Webservices_Abstract
 {
     /**
@@ -115,6 +127,8 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      * Updates the ExtensionControl server with updated statistics.
      *
      * @param boolean $forceUpdate
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return TIG_PostNL_Model_ExtensionControl_Webservices
      */
@@ -231,7 +245,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     }
 
     /**
-     * Gets information about the Magento vrsion and edition as well as the version of the currently installed PosTNL extension.
+     * Gets information about the Magento vrsion and edition as well as the version of the currently installed PostNL extension.
      *
      * @return array
      */
@@ -353,6 +367,8 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $uniqueKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, Mage_Core_Model_App::ADMIN_STORE_ID);
         $uniqueKey = Mage::helper('core')->decrypt($uniqueKey);
 
+        $uniqueKey = trim($uniqueKey);
+
         return $uniqueKey;
     }
 
@@ -365,6 +381,8 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     {
         $privateKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, Mage_Core_Model_App::ADMIN_STORE_ID);
         $privateKey = Mage::helper('core')->decrypt($privateKey);
+
+        $privateKey = trim($privateKey);
 
         return $privateKey;
     }

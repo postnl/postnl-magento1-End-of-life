@@ -1,0 +1,111 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php
+/**
+ * @var Mage_Sales_Model_Quote_Address $_address
+ */
+?>
+<?php $_address       = $this->getShippingAddress(); ?>
+<?php $_postcode      = $_address->getPostcode(); ?>
+<?php $_housenumber   = $_address->getStreet2(); ?>
+<?php $_deliveryDate  = $this->getDeliveryDate(); ?>
+<div id="postnl_delivery_options" class="col2-set">
+    <div class="title">
+        <h2><?php echo Mage::helper('postnl')->__('Delivery Options'); ?></h2>
+    </div>
+    <div id="postnl_delivery" class="col-1">
+        <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+        <ul class="option-list" id="timeframes">
+            <li class="location">
+                <span class="bkg">
+                    <span class="bkg">
+                        <div class="content">
+                            <strong class="location-name"><?php echo $_address->getStreetFull(); ?></strong>
+                        </div>
+                    </span>
+                </span>
+            </li>
+        </ul>
+    </div>
+    <div id="postnl_pickup" class="col-2">
+        <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+        <ul class="option-list" id="pgelocation"></ul>
+        <ul class="option-list" id="pglocation"></ul>
+        <ul class="option-list" id="palocation"></ul>
+        <ul class="option-list" id="customlocation"></ul>
+        <ul class="option-list" id="custom_location">
+            <li class="add-location">
+                <a id="add-location-link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
+            </li>
+        </ul>
+    </div>
+
+    <?php echo $this->getChildHtml('postnl.add.location') ?>
+
+</div>
+<script type="text/javascript">
+//<![CDATA[
+    var options;
+    options = {
+        eveningFee             : '<?php echo $this->getFeeText('evening'); ?>',
+        expressFee             : '<?php echo $this->getFeeText('express'); ?>',
+        allowPg                : <?php echo $this->canUsePakjeGemak()        ? 'true' : 'false'; ?>,
+        allowPge               : <?php echo $this->canUsePakjeGemakExpress() ? 'true' : 'false'; ?>,
+        allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
+        allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
+        allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
+        mapIcon                : '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/LOCATION_CIRCLE.png'); ?>',
+        mapIconSelected        : '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/LOCATION_DROPPIN.png'); ?>'
+    };
+
+    deliveryOptions = new PostnlDeliveryOptions(
+        '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
+        '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
+        '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
+        '<?php echo $_postcode; ?>',
+        '<?php echo $_housenumber; ?>',
+        '<?php echo $_deliveryDate; ?>',
+        options
+    );
+
+    deliveryOptions.fullAddress = "<?php echo $_address->getStreet1() . ' ' . $_address->getStreet2() . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>";
+    deliveryOptions.showOptions();
+//]]>
+</script>

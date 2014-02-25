@@ -59,15 +59,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
                 'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
             ),
             /**
-             * This option will be removed in v1.2.0
+             * This option has been removed in v1.2.0
              *
              * @deprecated v1.1.2
              */
-            array(
+            /*array(
                 'value' => '4955',
                 'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
                 'isBelgiumOnly' => true,
-            ),
+            ),*/
             /**
              * These are not currently implemented
              *
@@ -101,7 +101,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
 
-        $helper = Mage::helper('postnl');
         $options = $this->toOptionArray();
 
         /**
@@ -118,7 +117,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         /**
          * Check each standard option to see if it's supprted
          */
-        $availableStandardOptions = array();
         foreach ($options as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;

@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -42,13 +42,13 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      * Shipping carrier code used by PostNL
      */
     const POSTNL_CARRIER = 'postnl';
-    
+
     /**
      * PostNL shipping methods
      */
     const POSTNL_FLATRATE_METHOD  = 'flatrate';
     const POSTNL_TABLERATE_METHOD = 'tablerate';
-    
+
     /**
      * Localised track and trace base URL's
      */
@@ -57,15 +57,15 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     const POSTNL_TRACK_AND_TRACE_DE_BASE_URL  = 'http://parcels-de.tntpost.com/de/mytrackandtrace/TrackAndTrace.aspx?';
     const POSTNL_TRACK_AND_TRACE_FR_BASE_URL  = 'http://parcels-fr.tntpost.com/fr/mytrackandtrace/TrackAndTrace.aspx?';
     const POSTNL_TRACK_AND_TRACE_INT_BASE_URL = 'http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?';
-    
+
     /**
      * XML path to rate type setting
      */
     const XML_PATH_RATE_TYPE = 'carriers/postnl/rate_type';
-    
+
     /**
      * Array of possible PostNL shipping methods
-     * 
+     *
      * @var array
      */
     protected $_postnlShippingMethods = array(
@@ -73,10 +73,10 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         'postnl_flatrate',
         'postnl_tablerate',
     );
-    
+
     /**
      * Gets an array of possible PostNL shipping methods
-     * 
+     *
      * @return array
      */
     public function getPostnlShippingMethods()
@@ -84,24 +84,27 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         $shippingMethods = $this->_postnlShippingMethods;
         return $shippingMethods;
     }
-    
+
     /**
      * Alias for getCurrentPostnlShippingMethod()
-     * 
+     *
      * @return string
-     * 
+     *
      * @see TIG_PostNL_Helper_Carrier::getCurrentPostnlShippingMethod()
-     * 
+     *
      * @deprecated
      */
     public function getPostnlShippingMethod()
     {
         return $this->getCurrentPostnlShippingMethod();
     }
-    
+
     /**
      * Returns the PostNL shipping method
-     * 
+     *
+     * @param null $storeId
+     *
+     * @throws TIG_PostNL_Exception
      * @return string
      */
     public function getCurrentPostnlShippingMethod($storeId = null)
@@ -109,13 +112,13 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         if (Mage::registry('current_postnl_shipping_method') !== null) {
             return Mage::registry('current_postnl_shipping_method');
         }
-        
+
         if (is_null($storeId)) {
             $storeId = Mage::app()->getStore()->getId();
         }
-        
+
         $rateType = Mage::getStoreConfig(self::XML_PATH_RATE_TYPE, $storeId);
-       
+
         $carrier = self::POSTNL_CARRIER;
         switch ($rateType) {
             case 'flat':
@@ -130,19 +133,19 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
                     'POSTNL-0036'
                 );
         }
-        
+
         Mage::register('current_postnl_shipping_method', $shippingMethod);
         return $shippingMethod;
     }
-    
+
     /**
      * Constructs a PostNL track & trace url based on a barcode and the destination of the package (country and zipcode)
-     * 
+     *
      * @param string $barcode
      * @param mixed $destination An array or object containing the shipment's destination data
      * @param boolean | string $lang
      * @param boolean $forceNl
-     * 
+     *
      * @return string
      */
     public function getBarcodeUrl($barcode, $destination = false, $lang = false, $forceNl = false)
@@ -153,17 +156,17 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             $countryCode = $destination['countryCode'];
             $postcode    = $destination['postcode'];
         }
-        
+
         if (is_object($destination) && $destination instanceof Varien_Object) {
             $countryCode = $destination->getCountry();
             $postcode    = $destination->getPostcode();
         }
-        
+
         /**
          * Get the diutch track & trace URL for dutch shipments or for the admin
          */
         if ($forceNl
-            || (!empty($countryCode) 
+            || (!empty($countryCode)
                 && $countryCode == 'NL'
             )
         ) {
@@ -172,22 +175,22 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             /**
              * For dutch shipments add the postcode. For international shipments add an 'international' flag
              */
-            if (!empty($postcode) 
-                && !empty($countryCode) 
+            if (!empty($postcode)
+                && !empty($countryCode)
                 && $countryCode == 'NL'
             ) {
                 $barcodeUrl .= '&p=' . $postcode;
             } else {
                 $barcodeUrl .= '&i=true';
             }
-            
+
             return $barcodeUrl;
         }
-        
+
         /**
          * Get localized track & trace URLs for UK, DE and FR shipments
          */
-        if (isset($countryCode) 
+        if (isset($countryCode)
             && ($countryCode == 'UK'
                 || $countryCode == 'GB'
             )
@@ -196,43 +199,43 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
                         . '&B=' . $barcode
                         . '&D=GB'
                         . '&lang=en';
-                        
+
             return $barcodeUrl;
         }
-        
+
         if (isset($countryCode) && $countryCode == 'DE') {
             $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_DE_BASE_URL
                         . '&B=' . $barcode
                         . '&D=DE'
                         . '&lang=de';
-                        
+
             return $barcodeUrl;
         }
-        
+
         if (isset($countryCode) && $countryCode == 'FR') {
             $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_FR_BASE_URL
                         . '&B=' . $barcode
                         . '&D=FR'
                         . '&lang=fr';
-                        
+
             return $barcodeUrl;
         }
-        
+
         /**
          * Get a general track & trace URL for all other destinations
          */
         $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_INT_BASE_URL
                     . '&B=' . $barcode
                     . '&I=true';
-                    
+
         if ($lang) {
             $barcodeUrl .= '&lang=' . strtolower($lang);
         }
-        
+
         if ($countryCode) {
             $barcodeUrl .= '&D=' . $countryCode;
         }
-        
+
         return $barcodeUrl;
     }
 }
