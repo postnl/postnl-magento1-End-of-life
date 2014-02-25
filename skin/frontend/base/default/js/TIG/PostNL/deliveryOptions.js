@@ -1712,7 +1712,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         headerHtml += '<span class="bkg">';
         headerHtml += '<span class="bkg">';
         headerHtml += '<div class="content">';
-        headerHtml += '<strong class="location-name">' + this.getName() + '</strong>';
+        headerHtml += '<strong class="location-name overflow-protect">' + this.getName() + '</strong>';
 
         if (this.getType().indexOf('PA') != -1) {
             headerHtml += '<span class="location-type">' + Translator.translate('Package Dispenser') + '</span>';
@@ -2095,19 +2095,19 @@ PostnlDeliveryOptions.Location = new Class.create({
          * Build the element's html.
          */
         var html = '<li class="location" id="' + id + '">';
-        html += '<a href="javascript:void(0);">';
         html += '<div class="content">';
 
         /**
          * @todo implement the proper image for each element.
          */
         html += '<img src="http://newdev.tigpostnl.nl/skin/frontend/enterprise/default/images/TIG/PostNL/deliveryoptions/tmp_ah.png" class="location-icon" alt="Albert Heijn" />';
+        html += '<span class="overflow-protect">';
         html += '<strong class="location-name">' + this.getName() + '</strong>';
         html += '<span class="location-address">' + addressText + '</span>';
+        html += '</span>';
         html += '<span class="location-distance">' + distanceText + '</span>';
         html += '<a href="javascript:void(0);" class="location-info">' + Translator.translate('business hours') + '</a>';
         html += '</div>';
-        html += '</a>';
         html += '</li>';
 
         /**
