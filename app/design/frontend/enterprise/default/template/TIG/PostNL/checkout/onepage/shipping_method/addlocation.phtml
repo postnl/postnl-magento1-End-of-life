@@ -27,51 +27,94 @@ $_extension = Mage::getSingleton('checkout/session')->getQuote()->getShippingAdd
             <div class="popup-map">
                 <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/tmp_maps.jpg'); ?>" alt="" />
             </div>
-            
             <div class="popup-content">
                 <h2><?php echo Mage::helper('postnl')->__('Pickup locations found'); ?></h2>
-                
                 <ul class="location-list">
                     <li class="location">
-                        <a href="javascript:void(0);">
-                            <div class="content">
-                                <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/tmp_bruna.png'); ?>" class="location-icon" alt="Bruna" />
+                        <div class="content">
+                            <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/tmp_bruna.png'); ?>" class="location-icon" alt="Bruna" />
+                            <span class="overflow-protect">
                                 <strong class="location-name">Bruna</strong>
                                 <span class="location-address">Nieuwe Binnenweg 42, Rotterdam</span>
-                                <span class="location-distance">234 m</span>
-                                <a href="javascript:void(0);" class="location-info"><?php echo Mage::helper('postnl')->__('business hours'); ?></a>
-                            </div>
-                        </a>
+                            </span>
+                            <span class="location-distance">234 m</span>
+                            <a href="javascript:void(0);" class="location-info"><?php echo Mage::helper('postnl')->__('business hours'); ?></a>
+                        </div>
                     </li>
                     <li class="location selected">
-                        <a href="javascript:void(0);">
-                            <div class="content">
-                                <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/tmp_ah.png'); ?>" class="location-icon" alt="Albert Heijn" />
+                        <div class="content">
+                            <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/tmp_ah.png'); ?>" class="location-icon" alt="Albert Heijn" />
+                            <span class="overflow-protect">
                                 <strong class="location-name">Albert Heijn</strong>
                                 <span class="location-address">Oudedijk 427, Rotterdam</span>
-                                <span class="location-distance">2.1 km</span>
-                                <a href="javascript:void(0);" class="location-info"><?php echo Mage::helper('postnl')->__('business hours'); ?></a>
+                            </span>
+                            <span class="location-distance">2.1 km</span>
+                            <a href="javascript:void(0);" class="location-info"><?php echo Mage::helper('postnl')->__('business hours'); ?></a>
+                        </div>
+                        <div class="location-details">
+                            <div class="left">
+                                <strong class="location-name">Albert Heijn</strong>
+                                <strong class="location-address">Burgemeester Jonkheer Hesselt van Dinterstraat 427 te Gasselterboerveenschemond</strong>
+                                <span class="location-info">Extra vroeg ophalen mogelijk<br />'s Avonds open</span>
                             </div>
-                        </a>
+                            <div class="right">
+                                <table class="business-hours">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2"><?php echo Mage::helper('postnl')->__('Business Hours'); ?>:</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th><?php echo Mage::helper('postnl')->__('Mo') ?></th>
+                                            <td>08:00 - 21:00</td>
+                                        </tr>
+                                        <tr>
+                                            <th><?php echo Mage::helper('postnl')->__('Tu') ?></th>
+                                            <td>08:00 - 21:00</td>
+                                        </tr>
+                                        <tr>
+                                            <th><?php echo Mage::helper('postnl')->__('We') ?></th>
+                                            <td>08:00 - 21:00</td>
+                                        </tr>
+                                        <tr>
+                                            <th><?php echo Mage::helper('postnl')->__('Th') ?></th>
+                                            <td>08:00 - 21:00</td>
+                                        </tr>
+                                        <tr>
+                                            <th><?php echo Mage::helper('postnl')->__('Fr') ?></th>
+                                            <td>08:00 - 21:00</td>
+                                        </tr>
+                                        <tr>
+                                            <th><?php echo Mage::helper('postnl')->__('Sa') ?></th>
+                                            <td>08:00 - 21:00</td>
+                                        </tr>
+                                        <tr>
+                                            <th><?php echo Mage::helper('postnl')->__('Su') ?></th>
+                                            <td>12:00 - 20:00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <a href="javascript:void(0);" title="<?php echo Mage::helper('postnl')->__('Close'); ?>" id="close_popup" class="btn-close"><?php echo Mage::helper('postnl')->__('Close'); ?></a>
+                        </div>
                     </li>
                     <li class="location">
-                        <a href="javascript:void(0);">
-                            <div class="content">
-                                <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/tmp_ah.png'); ?>" class="location-icon" alt="Albert Heijn" />
+                        <div class="content">
+                            <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/tmp_ah.png'); ?>" class="location-icon" alt="Albert Heijn" />
+                            <span class="overflow-protect">
                                 <strong class="location-name">Albert Heijn</strong>
                                 <span class="location-address">Scheep Timmermanslaan 23, Rotterdam</span>
-                                <span class="location-distance">2.1 km</span>
-                                <a href="javascript:void(0);" class="location-info"><?php echo Mage::helper('postnl')->__('business hours'); ?></a>
-                            </div>
-                        </a>
+                            </span>
+                            <span class="location-distance">2.1 km</span>
+                            <a href="javascript:void(0);" class="location-info"><?php echo Mage::helper('postnl')->__('business hours'); ?></a>
+                        </div>
                     </li>
                 </ul>
-                
                 <div class="button-set">
                     <button type="button" class="button btn-save next"><span><span><?php echo Mage::helper('postnl')->__('Save'); ?></span></span></button>
                 </div>
             </div>
-        
         </div>
     </div>
 </div>
