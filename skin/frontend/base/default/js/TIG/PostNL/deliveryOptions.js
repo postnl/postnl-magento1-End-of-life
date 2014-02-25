@@ -524,6 +524,7 @@ PostnlDeliveryOptions.Map = new Class.create({
     isBeingDragged : false,
 
     markers              : [],
+    locations            : [],
     selectedMarker       : false,
     searchLocationMarker : false,
 
@@ -577,6 +578,25 @@ PostnlDeliveryOptions.Map = new Class.create({
         return false;
     },
 
+    getLocations : function() {
+        return this.locations;
+    },
+
+    setLocations : function(locations) {
+        this.locations = locations;
+
+        return this;
+    },
+
+    hasLocations : function() {
+        var locations = this.getLocations();
+        if (locations.length > 0) {
+            return true;
+        }
+
+        return false;
+    },
+
     getSelectedMarker : function() {
         return this.selectedMarker;
     },
@@ -585,6 +605,14 @@ PostnlDeliveryOptions.Map = new Class.create({
         this.selectedMarker = marker;
 
         return this;
+    },
+
+    hasSelectedMarker : function() {
+        if (!this.getSelectedMarker()) {
+            return false;
+        }
+
+        return true;
     },
 
     getSearchLocationMarker : function() {
@@ -1031,7 +1059,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         /**
          * Send a new getNearestLocations request.
          */
-        var nearestLocationsRequestObject = new Ajax.PostnlRequest(this.deliveryOptions.locationsUrl, {
+        var nearestLocationsRequestObject = new Ajax.PostnlRequest(this.getDeliveryOptions().locationsUrl, {
             method : 'post',
             parameters : {
                 lat          : center.lat(),
@@ -1115,6 +1143,9 @@ PostnlDeliveryOptions.Map = new Class.create({
 
                 var locations = responseText.evalJSON(true);
 
+                /**
+                 * Add new markers for the locations we found.
+                 */
                 this.addMarkers(locations);
 
                 return this;
@@ -1123,7 +1154,7 @@ PostnlDeliveryOptions.Map = new Class.create({
                 return false;
             },
             onComplete : function() {
-                this.getLocationsInAreaRequest = false;
+                this.setLocationsInAreaRequestObject(false);
             }.bind(this)
         });
 
@@ -1132,31 +1163,58 @@ PostnlDeliveryOptions.Map = new Class.create({
         return this;
     },
 
+    /**
+     * Add markers for an array of locations.
+     *
+     * @param locations
+     *
+     * @returns PostnlDeliveryOptions.Map
+     */
     addMarkers : function(locations) {
         var markers = [];
-        if (this.markers) {
-            markers = this.markers;
+
+        /**
+         * If we have existing markers, get those as we will be adding (not replacing) markers.
+         */
+        if (this.hasMarkers()) {
+            markers = this.getMarkers();
         }
 
         var parsedLocations = [];
         var newLocations = [];
-        if (this.locations) {
-            parsedLocations = this.locations;
+
+        /**
+         * If we have existing locations, get those as we will be adding (not replacing) locations.
+         */
+        if (this.hasLocations()) {
+            parsedLocations = this.getLocations();
         }
 
+        /**
+         * Loop through each location to add a marker.
+         */
         for (var i = 0; i < locations.length; i++) {
             var location = locations[i];
 
+            /**
+             * Check that this marker doesn't already exist.
+             */
             if (this.markerExists(location.LocationCode)) {
                 continue;
             }
 
+            /**
+             * Get the position and title of the new marker.
+             */
             var markerLatLng = new google.maps.LatLng(location.Latitude, location.Longitude);
             var markerTitle = location.Name + ', ' + location.Address.Street + ' ' + location.Address.HouseNr;
             if (location.Address.HouseNrExt) {
                 markerTitle += ' ' + location.Address.HouseNrExt;
             }
 
+            /**
+             * Add the new marker.
+             */
             var marker = new google.maps.Marker({
                 position  : markerLatLng,
                 map       : this.map,
@@ -1164,57 +1222,101 @@ PostnlDeliveryOptions.Map = new Class.create({
                 animation : google.maps.Animation.DROP,
                 draggable : false,
                 clickable : true,
-                icon      : this.deliveryOptions.getMapIcon()
+                icon      : this.getDeliveryOptions().getMapIcon()
             });
 
+            /**
+             * Create a new PostNL location object to associate with this marker.
+             */
             var parsedLocation = new PostnlDeliveryOptions.Location(
                 location,
                 parsedLocations.length + 1,
                 this.deliveryOptions,
                 location.DeliveryOptions.string
             );
-            parsedLocation.marker = marker;
 
+            /**
+             * Attach the marker to the location.
+             */
+            parsedLocation.setMarker(marker);
+
+            /**
+             * Attach the location to the marker.
+             */
             marker.locationCode = location.LocationCode;
             marker.location = parsedLocation;
 
+            /**
+             * Register some observers for the marker. These will allow the marker to be selected and will change it's
+             * icon on hover.
+             */
             google.maps.event.addListener(marker, "click", this.selectMarker.bind(this, marker, true, true));
             google.maps.event.addListener(marker, "mouseover", this.markerOnMouseOver.bind(this, marker));
             google.maps.event.addListener(marker, "mouseout", this.markerOnMouseOut.bind(this, marker));
 
+            /**
+             * Add the marker and the location to the marker and location lists.
+             */
             markers.push(marker);
             parsedLocations.push(parsedLocation);
             newLocations.push(parsedLocation);
         }
 
-        this.locations = parsedLocations;
-        this.markers = markers;
+        this.setLocations(parsedLocations);
+        this.setMarkers(markers);
 
+        /**
+         * Render the locations.
+         */
         this.renderLocations(newLocations);
 
-        if (!this.selectedMarker) {
+        /**
+         * If no marker has been selected, select the first marker.
+         */
+        if (!this.hasSelectedMarker()) {
             this.selectMarker(markers[0], false, false);
         }
 
         return this;
     },
 
+    /**
+     * Removes all markers.
+     *
+     * @returns PostnlDeliveryOptions.Map
+     */
     removeMarkers : function() {
-        var markers = this.markers;
+        var markers = this.getMarkers();
 
+        /**
+         * Remove each marker from the map and unset it.
+         */
         markers.each(function(marker) {
             marker.setMap(null);
             marker = null;
         });
 
+        /**
+         * Remove all location elements.
+         */
         $$('#map-locations li').each(function(location) {
             location.remove();
         });
 
-        this.markers = [];
+        /**
+         * Reset the markers array.
+         */
+        this.setMarkers([]);
         return this;
     },
 
+    /**
+     * Render location elements.
+     *
+     * @param locations
+     *
+     * @returns PostnlDeliveryOptions.Map
+     */
     renderLocations : function(locations) {
         for (var i = 0; i < locations.length; i++) {
             var location = locations[i];
@@ -1233,7 +1335,7 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns boolean
      */
     markerExists : function(location) {
-        var markers = this.markers;
+        var markers = this.getMarkers();
 
         for (var i = 0; i < markers.length; i++) {
             if (markers[i].locationCode == location) {
@@ -1244,67 +1346,140 @@ PostnlDeliveryOptions.Map = new Class.create({
         return false;
     },
 
+    /**
+     * Trigger the google maps resize event. This prevents sizing errors when the map has been initialized in a hidden
+     * div.
+     *
+     * @returns PostnlDeliveryOptions.Map
+     */
     triggerResize : function() {
-        var center = this.map.getCenter();
-        google.maps.event.trigger(this.map, "resize");
-        this.map.setCenter(center);
+        var map = this.getMap();
 
+        /**
+         * Make sure the map keeps it's previous center.
+         */
+        var center = map.getCenter();
+
+        google.maps.event.trigger(map, "resize");
+
+        map.setCenter(center);
+
+        /**
+         * Look for new locations within the map's new bounds.
+         */
         this.getLocationsWithinBounds();
 
         return this;
     },
 
+    /**
+     * Select a marker.
+     *
+     * @param marker   The marker to select.
+     * @param scrollTo Whether the locations list should scroll to the selected marker's location element.
+     * @param panTo    Whether the map should pan to the selected marker.
+     *
+     * @returns PostnlDeliveryOptions.Map
+     */
     selectMarker : function(marker, scrollTo, panTo) {
-        if (this.selectedMarker
-            && this.selectedMarker.location.mapElement.identify() == marker.location.mapElement.identify()
+        /**
+         * If the marker is already selected, we don't have to do anything.
+         */
+        if (this.hasSelectedMarker()
+            && this.getSelectedMarker().location.mapElement.identify() == marker.location.mapElement.identify()
         ) {
             return this;
         }
 
-        marker.setIcon(this.deliveryOptions.getMapIconSelected());
-        marker.location.mapElement.addClassName('selected');
+        /**
+         * Update the marker's icon and the marker's location's classname.
+         */
+        marker.setIcon(this.getDeliveryOptions().getMapIconSelected());
+        if (!marker.location.mapElement.hasClassName('selected')) {
+            marker.location.mapElement.addClassName('selected');
+        }
 
+        /**
+         * If required, scroll to the marker's location in the locations list.
+         */
         if (scrollTo) {
             var locationsList = $('map-locations');
             locationsList.scrollTop = marker.location.mapElement.offsetTop - locationsList.offsetTop - 36;
         }
 
-        if (this.selectedMarker) {
-            this.selectedMarker.setIcon(this.deliveryOptions.getMapIcon());
-            this.selectedMarker.location.mapElement.removeClassName('selected');
+        /**
+         * If we already had a selected marker, update it's icon and it's location's class name.
+         */
+        if (this.hasSelectedMarker()) {
+            this.getSelectedMarker().setIcon(this.getDeliveryOptions().getMapIcon());
+            this.getSelectedMarker().location.mapElement.removeClassName('selected');
         }
-        this.selectedMarker = marker;
 
+        /**
+         * Set this marker as the selected marker.
+         */
+        this.setSelectedMarker(marker);
+
+        /**
+         * Pan the map to the marker's position if required.
+         */
         if (panTo) {
-            this.map.panTo(marker.getPosition());
+            this.getMap().panTo(marker.getPosition());
         }
 
         return this;
     },
 
+    /**
+     * Update the marker's icon on mouseover.
+     *
+     * @param marker
+     *
+     * @returns PostnlDeliveryOptions.Map
+     */
     markerOnMouseOver : function(marker) {
+        /**
+         * Don't do anything if the map is currently being dragged.
+         */
         if (this.getIsBeingDragged()) {
             return this;
         }
 
+        /**
+         * Only update the marker is it's not the currently selected marker.
+         */
         if (!this.getSelectedMarker()
             || this.getSelectedMarker().location.mapElement.identify() != marker.location.mapElement.identify()
         ) {
-            marker.setIcon(this.deliveryOptions.getMapIconSelected());
+            marker.setIcon(this.getDeliveryOptions().getMapIconSelected());
         }
 
         return this;
     },
 
+
+    /**
+     * Update the marker's icon on mouseout.
+     *
+     * @param marker
+     *
+     * @returns PostnlDeliveryOptions.Map
+     */
     markerOnMouseOut : function(marker) {
+        /**
+         * Don't do anything if the map is currently being dragged.
+         */
         if (this.getIsBeingDragged()) {
             return this;
         }
 
-        if (!this.selectedMarker
-            || this.selectedMarker.location.mapElement.identify() != marker.location.mapElement.identify()
+        /**
+         * Only update the marker is it's not the currently selected marker.
+         */
+        if (!this.getSelectedMarker()
+            || this.getSelectedMarker().location.mapElement.identify() != marker.location.mapElement.identify()
             ) {
-            marker.setIcon(this.deliveryOptions.getMapIcon());
+            marker.setIcon(this.getDeliveryOptions().getMapIcon());
         }
 
         return this;
@@ -1521,8 +1696,14 @@ PostnlDeliveryOptions.Location = new Class.create({
     render : function(parent) {
         var elements = {};
         var deliveryDate = this.getDeliveryOptions().deliveryDate;
-        var date = new Date(deliveryDate.substring(6, 10), deliveryDate.substring(3, 5) - 1, deliveryDate.substring(0, 2));
-
+        var date = new Date(
+            deliveryDate.substring(6, 10),
+            deliveryDate.substring(3, 5) - 1,
+            deliveryDate.substring(0, 2)
+        );
+        console.log(date);
+        var availableDeliveryDate = this.getDeliveryDate(date);
+        console.log(availableDeliveryDate);
         /**
          * Get the html for this location's header.
          */
@@ -1576,13 +1757,13 @@ PostnlDeliveryOptions.Location = new Class.create({
              */
             if (n < 1) {
                 optionHtml += '<strong class="option-day">'
-                           + this.getDeliveryOptions().weekdays[date.getDay()]
-                           + '</strong>';
+                            + this.getDeliveryOptions().weekdays[availableDeliveryDate.getDay()]
+                            + '</strong>';
                 optionHtml += '<span class="option-date">'
-                           + ('0' + date.getDate()).slice(-2)
-                           + '-'
-                           + ('0' + (date.getMonth() + 1)).slice(-2)
-                           + '</span>';
+                            + ('0' + availableDeliveryDate.getDate()).slice(-2)
+                            + '-'
+                            + ('0' + (availableDeliveryDate.getMonth() + 1)).slice(-2)
+                            + '</span>';
             }
 
             optionHtml += '</span>';
@@ -1667,6 +1848,78 @@ PostnlDeliveryOptions.Location = new Class.create({
         }
 
         return commentHtml;
+    },
+
+    /**
+     * Get an available delivery date. This method checks the opening times of this location to make sure the location
+     * is open when the order is delivered. If not it will check the day after, and the day after that, and so on.
+     *
+     * Note that this method is recursive and uses the optional parameter n to prevent infinite loops.
+     *
+     * @param date
+     * @param n    The number of tries that have been made to find a valid delivery date.
+     *
+     * @returns Date
+     */
+    getDeliveryDate : function(date, n) {
+        /**
+         * If this is the first attempt, set n to 0
+         */
+        if (typeof n == 'undefined') {
+            n = 0;
+        }
+
+        /**
+         * If over 7 attempts have been made, return the current date (it should be 1 week after the first attempt).
+         */
+        if (n > 7) {
+            return date;
+        }
+
+        var openingDays = this.getOpeningHours();
+
+        /**
+         * Check if the location is open on the specified day of the week.
+         */
+        var openingHours = false;
+        switch (date.getDay()) {
+            case 0:
+                openingHours = openingDays.Sunday.string;
+                break;
+            case 1:
+                openingHours = openingDays.Monday.string;
+                break;
+            case 2:
+                openingHours = openingDays.Tuesday.string;
+                break;
+            case 3:
+                openingHours = openingDays.Wednesday.string;
+                break;
+            case 4:
+                openingHours = openingDays.Thursday.string;
+                break;
+            case 5:
+                openingHours = openingDays.Friday.string;
+                break;
+            case 6:
+                openingHours = openingDays.Saturday.string;
+                break;
+        }
+
+        /**
+         * If no openinghours are found for this day, or if the location is closed; check the next day.
+         */
+        if (!openingHours
+            || openingHours.length < 1
+            || openingHours[0] == ''
+        ) {
+            var nextDay = new Date(date);
+            nextDay.setDate(date.getDate() + 1);
+
+            return this.getDeliveryDate(nextDay, n + 1);
+        }
+
+        return date;
     },
 
     /**
