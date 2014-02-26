@@ -88,7 +88,16 @@
     <business_hours translate="message" module="postnl">
         <message>Business Hours</message>
     </business_hours>
+    <business_hours_lowercase translate="message" module="postnl">
+        <message>business hours</message>
+    </business_hours_lowercase>
     <closed translate="message" module="postnl">
         <message>Closed</message>
     </closed>
+    <early_pickup_available translate="message" module="postnl">
+        <message>Early pickup available.</message>
+    </early_pickup_available>
+    <evening_pickup_available translate="message" module="postnl">
+        <message>Evening pickup available</message>
+    </evening_pickup_available>
 </jstranslator>
