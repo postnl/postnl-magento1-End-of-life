@@ -66,6 +66,9 @@
             <div class="popup-content">
                 <h2><?php echo $_helper->__('Pickup locations found'); ?></h2>
                 <ul class="location-list" id="map-locations" style="overflow-y:scroll;"></ul>
+                <div class="location-details" id="location-info-window" style="display:none;">
+                    <a id="location-details-close" title="<?php echo Mage::helper('postnl')->__('Close'); ?>" class="btn-close"><?php echo Mage::helper('postnl')->__('Close'); ?></a>
+                </div>
                 <div class="button-set">
                     <button type="button" class="button btn-save next" id="location_save"><span><span><?php echo $_helper->__('Save'); ?></span></span></button>
                 </div>

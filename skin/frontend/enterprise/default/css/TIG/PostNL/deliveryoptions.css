@@ -1,8 +1,8 @@
 /* Generic =============================================================================== */
 #postnl_delivery_options { background:#fff; font:12px/1 'postnllight', Arial, sans-serif; padding:17px 17px 11px; color:#333334; }
 #postnl_delivery_options * { margin:0; padding:0; }
-#postnl_delivery_options *, 
-#postnl_delivery_options *:before, 
+#postnl_delivery_options *,
+#postnl_delivery_options *:before,
 #postnl_delivery_options *:after { -moz-box-sizing:border-box; -webkit-box-sizing:border-box; box-sizing:border-box; }
 
 /* Styling */
@@ -44,6 +44,10 @@
 #postnl_delivery_options .button:active { position:relative; z-index:2; bottom:-1px; right:0; left:0; }
 /* ======================================================================================= */
 
+/* Spinner =============================================================================== */
+#postnl-ajax-loader { width:100px; height:74px; background:#FCF8F4; text-align:center; position:relative; left:50%; margin-left:-50px; box-shadow:0 0 30px rgba(0,0,0,0.5); -webkit-box-shadow:0 0 30px rgba(0,0,0,0.5); border:1px solid #888; border-radius:10px; -moz-border-radius:10px; -webkit-border-radius:10px; }
+
+
 /* Option List ========================================================================== */
 #postnl_delivery_options .option-list { margin-bottom:6px; position:relative; }
 #postnl_delivery_options .option-list .bkg { display:block; padding:0 0 0 8px; background-position:0 0; }
@@ -60,9 +64,9 @@
 #postnl_delivery_options .location .location-info:hover .tooltip { display:block !important; }
 
 /* Option */
-#postnl_delivery_options .option-dd, 
-#postnl_delivery_options .option-radio, 
-#postnl_delivery_options .option-time, 
+#postnl_delivery_options .option-dd,
+#postnl_delivery_options .option-radio,
+#postnl_delivery_options .option-time,
 #postnl_delivery_options .option-comment { display:block; float:left; height:38px; }
 
 #postnl_delivery_options .option { display:block; height:38px; margin:0 0 2px; overflow:hidden; }
@@ -112,7 +116,7 @@
 
 /* Search */
 #postnl_add_location .search-location { margin-top:11px; }
-#postnl_add_location .search-location, 
+#postnl_add_location .search-location,
 #postnl_add_location .search-location .input-text,
 #postnl_add_location .search-location .btn-search { float:left; margin-left:2px; }
 #postnl_add_location .search-location .input-text { display:block; width:186px; height:26px; padding:0 12px 4px; border:none; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_location-search_input.gif) 0 0 no-repeat; color:#575756; font:12px 'postnllight', Arial, sans-serif; }
@@ -151,7 +155,7 @@
 #postnl_add_location .location-details .btn-close { top:16px; right:8px; }
 
 #postnl_add_location .location-details .left { float:left; width:131px; line-height:1; }
-#postnl_add_location .location-details .left .location-name { line-height:18px; margin:0 0 20px; } 
+#postnl_add_location .location-details .left .location-name { line-height:18px; margin:0 0 20px; }
 #postnl_add_location .location-details .left .location-address { line-height:18px; }
 #postnl_add_location .location-details .left .location-info { float:none; text-align:left; text-decoration:none; font-size:12px; line-height:18px; position:absolute; bottom:16px; width:131px; }
 

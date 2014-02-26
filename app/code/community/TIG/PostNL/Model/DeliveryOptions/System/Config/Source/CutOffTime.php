@@ -115,6 +115,10 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Source_CutOffTime
                 'label' => '16:00',
             ),
             array(
+                'value' => '17:00:00',
+                'label' => '17:00',
+            ),
+            array(
                 'value' => '18:00:00',
                 'label' => '18:00',
             ),

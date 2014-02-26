@@ -45,6 +45,7 @@
                 <type>skin_css</type>
                 <file>css/TIG/PostNL/messages.css</file>
             </action>
+            <block type="postnl_core/jsTranslate" name="postnl_js_translate" after="-"/>
         </reference>
     </default>
 
