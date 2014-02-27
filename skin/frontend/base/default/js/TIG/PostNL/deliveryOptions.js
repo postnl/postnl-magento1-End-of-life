@@ -81,6 +81,12 @@ PostnlDeliveryOptions.prototype = {
 
     selectedOption     : false,
 
+    /******************************
+     *                            *
+     *  GETTER AND SETTER METHODS *
+     *                            *
+     ******************************/
+
     setParsedTimeframes : function(parsedTimeframes) {
         this.parsedTimeframes = parsedTimeframes;
 
@@ -820,10 +826,30 @@ PostnlDeliveryOptions.Map = new Class.create({
     getMapOptions : function() {
         var myStyles = [
             {
-                featureType : 'poi',
-                elementType : 'labels',
-                stylers     : [
-                    { visibility : 'off'}
+                "featureType" : "poi.business",
+                "elementType" : "labels",
+                "stylers"     : [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType" : "poi.school",
+                "elementType" : "labels",
+                "stylers"     : [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType" : "poi.attraction",
+                "elementType" : "labels",
+                "stylers"     : [
+                    {
+                        "visibility": "off"
+                    }
                 ]
             }
         ];
@@ -834,19 +860,22 @@ PostnlDeliveryOptions.Map = new Class.create({
         };
 
         var mapOptions = {
-            zoom               : 16,
-            minZoom            : 11,
-            maxZoom            : 18,
-            center             : new google.maps.LatLng(52.3702157, 4.895167899999933), //Amsterdam
-            mapTypeId          : google.maps.MapTypeId.ROADMAP,
-            styles             : myStyles,
-            panControl         : false,
-            mapTypeControl     : false,
-            scaleControl       : false,
-            streetViewControl  : false,
-            overviewMapControl : false,
-            zoomControl        : true,
-            zoomControlOptions : zoomControlOptions
+            zoom                   : 16,
+            minZoom                : 11,
+            maxZoom                : 18,
+            center                 : new google.maps.LatLng(52.3702157, 4.895167899999933), //Amsterdam
+            mapTypeId              : google.maps.MapTypeId.ROADMAP,
+            styles                 : myStyles,
+            draggable              : true,
+            panControl             : false,
+            mapTypeControl         : false,
+            scaleControl           : false,
+            streetViewControl      : false,
+            overviewMapControl     : false,
+            zoomControl            : true,
+            zoomControlOptions     : zoomControlOptions,
+            disableDoubleClickZoom : false,
+            scrollwheel            : true
         };
 
         return mapOptions;
@@ -1357,6 +1386,10 @@ PostnlDeliveryOptions.Map = new Class.create({
              * Get the position and title of the new marker.
              */
             var markerLatLng = new google.maps.LatLng(location.Latitude, location.Longitude);
+
+            /**
+             * Format the location's address for the marker's title.
+             */
             var markerTitle = location.Name + ', ' + location.Address.Street + ' ' + location.Address.HouseNr;
             if (location.Address.HouseNrExt) {
                 markerTitle += ' ' + location.Address.HouseNrExt;
@@ -1367,7 +1400,7 @@ PostnlDeliveryOptions.Map = new Class.create({
              */
             var marker = new google.maps.Marker({
                 position  : markerLatLng,
-                map       : this.map,
+                map       : null,
                 title     : markerTitle,
                 animation : google.maps.Animation.DROP,
                 draggable : false,
@@ -1424,6 +1457,22 @@ PostnlDeliveryOptions.Map = new Class.create({
          */
         if (!this.hasSelectedMarker()) {
             this.selectMarker(markers[0], false, false);
+        }
+
+        /**
+         * Have the marker's drop sequentially, rather than all at once.
+         */
+        for (var o = 0, n = 0; i < markers.length; n++) {
+            marker = markers[n];
+            if (marker.getMap() !== null) {
+                continue;
+            }
+
+            setTimeout(function(marker) {
+                marker.setMap(this.getMap());
+            }.bind(this, marker), o * 50);
+
+            o++;
         }
 
         return this;
@@ -1767,6 +1816,19 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     openLocationInfoWindow : function(content) {
+        var map = this.getMap();
+        var mapOptions = this.getMapOptions();
+
+        mapOptions.draggable              = false;
+        mapOptions.minZoom                = map.getZoom();
+        mapOptions.maxZoom                = map.getZoom();
+        mapOptions.scrollwheel            = false;
+        mapOptions.zoomControl            = false;
+        mapOptions.disableDoubleClickZoom = true;
+        mapOptions.center                 = map.getCenter();
+
+        map.setOptions(mapOptions);
+
         $$('#location-info-window div').each(function(element) {
             element.remove();
         });
@@ -1786,6 +1848,14 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     closeLocationInfoWindow : function() {
+        var map = this.getMap();
+        var mapOptions = this.getMapOptions();
+
+        mapOptions.draggable = true;
+        mapOptions.center = map.getCenter();
+
+        map.setOptions(mapOptions);
+
         $$('#location-info-window div').each(function(element) {
             element.remove();
         });
