@@ -194,6 +194,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $this;
         }
 
+        $response = Mage::helper('postnl/deliveryOptions')->markEveningLocations($response, $data['deliveryDate']);
+
         $locations = Mage::helper('core')->jsonEncode($response);
 
         /**
@@ -258,6 +260,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
             return $this;
         }
+
+        $response = Mage::helper('postnl/deliveryOptions')->markEveningLocations($response, $data['deliveryDate']);
 
         $locations = Mage::helper('core')->jsonEncode($response);
 

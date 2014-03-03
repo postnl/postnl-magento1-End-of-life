@@ -48,6 +48,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_EVENING_TIMEFRAMES       = 'postnl/delivery_options/enable_evening_timeframes';
 
     /**
+     * The time (as H * 100 + i) we consider to be the start of the evening.
+     */
+    const EVENING_TIME = 1900;
+
+    /**
      * Checks if PakjeGemak is available.
      *
      * @param int|boolean $storeId
@@ -258,6 +263,78 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         Mage::register('can_use_delivery_options', true);
         return true;
+    }
+
+    /**
+     * Mark a set of location results with the 'isEvening' parameter. This will allow the google maps api to easily
+     * identify which locations may be filtered out later.
+     *
+     * @param array  $locations    An array of PostNL location objects
+     * @param string $deliveryDate The date on which the package should be delivered.
+     *
+     * @return array
+     */
+    public function markEveningLocations($locations, $deliveryDate)
+    {
+        /**
+         * Get the day of the week on which the package should be delivered.
+         */
+        $weekDay = date('l', strtotime($deliveryDate));
+
+        foreach ($locations as &$location) {
+            /**
+             * if we don't have any business hours specified for this date, it's not open on it.
+             */
+            if (!isset($location->OpeningHours->$weekDay->string)) {
+                $location->isEvening = false;
+
+                continue;
+            }
+
+            /**
+             * Check if the location is open in the evening and mark it accordingly.
+             */
+            $businessHours = $location->OpeningHours->$weekDay->string;
+            foreach ($businessHours as $businessHour) {
+                if ($this->_isEvening($businessHour)) {
+                    $location->isEvening = true;
+
+                    continue(2);
+                }
+            }
+
+            $location->isEvening = false;
+
+            continue;
+        }
+
+        return $locations;
+    }
+
+    /**
+     * Check if a specified opening time is considered to be in the evening. Opening times must be formatted as
+     * H:i-H:i. The second part of the time (the closing time) will be compared to the self::EVENING_TIME constant to
+     * find out if it's in the evening.
+     *
+     * @param $time
+     *
+     * @return bool
+     */
+    protected function _isEvening($time)
+    {
+        $timeParts = explode('-', $time);
+
+        if (!isset($timeParts[1])) {
+            return false;
+        }
+
+        $closingTime = str_replace(':', '', $timeParts[1]);
+
+        if ($closingTime >= self::EVENING_TIME) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -39,8 +39,6 @@
 
 /**
  * PostNL shipping method model
- *
- * @todo check code for inconsistency and conventions. Copied from flat_rate method
  */
 class TIG_PostNL_Model_Carrier_Postnl
     extends Mage_Shipping_Model_Carrier_Abstract
@@ -240,6 +238,7 @@ class TIG_PostNL_Model_Carrier_Postnl
 
         // Free shipping by qty
         $freeQty = 0;
+        $freePackageValue = false;
         if ($request->getAllItems()) {
             $freePackageValue = 0;
             foreach ($request->getAllItems() as $item) {
