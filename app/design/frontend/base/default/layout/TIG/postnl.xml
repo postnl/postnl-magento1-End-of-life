@@ -110,6 +110,9 @@
 
     <onestepcheckout_index_index>
         <reference name="head">
+            <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/TIG/PostNL/onestepcheckout.css</stylesheet></action>
+            <action method="addCss"><stylesheet>fonts/TIG/PostNL/fonts.css</stylesheet></action>
             <action method="addItem">
                 <type>skin_js</type>
                 <file>js/TIG/PostNL/ajax.js</file>
@@ -124,6 +127,17 @@
             </action>
             <block type="core/template" name="poswtnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
         </reference>
+        
+        <reference name="onestepcheckout.checkout">
+            <block type="checkout/onepage_shipping_method_available" name="choose-shipping-method" template="TIG/PostNL/onestepcheckout/shipping_method.phtml">
+                <block type="core/template" name="postnl.osc.add.moment" template="TIG/PostNL/onestepcheckout/addmoment.phtml">
+                    <block type="core/template" name="postnl.osc.delivery.options" template="TIG/PostNL/onestepcheckout/deliveryoptions.phtml">
+                        <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/onestepcheckout/addlocation.phtml" />
+                    </block>
+                </block>
+            </block>
+        </reference>
+        
         <reference name="onestepcheckout.billing.address">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/onestepcheckout/postcode_check.phtml"/>
         </reference>
