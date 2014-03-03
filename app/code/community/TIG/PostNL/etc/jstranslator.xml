@@ -95,7 +95,7 @@
         <message>Closed</message>
     </closed>
     <early_pickup_available translate="message" module="postnl">
-        <message>Early pickup available.</message>
+        <message>Early pickup available</message>
     </early_pickup_available>
     <evening_pickup_available translate="message" module="postnl">
         <message>Evening pickup available</message>

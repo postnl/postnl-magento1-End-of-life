@@ -666,3 +666,6 @@ TIG_PostNL::business hours,openingstijden
 TIG_PostNL::Save,Bewaren
 "TIG_PostNL::Search by zipcode, address or city","Zoek op postcode, adres of plaatsnaam"
 TIG_PostNL::business hours,openingstijden
+TIG_PostNL::Early pickup available,Extra vroeg ophalen mogelijk
+TIG_PostNL::Evening pickup available,'s Avonds ophalen mogelijk
+TIG_PostNL::Or pick your own delivery moment,Of kies zelf uw bezorgmoment

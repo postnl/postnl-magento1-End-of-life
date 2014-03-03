@@ -922,7 +922,7 @@ PostnlDeliveryOptions.prototype = {
             return this;
         }
 
-        $('postnl-ajax-loader').hide();
+        $('initial_loader').hide();
         $('postnl_delivery_options').show();
 
         return this;
@@ -1517,6 +1517,7 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     searchAndPanToAddress : function(address, addMarker, getLocations) {
+        this.unselectMarker();
         this.geocode(address, this.panMapToAddress.bind(this, addMarker, getLocations), this.showSearchErrorDiv);
 
         return this;
@@ -1645,10 +1646,11 @@ PostnlDeliveryOptions.Map = new Class.create({
              * Create a new marker.
              */
             searchLocationMarker = new google.maps.Marker({
-                position: latlng,
-                map: map,
-                title: selectedResult.formatted_address,
-                draggable: false
+                position  : latlng,
+                map       : map,
+                title     : selectedResult.formatted_address,
+                draggable : false,
+                zIndex    : 0
             });
 
             this.setSearchLocationMarker(searchLocationMarker);
@@ -1733,6 +1735,9 @@ PostnlDeliveryOptions.Map = new Class.create({
                 deliveryDate : this.getDeliveryOptions().getDeliveryDate(),
                 isAjax       : true
             },
+            onCreate : function() {
+                $('locations_loader').show();
+            },
             onSuccess : function(response) {
                 var responseText = response.responseText;
                 if (responseText == 'not_allowed'
@@ -1757,6 +1762,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             },
             onComplete : function() {
                 this.setNearestLocationsRequestObject(false);
+                $('locations_loader').hide();
             }.bind(this)
         });
 
@@ -1804,6 +1810,9 @@ PostnlDeliveryOptions.Map = new Class.create({
                 deliveryDate : this.getDeliveryOptions().getDeliveryDate(),
                 isAjax       : true
             },
+            onCreate : function() {
+                $('locations_loader').show();
+            },
             onSuccess : function(response) {
                 var responseText = response.responseText;
                 if (responseText == 'not_allowed'
@@ -1828,6 +1837,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             },
             onComplete : function() {
                 this.setLocationsInAreaRequestObject(false);
+                $('locations_loader').hide();
             }.bind(this)
         });
 
@@ -2174,6 +2184,8 @@ PostnlDeliveryOptions.Map = new Class.create({
             || this.getSelectedMarker().location.getMapElement().identify()
                 != marker.location.getMapElement().identify()
         ) {
+            marker.oldZIndex = marker.getZIndex();
+            marker.setZIndex(this.getMarkers().length + 2);
             marker.setIcon(this.getMapIconSelected(marker.location));
             marker.setShape(false); //remove any shape, as the new icon has a different shape. This could cause
                                     //flickering.
@@ -2207,7 +2219,8 @@ PostnlDeliveryOptions.Map = new Class.create({
          */
         if (!this.getSelectedMarker()
             || this.getSelectedMarker().location.getMapElement().identify() != marker.location.getMapElement().identify()
-            ) {
+        ) {
+            marker.setZIndex(marker.oldZIndex);
             marker.setIcon(this.getMapIcon(marker.location));
             marker.setShape(this.getMarkerShape());
         }
@@ -2677,7 +2690,7 @@ PostnlDeliveryOptions.Location = new Class.create({
             headerHtml += '<span class="location-type">' + Translator.translate('Post Office') + '</span>';
         }
 
-        headerHtml += '<a href="javascript:void(0);" class="location-info" id="tooltip_anchor_'
+        headerHtml += '<a class="location-info" id="tooltip_anchor_'
                     + this.getLocationCode()
                     + '">';
         headerHtml += '<span>' + Translator.translate('More Info') + '</span>';
