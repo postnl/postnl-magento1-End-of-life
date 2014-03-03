@@ -46,41 +46,40 @@
 <?php $_postcode      = $_address->getPostcode(); ?>
 <?php $_housenumber   = $_address->getStreet2(); ?>
 <?php $_deliveryDate  = $this->getDeliveryDate(); ?>
-<div id="postnl_delivery_options" class="col2-set" style="">
+<div id="initial_loader"><?php echo $this->__('Loading...'); ?></div>
+<div id="postnl_delivery_options" style="display:none;">
     <div class="title">
-        <h2><?php echo Mage::helper('postnl')->__('Delivery Options'); ?></h2>
+        <h2><?php echo $this->__('Delivery Options'); ?></h2>
     </div>
-    <div id="postnl_delivery" class="col-1">
-        <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
-        <ul class="option-list" id="timeframes">
-            <li class="location">
-                <div class="bkg">
+    <div class="col2-set">
+        <div id="postnl_delivery" class="col-1">
+            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+            <ul class="option-list" id="timeframes">
+                <li class="location">
                     <div class="bkg">
-                        <div class="content">
-                            <strong class="location-name"><?php echo $_address->getStreetFull(); ?></strong>
+                        <div class="bkg">
+                            <div class="content">
+                                <strong class="location-name"><?php echo $_address->getStreetFull(); ?></strong>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div id="postnl_pickup" class="col-2">
-        <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
-        <ul class="option-list" id="pgelocation"></ul>
-        <ul class="option-list" id="pglocation"></ul>
-        <ul class="option-list" id="palocation"></ul>
-        <ul class="option-list" id="customlocation"></ul>
-        <ul class="option-list" id="add_location">
-            <li class="add-location">
-                <a id="add_location_link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
-            </li>
-        </ul>
+                </li>
+            </ul>
+        </div>
+        <div id="postnl_pickup" class="col-2">
+            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+            <ul class="option-list" id="pgelocation"></ul>
+            <ul class="option-list" id="pglocation"></ul>
+            <ul class="option-list" id="palocation"></ul>
+            <ul class="option-list" id="customlocation"></ul>
+            <ul class="option-list" id="add_location">
+                <li class="add-location">
+                    <a id="add_location_link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
+                </li>
+            </ul>
+        </div>
     </div>
     <?php echo $this->getChildHtml('postnl.add.location') ?>
-</div>
-<div id="postnl-ajax-loader">
-    <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/postnl_spinner.gif'); ?>" />
-    <p class="message"><?php echo $this->__('Loading...'); ?></p>
 </div>
 <script type="text/javascript">
 //<![CDATA[
@@ -129,6 +128,8 @@
         deliveryOptions.showOptions();
     } catch(e) {
         console.log(e);
+        $('initial_loader').hide();
+        $('postnl_delivery_options').show();
         deliveryOptions.showDefaultTimeframe();
     }
 
