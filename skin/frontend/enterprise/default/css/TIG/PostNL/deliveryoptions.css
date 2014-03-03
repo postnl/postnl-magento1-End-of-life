@@ -44,10 +44,6 @@
 #postnl_delivery_options .button:active { position:relative; z-index:2; bottom:-1px; right:0; left:0; }
 /* ======================================================================================= */
 
-/* Spinner =============================================================================== */
-#postnl-ajax-loader { width:100px; height:74px; background:#FCF8F4; text-align:center; position:relative; left:50%; margin-left:-50px; box-shadow:0 0 30px rgba(0,0,0,0.5); -webkit-box-shadow:0 0 30px rgba(0,0,0,0.5); border:1px solid #888; border-radius:10px; -moz-border-radius:10px; -webkit-border-radius:10px; }
-
-
 /* Option List ========================================================================== */
 #postnl_delivery_options .option-list { margin-bottom:6px; position:relative; }
 #postnl_delivery_options .option-list .bkg { display:block; padding:0 0 0 8px; background-position:0 0; }

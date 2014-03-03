@@ -84,8 +84,31 @@
 </div>
 <script type="text/javascript">
 //<![CDATA[
+    /**
+     * Preload an array of images.
+     */
+    var baseUrl = '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions'); ?>';
+    var images = [
+        'AH', 'Primera', 'Staples', 'PostNL', 'Bruna', 'Jumbo', 'ReadShop', 'C1000', 'Coop', 'Plus', 'Emte', 'Spar',
+        'Gamma', 'Karwei'
+    ];
+    preloadImages(images);
+
     var options;
+    var params;
     var deliveryOptions;
+
+    params = {
+        timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
+        locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
+        locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
+        postcode           : '<?php echo $_postcode; ?>',
+        housenumber        : '<?php echo $_housenumber; ?>',
+        deliveryDate       : '<?php echo $_deliveryDate; ?>',
+        imageBaseUrl       : baseUrl,
+        fullAddress        : "<?php echo $_address->getStreet1() . ' ' . $_address->getStreet2() . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>"
+    };
+
     options = {
         eveningFee             : '<?php echo $this->getFeeText('evening'); ?>',
         expressFee             : '<?php echo $this->getFeeText('express'); ?>',
@@ -93,22 +116,37 @@
         allowPge               : <?php echo $this->canUsePakjeGemakExpress() ? 'true' : 'false'; ?>,
         allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
-        allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
-        mapIcon                : '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/LOCATION_CIRCLE.png'); ?>',
-        mapIconSelected        : '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/LOCATION_DROPPIN.png'); ?>'
+        allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>
     };
 
-    deliveryOptions = new PostnlDeliveryOptions(
-        '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
-        '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
-        '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
-        '<?php echo $_postcode; ?>',
-        '<?php echo $_housenumber; ?>',
-        '<?php echo $_deliveryDate; ?>',
-        options
-    );
+    try {
+        deliveryOptions = new PostnlDeliveryOptions(params, options);
+    } catch(e) {
+        console.log(e);
+    }
 
-    deliveryOptions.fullAddress = "<?php echo $_address->getStreet1() . ' ' . $_address->getStreet2() . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>";
-    deliveryOptions.showOptions();
+    try {
+        deliveryOptions.showOptions();
+    } catch(e) {
+        console.log(e);
+        deliveryOptions.showDefaultTimeframe();
+    }
+
+    /**
+     * Preload images.
+     *
+     * @param {Array} images
+     */
+    function preloadImages(images) {
+        var loadedImages = [];
+
+        for (var i = 0, o = images.length; i < images.length; i++, o++) {
+            loadedImages[i] = new Image();
+            loadedImages[i].src = baseUrl + '/LocationPin_' + images[i] + '.png';
+
+            loadedImages[o] = new Image();
+            loadedImages[o].src = baseUrl + '/LocationCircle_' + images[i] + '.png';
+        }
+    }
 //]]>
 </script>
