@@ -955,6 +955,8 @@ PostnlDeliveryOptions.prototype = {
 
 PostnlDeliveryOptions.Map = new Class.create({
     map                           : false,
+    scrollbar                     : false,
+
     deliveryOptions               : false,
     fullAddress                   : '',
 
@@ -979,6 +981,10 @@ PostnlDeliveryOptions.Map = new Class.create({
 
     getMap : function() {
         return this.map;
+    },
+
+    getScrollbar : function() {
+        return this.scrollbar;
     },
 
     getDeliveryOptions : function() {
@@ -1257,6 +1263,8 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         this.map = new google.maps.Map($('map-div'), mapOptions);
 
+        this.scrollbar = new Control.ScrollBar('scrollbar_content', 'scrollbar_track');
+
         this.searchAndPanToAddress(this.getFullAddress(), true, false);
 
         this.registerObservers();
@@ -1440,6 +1448,7 @@ PostnlDeliveryOptions.Map = new Class.create({
          * This causes the map to resize according to the now visible window's viewport.
          */
         this.triggerResize();
+        this.recalculateScrollbar();
 
         return this;
     },
@@ -1984,7 +1993,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         /**
          * Remove all location elements.
          */
-        $$('#map-locations li').each(function(location) {
+        $$('#scrollbar_content li').each(function(location) {
             location.remove();
         });
 
@@ -2015,14 +2024,16 @@ PostnlDeliveryOptions.Map = new Class.create({
                 renderDistance = false;
             }
 
-            location.renderAsMapLocation('map-locations', renderDistance);
+            location.renderAsMapLocation('scrollbar_content', renderDistance);
         }
+
+        this.recalculateScrollbar();
 
         return this;
     },
 
     /**
-     * Checks if a mark already exists for a specified location.
+     * Checks if a marker already exists for a specified location.
      *
      * @param {string} location
      *
@@ -2050,6 +2061,7 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     selectMarker : function(marker, scrollTo, panTo) {
+
         /**
          * If the marker is already selected, we don't have to do anything.
          */
@@ -2060,16 +2072,21 @@ PostnlDeliveryOptions.Map = new Class.create({
             return this;
         }
 
+        var element = false;
+        if (marker.location && marker.location.getMapElement()) {
+            element = marker.location.getMapElement();
+        }
+
         /**
          * Update the marker's icon and the marker's location's classname.
          */
         marker.setIcon(this.getMapIconSelected(marker.location));
         marker.setShape(this.getSelectedMarkerShape());
-
-        marker.oldZIndex = marker.getZIndex() ? marker.getZIndex() : 0;
+        marker.oldZIndex = marker.getZIndex();
         marker.setZIndex(this.getMarkers().length + 1);
-        if (!marker.location.getMapElement().hasClassName('selected')) {
-            marker.location.getMapElement().addClassName('selected');
+
+        if (element && !element.hasClassName('selected')) {
+            element.addClassName('selected');
         }
 
         this.unselectMarker();
@@ -2077,9 +2094,10 @@ PostnlDeliveryOptions.Map = new Class.create({
         /**
          * If required, scroll to the marker's location in the locations list.
          */
-        if (scrollTo) {
-            var locationsList = $('map-locations');
-            locationsList.scrollTop = marker.location.getMapElement().offsetTop - locationsList.offsetTop - 36;
+        if (scrollTo && element) {
+            this.getScrollbar().scrollTo(
+                element.offsetTop - $('scrollbar_content').offsetTop - 36, true
+            );
         }
 
         /**
@@ -2159,8 +2177,6 @@ PostnlDeliveryOptions.Map = new Class.create({
             marker.setIcon(this.getMapIconSelected(marker.location));
             marker.setShape(false); //remove any shape, as the new icon has a different shape. This could cause
                                     //flickering.
-            marker.oldZIndex = marker.getZIndex() ? marker.getZIndex() : 0;
-            marker.setZIndex(this.getMarkers().length + 1);
         }
 
         marker.location.getMapElement().setStyle({
@@ -2194,7 +2210,6 @@ PostnlDeliveryOptions.Map = new Class.create({
             ) {
             marker.setIcon(this.getMapIcon(marker.location));
             marker.setShape(this.getMarkerShape());
-            marker.setZIndex(marker.oldZIndex);
         }
 
         marker.location.getMapElement().writeAttribute('style', '');
@@ -2437,6 +2452,18 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         return this;
+    },
+
+    /**
+     * Recaclulcate the scrollbar after the scrollbar contents are changed.
+     *
+     * @returns {PostnlDeliveryOptions.Map}
+     */
+    recalculateScrollbar : function() {
+        var scrollbar = this.getScrollbar();
+        scrollbar.recalculateLayout();
+
+        return this;
     }
 });
 
@@ -2446,6 +2473,7 @@ PostnlDeliveryOptions.Map = new Class.create({
  */
 PostnlDeliveryOptions.Location = new Class.create({
     elements          : [],
+    tooltipElement    : null,
     mapElement        : null,
 
     address           : {},
@@ -2476,6 +2504,16 @@ PostnlDeliveryOptions.Location = new Class.create({
 
     setElements : function(elements) {
         this.elements = elements;
+
+        return this;
+    },
+
+    getTooltipElement : function() {
+        return this.tooltipElement;
+    },
+
+    setTooltipElement : function(element) {
+        this.tooltipElement = element;
 
         return this;
     },
@@ -2624,8 +2662,8 @@ PostnlDeliveryOptions.Location = new Class.create({
          */
         var headerHtml = '';
         headerHtml += '<li class="location">';
-        headerHtml += '<span class="bkg">';
-        headerHtml += '<span class="bkg">';
+        headerHtml += '<div class="bkg">';
+        headerHtml += '<div class="bkg">';
         headerHtml += '<div class="content">';
         headerHtml += '<strong class="location-name overflow-protect">' + this.getName() + '</strong>';
 
@@ -2635,13 +2673,17 @@ PostnlDeliveryOptions.Location = new Class.create({
             headerHtml += '<span class="location-type">' + Translator.translate('Post Office') + '</span>';
         }
 
-        headerHtml += '<a href="javascript:void(0);" class="location-info">';
+        headerHtml += '<a href="javascript:void(0);" class="location-info" id="tooltip_anchor_'
+                    + this.getLocationCode()
+                    + '">';
         headerHtml += '<span>' + Translator.translate('More Info') + '</span>';
-        headerHtml += this.getTooltipHtml();
         headerHtml += '</a>';
+
+        headerHtml += this.getTooltipHtml();
+
         headerHtml += '</div>';
-        headerHtml += '</span>';
-        headerHtml += '</span>';
+        headerHtml += '</div>';
+        headerHtml += '</div>';
         headerHtml += '</li>';
 
         /**
@@ -2661,9 +2703,8 @@ PostnlDeliveryOptions.Location = new Class.create({
 
             var optionHtml = '';
             optionHtml += '<li class="option" id="' + id + '">';
-            optionHtml += '<a href="#">';
-            optionHtml += '<span class="bkg">';
-            optionHtml += '<span class="bkg">';
+            optionHtml += '<div class="bkg">';
+            optionHtml += '<div class="bkg">';
             optionHtml += '<div class="content">';
             optionHtml += '<span class="option-dd">';
 
@@ -2695,9 +2736,8 @@ PostnlDeliveryOptions.Location = new Class.create({
 
             optionHtml += '<span class="option-comment">' + this.getCommentHtml(type) + '</span>';
             optionHtml += '</div>';
-            optionHtml += '</span>';
-            optionHtml += '</span>';
-            optionHtml += '</a>';
+            optionHtml += '</div>';
+            optionHtml += '</div>';
             optionHtml += '</li>';
 
             /**
@@ -2731,6 +2771,22 @@ PostnlDeliveryOptions.Location = new Class.create({
          * Save all newly created elements.
          */
         this.setElements(elements);
+
+        /**
+         * Add observers to display the tooltip on mouseover.
+         */
+        var tooltipElement = $('location_tooltip_' + this.getLocationCode());
+        var tooltipAnchor = $('tooltip_anchor_' + this.getLocationCode());
+
+        tooltipAnchor.observe('mouseover', function() {
+            tooltipElement.show();
+        }.bind(this));
+
+        tooltipAnchor.observe('mouseout', function() {
+            tooltipElement.hide();
+        }.bind(this));
+
+        this.setTooltipElement(tooltipElement);
 
         return this;
     },
@@ -2854,7 +2910,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         }
         addressText += '  ' + Translator.translate('in') + ' ' + address.City;
 
-        var html = '<div class="tooltip">';
+        var html = '<div class="tooltip" id="location_tooltip_' + this.getLocationCode() + '" style="display:none;">';
         html += '<div class="tooltip-header">';
         html += '<strong class="location-name">' + this.getName() + '</strong>';
         html += '<strong class="location-address">' + addressText + '</strong>';
@@ -3321,9 +3377,8 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
          * Build the element's html.
          */
         var html = '<li class="option" id="timeframe_' + this.getTimeframeIndex() + '">';
-        html += '<a href="#">';
-        html += '<span class="bkg">';
-        html += '<span class="bkg">';
+        html += '<div class="bkg">';
+        html += '<div class="bkg">';
         html += '<div class="content">';
         html += '<span class="option-dd">';
 
@@ -3346,9 +3401,8 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         html += this.getCommentHtml();
 
         html += '</div>';
-        html += '</span>';
-        html += '</span>';
-        html += '</a>';
+        html += '</div>';
+        html += '</div>';
         html += '</li>';
 
         /**

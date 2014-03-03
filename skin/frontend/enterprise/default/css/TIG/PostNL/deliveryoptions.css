@@ -85,7 +85,7 @@
 #postnl_delivery_options .add-location a:hover { text-decoration:underline; }
 
 /* Tooltip */
-#postnl_delivery_options .tooltip { display:none; position:absolute; z-index:500; top:-18px; right:27px; width:264px; background:#f2f2f2 url(../../../images/TIG/PostNL/deliveryoptions/bkg_tooltip.png) 100% 100% no-repeat; padding:12px 16px 16px; color:#333334;}
+#postnl_delivery_options .tooltip { position:absolute; z-index:500; top:-18px; right:27px; width:264px; background:#f2f2f2 url(../../../images/TIG/PostNL/deliveryoptions/bkg_tooltip.png) 100% 100% no-repeat; padding:12px 16px 16px; color:#333334;}
 #postnl_delivery_options .tooltip { border-radius:3px; -webkit-border-radius:3px; -moz-border-radius:3px; }
 #postnl_delivery_options .tooltip-header strong { display:block; font-size:14px; line-height:18px !important; }
 #postnl_delivery_options .tooltip-divider { height:0px; border:none; border-bottom:1px solid #bbbbbc; margin:12px -8px 7px; }
