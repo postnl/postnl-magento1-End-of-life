@@ -2371,7 +2371,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         });
 
         locationInfoWindow.insert({
-            bottom: content
+            top: content
         });
 
         if (code) {
@@ -2455,13 +2455,17 @@ PostnlDeliveryOptions.Map = new Class.create({
     },
 
     /**
-     * Recaclulcate the scrollbar after the scrollbar contents are changed.
+     * Recalculcate the scrollbar after the scrollbar contents were changed and make sure the scrollbar stays in the
+     * same position.
      *
      * @returns {PostnlDeliveryOptions.Map}
      */
     recalculateScrollbar : function() {
         var scrollbar = this.getScrollbar();
+        var scrollbarOffset = scrollbar.slider.value;
+
         scrollbar.recalculateLayout();
+        scrollbar.scrollTo(scrollbarOffset * scrollbar.getCurrentMaximumDelta());
 
         return this;
     }
