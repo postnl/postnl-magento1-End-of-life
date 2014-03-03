@@ -69,9 +69,14 @@
 
             <div class="popup-content">
                 <h2><?php echo $_helper->__('Pickup locations found'); ?></h2>
-                <ul class="location-list" id="map-locations" style="overflow-y:scroll;"></ul>
+                <div id="scrollbar_container">
+                    <div id="scrollbar_track">
+                        <div id="scrollbar_handle"></div>
+                    </div>
+                    <ul id="scrollbar_content" class="location-list"></ul>
+                </div>
                 <div class="location-details" id="location-info-window" style="display:none;">
-                    <a id="location-details-close" title="<?php echo Mage::helper('postnl')->__('Close'); ?>" class="btn-close">
+                    <a id="location-details-close" title="<?php echo $_helper->__('Close'); ?>" class="btn-close">
                         <?php echo Mage::helper('postnl')->__('Close'); ?>
                     </a>
                 </div>

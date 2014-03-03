@@ -46,7 +46,7 @@
 <?php $_postcode      = $_address->getPostcode(); ?>
 <?php $_housenumber   = $_address->getStreet2(); ?>
 <?php $_deliveryDate  = $this->getDeliveryDate(); ?>
-<div id="postnl_delivery_options" class="col2-set" style="display:none;">
+<div id="postnl_delivery_options" class="col2-set" style="">
     <div class="title">
         <h2><?php echo Mage::helper('postnl')->__('Delivery Options'); ?></h2>
     </div>
@@ -54,13 +54,13 @@
         <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
         <ul class="option-list" id="timeframes">
             <li class="location">
-                <span class="bkg">
-                    <span class="bkg">
+                <div class="bkg">
+                    <div class="bkg">
                         <div class="content">
                             <strong class="location-name"><?php echo $_address->getStreetFull(); ?></strong>
                         </div>
-                    </span>
-                </span>
+                    </div>
+                </div>
             </li>
         </ul>
     </div>
@@ -89,8 +89,8 @@
      */
     var baseUrl = '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions'); ?>';
     var images = [
-        'AH', 'Primera', 'Staples', 'PostNL', 'Bruna', 'Jumbo', 'ReadShop', 'C1000', 'Coop', 'Plus', 'Emte', 'Spar',
-        'Gamma', 'Karwei'
+        'albertheijn', 'bruna', 'c1000', 'coop', 'default', 'emte', 'jumbo', 'plus', 'primera', 'readshop', 'spar',
+        'staples', 'gamma', 'karwei'
     ];
     preloadImages(images);
 
@@ -142,10 +142,10 @@
 
         for (var i = 0, o = images.length; i < images.length; i++, o++) {
             loadedImages[i] = new Image();
-            loadedImages[i].src = baseUrl + '/LocationPin_' + images[i] + '.png';
+            loadedImages[i].src = baseUrl + '/drp_' + images[i] + '.png';
 
             loadedImages[o] = new Image();
-            loadedImages[o].src = baseUrl + '/LocationCircle_' + images[i] + '.png';
+            loadedImages[o].src = baseUrl + '/crc_' + images[i] + '.png';
         }
     }
 //]]>
