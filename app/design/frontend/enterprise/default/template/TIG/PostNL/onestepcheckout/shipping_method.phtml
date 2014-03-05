@@ -77,7 +77,9 @@
                                 </label>
                                 
                                 <?php if ($_rate->getCode() == 'postnl_flatrate'): ?>
+                                <div class="postnl-container">
                                     <?php echo $this->getChildHtml('postnl.osc.add.moment'); ?>
+                                </div>
                                 <?php endif; ?>
                                 
                            <?php endif ?>
