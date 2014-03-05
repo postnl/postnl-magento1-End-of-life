@@ -2498,6 +2498,8 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
         }
 
+        this.recalculateScrollbar();
+
         return this;
     },
 

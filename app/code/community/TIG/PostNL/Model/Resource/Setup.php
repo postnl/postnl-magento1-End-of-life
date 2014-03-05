@@ -77,6 +77,22 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     protected $_configVer;
 
     /**
+     * Array of available cif webservice settings.
+     *
+     * @var array
+     */
+    protected $_cifWebserviceVersionSettings = array(
+        'cif_version_shippingstatus',
+        'cif_version_confirming',
+        'cif_version_labelling',
+        'cif_version_barcode',
+        'cif_version_checkout',
+        'cif_version_deliverydate',
+        'cif_version_timeframe',
+        'cif_version_location',
+    );
+
+    /**
      * Set the stored DB version to the specified value
      *
      * @param string $dbVer
@@ -122,6 +138,16 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     public function getConfigVer()
     {
         return $this->_configVer;
+    }
+
+    /**
+     * Gets an array of cif webservice version settings.
+     *
+     * @return array
+     */
+    public function getCifWebserviceVersionSettings()
+    {
+        return $this->_cifWebserviceVersionSettings;
     }
 
     /**
@@ -387,6 +413,55 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
             $adminUser->saveExtra($extra);
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Resets a specific webservice version settings to the defaults specified in config.xml. If no parameter is
+     * provided, all settings will be reset.
+     *
+     * Please note that you will have to clear the caches after this method is used. Since this should be used during an
+     * upgrade of the extension, you should be doing that anyway.
+     *
+     * @param boolean|array $webservices
+     *
+     * @return TIG_PostNL_Model_Resource_Setup
+     */
+    public function resetWebserviceVersions($webservices = false)
+    {
+        if ($webservices === false) {
+            $webservices = $this->getCifWebserviceVersionSettings();
+        }
+
+        foreach ($webservices as &$service) {
+            if (strpos($service, 'postnl/advanced/') === false) {
+                $service = 'postnl/advanced/' . $service;
+            }
+        }
+
+        $this->resetConfig($webservices);
+
+        return $this;
+    }
+
+    /**
+     * Resets an array of config fields to factory defaults.
+     *
+     * @param array|string $configFields
+     *
+     * @return TIG_PostNL_Model_Resource_Setup
+     */
+    public function resetConfig($configFields)
+    {
+        if (!is_array($configFields)) {
+            $configFields = array($configFields);
+        }
+
+        $config = Mage::getConfig();
+        foreach ($configFields as $setting) {
+            $config->saveConfig($setting, null);
         }
 
         return $this;

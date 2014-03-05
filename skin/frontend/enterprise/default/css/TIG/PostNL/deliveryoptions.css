@@ -187,3 +187,12 @@
 .content:after,
 .col2-set:after { content:'.'; display:block; height:0; width:0; line-height:0; overflow:hidden; clear:both; }
 /* ======================================================================================= */
+
+/* Chrome bug #336476 fix ================================================================ */
+#postnl_delivery_options { -webkit-animation:fontfix 0.1s linear 0.1s; }
+
+@-webkit-keyframes fontfix {
+    from { 	opacity:1; }
+    to {	opacity:1; }
+}
+/* ======================================================================================= */
