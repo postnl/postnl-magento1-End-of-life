@@ -45,23 +45,110 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     const XPATH_PAKJEGEMAK_EXPRESS_FEE = 'postnl/delivery_options/pakjegemak_express_fee';
 
     /**
-     * Make sure we have a delivery date as this is required for all further requests.
-     *
-     * @return Mage_Core_Block_Template::_construct()
+     * Xpath to 'allow_streetview' setting.
      */
-    protected function _construct()
+    const XPATH_ALLOW_STREETVIEW = 'postnl/delivery_options/allow_streetview';
+
+    /**
+     * Currently selected shipping address.
+     *
+     * @var Mage_Sales_Model_Quote_Address|null
+     */
+    protected $_shippingAddress = null;
+
+    /**
+     * The earliest possible delivery date.
+     *
+     * @var null|string
+     */
+    protected $_deliveryDate = null;
+
+    /**
+     * Set the currently selected shipping address.
+     *
+     * @param Mage_Sales_Model_Quote_Address|null $shippingAddress
+     *
+     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions
+     */
+    public function setShippingAddress($shippingAddress)
     {
+        $this->_shippingAddress = $shippingAddress;
+
+        return $this;
+    }
+
+    /**
+     * Get the currently selected shipping address.
+     *
+     * @return Mage_Sales_Model_Quote_Address|null
+     */
+    public function getShippingAddress()
+    {
+        $shippingAddress = $this->_shippingAddress;
+        if ($shippingAddress !== null) {
+            return $shippingAddress;
+        }
+
         $shippingAddress = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress();
         $this->setShippingAddress($shippingAddress);
 
-        $postcode = $shippingAddress->getPostcode();
+        return $shippingAddress;
+    }
 
-        $this->setPostcode($postcode);
+    /**
+     * Get the currently selected shipping address's postcode.
+     *
+     * @return string
+     */
+    public function getPostcode()
+    {
+        $postcode = $this->getShippingAddress()->getPostcode();
 
-        $deliveryDate = $this->_getDeliveryDate($postcode);
+        $postcode = str_replace(' ', '', strtoupper($postcode));
+
+        return $postcode;
+    }
+
+    /**
+     * Get the earliest possible delivery date.
+     *
+     * @return null|string
+     */
+    public function getDeliveryDate()
+    {
+        $deliveryDate = $this->_deliveryDate;
+
+        if ($deliveryDate !== null) {
+            return $deliveryDate;
+        }
+
+        $postcode = $this->getPostcode();
+
+        try {
+            $deliveryDate = $this->_getDeliveryDate($postcode);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
+            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
+            $deliveryDate = date('d-m-Y', $tomorrow);
+        }
+
         $this->setDeliveryDate($deliveryDate);
+        return $deliveryDate;
+    }
 
-        return parent::_construct();
+    /**
+     * Set the earliest possible delivery date.
+     *
+     * @param string $deliveryDate
+     *
+     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions
+     */
+    public function setDeliveryDate($deliveryDate)
+    {
+        $this->_deliveryDate = $deliveryDate;
+
+        return $this;
     }
 
     /**
@@ -71,13 +158,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
      */
     public function getBaseCurrency()
     {
-        if ($this->hasBaseCurrency()) {
+        if ($this->hasData('base_currency')) {
             return $this->getData('base_currency');
         }
 
         $baseCurrency  = Mage::app()->getStore()->getBaseCurrencyCode();
 
-        $this->setBaseCurrency($baseCurrency);
+        $this->setData('base_currency', $baseCurrency);
         return $baseCurrency;
     }
 
@@ -108,14 +195,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     }
 
     /**
-     * Get either the evening or the express fee as a currency value.
+     * Get either the evening or express fee as a float or int.
      *
      * @param string $type
      *
-     * @return string
+     * @return float|int
      */
-    public function getFeeText($type)
-    {
+    public function getFee($type) {
         switch ($type) {
             case 'evening':
                 $fee = $this->getEveningFee();
@@ -124,8 +210,29 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
                 $fee = $this->getExpressFee();
                 break;
             default:
-                return '';
+                return 0;
         }
+
+        /**
+         * If no fee is entered or an invalid value was entered, return an empty string.
+         */
+        if (!$fee || $fee > 2 || $fee < 0) {
+            return 0;
+        }
+
+        return $fee;
+    }
+
+    /**
+     * Get either the evening or the express fee as a currency value.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getFeeText($type)
+    {
+        $fee = $this->getFee($type);
 
         /**
          * If no fee is entered or an invalid value was entered, return an empty string.
@@ -143,6 +250,20 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     }
 
     /**
+     * Gets an array containing the selected shipping address's streetname, housenumber and housenumber extension.
+     *
+     * @return array
+     */
+    public function getStreetData()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+        $address = $this->getShippingAddress();
+
+        $streetData = Mage::helper('postnl/cif')->getStreetData($storeId, $address, false);
+        return $streetData;
+    }
+
+    /**
      * Checks whether PakjeGemak locations are allowed.
      *
      * @return boolean
@@ -151,7 +272,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     {
         $storeId = Mage::app()->getStore()->getId();
 
-        $canUsePakjeGemak = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemak();
+        $canUsePakjeGemak = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemak($storeId);
         return $canUsePakjeGemak;
     }
 
@@ -164,7 +285,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     {
         $storeId = Mage::app()->getStore()->getId();
 
-        $canUsePakjeGemakExpress = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemakExpress();
+        $canUsePakjeGemakExpress = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemakExpress($storeId);
         return $canUsePakjeGemakExpress;
     }
 
@@ -177,7 +298,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     {
         $storeId = Mage::app()->getStore()->getId();
 
-        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUsePakketAutomaat();
+        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUsePakketAutomaat($storeId);
         return $canUsePakketAutomaat;
     }
 
@@ -190,7 +311,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     {
         $storeId = Mage::app()->getStore()->getId();
 
-        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUseTimeframes();
+        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUseTimeframes($storeId);
         return $canUsePakketAutomaat;
     }
 
@@ -203,8 +324,21 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     {
         $storeId = Mage::app()->getStore()->getId();
 
-        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUseEveningTimeframes();
+        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUseEveningTimeframes($storeId);
         return $canUsePakketAutomaat;
+    }
+
+    /**
+     * Checks whether google streetview is allowed.
+     *
+     * @return boolean
+     */
+    public function canUseStreetView()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $streetviewAllowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_STREETVIEW, $storeId);
+        return $streetviewAllowed;
     }
 
     /**
@@ -212,11 +346,25 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
      *
      * @param string $postcode
      *
+     * @throws TIG_PostNL_Exception
+     *
      * @return string
      */
     protected function _getDeliveryDate($postcode)
     {
-        $storeId = Mage::app()->getStore()->getId();
+        $postcode = str_replace(' ', '', strtoupper($postcode));
+
+        $validator = new Zend_Validate_PostCode('nl_NL');
+        if (!$validator->isValid($postcode)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid postcode supplied for GetDeliveryDate request: %s Postcodes may only contain 4 numbers '
+                        . 'and 2 letters.',
+                     $postcode
+                ),
+                'POSTNL-0131'
+            );
+        }
 
         $cif = Mage::getModel('postnl_deliveryoptions/cif');
         $response = $cif->setStoreId(Mage::app()->getStore()->getId())
@@ -225,4 +373,3 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
         return $response;
     }
 }
-

@@ -39,13 +39,15 @@
 ?>
 <?php
 /**
+ * @var TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions $this
  * @var Mage_Sales_Model_Quote_Address $_address
  */
 ?>
 <?php $_address       = $this->getShippingAddress(); ?>
-<?php $_postcode      = $_address->getPostcode(); ?>
-<?php $_housenumber   = $_address->getStreet2(); ?>
+<?php $_postcode      = $this->getPostcode(); ?>
 <?php $_deliveryDate  = $this->getDeliveryDate(); ?>
+<?php $_streetData    = $this->getStreetData(); ?>
+<?php $_housenumber   = $_streetData['housenumber']; ?>
 <div id="initial_loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_delivery_options" style="display:none;">
     <div class="title">
@@ -109,13 +111,16 @@
     };
 
     options = {
-        eveningFee             : '<?php echo $this->getFeeText('evening'); ?>',
-        expressFee             : '<?php echo $this->getFeeText('express'); ?>',
+        eveningFee             : <?php echo $this->getFee('evening'); ?>,
+        expressFee             : <?php echo $this->getFee('express'); ?>,
+        eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
+        expressFeeText         : '<?php echo $this->getFeeText('express'); ?>',
         allowPg                : <?php echo $this->canUsePakjeGemak()        ? 'true' : 'false'; ?>,
         allowPge               : <?php echo $this->canUsePakjeGemakExpress() ? 'true' : 'false'; ?>,
         allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
-        allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>
+        allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
+        allowStreetview        : <?php echo $this->canUseStreetview() ? 'true' : 'false'; ?>
     };
 
     try {
