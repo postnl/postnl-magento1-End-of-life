@@ -604,7 +604,7 @@ TIG_PostNL::This will affect the layout of the Magento address forms in your che
 TIG_PostNL::Use postcode check on checkout page,Gebruik de postcode check op de checkout pagina
 TIG_PostNL::If enabled the postcode check functionality will be added to your checkout page.,"Indien deze optie gebruikt wordt, zal de postcode check functionaliteit aan de checkout pagina toegevoegd worden."
 TIG_PostNL::Please note that only Magento's onepage checkout and Idev's OneStepCheckout are supported.,Houd er rekening mee dat enkel Magento's onepage checkout en Idev's OneStepCheckout ondersteund worden.
-TIG_PostNL::Use postcode check in customer's address book,Gebruik de postcode check op de checkout pagina
+TIG_PostNL::Use postcode check in customer's address book,Gebruik de postcode check in het adresboek van de klant
 TIG_PostNL::If enabled the postcode check functionality will be added to the customer's address book.,"Indien deze optie gebruikt wordt, zal de postcode check functionaliteit toegevoegd worden aan het adresboek in de klantaccount."
 TIG_PostNL::Shipping Product,Verzendproduct
 TIG_PostNL::Delivery Date,Bezorgdatum
@@ -669,3 +669,6 @@ TIG_PostNL::business hours,openingstijden
 TIG_PostNL::Early pickup available,Extra vroeg ophalen mogelijk
 TIG_PostNL::Evening pickup available,'s Avonds ophalen mogelijk
 TIG_PostNL::Or pick your own delivery moment,Of kies zelf uw bezorgmoment
+TIG_PostNL::Connection timeout duration,Connectie time-out duur
+"TIG_PostNL::If the postcode check takes more than this nuber of seconds, the user will be prompted to enter their address manually instead.","Indien de postcode check langer duurt dan dit aantal seconde, zal de klant gevraagd worden om handmatig een adres in te vullen."
+"TIG_PostNL::If this nuber is set too high, customers may have to wait for a long time before being able to proceed with their order. This could happen in case there is a connection problem to the postcode check servers. Leave this field empty to disable the timeout functionality.","Indien dit veld een te hoge waarde bevat, kan het voorkomen dat klanten lang moeten wachten voordat ze kunnen afrekenen. Dit kan voorkomen als er connectie problemen zijn met de postcode check servers. Laat dit veld leeg om de time-out functionaliteit uit te schakelen."
