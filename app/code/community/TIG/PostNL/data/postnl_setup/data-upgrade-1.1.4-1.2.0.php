@@ -33,8 +33,19 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMgkBSmIBbZpQSAANpQ2JMnJvPUeatLYo&sensor=false"></script>
+
+/**
+ * @var TIG_PostNL_Model_Resource_Setup $installer
+ */
+$installer = $this;
+
+$settingsToReset = array(
+    'cif_version_shippingstatus',
+    'cif_version_confirming',
+    'cif_version_labelling',
+);
+
+$installer->resetWebserviceVersions($settingsToReset);
