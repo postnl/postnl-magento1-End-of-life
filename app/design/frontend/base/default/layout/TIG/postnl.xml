@@ -89,7 +89,7 @@
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/livepipe.js</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/slider.js</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/scrollbar.js</file></action>
-            <block type="core/template" name="poswtnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
+            <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
         </reference>
         <reference name="checkout.onepage.billing">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>
@@ -125,7 +125,10 @@
                 <type>skin_css</type>
                 <file>css/TIG/PostNL/postcodecheck.css</file>
             </action>
-            <block type="core/template" name="poswtnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
+            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/livepipe.js</file></action>
+            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/slider.js</file></action>
+            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/scrollbar.js</file></action>
+            <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
         </reference>
         
         <reference name="onestepcheckout.checkout">
@@ -180,7 +183,7 @@
                 <type>skin_css</type>
                 <file>css/TIG/PostNL/postcodecheck.css</file>
             </action>
-            <block type="core/template" name="poswtnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
+            <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
         </reference>
         <reference name="customer_address_edit">
             <block type="core/template" name="postnl_postcodecheck" template="TIG/PostNL/customer/address/postcode_check.phtml"/>

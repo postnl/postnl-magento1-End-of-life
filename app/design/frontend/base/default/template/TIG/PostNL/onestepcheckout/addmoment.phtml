@@ -1,9 +1,7 @@
 <div id="postnl_add_moment">
-
     <div class="sub-title">
         <h3><?php echo Mage::helper('postnl')->__('Delivery Options'); ?></h3>
     </div>
-
     <ul class="option-list">
         <li class="location">
             <div class="bkg">
@@ -14,7 +12,7 @@
                 </div>
             </div>
         </li>
-        <li class="option">
+        <li class="option active">
             <div class="bkg">
                 <div class="bkg">
                     <div class="content">
@@ -24,7 +22,6 @@
                         </span>
                         <span class="option-radio"></span>
                         <span class="option-time">09:00 - 19:00</span>
-                        <span class="option-comment">vandaag + &euro;19,95</span>
                     </div>
                 </div>
             </div>
@@ -32,7 +29,8 @@
     </ul>
     <ul class="option-list">
         <li class="add-moment">
-            <a id="add_moment_link" class="button" ><span><span><?php echo Mage::helper('postnl')->__('Or pick your own delivery moment'); ?></span></span></a>
+            <a id="add_moment_link" class="button action" ><span><span><?php echo Mage::helper('postnl')->__('Or pick your own delivery moment'); ?></span></span></a>
         </li>
     </ul>
 </div>
+<?php echo $this->getChildHtml('postnl.osc.delivery.options'); ?>

@@ -67,7 +67,9 @@
                    <?php endif ?>
                    
                    <?php if ($_rate->getCode() == 'postnl_flatrate'): ?>
+                   <div class="postnl-container">
                        <?php echo $this->getChildHtml('postnl.delivery.options'); ?>
+                   </div>
                    <?php endif; ?>
                    
                 </li>
