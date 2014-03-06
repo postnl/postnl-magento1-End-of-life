@@ -573,7 +573,7 @@ PostnlDeliveryOptions.prototype = {
          * Parse and render the result.
          */
         this.parseTimeframes(timeframes)
-            .renderTimeframes();
+            .renderTimeframes(true);
 
         this.setParsedTimeframes(true)
             .hideSpinner();
@@ -622,7 +622,14 @@ PostnlDeliveryOptions.prototype = {
         return this;
     },
 
-    renderTimeframes : function() {
+    /**
+     * Render all timeframes.
+     *
+     * @param {boolean}  selectTimeframe
+     *
+     * @returns {PostnlDeliveryOptions}
+     */
+    renderTimeframes : function(selectTimeframe) {
         $$('#' + this.getOptions().timeframesContainer + ' li.option').each(function(element) {
             element.remove();
         });
@@ -631,7 +638,9 @@ PostnlDeliveryOptions.prototype = {
             timeframe.render(this.getOptions().timeframesContainer);
         }.bind(this));
 
-        this.timeframes[0].select();
+        if (selectTimeframe) {
+            this.selectTimeframe(this.timeframes[0].getElement());
+        }
 
         return this;
     },
@@ -646,7 +655,7 @@ PostnlDeliveryOptions.prototype = {
         var postnlTimeframe = new PostnlDeliveryOptions.Timeframe(this.getDeliveryDate(), fakeTimeframe, 0, this);
         this.setTimeframes(new Array(postnlTimeframe));
 
-        this.renderTimeframes();
+        this.renderTimeframes(true);
 
         this.setParsedTimeframes(true)
             .hideSpinner();

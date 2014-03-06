@@ -3,7 +3,7 @@ TIG_PostNL::Method Name,Methode naam
 TIG_PostNL::Rate Type,Tarief type
 TIG_PostNL::Price,Prijs
 TIG_PostNL::Calculate Handling Fee,Verzendkosten berekeningswijze
-TIG_PostNL::Handling Fee,afhandelingskosten
+TIG_PostNL::Handling Fee,Afhandelingskosten
 TIG_PostNL::Sort Order,Sorteer bestelling
 TIG_PostNL::Title,Titel
 TIG_PostNL::Type,Type
@@ -12,7 +12,7 @@ TIG_PostNL::Ship to Specific Countries,Verzend naar specifieke landen
 TIG_PostNL::Show Method if Not Applicable,Toon methode indien niet beschikbaar
 TIG_PostNL::Displayed Error Message,Getoonde foutmelding indien niet beschikbaar
 TIG_PostNL::Condition,Voorwaarde
-TIG_PostNL::Include Virtual Products in Price Calculation,Neem de virtuele prodcten mee in de prijsberekening
+TIG_PostNL::Include Virtual Products in Price Calculation,Neem de virtuele producten mee in de prijsberekening
 TIG_PostNL::Version & Support,Versie & Ondersteuning
 TIG_PostNL::General Settings,Algemene Instellingen
 TIG_PostNL::Active,Actief
@@ -672,3 +672,46 @@ TIG_PostNL::Or pick your own delivery moment,Of kies zelf uw bezorgmoment
 TIG_PostNL::Connection timeout duration,Connectie time-out duur
 "TIG_PostNL::If the postcode check takes more than this nuber of seconds, the user will be prompted to enter their address manually instead.","Indien de postcode check langer duurt dan dit aantal seconde, zal de klant gevraagd worden om handmatig een adres in te vullen."
 "TIG_PostNL::If this nuber is set too high, customers may have to wait for a long time before being able to proceed with their order. This could happen in case there is a connection problem to the postcode check servers. Leave this field empty to disable the timeout functionality.","Indien dit veld een te hoge waarde bevat, kan het voorkomen dat klanten lang moeten wachten voordat ze kunnen afrekenen. Dit kan voorkomen als er connectie problemen zijn met de postcode check servers. Laat dit veld leeg om de time-out functionaliteit uit te schakelen."
+TIG_PostNL::Show PostNL Checkout exclusively to MijnPakket users,Toon PostNL Checkout exclusief an Mijnpakket gebruikers
+"TIG_PostNL::If enabled, PostNL Checkout will only be available to users who already have a Mijnpakket account.","Indien deze optie op ja staat, zal PostNL Checkout enkel getoond worden aan gebruikers die een Mijnpakket account hebben."
+TIG_PostNL::This option is only available if delivery options are enabled.,Deze optie is enkel beschikbaar indien bezorgopties geactiveerd zijn.
+TIG_PostNL::PostNL Delivery Options,PostNL Bezorgopties
+"TIG_PostNL::Here you can configure your PostNL delivery options.<br />With PostNL delivery options, your customers can choose where and when they want their order delivered. They may choose a date and timeframe for their delivery. Also they can choose to have their order delivered to a nearby post office. New features include the 'evening' delivery option and the option to choose an 'early delivery' post office location.",Hier kunt u uw PostNL bezorgopties configureren.<br />Met PostNl bezorgopties kunnen uw klanten kiezen waar en wanneer zij hun bestelling bezorgd willen krijgen. Klanten kunnen kiezen voor een specifieke datum en tijdvak. Ook kunnen zij ervoor kiezen om hun bestelling op een nabij gelegen postkantoor te laten bezorgen. Ook zijn de nieuwe 'avondbezorging' en 'extra vroeg bezorging' diensten beschikbaar.
+TIG_PostNL::Enable PostNL delivery options,Activeer PostNL bezorgopties
+TIG_PostNL::You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.,U kunt PostNL bezorgopties deactiveren indien de bestelling een product bevat dat niet op voorraad is of indien de gehele bestelling minder weegt dan 2 kg.
+TIG_PostNL::Enable PostNL delivery options for orders under 2 kg,Activeer PostNL bezorgopties voor bestellingen van minder dan 2 kg
+TIG_PostNL::The 2kg limit will be based on the product's weight and the weight unit you selected under the 'Confirm and label printing settings' group.,Het 2 kg limiet wordt gebaseerd op het gewicht van de producten en de gewichtseenheid die u heeft ingesteld onder 'Voormelden en Label Printen Instellingen' groep.
+TIG_PostNL::Enable PostNL delivery options for orders containing out of stock products,Activeer PostNL bezorgopties voor bestellingen die producten bevatten die niet op voorraad zijn
+"TIG_PostNL::Customers can select a specific date and time when they want their shipment delivered when they use PostNL delivery options. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL delivery options if they are attempting to order an item that is not in stock, thereby preventing this situation.","Klanten kunnen een specifieke datum en tijd kiezen waarop ze hun bestelling bezorgd willen hebben wanneer ze gebruik maken van PostNL bezorgopties. Wanneer een klant een bestelling wil plaatsen met daarin een product dat niet op voorraad is, is het mogelijk dat u niet kunt garanderen dat de bestelling op het gekozen tijdstip bezorgd wordt. Indien deze instelling uit staat, zullen klanten in dit geval geen gebruik kunnen maken van PostNL bezorgopties. Op deze manier kunt u voorkomen dat deze situatie zich voordoet."
+"TIG_PostNL::PostNL delivery options determine the possible delivery dates based on a few settings. It is important that you configure these as accurately as you can. You should try to be conservative with these settings. If you cannot transfer a shipment to PostNL on time each day, customers may not receive their order on the requested date.<br />You can interpret these settings as ""If ordered by {cut-off time}, the order will be delivered in {shipping duration} days"".","De beschikbare bezorgmomenten worden door PostNL bezorgopties bepaald op basis van enkele instellingen. Het is aan te raden om deze instellingen conservatief in te vullen. Indien u een zending niet iedere dag tijdig kunt overhandigen aan PostNL is het mogelijk dat klanten hun bestelling niet op de gevraagde datum ontvangen.<br />U kunt deze instellingen lezen als ""Indien voor {cut-off tijd} besteld, over {overkomstduur} dagen bezorgd""."
+TIG_PostNL::Shipping duration,Overkomstduur
+TIG_PostNL::The number of days shipping will take after a customer finishes their order.,Het aantal dagen dat de bestelling nodig heeft om bezorgd te worden nadat de bestelling geplaatst is.
+TIG_PostNL::Order cut-off time,Bestelling cut-off tijd
+"TIG_PostNL::When an order is placed after this time, another day will be added to the shipping duration.","Indien een bestelling na dit tijdstip besteld wordt, zal er een dag bij de overkomstduur opgeteld worden."
+TIG_PostNL::Allow weekend sorting,gebruik weekend sortering
+"TIG_PostNL::Weekend sorting is a special service where shipments are sorted by PostNL during the weekend, allowing shipments to be delivered on monday. If you enable this field, but weekend sorting is not available for your webshop, parcels will NOT be delivered the next monday.","Weekend sortering is een speciale dienst van PostNL waarbij PostNL zendingen sorteert gedurende het weekend zodat deze op maandagen bezorgd kunnen worden. Indien u deze instelling activeert, maar weekend sortering niet beschikbaar is voor uw webshop zullen zendingen NIET op maandagen bezorgd worden."
+TIG_PostNL::Please ask your PostNL account manager if this service is available for your webshop.,Vraag aan uw PostNL account manager of weekend sortering voor uw webshop beschikbaar is.
+TIG_PostNL::Weekend cut-off time,Weekend cut-off tijd
+"TIG_PostNL::When an order is placed after this time on sunday, another day will be added to the shipping duration.","Indien een bestelling na dit tijdstip besteld wordt op zondag, zal er een dag bij de overkomstduur opgeteld worden."
+"TIG_PostNL::PostNL delivery options allows your customers to choose their delivery date and timeframe, or choose to have their order delivered to a post office, early delivery post office or parcel dispenser. Each of these options can be individually enabled and disabled. In the case of evening- and early delivery, you may charge an additional fee.","PostNL bezorgopties maken het voor uw klanten mogelijk om een bezorgdag en -tijdstip te kiezen. ook kunnen uw klanten er voor kiezen om hun bestelling te laten bezorgen op een postkkantoor, een 'extra vroeg' postkantoor of een pakketautomaat. Deze opties kunnen individueel geactiveerd of gedeactiveerd worden. In het geval van avondbezorging of extra vroeg bezorging kunt u extra kosten in rekening brengen voor het gebruik van deze diensten."
+TIG_PostNL::Enable timeframes,Activeer tijdvensters
+TIG_PostNL::Timeframes allow customers to specify on which date and at which time they want their order delivered.,Tijdvensters maken het mogelijk voor uw klanten om zelf een bezorgdatum en -tijdstip te kiezen voor hun bestelling.
+TIG_PostNL::Enable evening delivery,Activeer avondbezorging
+TIG_PostNL::Whether or not customers may pick an evening timeframe.,Dit bepaalt of klanten voor avondbezorging kunnen kiezen.
+TIG_PostNL::Evening timeframes may not be available in all areas. The PostNL extension will automatically determine whether or not evening delivery is available for a specific area.,Avondbezorging is niet overal beschikbaar. De PostNL extensie bepaalt automatisch of avondbezorging is een bepaald gebied beschikbaar is.
+TIG_PostNL::Evening timeframe fee,Avondbezorging toeslag
+TIG_PostNL::Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs.,Additionele kosten voor het gebruik van avondbezorging in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten.
+TIG_PostNL::This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for evening timeframes.,Deze kosten moeten tussen de 0 en 2 EUR liggen. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van avondbezorging.
+TIG_PostNL::Enable post office locations,Activeer postkantoor locaties
+TIG_PostNL::Whether or not customers may choose to have their order delivered to a nearby post office.,Of klanten ervoor kunnen kiezen om hun bestelling te laten bezorgen op een postkantoor locatie.
+TIG_PostNL::Enable early delivery locations,Activeer extra vroeg postkantoor locaties
+TIG_PostNL::Whether or not customers may choose an 'early delivery' location.,Of klanten ervoor kunnen kiezen om hun bestelling te laten bezorgen op een 'extra vroeg' postkantoor locatie.
+TIG_PostNL::Not all post offces may support early delivery.,Niet alle postkantoren ondersteunen extra vroege bezorging.
+TIG_PostNL::Early delivery fee,Extra vroege bezorging toeslag
+TIG_PostNL::Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs.,Additionele kosten voor het gebruik van extra vroege bezorging in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten.
+TIG_PostNL::This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for early delivery locations.,Deze kosten moeten tussen de 0 en 2 EUR liggen. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van extra vroege bezorging.
+TIG_PostNL::Enable package dispenser locations,Activeer pakketautomaat locaties
+TIG_PostNL::Whether or not customers may choose to have their order delivered to a parcel dispenser.,Of klanten hun bestelling kunnen laten bezorgen bij een pakketautomaat
+TIG_PostNL::Parcel dispensers are available at certain NS train stations across the Netherlands.,Pakketautomaten zijn beschikbaar op bepaalde NS stations.
+TIG_PostNL::Allow Google Streetview,Sta Google Streetview toe
+"TIG_PostNL::If enabled, users may use Google Streetview when choosing a post office location.","Indien geactiveerd, kunnen klanten Google Streetview gebruiken wanneer zij een postkantoor zoeken."
