@@ -63,6 +63,7 @@ PostnlDeliveryOptions.prototype = {
     weekdays           : [],
     datesProcessed     : [],
 
+    saveUrl            : null,
     timeframesUrl      : null,
     locationsUrl       : null,
     locationsInAreaUrl : null,
@@ -83,8 +84,11 @@ PostnlDeliveryOptions.prototype = {
     parsedLocations    : false,
 
     selectedOption     : false,
+    selectedType       : false,
 
     deliveryOptionsMap : false,
+
+    extraCosts         : 0,
 
     /******************************
      *                            *
@@ -102,6 +106,10 @@ PostnlDeliveryOptions.prototype = {
 
     getDatesProcessed : function() {
         return this.datesProcessed;
+    },
+
+    getSaveUrl : function() {
+        return this.saveUrl;
     },
 
     getTimeframesUrl : function() {
@@ -208,6 +216,16 @@ PostnlDeliveryOptions.prototype = {
         return this;
     },
 
+    getSelectedType : function() {
+        return this.selectedType;
+    },
+
+    setSelectedType : function(type) {
+        this.selectedType = type;
+
+        return this;
+    },
+
     getDeliveryOptionsMap : function() {
         return this.deliveryOptionsMap;
     },
@@ -289,7 +307,8 @@ PostnlDeliveryOptions.prototype = {
      * @returns {void}
      */
     initialize : function(params, options) {
-        if (!params.timeframesUrl
+        if (!params.saveUrl
+            || !params.timeframesUrl
             || !params.locationsUrl
             || !params.locationsInAreaUrl
             || !params.postcode
@@ -303,6 +322,7 @@ PostnlDeliveryOptions.prototype = {
 
         this.reset();
 
+        this.saveUrl            = params.saveUrl;
         this.timeframesUrl      = params.timeframesUrl;
         this.locationsUrl       = params.locationsUrl;
         this.locationsInAreaUrl = params.locationsInAreaUrl;
@@ -366,6 +386,8 @@ PostnlDeliveryOptions.prototype = {
         this.parsedLocations  = false;
         this.selectedOption   = false;
 
+        document.stopObserving('postnl:saveDeliveryOptions');
+
         return this;
     },
 
@@ -389,6 +411,8 @@ PostnlDeliveryOptions.prototype = {
                 this.unSelectTimeframe();
             }.bind(this, element));
         }.bind(this));
+
+        document.observe('postnl:saveDeliveryOptions', this.saveSelectedOption.bind(this));
 
         return this;
     },
@@ -640,6 +664,8 @@ PostnlDeliveryOptions.prototype = {
         timeframes.each(function(timeframe) {
             if (element && timeframe.element.identify() == element.identify()) {
                 this.setSelectedOption(timeframe);
+                this.setSelectedType(timeframe.getType());
+
                 timeframe.select();
             } else {
                 timeframe.unSelect();
@@ -894,6 +920,7 @@ PostnlDeliveryOptions.prototype = {
                 var locationElement = elements[index];
                 if (element && locationElement.identify() == element.identify()) {
                     this.setSelectedOption(location);
+                    this.setSelectedType(index);
                     location.select(index);
 
                     var selectedMarker = this.getDeliveryOptionsMap().getSelectedMarker();
@@ -977,6 +1004,45 @@ PostnlDeliveryOptions.prototype = {
 
             return this;
         }
+
+        return this;
+    },
+
+    /**
+     * Saves the selected option.
+     *
+     * @returns {PostnlDeliveryOptions}
+     */
+    saveSelectedOption : function() {
+        if (!this.getSelectedOption()) {
+            return this;
+        }
+
+        var selectedType   = this.getSelectedType();
+        var selectedOption = this.getSelectedOption();
+        var params = {
+            isAjax : true,
+            type   : selectedType,
+            date   : selectedOption.getDate(),
+            costs  : 0
+        };
+
+        if (selectedType == 'Avond') {
+            params['costs'] = this.getOptions().eveningFee;
+        }
+
+        if (selectedType == 'PGE') {
+            params['costs'] = this.getOptions().expressFee;
+        }
+
+        if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
+            params['address'] = Object.toJSON(selectedOption.getAddress());
+        }
+
+        new Ajax.PostnlRequest(this.getSaveUrl(),{
+            method : 'post',
+            parameters : params
+        });
 
         return this;
     }
@@ -2541,6 +2607,7 @@ PostnlDeliveryOptions.Location = new Class.create({
     name              : null,
     openingHours      : null,
     locationCode      : null,
+    date              : null,
 
     deliveryOptions   : null,
     type              : [],
@@ -2612,6 +2679,16 @@ PostnlDeliveryOptions.Location = new Class.create({
 
     getLocationCode : function() {
         return this.locationCode;
+    },
+
+    getDate : function() {
+        return this.date;
+    },
+
+    setDate : function(date) {
+        this.date = date;
+
+        return this;
     },
 
     getDeliveryOptions : function() {
@@ -2691,6 +2768,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.name              = location.Name;
         this.openingHours      = location.OpeningHours;
         this.locationCode      = location.LocationCode.replace(/\s+/g, ''); //remove whitespace from the location code
+        this.date              = deliveryOptions.getDeliveryDate();
         this.isEveningLocation = location.isEvening;
 
         this.deliveryOptions   = deliveryOptions;
@@ -2707,7 +2785,7 @@ PostnlDeliveryOptions.Location = new Class.create({
      */
     render : function(parent) {
         var elements = {};
-        var deliveryDate = this.getDeliveryOptions().getDeliveryDate();
+        var deliveryDate = this.getDate();
         var date = new Date(
             deliveryDate.substring(6, 10),
             deliveryDate.substring(3, 5) - 1,
@@ -2947,6 +3025,13 @@ PostnlDeliveryOptions.Location = new Class.create({
 
             return this.getDeliveryDate(nextDay, n + 1);
         }
+
+        var formattedDate = ('0' + date.getDate()).slice(-2)
+                          + '-'
+                          + ('0' + (date.getMonth() + 1)).slice(-2)
+                          + '-'
+                          + date.getFullYear();
+        this.setDate(formattedDate);
 
         return date;
     },
@@ -3398,6 +3483,10 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
 
     getDeliveryOptions : function() {
         return this.deliveryOptions;
+    },
+
+    getOptions : function() {
+        return this.getDeliveryOptions().getOptions();
     },
 
     /**

@@ -66,12 +66,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_DeliveryOptions_Observer_Onepage
+     * @return TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable
      *
      * @event core_block_abstract_to_html_before
      *
      * @observer checkout_onepage_billing_postcodecheck
-     *
      */
     public function addDeliveryOptions(Varien_Event_Observer $observer)
     {
@@ -95,6 +94,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
             return $this;
         }
 
+        $this->_resetPostnlOrder();
+
         /**
          * Get the template for the current module.
          */
@@ -107,6 +108,23 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
          * @var Mage_Checkout_Block_Onepage_Shipping_Method_Available $block
          */
         $block->setTemplate($template);
+
+        return $this;
+    }
+
+    /**
+     * Checks if a PostNL Order is associated with the current quote. If so, deactivate it.
+     *
+     * @return TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable
+     */
+    protected function _resetPostnlOrder()
+    {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        if ($postnlOrder->getId()) {
+            $postnlOrder->setIsActive(false)
+                        ->save();
+        }
 
         return $this;
     }

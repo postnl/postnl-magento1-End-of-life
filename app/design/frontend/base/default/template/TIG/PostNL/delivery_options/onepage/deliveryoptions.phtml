@@ -100,6 +100,7 @@
     var deliveryOptions;
 
     params = {
+        saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
         timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
         locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
         locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
@@ -107,7 +108,7 @@
         housenumber        : '<?php echo $_housenumber; ?>',
         deliveryDate       : '<?php echo $_deliveryDate; ?>',
         imageBaseUrl       : baseUrl,
-        fullAddress        : "<?php echo $_address->getStreet1() . ' ' . $_address->getStreet2() . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>"
+        fullAddress        : "<?php echo implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>"
     };
 
     options = {
@@ -155,5 +156,25 @@
             loadedImages[o].src = baseUrl + '/crc_' + images[i] + '.png';
         }
     }
+
+    Object.extend(shippingMethod, {
+        save: function(){
+            if (checkout.loadWaiting!=false) return;
+            if (this.validate()) {
+                document.fire('postnl:saveDeliveryOptions');
+                checkout.setLoadWaiting('shipping-method');
+                var request = new Ajax.Request(
+                    this.saveUrl,
+                    {
+                        method:'post',
+                        onComplete: this.onComplete,
+                        onSuccess: this.onSave,
+                        onFailure: checkout.ajaxFailure.bind(checkout),
+                        parameters: Form.serialize(this.form)
+                    }
+                );
+            }
+        }
+    });
 //]]>
 </script>

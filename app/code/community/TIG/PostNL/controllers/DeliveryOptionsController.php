@@ -45,6 +45,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     const LONGITUDE_REGEX = '#^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\.{1}\d{1,6}#';
 
     /**
+     * Newly added 'pakje_gemak' address type
+     */
+    const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
+
+    /**
      * Check to see if PostNL delivery options are active and available.
      *
      * @return boolean
@@ -57,6 +62,66 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $canUseDeliveryOptions = $helper->canUseDeliveryOptions($quote);
 
         return $canUseDeliveryOptions;
+    }
+
+    public function saveSelectedOptionAction()
+    {
+        /**
+         * This action may only be called using AJAX requests
+         */
+        if (!$this->getRequest()->isAjax()) {
+            $this->_redirect('');
+
+            return $this;
+        }
+
+        if (!$this->_canUseDeliveryOptions()) {
+            $this->getResponse()
+                 ->setBody('not_allowed');
+
+            return $this;
+        }
+
+        $params = $this->getRequest()->getPost();
+
+        /**
+         * @todo add validation
+         */
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder->setQuoteId($quote->getId())
+                    ->setIsActive(true)
+                    ->setType($params['type'])
+                    ->setShipmentCosts($params['costs']);
+
+        foreach ($quote->getAllAddresses() as $address) {
+            if ($address->getAddressType() == self::ADDRESS_TYPE_PAKJEGEMAK) {
+                $address->isDeleted(true);
+            }
+        }
+
+        if (isset($params['address'])) {
+            $address = $params['address'];
+            $address = Mage::helper('core')->jsonDecode($address);
+
+            $pakjeGemakAddress = Mage::getModel('sales/quote_address');
+            $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK);
+            $pakjeGemakAddress->setCity($address['City'])
+                              ->setCountryId($address['Countrycode'])
+                              ->setStreet1($address['Street'])
+                              ->setStreet2($address['HouseNr'])
+                              ->setStreet3($address['HouseNrExt'])
+                              ->setPostcode($address['Zipcode']);
+
+            $quote->addAddress($pakjeGemakAddress)
+                  ->save();
+
+            $postnlOrder->setisPakjeGemak(true);
+        }
+        $postnlOrder->save();
+
+        return $this;
     }
 
     /**

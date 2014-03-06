@@ -125,7 +125,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
         $labelSize = Mage::getStoreConfig(self::XML_PATH_LABEL_SIZE, Mage_Core_Model_App::ADMIN_STORE_ID);
 
-        $this->setLabelSeize($labelSize);
+        $this->setLabelSize($labelSize);
         return $labelSize;
     }
 
