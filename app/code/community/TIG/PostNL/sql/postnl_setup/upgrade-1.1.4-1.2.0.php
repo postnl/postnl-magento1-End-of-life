@@ -41,14 +41,34 @@ $installer = $this;
 
 $installer->startSetup();
 
-$installer->getConnection()
-    ->addColumn($installer->getTable('postnl_core/shipment'),
+$conn = $installer->getConnection();
+$conn->addColumn($installer->getTable('postnl_core/shipment'),
     'is_parcelware_exported',
     array(
         'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
         'nullable' => false,
         'default'  => 0,
         'comment'  => 'Is Parcelware Exported'
+    )
+);
+
+$conn->addColumn($installer->getTable('postnl_checkout/order'),
+    'type',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+        'nullable' => true,
+        'default'  => null,
+        'comment'  => 'Type'
+    )
+);
+
+$conn->addColumn($installer->getTable('postnl_checkout/order'),
+    'shipment_costs',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_FLOAT,
+        'nullable' => true,
+        'default'  => 0,
+        'comment'  => 'Shipment Costs'
     )
 );
 
