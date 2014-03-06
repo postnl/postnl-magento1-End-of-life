@@ -48,6 +48,48 @@
 <?php $_deliveryDate  = $this->getDeliveryDate(); ?>
 <?php $_streetData    = $this->getStreetData(); ?>
 <?php $_housenumber   = $_streetData['housenumber']; ?>
+
+<?php $_hidden = false; ?>
+
+<?php if (!$_postcode || !$_postcode == '-' || !$_housenumber): ?>
+    <?php $_hidden = true; ?>
+<?php endif; ?>
+
+<div id="postnl_add_moment" <?php if ($_hidden): ?>style="display: none;"<?php endif; ?>>
+    <div class="sub-title">
+        <h3><?php echo $this->__('Delivery Options'); ?></h3>
+    </div>
+    <ul class="option-list">
+        <li class="location">
+            <div class="bkg">
+                <div class="bkg">
+                    <div class="content">
+                        <strong class="location-name overflow-protect"><?php echo $_address->getStreetFull(); ?></strong>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li class="option active">
+            <div class="bkg">
+                <div class="bkg">
+                    <div class="content">
+                        <span class="option-dd">
+                            <strong class="option-day">Wo</strong>
+                            <span class="option-date">20-08</span>
+                        </span>
+                        <span class="option-radio"></span>
+                        <span class="option-time">09:00 - 19:00</span>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <ul class="option-list">
+        <li class="add-moment">
+            <a id="add_moment_link" class="button action" ><span><span><?php echo $this->__('Or pick your own delivery moment'); ?></span></span></a>
+        </li>
+    </ul>
+</div>
 <div id="postnl_delivery_options" style="display:none;">
     <div class="popup-overlay">
         <div class="popup-window">
@@ -89,18 +131,19 @@
                     </div>
                 </div>
             </div>
+            <div class="button-set">
+                <button type="button" class="button btn-save next" id="close_options_popup_btn">
+                    <span>
+                        <span><?php echo $this->__('Save'); ?></span>
+                    </span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
 <?php echo $this->getChildHtml('postnl.osc.add.location') ?>
 <script type="text/javascript">
 //<![CDATA[
-    $('close_options_popup').observe('click', function(event) {
-        event.stop();
-
-        $('postnl_delivery_options').hide();
-    });
-
     /**
      * Preload an array of images.
      */
@@ -111,49 +154,61 @@
     ];
     preloadImages(images);
 
-    var options;
-    var params;
-    var deliveryOptions;
+    var postcode = '<?php echo $_postcode; ?>';
+    var housenumber = '<?php echo $_housenumber; ?>';
+    var fullAddress = "<?php echo implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>";
+    <?php if (!$_hidden): ?>
+        startDeliveryOptions(postcode, housenumber, fullAddress);
+    <?php endif; ?>
 
-    params = {
-        timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
-        locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
-        locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
-        postcode           : '<?php echo $_postcode; ?>',
-        housenumber        : '<?php echo $_housenumber; ?>',
-        deliveryDate       : '<?php echo $_deliveryDate; ?>',
-        imageBaseUrl       : baseUrl,
-        fullAddress        : "<?php echo $_address->getStreet1() . ' ' . $_address->getStreet2() . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>"
-    };
+    function startDeliveryOptions(postcode, housenumber, fullAddress) {
+        var options;
+        var params;
+        var deliveryOptions;
 
-    options = {
-        eveningFee             : <?php echo $this->getFee('evening'); ?>,
-        expressFee             : <?php echo $this->getFee('express'); ?>,
-        eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
-        expressFeeText         : '<?php echo $this->getFeeText('express'); ?>',
-        allowPg                : <?php echo $this->canUsePakjeGemak()        ? 'true' : 'false'; ?>,
-        allowPge               : <?php echo $this->canUsePakjeGemakExpress() ? 'true' : 'false'; ?>,
-        allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
-        allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
-        allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
-        allowStreetview        : <?php echo $this->canUseStreetview() ? 'true' : 'false'; ?>,
-        optionsContainer       : 'osc_scrollbar_container'
-    };
+        params = {
+            saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
+            timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
+            locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
+            locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
+            postcode           : '<?php echo $_postcode; ?>',
+            housenumber        : housenumber,
+            deliveryDate       : '<?php echo $_deliveryDate; ?>',
+            imageBaseUrl       : baseUrl,
+            fullAddress        : fullAddress
+        };
 
-    try {
-        deliveryOptions = new PostnlDeliveryOptions(params, options);
-    } catch(e) {
-        console.log(e);
-    }
+        options = {
+            eveningFee             : <?php echo $this->getFee('evening'); ?>,
+            expressFee             : <?php echo $this->getFee('express'); ?>,
+            eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
+            expressFeeText         : '<?php echo $this->getFeeText('express'); ?>',
+            allowPg                : <?php echo $this->canUsePakjeGemak()        ? 'true' : 'false'; ?>,
+            allowPge               : <?php echo $this->canUsePakjeGemakExpress() ? 'true' : 'false'; ?>,
+            allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
+            allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
+            allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
+            allowStreetview        : <?php echo $this->canUseStreetview() ? 'true' : 'false'; ?>,
+            optionsContainer       : 'osc_scrollbar_container'
+        };
 
-    try {
-        deliveryOptions.showOptions();
-    } catch(e) {
-        console.log(e);
-        $('initial_loader').hide();
-        $('osc_scrollbar_container').show();
-        $('postnl_pickup').hide();
-        deliveryOptions.showDefaultTimeframe();
+
+        try {
+            deliveryOptions = new PostnlDeliveryOptions(params, options);
+        } catch(e) {
+            console.log(e);
+        }
+
+        if (typeof deliveryOptions != 'undefined') {
+            try {
+                deliveryOptions.showOptions();
+            } catch(e) {
+                console.log(e);
+                $('initial_loader').hide();
+                $('osc_scrollbar_container').show();
+                $('postnl_pickup').hide();
+            }
+        }
     }
 
     /**
@@ -172,5 +227,23 @@
             loadedImages[o].src = baseUrl + '/crc_' + images[i] + '.png';
         }
     }
+
+    $('add_moment_link').observe('click', function(event) {
+        event.stop();
+
+        $('postnl_delivery_options').show();
+    });
+
+    $('close_options_popup').observe('click', function(event) {
+        event.stop();
+
+        $('postnl_delivery_options').hide();
+    });
+
+    $('close_options_popup_btn').observe('click', function(event) {
+        event.stop();
+
+        $('postnl_delivery_options').hide();
+    });
 //]]>
 </script>

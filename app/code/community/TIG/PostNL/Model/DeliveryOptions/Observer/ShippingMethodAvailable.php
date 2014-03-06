@@ -74,12 +74,6 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
      */
     public function addDeliveryOptions(Varien_Event_Observer $observer)
     {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $canUseDeliveryOptions = Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($quote);
-        if (!$canUseDeliveryOptions) {
-            return $this;
-        }
-
         /**
          * Checks if the current block is the one we want to edit.
          *
@@ -91,6 +85,16 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         $blockClass = $this->getBlockClass();
 
         if (get_class($block) !== $blockClass) {
+            return $this;
+        }
+
+        /**
+         * Check if delivery options are available for the current quote.
+         */
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $canUseDeliveryOptions = Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($quote);
+
+        if (!$canUseDeliveryOptions) {
             return $this;
         }
 

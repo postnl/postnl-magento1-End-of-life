@@ -130,14 +130,16 @@
         console.log(e);
     }
 
-    try {
-        deliveryOptions.showOptions();
-    } catch(e) {
-        console.log(e);
-        $('initial_loader').hide();
-        $('postnl_delivery_options').show();
-        $('postnl_pickup').hide();
-        deliveryOptions.showDefaultTimeframe();
+    if (typeof deliveryOptions != 'undefined') {
+        try {
+            deliveryOptions.showOptions();
+        } catch(e) {
+            console.log(e);
+            $('initial_loader').hide();
+            $('postnl_delivery_options').show();
+            $('postnl_pickup').hide();
+            deliveryOptions.showDefaultTimeframe();
+        }
     }
 
     /**

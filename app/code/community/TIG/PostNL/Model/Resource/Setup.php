@@ -461,7 +461,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
 
         $config = Mage::getConfig();
         foreach ($configFields as $setting) {
-            $config->saveConfig($setting, false);
+            $config->deleteConfig($setting);
         }
 
         return $this;

@@ -98,7 +98,7 @@
                                 <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
                                 <?php if (in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
                                     <div class="postnl-container">
-                                        <?php echo $this->getChildHtml('postnl.osc.add.moment'); ?>
+                                        <?php echo $this->getChildHtml('postnl.osc.delivery.options'); ?>
                                     </div>
                                 <?php endif; ?>
 

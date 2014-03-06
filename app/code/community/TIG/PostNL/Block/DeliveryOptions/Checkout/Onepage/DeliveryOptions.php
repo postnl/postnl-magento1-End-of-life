@@ -89,7 +89,19 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
             return $shippingAddress;
         }
 
-        $shippingAddress = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress();
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $shippingAddress = $quote->getShippingAddress();
+
+        if (!$shippingAddress || $shippingAddress->getSameAsBilling()) {
+            $shippingAddress = $quote->getBillingAddress();
+        }
+
+        if (
+            (!$shippingAddress->getPostcode() || $shippingAddress->getPostcode() == '-')
+            && $shippingAddress->getId()
+        ) {
+            $shippingAddress = $quote->getCustomer()->getAddressById($shippingAddress->getCustomerAddressId());
+        }
         $this->setShippingAddress($shippingAddress);
 
         return $shippingAddress;
@@ -259,7 +271,18 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
         $storeId = Mage::app()->getStore()->getId();
         $address = $this->getShippingAddress();
 
-        $streetData = Mage::helper('postnl/cif')->getStreetData($storeId, $address, false);
+        try {
+            $streetData = Mage::helper('postnl/cif')->getStreetData($storeId, $address, false);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
+            $streetData = array(
+                'streetname'           => '',
+                'housenumber'          => '',
+                'housenumberExtension' => '',
+                'fullStreet'           => '',
+            );
+        }
         return $streetData;
     }
 
@@ -350,8 +373,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
      *
      * @return string
      */
-    protected function _getDeliveryDate($postcode)
-    {
+    protected function _getDeliveryDate($postcode) {
         $postcode = str_replace(' ', '', strtoupper($postcode));
 
         $validator = new Zend_Validate_PostCode('nl_NL');

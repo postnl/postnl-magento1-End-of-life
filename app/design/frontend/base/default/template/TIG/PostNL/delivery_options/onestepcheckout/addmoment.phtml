@@ -37,9 +37,10 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
+<?php $_helper = Mage::helper('postnl'); ?>
 <div id="postnl_add_moment">
     <div class="sub-title">
-        <h3><?php echo Mage::helper('postnl')->__('Delivery Options'); ?></h3>
+        <h3><?php echo $_helper->__('Delivery Options'); ?></h3>
     </div>
     <ul class="option-list">
         <li class="location">
@@ -68,7 +69,7 @@
     </ul>
     <ul class="option-list">
         <li class="add-moment">
-            <a id="add_moment_link" class="button action" ><span><span><?php echo Mage::helper('postnl')->__('Or pick your own delivery moment'); ?></span></span></a>
+            <a id="add_moment_link" class="button action" ><span><span><?php echo $_helper->__('Or pick your own delivery moment'); ?></span></span></a>
         </li>
     </ul>
 </div>
