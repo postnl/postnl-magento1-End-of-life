@@ -138,7 +138,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
         /**
          * Check if the extension is active
          */
-        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled()) {
+        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
             return $this;
         }
 

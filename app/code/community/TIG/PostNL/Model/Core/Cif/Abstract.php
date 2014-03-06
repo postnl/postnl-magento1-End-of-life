@@ -55,11 +55,14 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * available wsdl filenames
      */
-    const WSDL_BARCODE_NAME         = 'BarcodeWebService';
-    const WSDL_CONFIRMING_NAME      = 'ConfirmingWebService';
-    const WSDL_LABELLING_NAME       = 'LabellingWebService';
-    const WSDL_SHIPPING_STATUS_NAME = 'ShippingStatusWebService';
-    const WSDL_CHECKOUT_NAME        = 'WebshopCheckoutWebService';
+    const WSDL_BARCODE_NAME        = 'BarcodeWebService';
+    const WSDL_CONFIRMING_NAME     = 'ConfirmingWebService';
+    const WSDL_LABELLING_NAME      = 'LabellingWebService';
+    const WSDL_SHIPPINGSTATUS_NAME = 'ShippingStatusWebService';
+    const WSDL_CHECKOUT_NAME       = 'WebshopCheckoutWebService';
+    const WSDL_DELIVERYDATE_NAME   = 'DeliveryDateWebService';
+    const WSDL_TIMEFRAME_NAME      = 'TimeframeWebService';
+    const WSDL_LOCATION_NAME       = 'LocationWebService';
 
     /**
      * header security namespace. Used for constructing the SOAP headers array
@@ -83,6 +86,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const XML_PATH_CIF_VERSION_CONFIRMING     = 'postnl/advanced/cif_version_confirming';
     const XML_PATH_CIF_VERSION_SHIPPINGSTATUS = 'postnl/advanced/cif_version_shippingstatus';
     const XML_PATH_CIF_VERSION_CHECKOUT       = 'postnl/advanced/cif_version_checkout';
+    const XML_PATH_CIF_VERSION_DELIVERYDATE   = 'postnl/advanced/cif_version_deliverydate';
+    const XML_PATH_CIF_VERSION_TIMEFRAME      = 'postnl/advanced/cif_version_timeframe';
+    const XML_PATH_CIF_VERSION_LOCATION       = 'postnl/advanced/cif_version_location';
 
     /**
      * Gets the username from system/config. Test mode determines if live or test username is used.
@@ -183,12 +189,13 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * @param boolean|string $username
      * @param boolean|string $password
      *
-     * @return object
+     * @return object|boolean
      *
      * @throws TIG_PostNL_Exception
      */
     public function call($wsdlType, $method, $soapParams = null, $username = false, $password = false)
     {
+        $client = null;
         try {
             if ($username !== false && $password !== false
                 && (!$this->_getUserName() || !$this->_getPassword())
@@ -256,9 +263,13 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         } catch(SoapFault $e) {
             /**
              * Only Soap exceptions are caught. Other exceptions must be caught by the caller
+             *
+             * @throws TIG_PostNL_Exception
              */
             $this->_handleCifException($e, $client);
         }
+
+        return false;
     }
 
     /**
@@ -301,11 +312,23 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 break;
             case 'shippingstatus':
                 $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_SHIPPINGSTATUS, $adminStoreId);
-                $wsdlFileName = self::WSDL_SHIPPING_STATUS_NAME;
+                $wsdlFileName = self::WSDL_SHIPPINGSTATUS_NAME;
                 break;
             case 'checkout':
                 $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_CHECKOUT, $adminStoreId);
                 $wsdlFileName = self::WSDL_CHECKOUT_NAME;
+                break;
+            case 'deliverydate':
+                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_DELIVERYDATE, $adminStoreId);
+                $wsdlFileName = self::WSDL_DELIVERYDATE_NAME;
+                break;
+            case 'timeframe':
+                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_TIMEFRAME, $adminStoreId);
+                $wsdlFileName = self::WSDL_TIMEFRAME_NAME;
+                break;
+            case 'location':
+                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_LOCATION, $adminStoreId);
+                $wsdlFileName = self::WSDL_LOCATION_NAME;
                 break;
             default:
                 throw new TIG_PostNL_Exception(
@@ -434,6 +457,10 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     protected function _handleCifException($e, $client = null)
     {
         $cifHelper = Mage::helper('postnl/cif');
+        $exception = new TIG_PostNL_Model_Core_Cif_Exception($e->getMessage(), null, $e);
+
+        $requestXML = false;
+        $responseXML = false;
 
         /**
          * Get the request and response XML data
@@ -443,7 +470,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             $responseXML = $cifHelper->formatXml($client->getLastResponse());
         }
 
-        if ($responseXML) {
+        if (!empty($responseXML)) {
             /**
              * If we received a response, parse it for errors and create an appropriate exception
              */
@@ -460,16 +487,11 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             }
 
             $errorNumbers = $errorResponse->getElementsByTagNameNS(self::CIF_ERROR_NAMESPACE, 'ErrorNumber');
-            if ($exception && $errorNumbers) {
+            if (isset($exception) && $errorNumbers) {
                 foreach ($errorNumbers as $errorNumber) {
                     $exception->addErrorNumber($errorNumber->nodeValue);
                 }
             }
-        } else {
-            /**
-             * Create a general exception
-             */
-             $exception = new TIG_PostNL_Model_Core_Cif_Exception($e->getMessage(), null, $e);
         }
 
         /**

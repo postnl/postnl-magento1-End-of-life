@@ -41,9 +41,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tabs extends Mage_Adm
     /**
      * Constructor for the tabs container
      *
-     * @return null
-     *
-     * @see Mage_Adminhtml_Block_Widget_Tabs::__construct()
+     * @return \TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tabs
+    @see Mage_Adminhtml_Block_Widget_Tabs::__construct()
      */
     public function __construct()
     {

@@ -43,6 +43,10 @@
 <script type="text/javascript" src="<?php echo $_checkoutJsUrl; ?>"></script>
 <script type="text/javascript">
     document.observe('dom:loaded', function() {
+        if (typeof pingUrl == 'undefined') {
+            return false;
+        }
+
         new Ajax.Request(pingUrl,{
             method: 'get',
             parameters: null,

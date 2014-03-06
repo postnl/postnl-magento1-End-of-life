@@ -68,20 +68,20 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
             return $this;
         }
 
-        $postcode = $data['postcode'];
+        $postcode    = $data['postcode'];
         $housenumber = $data['housenumber'];
 
         /**
          * Remove spaces from housenumber and postcode fields.
          */
-        $postcode = str_replace(' ', '', $postcode);
-        $postcode = strtoupper($postcode);
-        $housenumber = str_replace(' ', '', $housenumber);
+        $postcode    = str_replace(' ', '', $postcode);
+        $postcode    = strtoupper($postcode);
+        $housenumber = trim($housenumber);
 
         /**
          * Get validation classes for the postcode and housenumber values
          */
-        $postcodeValidator = new Zend_Validate_PostCode('nl_NL');
+        $postcodeValidator    = new Zend_Validate_PostCode('nl_NL');
         $housenumberValidator = new Zend_Validate_Digits();
 
         /**
