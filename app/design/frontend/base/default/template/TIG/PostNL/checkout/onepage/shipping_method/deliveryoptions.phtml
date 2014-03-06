@@ -48,37 +48,46 @@
 <?php $_deliveryDate  = $this->getDeliveryDate(); ?>
 <?php $_streetData    = $this->getStreetData(); ?>
 <?php $_housenumber   = $_streetData['housenumber']; ?>
-<div id="initial_loader"><?php echo $this->__('Loading...'); ?></div>
-<div id="postnl_delivery_options" style="display:none;">
-    <div class="title">
-        <h2><?php echo $this->__('Delivery Options'); ?></h2>
-    </div>
-    <div class="col2-set">
-        <div id="postnl_delivery" class="col-1">
-            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
-            <ul class="option-list" id="timeframes">
-                <li class="location">
-                    <div class="bkg">
-                        <div class="bkg">
-                            <div class="content">
-                                <strong class="location-name"><?php echo $_address->getStreetFull(); ?></strong>
-                            </div>
-                        </div>
+<div id="postnl_delivery_options">
+    <div class="popup-overlay">
+        <div class="popup-window">
+            <div class="popup-header title">
+                <h2><?php echo $this->__('Delivery Options'); ?></h2>
+                <a href="javascript:void(0);" title="<?php echo $this->__('Close'); ?>" id="close_popup" class="btn-close"><?php echo Mage::helper('postnl')->__('Close'); ?></a>
+            </div>
+            <div id="osc_scrollbar_container">
+                <div id="osc_scrollbar_track">
+                    <div id="osc_scrollbar_handle"></div>
+                </div>
+                <div id="osc_scrollbar_content" class="popup-content col2-set">
+                    <div id="postnl_delivery" class="col-1">
+                        <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+                        <ul class="option-list" id="timeframes">
+                            <li class="location">
+                                <div class="bkg">
+                                    <div class="bkg">
+                                        <div class="content">
+                                            <strong class="location-name"><?php echo $_address->getStreetFull(); ?></strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
-                </li>
-            </ul>
-        </div>
-        <div id="postnl_pickup" class="col-2">
-            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
-            <ul class="option-list" id="pgelocation"></ul>
-            <ul class="option-list" id="pglocation"></ul>
-            <ul class="option-list" id="palocation"></ul>
-            <ul class="option-list" id="customlocation"></ul>
-            <ul class="option-list" id="add_location">
-                <li class="add-location">
-                    <a id="add_location_link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
-                </li>
-            </ul>
+                    <div id="postnl_pickup" class="col-2">
+                        <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+                        <ul class="option-list" id="pgelocation"></ul>
+                        <ul class="option-list" id="pglocation"></ul>
+                        <ul class="option-list" id="palocation"></ul>
+                        <ul class="option-list" id="customlocation"></ul>
+                        <ul class="option-list" id="add_location">
+                            <li class="add-location">
+                                <a id="add_location_link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <?php echo $this->getChildHtml('postnl.add.location') ?>
@@ -120,7 +129,8 @@
         allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
         allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
-        allowStreetview        : <?php echo $this->canUseStreetview() ? 'true' : 'false'; ?>
+        allowStreetview        : <?php echo $this->canUseStreetview() ? 'true' : 'false'; ?>,
+        loaderDiv              : false
     };
 
     try {
@@ -133,7 +143,6 @@
         deliveryOptions.showOptions();
     } catch(e) {
         console.log(e);
-        $('initial_loader').hide();
         $('postnl_delivery_options').show();
         deliveryOptions.showDefaultTimeframe();
     }
