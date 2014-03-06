@@ -9,19 +9,18 @@ $_extension = Mage::getSingleton('checkout/session')->getQuote()->getShippingAdd
             <div class="popup-header">
                 <h2><?php echo Mage::helper('postnl')->__('Select Post Office'); ?></h2>
                 <div class="search-location">
-                    <form>
-                        <input type="text" class="input-text" name="" value="<?php echo $_postCode . ', ' . $_houseNumber . $_extension ?>" />
-                        <button type="button" class="button btn-search"><span><span><?php echo Mage::helper('postnl')->__('Search'); ?></span></span></button>
-                    </form>
+                    <input type="text" class="input-text" name="" value="<?php echo $_postCode . ', ' . $_houseNumber . $_extension ?>" />
+                    <button type="button" class="button btn-search"><span><span><?php echo Mage::helper('postnl')->__('Search'); ?></span></span></button>
+                    <ul class="location-options">
+                        <li>
+                            <a href="javascript:void(0);"><?php echo Mage::helper('postnl')->__('early pickup');?></a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" class="selected"><?php echo Mage::helper('postnl')->__('opened in the evening');?></a>
+                        </li>
+                    </ul>
+                    <div class="error-msg" style="display:none;"><?php echo Mage::helper('postnl')->__('Geen adres gevonden bij de opgegeven combinatie van straatnaam, postcode, huisnr en woonplaats.'); ?></div>
                 </div>
-                <ul class="location-options">
-                    <li>
-                        <a href="javascript:void(0);"><?php echo Mage::helper('postnl')->__('early pickup');?></a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0);" class="selected"><?php echo Mage::helper('postnl')->__('opened in the evening');?></a>
-                    </li>
-                </ul>
                 <a href="javascript:void(0);" title="<?php echo Mage::helper('postnl')->__('Close'); ?>" id="close_popup" class="btn-close"><?php echo Mage::helper('postnl')->__('Close'); ?></a>
             </div>
             <div class="popup-map">
