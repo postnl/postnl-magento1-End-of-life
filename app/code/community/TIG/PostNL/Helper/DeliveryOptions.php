@@ -41,7 +41,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Xpath to delivery options enabled config setting.
      */
-    const XPATH_DELIVERY_OPTIONS_ACTIVE = 'postnl/delivery_options/active';
+    const XPATH_DELIVERY_OPTIONS_ACTIVE = 'postnl/delivery_options/delivery_options_active';
 
     /**
      * Xpaths to various possible delivery option settings.

@@ -1539,7 +1539,7 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <active translate="label" module="postnl">
+                        <delivery_options_active translate="label" module="postnl">
                             <label>Enable PostNL delivery options</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
@@ -1547,7 +1547,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </active>
+                        </delivery_options_active>
                         <business_rules_header translate="label" module="postnl">
                             <label>You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -1556,7 +1556,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </business_rules_header>
                         <show_options_for_letter translate="label comment" module="postnl">
@@ -1569,7 +1569,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </show_options_for_letter>
                         <show_options_for_backorders translate="label tooltip" module="postnl">
@@ -1582,18 +1582,18 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </show_options_for_backorders>
-                        <duration_header>
-                            <label>PostNL delivery options determine the possible delivery dates based on a few settings. It is important that you configure these as accurately as you can. You should try to be conservative with these settings. If you cannot transfer a shipment to PostNL on time each day, customers may not receive their order on the requested date.</label>
+                        <duration_header translate="label" module="postnl">
+                            <label><![CDATA[PostNL delivery options determine the possible delivery dates based on a few settings. It is important that you configure these as accurately as you can. You should try to be conservative with these settings. If you cannot transfer a shipment to PostNL on time each day, customers may not receive their order on the requested date.<br />You can interpret these settings as "If ordered by {cut-off time}, the order will be delivered in {shipping duration} days".]]></label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </duration_header>
                         <shipping_duration translate="label comment" module="postnl">
@@ -1606,7 +1606,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </shipping_duration>
                         <cutoff_time translate="label comment" module="postnl">
@@ -1619,7 +1619,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </cutoff_time>
                         <allow_sunday_sorting translate="label comment tooltip" module="postnl">
@@ -1633,7 +1633,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </allow_sunday_sorting>
                         <sunday_cutoff_time translate="label comment" module="postnl">
@@ -1646,7 +1646,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                                 <allow_sunday_sorting>1</allow_sunday_sorting>
                             </depends>
                         </sunday_cutoff_time>
@@ -1658,7 +1658,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </shipping_duration_header>
                         <enable_timeframes translate="label comment" module="postnl">
@@ -1671,13 +1671,13 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </enable_timeframes>
                         <enable_evening_timeframes translate="label comment" module="postnl">
-                            <label>Enable evening timeframes</label>
+                            <label>Enable evening delivery</label>
                             <comment>Whether or not customers may pick an evening timeframe.</comment>
-                            <tooltip>Evening timeframes may not be available in all areas.</tooltip>
+                            <tooltip>Evening timeframes may not be available in all areas. The PostNL extension will automatically determine whether or not evening delivery is available for a specific area.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>120</sort_order>
@@ -1685,7 +1685,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                                 <enable_timeframes>1</enable_timeframes>
                             </depends>
                         </enable_evening_timeframes>
@@ -1700,7 +1700,7 @@
                             <show_in_store>1</show_in_store>
                             <validate>validate-digits-range digits-range-0-2</validate>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                                 <enable_timeframes>1</enable_timeframes>
                                 <enable_evening_timeframes>1</enable_evening_timeframes>
                             </depends>
@@ -1715,7 +1715,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </enable_pakjegemak>
                         <enable_pakjegemak_express translate="label comment" module="postnl">
@@ -1729,7 +1729,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                                 <enable_pakjegemak>1</enable_pakjegemak>
                             </depends>
                         </enable_pakjegemak_express>
@@ -1744,7 +1744,7 @@
                             <show_in_store>1</show_in_store>
                             <validate>validate-digits-range digits-range-0-2</validate>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                                 <enable_pakjegemak>1</enable_pakjegemak>
                                 <enable_pakjegemak_express>1</enable_pakjegemak_express>
                             </depends>
@@ -1760,12 +1760,12 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </enable_pakketautomaat_locations>
                         <allow_streetview translate="label comment" module="postnl">
-                            <label>Allow google streetview</label>
-                            <comment>If enabled, users may use google streetview when choosing a post office location.</comment>
+                            <label>Allow Google Streetview</label>
+                            <comment>If enabled, users may use Google Streetview when choosing a post office location.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>180</sort_order>
@@ -1773,7 +1773,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <active>1</active>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </allow_streetview>
                     </fields>
@@ -1837,10 +1837,32 @@
                                 </use_checkout>
                             </depends>
                         </mode>
+                        <show_exclusively_for_mijnpakket_users translate="label comment tooltip" module="postnl">
+                            <label>Show PostNL Checkout exclusively to MijnPakket users</label>
+                            <comment>If enabled, PostNL Checkout will only be available to users who already have a Mijnpakket account.</comment>
+                            <tooltip>This option is only available if delivery options are enabled.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                                <use_checkout>
+                                    <fieldset>cif</fieldset>
+                                    <value>1</value>
+                                </use_checkout>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                            </depends>
+                        </show_exclusively_for_mijnpakket_users>
                         <checkout_button_header translate="label" module="postnl">
                             <label>Here you can customize when and how the PostNL Checkout button is displayed.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1857,7 +1879,7 @@
                             <comment>Select a page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_cmsPage</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1874,7 +1896,7 @@
                             <comment>The 2kg limit will be based on the product's weight and the weight unit you selected under the 'Confirm and label printing settings' group.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1891,7 +1913,7 @@
                             <tooltip>Customers can select a specific date and time when they want their shipment delivered when they use PostNL Checkout. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL Checkout if they are attempting to order an item that is not in stock, thereby preventing this situation.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1906,7 +1928,7 @@
                         <checkout_customization_header translate="label" module="postnl">
                             <label>Here you can customaize the way PostNL Checkout behaves in your webshop.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1923,7 +1945,7 @@
                             <comment>Whether or not to show the customer a final order summary page before finalizing the order.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1942,7 +1964,7 @@
                             <tooltip>Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1960,7 +1982,7 @@
                             <comment>Whether or not the customer can leave a remark.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1979,7 +2001,7 @@
                             <tooltip>The mobile phonenumber will be saved as the customer's regular phonenumber when used.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1997,7 +2019,7 @@
                             <comment>Whether or not the customer's date of birth will be returned by PostNL if available.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2015,7 +2037,7 @@
                             <comment>Whether or not the customer may choose a retail location as their delivery address.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2034,7 +2056,7 @@
                             <tooltip>All addresses outside of the Netherlands are considered 'foreign'. Addresses outside the EU are not possible regardless of this setting.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2053,7 +2075,7 @@
                             <tooltip>The price overview will contain the order's subtotal and shipping costs only.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2072,7 +2094,7 @@
                             <tooltip>You can enter a URL where the customer can find your terms and conditions in your PostNL Checkout account at http://checkout.postnl.nl</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2088,7 +2110,7 @@
                         <checkout_urls_header translate="label" module="postnl">
                             <label>These URLs allow the customer to contact you. They will be shown on the user's MijnPakket page.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>180</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2104,7 +2126,7 @@
                             <label>Contact URL</label>
                             <comment>URL of a page where customers can find contact information for your webshop. Leave empty to disable this feature.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>190</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2120,7 +2142,7 @@
                             <label>Service URL</label>
                             <comment>URL of a page where customers can find information regarding the webshop's customer service department. Leave empty to disable this feature.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>200</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
