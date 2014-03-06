@@ -47,16 +47,16 @@
                 <div class="search-location">
                     <input type="text" class="input-text" name="" value="<?php echo $_address->getPostcode(); ?>" id="search-field" placeholder="<?php echo $_helper->__('Search by zipcode, address or city'); ?>"/>
                     <button type="button" class="button btn-search" id="search-button"><span><span><?php echo $_helper->__('Search'); ?></span></span></button>
-                    <div style="display:none;" id="search-field-error" class="validation-advice"><?php echo $_helper->__('Address not found.'); ?></div>
+                    <ul class="location-options">
+                        <li>
+                            <a id="early-filter" class="location-option-checkbox"><?php echo $_helper->__('early pickup');?></a>
+                        </li>
+                        <li>
+                            <a id="evening-filter" class="location-option-checkbox"><?php echo $_helper->__('opened in the evening');?></a>
+                        </li>
+                    </ul>
+                    <div id="search-field-error" class="error-msg" style="display:none;"><?php echo $_helper->__('The saddress you searched for was not found. Please try again.'); ?></div>
                 </div>
-                <ul class="location-options">
-                    <li>
-                        <a id="early-filter" class="location-option-checkbox"><?php echo $_helper->__('early pickup');?></a>
-                    </li>
-                    <li>
-                        <a id="evening-filter" class="location-option-checkbox"><?php echo $_helper->__('opened in the evening');?></a>
-                    </li>
-                </ul>
                 <a title="<?php echo $_helper->__('Close'); ?>" id="close_popup" class="btn-close"><?php echo $_helper->__('Close'); ?></a>
             </div>
             <div class="popup-map" id="map-div"></div>

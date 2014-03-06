@@ -1,0 +1,176 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php
+/**
+ * @var TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions $this
+ * @var Mage_Sales_Model_Quote_Address $_address
+ */
+?>
+<?php $_address       = $this->getShippingAddress(); ?>
+<?php $_postcode      = $this->getPostcode(); ?>
+<?php $_deliveryDate  = $this->getDeliveryDate(); ?>
+<?php $_streetData    = $this->getStreetData(); ?>
+<?php $_housenumber   = $_streetData['housenumber']; ?>
+<div id="postnl_delivery_options" style="display:none;">
+    <div class="popup-overlay">
+        <div class="popup-window">
+            <div class="popup-header title">
+                <h2><?php echo $this->__('Delivery Options'); ?></h2>
+                <a title="<?php echo $this->__('Close'); ?>" id="close_options_popup" class="btn-close"><?php echo $this->__('Close'); ?></a>
+            </div>
+            <div id="initial_loader"><?php echo $this->__('Loading...'); ?></div>
+            <div id="osc_scrollbar_container" style="display:none;">
+                <div id="osc_scrollbar_track">
+                    <div id="osc_scrollbar_handle"></div>
+                </div>
+                <div id="osc_scrollbar_content" class="popup-content col2-set">
+                    <div id="postnl_delivery" class="col-1">
+                        <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+                        <ul class="option-list" id="timeframes">
+                            <li class="location">
+                                <div class="bkg">
+                                    <div class="bkg">
+                                        <div class="content">
+                                            <strong class="location-name"><?php echo $_address->getStreetFull(); ?></strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="postnl_pickup" class="col-2">
+                        <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+                        <ul class="option-list" id="pgelocation"></ul>
+                        <ul class="option-list" id="pglocation"></ul>
+                        <ul class="option-list" id="palocation"></ul>
+                        <ul class="option-list" id="customlocation"></ul>
+                        <ul class="option-list" id="add_location">
+                            <li class="add-location">
+                                <a id="add_location_link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php echo $this->getChildHtml('postnl.osc.add.location') ?>
+<script type="text/javascript">
+//<![CDATA[
+    $('close_options_popup').observe('click', function(event) {
+        event.stop();
+
+        $('postnl_delivery_options').hide();
+    });
+
+    /**
+     * Preload an array of images.
+     */
+    var baseUrl = '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions'); ?>';
+    var images = [
+        'albertheijn', 'bruna', 'c1000', 'coop', 'default', 'emte', 'jumbo', 'plus', 'primera', 'readshop', 'spar',
+        'staples', 'gamma', 'karwei'
+    ];
+    preloadImages(images);
+
+    var options;
+    var params;
+    var deliveryOptions;
+
+    params = {
+        timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
+        locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
+        locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
+        postcode           : '<?php echo $_postcode; ?>',
+        housenumber        : '<?php echo $_housenumber; ?>',
+        deliveryDate       : '<?php echo $_deliveryDate; ?>',
+        imageBaseUrl       : baseUrl,
+        fullAddress        : "<?php echo $_address->getStreet1() . ' ' . $_address->getStreet2() . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>"
+    };
+
+    options = {
+        eveningFee             : <?php echo $this->getFee('evening'); ?>,
+        expressFee             : <?php echo $this->getFee('express'); ?>,
+        eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
+        expressFeeText         : '<?php echo $this->getFeeText('express'); ?>',
+        allowPg                : <?php echo $this->canUsePakjeGemak()        ? 'true' : 'false'; ?>,
+        allowPge               : <?php echo $this->canUsePakjeGemakExpress() ? 'true' : 'false'; ?>,
+        allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
+        allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
+        allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
+        allowStreetview        : <?php echo $this->canUseStreetview() ? 'true' : 'false'; ?>,
+        optionsContainer       : 'osc_scrollbar_container'
+    };
+
+    try {
+        deliveryOptions = new PostnlDeliveryOptions(params, options);
+    } catch(e) {
+        console.log(e);
+    }
+
+    try {
+        deliveryOptions.showOptions();
+    } catch(e) {
+        console.log(e);
+        $('initial_loader').hide();
+        $('osc_scrollbar_container').show();
+        $('postnl_pickup').hide();
+        deliveryOptions.showDefaultTimeframe();
+    }
+
+    /**
+     * Preload images.
+     *
+     * @param {Array} images
+     */
+    function preloadImages(images) {
+        var loadedImages = [];
+
+        for (var i = 0, o = images.length; i < images.length; i++, o++) {
+            loadedImages[i] = new Image();
+            loadedImages[i].src = baseUrl + '/drp_' + images[i] + '.png';
+
+            loadedImages[o] = new Image();
+            loadedImages[o].src = baseUrl + '/crc_' + images[i] + '.png';
+        }
+    }
+//]]>
+</script>

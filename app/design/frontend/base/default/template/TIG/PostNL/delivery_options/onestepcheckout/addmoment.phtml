@@ -1,0 +1,84 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<div id="postnl_add_moment">
+    <div class="sub-title">
+        <h3><?php echo Mage::helper('postnl')->__('Delivery Options'); ?></h3>
+    </div>
+    <ul class="option-list">
+        <li class="location">
+            <div class="bkg">
+                <div class="bkg">
+                    <div class="content">
+                        <strong class="location-name overflow-protect"><?php echo Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getStreetFull(); ?></strong>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li class="option active">
+            <div class="bkg">
+                <div class="bkg">
+                    <div class="content">
+                        <span class="option-dd">
+                            <strong class="option-day">Wo</strong>
+                            <span class="option-date">20-08</span>
+                        </span>
+                        <span class="option-radio"></span>
+                        <span class="option-time">09:00 - 19:00</span>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <ul class="option-list">
+        <li class="add-moment">
+            <a id="add_moment_link" class="button action" ><span><span><?php echo Mage::helper('postnl')->__('Or pick your own delivery moment'); ?></span></span></a>
+        </li>
+    </ul>
+</div>
+<?php echo $this->getChildHtml('postnl.osc.delivery.options'); ?>
+<script type="text/javascript">
+//<![CDATA[
+    $('add_moment_link').observe('click', function(event) {
+        event.stop();
+
+        $('postnl_delivery_options').show();
+    });
+//]]>
+</script>
