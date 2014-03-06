@@ -84,7 +84,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $labelModel = Mage::getModel('postnl_core/label');
             $output = $labelModel->createPdf($labels);
-            
+
             $this->getResponse()
                  ->setHttpResponseCode(200)
                  ->setHeader('Pragma', 'public', true)
@@ -92,7 +92,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                  ->setHeader('Content-type', 'application/pdf', true)
                  ->setHeader('Content-Disposition', 'inline; filename="PostNL Shipping Labels.pdf"')
                  ->setHeader('Last-Modified', date('r'));
-            
+
             $this->getResponse()->setBody($output);
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
@@ -450,7 +450,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $label = Mage::getModel('postnl_core/label');
             $output = $label->createPdf($labels);
-            
+
             $this->getResponse()
                  ->setHttpResponseCode(200)
                  ->setHeader('Pragma', 'public', true)
@@ -458,7 +458,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                  ->setHeader('Content-type', 'application/pdf', true)
                  ->setHeader('Content-Disposition', 'inline; filename="PostNL Shipping Labels.pdf"')
                  ->setHeader('Last-Modified', date('r'));
-            
+
             $this->getResponse()->setBody($output);
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
@@ -533,7 +533,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $label = Mage::getModel('postnl_core/label');
             $output = $label->createPdf($labels);
-            
+
             $this->getResponse()
                  ->setHttpResponseCode(200)
                  ->setHeader('Pragma', 'public', true)
@@ -541,7 +541,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                  ->setHeader('Content-type', 'application/pdf', true)
                  ->setHeader('Content-Disposition', 'inline; filename="PostNL Shipping Labels.pdf"')
                  ->setHeader('Last-Modified', date('r'));
-            
+
             $this->getResponse()->setBody($output);
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
@@ -678,6 +678,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      * Creates a shipment of an order containing all available items
      *
      * @param int $orderId
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return TIG_PostNL_Adminhtml_ShipmentController
      */

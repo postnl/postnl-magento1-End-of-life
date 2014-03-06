@@ -66,7 +66,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     /**
                      * These are not currently implemented
                      *
-                     * TODO implement these options
+                     * @todo implement these options
                      */
                     /*'3086' => array(
                         'value' => '3086',
@@ -130,7 +130,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     /**
                      * These are not currently implemented
                      *
-                     * TODO implement these options
+                     * @todo implement these options
                      */
                     /*'3535' => array(
                         'value' => '3535',
@@ -188,7 +188,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     /**
                      * These are not currently implemented
                      *
-                     * TODO implement these options
+                     * @todo implement these options
                      */
                     /*'4950' => array(
                         'value' => '4950',
@@ -223,13 +223,14 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     /**
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
-     * @param boolean $withDefault Determines whether or not a 'default' option is prepended to the array
-     * @param boolean $witHExtraCover Flag whether or not to include extra cover options
+     * @param boolean     $withDefault Determines whether or not a 'default' option is prepended to the array
+     * @param bool        $withExtraCover
      * @param boolean|int $storeId
-     * @param boolean $codesOnly Flag that dtermines whether to only return the product codes and not the labels
-     * @param boolean $flat FLag that dtermines whether to return a flat 'code => label' array
-     * @param boolean $markDefault Flag that determines whether default options will be marked as such.
+     * @param boolean     $codesOnly   Flag that dtermines whether to only return the product codes and not the labels
+     * @param boolean     $flat        FLag that dtermines whether to return a flat 'code => label' array
+     * @param boolean     $markDefault Flag that determines whether default options will be marked as such.
      *
+     * @internal param bool $witHExtraCover Flag whether or not to include extra cover options
      * @return array
      */
     public function getAvailableOptions($withDefault = false,
@@ -417,6 +418,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
 
     /**
      * Get the list of available product options that have extra cover
+     *
+     * @param bool $valuesOnly
      *
      * @return array
      */

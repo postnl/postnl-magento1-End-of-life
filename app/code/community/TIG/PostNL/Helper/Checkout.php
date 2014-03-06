@@ -176,7 +176,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             )
         );
 
-        return $conversionObject->getConversionArray();;
+        return $conversionObject->getConversionArray();
     }
 
     /**
@@ -406,6 +406,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
 
     /**
      * Check if the module is set to test mode
+     *
+     * @param bool $storeId
      *
      * @return boolean
      */

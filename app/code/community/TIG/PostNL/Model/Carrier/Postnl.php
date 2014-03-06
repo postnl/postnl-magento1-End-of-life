@@ -39,8 +39,6 @@
 
 /**
  * PostNL shipping method model
- *
- * @todo check code for inconsistency and conventions. Copied from flat_rate method
  */
 class TIG_PostNL_Model_Carrier_Postnl
     extends Mage_Shipping_Model_Carrier_Abstract
@@ -103,8 +101,9 @@ class TIG_PostNL_Model_Carrier_Postnl
     /**
      * Collect shipping rate
      *
-     * @param Mage_Shipping_Model_Rate_Request $data
+     * @param Mage_Shipping_Model_Rate_Request $request
      *
+     * @throws TIG_PostNL_Exception
      * @return Mage_Shipping_Model_Rate_Result|void
      */
     public function collectRates(Mage_Shipping_Model_Rate_Request $request)
@@ -140,7 +139,6 @@ class TIG_PostNL_Model_Carrier_Postnl
                 return false;
             }
         }
-
 
         $rateType = Mage::getStoreConfig(self::XML_PATH_RATE_TYPE, Mage::app()->getStore()->getId());
 
@@ -207,6 +205,14 @@ class TIG_PostNL_Model_Carrier_Postnl
                 $shippingPrice = '0.00';
             }
 
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            if ($quote && $quote->getId()) {
+                $postnlOrder = Mage::getModel('postnL_checkout/order')->load($quote->getId(), 'quote_id');
+                if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
+                    $costs = $postnlOrder->getShipmentCosts();
+                    $shippingPrice += $costs;
+                }
+            }
 
             $method->setPrice($shippingPrice);
             $method->setCost($shippingPrice);
@@ -239,6 +245,7 @@ class TIG_PostNL_Model_Carrier_Postnl
 
         // Free shipping by qty
         $freeQty = 0;
+        $freePackageValue = false;
         if ($request->getAllItems()) {
             $freePackageValue = 0;
             foreach ($request->getAllItems() as $item) {
@@ -297,6 +304,15 @@ class TIG_PostNL_Model_Carrier_Postnl
                 $shippingPrice = 0;
             } else {
                 $shippingPrice = $this->getFinalPriceWithHandlingFee($rate['price']);
+            }
+
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            if ($quote && $quote->getId()) {
+                $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+                if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
+                    $costs = $postnlOrder->getShipmentCosts();
+                    $shippingPrice += $costs;
+                }
             }
 
             $method->setPrice($shippingPrice);

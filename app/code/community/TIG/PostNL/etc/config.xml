@@ -60,6 +60,9 @@
             <postnl_checkout>
                 <class>TIG_PostNL_Block_Checkout</class>
             </postnl_checkout>
+            <postnl_deliveryoptions>
+                <class>TIG_PostNL_Block_DeliveryOptions</class>
+            </postnl_deliveryoptions>
 		</blocks>
 		<helpers>
 			<postnl>
@@ -95,6 +98,9 @@
             <postnl_parcelware>
                 <class>TIG_PostNL_Model_Parcelware</class>
             </postnl_parcelware>
+            <postnl_deliveryoptions>
+                <class>TIG_PostNL_Model_DeliveryOptions</class>
+            </postnl_deliveryoptions>
 
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
@@ -283,6 +289,12 @@
                         <class>postnl_addressvalidation/observer_addressBook</class>
                         <method>addressBookPostcodeCheck</method>
                     </customer_address_edit_postcodecheck>
+                    <!-- Adds PostNL delivery options to the checkout shipping methods -->
+                    <checkout_onepage_deliveryoptions>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_shippingMethodAvailable</class>
+                        <method>addDeliveryOptions</method>
+                    </checkout_onepage_deliveryoptions>
                 </observers>
             </core_block_abstract_to_html_before>
         </events>
@@ -455,8 +467,8 @@
         	    <use_postcode_check>0</use_postcode_check> <!-- Do not use postcode check functionality -->
         	    <postcode_check_in_checkout>1</postcode_check_in_checkout> <!-- Use postcode check on the checkout page -->
         	    <postcode_check_in_addressbook>1</postcode_check_in_addressbook> <!-- Use postcode check in the customer's addressbook -->
-        		<postcode_check_max_attempts>3</postcode_check_max_attempts> <!-- Allow 3 attempts before disabling postcode check -->
-        		<postcode_check_timeout>3</postcode_check_timeout> <!-- Postcode check will time-out after 3 seconds -->
+        		<postcode_check_max_attempts>1</postcode_check_max_attempts> <!-- Allow 1 attempt before disabling postcode check and allowing users to enter their addess manually -->
+        		<postcode_check_timeout>3</postcode_check_timeout> <!-- Postcode check will timeout after 3 seconds -->
         		<split_street>1</split_street> <!-- split street -->
         		<streetname_field>1</streetname_field> <!-- first address line -->
         		<housenr_field>2</housenr_field> <!-- second address line -->
@@ -515,9 +527,27 @@
         		<product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
         		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
         	</cif_globalpack_settings>
+        	<delivery_options>
+        	    <delivery_options_active>0</delivery_options_active> <!-- Delivery options are disabled -->
+                <show_options_for_letter>0</show_options_for_letter> <!-- Do not show delivery options if the order's total weight is less than 2 kg -->
+                <show_options_for_backorders>0</show_options_for_backorders> <!-- Do not show delivery options if the order is not in stock -->
+        	    <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
+        	    <cutoff_time/>
+        	    <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
+        	    <sunday_cutoff_time/>
+        	    <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
+        	    <enable_evening_timeframes>0</enable_evening_timeframes> <!-- Evening timeframes are disabled -->
+        	    <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
+        	    <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
+        	    <enable_pakjegemak_express>0</enable_pakjegemak_express> <!-- PakjeGemak express locations are not allowed -->
+        	    <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
+        	    <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
+                <allow_streetview>1</allow_streetview> <!-- Google streetview is allowed. -->
+        	</delivery_options>
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
         	    <mode>0</mode> <!-- Live mode -->
+                <show_exclusively_for_mijnpakket_users>0</show_exclusively_for_mijnpakket_users> <!-- Do not show PostNL Checkout exclusively to Mijnpakket users -->
         	    <instruction_cms_page/>
         	    <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the PostNL Checkout button for orders under 2 kg -->
         	    <show_checkout_for_backorders>0</show_checkout_for_backorders> <!-- Do not show the PostNL Checkout button if the order contains out-of-stock products -->
@@ -571,11 +601,14 @@
         		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
         		<feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
         		<show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
-        		<cif_version_shippingstatus>1_2</cif_version_shippingstatus> <!-- v1.2 -->
-        		<cif_version_confirming>1_3</cif_version_confirming> <!-- v1.3 -->
-        		<cif_version_labelling>1_4</cif_version_labelling> <!-- v1.4 -->
+        		<cif_version_shippingstatus>1_3</cif_version_shippingstatus> <!-- v1.3 -->
+        		<cif_version_confirming>1_4</cif_version_confirming> <!-- v1.4 -->
+        		<cif_version_labelling>1_5</cif_version_labelling> <!-- v1.5 -->
         		<cif_version_barcode>1_0</cif_version_barcode> <!-- v1.0 -->
-                <cif_version_checkout>2_1</cif_version_checkout> <!-- v2.1 -->
+                <cif_version_checkout>2_2</cif_version_checkout> <!-- v2.2 -->
+                <cif_version_deliverydate>1_1</cif_version_deliverydate> <!-- v1.1 -->
+                <cif_version_timeframe>1_0</cif_version_timeframe> <!-- v1.0 -->
+                <cif_version_location>1_0</cif_version_location> <!-- v1.0 -->
         	</advanced>
 
         	<!-- Login data for the postcode check functionality. DO NOT CHANGE THIS UNLESS SPECIFICALLY INSTRUCTED TO DO SO BY POSTNL OR TIG -->
@@ -637,7 +670,7 @@
             </POSTNL-0006>
             <POSTNL-0007>
                 <message>An error occurred whilst processing your request: </message>
-                <url></url>
+                <url/>
                 <type>error</type>
             </POSTNL-0007>
             <POSTNL-0008>
@@ -662,7 +695,7 @@
             </POSTNL-0011>
             <POSTNL-0012>
                 <message>An error occurred whilst creating processing the shipment(s): </message>
-                <url></url>
+                <url/>
                 <type>error</type>
             </POSTNL-0012>
             <POSTNL-0013>
@@ -1161,7 +1194,7 @@
             </POSTNL-0112>
             <POSTNL-0113>
                 <message>An error occurred while updating the PostNL Checkout order.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/38931193</url>
                 <type>warning</type>
             </POSTNL-0113>
             <POSTNL-0114>
@@ -1169,6 +1202,101 @@
                 <url/>
                 <type>error</type>
             </POSTNL-0114>
+            <POSTNL-0115>
+                <message>No data available for GetDeliveryDay request.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0115>
+            <POSTNL-0116>
+                <message>Invalid GetDeliveryDate response: %s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0116>
+            <POSTNL-0117>
+                <message>No data available for request.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0117>
+            <POSTNL-0118>
+                <message>Invalid postcode supplied for getNearestLocations request: %s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0118>
+            <POSTNL-0119>
+                <message>Invalid coordinates supplied for getNearestLocations request. lat: %s, long: %s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0119>
+            <POSTNL-0120>
+                <message>Invalid arguments supplied. getNearestLocations requires a postcode or a longitude and latitude.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0120>
+            <POSTNL-0121>
+                <message>Invalid delivery date supplied: %s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0121>
+            <POSTNL-0122>
+                <message>Invalid response for GetDeliveryTimeframes request: %s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0122>
+            <POSTNL-0123>
+                <message>Invalid response for GetNearestLocations request: %s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0123>
+            <POSTNL-0124>
+                <message>Invalid arguments supplied. GetDeliveryTimeframes requires a postcode and a housenumber.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0124>
+            <POSTNL-0125>
+                <message>Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0125>
+            <POSTNL-0126>
+                <message>Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain digits.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0126>
+            <POSTNL-0127>
+                <message>Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0127>
+            <POSTNL-0128>
+                <message>Invalid arguments supplied. getNearestLocationsInArea requires two sets of coordinates.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0128>
+            <POSTNL-0129>
+                <message>Invalid NE coordinates supplied for getLocationsInArea request. lat: %s, long: %s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0129>
+            <POSTNL-0130>
+                <message>Invalid SW coordinates supplied for getLocationsInArea request. lat: %s, long: %s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0130>
+            <POSTNL-0131>
+                <message>Invalid postcode supplied for GetDeliveryDate request: %s Postcodes may only contain 4 numbers and 2 letters.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0131>
+            <POSTNL-0132>
+                <message>PostNL delivery options are only available for Dutch shipping addresses.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0132>
+            <POSTNL-0133>
+                <message>You have not yet enabled PostNL delivery options.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0133>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>

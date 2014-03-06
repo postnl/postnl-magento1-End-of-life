@@ -241,6 +241,8 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
      *
      * @param int|null $storeId
      *
+     * @param bool     $environment
+     *
      * @return boolean
      */
     public function isPostcodeCheckEnabled($storeId = null, $environment = false)

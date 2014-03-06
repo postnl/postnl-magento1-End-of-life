@@ -97,7 +97,9 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
      * Check if a status history item exists for the given postnl shipment and status
      *
      * @param int $shipmentId
-     * @param StdClass $code
+     * @param     $status
+     *
+     * @internal param \StdClass $code
      *
      * @return boolean
      */

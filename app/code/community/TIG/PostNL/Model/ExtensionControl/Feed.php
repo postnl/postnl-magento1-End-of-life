@@ -69,6 +69,8 @@ class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Mode
     /**
      * Set the feed url
      *
+     * @param $feedUrl
+     *
      * @return TIG_PostNL_Model_ExtensionControl_Feed
      */
     public function setFeedUrl($feedUrl)
