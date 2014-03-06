@@ -47,11 +47,13 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
     /**
      * Add new message
      *
-     * @param int $severity
-     * @param string $title
+     * @param int          $severity
+     * @param string       $title
      * @param string|array $description
-     * @param string $url
-     * @param bool $isInternal
+     * @param string       $url
+     * @param bool         $isInternal
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return Mage_AdminNotification_Model_Inbox
      */

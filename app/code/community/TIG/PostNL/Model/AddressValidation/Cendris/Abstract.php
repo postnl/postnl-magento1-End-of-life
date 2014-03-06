@@ -46,13 +46,13 @@ class TIG_PostNL_Model_AddressValidation_Cendris_Abstract extends Varien_Object
     /**
      * Calls a webservice method
      *
-     * @param string
-     * @param string $method The method that will be called
-     * @param array $soapParams An array of parameters to be sent
+     * @param string $method     The method that will be called
+     * @param array  $soapParams An array of parameters to be sent
+     *
+     * @throws Exception
+     * @throws SoapFault
      *
      * @return object
-     *
-     * @throws TIG_PostNL_Exception
      */
     public function call($method, $soapParams)
     {

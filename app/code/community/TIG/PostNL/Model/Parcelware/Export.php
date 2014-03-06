@@ -51,7 +51,9 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      *  2. Update the shipments.
      *  3. Actually create the CSV file and return an array containing data for whoever called this method (probably a controller).
      *
-     * @param array $shipments An array of TIG_PostNL_Model_Core_Shipment objects
+     * @param $postnlShipments
+     *
+     * @internal param array $shipments An array of TIG_PostNL_Model_Core_Shipment objects
      *
      * @return array
      */
@@ -170,6 +172,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      *
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      *
+     * @param bool                           $parcelCount
+     * @param bool                           $count
      * @return array
      */
     protected function _getShipmentData($postnlShipment, $parcelCount = false, $count = false)
@@ -261,7 +265,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      * Get all address data for the recipient of a shipment.
      *
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
-     * @param Mage_Sales_Model_Shipments $shipment
+     * @param Mage_Sales_Model_Shipment $shipment
      *
      * @return array
      */
@@ -289,7 +293,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      * Get address data for PakjeGemak (post office) addresses.
      *
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
-     * @param Mage_Sales_Model_Shipments $shipment
+     * @param Mage_Sales_Model_Shipment $shipment
      *
      * @return array
      */

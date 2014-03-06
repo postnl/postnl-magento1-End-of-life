@@ -115,5 +115,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingDescription
                 return $this->escapeHtml($value);
             }
         }
+        return $this->escapeHtml($value);
     }
 }

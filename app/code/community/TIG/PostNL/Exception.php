@@ -47,13 +47,12 @@ class TIG_PostNL_Exception extends Mage_Core_Exception
     /**
      * Our error codes are strings, however the core Exception class only accepts integers, so we need to overload it.
      *
-     * @param string $message
-     * @param mixed $code
+     * @param string         $message
+     * @param mixed          $code
      * @param Exception|null $previous
      *
-     * @return void
-     *
-     * @see Exception::__construct()
+     * @return \TIG_PostNL_Exception
+    @see Exception::__construct()
      *
      * @link http://www.php.net/manual/en/exception.construct.php
      */

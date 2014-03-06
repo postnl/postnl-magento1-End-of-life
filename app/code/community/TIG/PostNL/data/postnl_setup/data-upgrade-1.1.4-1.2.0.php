@@ -37,19 +37,15 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
+/**
+ * @var TIG_PostNL_Model_Resource_Setup $installer
+ */
 $installer = $this;
 
-$installer->startSetup();
-
-$installer->getConnection()
-    ->addColumn($installer->getTable('postnl_core/shipment'),
-    'is_parcelware_exported',
-    array(
-        'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
-        'nullable' => false,
-        'default'  => 0,
-        'comment'  => 'Is Parcelware Exported'
-    )
+$settingsToReset = array(
+    'cif_version_shippingstatus',
+    'cif_version_confirming',
+    'cif_version_labelling',
 );
 
-$installer->endSetup();
+$installer->resetWebserviceVersions($settingsToReset);

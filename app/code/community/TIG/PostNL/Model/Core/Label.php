@@ -125,7 +125,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
         $labelSize = Mage::getStoreConfig(self::XML_PATH_LABEL_SIZE, Mage_Core_Model_App::ADMIN_STORE_ID);
 
-        $this->setLabelSeize($labelSize);
+        $this->setLabelSize($labelSize);
         return $labelSize;
     }
 
@@ -232,7 +232,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * Get the final label.
          */
         $label = $pdf->Output('PostNL Shipping Labels.pdf', 'I');
-        
+
         Varien_Profiler::stop('tig::postnl::core::label_createpdf');
 
         return $label;
@@ -281,9 +281,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * Adds a lebl to the pdf by storing it in a temporary pdf file and then adding it to the master pdf object
      *
      * @param TIG_PostNL_Fpdi $pdf
-     * @param string $label
-     * @param int $labelCounter A counter used to determine the position of the next label to be added.
+     * @param string          $label
      *
+     * @throws TIG_PostNL_Exception
      * @return TIG_PostNL_Fpdi $pdf
      */
     protected function _addPdfTemplate($pdf, $label)
@@ -297,34 +297,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             case 'Label-combi':
                 $this->_convertTempLabelToCombi($tempFilename); //NO BREAK
             case 'Label':
-                /**
-                 * If the configured label size is A4, add a new page every 4 labels and reset the counter
-                 */
-                if ($this->getLabelSize() == 'A4'
-                    && (!$this->getLabelCounter() || $this->getLabelCounter() > 4)
-                ) {
-                    $pdf->addOrientedPage('L', 'A4');
-                    $this->resetLabelCounter();
-                }
-
-                /**
-                 * If the configured label size is A6, add a new page every label
-                 */
-                if($this->getLabelSize() == 'A6') {
-                    $this->setLabelCounter(3); //used to calculate the top left position
-                    $pdf->addOrientedPage('L', 'A6');
-                }
-
-                /**
-                 * Calculate the position of the next label to be printed
-                 */
-                $position = $this->_getPosition($this->getLabelCounter());
-                $position['w'] = $this->pix2pt(538);
-
-                $this->increaseLabelCounter();
-                break;
-
-
                 /**
                  * If the configured label size is A4, add a new page every 4 labels and reset the counter
                  */
@@ -426,6 +398,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * Save a label to a temporary pdf file. Temporary pdf files are stored in var/TIG/PostNL/temp_label/
      *
      * @param string $label
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return string
      */
@@ -592,11 +566,11 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * third: bottom left
      * fourth: bottom right
      *
-     * @param int $counter
-     *
-     * @return array
+     * @param bool|int $counter
      *
      * @throws TIG_PostNL_Exception
+     * @return array
+     *
      */
     protected function _getPosition($counter = false)
     {
@@ -632,7 +606,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     /**
      * Converts pixels to points. 3.8 pixels is 1 pt in pdfs
      *
-     * @param float $input
+     * @param int $pixels
+     *
+     * @internal param float $input
      *
      * @return int
      */
