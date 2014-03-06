@@ -39,6 +39,9 @@
  */
 -->
 <layout version="0.1.0">
+
+    <!--  CORE  -->
+
     <default>
         <reference name="head">
             <action method="addItem">
@@ -54,6 +57,8 @@
             <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
         </reference>
     </sales_order_shipment>
+
+    <!--  POSTNL CHECKOUT  -->
 
     <checkout_cart_index>
         <reference name="head">
@@ -71,6 +76,50 @@
         </reference>
     </checkout_cart_index>
 
+    <postnl_checkout_summary>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/cart.css</file>
+            </action>
+        </reference>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="postnl_checkout/summary" name="postnl_checkout_summary" template="TIG/PostNL/checkout/summary.phtml">
+                <action method="addItemRender"><type>default</type><block>checkout/cart_item_renderer</block><template>checkout/onepage/review/item.phtml</template></action>
+                <action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>checkout/onepage/review/item.phtml</template></action>
+                <action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>checkout/onepage/review/item.phtml</template></action>
+                <block type="postnl_checkout/summary_totals" name="totals" template="TIG/PostNL/checkout/summary/totals.phtml"/>
+            </block>
+        </reference>
+    </postnl_checkout_summary>
+
+    <!--  POSTCODE CHECK  -->
+
+    <customer_address_form>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/ajax.js</file>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/postcodecheck.js</file>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/postcodecheck.css</file>
+            </action>
+            <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
+        </reference>
+        <reference name="customer_address_edit">
+            <block type="core/template" name="postnl_postcodecheck" template="TIG/PostNL/customer/address/postcode_check.phtml"/>
+        </reference>
+    </customer_address_form>
+
+    <!--  DELIVERY OPTIONS  -->
     <checkout_onepage_index>
         <reference name="head">
             <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions.css</stylesheet></action>
@@ -98,7 +147,6 @@
         </reference>
     </checkout_onepage_index>
 
-<!-- Individual blocks for Progress steps begins -->
     <checkout_onepage_shippingmethod>
         <reference name="root">
             <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.delivery.options" template="TIG/PostNL/delivery_options/onepage/deliveryoptions.phtml">
@@ -129,10 +177,8 @@
         </reference>
 
         <reference name="choose-shipping-method">
-            <block type="core/template" name="postnl.osc.add.moment" template="TIG/PostNL/delivery_options/onestepcheckout/addmoment.phtml">
-                <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">
-                    <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
-                </block>
+            <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">
+                <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
             </block>
         </reference>
 
@@ -144,44 +190,12 @@
         </reference>
     </onestepcheckout_index_index>
 
-    <postnl_checkout_summary>
-        <reference name="head">
-            <action method="addItem">
-                <type>skin_css</type>
-                <file>css/TIG/PostNL/cart.css</file>
-            </action>
-        </reference>
-        <reference name="root">
-            <action method="setTemplate"><template>page/1column.phtml</template></action>
-        </reference>
-        <reference name="content">
-            <block type="postnl_checkout/summary" name="postnl_checkout_summary" template="TIG/PostNL/checkout/summary.phtml">
-                <action method="addItemRender"><type>default</type><block>checkout/cart_item_renderer</block><template>checkout/onepage/review/item.phtml</template></action>
-                <action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>checkout/onepage/review/item.phtml</template></action>
-                <action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>checkout/onepage/review/item.phtml</template></action>
-                <block type="postnl_checkout/summary_totals" name="totals" template="TIG/PostNL/checkout/summary/totals.phtml"/>
+    <onestepcheckout_ajax_save_billing>
+        <reference name="choose-shipping-method">
+            <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">
+                <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
             </block>
         </reference>
-    </postnl_checkout_summary>
+    </onestepcheckout_ajax_save_billing>
 
-    <customer_address_form>
-        <reference name="head">
-            <action method="addItem">
-                <type>skin_js</type>
-                <file>js/TIG/PostNL/ajax.js</file>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <file>js/TIG/PostNL/postcodecheck.js</file>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <file>css/TIG/PostNL/postcodecheck.css</file>
-            </action>
-            <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
-        </reference>
-        <reference name="customer_address_edit">
-            <block type="core/template" name="postnl_postcodecheck" template="TIG/PostNL/customer/address/postcode_check.phtml"/>
-        </reference>
-    </customer_address_form>
 </layout>
