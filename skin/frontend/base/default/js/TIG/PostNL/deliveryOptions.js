@@ -325,6 +325,8 @@ PostnlDeliveryOptions.prototype = {
             allowStreetview        : true,
             scrollbarContainer     : 'scrollbar_content',
             scrollbarTrack         : 'scrollbar_track',
+            loaderDiv              : 'initial_loader',
+            optionsContainer       : 'postnl_delivery_options',
             pgLocationContainer    : 'pglocation',
             pgeLocationContainer   : 'pgelocation',
             paLocationContainer    : 'palocation',
@@ -941,12 +943,16 @@ PostnlDeliveryOptions.prototype = {
      * @returns {PostnlDeliveryOptions}
      */
     hideSpinner : function() {
+        if (!this.getOptions().loaderDiv) {
+            return this;
+        }
+
         if (!this.getParsedLocations() || !this.getParsedTimeframes()) {
             return this;
         }
 
-        $('initial_loader').hide();
-        $('postnl_delivery_options').show();
+        $(this.getOptions().loaderDiv).hide();
+        $(this.getOptions().optionsContainer).show();
 
         return this;
     },
@@ -1277,7 +1283,6 @@ PostnlDeliveryOptions.Map = new Class.create({
         if (typeof google.maps == 'undefined') {
             throw 'Google maps is required.';
         }
-
 
         this.deliveryOptions = deliveryOptions;
         this.fullAddress = fullAddress;

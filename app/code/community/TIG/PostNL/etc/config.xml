@@ -289,10 +289,10 @@
                         <class>postnl_addressvalidation/observer_addressBook</class>
                         <method>addressBookPostcodeCheck</method>
                     </customer_address_edit_postcodecheck>
-                    <!-- Adds PostNL delivery options to Onepage checkout -->
+                    <!-- Adds PostNL delivery options to the checkout shipping methods -->
                     <checkout_onepage_deliveryoptions>
                         <type>singleton</type>
-                        <class>postnl_deliveryoptions/observer_onepage</class>
+                        <class>postnl_deliveryoptions/observer_shippingMethodAvailable</class>
                         <method>addDeliveryOptions</method>
                     </checkout_onepage_deliveryoptions>
                 </observers>

@@ -1,30 +1,42 @@
 <?php
 /**
- * Magento
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE_AFL.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Magento to newer
- * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @category   design_default
- * @package    Mage
- * @copyright  Copyright (c) 2008 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
- * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
-
 <?php if (!($_shippingRateGroups = $this->getShippingRates())): ?>
     <strong><?php echo $this->__('Sorry, no quotes are available for this order at this time.') ?></strong>
 <?php else: ?>
@@ -48,6 +60,13 @@
                         <?php endif; ?>
                         </strong>
                     </label>
+
+                    <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
+                    <?php if (in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
+                        <div class="postnl-container">
+                            <?php echo $this->getChildHtml('postnl.osc.add.moment'); ?>
+                        </div>
+                    <?php endif; ?>
                    <?php endif ?>
                    </dt>
                 <?php endforeach; ?>
@@ -75,13 +94,14 @@
                                 <?php endif; ?>
                                 </strong>
                                 </label>
-                                
-                                <?php if ($_rate->getCode() == 'postnl_flatrate'): ?>
-                                <div class="postnl-container">
-                                    <?php echo $this->getChildHtml('postnl.osc.add.moment'); ?>
-                                </div>
+
+                                <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
+                                <?php if (in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
+                                    <div class="postnl-container">
+                                        <?php echo $this->getChildHtml('postnl.osc.add.moment'); ?>
+                                    </div>
                                 <?php endif; ?>
-                                
+
                            <?php endif ?>
                         </dt>
                     <?php endforeach; ?>
