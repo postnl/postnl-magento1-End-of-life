@@ -656,7 +656,7 @@ TIG_PostNL::Delivery,Bezorgen
 TIG_PostNL::or Pickup,of Ophalen
 TIG_PostNL::More Info,Meer informatie
 TIG_PostNL::choose a different pickup location,kies een ander ophaalpunt
-TIG_PostNL::Select Post Office,Postkantoor kiezen
+TIG_PostNL::Select pickup location,Ophaallocatie kiezen
 TIG_PostNL::Search,Zoeken
 TIG_PostNL::early pickup,extra vroeg ophalen
 TIG_PostNL::opened in the evening,'s avonds open
@@ -715,3 +715,8 @@ TIG_PostNL::Whether or not customers may choose to have their order delivered to
 TIG_PostNL::Parcel dispensers are available at certain NS train stations across the Netherlands.,Pakketautomaten zijn beschikbaar op bepaalde NS stations.
 TIG_PostNL::Allow Google Streetview,Sta Google Streetview toe
 "TIG_PostNL::If enabled, users may use Google Streetview when choosing a post office location.","Indien geactiveerd, kunnen klanten Google Streetview gebruiken wanneer zij een postkantoor zoeken."
+TIG_PostNL::No cut-off time,Geen cut-off tijd
+TIG_PostNL::day,dag
+TIG_PostNL::days,dagen
+TIG_PostNL::The address you searched for was not found. Please try again.,Het gezochte adres is niet gevonden. Probeer het s.v.p. opnieuw.
+TIG_PostNL::We could not find any locations matching your filters. Please unselect any filters or try again at a different location.,Er zijn geen locaties gevonden die aan uw filters voldoen. Pas s.v.p. uw zoekfilters aan of zoek op een andere locatie.
