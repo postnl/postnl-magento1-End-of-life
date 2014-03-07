@@ -92,9 +92,9 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
         $quote = Mage::getSingleton('checkout/session')->getQuote();
         $shippingAddress = $quote->getShippingAddress();
 
-        if (!$shippingAddress || $shippingAddress->getSameAsBilling()) {
-            $shippingAddress = $quote->getBillingAddress();
-        }
+//        if (!$shippingAddress || $shippingAddress->getSameAsBilling()) {
+//            $shippingAddress = $quote->getBillingAddress();
+//        }
 
         if (
             (!$shippingAddress->getPostcode() || $shippingAddress->getPostcode() == '-')
