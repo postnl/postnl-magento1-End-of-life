@@ -207,7 +207,7 @@ class TIG_PostNL_Model_Carrier_Postnl
 
             $quote = Mage::getSingleton('checkout/session')->getQuote();
             if ($quote && $quote->getId()) {
-                $postnlOrder = Mage::getModel('postnL_checkout/order')->load($quote->getId(), 'quote_id');
+                $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
                 if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
                     $costs = $postnlOrder->getShipmentCosts();
                     $shippingPrice += $costs;
