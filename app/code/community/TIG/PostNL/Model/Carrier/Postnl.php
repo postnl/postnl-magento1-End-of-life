@@ -205,14 +205,14 @@ class TIG_PostNL_Model_Carrier_Postnl
                 $shippingPrice = '0.00';
             }
 
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
-            if ($quote && $quote->getId()) {
-                $postnlOrder = Mage::getModel('postnL_checkout/order')->load($quote->getId(), 'quote_id');
-                if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
-                    $costs = $postnlOrder->getShipmentCosts();
-                    $shippingPrice += $costs;
-                }
-            }
+            // $quote = Mage::getSingleton('checkout/session')->getQuote();
+            // if ($quote && $quote->getId()) {
+                // $postnlOrder = Mage::getModel('postnL_checkout/order')->load($quote->getId(), 'quote_id');
+                // if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
+                    // $costs = $postnlOrder->getShipmentCosts();
+                    // $shippingPrice += $costs;
+                // }
+            // }
 
             $method->setPrice($shippingPrice);
             $method->setCost($shippingPrice);
