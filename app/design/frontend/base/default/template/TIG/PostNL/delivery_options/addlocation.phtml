@@ -39,6 +39,7 @@
 ?>
 <?php $_helper = Mage::helper('postnl'); ?>
 <?php $_address = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress(); ?>
+<?php $_canUsePakjeGemakExpress = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemakExpress(); ?>
 <div id="postnl_add_location" style="display:none;">
     <div class="popup-overlay">
         <div class="popup-window">
@@ -48,7 +49,7 @@
                     <input type="text" class="input-text" name="test" value="<?php echo $_address->getPostcode(); ?>" id="search_field" placeholder="<?php echo $_helper->__('Search by zipcode, address or city'); ?>"/>
                     <button type="button" class="button btn-search" id="search_button"><span><span><?php echo $_helper->__('Search'); ?></span></span></button>
                     <ul class="location-options">
-                        <li>
+                        <li <?php if (!$_canUsePakjeGemakExpress): ?>style="display:none;"<?php endif; ?>>
                             <a id="early-filter" class="location-option-checkbox"><?php echo $_helper->__('early pickup');?></a>
                         </li>
                         <li>
