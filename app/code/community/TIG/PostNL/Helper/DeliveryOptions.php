@@ -184,6 +184,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        if (!$this->canUsePakjeGemak($storeId)) {
+            return false;
+        }
+
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK_EXPRESS, $storeId);
 
         return $enabled;
@@ -236,6 +240,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     {
         if ($storeId === false) {
             $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (!$this->canUseTimeframes($storeId)) {
+            return false;
         }
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EVENING_TIMEFRAMES, $storeId);

@@ -127,7 +127,6 @@
 
 /* Google maps Autocomplete */
 .pac-container { width:394px !important; z-index:7000; }
-.pac-container:after{ content:none !important; }
 
 /* Options */
 .postnl-container .location-options { float:left; margin-left:4px; }
@@ -184,6 +183,7 @@
 /* ======================================================================================= */
 
 /* Fixes ================================================================================= */
+.noscroll { overflow:hidden; }
 .overflow-protect { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; display:block; }
 #postnl_delivery .location-name.overflow-protect { width:100%; }
 #postnl_pickup .location-name.overflow-protect { max-width:158px; float:left; }
