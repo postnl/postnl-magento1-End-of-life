@@ -277,16 +277,12 @@ PostnlDeliveryOptions.prototype = {
             case 'Staples Office Centre':
                 imageName = 'staples';
                 break;
-        }
-
-        if (imageName == '') {
-            if (name.indexOf('GAMMA') > -1) {
-                return 'gamma';
-            }
-
-            if (name.indexOf('KARWEI') > -1) {
-                return 'karwei';
-            }
+            case 'GAMMA':
+                imageName = 'gamma';
+                break;
+            case 'KARWEI':
+                imageName = 'karwei';
+                break;
         }
 
         if (imageName == '') {
@@ -1061,6 +1057,7 @@ PostnlDeliveryOptions.prototype = {
 PostnlDeliveryOptions.Map = new Class.create({
     map                           : false,
     scrollbar                     : false,
+    autocomplete                  : false,
 
     deliveryOptions               : false,
     fullAddress                   : '',
@@ -1091,6 +1088,10 @@ PostnlDeliveryOptions.Map = new Class.create({
 
     getScrollbar : function() {
         return this.scrollbar;
+    },
+
+    getAutoComplete : function() {
+        return this.autocomplete;
     },
 
     getDeliveryOptions : function() {
@@ -1385,13 +1386,20 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         this.searchAndPanToAddress(this.getFullAddress(), true, false);
 
+        /**
+         * Add autocomplete functionality to the address search field. Results will be located in the Netherlands and
+         * may contain only addresses.
+         */
         this.autocomplete = new google.maps.places.Autocomplete(
             $('search_field'),
             {
                 componentRestrictions : {
                     country : 'nl'
                 },
-                types : ['geocode']
+                types : [
+                    'establishment',
+                    'geocode'
+                ]
             }
         );
         this.autocomplete.bindTo('bounds', this.map);
@@ -1534,7 +1542,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
         }.bind(this));
 
-        google.maps.event.addListener(this.autocomplete, 'place_changed', this.addressSearch.bind(this));
+        google.maps.event.addListener(this.autocomplete, 'place_changed', this.placeSearch.bind(this));
 
         return this;
     },
@@ -1579,6 +1587,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             event.stop();
         }
 
+        $$('body')[0].addClassName('noscroll');
         this.getAddLocationWindow().show();
 
         /**
@@ -1605,6 +1614,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             event.stop();
         }
 
+        $$('body')[0].removeClassName('noscroll');
         this.getAddLocationWindow().hide();
 
         return this;
@@ -1639,6 +1649,35 @@ PostnlDeliveryOptions.Map = new Class.create({
          * Search for an address, pan the map to the new location and search for locations nearby.
          */
         this.searchAndPanToAddress(address, true, true);
+
+        return this;
+    },
+
+    /**
+     * Search for a place. The place will contain an address for google's geocode service to search for.
+     *
+     * @returns {PostnlDeliveryOptions.Map}
+     */
+    placeSearch : function() {
+        /**
+         * Get the currently selected place.
+         */
+        var place = this.getAutoComplete().getPlace();
+        var address = place.formatted_address;
+
+        /**
+         * Search for the place's address, pan the map to the new location and search for locations nearby.
+         */
+        this.searchAndPanToAddress(address, true, true);
+
+        /**
+         * Hack to force the input element to contain the address of the selected place, rather than the name.
+         */
+        var input = $('search_field');
+        input.blur();
+        setTimeout(function() {
+            input.setValue(address);
+        }, 1);
 
         return this;
     },
@@ -2149,6 +2188,7 @@ PostnlDeliveryOptions.Map = new Class.create({
          */
         this.setMarkers([]);
 
+        this.getScrollbar().reset();
         this.recalculateScrollbar();
         return this;
     },
