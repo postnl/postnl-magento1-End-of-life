@@ -125,6 +125,9 @@
 
 .postnl-container .error-msg { color:#c00; padding:6px 17px 8px; position:absolute; width:700px; left:0; bottom:-14px; background:#fff; }
 
+/* Google maps Autocomplete */
+.pac-container { width:394px !important; z-index:7000; }
+
 /* Options */
 .postnl-container .location-options { float:left; margin-left:4px; }
 .postnl-container .location-options li { display:block; float:left; margin:0 0 0 30px; padding:0; line-height:22px; }
@@ -148,6 +151,8 @@
 .postnl-container .location-list .location-info:hover { text-decoration:underline; }
 
 .postnl-container .location-list .location-distance { width:101px; float:right; text-align:right; }
+
+.postnl-container .location-list .location-error-msg { color:#c00; padding:6px 17px 8px; background:#fff;  }
 
 /* Scrollbar */
 #scrollbar_container { width:666px; position:relative; }
@@ -178,6 +183,7 @@
 /* ======================================================================================= */
 
 /* Fixes ================================================================================= */
+.noscroll { overflow:hidden; }
 .overflow-protect { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; display:block; }
 #postnl_delivery .location-name.overflow-protect { width:100%; }
 #postnl_pickup .location-name.overflow-protect { max-width:158px; float:left; }

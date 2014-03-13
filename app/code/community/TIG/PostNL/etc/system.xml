@@ -1622,38 +1622,10 @@
                                 <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </cutoff_time>
-                        <allow_sunday_sorting translate="label comment tooltip" module="postnl">
-                            <label>Allow weekend sorting</label>
-                            <comment>Weekend sorting is a special service where shipments are sorted by PostNL during the weekend, allowing shipments to be delivered on monday. If you enable this field, but weekend sorting is not available for your webshop, parcels will NOT be delivered the next monday.</comment>
-                            <tooltip>Please ask your PostNL account manager if this service is available for your webshop.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                            </depends>
-                        </allow_sunday_sorting>
-                        <sunday_cutoff_time translate="label comment" module="postnl">
-                            <label>Weekend cut-off time</label>
-                            <comment>When an order is placed after this time on sunday, another day will be added to the shipping duration.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_deliveryoptions/system_config_source_cutOffTime</source_model>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <allow_sunday_sorting>1</allow_sunday_sorting>
-                            </depends>
-                        </sunday_cutoff_time>
                         <shipping_duration_header translate="label" module="postnl">
                             <label>PostNL delivery options allows your customers to choose their delivery date and timeframe, or choose to have their order delivered to a post office, early delivery post office or parcel dispenser. Each of these options can be individually enabled and disabled. In the case of evening- and early delivery, you may charge an additional fee.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1666,7 +1638,7 @@
                             <comment>Timeframes allow customers to specify on which date and at which time they want their order delivered.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1680,7 +1652,7 @@
                             <tooltip>Evening timeframes may not be available in all areas. The PostNL extension will automatically determine whether or not evening delivery is available for a specific area.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1694,7 +1666,7 @@
                             <comment>Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs.</comment>
                             <tooltip>This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for evening timeframes.</tooltip>
                             <frontend_type>text</frontend_type>
-                            <sort_order>130</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1710,7 +1682,7 @@
                             <comment>Whether or not customers may choose to have their order delivered to a nearby post office.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1724,7 +1696,7 @@
                             <tooltip>Not all post offces may support early delivery.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1738,7 +1710,7 @@
                             <comment>Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs.</comment>
                             <tooltip>This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
                             <frontend_type>text</frontend_type>
-                            <sort_order>160</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1755,7 +1727,7 @@
                             <tooltip>Parcel dispensers are available at certain NS train stations across the Netherlands.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1768,7 +1740,7 @@
                             <comment>If enabled, users may use Google Streetview when choosing a post office location.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>180</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

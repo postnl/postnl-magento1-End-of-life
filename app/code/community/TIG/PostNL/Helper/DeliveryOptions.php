@@ -76,12 +76,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     {
         /**
          * Get the day of the week on which the package should be delivered.
+         *
+         * date('l') returns the full textual representation of the day of the week (Sunday through Saturday).
          */
         $weekDay = date('l', strtotime($deliveryDate));
 
         foreach ($locations as &$location) {
             /**
-             * if we don't have any business hours specified for this date, it's not open on it.
+             * if we don't have any business hours specified for this date, the location is closed.
              */
             if (!isset($location->OpeningHours->$weekDay->string)) {
                 $location->isEvening = false;
@@ -182,6 +184,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        if (!$this->canUsePakjeGemak($storeId)) {
+            return false;
+        }
+
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK_EXPRESS, $storeId);
 
         return $enabled;
@@ -234,6 +240,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     {
         if ($storeId === false) {
             $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (!$this->canUseTimeframes($storeId)) {
+            return false;
         }
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EVENING_TIMEFRAMES, $storeId);

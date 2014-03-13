@@ -207,7 +207,7 @@ class TIG_PostNL_Model_Carrier_Postnl
 
             $quote = Mage::getSingleton('checkout/session')->getQuote();
             if ($quote && $quote->getId()) {
-                $postnlOrder = Mage::getModel('postnL_checkout/order')->load($quote->getId(), 'quote_id');
+                $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
                 if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
                     $costs = $postnlOrder->getShipmentCosts();
                     $shippingPrice += $costs;
@@ -273,10 +273,9 @@ class TIG_PostNL_Model_Carrier_Postnl
         if ($freePackageValue) {
             $request->setPackageValue($request->getPackageValue() - $freePackageValue);
         }
-        if (!$request->getConditionName()) {
-            $conditionName = $this->getConfigData('conditi on_name');
-            $request->setConditionName($conditionName ? $conditionName : $this->_default_condition_name);
-        }
+
+        $conditionName = $this->getConfigData('condition_name');
+        $request->setConditionName($conditionName ? $conditionName : $this->_default_condition_name);
 
          // Package weight and qty free shipping
         $oldWeight = $request->getPackageWeight();
@@ -411,8 +410,6 @@ class TIG_PostNL_Model_Carrier_Postnl
      * @param string $tracking
      *
      * @return Mage_Shipping_Model_Tracking_Result_Status
-     *
-     * @todo check code and docblock
      */
     public function getTrackingInfo($tracking)
     {
@@ -440,8 +437,6 @@ class TIG_PostNL_Model_Carrier_Postnl
      * @param string $number
      *
      * @return Mage_Sales_Model_Order_Shipment_Track
-     *
-     * @todo check code and docblock
      */
     protected function _getTrackByNumber($number)
     {

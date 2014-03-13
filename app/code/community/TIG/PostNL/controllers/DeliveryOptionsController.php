@@ -64,6 +64,13 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         return $canUseDeliveryOptions;
     }
 
+    /**
+     * Saves the selected shipment option.
+     *
+     * @todo add validation
+     *
+     * @return TIG_PostNL_DeliveryOptionsController
+     */
     public function saveSelectedOptionAction()
     {
         /**
@@ -273,6 +280,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         return $this;
     }
 
+    /**
+     * Get all locations in a given area.
+     *
+     * @return TIG_PostNL_DeliveryOptionsController
+     */
     public function getLocationsInAreaAction()
     {
         /**
