@@ -133,24 +133,29 @@ class TIG_PostNL_Block_Core_JsTranslate extends Mage_Core_Block_Template
 
         $translateData = array();
         $messages = $this->_getXmlConfig()->getXpath('*/message');
-        if (!empty($messages)) {
-            $helper = Mage::helper('postnl');
+
+        if (empty($messages)) {
+            $this->setTranslateData($translateData);
+
+            return $translateData;
+        }
+
+        $helper = Mage::helper('postnl');
+
+        /**
+         * @var Varien_Simplexml_Element $message
+         */
+        foreach ($messages as $message) {
+            $messageText = (string) $message;
+            $module = $message->getParent()->getAttribute("module");
 
             /**
-             * @var Varien_Simplexml_Element $message
+             * We only want to parse PostNL's translations.
              */
-            foreach ($messages as $message) {
-                $messageText = (string) $message;
-                $module = $message->getParent()->getAttribute("module");
-
-                /**
-                 * We only want to parse PostNL's translations.
-                 */
-                if (!$module || $module != 'postnl') {
-                    continue;
-                }
-                $translateData[$messageText] = $helper->__($messageText);
+            if (!$module || $module != 'postnl') {
+                continue;
             }
+            $translateData[$messageText] = $helper->__($messageText);
         }
 
         foreach ($translateData as $key => $value) {

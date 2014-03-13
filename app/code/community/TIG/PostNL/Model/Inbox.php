@@ -64,7 +64,7 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
         }
 
         if (!$this->getSeverities($severity)) {
-            throw new TIG_PostNL_Exception($this->__('Wrong message type'), 'POSTNL-0087');
+            throw new TIG_PostNL_Exception(Mage::helper('postnl')->__('Wrong message type'), 'POSTNL-0087');
         }
 
         if (is_array($description)) {
