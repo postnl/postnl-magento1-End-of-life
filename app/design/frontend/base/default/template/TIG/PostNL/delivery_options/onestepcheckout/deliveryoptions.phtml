@@ -66,20 +66,6 @@
                 </div>
             </div>
         </li>
-        <li class="option active">
-            <div class="bkg">
-                <div class="bkg">
-                    <div class="content">
-                        <span class="option-dd">
-                            <strong class="option-day">Wo</strong>
-                            <span class="option-date">20-08</span>
-                        </span>
-                        <span class="option-radio"></span>
-                        <span class="option-time">09:00 - 19:00</span>
-                    </div>
-                </div>
-            </div>
-        </li>
     </ul>
     <ul class="option-list">
         <li class="add-moment">
@@ -176,6 +162,7 @@
         };
 
         options = {
+            isOsc                  : true,
             eveningFee             : <?php echo $this->getFee('evening'); ?>,
             expressFee             : <?php echo $this->getFee('express'); ?>,
             eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
@@ -242,5 +229,27 @@
 
         $('postnl_delivery_options').hide();
     });
+
+    var url_save_billing = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure'=>true)); ?>';
+    var url_set_methods = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure'=>true)); ?>';
+
+    var fieldsToObserve = [
+        'virtual:billing:street1',
+        'billing:street1',
+        'virtual:shipping:street1',
+        'shipping:street1'
+    ];
+
+    fieldsToObserve.each(function(field) {
+        $(field).observe('change', function() {
+            get_save_billing_function(url_save_billing, url_set_methods, false)();
+        });
+    });
+
+    $$('body')[0].stopObserving('postcodecheck:update_success');
+    $$('body')[0].observe('postcodecheck:update_success', function() {
+        get_save_billing_function(url_save_billing, url_set_methods, false)();
+    });
+
 //]]>
 </script>
