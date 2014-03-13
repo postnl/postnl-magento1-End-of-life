@@ -1417,7 +1417,7 @@ PostnlDeliveryOptions.Map = new Class.create({
          * Google map styles.
          * All POI icons are hidden. Road icons (directions, etc.) are also hidden.
          */
-        var myStyles = [
+        var styles = [
             {
                 "featureType" : "poi",
                 "elementType" : "labels",
@@ -1449,7 +1449,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             maxZoom                : 18,
             center                 : new google.maps.LatLng(52.3702157, 4.895167899999933), //Amsterdam
             mapTypeId              : google.maps.MapTypeId.ROADMAP,
-            styles                 : myStyles,
+            styles                 : styles,
             draggable              : true,
             panControl             : false,
             mapTypeControl         : false,
@@ -1626,16 +1626,29 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     addressSearch : function(event) {
-
         /**
          * If this event was triggered by a keypress, we want to ignore any except the return key.
          */
         if (event && event.keyCode && event.keyCode != Event.KEY_RETURN) {
             return this;
-        } else if (event) {
-            /**
-             * Stop event propagation and the default action from triggering.
-             */
+        }
+
+        /**
+         * If this event was triggered by the return key and a pac-item was selected, ignore it. The google maps
+         * place-changed event will handle it instead.
+         */
+        if (event
+            && event.keyCode
+            && event.keyCode == Event.KEY_RETURN
+            && $$('.pac-item.pac-item-selected').length > 0
+        ) {
+            return this;
+        }
+
+        /**
+         * Stop event propagation and the default action from triggering.
+         */
+        if (event) {
             event.stop();
         }
 
@@ -1664,8 +1677,12 @@ PostnlDeliveryOptions.Map = new Class.create({
         var place = this.getAutoComplete().getPlace();
         var address = place.formatted_address;
 
+        /**
+         * Fix for some locations returning 'Netherlands' as the address. Appears to be a bug in google's autocomplete
+         * service.
+         */
         if (address == 'Netherlands') {
-            return this;
+            address = $('search_field').getValue();
         }
 
         /**
@@ -2061,6 +2078,22 @@ PostnlDeliveryOptions.Map = new Class.create({
             var location = locations[i];
 
             /**
+             * Check that this location's types are allowed. Only if all of the location's types are disallowed is the
+             * location skipped.
+             */
+            var type = location.DeliveryOptions.string;
+            var isTypeAllowed = false;
+            type.each(function(type) {
+                if (this.getDeliveryOptions().isTypeAllowed(type)) {
+                    isTypeAllowed = true;
+                }
+            }.bind(this));
+
+            if (!isTypeAllowed) {
+                continue;
+            }
+
+            /**
              * Check that this marker doesn't already exist.
              */
             if (this.markerExists(location.LocationCode)) {
@@ -2097,7 +2130,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             var parsedLocation = new PostnlDeliveryOptions.Location(
                 location,
                 this.getDeliveryOptions(),
-                location.DeliveryOptions.string
+                type
             );
 
             /**
@@ -2307,6 +2340,11 @@ PostnlDeliveryOptions.Map = new Class.create({
          */
         if (panTo) {
             this.getMap().panTo(marker.getPosition());
+
+            var streetView = this.getMap().getStreetView();
+            if (streetView.getVisible()) {
+                streetView.setPosition(marker.getPosition());
+            }
         }
 
         /**
@@ -2559,6 +2597,10 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     openLocationInfoWindow : function(content, code) {
+        if (this.getMap().getStreetView().getVisible()) {
+            return this;
+        }
+
         this.setIsInfoWindowOpen(true);
 
         var locationInfoWindow = $('location-info-window');
