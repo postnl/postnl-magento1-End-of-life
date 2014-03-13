@@ -26,9 +26,10 @@
 #postnl_delivery_options .btn-close { top:0; right:0; }
 #postnl_delivery_options .button-set { margin-top:21px; padding:7px 17px; }
 
-#postnl_delivery_options .tooltip.top { top:-18px !important; }
-#postnl_delivery_options .tooltip.middle { top:-103px !important;  }
-#postnl_delivery_options .tooltip.bottom { top:-121px !important; }
+#postnl_delivery_options .tooltip.first { top:-18px !important; }
+#postnl_delivery_options .tooltip.socond { top:-103px !important;  }
+#postnl_delivery_options .tooltip.third { top:-121px !important; }
+#postnl_delivery_options .tooltip.last { top:-169px !important; }
 
 /* Scrollbar */
 #osc_scrollbar_container { width:631px; position:relative; }
