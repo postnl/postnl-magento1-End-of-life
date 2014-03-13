@@ -39,6 +39,40 @@
 class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_Action
 {
     /**
+     * @var TIG_PostNL_Model_AddressValidation_Cendris
+     */
+    protected $_cendrisModel;
+
+    /**
+     * @param TIG_PostNL_Model_AddressValidation_Cendris $cendrisModel
+     *
+     * @return TIG_PostNL_AddressValidationController
+     */
+    public function setCendrisModel($cendrisModel)
+    {
+        $this->_cendrisModel = $cendrisModel;
+
+        return $this;
+    }
+
+    /**
+     * @return TIG_PostNL_Model_AddressValidation_Cendris
+     */
+    public function getCendrisModel()
+    {
+        $cendrisModel = $this->_cendrisModel;
+
+        if ($cendrisModel) {
+            return $cendrisModel;
+        }
+
+        $cendris = Mage::getModel('postnl_addressvalidation/cendris');
+        $this->setCendrisModel($cendris);
+
+        return $cendris;
+    }
+
+    /**
      * Validates and enriches a postcode/housenumber combination. This will result in the address's city and streetname if valid.
      *
      * @return TIG_PostNL_AddressValidationController
@@ -49,7 +83,8 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
          * This action may only be called using AJAX requests
          */
         if (!$this->getRequest()->isAjax()) {
-            $this->_redirect('');
+            $this->getResponse()
+                 ->setBody('missing_data');
 
             return $this;
         }
@@ -74,7 +109,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
         /**
          * Validate the parameters.
          */
-        if (!$this->_validatePostcode($postcode, $housenumber)) {
+        if (!$this->validatePostcode($postcode, $housenumber)) {
             $this->getResponse()
                  ->setBody('invalid_data');
 
@@ -84,8 +119,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
         /**
          * Load the Cendris webservice and perform an getAdresxpressPostcode request
          */
-        $cendris = Mage::getModel('postnl_addressvalidation/cendris');
-
+        $cendris = $this->getCendrisModel();
         try {
             $result = $cendris->getAdresxpressPostcode($postcode, $housenumber);
         } catch (Exception $e) {
@@ -97,7 +131,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
             return $this;
         }
 
-        if (!$this->_validateResult($result)) {
+        if (!$this->validateResult($result)) {
             $this->getResponse()
                  ->setBody('invalid_data');
 
@@ -138,7 +172,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
      *
      * @return boolean
      */
-    protected function _validatePostcode($postcode, $housenumber)
+    public function validatePostcode($postcode, $housenumber)
     {
         /**
          * Remove spaces from housenumber and postcode fields.
@@ -172,7 +206,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
      *
      * @return bool
      */
-    protected function _validateResult($result)
+    public function validateResult($result)
     {
         /**
          * Make sure the required data is present.

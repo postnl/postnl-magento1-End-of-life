@@ -56,7 +56,7 @@
                             <a id="evening-filter" class="location-option-checkbox"><?php echo $_helper->__('opened in the evening');?></a>
                         </li>
                     </ul>
-                    <div id="search_field_error" class="error-msg" style="display:none;"><?php echo $_helper->__('The address you searched for was not found. Please try again.'); ?></div>
+                    <em class="no-results"><?php echo $_helper->__('The address you searched for was not found. Please try again.'); ?></em>
                 </div>
                 <a title="<?php echo $_helper->__('Close'); ?>" id="close_popup" class="btn-close"><?php echo $_helper->__('Close'); ?></a>
             </div>
@@ -64,6 +64,7 @@
 
             <div class="popup-content">
                 <h2><?php echo $_helper->__('Pickup locations found'); ?><span id="locations_loader" style="display:none;"><?php echo $_helper->__('Loading...'); ?></span></h2>
+
                 <div id="scrollbar_container">
                     <div id="scrollbar_track">
                         <div id="scrollbar_handle"></div>
