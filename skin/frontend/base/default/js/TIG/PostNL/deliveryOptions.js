@@ -329,6 +329,7 @@ PostnlDeliveryOptions.prototype = {
         this.fullAddress        = params.fullAddress;
 
         this.options = Object.extend({
+            isOsc                  : false,
             allowTimeframes        : true,
             allowEveningTimeframes : false,
             allowPg                : true,
@@ -342,7 +343,7 @@ PostnlDeliveryOptions.prototype = {
             scrollbarContainer     : 'scrollbar_content',
             scrollbarTrack         : 'scrollbar_track',
             loaderDiv              : 'initial_loader',
-            searchErrorDiv         : 'search_field_error',
+            searchErrorDiv         : 'search_error_message',
             optionsContainer       : 'postnl_delivery_options',
             pgLocationContainer    : 'pglocation',
             pgeLocationContainer   : 'pgelocation',
@@ -649,6 +650,10 @@ PostnlDeliveryOptions.prototype = {
             this.selectTimeframe(this.timeframes[0].getElement());
         }
 
+        if (this.getOptions().isOsc) {
+            this.timeframes[0].renderAsOsc();
+        }
+
         return this;
     },
 
@@ -813,6 +818,7 @@ PostnlDeliveryOptions.prototype = {
                 (this.isPgAllowed() && !processedPG && type.indexOf('PG') != -1)
                 && (this.isPgeAllowed() && !processedPGE && type.indexOf('PGE') != -1)
             ) {
+                postnlLocation.setTooltipClassName('first');
 
                 /**
                  * Register this location as the chosen PGE location.
@@ -830,6 +836,8 @@ PostnlDeliveryOptions.prototype = {
              * PGE location.
              */
             if (this.isPgeAllowed() && !processedPGE && type.indexOf('PGE') != -1) {
+                postnlLocation.setTooltipClassName('first');
+
                 /**
                  * Register this location as the chosen PGE location.
                  */
@@ -843,6 +851,8 @@ PostnlDeliveryOptions.prototype = {
              * PG location.
              */
             if (this.isPgAllowed() && !processedPG && type.indexOf('PG') != -1) {
+                postnlLocation.setTooltipClassName('second');
+
                 /**
                  * Register this location as the chosen PG location.
                  */
@@ -858,6 +868,8 @@ PostnlDeliveryOptions.prototype = {
              * N.B. that a single location can be used as both PG, PGE and PA.
              */
             if (this.isPaAllowed() && !processedPA && type.indexOf('PA') != -1) {
+                postnlLocation.setTooltipClassName('third');
+
                 /**
                  * Register this location as the chosen PA location.
                  */
@@ -1858,14 +1870,14 @@ PostnlDeliveryOptions.Map = new Class.create({
     /**
      * Get the element containing the search error message.
      *
-     * @returns {Element}
+     * @returns {Element|boolean}
      */
     getSearchErrorDiv : function() {
         if (this.getDeliveryOptions().getOptions().searchErrorDiv) {
             return $(this.getDeliveryOptions().getOptions().searchErrorDiv);
         }
 
-        return $('search_field-error');
+        return false;
     },
 
     /**
@@ -1874,7 +1886,9 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     hideSearchErrorDiv : function() {
-        this.getSearchErrorDiv().hide();
+        if (this.getSearchErrorDiv()) {
+            this.getSearchErrorDiv().hide();
+        }
 
         return this;
     },
@@ -1885,7 +1899,9 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     showSearchErrorDiv : function() {
-        this.getSearchErrorDiv().show();
+        if (this.getSearchErrorDiv()) {
+            this.getSearchErrorDiv().show();
+        }
 
         return this;
     },
@@ -2744,6 +2760,7 @@ PostnlDeliveryOptions.Location = new Class.create({
     elements          : [],
     tooltipElement    : null,
     mapElement        : null,
+    tooltipClassName  : null,
 
     address           : {},
     distance          : null,
@@ -2794,6 +2811,37 @@ PostnlDeliveryOptions.Location = new Class.create({
 
     setMapElement : function(mapElement) {
         this.mapElement = mapElement;
+
+        return this;
+    },
+
+    getTooltipClassName : function() {
+        var className = this.tooltipClassName;
+
+        if (className) {
+            return className;
+        }
+
+        if ($$('.tooltip.first').length < 1) {
+            this.setTooltipClassName('first');
+            return 'first';
+        }
+
+        if ($$('.tooltip.second').length < 1) {
+            this.setTooltipClassName('first');
+            return 'second';
+        }
+
+        if ($$('.tooltip.third').length < 1) {
+            this.setTooltipClassName('first');
+            return 'third';
+        }
+
+        return 'fourth';
+    },
+
+    setTooltipClassName : function(className) {
+        this.tooltipClassName = className;
 
         return this;
     },
@@ -3201,12 +3249,16 @@ PostnlDeliveryOptions.Location = new Class.create({
          */
         var address = this.getAddress();
         var addressText = address.Street + ' ' + address.HouseNr;
-        if (address.houseNrExt) {
-            addressText += ' ' + address.houseNrExt;
+        if (address.HouseNrExt) {
+            addressText += address.HouseNrExt;
         }
         addressText += '  ' + Translator.translate('in') + ' ' + address.City;
 
-        var html = '<div class="tooltip" id="location_tooltip_' + this.getLocationCode() + '" style="display:none;">';
+        var html = '<div class="tooltip '
+                 + this.getTooltipClassName()
+                 + '" id="location_tooltip_'
+                 + this.getLocationCode()
+                 + '" style="display:none;">';
         html += '<div class="tooltip-header">';
         html += '<strong class="location-name">' + this.getName() + '</strong>';
         html += '<strong class="location-address">' + addressText + '</strong>';
@@ -3352,7 +3404,7 @@ PostnlDeliveryOptions.Location = new Class.create({
          */
         var addressText = address.Street + ' ' + address.HouseNr;
         if (address.HouseNrExt) {
-            addressText += ' ' + address.HouseNrExt;
+            addressText += address.HouseNrExt;
         }
         addressText += ', ' + address.City;
 
@@ -3514,8 +3566,8 @@ PostnlDeliveryOptions.Location = new Class.create({
          */
         var address = this.getAddress();
         var addressText = address.Street + ' ' + address.HouseNr;
-        if (address.houseNrExt) {
-            addressText += ' ' + address.houseNrExt;
+        if (address.HouseNrExt) {
+            addressText += address.HouseNrExt;
         }
         addressText += '  ' + Translator.translate('in') + ' ' + address.City;
 
@@ -3684,11 +3736,12 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     /**
      * Render this timeframe as a new html element.
      *
-     * @param {string} parent The parent element's ID to which we will attach this element.
+     * @param {string}  parent The parent element's ID to which we will attach this element.
+     * @param {boolean} forceDate
      *
      * @returns {PostnlDeliveryOptions.Timeframe}
      */
-    render : function(parent) {
+    render : function(parent, forceDate) {
         /**
          * Build the element's html.
          */
@@ -3701,7 +3754,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         /**
          * Add the day of the week on which this timeframe is available.
          */
-        html += this.getWeekdayHtml();
+        html += this.getWeekdayHtml(forceDate);
 
         html += '</span>';
         html += '<span class="option-radio"></span>';
@@ -3720,6 +3773,10 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         html += '</div>';
         html += '</div>';
         html += '</li>';
+
+        if (!parent) {
+            return html;
+        }
 
         /**
          * Add the element to the DOM.
@@ -3749,6 +3806,19 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     },
 
     /**
+     * @returns {PostnlDeliveryOptions.Timeframe}
+     */
+    renderAsOsc : function() {
+        var html = this.render(false, true);
+
+        $$('#postnl_add_moment .option-list')[0].insert({
+            bottom : html
+        });
+
+        return this;
+    },
+
+    /**
      * Get an optional comment for this timeframe.
      *
      * @returns {string}
@@ -3772,14 +3842,16 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     /**
      * Get the day of the week on which this timeframe is available.
      *
+     * @param {boolean} skipCheck
+     *
      * @returns {string}
      */
-    getWeekdayHtml : function() {
+    getWeekdayHtml : function(skipCheck) {
         var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5) - 1, this.date.substring(0, 2));
 
         var datesProcessed = this.getDeliveryOptions().getDatesProcessed();
         var weekdayHtml = '';
-        if (datesProcessed.indexOf(date.getTime()) == -1) {
+        if (skipCheck || datesProcessed.indexOf(date.getTime()) == -1) {
             var weekdays = this.getDeliveryOptions().getWeekdays();
 
             this.getDeliveryOptions().getDatesProcessed().push(date.getTime());
