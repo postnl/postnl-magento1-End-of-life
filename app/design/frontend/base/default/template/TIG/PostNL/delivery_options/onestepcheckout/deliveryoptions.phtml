@@ -137,13 +137,39 @@
     ];
     preloadImages(images);
 
+    /**
+     * Register OSC specific observers.
+     */
+    registerOscObservers();
+
+    /**
+     * Get some required variables and start the delivery options script.
+     */
     var postcode = '<?php echo $_postcode; ?>';
-    var housenumber = '<?php echo $_housenumber; ?>';
+    var housenumber = <?php echo $_housenumber; ?>;
     var fullAddress = "<?php echo implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>";
+
     <?php if (!$_hidden): ?>
         startDeliveryOptions(postcode, housenumber, fullAddress);
     <?php endif; ?>
 
+    /**
+     * Hack to prevent OSC from spamming a set_methods_seperate AJAX call every time the address search field is
+     * clicked.
+     */
+    var searchField = $('search_field');
+    searchField.stopObserving('click');
+    searchField.observe('click', function() {
+        searchField.stopObserving('click');
+    });
+
+    /**
+     * Start the elivery options script.
+     *
+     * @param {string} postcode
+     * @param {int}    housenumber
+     * @param {string} fullAddress
+     */
     function startDeliveryOptions(postcode, housenumber, fullAddress) {
         var options;
         var params;
@@ -154,7 +180,7 @@
             timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
             locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
             locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
-            postcode           : '<?php echo $_postcode; ?>',
+            postcode           : postcode,
             housenumber        : housenumber,
             deliveryDate       : '<?php echo $_deliveryDate; ?>',
             imageBaseUrl       : baseUrl,
@@ -213,44 +239,49 @@
         }
     }
 
-    $('add_moment_link').observe('click', function(event) {
-        event.stop();
+    /**
+     * Register a bunch of OSC specific observers
+     */
+    function registerOscObservers() {
+        $('add_moment_link').observe('click', function(event) {
+            event.stop();
 
-        $('postnl_delivery_options').show();
-    });
+            $('postnl_delivery_options').show();
+        });
 
-    $('close_options_popup').observe('click', function(event) {
-        event.stop();
+        $('close_options_popup').observe('click', function(event) {
+            event.stop();
 
-        $('postnl_delivery_options').hide();
-    });
+            $('postnl_delivery_options').hide();
+        });
 
-    $('close_options_popup_btn').observe('click', function(event) {
-        event.stop();
+        $('close_options_popup_btn').observe('click', function(event) {
+            event.stop();
 
-        $('postnl_delivery_options').hide();
-    });
+            $('postnl_delivery_options').hide();
+        });
 
-    var url_save_billing = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure'=>true)); ?>';
-    var url_set_methods = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure'=>true)); ?>';
+        var url_save_billing = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure'=>true)); ?>';
+        var url_set_methods = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure'=>true)); ?>';
 
-    var fieldsToObserve = [
-        'virtual:billing:street1',
-        'billing:street1',
-        'virtual:shipping:street1',
-        'shipping:street1'
-    ];
+        var fieldsToObserve = [
+            'virtual:billing:street1',
+            'billing:street1',
+            'virtual:shipping:street1',
+            'shipping:street1'
+        ];
 
-    fieldsToObserve.each(function(field) {
-        $(field).observe('change', function() {
+        fieldsToObserve.each(function(field) {
+            $(field).observe('change', function() {
+                get_save_billing_function(url_save_billing, url_set_methods, false)();
+            });
+        });
+
+        $$('body')[0].stopObserving('postcodecheck:update_success');
+        $$('body')[0].observe('postcodecheck:update_success', function() {
             get_save_billing_function(url_save_billing, url_set_methods, false)();
         });
-    });
-
-    $$('body')[0].stopObserving('postcodecheck:update_success');
-    $$('body')[0].observe('postcodecheck:update_success', function() {
-        get_save_billing_function(url_save_billing, url_set_methods, false)();
-    });
+    }
 
 //]]>
 </script>
