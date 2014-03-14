@@ -43,9 +43,11 @@
     <?php if (count($_shippingRateGroups)=='1' && Mage::getStoreConfig('onestepcheckout/general/hide_shipping_method')):?>
         <dl class="shipment-methods" style="display: none">
             <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
+            <?php $_carrierClassName = strtolower($this->getCarrierName($code)); ?>
+            <?php $_carrierClassName = str_replace(' ', '', $_carrierClassName); ?>
             <dd><?php echo $this->getCarrierName($code) ?></dd>
                 <?php foreach ($_rates as $_rate): ?>
-                <dt style="margin-bottom: 5px;">
+                <dt id="carrier_<?php echo $_carrierClassName ?>" style="margin-bottom: 5px;">
                    <?php if ($_rate->getErrorMessage()): ?>
                    <ul class="messages"><li class="error-msg"><ul><li><?php echo $_rate->getErrorMessage() ?></li></ul></li></ul>
                    <?php else: ?>
@@ -75,10 +77,12 @@
     <?php else: ?>
         <dl class="shipment-methods">
             <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
-                        <dd><?php echo $this->getCarrierName($code) ?></dd>
+                <?php $_carrierClassName = strtolower($this->getCarrierName($code)); ?>
+                <?php $_carrierClassName = str_replace(' ', '', $_carrierClassName); ?>
+                <dd><?php echo $this->getCarrierName($code) ?></dd>
                     <?php foreach ($_rates as $_rate): ?>
-                        <dt style="margin-bottom: 5px;">
-
+                        <dt id="carrier_<?php echo $_carrierClassName ?>" style="margin-bottom: 5px;">
+    
                            <?php if ($_rate->getErrorMessage()): ?>
                             <ul class="messages"><li class="error-msg"><ul><li><?php echo $_rate->getErrorMessage() ?></li></ul></li></ul>
                            <?php else: ?>
@@ -87,21 +91,21 @@
                                 <strong>
                                 <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
                                 <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
-
+    
                                 <?php echo $_excl; ?>
                                 <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
                                     (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
                                 <?php endif; ?>
                                 </strong>
                                 </label>
-
+    
                                 <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
                                 <?php if (in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
                                     <div class="postnl-container">
                                         <?php echo $this->getChildHtml('postnl.osc.delivery.options'); ?>
                                     </div>
                                 <?php endif; ?>
-
+    
                            <?php endif ?>
                         </dt>
                     <?php endforeach; ?>
