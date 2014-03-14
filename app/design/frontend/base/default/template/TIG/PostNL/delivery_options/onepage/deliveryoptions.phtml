@@ -43,11 +43,20 @@
  * @var Mage_Sales_Model_Quote_Address $_address
  */
 ?>
-<?php $_address       = $this->getShippingAddress(); ?>
-<?php $_postcode      = $this->getPostcode(); ?>
-<?php $_deliveryDate  = $this->getDeliveryDate(); ?>
-<?php $_streetData    = $this->getStreetData(); ?>
-<?php $_housenumber   = $_streetData['housenumber']; ?>
+<?php $_address                 = $this->getShippingAddress(); ?>
+<?php $_postcode                = $this->getPostcode(); ?>
+<?php $_deliveryDate            = $this->getDeliveryDate(); ?>
+<?php $_streetData              = $this->getStreetData(); ?>
+<?php $_housenumber             = $_streetData['housenumber']; ?>
+
+<?php $_canUsePakjeGemak        = $this->canUsePakjeGemak(); ?>
+<?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
+<?php $_canUsePakketAutomaat    = $this->canUsePakketAutomaat(); ?>
+
+<?php $_canAddLocation = true; ?>
+<?php if (!$_canUsePakjeGemak && !$_canUsePakjeGemakExpress && !$_canUsePakketAutomaat): ?>
+    <?php $_canAddLocation = false; ?>
+<?php endif; ?>
 <div id="initial_loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_delivery_options" style="display:none;">
     <div class="title">
@@ -61,14 +70,14 @@
                     <div class="bkg">
                         <div class="bkg">
                             <div class="content">
-                                <strong class="location-name"><?php echo $_address->getStreetFull(); ?></strong>
+                                <strong class="location-name overflow-protect"><?php echo $_address->getStreetFull(); ?></strong>
                             </div>
                         </div>
                     </div>
                 </li>
             </ul>
         </div>
-        <div id="postnl_pickup" class="col-2">
+        <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
             <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
             <ul class="option-list" id="pgelocation"></ul>
             <ul class="option-list" id="pglocation"></ul>
@@ -116,12 +125,12 @@
         expressFee             : <?php echo $this->getFee('express'); ?>,
         eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
         expressFeeText         : '<?php echo $this->getFeeText('express'); ?>',
-        allowPg                : <?php echo $this->canUsePakjeGemak()        ? 'true' : 'false'; ?>,
-        allowPge               : <?php echo $this->canUsePakjeGemakExpress() ? 'true' : 'false'; ?>,
-        allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
+        allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
+        allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
+        allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
         allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
-        allowStreetview        : <?php echo $this->canUseStreetview() ? 'true' : 'false'; ?>
+        allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>
     };
 
     try {

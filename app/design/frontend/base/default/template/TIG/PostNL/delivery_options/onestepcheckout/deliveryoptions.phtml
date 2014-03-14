@@ -56,29 +56,12 @@
 <?php endif; ?>
 
 <div id="postnl_add_moment" <?php if ($_hidden): ?>style="display: none;"<?php endif; ?>>
-    <div class="sub-title">
-        <h3><?php echo $this->__('Delivery Options'); ?></h3>
-    </div>
     <ul class="option-list">
         <li class="location">
             <div class="bkg">
                 <div class="bkg">
                     <div class="content">
                         <strong class="location-name overflow-protect"><?php echo $_address->getStreetFull(); ?></strong>
-                    </div>
-                </div>
-            </div>
-        </li>
-        <li class="option active">
-            <div class="bkg">
-                <div class="bkg">
-                    <div class="content">
-                        <span class="option-dd">
-                            <strong class="option-day">Wo</strong>
-                            <span class="option-date">20-08</span>
-                        </span>
-                        <span class="option-radio"></span>
-                        <span class="option-time">09:00 - 19:00</span>
                     </div>
                 </div>
             </div>
@@ -179,6 +162,7 @@
         };
 
         options = {
+            isOsc                  : true,
             eveningFee             : <?php echo $this->getFee('evening'); ?>,
             expressFee             : <?php echo $this->getFee('express'); ?>,
             eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
@@ -207,6 +191,7 @@
                 $('initial_loader').hide();
                 $('osc_scrollbar_container').show();
                 $('postnl_pickup').hide();
+                $('add_moment_link').hide();
             }
         }
     }
@@ -245,5 +230,27 @@
 
         $('postnl_delivery_options').hide();
     });
+
+    var url_save_billing = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure'=>true)); ?>';
+    var url_set_methods = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure'=>true)); ?>';
+
+    var fieldsToObserve = [
+        'virtual:billing:street1',
+        'billing:street1',
+        'virtual:shipping:street1',
+        'shipping:street1'
+    ];
+
+    fieldsToObserve.each(function(field) {
+        $(field).observe('change', function() {
+            get_save_billing_function(url_save_billing, url_set_methods, false)();
+        });
+    });
+
+    $$('body')[0].stopObserving('postcodecheck:update_success');
+    $$('body')[0].observe('postcodecheck:update_success', function() {
+        get_save_billing_function(url_save_billing, url_set_methods, false)();
+    });
+
 //]]>
 </script>

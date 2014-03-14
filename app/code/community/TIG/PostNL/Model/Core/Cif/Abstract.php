@@ -77,18 +77,33 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * XML paths for config options
      */
-    const XML_PATH_LIVE_USERNAME              = 'postnl/cif/live_username';
-    const XML_PATH_LIVE_PASSWORD              = 'postnl/cif/live_password';
-    const XML_PATH_TEST_USERNAME              = 'postnl/cif/test_username';
-    const XML_PATH_TEST_PASSWORD              = 'postnl/cif/test_password';
-    const XML_PATH_CIF_VERSION_BARCODE        = 'postnl/advanced/cif_version_barcode';
-    const XML_PATH_CIF_VERSION_LABELLING      = 'postnl/advanced/cif_version_labelling';
-    const XML_PATH_CIF_VERSION_CONFIRMING     = 'postnl/advanced/cif_version_confirming';
-    const XML_PATH_CIF_VERSION_SHIPPINGSTATUS = 'postnl/advanced/cif_version_shippingstatus';
-    const XML_PATH_CIF_VERSION_CHECKOUT       = 'postnl/advanced/cif_version_checkout';
-    const XML_PATH_CIF_VERSION_DELIVERYDATE   = 'postnl/advanced/cif_version_deliverydate';
-    const XML_PATH_CIF_VERSION_TIMEFRAME      = 'postnl/advanced/cif_version_timeframe';
-    const XML_PATH_CIF_VERSION_LOCATION       = 'postnl/advanced/cif_version_location';
+    const XPATH_LIVE_USERNAME              = 'postnl/cif/live_username';
+    const XPATH_LIVE_PASSWORD              = 'postnl/cif/live_password';
+    const XPATH_TEST_USERNAME              = 'postnl/cif/test_username';
+    const XPATH_TEST_PASSWORD              = 'postnl/cif/test_password';
+    const XPATH_CIF_VERSION_BARCODE        = 'postnl/advanced/cif_version_barcode';
+    const XPATH_CIF_VERSION_LABELLING      = 'postnl/advanced/cif_version_labelling';
+    const XPATH_CIF_VERSION_CONFIRMING     = 'postnl/advanced/cif_version_confirming';
+    const XPATH_CIF_VERSION_SHIPPINGSTATUS = 'postnl/advanced/cif_version_shippingstatus';
+    const XPATH_CIF_VERSION_CHECKOUT       = 'postnl/advanced/cif_version_checkout';
+    const XPATH_CIF_VERSION_DELIVERYDATE   = 'postnl/advanced/cif_version_deliverydate';
+    const XPATH_CIF_VERSION_TIMEFRAME      = 'postnl/advanced/cif_version_timeframe';
+    const XPATH_CIF_VERSION_LOCATION       = 'postnl/advanced/cif_version_location';
+
+    /**
+     * @return TIG_PostNL_Helper_Data
+     */
+    public function getHelper()
+    {
+        if ($this->hasHelper()) {
+            return $this->getData('helper');
+        }
+
+        $helper = Mage::helper('postnl');
+
+        $this->setHelper($helper);
+        return $helper;
+    }
 
     /**
      * Gets the username from system/config. Test mode determines if live or test username is used.
@@ -108,11 +123,11 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         if ($this->isTestMode()) {
-            $username = Mage::getStoreConfig(self::XML_PATH_TEST_USERNAME, $storeId);
+            $username = Mage::getStoreConfig(self::XPATH_TEST_USERNAME, $storeId);
             return $username;
         }
 
-        $username = Mage::getStoreConfig(self::XML_PATH_LIVE_USERNAME, $storeId);
+        $username = Mage::getStoreConfig(self::XPATH_LIVE_USERNAME, $storeId);
         return trim($username);
     }
 
@@ -135,7 +150,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         if ($this->isTestMode()) {
-            $password = Mage::getStoreConfig(self::XML_PATH_TEST_PASSWORD, $storeId);
+            $password = Mage::getStoreConfig(self::XPATH_TEST_PASSWORD, $storeId);
 
             $password = trim($password);
             $password = sha1(Mage::helper('core')->decrypt($password));
@@ -143,7 +158,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             return $password;
         }
 
-        $password = Mage::getStoreConfig(self::XML_PATH_LIVE_PASSWORD, $storeId);
+        $password = Mage::getStoreConfig(self::XPATH_LIVE_PASSWORD, $storeId);
 
         $password = trim($password);
         $password = sha1(Mage::helper('core')->decrypt($password));
@@ -175,7 +190,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $testMode = Mage::helper('postnl')->isTestMode($storeId);
+        $testMode = $this->getHelper()->isTestMode($storeId);
 
         return $testMode;
     }
@@ -183,9 +198,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * Calls a CIF method
      *
-     * @param string $wsdlType Which wsdl to use
-     * @param string $method The method that will be called
-     * @param array $soapParams An array of parameters to be sent
+     * @param string         $wsdlType   Which wsdl to use
+     * @param string         $method     The method that will be called
+     * @param array          $soapParams An array of parameters to be sent
      * @param boolean|string $username
      * @param boolean|string $password
      *
@@ -299,35 +314,35 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $wsdlType = strtolower($wsdlType);
         switch ($wsdlType) {
             case 'barcode':
-                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_BARCODE, $adminStoreId);
+                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_BARCODE, $adminStoreId);
                 $wsdlFileName = self::WSDL_BARCODE_NAME;
                 break;
             case 'confirming':
-                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_CONFIRMING, $adminStoreId);
+                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_CONFIRMING, $adminStoreId);
                 $wsdlFileName = self::WSDL_CONFIRMING_NAME;
                 break;
             case 'labelling':
-                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_LABELLING, $adminStoreId);
+                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_LABELLING, $adminStoreId);
                 $wsdlFileName = self::WSDL_LABELLING_NAME;
                 break;
             case 'shippingstatus':
-                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_SHIPPINGSTATUS, $adminStoreId);
+                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_SHIPPINGSTATUS, $adminStoreId);
                 $wsdlFileName = self::WSDL_SHIPPINGSTATUS_NAME;
                 break;
             case 'checkout':
-                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_CHECKOUT, $adminStoreId);
+                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_CHECKOUT, $adminStoreId);
                 $wsdlFileName = self::WSDL_CHECKOUT_NAME;
                 break;
             case 'deliverydate':
-                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_DELIVERYDATE, $adminStoreId);
+                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_DELIVERYDATE, $adminStoreId);
                 $wsdlFileName = self::WSDL_DELIVERYDATE_NAME;
                 break;
             case 'timeframe':
-                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_TIMEFRAME, $adminStoreId);
+                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_TIMEFRAME, $adminStoreId);
                 $wsdlFileName = self::WSDL_TIMEFRAME_NAME;
                 break;
             case 'location':
-                $wsdlversion  = Mage::getStoreConfig(self::XML_PATH_CIF_VERSION_LOCATION, $adminStoreId);
+                $wsdlversion  = Mage::getStoreConfig(self::XPATH_CIF_VERSION_LOCATION, $adminStoreId);
                 $wsdlFileName = self::WSDL_LOCATION_NAME;
                 break;
             default:

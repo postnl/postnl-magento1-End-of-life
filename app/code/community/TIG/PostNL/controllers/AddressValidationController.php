@@ -39,6 +39,40 @@
 class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_Action
 {
     /**
+     * @var TIG_PostNL_Model_AddressValidation_Cendris
+     */
+    protected $_cendrisModel;
+
+    /**
+     * @param TIG_PostNL_Model_AddressValidation_Cendris $cendrisModel
+     *
+     * @return TIG_PostNL_AddressValidationController
+     */
+    public function setCendrisModel($cendrisModel)
+    {
+        $this->_cendrisModel = $cendrisModel;
+
+        return $this;
+    }
+
+    /**
+     * @return TIG_PostNL_Model_AddressValidation_Cendris
+     */
+    public function getCendrisModel()
+    {
+        $cendrisModel = $this->_cendrisModel;
+
+        if ($cendrisModel) {
+            return $cendrisModel;
+        }
+
+        $cendris = Mage::getModel('postnl_addressvalidation/cendris');
+        $this->setCendrisModel($cendris);
+
+        return $cendris;
+    }
+
+    /**
      * Validates and enriches a postcode/housenumber combination. This will result in the address's city and streetname if valid.
      *
      * @return TIG_PostNL_AddressValidationController
@@ -49,7 +83,8 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
          * This action may only be called using AJAX requests
          */
         if (!$this->getRequest()->isAjax()) {
-            $this->_redirect('');
+            $this->getResponse()
+                 ->setBody('missing_data');
 
             return $this;
         }
@@ -72,24 +107,9 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
         $housenumber = $data['housenumber'];
 
         /**
-         * Remove spaces from housenumber and postcode fields.
+         * Validate the parameters.
          */
-        $postcode    = str_replace(' ', '', $postcode);
-        $postcode    = strtoupper($postcode);
-        $housenumber = trim($housenumber);
-
-        /**
-         * Get validation classes for the postcode and housenumber values
-         */
-        $postcodeValidator    = new Zend_Validate_PostCode('nl_NL');
-        $housenumberValidator = new Zend_Validate_Digits();
-
-        /**
-         * Make sure the input is valid
-         */
-        if (!$postcodeValidator->isValid($postcode)
-            || !$housenumberValidator->isValid($housenumber)
-        ) {
+        if (!$this->validatePostcode($postcode, $housenumber)) {
             $this->getResponse()
                  ->setBody('invalid_data');
 
@@ -99,8 +119,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
         /**
          * Load the Cendris webservice and perform an getAdresxpressPostcode request
          */
-        $cendris = Mage::getModel('postnl_addressvalidation/cendris');
-
+        $cendris = $this->getCendrisModel();
         try {
             $result = $cendris->getAdresxpressPostcode($postcode, $housenumber);
         } catch (Exception $e) {
@@ -112,15 +131,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
             return $this;
         }
 
-        /**
-         * Make sure the required data is present.
-         * If not, it means the supplied housenumber and postcode combination could not be found.
-         */
-        if (!isset($result->woonplaats)
-            || !$result->woonplaats
-            || !isset($result->straatnaam)
-            || !$result->straatnaam
-        ) {
+        if (!$this->validateResult($result)) {
             $this->getResponse()
                  ->setBody('invalid_data');
 
@@ -151,5 +162,64 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
              ->setBody($response);
 
         return $this;
+    }
+
+    /**
+     * Validates a postcode and housenumber.
+     *
+     * @param string $postcode
+     * @param int    $housenumber
+     *
+     * @return boolean
+     */
+    public function validatePostcode($postcode, $housenumber)
+    {
+        /**
+         * Remove spaces from housenumber and postcode fields.
+         */
+        $postcode    = str_replace(' ', '', $postcode);
+        $postcode    = strtoupper($postcode);
+        $housenumber = trim($housenumber);
+
+        /**
+         * Get validation classes for the postcode and housenumber values
+         */
+        $postcodeValidator    = new Zend_Validate_PostCode('nl_NL');
+        $housenumberValidator = new Zend_Validate_Digits();
+
+        /**
+         * Make sure the input is valid
+         */
+        if (!$postcodeValidator->isValid($postcode)
+            || !$housenumberValidator->isValid($housenumber)
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate the postcode check result.
+     *
+     * @param StdClass $result
+     *
+     * @return bool
+     */
+    public function validateResult($result)
+    {
+        /**
+         * Make sure the required data is present.
+         * If not, it means the supplied housenumber and postcode combination could not be found.
+         */
+        if (!isset($result->woonplaats)
+            || !$result->woonplaats
+            || !isset($result->straatnaam)
+            || !$result->straatnaam
+        ) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -539,8 +539,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @param null|boolean $forceTestMode
      *
      * @return boolean
-     *
-     * @todo properly implement global check
      */
     public function isConfigured($storeId = false, $checkGlobal = false, $forceTestMode = null)
     {
