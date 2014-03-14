@@ -63,10 +63,42 @@ class TIG_PostNL_Model_Carrier_Postnl
 
     protected $_conditionNames = array();
 
+    /**
+     * @return Mage_Sales_Model_Quote
+     */
+    public function getQuote()
+    {
+        if ($this->hasQuote()) {
+            return $this->getData('quote');
+        }
+
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $this->setQuote($quote);
+
+        return $quote;
+    }
+
+    public function getPostnlOrder()
+    {
+        if ($this->hasPostnlOrder()) {
+            return $this->getData('postnl_order');
+        }
+
+        $quote = $this->getQuote();
+        $postnlOrder = Mage::getModel('postnl_checkout/order');
+
+        if ($quote->getId()) {
+            $postnlOrder->load($quote->getId(), 'quote_id');
+        }
+
+        $this->setPostnlOrder($postnlOrder);
+        return $this;
+    }
+
     public function __construct()
     {
         parent::__construct();
-        foreach ($this->getCode('condition_name') as $k=>$v) {
+        foreach (array_keys($this->getCode('condition_name')) as $k) {
             $this->_conditionNames[] = $k;
         }
     }
@@ -185,7 +217,8 @@ class TIG_PostNL_Model_Carrier_Postnl
         if ($this->getConfigData('type') == 'O') { // per order
             $shippingPrice = $this->getConfigData('price');
         } elseif ($this->getConfigData('type') == 'I') { // per item
-            $shippingPrice = ($request->getPackageQty() * $this->getConfigData('price')) - ($this->getFreeBoxes() * $this->getConfigData('price'));
+            $shippingPrice = ($request->getPackageQty() * $this->getConfigData('price'))
+                           - ($this->getFreeBoxes() * $this->getConfigData('price'));
         } else {
             $shippingPrice = false;
         }
@@ -207,7 +240,7 @@ class TIG_PostNL_Model_Carrier_Postnl
 
             $quote = Mage::getSingleton('checkout/session')->getQuote();
             if ($quote && $quote->getId()) {
-                $postnlOrder = Mage::getModel('postnL_checkout/order')->load($quote->getId(), 'quote_id');
+                $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
                 if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
                     $costs = $postnlOrder->getShipmentCosts();
                     $shippingPrice += $costs;
@@ -223,7 +256,7 @@ class TIG_PostNL_Model_Carrier_Postnl
         return $result;
     }
 
-    public function _getTableRate(Mage_Shipping_Model_Rate_Request $request)
+    protected function _getTableRate(Mage_Shipping_Model_Rate_Request $request)
     {
         // exclude Virtual products price from Package value if pre-configured
         if (!$this->getConfigFlag('include_virtual_price') && $request->getAllItems()) {
@@ -273,10 +306,9 @@ class TIG_PostNL_Model_Carrier_Postnl
         if ($freePackageValue) {
             $request->setPackageValue($request->getPackageValue() - $freePackageValue);
         }
-        if (!$request->getConditionName()) {
-            $conditionName = $this->getConfigData('conditi on_name');
-            $request->setConditionName($conditionName ? $conditionName : $this->_default_condition_name);
-        }
+
+        $conditionName = $this->getConfigData('condition_name');
+        $request->setConditionName($conditionName ? $conditionName : $this->_default_condition_name);
 
          // Package weight and qty free shipping
         $oldWeight = $request->getPackageWeight();
@@ -291,34 +323,19 @@ class TIG_PostNL_Model_Carrier_Postnl
         $request->setPackageWeight($oldWeight);
         $request->setPackageQty($oldQty);
 
+        $method = Mage::getModel('shipping/rate_result_method');
         if (!empty($rate) && $rate['price'] >= 0) {
-            $method = Mage::getModel('shipping/rate_result_method');
-
-            $method->setCarrier('postnl');
-            $method->setCarrierTitle($this->getConfigData('title'));
-
-            $method->setMethod('tablerate');
-            $method->setMethodTitle($this->getConfigData('name'));
-
             if ($request->getFreeShipping() === true || ($request->getPackageQty() == $freeQty)) {
                 $shippingPrice = 0;
             } else {
                 $shippingPrice = $this->getFinalPriceWithHandlingFee($rate['price']);
             }
 
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
-            if ($quote && $quote->getId()) {
-                $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
-                if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
-                    $costs = $postnlOrder->getShipmentCosts();
-                    $shippingPrice += $costs;
-                }
-            }
+            $shippingPrice += $this->getPostnlFee();
 
-            $method->setPrice($shippingPrice);
-            $method->setCost($rate['cost']);
 
-            $result->append($method);
+            $price = $shippingPrice;
+            $cost = $rate['cost'];
         } elseif (empty($rate) && $request->getFreeShipping() === true) {
             /**
              * was applied promotion rule for whole cart
@@ -331,27 +348,47 @@ class TIG_PostNL_Model_Carrier_Postnl
             $rate = $this->getRate($request);
             if (!empty($rate) && $rate['price'] >= 0) {
                 $method = Mage::getModel('shipping/rate_result_method');
-
-                $method->setCarrier('postnl');
-                $method->setCarrierTitle($this->getConfigData('title'));
-
-                $method->setMethod('tablerate');
-                $method->setMethodTitle($this->getConfigData('name'));
-
-                $method->setPrice(0);
-                $method->setCost(0);
-
-                $result->append($method);
             }
+
+            $price = 0;
+            $cost = 0;
         } else {
             $error = Mage::getModel('shipping/rate_result_error');
             $error->setCarrier('tablerate');
             $error->setCarrierTitle($this->getConfigData('title'));
             $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
+
+            return $result;
         }
 
+        $method->setCarrier('postnl');
+        $method->setCarrierTitle($this->getConfigData('title'));
+
+        $method->setMethod('tablerate');
+        $method->setMethodTitle($this->getConfigData('name'));
+
+        $method->setPrice($price);
+        $method->setCost($cost);
+
+        $result->append($method);
+
         return $result;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPostnlFee()
+    {
+        $fee = 0;
+
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
+            $fee = $postnlOrder->getShipmentCosts();
+        }
+
+        return $fee;
     }
 
     public function getRate(Mage_Shipping_Model_Rate_Request $request)
@@ -411,8 +448,6 @@ class TIG_PostNL_Model_Carrier_Postnl
      * @param string $tracking
      *
      * @return Mage_Shipping_Model_Tracking_Result_Status
-     *
-     * @todo check code and docblock
      */
     public function getTrackingInfo($tracking)
     {
@@ -440,8 +475,6 @@ class TIG_PostNL_Model_Carrier_Postnl
      * @param string $number
      *
      * @return Mage_Sales_Model_Order_Shipment_Track
-     *
-     * @todo check code and docblock
      */
     protected function _getTrackByNumber($number)
     {

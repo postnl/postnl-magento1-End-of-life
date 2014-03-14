@@ -2,6 +2,7 @@
 
 /* PostNL */
 .postnl-container { padding:0; background:none; }
+#postnl_add_moment .option .option-radio { visibility:hidden; }
 #postnl_add_location .popup-overlay { background:transparent !important; }
 #postnl_pickup .location-name.overflow-protect { max-width:192px; }
 
@@ -10,20 +11,25 @@
 /* ======================================================================================= */
 
 /* Additional Styling /* ==================================================================*/
-#postnl_add_moment { /*min-width:264px;*/ max-width:334px; }
+#postnl_add_moment { max-width:334px; border-bottom:1px solid #bbbbbc; margin-bottom:16px; }
 #postnl_add_moment .sub-title h3 { height:46px; background:url(../../../images/TIG/PostNL/deliveryoptions/bkg_postnl-logo.png) 100% 0 no-repeat; line-height:46px; }
 
-#postnl_add_moment .add-moment { text-align:center; margin-top:-2px; }
+#postnl_add_moment .add-moment { text-align:center; margin:-2px 0 -4px; }
 #postnl_add_moment .add-moment .button.action { display:inline-block; }
 #postnl_add_moment .add-moment .button.action span { text-align:left; }
 #postnl_add_moment .add-moment .button.action span span { width:226px; }
 
 /* Delivery Options Popup */
-#postnl_delivery_options .popup-window { width:665px; height:469px; padding:17px 17px 0; margin:-235px 0 0 -333px; }
-#postnl_delivery_options .popup-header { height:54px; padding:0; background-position:483px 0; }
+#postnl_delivery_options .popup-window { width:665px; min-height:469px; padding:17px 17px 0; margin:-235px 0 0 -333px; }
+#postnl_delivery_options .popup-header { min-height:54px; padding:0; background-position:483px 0; }
 #postnl_delivery_options .popup-content { height:333px; padding:0; }
 #postnl_delivery_options .btn-close { top:0; right:0; }
 #postnl_delivery_options .button-set { margin-top:21px; padding:7px 17px; }
+
+#postnl_delivery_options .tooltip.first { top:-18px !important; }
+#postnl_delivery_options .tooltip.second { top:-92px !important;  }
+#postnl_delivery_options .tooltip.third { top:-121px !important; }
+#postnl_delivery_options .tooltip.fourth { top:-169px !important; }
 
 /* Scrollbar */
 #osc_scrollbar_container { width:631px; position:relative; }

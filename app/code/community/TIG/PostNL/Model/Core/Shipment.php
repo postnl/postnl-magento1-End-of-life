@@ -520,8 +520,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Gets the default product code for this shipment from the module's configuration
      *
      * @return string
-     *
-     * @todo implement pakjegemak
      */
     public function getDefaultProductCode()
     {

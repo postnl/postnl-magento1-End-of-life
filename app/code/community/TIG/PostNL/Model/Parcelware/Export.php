@@ -188,7 +188,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         /**
          * Get the address and reference data for this shipment. These are simple associative arrays
          */
-        $addressData    = $this->_getAddressData($postnlShipment, $shipment);
+        $addressData    = $this->_getAddressData($shipment);
         $pakjeGemakData = $this->_getPakjeGemakAddressData($postnlShipment, $shipment);
         $referenceData  = $this->_getReferenceData();
         $extraCover     = array($postnlShipment->getExtraCoverAmount());
@@ -264,12 +264,11 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     /**
      * Get all address data for the recipient of a shipment.
      *
-     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
-     * @param Mage_Sales_Model_Shipment $shipment
+     * @param Mage_Sales_Model_Order_Shipment $shipment
      *
      * @return array
      */
-    protected function _getAddressData($postnlShipment, $shipment)
+    protected function _getAddressData($shipment)
     {
         $address = $shipment->getShippingAddress();
         $streetData = $this->_getStreetData($address, false);
@@ -293,11 +292,10 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      * Get address data for PakjeGemak (post office) addresses.
      *
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
-     * @param Mage_Sales_Model_Shipment $shipment
      *
      * @return array
      */
-    protected function _getPakjeGemakAddressData($postnlShipment, $shipment)
+    protected function _getPakjeGemakAddressData($postnlShipment)
     {
         $pakjeGemakAddress = $postnlShipment->getPakjeGemakAddress();
 

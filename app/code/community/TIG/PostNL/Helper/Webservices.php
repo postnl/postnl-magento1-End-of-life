@@ -153,8 +153,6 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
      * @return TIG_PostNL_Helper_Webservices
      *
      * @see Mage::log()
-     *
-     * @todo add additional debug options
      */
     public function logWebserviceCall($client)
     {
@@ -186,8 +184,6 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
      * @return TIG_PostNL_Helper_Webservices
      *
      * @see Mage::logException()
-     *
-     * @todo add additional debug options
      */
     public function logWebserviceException($exception)
     {

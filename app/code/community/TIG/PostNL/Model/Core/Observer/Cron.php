@@ -200,7 +200,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         if ($files === false) {
             $helper->cronLog('Lock storage is unreadable. Exiting cron.');
             throw new TIG_PostNL_Exception(
-                $helper->__('Unable to read directory: %s', $tempLabelsDirectory),
+                $helper->__('Unable to read directory: %s', $locksDirectory),
                 'POSTNL-0096'
             );
         }
@@ -280,13 +280,13 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $helper->cronLog("Getting barcodes for {$postnlShipmentCollection->getSize()} shipments.");
 
-        $n = 1000;
+        $counter = 1000;
         foreach ($postnlShipmentCollection as $postnlShipment) {
             /**
              * Process a maximum of 1000 shipments (to prevent Cif from being overburdoned).
              * Only successfull requests count towards this number
              */
-            if ($n < 1) {
+            if ($counter < 1) {
                 break;
             }
 
@@ -298,7 +298,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 $postnlShipment->generateBarcodes()
                                ->save();
 
-                $n--;
+                $counter--;
             } catch (Exception $e) {
                 Mage::helper('postnl')->logException($e);
             }
@@ -327,6 +327,9 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $helper->cronLog('UpdateShippingStatus cron starting...');
 
+        /**
+         * @var $postnlShipmentModelClass TIG_PostNL_Model_Core_Shipment
+         */
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
         $deliveredStatus = $postnlShipmentModelClass::SHIPPING_PHASE_DELIVERED;
@@ -476,6 +479,9 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $helper->cronLog('ExpireConfirmation cron starting...');
 
+        /**
+         * @var $postnlShipmentModelClass TIG_PostNL_Model_Core_Shipment
+         */
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
         $collectionPhase = $postnlShipmentModelClass::SHIPPING_PHASE_COLLECTION;
@@ -564,7 +570,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Check each storeview if sending track & trace emails is allowed
          */
         $allowedStoreIds = array();
-        foreach (Mage::app()->getStores() as $storeId => $value) {
+        foreach (array_keys(Mage::app()->getStores()) as $storeId) {
             if (Mage::getStoreConfig(self::XML_PATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId)) {
                 $allowedStoreIds[] = $storeId;
             }
@@ -575,6 +581,9 @@ class TIG_PostNL_Model_Core_Observer_Cron
             return $this;
         }
 
+        /**
+         * @var $postnlShipmentModelClass TIG_PostNL_Model_Core_Shipment
+         */
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
 
@@ -690,6 +699,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         /**
          * Get the PostNL Shipment classname for later use
+         *
+         * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
          */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 

@@ -289,8 +289,6 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
      * @return TIG_PostNL_Helper_Webservices
      *
      * @see Mage::log()
-     *
-     * @todo add additional debug options
      */
     public function logCendrisCall($client)
     {
@@ -326,8 +324,6 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
      * @return TIG_PostNL_Helper_Webservices
      *
      * @see Mage::logException()
-     *
-     * @todo add additional debug options
      */
     public function logCendrisException($exception, $client = false)
     {

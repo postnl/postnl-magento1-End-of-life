@@ -277,20 +277,18 @@ PostnlDeliveryOptions.prototype = {
             case 'Staples Office Centre':
                 imageName = 'staples';
                 break;
-        }
-
-        if (imageName == '') {
-            if (name.indexOf('GAMMA') > -1) {
-                return 'gamma';
-            }
-
-            if (name.indexOf('KARWEI') > -1) {
-                return 'karwei';
-            }
-        }
-
-        if (imageName == '') {
-            return 'default';
+            case 'Gamma':
+                imageName = 'gamma';
+                break;
+            case 'Karwei':
+                imageName = 'karwei';
+                break;
+            case 'automaat':
+                imageName = 'automaat';
+                break;
+            default:
+                imageName = 'default';
+                break;
         }
 
         return imageName;
@@ -333,6 +331,7 @@ PostnlDeliveryOptions.prototype = {
         this.fullAddress        = params.fullAddress;
 
         this.options = Object.extend({
+            isOsc                  : false,
             allowTimeframes        : true,
             allowEveningTimeframes : false,
             allowPg                : true,
@@ -346,6 +345,7 @@ PostnlDeliveryOptions.prototype = {
             scrollbarContainer     : 'scrollbar_content',
             scrollbarTrack         : 'scrollbar_track',
             loaderDiv              : 'initial_loader',
+            searchErrorDiv         : 'search_error_message',
             optionsContainer       : 'postnl_delivery_options',
             pgLocationContainer    : 'pglocation',
             pgeLocationContainer   : 'pgelocation',
@@ -418,16 +418,42 @@ PostnlDeliveryOptions.prototype = {
     },
 
     /**
+     * Checks if a specified location type is allowed.
+     *
+     * @param {string} type
+     *
+     * @returns {boolean}
+     */
+    isTypeAllowed : function(type) {
+        var isAllowed = false;
+        switch (type) {
+            case 'PG':
+                isAllowed = this.isPgAllowed();
+                break;
+            case 'PGE':
+                isAllowed = this.isPgeAllowed();
+                break;
+            case 'PA':
+                isAllowed = this.isPaAllowed();
+                break;
+            case 'timeframes':
+                isAllowed = this.isTimeframesAllowed();
+                break;
+            case 'EveningTimeframes':
+                isAllowed = this.isEveningTimeframesAllowed();
+                break;
+        }
+
+        return isAllowed;
+    },
+
+    /**
      * Check if PGE locations are allowed.
      *
      * @returns {boolean}
      */
     isPgeAllowed : function() {
-        if (this.getOptions().allowPge === false) {
-            return false;
-        }
-
-        return true;
+        return this.getOptions().allowPge !== false;
     },
 
     /**
@@ -436,11 +462,7 @@ PostnlDeliveryOptions.prototype = {
      * @returns {boolean}
      */
     isPgAllowed : function() {
-        if (this.getOptions().allowPg === false) {
-            return false;
-        }
-
-        return true;
+        return this.getOptions().allowPg !== false;
     },
 
     /**
@@ -449,11 +471,7 @@ PostnlDeliveryOptions.prototype = {
      * @returns {boolean}
      */
     isPaAllowed : function() {
-        if (this.getOptions().allowPa === false) {
-            return false;
-        }
-
-        return true;
+        return this.getOptions().allowPa !== false;
     },
 
     /**
@@ -462,11 +480,7 @@ PostnlDeliveryOptions.prototype = {
      * @returns {boolean}
      */
     isTimeframesAllowed : function() {
-        if (this.getOptions().allowTimeframes === false) {
-            return false;
-        }
-
-        return true;
+        return this.getOptions().allowTimeframes !== false;
     },
 
     /**
@@ -475,11 +489,7 @@ PostnlDeliveryOptions.prototype = {
      * @returns {boolean}
      */
     isEveningTimeframesAllowed : function() {
-        if (this.getOptions().allowEveningTimeframes === false) {
-            return false;
-        }
-
-        return true;
+        return this.getOptions().allowEveningTimeframes !== false;
     },
 
     /**
@@ -598,7 +608,7 @@ PostnlDeliveryOptions.prototype = {
 
             var currentTimeframe = timeframes[n];
 
-            for (i = 0, m = currentTimeframe.Timeframes.TimeframeTimeFrame.length; i < m ; i++, o++) {
+            for (var i = 0, m = currentTimeframe.Timeframes.TimeframeTimeFrame.length; i < m ; i++, o++) {
                 var currentSubTimeframe = currentTimeframe.Timeframes.TimeframeTimeFrame[i];
                 if (this.isEveningTimeframesAllowed() === false
                     && currentSubTimeframe.TimeframeType == 'Avond'
@@ -640,6 +650,10 @@ PostnlDeliveryOptions.prototype = {
 
         if (selectTimeframe) {
             this.selectTimeframe(this.timeframes[0].getElement());
+        }
+
+        if (this.getOptions().isOsc) {
+            this.timeframes[0].renderAsOsc();
         }
 
         return this;
@@ -806,6 +820,7 @@ PostnlDeliveryOptions.prototype = {
                 (this.isPgAllowed() && !processedPG && type.indexOf('PG') != -1)
                 && (this.isPgeAllowed() && !processedPGE && type.indexOf('PGE') != -1)
             ) {
+                postnlLocation.setTooltipClassName('first');
 
                 /**
                  * Register this location as the chosen PGE location.
@@ -823,6 +838,8 @@ PostnlDeliveryOptions.prototype = {
              * PGE location.
              */
             if (this.isPgeAllowed() && !processedPGE && type.indexOf('PGE') != -1) {
+                postnlLocation.setTooltipClassName('first');
+
                 /**
                  * Register this location as the chosen PGE location.
                  */
@@ -836,6 +853,8 @@ PostnlDeliveryOptions.prototype = {
              * PG location.
              */
             if (this.isPgAllowed() && !processedPG && type.indexOf('PG') != -1) {
+                postnlLocation.setTooltipClassName('second');
+
                 /**
                  * Register this location as the chosen PG location.
                  */
@@ -851,6 +870,8 @@ PostnlDeliveryOptions.prototype = {
              * N.B. that a single location can be used as both PG, PGE and PA.
              */
             if (this.isPaAllowed() && !processedPA && type.indexOf('PA') != -1) {
+                postnlLocation.setTooltipClassName('third');
+
                 /**
                  * Register this location as the chosen PA location.
                  */
@@ -1060,11 +1081,13 @@ PostnlDeliveryOptions.prototype = {
 PostnlDeliveryOptions.Map = new Class.create({
     map                           : false,
     scrollbar                     : false,
+    autocomplete                  : false,
 
     deliveryOptions               : false,
     fullAddress                   : '',
 
     isBeingDragged                : false,
+    isInfoWindowOpen              : false,
 
     markers                       : [],
     locations                     : [],
@@ -1091,6 +1114,10 @@ PostnlDeliveryOptions.Map = new Class.create({
         return this.scrollbar;
     },
 
+    getAutoComplete : function() {
+        return this.autocomplete;
+    },
+
     getDeliveryOptions : function() {
         return this.deliveryOptions;
     },
@@ -1105,6 +1132,16 @@ PostnlDeliveryOptions.Map = new Class.create({
 
     setIsBeingDragged : function(isBeingDragged) {
         this.isBeingDragged = isBeingDragged;
+
+        return this;
+    },
+
+    getIsInfoWindowOpen : function() {
+        return this.isInfoWindowOpen;
+    },
+
+    setIsInfoWindowOpen : function(isInfoWindowOpen) {
+        this.isInfoWindowOpen = isInfoWindowOpen;
 
         return this;
     },
@@ -1222,16 +1259,24 @@ PostnlDeliveryOptions.Map = new Class.create({
             name = location.getName();
         }
 
+        if (typeof location.DeliveryOptions != 'undefined'
+            && location.DeliveryOptions.string.indexOf('PA') > -1
+        ) {
+            name = 'automaat';
+        } else if (typeof location.type != 'undefined'
+            && location.getType().indexOf('PA') > -1
+        ) {
+            name = 'automaat';
+        }
+
         var imageName = this.getDeliveryOptions().getImageName(name);
         var imageBase = this.getDeliveryOptions().getImageBasUrl();
         var image = imageBase + '/crc_' + imageName + '.png';
 
-        var icon = {
+        return {
             anchor : new google.maps.Point(13, 27),
             url    : image
         };
-
-        return icon;
     },
 
     /**
@@ -1247,16 +1292,25 @@ PostnlDeliveryOptions.Map = new Class.create({
             name = location.Name;
         }
 
+        console.log(location);
+        if (typeof location.DeliveryOptions != 'undefined'
+            && location.DeliveryOptions.string.indexOf('PA') > -1
+            ) {
+            name = 'automaat';
+        } else if (typeof location.type != 'undefined'
+            && location.getType().indexOf('PA') > -1
+            ) {
+            name = 'automaat';
+        }
+
         var imageName = this.getDeliveryOptions().getImageName(name);
         var imageBase = this.getDeliveryOptions().getImageBasUrl();
         var image = imageBase + '/drp_' + imageName + '.png';
 
-        var icon = {
+        return {
             anchor : new google.maps.Point(17, 46),
             url    : image
         };
-
-        return icon;
     },
 
     getSaveButton : function() {
@@ -1267,13 +1321,13 @@ PostnlDeliveryOptions.Map = new Class.create({
      * Get an options object for the map's markers.
      *
      * @param {object} location
-     * @param {google.maps.LatLng} markerLatLng
+     * @param {*} markerLatLng
      * @param {string} markerTitle
      *
      * @returns {object}
      */
     getMarkerOptions : function(location, markerLatLng, markerTitle) {
-        var markerOptions = {
+        return {
             position  : markerLatLng,
             map       : null,
             title     : markerTitle,
@@ -1282,46 +1336,62 @@ PostnlDeliveryOptions.Map = new Class.create({
             clickable : true,
             icon      : this.getMapIcon(location)
         };
-
-        return markerOptions;
     },
 
     /**
      * Get the shape of a marker.
      *
+     * @param {boolean} isPa Whether or not this is for a pakket automaat locations
+     *
      * @returns {{coords: number[], type: string}}
      */
-    getMarkerShape : function() {
-        var coords = [
-            10, 27, 6, 25, 4, 23, 3, 22, 1, 20, 0, 17, 0, 10, 1, 7, 3, 5, 4, 4, 6, 2, 10, 0, 17, 0, 21, 2, 23, 4, 24,
-            5, 26, 7, 27, 10, 27, 17, 26, 20, 24, 22, 23, 23, 21, 25, 17, 27
-        ];
+    getMarkerShape : function(isPa) {
+        console.log(isPa);
+        var coords = [];
+        if (isPa) {
+            coords = [
+                10, 31, 6, 29, 4, 27, 3, 26, 1, 24, 0, 21, 0, 14, 1, 11, 3, 9, 4, 8, 6, 6, 10, 4, 10, 0, 31, 0, 31, 12,
+                27, 12, 27, 21, 26, 24, 24, 26, 23, 27, 21, 29, 17, 31
+            ];
+        } else {
+            coords = [
+                10, 27, 6, 25, 4, 23, 3, 22, 1, 20, 0, 17, 0, 10, 1, 7, 3, 5, 4, 4, 6, 2, 10, 0, 17, 0, 21, 2, 23, 4,
+                24, 5, 26, 7, 27, 10, 27, 17, 26, 20, 24, 22, 23, 23, 21, 25, 17, 27
+            ];
+        }
 
-        var shape = {
+        return {
             coords : coords,
             type   : 'poly'
         };
-
-        return shape;
     },
 
     /**
      * Get the shape of a selected marker.
      *
+     * @param {boolean} isPa Whether or not this is for a pakket automaat locations
+     *
      * @returns {{coords: number[], type: string}}
      */
-    getSelectedMarkerShape : function() {
-        var coords = [
-            17, 46, 13, 41, 8, 34,3, 28, 1, 24, 0, 21, 0, 13, 1, 10, 3, 7, 5, 5, 7, 3, 10, 1, 13, 0, 22, 0, 25, 1, 28,
-            3, 30, 5, 32, 7, 34, 10, 35, 13, 35, 21, 34, 24, 32, 28, 27, 34, 22, 41, 18, 46
-        ];
+    getSelectedMarkerShape : function(isPa) {
+        console.log(isPa);
+        var coords = [];
+        if (isPa) {
+            coords = [
+                17, 46, 13, 41, 8, 34, 3, 28, 1, 24, 0, 21, 0, 13, 1, 10, 3, 7, 5, 5, 7, 3, 10, 1, 13, 0, 35,0, 35, 21,
+                34, 24, 32, 28, 27, 34, 22, 41, 18, 46
+            ];
+        } else {
+            coords = [
+                17, 46, 13, 41, 8, 34,3, 28, 1, 24, 0, 21, 0, 13, 1, 10, 3, 7, 5, 5, 7, 3, 10, 1, 13, 0, 22, 0, 25, 1,
+                28, 3, 30, 5, 32, 7, 34, 10, 35, 13, 35, 21, 34, 24, 32, 28, 27, 34, 22, 41, 18, 46
+            ];
+        }
 
-        var shape = {
+        return {
             coords : coords,
             type   : 'poly'
         };
-
-        return shape;
     },
 
     /**
@@ -1373,6 +1443,24 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         this.searchAndPanToAddress(this.getFullAddress(), true, false);
 
+        /**
+         * Add autocomplete functionality to the address search field. Results will be located in the Netherlands and
+         * may contain only addresses.
+         */
+        this.autocomplete = new google.maps.places.Autocomplete(
+            $('search_field'),
+            {
+                componentRestrictions : {
+                    country : 'nl'
+                },
+                types : [
+                    'establishment',
+                    'geocode'
+                ]
+            }
+        );
+        this.autocomplete.bindTo('bounds', this.map);
+
         this.registerObservers();
     },
 
@@ -1386,7 +1474,7 @@ PostnlDeliveryOptions.Map = new Class.create({
          * Google map styles.
          * All POI icons are hidden. Road icons (directions, etc.) are also hidden.
          */
-        var myStyles = [
+        var styles = [
             {
                 "featureType" : "poi",
                 "elementType" : "labels",
@@ -1412,13 +1500,13 @@ PostnlDeliveryOptions.Map = new Class.create({
             position : google.maps.ControlPosition.LEFT_TOP
         };
 
-        var mapOptions = {
+        return {
             zoom                   : 14,
             minZoom                : 13,
             maxZoom                : 18,
             center                 : new google.maps.LatLng(52.3702157, 4.895167899999933), //Amsterdam
             mapTypeId              : google.maps.MapTypeId.ROADMAP,
-            styles                 : myStyles,
+            styles                 : styles,
             draggable              : true,
             panControl             : false,
             mapTypeControl         : false,
@@ -1428,10 +1516,9 @@ PostnlDeliveryOptions.Map = new Class.create({
             zoomControl            : true,
             zoomControlOptions     : zoomControlOptions,
             disableDoubleClickZoom : false,
-            scrollwheel            : true
+            scrollwheel            : true,
+            keyboardShortcuts      : false
         };
-
-        return mapOptions;
     },
 
     /**
@@ -1447,8 +1534,8 @@ PostnlDeliveryOptions.Map = new Class.create({
          */
         $('add_location').observe('click', this.openAddLocationWindow.bind(this));
         $('close_popup').observe('click', this.closeAddLocationWindow.bind(this));
-        $('search-button').observe('click', this.addressSearch.bind(this));
-        $('search-field').observe('keydown', this.addressSearch.bind(this));
+        $('search_button').observe('click', this.addressSearch.bind(this));
+        $('search_field').observe('keydown', this.addressSearch.bind(this));
         $('location-details-close').observe('click', this.closeLocationInfoWindow.bind(this));
         this.getSaveButton().observe('click', this.saveLocation.bind(this));
         Event.observe(this.getOptions().scrollbarTrack, 'mouse:wheel', this.scrollbar.boundMouseWheelEvent);
@@ -1485,6 +1572,10 @@ PostnlDeliveryOptions.Map = new Class.create({
          * Register observers specific for the google map.
          */
         google.maps.event.addListener(map, 'zoom_changed', function() {
+            if (this.getIsInfoWindowOpen()) {
+                return;
+            }
+
             if (map.getZoom() < 14) {
                 this.getNearestLocations(true);
             } else {
@@ -1505,6 +1596,8 @@ PostnlDeliveryOptions.Map = new Class.create({
                 this.getLocationsWithinBounds();
             }
         }.bind(this));
+
+        google.maps.event.addListener(this.autocomplete, 'place_changed', this.placeSearch.bind(this));
 
         return this;
     },
@@ -1549,6 +1642,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             event.stop();
         }
 
+        $$('body')[0].addClassName('noscroll');
         this.getAddLocationWindow().show();
 
         /**
@@ -1575,6 +1669,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             event.stop();
         }
 
+        $$('body')[0].removeClassName('noscroll');
         this.getAddLocationWindow().hide();
 
         return this;
@@ -1591,16 +1686,30 @@ PostnlDeliveryOptions.Map = new Class.create({
         /**
          * If this event was triggered by a keypress, we want to ignore any except the return key.
          */
-        if (event.keyCode && event.keyCode != Event.KEY_RETURN) {
+        if (event && event.keyCode && event.keyCode != Event.KEY_RETURN) {
             return this;
-        } else if (event) {
-            /**
-             * Stop event propagation and the default action from triggering.
-             */
+        }
+
+        /**
+         * If this event was triggered by the return key and a pac-item was selected, ignore it. The google maps
+         * place-changed event will handle it instead.
+         */
+        if (event
+            && event.keyCode
+            && event.keyCode == Event.KEY_RETURN
+            && $$('.pac-item.pac-item-selected').length > 0
+        ) {
+            return this;
+        }
+
+        /**
+         * Stop event propagation and the default action from triggering.
+         */
+        if (event) {
             event.stop();
         }
 
-        var address = $('search-field').getValue();
+        var address = $('search_field').getValue();
         if (!address) {
             return this;
         }
@@ -1609,6 +1718,43 @@ PostnlDeliveryOptions.Map = new Class.create({
          * Search for an address, pan the map to the new location and search for locations nearby.
          */
         this.searchAndPanToAddress(address, true, true);
+
+        return this;
+    },
+
+    /**
+     * Search for a place. The place will contain an address for google's geocode service to search for.
+     *
+     * @returns {PostnlDeliveryOptions.Map}
+     */
+    placeSearch : function() {
+        /**
+         * Get the currently selected place.
+         */
+        var place = this.getAutoComplete().getPlace();
+        var address = place.formatted_address;
+
+        /**
+         * Fix for some locations returning 'Netherlands' as the address. Appears to be a bug in google's autocomplete
+         * service.
+         */
+        if (address == 'Netherlands') {
+            address = $('search_field').getValue();
+        }
+
+        /**
+         * Search for the place's address, pan the map to the new location and search for locations nearby.
+         */
+        this.searchAndPanToAddress(address, true, true);
+
+        /**
+         * Hack to force the input element to contain the address of the selected place, rather than the name.
+         */
+        var input = $('search_field');
+        input.blur();
+        setTimeout(function() {
+            input.setValue(address);
+        }, 1);
 
         return this;
     },
@@ -1684,6 +1830,10 @@ PostnlDeliveryOptions.Map = new Class.create({
                 return false;
             }
 
+            if (result.formatted_address === 'Nederland') {
+                return false;
+            }
+
             /**
              * Make sure the result is located in the Netherlands.
              */
@@ -1693,17 +1843,13 @@ PostnlDeliveryOptions.Map = new Class.create({
                     return false;
                 }
 
-                if (component.short_name == 'NL') {
-                    if (selectedResult !== false) {
-                        return false;
-                    }
-
-                    selectedResult = result;
-
-                    return true;
+                if (component.short_name != 'NL') {
+                    return false;
                 }
 
-                return false;
+                selectedResult = result;
+
+                return true;
             });
             return true;
         });
@@ -1769,14 +1915,14 @@ PostnlDeliveryOptions.Map = new Class.create({
     /**
      * Get the element containing the search error message.
      *
-     * @returns {Element}
+     * @returns {Element|boolean}
      */
     getSearchErrorDiv : function() {
         if (this.getDeliveryOptions().getOptions().searchErrorDiv) {
-            return this.getDeliveryOptions().getOptions().searchErrorDiv;
+            return $(this.getDeliveryOptions().getOptions().searchErrorDiv);
         }
 
-        return $('search-field-error');
+        return false;
     },
 
     /**
@@ -1785,7 +1931,9 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     hideSearchErrorDiv : function() {
-        this.getSearchErrorDiv().hide();
+        if (this.getSearchErrorDiv()) {
+            this.getSearchErrorDiv().hide();
+        }
 
         return this;
     },
@@ -1796,7 +1944,9 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     showSearchErrorDiv : function() {
-        this.getSearchErrorDiv().show();
+        if (this.getSearchErrorDiv()) {
+            this.getSearchErrorDiv().show();
+        }
 
         return this;
     },
@@ -1989,6 +2139,22 @@ PostnlDeliveryOptions.Map = new Class.create({
             var location = locations[i];
 
             /**
+             * Check that this location's types are allowed. Only if all of the location's types are disallowed is the
+             * location skipped.
+             */
+            var type = location.DeliveryOptions.string;
+            var isTypeAllowed = false;
+            type.each(function(type) {
+                if (this.getDeliveryOptions().isTypeAllowed(type)) {
+                    isTypeAllowed = true;
+                }
+            }.bind(this));
+
+            if (!isTypeAllowed) {
+                continue;
+            }
+
+            /**
              * Check that this marker doesn't already exist.
              */
             if (this.markerExists(location.LocationCode)) {
@@ -2016,7 +2182,12 @@ PostnlDeliveryOptions.Map = new Class.create({
              */
             var markerOptions = this.getMarkerOptions(location, markerLatLng, markerTitle);
             var marker = new google.maps.Marker(markerOptions);
-            marker.setShape(this.getMarkerShape());
+
+            var isPa = false;
+            if (type.indexOf('PA') > -1) {
+                isPa = true;
+            }
+            marker.setShape(this.getMarkerShape(isPa));
             marker.setZIndex(markers.length + 1);
 
             /**
@@ -2025,7 +2196,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             var parsedLocation = new PostnlDeliveryOptions.Location(
                 location,
                 this.getDeliveryOptions(),
-                location.DeliveryOptions.string
+                type
             );
 
             /**
@@ -2110,7 +2281,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         /**
          * Remove all location elements.
          */
-        $$('#scrollbar_content li').each(function(location) {
+        $$('#scrollbar_content li.location').each(function(location) {
             location.remove();
         });
 
@@ -2118,6 +2289,9 @@ PostnlDeliveryOptions.Map = new Class.create({
          * Reset the markers array.
          */
         this.setMarkers([]);
+
+        this.getScrollbar().reset();
+        this.recalculateScrollbar();
         return this;
     },
 
@@ -2171,9 +2345,9 @@ PostnlDeliveryOptions.Map = new Class.create({
     /**
      * Select a marker.
      *
-     * @param {google.maps.Marker} marker   The marker to select.
-     * @param {boolean}            scrollTo Whether the locations list should scroll to the selected marker's location element.
-     * @param {boolean}            panTo    Whether the map should pan to the selected marker.
+     * @param {*}       marker   The marker to select.
+     * @param {boolean} scrollTo Whether the locations list should scroll to the selected marker's location element.
+     * @param {boolean} panTo    Whether the map should pan to the selected marker.
      *
      * @returns {PostnlDeliveryOptions.Map}
      */
@@ -2184,7 +2358,9 @@ PostnlDeliveryOptions.Map = new Class.create({
          */
         if (this.hasSelectedMarker()
             && this.getSelectedMarker().location
-            && this.getSelectedMarker().location.getMapElement().identify() == marker.location.getMapElement().identify()
+            && marker.location
+            && this.getSelectedMarker().location.getMapElement().identify()
+                == marker.location.getMapElement().identify()
         ) {
             return this;
         }
@@ -2194,11 +2370,16 @@ PostnlDeliveryOptions.Map = new Class.create({
             element = marker.location.getMapElement();
         }
 
+        var isPa = false;
+        if (marker.location.getType().indexOf('PA') > -1) {
+            isPa = true;
+        }
+
         /**
          * Update the marker's icon and the marker's location's classname.
          */
         marker.setIcon(this.getMapIconSelected(marker.location));
-        marker.setShape(this.getSelectedMarkerShape());
+        marker.setShape(this.getSelectedMarkerShape(isPa));
 
         if (!marker.oldZIndex) {
             marker.oldZIndex = marker.getZIndex();
@@ -2230,6 +2411,11 @@ PostnlDeliveryOptions.Map = new Class.create({
          */
         if (panTo) {
             this.getMap().panTo(marker.getPosition());
+
+            var streetView = this.getMap().getStreetView();
+            if (streetView.getVisible()) {
+                streetView.setPosition(marker.getPosition());
+            }
         }
 
         /**
@@ -2255,9 +2441,19 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         var marker = this.getSelectedMarker();
         marker.setIcon(this.getMapIcon(marker.location));
-        marker.location.getMapElement().removeClassName('selected');
-        marker.setShape(this.getMarkerShape());
-        marker.setZIndex(marker.oldZIndex);
+
+        if (marker.location && marker.location.getMapElement()) {
+            marker.location.getMapElement().removeClassName('selected');
+        }
+
+        var isPa = false;
+        if (typeof location.type != 'undefined'
+            && location.getType().indexOf('PA') > -1
+        ) {
+            isPa = true;
+        }
+        marker.setShape(this.getMarkerShape(isPa));
+        marker.setZIndex(marker.oldZIndex ? marker.oldZIndex : 0);
         marker.oldZIndex = false;
 
         this.setSelectedMarker(false);
@@ -2276,7 +2472,7 @@ PostnlDeliveryOptions.Map = new Class.create({
     /**
      * Update the marker's icon on mouseover.
      *
-     * @param {google.maps.Marker} marker
+     * @param {*} marker
      *
      * @returns {PostnlDeliveryOptions.Map}
      */
@@ -2315,7 +2511,7 @@ PostnlDeliveryOptions.Map = new Class.create({
     /**
      * Update the marker's icon on mouseout.
      *
-     * @param {google.maps.Marker} marker
+     * @param {*} marker
      *
      * @returns {PostnlDeliveryOptions.Map}
      */
@@ -2333,9 +2529,14 @@ PostnlDeliveryOptions.Map = new Class.create({
         if (!this.getSelectedMarker()
             || this.getSelectedMarker().location.getMapElement().identify() != marker.location.getMapElement().identify()
         ) {
-            marker.setZIndex(marker.oldZIndex);
+            var isPa = false;
+            if (marker.location.getType().indexOf('PA') > -1) {
+                isPa = true;
+            }
+
+            marker.setZIndex(marker.oldZIndex ? marker.oldZIndex : 0);
             marker.setIcon(this.getMapIcon(marker.location));
-            marker.setShape(this.getMarkerShape());
+            marker.setShape(this.getMarkerShape(isPa));
             marker.oldZIndex = false;
         }
 
@@ -2478,13 +2679,17 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     openLocationInfoWindow : function(content, code) {
+        if (this.getMap().getStreetView().getVisible()) {
+            return this;
+        }
+
+        this.setIsInfoWindowOpen(true);
+
         var locationInfoWindow = $('location-info-window');
         var map = this.getMap();
         var mapOptions = this.getMapOptions();
 
         mapOptions.draggable              = false;
-        mapOptions.minZoom                = map.getZoom();
-        mapOptions.maxZoom                = map.getZoom();
         mapOptions.scrollwheel            = false;
         mapOptions.zoomControl            = false;
         mapOptions.streetViewControl      = false;
@@ -2517,6 +2722,7 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     closeLocationInfoWindow : function() {
+
         var locationInfoWindow = $('location-info-window');
         var map = this.getMap();
         var mapOptions = this.getMapOptions();
@@ -2533,6 +2739,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         locationInfoWindow.removeAttribute('data-locationcode');
         locationInfoWindow.hide();
 
+        this.setIsInfoWindowOpen(false);
+
         return this;
     },
 
@@ -2542,9 +2750,10 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     filter : function() {
-        var filterEarly   = this.getFilterEarly();
-        var filterEvening = this.getFilterEvening();
-        var locations     = this.getLocations();
+        var filterEarly       = this.getFilterEarly();
+        var filterEvening     = this.getFilterEvening();
+        var locations         = this.getLocations();
+        var hasVisibleMarkers = false;
 
         locations.each(function(location) {
             if (filterEarly) {
@@ -2568,6 +2777,9 @@ PostnlDeliveryOptions.Map = new Class.create({
 
             location.getMapElement().show();
             location.getMarker().setVisible(true);
+
+            hasVisibleMarkers = true;
+
             return true;
         }.bind(this));
 
@@ -2576,6 +2788,12 @@ PostnlDeliveryOptions.Map = new Class.create({
             if (!selectedMarker.getVisible()) {
                 this.unselectMarker();
             }
+        }
+
+        if (hasVisibleMarkers === true) {
+            $('no_locations_error').hide();
+        } else {
+            $('no_locations_error').show();
         }
 
         this.recalculateScrollbar();
@@ -2608,6 +2826,7 @@ PostnlDeliveryOptions.Location = new Class.create({
     elements          : [],
     tooltipElement    : null,
     mapElement        : null,
+    tooltipClassName  : null,
 
     address           : {},
     distance          : null,
@@ -2658,6 +2877,37 @@ PostnlDeliveryOptions.Location = new Class.create({
 
     setMapElement : function(mapElement) {
         this.mapElement = mapElement;
+
+        return this;
+    },
+
+    getTooltipClassName : function() {
+        var className = this.tooltipClassName;
+
+        if (className) {
+            return className;
+        }
+
+        if ($$('.tooltip.first').length < 1) {
+            this.setTooltipClassName('first');
+            return 'first';
+        }
+
+        if ($$('.tooltip.second').length < 1) {
+            this.setTooltipClassName('first');
+            return 'second';
+        }
+
+        if ($$('.tooltip.third').length < 1) {
+            this.setTooltipClassName('first');
+            return 'third';
+        }
+
+        return 'fourth';
+    },
+
+    setTooltipClassName : function(className) {
+        this.tooltipClassName = className;
 
         return this;
     },
@@ -2717,7 +2967,7 @@ PostnlDeliveryOptions.Location = new Class.create({
             return this.marker;
         }
 
-        var markers = this.getDeliveryOptions().getDeliveryOptionsMap().getMarkers();
+        var markers = this.getMap().getMarkers();
         for (var i = 0; i < markers.length; i++) {
             var marker = markers[i];
             if (marker.locationCode == this.getLocationCode()) {
@@ -2753,6 +3003,10 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.isEveningLocation = isEveningLocation;
 
         return this;
+    },
+
+    getMap : function() {
+        return this.getDeliveryOptions().getDeliveryOptionsMap();
     },
 
     /**
@@ -2844,6 +3098,10 @@ PostnlDeliveryOptions.Location = new Class.create({
          */
         var n = 0;
         this.getType().each(function(type) {
+            if (!this.getDeliveryOptions().isTypeAllowed(type)) {
+                return;
+            }
+
             var id = 'location_' + this.getLocationCode() + '_' + type;
 
             var optionHtml = '';
@@ -3057,12 +3315,16 @@ PostnlDeliveryOptions.Location = new Class.create({
          */
         var address = this.getAddress();
         var addressText = address.Street + ' ' + address.HouseNr;
-        if (address.houseNrExt) {
-            addressText += ' ' + address.houseNrExt;
+        if (address.HouseNrExt) {
+            addressText += address.HouseNrExt;
         }
         addressText += '  ' + Translator.translate('in') + ' ' + address.City;
 
-        var html = '<div class="tooltip" id="location_tooltip_' + this.getLocationCode() + '" style="display:none;">';
+        var html = '<div class="tooltip '
+                 + this.getTooltipClassName()
+                 + '" id="location_tooltip_'
+                 + this.getLocationCode()
+                 + '" style="display:none;">';
         html += '<div class="tooltip-header">';
         html += '<strong class="location-name">' + this.getName() + '</strong>';
         html += '<strong class="location-address">' + addressText + '</strong>';
@@ -3196,6 +3458,7 @@ PostnlDeliveryOptions.Location = new Class.create({
      * Render this location as a map element. Map elements appear in a list below the google maps interface.
      *
      * @param {string} parent
+     * @param {boolean} renderDistance
      *
      * @returns {PostnlDeliveryOptions.Location}
      */
@@ -3207,7 +3470,7 @@ PostnlDeliveryOptions.Location = new Class.create({
          */
         var addressText = address.Street + ' ' + address.HouseNr;
         if (address.HouseNrExt) {
-            addressText += ' ' + address.HouseNrExt;
+            addressText += address.HouseNrExt;
         }
         addressText += ', ' + address.City;
 
@@ -3224,6 +3487,13 @@ PostnlDeliveryOptions.Location = new Class.create({
             distanceText = distance + ' m';
         } else if (renderDistance && distance > 0) {
             distanceText = parseFloat(Math.round(distance / 100) / 10).toFixed(1) + ' km';
+        }
+
+        var businessHoursText = '';
+        if (this.getType().indexOf('PA') > -1) {
+            businessHoursText = Translator.translate('open 24/7');
+        } else {
+            businessHoursText = Translator.translate('business hours');
         }
 
         var id = 'map-location_' + this.getLocationCode();
@@ -3244,11 +3514,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         html += '<span class="location-address">' + addressText + '</span>';
         html += '</span>';
         html += '<span class="location-distance">' + distanceText + '</span>';
-        html += '<a class="location-info" id="'
-              + id
-              + '-info">'
-              + Translator.translate('business hours')
-              + '</a>';
+        html += '<a class="location-info" id="' + id + '-info">' + businessHoursText + '</a>';
         html += '</div>';
         html += '</li>';
 
@@ -3265,6 +3531,11 @@ PostnlDeliveryOptions.Location = new Class.create({
          * Add observers to this element.
          */
         element.observe('click', function(event) {
+            var map = this.getMap();
+            if (map.getIsInfoWindowOpen()) {
+                return this;
+            }
+
             event.stop();
 
             if (Event.element(event).hasClassName('location-info')) {
@@ -3277,13 +3548,13 @@ PostnlDeliveryOptions.Location = new Class.create({
 
             this.setOldCenter(this.getMarker().getPosition());
 
-            this.getDeliveryOptions().getDeliveryOptionsMap().selectMarker(this.getMarker(), false, true, event);
+            map.selectMarker(this.getMarker(), false, true, event);
             return true;
         }.bind(this));
 
         element.observe('mouseover', function() {
-            var map = this.getDeliveryOptions().getDeliveryOptionsMap();
-            if (map.getIsBeingDragged()) {
+            var map = this.getMap();
+            if (map.getIsInfoWindowOpen() || map.getIsBeingDragged()) {
                 return this;
             }
 
@@ -3299,8 +3570,8 @@ PostnlDeliveryOptions.Location = new Class.create({
         }.bind(this));
 
         element.observe('mouseout', function() {
-            var map = this.getDeliveryOptions().getDeliveryOptionsMap();
-            if (map.getIsBeingDragged()) {
+            var map = this.getMap();
+            if (map.getIsInfoWindowOpen() || map.getIsBeingDragged()) {
                 return this;
             }
 
@@ -3319,6 +3590,8 @@ PostnlDeliveryOptions.Location = new Class.create({
 
         var infoElement = $(id + '-info');
         infoElement.observe('click', function() {
+            var map = this.getMap();
+
             /**
              * If the location info window already has this location's info, close it instead.
              */
@@ -3326,16 +3599,24 @@ PostnlDeliveryOptions.Location = new Class.create({
             if (infoWindow.getAttribute('data-locationcode')
                 && infoWindow.getAttribute('data-locationcode') == this.getLocationCode()
             ) {
-                this.deliveryOptions.getDeliveryOptionsMap().closeLocationInfoWindow();
+                map.closeLocationInfoWindow();
 
                 return this;
             }
 
+            if (this.getOldCenter()) {
+                map.map.setCenter(this.getOldCenter());
+                this.setOldCenter(false);
+            }
 
-            this.deliveryOptions.getDeliveryOptionsMap().openLocationInfoWindow(
+            google.maps.event.trigger(this.getMarker(), 'mouseout');
+
+            map.openLocationInfoWindow(
                 this.getMapTooltipHtml(),
                 this.getLocationCode()
-            )
+            );
+
+            return this;
         }.bind(this));
 
         this.setMapElement(element);
@@ -3354,8 +3635,8 @@ PostnlDeliveryOptions.Location = new Class.create({
          */
         var address = this.getAddress();
         var addressText = address.Street + ' ' + address.HouseNr;
-        if (address.houseNrExt) {
-            addressText += ' ' + address.houseNrExt;
+        if (address.HouseNrExt) {
+            addressText += address.HouseNrExt;
         }
         addressText += '  ' + Translator.translate('in') + ' ' + address.City;
 
@@ -3524,11 +3805,12 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     /**
      * Render this timeframe as a new html element.
      *
-     * @param {string} parent The parent element's ID to which we will attach this element.
+     * @param {string}  parent The parent element's ID to which we will attach this element.
+     * @param {boolean} forceDate
      *
      * @returns {PostnlDeliveryOptions.Timeframe}
      */
-    render : function(parent) {
+    render : function(parent, forceDate) {
         /**
          * Build the element's html.
          */
@@ -3541,7 +3823,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         /**
          * Add the day of the week on which this timeframe is available.
          */
-        html += this.getWeekdayHtml();
+        html += this.getWeekdayHtml(forceDate);
 
         html += '</span>';
         html += '<span class="option-radio"></span>';
@@ -3560,6 +3842,10 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         html += '</div>';
         html += '</div>';
         html += '</li>';
+
+        if (!parent) {
+            return html;
+        }
 
         /**
          * Add the element to the DOM.
@@ -3589,6 +3875,19 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     },
 
     /**
+     * @returns {PostnlDeliveryOptions.Timeframe}
+     */
+    renderAsOsc : function() {
+        var html = this.render(false, true);
+
+        $$('#postnl_add_moment .option-list')[0].insert({
+            bottom : html
+        });
+
+        return this;
+    },
+
+    /**
      * Get an optional comment for this timeframe.
      *
      * @returns {string}
@@ -3612,14 +3911,16 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     /**
      * Get the day of the week on which this timeframe is available.
      *
+     * @param {boolean} skipCheck
+     *
      * @returns {string}
      */
-    getWeekdayHtml : function() {
+    getWeekdayHtml : function(skipCheck) {
         var date = new Date(this.date.substring(6, 10), this.date.substring(3, 5) - 1, this.date.substring(0, 2));
 
         var datesProcessed = this.getDeliveryOptions().getDatesProcessed();
         var weekdayHtml = '';
-        if (datesProcessed.indexOf(date.getTime()) == -1) {
+        if (skipCheck || datesProcessed.indexOf(date.getTime()) == -1) {
             var weekdays = this.getDeliveryOptions().getWeekdays();
 
             this.getDeliveryOptions().getDatesProcessed().push(date.getTime());

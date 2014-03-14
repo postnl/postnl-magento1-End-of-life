@@ -117,7 +117,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $block = $observer->getBlock();
         $shipmentGridClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_GRID_BLOCK_NAME);
 
-        if (get_class($block) !== $shipmentGridClass) {
+        if (!($block instanceof $shipmentGridClass)) {
             return $this;
         }
 
