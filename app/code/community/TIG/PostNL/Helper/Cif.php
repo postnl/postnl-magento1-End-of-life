@@ -965,8 +965,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @see Mage::log()
      *
-     * @todo add additional debug options
-     *
      */
     public function logCifCall($client)
     {
@@ -998,8 +996,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * @return TIG_PostNL_Helper_Cif
      *
      * @see Mage::logException()
-     *
-     * @todo add additional debug options
      */
     public function logCifException($exception)
     {
