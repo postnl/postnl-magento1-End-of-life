@@ -616,6 +616,11 @@
         	    <username>tpgpost030</username>
         	    <password>Post2014!</password>
         	</cendris>
+
+            <!-- Google maps API key. Only change this value if you wish to use your own API key instead. -->
+            <google_maps>
+                <api_key>AIzaSyAMgkBSmIBbZpQSAANpQ2JMnJvPUeatLYo</api_key>
+            </google_maps>
         </postnl>
     </default>
 

@@ -332,6 +332,7 @@ PostnlDeliveryOptions.prototype = {
 
         this.options = Object.extend({
             isOsc                  : false,
+            disableCufon           : false,
             allowTimeframes        : true,
             allowEveningTimeframes : false,
             allowPg                : true,
@@ -657,6 +658,8 @@ PostnlDeliveryOptions.prototype = {
         if (this.getOptions().isOsc) {
             this.timeframes[0].renderAsOsc();
         }
+
+        this.startCufon();
 
         return this;
     },
@@ -1075,6 +1078,20 @@ PostnlDeliveryOptions.prototype = {
             method : 'post',
             parameters : params
         });
+
+        return this;
+    },
+
+    startCufon : function() {
+        if (this.getOptions().disableCufon) {
+            return this;
+        }
+
+        if (typeof initCufon != 'function') {
+            return this;
+        }
+
+        initCufon();
 
         return this;
     }
@@ -2338,6 +2355,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         this.recalculateScrollbar();
+
+        this.getDeliveryOptions().startCufon();
 
         return this;
     },
