@@ -56,7 +56,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     const EXPAND_SUPPORT_PATH = 'postnl/support/expanded';
 
     /**
-     * callAfterApplyAllUpdates flag. Causes applyAFterUpdates() to be called.
+     * callAfterApplyAllUpdates flag. Causes applyAfterUpdates() to be called.
      *
      * @var boolean
      */
@@ -170,8 +170,6 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
      * Check if the PostNL module has been updated. If so, add an admin notification to the inbox.
      *
      * @return TIG_PostNL_Model_Resource_Setup
-     *
-     * @todo prevent window from being shown after every login
      */
     public function afterApplyAllUpdates()
     {
