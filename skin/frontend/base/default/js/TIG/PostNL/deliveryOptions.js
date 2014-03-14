@@ -345,6 +345,8 @@ PostnlDeliveryOptions.prototype = {
             scrollbarContainer     : 'scrollbar_content',
             scrollbarTrack         : 'scrollbar_track',
             loaderDiv              : 'initial_loader',
+            locationsLoader        : 'locations_loader',
+            searchField            : 'search_field',
             searchErrorDiv         : 'search_error_message',
             optionsContainer       : 'postnl_delivery_options',
             pgLocationContainer    : 'pglocation',
@@ -1292,7 +1294,6 @@ PostnlDeliveryOptions.Map = new Class.create({
             name = location.Name;
         }
 
-        console.log(location);
         if (typeof location.DeliveryOptions != 'undefined'
             && location.DeliveryOptions.string.indexOf('PA') > -1
             ) {
@@ -1346,7 +1347,6 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {{coords: number[], type: string}}
      */
     getMarkerShape : function(isPa) {
-        console.log(isPa);
         var coords = [];
         if (isPa) {
             coords = [
@@ -1374,7 +1374,6 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {{coords: number[], type: string}}
      */
     getSelectedMarkerShape : function(isPa) {
-        console.log(isPa);
         var coords = [];
         if (isPa) {
             coords = [
@@ -1728,6 +1727,8 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     placeSearch : function() {
+        var searchField = $(this.getOptions().searchField);
+
         /**
          * Get the currently selected place.
          */
@@ -1739,7 +1740,7 @@ PostnlDeliveryOptions.Map = new Class.create({
          * service.
          */
         if (address == 'Netherlands') {
-            address = $('search_field').getValue();
+            address = searchField.getValue();
         }
 
         /**
@@ -1750,7 +1751,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         /**
          * Hack to force the input element to contain the address of the selected place, rather than the name.
          */
-        var input = $('search_field');
+        var input = searchField;
         input.blur();
         setTimeout(function() {
             input.setValue(address);
@@ -1770,6 +1771,10 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     searchAndPanToAddress : function(address, addMarker, getLocations) {
+        if (!address) {
+            return this;
+        }
+
         this.unselectMarker();
         this.geocode(address, this.panMapToAddress.bind(this, addMarker, getLocations), this.showSearchErrorDiv);
 
@@ -1830,13 +1835,19 @@ PostnlDeliveryOptions.Map = new Class.create({
                 return false;
             }
 
-            if (result.formatted_address === 'Nederland') {
+            /**
+             * These are the results that google returns when it actually can't find the address.
+             */
+            if (result.formatted_address === 'Nederland'
+                || result.formatted_address === '8362 Nederland'
+            ) {
                 return false;
             }
 
             /**
              * Make sure the result is located in the Netherlands.
              */
+            var resultIsNl = false;
             var components = result.address_components;
             components.each(function(component) {
                 if (selectedResult !== false) {
@@ -1847,10 +1858,15 @@ PostnlDeliveryOptions.Map = new Class.create({
                     return false;
                 }
 
-                selectedResult = result;
-
+                resultIsNl = true;
                 return true;
             });
+
+            if (!resultIsNl) {
+                return false;
+            }
+
+            selectedResult = result;
             return true;
         });
 
@@ -1960,6 +1976,8 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     getNearestLocations : function(checkBounds) {
+        var locationsLoader = $(this.getOptions().locationsLoader);
+
         if (checkBounds !== true) {
             checkBounds = false;
         }
@@ -1993,7 +2011,7 @@ PostnlDeliveryOptions.Map = new Class.create({
                 isAjax       : true
             },
             onCreate : function() {
-                $('locations_loader').show();
+                locationsLoader.show();
             },
             onSuccess : function(response) {
                 var responseText = response.responseText;
@@ -2019,7 +2037,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             },
             onComplete : function() {
                 this.setNearestLocationsRequestObject(false);
-                $('locations_loader').hide();
+                locationsLoader.hide();
             }.bind(this)
         });
 
@@ -2037,6 +2055,7 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     getLocationsWithinBounds : function() {
+        var locationsLoader = $(this.getOptions().locationsLoader);
         var map = this.map;
 
         /**
@@ -2068,7 +2087,7 @@ PostnlDeliveryOptions.Map = new Class.create({
                 isAjax       : true
             },
             onCreate : function() {
-                $('locations_loader').show();
+                locationsLoader.show();
             },
             onSuccess : function(response) {
                 var responseText = response.responseText;
@@ -2094,7 +2113,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             },
             onComplete : function() {
                 this.setLocationsInAreaRequestObject(false);
-                $('locations_loader').hide();
+                locationsLoader.hide();
             }.bind(this)
         });
 
