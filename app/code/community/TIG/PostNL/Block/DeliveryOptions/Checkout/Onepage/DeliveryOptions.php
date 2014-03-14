@@ -78,6 +78,21 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     }
 
     /**
+     * @return Mage_Sales_Model_Quote
+     */
+    public function getQuote()
+    {
+        if ($this->hasData('quote')) {
+            return $this->_getData('quote');
+        }
+
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $this->setData('quote', $quote);
+        return $quote;
+    }
+
+    /**
      * Get the currently selected shipping address.
      *
      * @return Mage_Sales_Model_Quote_Address|null
@@ -89,9 +104,12 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
             return $shippingAddress;
         }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $quote = $this->getQuote();
         $shippingAddress = $quote->getShippingAddress();
 
+        /**
+         * @todo check if this is needed for OSC
+         */
 //        if (!$shippingAddress || $shippingAddress->getSameAsBilling()) {
 //            $shippingAddress = $quote->getBillingAddress();
 //        }
@@ -190,7 +208,25 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
         $storeId = Mage::app()->getStore()->getId();
 
         $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
+
+        $excl = $this->getPriceWithTax($eveningFee, Mage::helper('tax')->displayShippingPriceIncludingTax());
+        $incl = $this->getPriceWithTax($eveningFee, true);
+
         return $eveningFee;
+    }
+
+    /**
+     * @param float   $price
+     * @param boolean $flag
+     *
+     * @return float
+     */
+    public function getPriceWithTax($price, $flag)
+    {
+        $store = $this->getQuote()->getStore();
+        $price = $store->convertPrice(Mage::helper('tax')->getShippingPrice($price, $flag, $this->getShippingAddress()), true);
+
+        return $price;
     }
 
     /**

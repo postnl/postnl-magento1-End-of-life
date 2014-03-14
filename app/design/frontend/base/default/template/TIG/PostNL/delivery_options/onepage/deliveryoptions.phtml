@@ -149,6 +149,10 @@
             $('postnl_pickup').hide();
             deliveryOptions.showDefaultTimeframe();
         }
+    } else {
+        $('initial_loader').hide();
+        $('postnl_delivery_options').show();
+        $('postnl_pickup').hide();
     }
 
     /**
