@@ -33,54 +33,46 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-
-/**
- * Class TIG_PostNL_Model_Core_Shipment_Barcode@method getBarcode
- *
- * @method int getBarcodeNumber()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeNumber(int $value)
- * @method int getBarcodeId()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeId(int $value)
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcode(string $value)
- * @method int getParentId()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setParentId(int $value)
- */
-class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
+class TIG_PostNL_Test_Model_Carrier_Postnl extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
 {
-    /**
-     * Prefix of model events names
-     *
-     * @var string
-     */
-    protected $_eventPrefix = 'postnl_shipment_barcode';
-
-    public function _construct()
+    protected function _getInctance()
     {
-        $this->_init('postnl_core/shipment_barcode');
+        return Mage::getModel('postnl_carrier/postnl');
     }
 
     /**
-     * Load a barcode object based on a postnl shipment Id and a barcode number
-     *
-     * @param $parentId
-     * @param $barcodeNumber
-     *
-     * @return TIG_PostNL_Model_Core_Shipment_Barcode
+     * @test
      */
-    public function loadByParentAndBarcodeNumber($parentId, $barcodeNumber)
+    public function itShouldBeOfTheProperInstance()
     {
-        $collection = $this->getCollection();
-        $collection->addFieldToSelect('*')
-                   ->addFieldToFilter('parent_id', array('eq' => $parentId))
-                   ->addFieldToFilter('barcode_number', array('eq' => $barcodeNumber));
+        $carrier = $this->_getInctance();
 
-        if ($collection->getSize()) {
-            return $collection->getFirstItem();
-        }
+        $this->assertInstanceOf('TIG_PostNL_Model_Carrier_Postnl', $carrier);
+    }
 
-        return $this;
+    /**
+     * @test
+     */
+    public function shouldBeAbleTogetThePostnlFee()
+    {
+        $carrier = $this->_getInctance();
+
+        $mockPostnlOrder = $this->getMock('TIG_PostNL_Model_Checkout_Order');
+        $mockPostnlOrder->expects($this->once())
+                        ->method('getId')
+                        ->will($this->returnValue(1));
+        $mockPostnlOrder->expects($this->once())
+                        ->method('getIsActive')
+                        ->will($this->returnValue(true));
+        $mockPostnlOrder->expects($this->once())
+                        ->method('getShipmentCosts')
+                        ->will($this->returnValue(5));
+
+        $carrier->setPostnlOrder($mockPostnlOrder);
+
+        $this->assertEquals($carrier->getPostnlFee(), 5);
     }
 }

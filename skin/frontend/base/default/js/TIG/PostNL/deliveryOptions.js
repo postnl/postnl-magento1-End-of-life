@@ -354,6 +354,8 @@ PostnlDeliveryOptions.prototype = {
             pgeLocationContainer   : 'pgelocation',
             paLocationContainer    : 'palocation',
             timeframesContainer    : 'timeframes',
+            currencySymbol         : '€',
+            shippingMethodName     : 's_method_postnl_flatrate',
             postnlShippingMethods  : [
                 's_method_postnl_tablerate', 's_method_postnl_flatrate'
             ]
@@ -659,8 +661,6 @@ PostnlDeliveryOptions.prototype = {
             this.timeframes[0].renderAsOsc();
         }
 
-        this.startCufon();
-
         return this;
     },
 
@@ -702,6 +702,8 @@ PostnlDeliveryOptions.prototype = {
 
         this.unSelectLocation();
         this.selectPostnlShippingMethod();
+
+        this.updateShippingPrice();
 
         return false;
     },
@@ -973,6 +975,8 @@ PostnlDeliveryOptions.prototype = {
         this.unSelectTimeframe();
         this.selectPostnlShippingMethod();
 
+        this.updateShippingPrice();
+
         return this;
     },
 
@@ -1016,6 +1020,8 @@ PostnlDeliveryOptions.prototype = {
         $(this.getOptions().loaderDiv).hide();
         $(this.getOptions().optionsContainer).show();
 
+        this.reinitCufon();
+
         return this;
     },
 
@@ -1025,17 +1031,11 @@ PostnlDeliveryOptions.prototype = {
      * @returns {PostnlDeliveryOptions}
      */
     selectPostnlShippingMethod : function() {
-        var flatrate = $('s_method_postnl_flatrate');
-        var tablerate = $('s_method_postnl_tablerate');
+        var shippingMethodName = this.getOptions().shippingMethodName;
+        var checkbox = $(shippingMethodName);
 
-        if (flatrate) {
-            flatrate.checked = true;
-
-            return this;
-        }
-
-        if (tablerate) {
-            tablerate.checked = true;
+        if (checkbox) {
+            checkbox.checked = true;
 
             return this;
         }
@@ -1082,7 +1082,39 @@ PostnlDeliveryOptions.prototype = {
         return this;
     },
 
-    startCufon : function() {
+    /**
+     * Update the displayed shipping price.
+     *
+     * @returns {PostnlDeliveryOptions}
+     */
+    updateShippingPrice : function() {
+        var shippingMethodLabel = $$('label[for="' + this.getOptions().shippingMethodName + '"]')[0];
+        var priceContainer = $$('label[for="' + this.getOptions().shippingMethodName + '"] span.price')[0];
+
+        if (!priceContainer) {
+            return this;
+        }
+
+        var selectedType = this.getSelectedType();
+        var extraCosts = 0;
+
+        if (selectedType == 'PGE') {
+            extraCosts = this.getOptions().expressFee;
+        } else if (selectedType == 'Avond') {
+            extraCosts = this.getOptions().eveningFee;
+        }
+
+        var defaultCosts = parseFloat(shippingMethodLabel.readAttribute('data-price'));
+
+        var newCosts = defaultCosts + extraCosts;
+
+        var currency = (newCosts).formatMoney(2, '.', ',');
+        priceContainer.update(this.getOptions().currencySymbol + ' ' + currency);
+
+        return this;
+    },
+
+    reinitCufon : function() {
         if (this.getOptions().disableCufon) {
             return this;
         }
@@ -2339,6 +2371,10 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     renderLocations : function(locations) {
+        if (locations.length < 1) {
+            return this;
+        }
+
         for (var i = 0; i < locations.length; i++) {
             var location = locations[i];
 
@@ -2356,7 +2392,7 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         this.recalculateScrollbar();
 
-        this.getDeliveryOptions().startCufon();
+        this.getDeliveryOptions().reinitCufon();
 
         return this;
     },
@@ -2647,6 +2683,8 @@ PostnlDeliveryOptions.Map = new Class.create({
          * Close the google maps interface window.
          */
         this.closeAddLocationWindow();
+
+        this.getDeliveryOptions().reinitCufon();
 
         return this;
     },
@@ -4016,5 +4054,18 @@ if (!Array.prototype.indexOf) {
              if (this[i] === obj) { return i; }
          }
          return -1;
+    }
+}
+
+if (!Number.prototype.formatMoney) {
+    Number.prototype.formatMoney = function(c, d, t){
+        c = isNaN(c = Math.abs(c)) ? 2 : c;
+        d = d == undefined ? "." : d;
+        t = t == undefined ? "," : t;
+        var n = this,
+            s = n < 0 ? "-" : "",
+            i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
+            j = (j = i.length) > 3 ? j % 3 : 0;
+        return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
     }
 }

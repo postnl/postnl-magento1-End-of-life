@@ -36,6 +36,37 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+
+/**
+ * Class TIG_PostNL_Model_Checkout_Order
+ *
+ * @method string getConfirmDate()
+ * @method TIG_PostNL_Model_Checkout_Order setConfirmDate(string $value)
+ * @method int getIsActive()
+ * @method TIG_PostNL_Model_Checkout_Order setIsActive(int $value)
+ * @method string getToken()
+ * @method TIG_PostNL_Model_Checkout_Order setToken(string $value)
+ * @method string getShipmentCosts()
+ * @method TIG_PostNL_Model_Checkout_Order setShipmentCosts(string $value)
+ * @method string getProductCode()
+ * @method TIG_PostNL_Model_Checkout_Order setProductCode(string $value)
+ * @method int getIsPakjeGemak()
+ * @method TIG_PostNL_Model_Checkout_Order setIsPakjeGemak(int $value)
+ * @method int getIsCanceled()
+ * @method TIG_PostNL_Model_Checkout_Order setIsCanceled(int $value)
+ * @method string getDeliveryDate()
+ * @method TIG_PostNL_Model_Checkout_Order setDeliveryDate(string $value)
+ * @method int getQuoteId()
+ * @method TIG_PostNL_Model_Checkout_Order setQuoteId(int $value)
+ * @method string getType()
+ * @method TIG_PostNL_Model_Checkout_Order setType(string $value)
+ * @method int getOrderId()
+ * @method TIG_PostNL_Model_Checkout_Order setOrderId(int $value)
+ * @method int getEntityId()
+ * @method TIG_PostNL_Model_Checkout_Order setEntityId(int $value)
+ * @method TIG_PostNL_Model_Checkout_Order setOrder(Mage_Sales_Model_Order $value)
+ * @method TIG_PostNL_Model_Checkout_Order setQuote(Mage_Sales_Model_Quote $value)
+ */
 class TIG_PostNL_Model_Checkout_Order extends Mage_Core_Model_Abstract
 {
     /**
