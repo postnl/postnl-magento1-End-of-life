@@ -56,7 +56,7 @@
                         <?php endif; ?>
 
                         <?php endif; ?>
-                        <label for="s_method_<?php echo $_rate->getCode() ?>"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
+                        <label data-price="<?php echo $_rate->getPrice(); ?>" for="s_method_<?php echo $_rate->getCode() ?>"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
                         <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
                         <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
                         <?php echo $_excl; ?>
@@ -69,7 +69,7 @@
                    <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
                    <?php if (in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
                        <div class="postnl-container">
-                           <?php echo $this->getChildHtml('postnl.delivery.options'); ?>
+                           <?php echo $this->getChild('postnl.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
                        </div>
                    <?php endif; ?>
 

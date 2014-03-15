@@ -36,51 +36,72 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-
-/**
- * Class TIG_PostNL_Model_Core_Shipment_Barcode@method getBarcode
- *
- * @method int getBarcodeNumber()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeNumber(int $value)
- * @method int getBarcodeId()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeId(int $value)
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcode(string $value)
- * @method int getParentId()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setParentId(int $value)
- */
-class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
+class TIG_PostNL_Test_Framework_TIG_Test_Config extends Mage_Core_Model_Config
 {
     /**
-     * Prefix of model events names
-     *
-     * @var string
+     * @var array
      */
-    protected $_eventPrefix = 'postnl_shipment_barcode';
+    protected $_mockModels = array();
 
-    public function _construct()
+    /**
+     * @var array
+     */
+    protected $_mockResourceModels = array();
+
+    /**
+     * @param string $modelClass
+     * @param object $mock
+     */
+    public function setModelMock($modelClass, $mock)
     {
-        $this->_init('postnl_core/shipment_barcode');
+        if (!array_key_exists($modelClass, $this->_mockModels)) {
+            $this->_mockModels[$modelClass] = $mock;
+        }
     }
 
     /**
-     * Load a barcode object based on a postnl shipment Id and a barcode number
-     *
-     * @param $parentId
-     * @param $barcodeNumber
-     *
-     * @return TIG_PostNL_Model_Core_Shipment_Barcode
+     * @param string $modelClass
+     * @param object $mock
      */
-    public function loadByParentAndBarcodeNumber($parentId, $barcodeNumber)
+    public function setResourceModelMock($modelClass, $mock)
     {
-        $collection = $this->getCollection();
-        $collection->addFieldToSelect('*')
-                   ->addFieldToFilter('parent_id', array('eq' => $parentId))
-                   ->addFieldToFilter('barcode_number', array('eq' => $barcodeNumber));
+        if (!array_key_exists($modelClass, $this->_mockResourceModels)) {
+            $this->_mockResourceModels[$modelClass] = $mock;
+        }
+    }
 
-        if ($collection->getSize()) {
-            return $collection->getFirstItem();
+    /**
+     * @param string $modelClass
+     * @param array  $constructArguments
+     *
+     * @return false|Mage_Core_Model_Abstract
+     */
+    public function getModelInstance($modelClass = '', $constructArguments = array())
+    {
+        $modelClass = (string) $modelClass;
+
+        if (array_key_exists($modelClass, $this->_mockModels)) {
+            return $this->_mockModels[$modelClass];
         }
 
-        return $this;
+        return parent::getModelInstance($modelClass, $constructArguments);
+    }
+
+    /**
+     * Get resource model object by alias
+     *
+     * @param   string $modelClass
+     * @param   array $constructArguments
+     * @return  object
+     */
+    public function getResourceModelInstance($modelClass='', $constructArguments = array())
+    {
+        $modelClass = (string) $modelClass;
+
+        if (array_key_exists($modelClass, $this->_mockResourceModels)) {
+            return $this->_mockResourceModels[$modelClass];
+        }
+
+        return parent::getResourceModelInstance($modelClass, $constructArguments);
     }
 }

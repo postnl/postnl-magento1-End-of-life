@@ -33,54 +33,30 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-
-/**
- * Class TIG_PostNL_Model_Core_Shipment_Barcode@method getBarcode
- *
- * @method int getBarcodeNumber()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeNumber(int $value)
- * @method int getBarcodeId()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeId(int $value)
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcode(string $value)
- * @method int getParentId()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setParentId(int $value)
- */
-class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
+class TIG_PostNL_Test_Model_Adminhtml_Observer_OrderGridTest extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
 {
-    /**
-     * Prefix of model events names
-     *
-     * @var string
-     */
-    protected $_eventPrefix = 'postnl_shipment_barcode';
-
-    public function _construct()
+    protected function _getInstance()
     {
-        $this->_init('postnl_core/shipment_barcode');
+        return Mage::getModel('postnl_adminhtml/observer_orderGrid');
     }
 
     /**
-     * Load a barcode object based on a postnl shipment Id and a barcode number
-     *
-     * @param $parentId
-     * @param $barcodeNumber
-     *
-     * @return TIG_PostNL_Model_Core_Shipment_Barcode
+     * @test
      */
-    public function loadByParentAndBarcodeNumber($parentId, $barcodeNumber)
+    public function modifyColumnsShouldBeCallable()
     {
-        $collection = $this->getCollection();
-        $collection->addFieldToSelect('*')
-                   ->addFieldToFilter('parent_id', array('eq' => $parentId))
-                   ->addFieldToFilter('barcode_number', array('eq' => $barcodeNumber));
+        $observer = $this->_getInstance();
 
-        if ($collection->getSize()) {
-            return $collection->getFirstItem();
-        }
+        $this->assertInstanceOf(
+             'TIG_PostNL_Model_Adminhtml_Observer_OrderGrid',
+             $observer,
+             'Observer not instance of TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid'
+        );
 
-        return $this;
+        $isCallable = is_callable(array($observer, 'modifyColumns'));
+        $this->assertTrue($isCallable, 'ModifyColumns is not callable');
     }
 }

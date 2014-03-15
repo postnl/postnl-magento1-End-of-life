@@ -182,49 +182,19 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     }
 
     /**
-     * Get the currenct store's base currency.
-     *
-     * @return string
-     */
-    public function getBaseCurrency()
-    {
-        if ($this->hasData('base_currency')) {
-            return $this->getData('base_currency');
-        }
-
-        $baseCurrency  = Mage::app()->getStore()->getBaseCurrencyCode();
-
-        $this->setData('base_currency', $baseCurrency);
-        return $baseCurrency;
-    }
-
-    /**
      * Get the fee charged for evening timeframes.
+     *
+     * @param boolean $formatted
      *
      * @return float
      */
-    public function getEveningFee()
+    public function getEveningFee($formatted = false)
     {
         $storeId = Mage::app()->getStore()->getId();
 
         $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
 
-        $excl = $this->getPriceWithTax($eveningFee, Mage::helper('tax')->displayShippingPriceIncludingTax());
-        $incl = $this->getPriceWithTax($eveningFee, true);
-
-        return $eveningFee;
-    }
-
-    /**
-     * @param float   $price
-     * @param boolean $flag
-     *
-     * @return float
-     */
-    public function getPriceWithTax($price, $flag)
-    {
-        $store = $this->getQuote()->getStore();
-        $price = $store->convertPrice(Mage::helper('tax')->getShippingPrice($price, $flag, $this->getShippingAddress()), true);
+        $price = $this->getPriceWithTax($eveningFee, true, $formatted);
 
         return $price;
     }
@@ -232,14 +202,40 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     /**
      * Get the fee charged for PakjeGemak Express.
      *
+     * @param boolean $formatted
+     *
      * @return float
      */
-    public function getExpressFee()
+    public function getExpressFee($formatted = false)
     {
         $storeId = Mage::app()->getStore()->getId();
 
         $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
-        return $expressFee;
+
+        $price = $this->getPriceWithTax($expressFee, true, $formatted);
+
+        return $price;
+    }
+
+    /**
+     * Convert a value to a formatted price.
+     *
+     * @param float   $price
+     * @param boolean $flag
+     * @param boolean $formatted
+     *
+     * @return float
+     *
+     * @see Mage_Checkout_Block_Onepage_Shipping_Method_Available::getShippingPrice()
+     */
+    public function getPriceWithTax($price, $flag, $formatted = false)
+    {
+        $store = $this->getQuote()->getStore();
+
+        $shippingPrice = Mage::helper('tax')->getShippingPrice($price, $flag, $this->getShippingAddress());
+        $convertedPrice = $store->convertPrice($shippingPrice, $formatted, false);
+
+        return $convertedPrice;
     }
 
     /**
@@ -280,19 +276,16 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
      */
     public function getFeeText($type)
     {
-        $fee = $this->getFee($type);
-
-        /**
-         * If no fee is entered or an invalid value was entered, return an empty string.
-         */
-        if (!$fee || $fee > 2 || $fee < 0) {
-            return '';
+        switch ($type) {
+            case 'evening':
+                $feeText = $this->getEveningFee(true);
+                break;
+            case 'express':
+                $feeText = $this->getExpressFee(true);
+                break;
+            default:
+                return 0;
         }
-
-        $baseCurrency = $this->getBaseCurrency();
-        $currencyModel = Mage::app()->getLocale()->currency($baseCurrency);
-
-        $feeText = $currencyModel->toCurrency($fee);
 
         return $feeText;
     }

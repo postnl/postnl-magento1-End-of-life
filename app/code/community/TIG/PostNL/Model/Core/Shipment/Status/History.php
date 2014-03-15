@@ -36,6 +36,29 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+
+/**
+ * Class TIG_PostNL_Model_Core_Shipment_Status_History
+ *
+ * @method string getTimestamp()
+ * @method TIG_PostNL_Model_Core_Shipment_Status_History setTimestamp(string $value)
+ * @method string getRouteName()
+ * @method TIG_PostNL_Model_Core_Shipment_Status_History setRouteName(string $value)
+ * @method string getDescription()
+ * @method TIG_PostNL_Model_Core_Shipment_Status_History setDescription(string $value)
+ * @method string getLocationCode()
+ * @method TIG_PostNL_Model_Core_Shipment_Status_History setLocationCode(string $value)
+ * @method int getStatusId()
+ * @method TIG_PostNL_Model_Core_Shipment_Status_History setStatusId(int $value)
+ * @method string getCode()
+ * @method TIG_PostNL_Model_Core_Shipment_Status_History setCode(string $value)
+ * @method string getDestinationLocationCode()
+ * @method TIG_PostNL_Model_Core_Shipment_Status_History setDestinationLocationCode(string $value)
+ * @method string getRouteCode()
+ * @method TIG_PostNL_Model_Core_Shipment_Status_History setRouteCode(string $value)
+ * @method int getParentId()
+ * @method TIG_PostNL_Model_Core_Shipment_Status_History setParentId(int $value)
+ */
 class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abstract
 {
     /**
@@ -77,6 +100,9 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
      */
     public function loadByShipmentIdAndCode($shipmentId, $code)
     {
+        /**
+         * @var TIG_PostNL_Model_Core_Resource_Shipment_Status_History_Collection $collection
+         */
         $collection = $this->getCollection();
         $collection->addFieldToSelect('status_id')
                    ->addFieldToFilter('parent_id', array('eq' => $shipmentId))
@@ -105,6 +131,9 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
      */
     public function statusHistoryIsNew($shipmentId, $status)
     {
+        /**
+         * @var TIG_PostNL_Model_Core_Resource_Shipment_Status_History_Collection $collection
+         */
         $collection = $this->getCollection();
         $collection->addFieldToSelect('status_id')
                    ->addFieldToFilter('parent_id', array('eq' => $shipmentId))

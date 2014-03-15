@@ -130,7 +130,9 @@
         allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
         allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
-        allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>
+        allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
+        shippingMethodName     : '<?php echo $this->getMethodName() ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
+        currencySymbol         : '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(); ?>'
     };
 
     try {

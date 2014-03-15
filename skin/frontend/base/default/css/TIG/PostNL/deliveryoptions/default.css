@@ -131,6 +131,7 @@
 #postnl_add_location .search-location .btn-search { margin-left:2px; }
 #postnl_add_location .search-location .btn-search span span { width:70px; }
 #postnl_add_location .search-location .no-results { display:block; clear:both; color:#f10; padding:8px 0; }
+div.pac-container { z-index:5000; width:380px !important;}
 
 /* Options */
 #postnl_add_location .location-options { float:left; margin-left:4px; }
@@ -186,6 +187,7 @@
 .location-list .overflow-protect { float:left; width:528px; }
 #palocation .location-type { display:none; }
 #palocation .location-name.overflow-protect { max-width:251px !important; }
+body.noscroll { overflow:hidden; }
 
 /* Clears */
 .location-list:after,

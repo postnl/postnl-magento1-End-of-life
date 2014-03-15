@@ -33,54 +33,63 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-
-/**
- * Class TIG_PostNL_Model_Core_Shipment_Barcode@method getBarcode
- *
- * @method int getBarcodeNumber()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeNumber(int $value)
- * @method int getBarcodeId()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeId(int $value)
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcode(string $value)
- * @method int getParentId()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setParentId(int $value)
- */
-class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
+class TIG_PostNL_Test_Framework_TIG_Test_Http_Response extends Mage_Core_Controller_Response_Http
 {
     /**
-     * Prefix of model events names
-     *
-     * @var string
+     * @var bool
      */
-    protected $_eventPrefix = 'postnl_shipment_barcode';
-
-    public function _construct()
-    {
-        $this->_init('postnl_core/shipment_barcode');
-    }
+    protected $_headersSent = false;
 
     /**
-     * Load a barcode object based on a postnl shipment Id and a barcode number
+     * @param boolean $headersSent
      *
-     * @param $parentId
-     * @param $barcodeNumber
-     *
-     * @return TIG_PostNL_Model_Core_Shipment_Barcode
+     * @return TIG_Test_Http_Response
      */
-    public function loadByParentAndBarcodeNumber($parentId, $barcodeNumber)
+    public function setHeadersSent($headersSent)
     {
-        $collection = $this->getCollection();
-        $collection->addFieldToSelect('*')
-                   ->addFieldToFilter('parent_id', array('eq' => $parentId))
-                   ->addFieldToFilter('barcode_number', array('eq' => $barcodeNumber));
-
-        if ($collection->getSize()) {
-            return $collection->getFirstItem();
-        }
+        $this->_headersSent = $headersSent;
 
         return $this;
     }
+
+    /**
+     * @return boolean
+     */
+    public function getHeadersSent()
+    {
+        return $this->_headersSent;
+    }
+
+    /**
+     * @param bool $throw
+     *
+     * @return bool
+     */
+    public function canSendHeaders($throw = false)
+    {
+        $canSendHeaders = !$this->getHeadersSent();
+        return $canSendHeaders;
+    }
+
+    /**
+     * @return Mage_Core_Controller_Response_Http
+     */
+    public function sendHeaders()
+    {
+        $this->setHeadersSent(true);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function sendResponse()
+    {
+        return $this;
+    }
+
 }
