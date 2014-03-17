@@ -291,7 +291,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * Calls a CIF method
      *
      * @param string         $wsdlType   Which wsdl to use
-     * @param string         $method     The method that will be called
+     * @param callable       $method     The method that will be called
      * @param array          $soapParams An array of parameters to be sent
      * @param boolean|string $username
      * @param boolean|string $password
@@ -318,7 +318,14 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
              */
             $client = $this->getSoapClient($wsdlType);
 
-            /**
+            if (!is_callable(array($client, $method))) {
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('The specified method "%s" is not callable.', $method),
+                    'POSTNL-0136'
+                );
+            }
+
+                /**
              * Add SOAP header
              */
             $header = $this->_getSoapHeader($username, $password);
