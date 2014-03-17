@@ -114,8 +114,8 @@
 .postnl-container .btn-close:hover { background-position:0 -18px; }
 
 /* Button Set */
-.postnl-container .button-set { background:#f2f2f2; height:44px; padding:7px 43px 7px 17px; margin:0 -17px; }
-.postnl-container .button-set .btn-save { float:right; }
+.postnl-container .button-set { background:#f2f2f2; height:44px; padding:7px 17px; }
+.postnl-container .button-set .button { float:right; }
 
 /********** Add Location > */
 #postnl_add_location .popup-window { width:834px; min-height:545px; margin:-273px 0 0 -417px; }
@@ -170,12 +170,19 @@ div.pac-container { z-index:5000; width:380px !important;}
 #postnl_add_location .location-details .right { float:right; width:151px; padding-left:14px; border-left:1px solid #d1d3d3; }
 #postnl_add_location .location-details .right .business-hours { font-size:12px; line-height:18px; }
 #postnl_add_location .location-details .right .business-hours tbody th { width:36px; }
+
+/* Button Set */
+#postnl_add_location .button-set { padding:7px 43px 7px 17px; margin:0 -17px; }
 /********** < Add Location */
 
 /********** Add Phone Number > */
-#postnl_add_phonenumber .popup-window { }
-#postnl_add_phonenumber .popup-content { }
-#postnl_add_phonenumber .button-set { }
+#postnl_add_phonenumber .popup-window { width:700px; height:300px; margin:-150px 0 0 -350px; }
+#postnl_add_phonenumber .popup-header { min-height:51px; }
+#postnl_add_phonenumber .popup-content { min-height:205px; padding-left:166px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_postnl-logo.png) 44px 14px no-repeat; }
+
+#postnl_add_phonenumber .text { font-size:14px; width:320px; }
+
+#postnl_add_phonenumber .number-input {  }
 /********** < Add Phone Number */
 
 /* ======================================================================================= */
