@@ -96,12 +96,18 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          */
         $quote = Mage::getSingleton('checkout/session')->getQuote();
 
+        /**
+         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         */
         $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
         $postnlOrder->setQuoteId($quote->getId())
                     ->setIsActive(true)
                     ->setType($params['type'])
                     ->setShipmentCosts($params['costs']);
 
+        /**
+         * @var Mage_Sales_Model_Quote_Address $address
+         */
         foreach ($quote->getAllAddresses() as $address) {
             if ($address->getAddressType() == self::ADDRESS_TYPE_PAKJEGEMAK) {
                 $address->isDeleted(true);
@@ -124,7 +130,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             $quote->addAddress($pakjeGemakAddress)
                   ->save();
 
-            $postnlOrder->setisPakjeGemak(true);
+            $postnlOrder->setIsPakjeGemak(true);
         }
         $postnlOrder->save();
 
