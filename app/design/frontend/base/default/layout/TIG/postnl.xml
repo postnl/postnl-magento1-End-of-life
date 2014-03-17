@@ -145,6 +145,7 @@
         <reference name="root">
             <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.delivery.options" template="TIG/PostNL/delivery_options/onepage/deliveryoptions.phtml">
                 <block type="core/template" name="postnl.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
+                <block type="core/template" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
             </block>
         </reference>
     </checkout_onepage_shippingmethod>
@@ -167,6 +168,7 @@
         <reference name="choose-shipping-method">
             <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">
                 <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
+                <block type="core/template" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
             </block>
         </reference>
 
@@ -182,6 +184,7 @@
         <reference name="choose-shipping-method">
             <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">
                 <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
+                <block type="core/template" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
             </block>
         </reference>
     </onestepcheckout_ajax_save_billing>
