@@ -35,9 +35,7 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
-
-/**
+ *
  * Base CIF model. Contains general code for communicating with the CIF API
  *
  * @method int     getStoreId()
@@ -106,22 +104,24 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const XPATH_CIF_VERSION_LOCATION       = 'postnl/advanced/cif_version_location';
 
     /**
+     * Check if the required PHP extensions are installed.
+     *
      * @throws TIG_PostNL_Exception
      */
     protected function _construct()
     {
         if (!extension_loaded('soap')) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('The SOAP extension is not installed. PostNL requires the SOAP extension '
-                    . 'to communicate with PostNL.'
+                Mage::helper('postnl')->__('The SOAP extension is not installed. PostNL requires the SOAP extension to '
+                    . 'communicate with PostNL.'
                 ),
                 'POSTNL-0134'
             );
         }
         if (!extension_loaded('openssl')) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('The OpenSSL extension is not installed. PostNL requires the OpenSSL '
-                    . 'extension to communicate with PostNL.'
+                Mage::helper('postnl')->__('The OpenSSL extension is not installed. The PostNL extension requires the '
+                    . 'OpenSSL extension to secure the communications with the PostNL servers.'
                 ),
                 'POSTNL-0135'
             );

@@ -38,7 +38,10 @@
  */
 class TIG_PostNL_Test_Model_Carrier_Postnl extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
 {
-    protected function _getInctance()
+    /**
+     * @return TIG_PostNL_Model_Carrier_Postnl
+     */
+    protected function _getInstance()
     {
         return Mage::getModel('postnl_carrier/postnl');
     }
@@ -48,7 +51,7 @@ class TIG_PostNL_Test_Model_Carrier_Postnl extends TIG_PostNL_Test_Framework_TIG
      */
     public function itShouldBeOfTheProperInstance()
     {
-        $carrier = $this->_getInctance();
+        $carrier = $this->_getInstance();
 
         $this->assertInstanceOf('TIG_PostNL_Model_Carrier_Postnl', $carrier);
     }
@@ -58,7 +61,7 @@ class TIG_PostNL_Test_Model_Carrier_Postnl extends TIG_PostNL_Test_Framework_TIG
      */
     public function shouldBeAbleTogetThePostnlFee()
     {
-        $carrier = $this->_getInctance();
+        $carrier = $this->_getInstance();
 
         $mockPostnlOrder = $this->getMock('TIG_PostNL_Model_Checkout_Order');
         $mockPostnlOrder->expects($this->once())
