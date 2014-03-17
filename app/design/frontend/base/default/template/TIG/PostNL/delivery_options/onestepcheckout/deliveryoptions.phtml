@@ -125,7 +125,7 @@
     </div>
 </div>
 <?php echo $this->getChildHtml('postnl.osc.add.location') ?>
-<?php echo $this->getChildHtml('postnl.add.phonenumber') ?>
+<?php //echo $this->getChildHtml('postnl.add.phonenumber') ?>
 <script type="text/javascript">
 //<![CDATA[
     /**
@@ -190,6 +190,8 @@
 
         options = {
             isOsc                  : true,
+            oscSaveButton          : 'close_options_popup_btn',
+            oscOptionsPopup        : 'postnl_delivery_options',
             eveningFee             : <?php echo $this->getFee('evening'); ?>,
             expressFee             : <?php echo $this->getFee('express'); ?>,
             eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
@@ -282,9 +284,14 @@
             });
         });
 
-        $$('body')[0].stopObserving('postcodecheck:update_success');
-        $$('body')[0].observe('postcodecheck:update_success', function() {
+        document.stopObserving('postcodecheck:update_success');
+        document.observe('postcodecheck:update_success', function() {
             get_save_billing_function(url_save_billing, url_set_methods, false)();
+        });
+
+        document.stopObserving('postnl:selectOptionSaved');
+        document.observe('postnl:selectOptionSaved', function() {
+            get_separate_save_methods_function(url_set_methods, false)();
         });
     }
 

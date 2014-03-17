@@ -332,6 +332,8 @@ PostnlDeliveryOptions.prototype = {
 
         this.options = Object.extend({
             isOsc                  : false,
+            oscSaveButton          : 'close_options_popup_btn',
+            oscOptionsPopup        : 'postnl_delivery_options',
             disableCufon           : false,
             allowTimeframes        : true,
             allowEveningTimeframes : false,
@@ -418,6 +420,15 @@ PostnlDeliveryOptions.prototype = {
         }.bind(this));
 
         document.observe('postnl:saveDeliveryOptions', this.saveSelectedOption.bind(this));
+        document.observe('postnl:domModified', this.reinitCufon.bind(this));
+
+        if (this.getOptions().isOsc) {
+            document.observe('postnl:selectOptionSaved', this.triggerOscUpdate.bind(this));
+        }
+
+        if (this.getOptions().isOsc && this.getOptions().oscSaveButton) {
+            $(this.getOptions().oscSaveButton).observe('click', this.saveOscOptions.bind(this));
+        }
 
         return this;
     },
@@ -1020,7 +1031,7 @@ PostnlDeliveryOptions.prototype = {
         $(this.getOptions().loaderDiv).hide();
         $(this.getOptions().optionsContainer).show();
 
-        this.reinitCufon();
+        document.fire('postnl:domModified');
 
         return this;
     },
@@ -1044,11 +1055,57 @@ PostnlDeliveryOptions.prototype = {
     },
 
     /**
-     * Saves the selected option.
+     * Save the selected option for OneStepCheckout.
      *
      * @returns {PostnlDeliveryOptions}
      */
-    saveSelectedOption : function() {
+    saveOscOptions : function() {
+        if (!this.getSelectedOption()) {
+            return this;
+        }
+
+        $$('#postnl_add_moment .option').each(function(element) {
+            element.remove();
+        });
+
+        var selectedOption = this.getSelectedOption();
+        var selectedType   = this.getSelectedType();
+        var isTimeframe    = true;
+
+        if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
+            isTimeframe = false;
+        }
+
+        var n = 0;
+        $$('#postnl_add_moment .location').each(function(element) {
+            if (n == 0 && isTimeframe) {
+                element.show();
+            } else if (n == 0) {
+                element.hide();
+            } else {
+                element.remove();
+            }
+            n++;
+        });
+
+        selectedOption.renderAsOsc(selectedType);
+
+        $(this.getOptions().oscOptionsPopup).hide();
+
+        this.saveSelectedOption();
+        document.fire('postnl:domModified');
+
+        return this;
+    },
+
+    /**
+     * Saves the selected option.
+     *
+     * @param {function|null} callback
+     *
+     * @returns {PostnlDeliveryOptions}
+     */
+    saveSelectedOption : function(callback) {
         if (!this.getSelectedOption()) {
             return this;
         }
@@ -1074,9 +1131,12 @@ PostnlDeliveryOptions.prototype = {
             params['address'] = Object.toJSON(selectedOption.getAddress());
         }
 
-        new Ajax.PostnlRequest(this.getSaveUrl(),{
-            method : 'post',
-            parameters : params
+        new Ajax.PostnlRequest(this.getSaveUrl(), {
+            method     : 'post',
+            parameters : params,
+            onSuccess  : function() {
+                document.fire('postnl:selectOptionSaved');
+            }
         });
 
         return this;
@@ -1114,6 +1174,9 @@ PostnlDeliveryOptions.prototype = {
         return this;
     },
 
+    /**
+     * @returns {PostnlDeliveryOptions}
+     */
     reinitCufon : function() {
         if (this.getOptions().disableCufon) {
             return this;
@@ -1125,6 +1188,14 @@ PostnlDeliveryOptions.prototype = {
 
         initCufon();
 
+        return this;
+    },
+
+
+    /**
+     * @returns {PostnlDeliveryOptions}
+     */
+    triggerOscUpdate : function() {
         return this;
     }
 };
@@ -2392,7 +2463,7 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         this.recalculateScrollbar();
 
-        this.getDeliveryOptions().reinitCufon();
+        document.fire('postnl:domModified');
 
         return this;
     },
@@ -2684,7 +2755,7 @@ PostnlDeliveryOptions.Map = new Class.create({
          */
         this.closeAddLocationWindow();
 
-        this.getDeliveryOptions().reinitCufon();
+        document.fire('postnl:domModified');
 
         return this;
     },
@@ -3118,12 +3189,15 @@ PostnlDeliveryOptions.Location = new Class.create({
     /**
      * Render the location and attach it to the supplied parent element.
      *
-     * @param {string} parent The parent element's ID.
+     * @param {string|boolean} parent       The parent element's ID.
+     * @param {string|null}    typeToRender
+     * @param {boolean|null}   noTooltip
      *
-     * @return {PostnlDeliveryOptions.Location}
+     * @return {PostnlDeliveryOptions.Location|string}
      */
-    render : function(parent) {
+    render : function(parent, typeToRender, noTooltip) {
         var elements = {};
+        var element;
         var deliveryDate = this.getDate();
         var date = new Date(
             deliveryDate.substring(6, 10),
@@ -3131,6 +3205,8 @@ PostnlDeliveryOptions.Location = new Class.create({
             deliveryDate.substring(0, 2)
         );
         var availableDeliveryDate = this.getDeliveryDate(date);
+
+        this.counter = 0;
 
         /**
          * Get the html for this location's header.
@@ -3148,13 +3224,15 @@ PostnlDeliveryOptions.Location = new Class.create({
             headerHtml += '<span class="location-type">' + Translator.translate('Post Office') + '</span>';
         }
 
-        headerHtml += '<a class="location-info" id="tooltip_anchor_'
-                    + this.getLocationCode()
-                    + '">';
-        headerHtml += '<span>' + Translator.translate('More Info') + '</span>';
-        headerHtml += '</a>';
+        if (!noTooltip) {
+            headerHtml += '<a class="location-info" id="tooltip_anchor_'
+                        + this.getLocationCode()
+                        + '">';
+            headerHtml += '<span>' + Translator.translate('More Info') + '</span>';
+            headerHtml += '</a>';
 
-        headerHtml += this.getTooltipHtml();
+            headerHtml += this.getTooltipHtml();
+        }
 
         headerHtml += '</div>';
         headerHtml += '</div>';
@@ -3164,86 +3242,26 @@ PostnlDeliveryOptions.Location = new Class.create({
         /**
          * Attach the header to the bottom of the parent element.
          */
-        $(parent).insert({
-            bottom: headerHtml
-        });
+        if (parent) {
+            $(parent).insert({
+                bottom: headerHtml
+            });
+        }
+
+        if (typeToRender) {
+            element = this.renderOption(typeToRender, availableDeliveryDate, false, true);
+            return headerHtml + element;
+        }
 
         /**
          * Add an element for each of this location's types. Most often this will be a a single element or a PE and PGE
          * element.
          */
-        var n = 0;
         this.getType().each(function(type) {
-            if (!this.getDeliveryOptions().isTypeAllowed(type)) {
-                return;
+            element = this.renderOption(type, availableDeliveryDate, parent, false);
+            if (element) {
+                elements[type] = element;
             }
-
-            var id = 'location_' + this.getLocationCode() + '_' + type;
-
-            var optionHtml = '';
-            optionHtml += '<li class="option" id="' + id + '">';
-            optionHtml += '<div class="bkg">';
-            optionHtml += '<div class="bkg">';
-            optionHtml += '<div class="content">';
-            optionHtml += '<span class="option-dd">';
-
-            /**
-             * Only the first element will display the delivery date.
-             */
-            if (n < 1) {
-                optionHtml += '<strong class="option-day">'
-                            + this.getDeliveryOptions().getWeekdays()[availableDeliveryDate.getDay()]
-                            + '</strong>';
-                optionHtml += '<span class="option-date">'
-                            + ('0' + availableDeliveryDate.getDate()).slice(-2)
-                            + '-'
-                            + ('0' + (availableDeliveryDate.getMonth() + 1)).slice(-2)
-                            + '</span>';
-            }
-
-            optionHtml += '</span>';
-            optionHtml += '<span class="option-radio"></span>';
-
-            /*
-             * Opening times are hardoded as 8:30 A.M. for PGE locations and 4:00 P.M. for other loations.
-             */
-            if (type == 'PGE') {
-                optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 8:30</span>';
-            } else {
-                optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 16:00</span>';
-            }
-
-            optionHtml += '<span class="option-comment">' + this.getCommentHtml(type) + '</span>';
-            optionHtml += '</div>';
-            optionHtml += '</div>';
-            optionHtml += '</div>';
-            optionHtml += '</li>';
-
-            /**
-             * Attach the element to the bottom of the parent element.
-             */
-            $(parent).insert({
-                bottom: optionHtml
-            });
-
-            var element = $(id);
-
-            /**
-             * Add an onclick observer that will select the location.
-             */
-            element.observe('click', function(element, event) {
-                event.stop();
-
-                if (element.hasClassName('active')) {
-                    return false;
-                }
-
-                this.getDeliveryOptions().selectLocation(element);
-                return true;
-            }.bind(this, element));
-
-            elements[type] = element;
-            n++;
         }.bind(this));
 
         /**
@@ -3268,6 +3286,91 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.setTooltipElement(tooltipElement);
 
         return this;
+    },
+
+    /**
+     * @param {string}         type
+     * @param {Date}           availableDeliveryDate
+     * @param {string|boolean} parent
+     * @param {boolean|null}   toHtml
+     *
+     * @returns {Element|string|boolean}
+     */
+    renderOption : function(type, availableDeliveryDate, parent, toHtml) {
+        if (!this.getDeliveryOptions().isTypeAllowed(type)) {
+            return false;
+        }
+
+        var id = 'location_' + this.getLocationCode() + '_' + type;
+
+        var optionHtml = '';
+        optionHtml += '<li class="option" id="' + id + '">';
+        optionHtml += '<div class="bkg">';
+        optionHtml += '<div class="bkg">';
+        optionHtml += '<div class="content">';
+        optionHtml += '<span class="option-dd">';
+
+        /**
+         * Only the first element will display the delivery date.
+         */
+        if (this.counter < 1) {
+            optionHtml += '<strong class="option-day">'
+                + this.getDeliveryOptions().getWeekdays()[availableDeliveryDate.getDay()]
+                + '</strong>';
+            optionHtml += '<span class="option-date">'
+                + ('0' + availableDeliveryDate.getDate()).slice(-2)
+                + '-'
+                + ('0' + (availableDeliveryDate.getMonth() + 1)).slice(-2)
+                + '</span>';
+        }
+
+        optionHtml += '</span>';
+        optionHtml += '<span class="option-radio"></span>';
+
+        /*
+         * Opening times are hardoded as 8:30 A.M. for PGE locations and 4:00 P.M. for other loations.
+         */
+        if (type == 'PGE') {
+            optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 8:30</span>';
+        } else {
+            optionHtml += '<span class="option-time">' + Translator.translate('from') + ' 16:00</span>';
+        }
+
+        optionHtml += '<span class="option-comment">' + this.getCommentHtml(type) + '</span>';
+        optionHtml += '</div>';
+        optionHtml += '</div>';
+        optionHtml += '</div>';
+        optionHtml += '</li>';
+
+        if (toHtml) {
+            return optionHtml;
+        }
+
+        /**
+         * Attach the element to the bottom of the parent element.
+         */
+        $(parent).insert({
+            bottom: optionHtml
+        });
+
+        var element = $(id);
+
+        /**
+         * Add an onclick observer that will select the location.
+         */
+        element.observe('click', function(element, event) {
+            event.stop();
+
+            if (element.hasClassName('active')) {
+                return false;
+            }
+
+            this.getDeliveryOptions().selectLocation(element);
+            return true;
+        }.bind(this, element));
+
+        this.counter++;
+        return element;
     },
 
     /**
@@ -3306,8 +3409,8 @@ PostnlDeliveryOptions.Location = new Class.create({
      *
      * Note that this method is recursive and uses the optional parameter n to prevent infinite loops.
      *
-     * @param {Date}   date
-     * @param {number} n    The number of tries that have been made to find a valid delivery date.
+     * @param {Date}        date
+     * @param {number|void} n    The number of tries that have been made to find a valid delivery date.
      *
      * @returns {Date}
      */
@@ -3761,6 +3864,21 @@ PostnlDeliveryOptions.Location = new Class.create({
         }
 
         return locationInfo.join('<br />');
+    },
+
+    /**
+     * @param {string} type
+     *
+     * @returns {PostnlDeliveryOptions.Location}
+     */
+    renderAsOsc : function(type) {
+        var html = this.render(false, type, true);
+
+        $$('#postnl_add_moment .option-list')[0].insert({
+            bottom : html
+        });
+
+        return this;
     },
 
     /**
