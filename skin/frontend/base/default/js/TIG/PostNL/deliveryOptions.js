@@ -1101,11 +1101,9 @@ PostnlDeliveryOptions.prototype = {
     /**
      * Saves the selected option.
      *
-     * @param {function|null} callback
-     *
      * @returns {PostnlDeliveryOptions}
      */
-    saveSelectedOption : function(callback) {
+    saveSelectedOption : function() {
         if (!this.getSelectedOption()) {
             return this;
         }
@@ -1134,7 +1132,12 @@ PostnlDeliveryOptions.prototype = {
         new Ajax.PostnlRequest(this.getSaveUrl(), {
             method     : 'post',
             parameters : params,
-            onSuccess  : function() {
+            onSuccess  : function(response) {
+                var responseText = response.responseText;
+                if (responseText != 'OK') {
+                    return;
+                }
+
                 document.fire('postnl:selectOptionSaved');
             }
         });

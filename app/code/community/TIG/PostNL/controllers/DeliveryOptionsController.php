@@ -45,29 +45,129 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     const LONGITUDE_REGEX = '#^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\.{1}\d{1,6}#';
 
     /**
-     * Newly added 'pakje_gemak' address type
+     * Regular expressions to validate various address fields.
      */
-    const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
+    const CITY_NAME_REGEX   = '#^[a-zA-Z]+(?:(?:\\s+|-)[a-zA-Z]+)*$#';
+    const STREET_NAME_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
+    const HOUSENR_EXT_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
 
     /**
-     * Check to see if PostNL delivery options are active and available.
-     *
-     * @return boolean
+     * @var null|array
      */
-    protected function _canUseDeliveryOptions()
+    protected $_validTypes = null;
+
+    /**
+     * @var null|boolean
+     */
+    protected $_canUseDeliveryOptions = null;
+
+    /**
+     * @var null|TIG_PostNL_Model_DeliveryOptions_Service
+     */
+    protected $_service = null;
+
+    /**
+     * Gets valid option types.
+     *
+     * @return array
+     */
+    public function getValidTypes()
     {
-        $helper = Mage::helper('postnl/deliveryOptions');
+        if ($this->hasValidTypes()) {
+            return $this->_validTypes;
+        }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $canUseDeliveryOptions = $helper->canUseDeliveryOptions($quote);
+        $validTypes = Mage::helper('postnl/deliveryOptions')->getValidTypes();
 
-        return $canUseDeliveryOptions;
+        $this->setValidTypes($validTypes);
+        return $validTypes;
+    }
+
+    /**
+     * @param array $validTypes
+     *
+     * @return TIG_PostNL_DeliveryOptionsController
+     */
+    public function setValidTypes($validTypes)
+    {
+        $this->_validTypes = $validTypes;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasValidTypes()
+    {
+        if ($this->_validTypes !== null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCanUseDeliveryOptions()
+    {
+        return $this->_canUseDeliveryOptions;
+    }
+
+    /**
+     * @param boolean $canUse
+     *
+     * @return TIG_PostNL_DeliveryOptionsController
+     */
+    public function setCanUseDeliveryOptions($canUse)
+    {
+        $this->_canUseDeliveryOptions = $canUse;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasCanUseDeliveryOptions()
+    {
+        if ($this->_canUseDeliveryOptions !== null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return null|TIG_PostNL_Model_DeliveryOptions_Service
+     */
+    public function getService()
+    {
+        $service = $this->_service;
+        if ($service === null) {
+            $service = Mage::getModel('postnl_deliveryoptions/service');
+
+            $this->setService($service);
+        }
+
+        return $service;
+    }
+
+    /**
+     * @param TIG_PostNL_Model_DeliveryOptions_Service $service
+     *
+     * @return TIG_PostNL_DeliveryOptionsController
+     */
+    public function setService(TIG_PostNL_Model_DeliveryOptions_Service $service)
+    {
+        $this->_service = $service;
+
+        return $this;
     }
 
     /**
      * Saves the selected shipment option.
-     *
-     * @todo add validation
      *
      * @return TIG_PostNL_DeliveryOptionsController
      */
@@ -91,48 +191,21 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         $params = $this->getRequest()->getPost();
 
-        /**
-         * @todo add validation
-         */
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        try {
+            $data = $this->_getSaveSelectionPostData($params);
+        } catch (Exception $e) {
+            Mage::helper('postnl/deliveryOptions')->logException($e);
 
-        /**
-         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
-         */
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
-        $postnlOrder->setQuoteId($quote->getId())
-                    ->setIsActive(true)
-                    ->setType($params['type'])
-                    ->setShipmentCosts($params['costs']);
+            $this->getResponse()
+                 ->setBody('invalid_data');
 
-        /**
-         * @var Mage_Sales_Model_Quote_Address $address
-         */
-        foreach ($quote->getAllAddresses() as $address) {
-            if ($address->getAddressType() == self::ADDRESS_TYPE_PAKJEGEMAK) {
-                $address->isDeleted(true);
-            }
+            return $this;
         }
 
-        if (isset($params['address'])) {
-            $address = $params['address'];
-            $address = Mage::helper('core')->jsonDecode($address);
+        $this->getService()->saveDeliveryOption($data);
 
-            $pakjeGemakAddress = Mage::getModel('sales/quote_address');
-            $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK);
-            $pakjeGemakAddress->setCity($address['City'])
-                              ->setCountryId($address['Countrycode'])
-                              ->setStreet1($address['Street'])
-                              ->setStreet2($address['HouseNr'])
-                              ->setStreet3($address['HouseNrExt'])
-                              ->setPostcode($address['Zipcode']);
-
-            $quote->addAddress($pakjeGemakAddress)
-                  ->save();
-
-            $postnlOrder->setIsPakjeGemak(true);
-        }
-        $postnlOrder->save();
+        $this->getResponse()
+             ->setBody('OK');
 
         return $this;
     }
@@ -356,6 +429,239 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
              ->setBody($locations);
 
         return $this;
+    }
+
+    /**
+     * Check to see if PostNL delivery options are active and available.
+     *
+     * @return boolean
+     */
+    protected function _canUseDeliveryOptions()
+    {
+        if ($this->hasCanUseDeliveryOptions()) {
+            return $this->hasCanUseDeliveryOptions();
+        }
+
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $canUseDeliveryOptions = $helper->canUseDeliveryOptions($quote);
+
+        $this->setCanUseDeliveryOptions($canUseDeliveryOptions);
+        return $canUseDeliveryOptions;
+    }
+
+    /**
+     * Validates the supplied parameters for the saveSelectedOption action.
+     *
+     * @param array $params
+     *
+     * @return array
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getSaveSelectionPostData($params)
+    {
+        /**
+         * In order to save the selected option we need a type, delivery date and optional extra costs.
+         */
+        if (!isset($params['type']) || !isset($params['date']) || !isset($params['costs'])) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid arguments supplied. In order to save a selected option, a type, delivery date and '
+                     . 'optional extra costs are required.'
+                ),
+                'POSTNL-0138'
+            );
+        }
+
+        $type  = $params['type'];
+        $date  = $params['date'];
+        $costs = $params['costs'];
+
+        /**
+         * Get validation classes for the postcode and housenumber values.
+         */
+        $validTypes = $this->getValidTypes();
+
+        $typeValidator  = new Zend_Validate_InArray(array('haystack' => $validTypes));
+        $dateValidator  = new Zend_Validate_Date(array('format' => 'd-m-Y'));
+        $costsValidator = new Zend_Validate_Float();
+
+        /**
+         * Validate the postcode.
+         */
+        if (!$typeValidator->isValid($type)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid type supplied: %s',
+                     $type
+                ),
+                'POSTNL-0139'
+            );
+        }
+
+        /**
+         * Validate the delivery date.
+         */
+        if (!$dateValidator->isValid($date)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid delivery date supplied: %s',
+                     $date
+                ),
+                'POSTNL-0121'
+            );
+        }
+
+        /**
+         * Validate the costs.
+         */
+        if (!$costsValidator->isValid($costs)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid extra costs supplied: %s Extra costs must be supplied as a float.',
+                     $costs
+                ),
+                'POSTNL-0140'
+            );
+        }
+
+        $data = array(
+            'type'  => $type,
+            'date'  => $date,
+            'costs' => $costs,
+        );
+
+        if (!array_key_exists('address', $params)) {
+            return $data;
+        }
+
+        $address = $this->_validateAddress($params['address']);
+        $data['address'] = $address;
+
+        return $data;
+    }
+
+    /**
+     * @param array $addressData
+     *
+     * @return array
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _validateAddress($addressData)
+    {
+        $address = Mage::helper('core')->jsonDecode($addressData);
+
+        if (!isset($address['City'])
+            || !isset($address['Countrycode'])
+            || !isset($address['Street'])
+            || !isset($address['HouseNr'])
+            || !isset($address['Zipcode'])
+        ) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country '
+                     . 'code, street, house number and zipcode.'
+                ),
+                'POSTNL-0141'
+            );
+        }
+
+        $city        = $address['City'];
+        $countryCode = $address['Countrycode'];
+        $street      = $address['Street'];
+        $houseNumber = $address['HouseNr'];
+        $postcode    = $address['Zipcode'];
+
+        $countryCodes = Mage::getResourceModel('directory/country_collection')->getColumnValues('iso2_code');
+
+        $cityValidator        = new Zend_Validate_Regex(array('pattern' => self::CITY_NAME_REGEX));
+        $countryCodeValidator = new Zend_Validate_InArray(array('haystack' => $countryCodes));
+        $streetValidator      = new Zend_Validate_Regex(array('pattern' => self::STREET_NAME_REGEX));
+        $housenumberValidator = new Zend_Validate_Digits();
+        $postcodeValidator    = new Zend_Validate_PostCode('nl_NL');
+
+        if (!$cityValidator->isValid($city)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid city supplied: %s',
+                     $city
+                ),
+                'POSTNL-0142'
+            );
+        }
+
+        if (!$countryCodeValidator->isValid($countryCode)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid country code supplied: %s',
+                     $countryCode
+                ),
+                'POSTNL-0143'
+            );
+        }
+
+        if (!$streetValidator->isValid($street)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid street supplied: %s',
+                     $street
+                ),
+                'POSTNL-0144'
+            );
+        }
+
+        if (!$housenumberValidator->isValid($houseNumber)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid housenumber supplied: %s',
+                     $houseNumber
+                ),
+                'POSTNL-0145'
+            );
+        }
+
+        if (!$postcodeValidator->isValid($postcode)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid postcode supplied: %s.',
+                     $postcode
+                ),
+                'POSTNL-0146'
+            );
+        }
+
+        $data = array(
+            'city'        => $city,
+            'countryCode' => $countryCode,
+            'street'      => $street,
+            'houseNumber' => $houseNumber,
+            'postcode'    => $postcode,
+        );
+
+        if (!array_key_exists('HouseNrExt', $address)) {
+            return $data;
+        }
+
+        $houseNumberExtension = $address['HouseNrExt'];
+
+        $houseNumberExtensionValidator = new Zend_Validate_Regex(array('pattern' => self::HOUSENR_EXT_REGEX));
+
+        if (!$houseNumberExtensionValidator->isValid($houseNumberExtension)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid housenumber extension supplied: %s.',
+                     $houseNumberExtension
+                ),
+                'POSTNL-0147'
+            );
+        }
+
+        $data['houseNumberExtension'] = $houseNumberExtension;
+
+        return $data;
     }
 
     /**

@@ -185,6 +185,18 @@ class TIG_PostNL_Test_Framework_TIG_Test_TestCase extends PHPUnit_Framework_Test
     }
 
     /**
+     * @param $modelClass
+     *
+     * @return mixed
+     */
+    public function getSingletonMock($modelClass)
+    {
+        $registryKey = '_singleton/' . $modelClass;
+
+        return Mage::registry($registryKey);
+    }
+
+    /**
      * @param string $resourceModelClass
      * @param object $mock
      *
