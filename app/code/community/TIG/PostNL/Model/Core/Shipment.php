@@ -33,11 +33,12 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
- * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
-
-/**
+ * @copyright Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license   http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * @package   TIG
+ * @module    PostNL
+ * @author    Total Internet Group
+ *
  * PostNL Shipment base class. Contains the majority of PostNL shipping functionality
  *
  * Supported events:
@@ -104,6 +105,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setShipmentBaseGrandTotal(float $value)
  * @method TIG_PostNL_Model_Core_Shipment setBarcodeUrl(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPostnlOrder(mixed $value)
+ * @method TIG_PostNL_Model_Core_Shipment setLabelCollection(TIG_PostNL_Model_Core_Resource_Shipment_LabeL_Collection $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -116,6 +118,7 @@
  * @method bool                           hasStoreId()
  * @method bool                           hasOrderId()
  * @method bool                           hasExtraCoverAmount()
+ * @method bool                           hasLabelCollection()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -213,9 +216,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected $_labelsToSave = array();
 
     /**
-     * Contains an instance of TIG_PostNL_Model_Core_Shipment_Process which locks a shipment and prevents it from being modified
+     * Contains an instance of TIG_PostNL_Model_Core_Shipment_Process which locks a shipment and prevents it from being
+     * modified.
      *
-     * @var void | TIG_PostNL_Model_Core_Shipment_Process
+     * @var void|TIG_PostNL_Model_Core_Shipment_Process
      */
     protected $_process;
 
@@ -227,9 +231,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $this->_init('postnl_core/shipment');
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * GETTER METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Retrieves a Mage_Sales_Model_Order_Shipment entity linked to the postnl shipment.
@@ -662,7 +666,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
 
         /**
-         * Dutch shipments may use an alternative default option when the shipment's base grandtotal exceeds a specified amount
+         * Dutch shipments may use an alternative default option when the shipment's base grandtotal exceeds a specified
+         * amount.
          */
         $useAlternativeDefault = Mage::getStoreConfig(self::XML_PATH_USE_ALTERNATIVE_DEFAULT, $storeId);
         if ($useAlternativeDefault) {
@@ -780,9 +785,27 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $postnlOrder;
     }
 
-    /****************************************************************************************************************************
+    /**
+     * Get collection object for this shipment's labels.
+     *
+     * @return TIG_PostNL_Model_Core_Resource_Shipment_Label_Collection
+     */
+    public function getLabelCollection()
+    {
+        if ($this->hasLabelCollection()) {
+            return $this->_getData('label_collection');
+        }
+
+        $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
+        $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
+
+        $this->setLabelCollection($labelCollection);
+        return $labelCollection;
+    }
+
+    /*******************************************************************************************************************
      * SETTER METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Set an array of labels that are to be saved together
@@ -905,9 +928,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * HAS- METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Check if the shipment has any associated labels
@@ -976,9 +999,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return true;
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * IS- AND CAN- METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Alias for magic getIsPakjeGemak()
@@ -1200,7 +1223,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
     /**
      * Checks if the current shipment is eligible for a shipping status update.
-     * Unconfirmed shipments, shipments whose labels are not yet printed or shipments that are already delivered are inelligible.
+     * Unconfirmed shipments, shipments whose labels are not yet printed or shipments that are already delivered are
+     * inelligible.
      *
      * @return boolean
      */
@@ -1235,7 +1259,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
     /**
      * Checks if the current shipment is eligible for a complete shipping status update.
-     * For now the same conditions apply as a regular status update. This may change in a future update of the extension.
+     * For now the same conditions apply as a regular status update. This may change in a future update of the
+     * extension.
      *
      * @return boolean
      *
@@ -1272,9 +1297,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return true;
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * SHIPMENT LOCKING AND UNLOCKING FUNCTIONS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Lock this shipment to prevent simultaneous execution
@@ -1317,13 +1342,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $isLocked;
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * CIF FUNCTIONALITY METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Generates barcodes for this postnl shipment.
-     * Barcodes are the basis for all CIF functionality and must therefore be generated before any further action is possible.
+     * Barcodes are the basis for all CIF functionality and must therefore be generated before any further action is
+     * possible.
      *
      * @return TIG_PostNL_Model_Core_Shipment
      *
@@ -1400,7 +1426,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         if (!$barcode) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Unable to generate barcode for this shipment: %s', $shipment->getId()),
+                $helper->__('Unable to generate barcode for this shipment: %s', $shipment->getId()),
                 'POSTNL-0070'
             );
         }
@@ -1465,10 +1491,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Get a shipping label from PostNL for a single parcel or a whole shipment
+     * Get a shipping label from PostNL for a single parcel or a whole shipment.
      *
-     * @param boolean       $confirm       Whether or not to also confirm the shipment
-     * @param bool|int|null $barcodeNumber An optional barcode number. If this parameter is null, the main barcode will be used
+     * @param boolean       $confirm       Whether or not to also confirm the shipment.
+     * @param bool|int|null $barcodeNumber An optional barcode number. If this parameter is null, the main barcode will
+     *                                     be used.
      *
      * @throws TIG_PostNL_Exception
      * @return array
@@ -1523,8 +1550,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Manually confirms a shipment without communicating with PostNL. This should be used if you wish to update the confirmation
-     * status in Magento, while actually confirming the shipment through other means, such as parcelware.
+     * Manually confirms a shipment without communicating with PostNL. This should be used if you wish to update the
+     * confirmation status in Magento, while actually confirming the shipment through other means, such as parcelware.
      *
      * @return TIG_PostNL_Model_Core_Shipment
      *
@@ -1633,8 +1660,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $responseShipment = $result->ConfirmingResponseShipment;
 
         /**
-         * If the ConfirmingResponseShipment is an object, it means only one shipment was confirmed and the returned barcode
-         * has to be the shipment's main barcode.
+         * If the ConfirmingResponseShipment is an object, it means only one shipment was confirmed and the returned
+         * barcode has to be the shipment's main barcode.
          */
         if (is_object($responseShipment)
             && isset($responseShipment->Barcode)
@@ -1644,11 +1671,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * If the ConfirmingResponseShipment is an array, it may indicate multiple shipments were confirmed. We need to check the
-         * first shipment's barcode to see if it matches the main bartcode.
+         * If the ConfirmingResponseShipment is an array, it may indicate multiple shipments were confirmed. We need to
+         * check the first shipment's barcode to see if it matches the main bartcode.
          */
         if (is_array($responseShipment)) {
-            $mainResponseShipment = $responseShipment[0];
+            $mainResponseShipment = reset($responseShipment);
 
             if (is_object($mainResponseShipment)
                 && isset($mainResponseShipment->Barcode)
@@ -1863,9 +1890,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * TRACKING METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Adds Magento tracking information to the order containing the previously retrieved barcode
@@ -1986,7 +2013,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         if ($success === false) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Unable to send track and trace email for shipment #', $this->getShipmentId()),
+                Mage::helper('postnl')->__(
+                    'Unable to send track and trace email for shipment #',
+                    $this->getShipmentId()
+                ),
                 'POSTNL-0077'
             );
         }
@@ -1994,9 +2024,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * BARCODE PROCESSING METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Add a barcode to this shipment's barcode collection
@@ -2020,9 +2050,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * LABEL PROCESSING METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Add labels to this shipment
@@ -2114,7 +2144,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $labelsToSave = $this->getLabelsToSave();
 
-        Mage::dispatchEvent('postnl_shipment_savelabels_before', array('shipment' => $this, 'labels' => $labelsToSave));
+        Mage::dispatchEvent(
+            'postnl_shipment_savelabels_before',
+            array('shipment' => $this, 'labels' => $labelsToSave)
+        );
 
         foreach ($labelsToSave as $label) {
             $transactionSave->addObject($label);
@@ -2125,7 +2158,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $transactionSave->save();
 
-        Mage::dispatchEvent('postnl_shipment_savelabels_after', array('shipment' => $this, 'labels' => $labelsToSave));
+        Mage::dispatchEvent(
+            'postnl_shipment_savelabels_after',
+            array('shipment' => $this, 'labels' => $labelsToSave)
+        );
 
         return $this;
     }
@@ -2164,9 +2200,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return true;
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * STATUS PROCESSING METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Sort a status history array based on the time the status was assigned
@@ -2199,9 +2235,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return array_values($sortedHistory);
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * PRODUCT CODE METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Gets the product code for this shipment. If specific options have been selected
@@ -2262,7 +2298,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         if ($this->isEuShipment()) {
             $allowedProductCodes = $cifHelper->getEuProductCodes();
-
         }
 
         if ($this->isGlobalShipment()) {
@@ -2336,9 +2371,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $allowedCountries;
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * ADDITIONAL SHIPMENT OPTIONS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Public alias for _saveAdditionalShippingOptions()
@@ -2417,9 +2452,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $parcelCount;
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * RESET AND DELETE METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Resets this shipment to a pre-confirmed state
@@ -2446,8 +2481,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function deleteLabels()
     {
-        $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
-        $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
+        $labelCollection = $this->getLabelCollection();
 
         $labels = $labelCollection->getItems();
 
@@ -2505,9 +2539,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
 
-    /****************************************************************************************************************************
+    /*******************************************************************************************************************
      * BEFORE- AND AFTERSAVE METHODS
-     ***************************************************************************************************************************/
+     ******************************************************************************************************************/
 
     /**
      * Updates the shipment's attributes before saving this shipment
