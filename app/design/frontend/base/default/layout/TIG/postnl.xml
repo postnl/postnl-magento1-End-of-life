@@ -120,6 +120,7 @@
     </customer_address_form>
 
     <!--  DELIVERY OPTIONS  -->
+
     <checkout_onepage_index>
         <reference name="head">
             <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/default.css</stylesheet></action>
@@ -127,9 +128,6 @@
             <action method="addItem"><type>skin_css</type><file>css/TIG/PostNL/postcodecheck.css</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/ajax.js</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/postcodecheck.js</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/deliveryoptions/cufon-yui.js</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/deliveryoptions/cufon-fonts.js</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/deliveryoptions/cufon-settings.js</file></action>
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="postnl_deliveryoptions/js" name="postnl_google_maps_api" template="TIG/PostNL/delivery_options/js.phtml"/>
         </reference>
@@ -158,9 +156,6 @@
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/ajax.js</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/postcodecheck.js</file></action>
             <action method="addItem"><type>skin_css</type><file>css/TIG/PostNL/postcodecheck.css</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/deliveryoptions/cufon-yui.js</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/deliveryoptions/cufon-fonts.js</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/deliveryoptions/cufon-settings.js</file></action>
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
         </reference>

@@ -90,6 +90,9 @@ PostnlDeliveryOptions.prototype = {
 
     extraCosts         : 0,
 
+    timeframeRequest   : false,
+    locationsRequest   : false,
+
     /******************************
      *                            *
      *  GETTER AND SETTER METHODS *
@@ -540,6 +543,10 @@ PostnlDeliveryOptions.prototype = {
             return timeframes;
         }
 
+        if (this.timeframeRequest !== false) {
+            this.timeframeRequest.transport.abort();
+        }
+
         if (!postcode) {
             postcode = this.getPostcode();
         }
@@ -552,7 +559,7 @@ PostnlDeliveryOptions.prototype = {
             deliveryDate = this.getDeliveryDate();
         }
 
-        new Ajax.PostnlRequest(this.getTimeframesUrl(),{
+        this.timeframeRequest = new Ajax.PostnlRequest(this.getTimeframesUrl(), {
             method : 'post',
             parameters : {
                 postcode     : postcode,
@@ -561,7 +568,10 @@ PostnlDeliveryOptions.prototype = {
                 isAjax       : true
             },
             onSuccess : this.processGetTimeframesSuccess.bind(this),
-            onFailure : this.showDefaultTimeframe.bind(this)
+            onFailure : this.showDefaultTimeframe.bind(this),
+            onComplete : function() {
+                this.timeframeRequest = false;
+            }.bind(this)
         });
 
         return this;
@@ -741,7 +751,11 @@ PostnlDeliveryOptions.prototype = {
      * @return {PostnlDeliveryOptions}
      */
     getLocations : function(postcode, housenumber, deliveryDate) {
-        new Ajax.PostnlRequest(this.getLocationsUrl(),{
+        if (this.locationsRequest !== false) {
+            this.locationsRequest.transport.abort();
+        }
+
+        this.locationsRequest = new Ajax.PostnlRequest(this.getLocationsUrl(),{
             method : 'post',
             parameters : {
                 postcode     : postcode,
@@ -750,7 +764,10 @@ PostnlDeliveryOptions.prototype = {
                 isAjax       : true
             },
             onSuccess : this.processGetLocationsSuccess.bind(this),
-            onFailure : this.hideLocations.bind(this)
+            onFailure : this.hideLocations.bind(this),
+            onComplete : function() {
+                this.locationsRequest = false;
+            }.bind(this)
         });
 
         return this;
@@ -1093,6 +1110,7 @@ PostnlDeliveryOptions.prototype = {
         $(this.getOptions().oscOptionsPopup).hide();
 
         this.saveSelectedOption();
+
         document.fire('postnl:domModified');
 
         return this;
@@ -2566,14 +2584,6 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
         }
 
-        /**
-         * Enable the 'save' button.
-         */
-        this.getSaveButton().disabled = false;
-        if (this.getSaveButton().hasClassName('disabled')) {
-            this.getSaveButton().removeClassName('disabled');
-        }
-
         return this;
     },
 
@@ -2605,14 +2615,6 @@ PostnlDeliveryOptions.Map = new Class.create({
         marker.oldZIndex = false;
 
         this.setSelectedMarker(false);
-
-        /**
-         * Disable the 'save' button.
-         */
-        this.getSaveButton().disabled = true;
-        if (!this.getSaveButton().hasClassName('disabled')) {
-            this.getSaveButton().addClassName('disabled');
-        }
 
         return this;
     },
@@ -2942,11 +2944,49 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         if (hasVisibleMarkers === true) {
             $('no_locations_error').hide();
+            this.enableSaveButton();
         } else {
             $('no_locations_error').show();
+            this.disableSaveButton();
         }
 
         this.recalculateScrollbar();
+
+        return this;
+    },
+
+    /**
+     * @returns {PostnlDeliveryOptions.Map}
+     */
+    disableSaveButton : function() {
+        if (this.getSaveButton().disabled) {
+            return this;
+        }
+
+        this.getSaveButton().disabled = true;
+        if (!this.getSaveButton().hasClassName('disabled')) {
+            this.getSaveButton().addClassName('disabled');
+        }
+
+        document.fire('postnl:domModified');
+
+        return this;
+    },
+
+    /**
+     * @returns {PostnlDeliveryOptions.Map}
+     */
+    enableSaveButton : function() {
+        if (!this.getSaveButton().disabled) {
+            return this;
+        }
+
+        this.getSaveButton().disabled = false;
+        if (this.getSaveButton().hasClassName('disabled')) {
+            this.getSaveButton().removeClassName('disabled');
+        }
+
+        document.fire('postnl:domModified');
 
         return this;
     },

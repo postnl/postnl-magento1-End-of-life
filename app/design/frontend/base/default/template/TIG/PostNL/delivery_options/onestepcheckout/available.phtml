@@ -47,7 +47,15 @@
             <?php $_carrierClassName = str_replace(' ', '', $_carrierClassName); ?>
             <dd><?php echo $this->getCarrierName($code) ?></dd>
                 <?php foreach ($_rates as $_rate): ?>
-                <dt id="carrier_<?php echo $_carrierClassName ?>" style="margin-bottom: 5px;">
+
+                    <?php $_isPostnl = false; ?>
+                    <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
+                    <?php if (in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
+                        <?php $_isPostnl = true; ?>
+                    <?php endif; ?>
+
+                    <dt <?php if($_isPostnl): ?>id="carrier_postnl"<?php endif; ?> style="margin-bottom: 5px;">
+
                    <?php if ($_rate->getErrorMessage()): ?>
                    <ul class="messages"><li class="error-msg"><ul><li><?php echo $_rate->getErrorMessage() ?></li></ul></li></ul>
                    <?php else: ?>
@@ -63,8 +71,7 @@
                         </strong>
                     </label>
 
-                    <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
-                    <?php if (in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
+                    <?php if ($_isPostnl): ?>
                         <div class="postnl-container">
                             <?php echo $this->getChildHtml('postnl.osc.delivery.options'); ?>
                         </div>
@@ -81,7 +88,14 @@
                 <?php $_carrierClassName = str_replace(' ', '', $_carrierClassName); ?>
                 <dd><?php echo $this->getCarrierName($code) ?></dd>
                     <?php foreach ($_rates as $_rate): ?>
-                        <dt id="carrier_<?php echo $_carrierClassName ?>" style="margin-bottom: 5px;">
+
+                        <?php $_isPostnl = false; ?>
+                        <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
+                        <?php if (in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
+                            <?php $_isPostnl = true; ?>
+                        <?php endif; ?>
+
+                        <dt <?php if($_isPostnl): ?>id="carrier_postnl"<?php endif; ?> style="margin-bottom: 5px;">
 
                            <?php if ($_rate->getErrorMessage()): ?>
                             <ul class="messages"><li class="error-msg"><ul><li><?php echo $_rate->getErrorMessage() ?></li></ul></li></ul>
@@ -99,8 +113,7 @@
                                 </strong>
                                 </label>
 
-                                <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
-                                <?php if (in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
+                                <?php if ($_isPostnl): ?>
                                     <div class="postnl-container">
                                         <?php echo $this->getChildHtml('postnl.osc.delivery.options'); ?>
                                     </div>
