@@ -268,7 +268,8 @@ PostnlPostcodecheck = new Class.create({
                 postcodeCheck.inProgressRequest = false;
                 $('postnl_postcodecheck_spinner_' + addressType).hide();
 
-                document.fire('postcodecheck:update_success');
+                document.fire('postnl:postcodeCheckSuccess');
+
                 return;
             },
             onFailure: function(response) {
