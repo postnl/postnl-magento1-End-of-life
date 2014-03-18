@@ -51,8 +51,7 @@ class TIG_PostNL_Exception extends Mage_Core_Exception
      * @param mixed          $code
      * @param Exception|null $previous
      *
-     * @return \TIG_PostNL_Exception
-    @see Exception::__construct()
+     * @see Exception::__construct()
      *
      * @link http://www.php.net/manual/en/exception.construct.php
      */

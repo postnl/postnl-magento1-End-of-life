@@ -100,7 +100,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $block = $observer->getBlock();
         $orderGridClass = Mage::getConfig()->getBlockClassName(self::ORDER_GRID_BLOCK_NAME);
 
-        if (get_class($block) !== $orderGridClass) {
+        if (!($block instanceof $orderGridClass)) {
             return $this;
         }
 

@@ -1,0 +1,67 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php $_helper = Mage::helper('postnl'); ?>
+<div id="postnl_add_phonenumber">
+    <div class="popup-overlay">
+        <div class="popup-window">
+            <div class="popup-header">
+                <h2><?php echo $_helper->__('Phone number for Package Dispensing Machine service'); ?></h2>
+                <a title="<?php echo $_helper->__('Close');?>" class="btn-close"><?php echo $_helper->__('Close');?></a>
+            </div>
+            <div class="popup-content">
+                <div class="text">
+                    <p><?php echo $_helper->__('We will send you a text message when the package can be collected from the package dispenser.'); ?></p>
+                    <p><?php echo $_helper->__('Therefore we ask you for your mobile phone number.'); ?></p>
+                </div>
+                <div class="number-input">
+                    <input type="text" class="input-text fail" name="" value="<?php echo $_helper->__('Phone number'); ?>" />
+                    <div class="number-verify" style="display:none;"><?php echo $_helper->__('Please check in a thorough manner if correct.'); ?></div>
+                    <div class="number-failed" style="/*display:none;*/"><?php echo $_helper->__('Please insert a mobile phone number.'); ?></div>
+                </div>
+            </div>
+            <div class="button-set">
+                <button type="button" class="button next"><span><span><?php echo $_helper->__('Continue'); ?></span></span></button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    initCufon();
+</script>

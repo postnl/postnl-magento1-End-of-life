@@ -43,14 +43,16 @@
     <?php if (count($_shippingRateGroups)=='1' && Mage::getStoreConfig('onestepcheckout/general/hide_shipping_method')):?>
         <dl class="shipment-methods" style="display: none">
             <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
+            <?php $_carrierClassName = strtolower($this->getCarrierName($code)); ?>
+            <?php $_carrierClassName = str_replace(' ', '', $_carrierClassName); ?>
             <dd><?php echo $this->getCarrierName($code) ?></dd>
                 <?php foreach ($_rates as $_rate): ?>
-                <dt style="margin-bottom: 5px;">
+                <dt id="carrier_<?php echo $_carrierClassName ?>" style="margin-bottom: 5px;">
                    <?php if ($_rate->getErrorMessage()): ?>
                    <ul class="messages"><li class="error-msg"><ul><li><?php echo $_rate->getErrorMessage() ?></li></ul></li></ul>
                    <?php else: ?>
                    <input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>" checked="checked" />
-                   <label for="s_method_<?php echo $_rate->getCode() ?>"><!--<b><?php echo $this->getCarrierName($code) ?>:</b>--> <?php echo $_rate->getMethodTitle() ?>
+                   <label data-price="<?php echo $_rate->getPrice(); ?>" for="s_method_<?php echo $_rate->getCode() ?>"><!--<b><?php echo $this->getCarrierName($code) ?>:</b>--> <?php echo $_rate->getMethodTitle() ?>
                         <strong>
                         <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
                         <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
@@ -64,7 +66,7 @@
                     <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
                     <?php if (in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
                         <div class="postnl-container">
-                            <?php echo $this->getChildHtml('postnl.osc.add.moment'); ?>
+                            <?php echo $this->getChildHtml('postnl.osc.delivery.options'); ?>
                         </div>
                     <?php endif; ?>
                    <?php endif ?>
@@ -75,15 +77,17 @@
     <?php else: ?>
         <dl class="shipment-methods">
             <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
-                        <dd><?php echo $this->getCarrierName($code) ?></dd>
+                <?php $_carrierClassName = strtolower($this->getCarrierName($code)); ?>
+                <?php $_carrierClassName = str_replace(' ', '', $_carrierClassName); ?>
+                <dd><?php echo $this->getCarrierName($code) ?></dd>
                     <?php foreach ($_rates as $_rate): ?>
-                        <dt style="margin-bottom: 5px;">
+                        <dt id="carrier_<?php echo $_carrierClassName ?>" style="margin-bottom: 5px;">
 
                            <?php if ($_rate->getErrorMessage()): ?>
                             <ul class="messages"><li class="error-msg"><ul><li><?php echo $_rate->getErrorMessage() ?></li></ul></li></ul>
                            <?php else: ?>
                                 <input name="shipping_method" type="radio" class="validate-one-required-by-name" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> />
-                                <label for="s_method_<?php echo $_rate->getCode() ?>"><!--<b><?php echo $this->getCarrierName($code) ?>:</b>--> <?php echo $_rate->getMethodTitle() ?>
+                                <label data-price="<?php echo $_rate->getPrice(); ?>" for="s_method_<?php echo $_rate->getCode() ?>"><!--<b><?php echo $this->getCarrierName($code) ?>:</b>--> <?php echo $_rate->getMethodTitle() ?>
                                 <strong>
                                 <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
                                 <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>

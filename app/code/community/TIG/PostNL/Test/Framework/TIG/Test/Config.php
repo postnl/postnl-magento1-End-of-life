@@ -36,50 +36,72 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_helper = Mage::helper('postnl'); ?>
-<div id="postnl_add_moment">
-    <div class="sub-title">
-        <h3><?php echo $_helper->__('Delivery Options'); ?></h3>
-    </div>
-    <ul class="option-list">
-        <li class="location">
-            <div class="bkg">
-                <div class="bkg">
-                    <div class="content">
-                        <strong class="location-name overflow-protect"><?php echo Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getStreetFull(); ?></strong>
-                    </div>
-                </div>
-            </div>
-        </li>
-        <li class="option active">
-            <div class="bkg">
-                <div class="bkg">
-                    <div class="content">
-                        <span class="option-dd">
-                            <strong class="option-day">Wo</strong>
-                            <span class="option-date">20-08</span>
-                        </span>
-                        <span class="option-radio"></span>
-                        <span class="option-time">09:00 - 19:00</span>
-                    </div>
-                </div>
-            </div>
-        </li>
-    </ul>
-    <ul class="option-list">
-        <li class="add-moment">
-            <a id="add_moment_link" class="button action" ><span><span><?php echo $_helper->__('Or pick your own delivery moment'); ?></span></span></a>
-        </li>
-    </ul>
-</div>
-<?php echo $this->getChildHtml('postnl.osc.delivery.options'); ?>
-<script type="text/javascript">
-//<![CDATA[
-    $('add_moment_link').observe('click', function(event) {
-        event.stop();
+class TIG_PostNL_Test_Framework_TIG_Test_Config extends Mage_Core_Model_Config
+{
+    /**
+     * @var array
+     */
+    protected $_mockModels = array();
 
-        $('postnl_delivery_options').show();
-    });
-//]]>
-</script>
+    /**
+     * @var array
+     */
+    protected $_mockResourceModels = array();
+
+    /**
+     * @param string $modelClass
+     * @param object $mock
+     */
+    public function setModelMock($modelClass, $mock)
+    {
+        if (!array_key_exists($modelClass, $this->_mockModels)) {
+            $this->_mockModels[$modelClass] = $mock;
+        }
+    }
+
+    /**
+     * @param string $modelClass
+     * @param object $mock
+     */
+    public function setResourceModelMock($modelClass, $mock)
+    {
+        if (!array_key_exists($modelClass, $this->_mockResourceModels)) {
+            $this->_mockResourceModels[$modelClass] = $mock;
+        }
+    }
+
+    /**
+     * @param string $modelClass
+     * @param array  $constructArguments
+     *
+     * @return false|Mage_Core_Model_Abstract
+     */
+    public function getModelInstance($modelClass = '', $constructArguments = array())
+    {
+        $modelClass = (string) $modelClass;
+
+        if (array_key_exists($modelClass, $this->_mockModels)) {
+            return $this->_mockModels[$modelClass];
+        }
+
+        return parent::getModelInstance($modelClass, $constructArguments);
+    }
+
+    /**
+     * Get resource model object by alias
+     *
+     * @param   string $modelClass
+     * @param   array $constructArguments
+     * @return  object
+     */
+    public function getResourceModelInstance($modelClass='', $constructArguments = array())
+    {
+        $modelClass = (string) $modelClass;
+
+        if (array_key_exists($modelClass, $this->_mockResourceModels)) {
+            return $this->_mockResourceModels[$modelClass];
+        }
+
+        return parent::getResourceModelInstance($modelClass, $constructArguments);
+    }
+}
