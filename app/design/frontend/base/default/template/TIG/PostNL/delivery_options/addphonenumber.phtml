@@ -51,9 +51,9 @@
                     <p><?php echo $_helper->__('Therefore we ask you for your mobile phone number.'); ?></p>
                 </div>
                 <div class="number-input">
-                    <input type="text" class="input-text" name="" value="<?php echo $_helper->__('Phone number'); ?>" />
-                    <div class="number-notice"><?php echo $_helper->__('Please check in a thorough manner if correct.'); ?></div>
-                    <div class="number-error"><?php echo $_helper->__('Please insert a mobile phone number.'); ?></div>
+                    <input type="text" class="input-text fail" name="" value="<?php echo $_helper->__('Phone number'); ?>" />
+                    <div class="number-verify" style="display:none;"><?php echo $_helper->__('Please check in a thorough manner if correct.'); ?></div>
+                    <div class="number-failed" style="/*display:none;*/"><?php echo $_helper->__('Please insert a mobile phone number.'); ?></div>
                 </div>
             </div>
             <div class="button-set">
@@ -62,3 +62,6 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    initCufon();
+</script>
