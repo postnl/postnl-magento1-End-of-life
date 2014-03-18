@@ -33,16 +33,30 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryOptions.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/livepipe.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/slider.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/placeholder.min.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/scrollbar.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-yui.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-fonts.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-settings.js'); ?>" type="text/javascript"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $this->getApiKey(); ?>&sensor=false&libraries=places" type="text/javascript"></script>
+class TIG_PostNL_Test_Model_Adminhtml_Observer_OrderGridTest extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
+{
+    protected function _getInstance()
+    {
+        return Mage::getModel('postnl_adminhtml/observer_orderGrid');
+    }
+
+    /**
+     * @test
+     */
+    public function modifyColumnsShouldBeCallable()
+    {
+        $observer = $this->_getInstance();
+
+        $this->assertInstanceOf(
+             'TIG_PostNL_Model_Adminhtml_Observer_OrderGrid',
+             $observer,
+             'Observer not instance of TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid'
+        );
+
+        $isCallable = is_callable(array($observer, 'modifyColumns'));
+        $this->assertTrue($isCallable, 'ModifyColumns is not callable');
+    }
+}

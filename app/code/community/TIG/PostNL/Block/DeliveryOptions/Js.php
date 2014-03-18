@@ -39,6 +39,28 @@
 class TIG_PostNL_Block_DeliveryOptions_Js extends Mage_Core_Block_Template
 {
     /**
+     * @var string
+     */
+    protected $_template = 'TIG/PostNL/delivery_options/js.phtml';
+
+    /**
+     * Get the configured Google maps API key.
+     *
+     * @return string
+     */
+    public function getApiKey()
+    {
+        if ($this->hasApiKey()) {
+            return $this->_getData('api_key');
+        }
+
+        $apiKey = Mage::getStoreConfig('postnl/google_maps/api_key', Mage::app()->getStore()->getId());
+
+        $this->setApiKey($apiKey);
+        return $apiKey;
+    }
+
+    /**
      * Check if PostNL delivery options are available for the current quote.
      *
      * @return string
@@ -47,7 +69,9 @@ class TIG_PostNL_Block_DeliveryOptions_Js extends Mage_Core_Block_Template
     {
         $quote = Mage::getSingleton('checkout/session')->getQuote();
 
-        if (!Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($quote, false)) {
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        if (!$helper->canUseDeliveryOptions($quote, false)) {
             return '';
         }
 

@@ -33,16 +33,63 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryOptions.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/livepipe.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/slider.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/placeholder.min.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/scrollbar.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-yui.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-fonts.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-settings.js'); ?>" type="text/javascript"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $this->getApiKey(); ?>&sensor=false&libraries=places" type="text/javascript"></script>
+class TIG_PostNL_Test_Framework_TIG_Test_Http_Response extends Mage_Core_Controller_Response_Http
+{
+    /**
+     * @var bool
+     */
+    protected $_headersSent = false;
+
+    /**
+     * @param boolean $headersSent
+     *
+     * @return TIG_Test_Http_Response
+     */
+    public function setHeadersSent($headersSent)
+    {
+        $this->_headersSent = $headersSent;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getHeadersSent()
+    {
+        return $this->_headersSent;
+    }
+
+    /**
+     * @param bool $throw
+     *
+     * @return bool
+     */
+    public function canSendHeaders($throw = false)
+    {
+        $canSendHeaders = !$this->getHeadersSent();
+        return $canSendHeaders;
+    }
+
+    /**
+     * @return Mage_Core_Controller_Response_Http
+     */
+    public function sendHeaders()
+    {
+        $this->setHeadersSent(true);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function sendResponse()
+    {
+        return $this;
+    }
+
+}

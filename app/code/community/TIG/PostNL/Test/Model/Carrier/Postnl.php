@@ -33,16 +33,49 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryOptions.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/livepipe.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/slider.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/placeholder.min.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/scrollbar.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-yui.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-fonts.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/deliveryoptions/cufon-settings.js'); ?>" type="text/javascript"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $this->getApiKey(); ?>&sensor=false&libraries=places" type="text/javascript"></script>
+class TIG_PostNL_Test_Model_Carrier_Postnl extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
+{
+    /**
+     * @return TIG_PostNL_Model_Carrier_Postnl
+     */
+    protected function _getInstance()
+    {
+        return Mage::getModel('postnl_carrier/postnl');
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldBeOfTheProperInstance()
+    {
+        $carrier = $this->_getInstance();
+
+        $this->assertInstanceOf('TIG_PostNL_Model_Carrier_Postnl', $carrier);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldBeAbleTogetThePostnlFee()
+    {
+        $carrier = $this->_getInstance();
+
+        $mockPostnlOrder = $this->getMock('TIG_PostNL_Model_Checkout_Order');
+        $mockPostnlOrder->expects($this->once())
+                        ->method('getId')
+                        ->will($this->returnValue(1));
+        $mockPostnlOrder->expects($this->once())
+                        ->method('getIsActive')
+                        ->will($this->returnValue(true));
+        $mockPostnlOrder->expects($this->once())
+                        ->method('getShipmentCosts')
+                        ->will($this->returnValue(5));
+
+        $carrier->setPostnlOrder($mockPostnlOrder);
+
+        $this->assertEquals($carrier->getPostnlFee(), 5);
+    }
+}

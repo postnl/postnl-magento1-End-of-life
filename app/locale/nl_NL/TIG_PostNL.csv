@@ -37,7 +37,7 @@ TIG_PostNL::The current global barcode type as supplied by PostNL. Must contain 
 TIG_PostNL::Global Barcode Range,Globaal barcode bereik
 TIG_PostNL::Your global barcode range as supplied by PostNL. Must contain 4 digits.,Uw globaal barcode bereik zoals aangeleverd door PostNL. Moet bestaan uit 4 cijfers
 TIG_PostNL::These fields are only required if you wish to use PostNL Checkout.,Deze velden zijn alleen verplicht als u gebruik wenst te maken van PostNL Checkout.
-TIG_PostNL::Webshop External ID,Webwinkel extern ID
+TIG_PostNL::Webshop ID,Webshop ID
 TIG_PostNL::Public Webshop ID,Publiek Webshop ID
 TIG_PostNL::These fields contain your contact information for PostNL.,Deze velden bevatten uw contact informatie voor PostNL
 TIG_PostNL::Company Name,Bedrijfsnaam
@@ -629,7 +629,7 @@ TIG_PostNL::Street Address %s,Adres regel %s
 TIG_PostNL::Delivery date webservice version,Bezorgdatum webservice versie
 TIG_PostNL::No data available for GetDeliveryDay request.,Geen data beschikbaar voor het GetDeliveryDate verzoek.
 TIG_PostNL::Invalid GetDeliveryDate response: %s,Ongeldig GetDeliveryDate antwoord: %s
-TIG_PostNL::No data available for GetEveningTimeframes request.,Geen data beschikbaar voor het GetEveningTimeframes verzoek.
+TIG_PostNL::No data available for GetDeliveryDay request.,Geen data beschikbaar voor het GetDeliveryDay verzoek.
 TIG_PostNL::Timeframe webservice version,Timeframe webservice versie
 TIG_PostNL::More Info,Meer Info
 TIG_PostNL::from,vanaf
@@ -720,3 +720,25 @@ TIG_PostNL::day,dag
 TIG_PostNL::days,dagen
 TIG_PostNL::The address you searched for was not found. Please try again.,Het gezochte adres is niet gevonden. Probeer het s.v.p. opnieuw.
 TIG_PostNL::We could not find any locations matching your filters. Please unselect any filters or try again at a different location.,Er zijn geen locaties gevonden die aan uw filters voldoen. Pas s.v.p. uw zoekfilters aan of zoek op een andere locatie.
+TIG_PostNL::Invalid GetDeliveryDate response: %s,Ongeldig GetDeliveryDate antwoord: %s
+TIG_PostNL::No data available for request.,Geen data beschikbaar voor het verzoek.
+TIG_PostNL::Invalid postcode supplied for getNearestLocations request: %s,Ongeldige postcode aangegeven voor het getNearestLocations verzoek: %s
+"TIG_PostNL::Invalid coordinates supplied for getNearestLocations request. lat: %s, long: %s","Ongeldige coördinaten aangegeven voor het getNearestLocations verzoek. lat: %s, long: %s"
+TIG_PostNL::Invalid arguments supplied. getNearestLocations requires a postcode or a longitude and latitude.,Ongeldige argumenten aangegeven. getNearestLocations verwacht een postcode of een latitude en longitude.
+TIG_PostNL::Invalid delivery date supplied: %s,Ongeldige bezorgdatum aangegeven: %s
+TIG_PostNL::Invalid response for GetDeliveryTimeframes request: %s,Ongeldig antwoord ontvangen voor het GetDeliveryTimeframes verzoek: %s
+TIG_PostNL::Invalid response for GetNearestLocations request: %s,Ongeldig antwoord ontvangen voor het GetNearestLocations verzoek: %s
+TIG_PostNL::Invalid arguments supplied. GetDeliveryTimeframes requires a postcode and a housenumber.,Ongeldige argumenten aangegeven. GetDeliveryTimeframes verwacht een postcode en een huisnummer.
+TIG_PostNL::Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.,Ongeldige postcode aangegeven voor het GetDeliveryTimeframes verzoek: %s Postcodes mogen enkel 4 cijfers en 2 letters bevatten.
+TIG_PostNL::Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain digits.,Ongeldig huisnummer aangegeven voor het GetDeliveryTimeframes verzoek: %s. Huisnummers mogen enkel getallen bevatten.
+TIG_PostNL::Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.,Ongeldige overkomstduur: %s De overkomstduur moet tussen de 1 en 14 dagen liggen.
+TIG_PostNL::Invalid arguments supplied. getNearestLocationsInArea requires two sets of coordinates.,Ongeldige argumenten aangegeven. getNearestLocations verwacht 2 sets aan coördinaten.
+"TIG_PostNL::Invalid NE coordinates supplied for getLocationsInArea request. lat: %s, long: %s","Ongeldige NE coördinaten aangegeven voor het getNearestLocations verzoek. lat: %s, long: %s"
+"TIG_PostNL::Invalid SW coordinates supplied for getLocationsInArea request. lat: %s, long: %s","Ongeldige SW coördinaten aangegeven voor het getNearestLocations verzoek. lat: %s, long: %s"
+TIG_PostNL::Invalid postcode supplied for GetDeliveryDate request: %s Postcodes may only contain 4 numbers and 2 letters.,Ongeldige postcode aangegeven voor het GetDeliveryDate verzoek: %s Postcodes mogen enkel 4 cijfers en 2 letters bevatten.
+TIG_PostNL::PostNL delivery options are only available for Dutch shipping addresses.,PostNL bezorgopties zijn enkel beschikbaar voor Nederlandse verzendadressen.
+TIG_PostNL::You have not yet enabled PostNL delivery options.,U heeft PostNL bezorgopties nog niet geactiveerd.
+TIG_PostNL::The SOAP extension is not installed. PostNL requires the SOAP extension to communicate with PostNL.,De SOAP extensie is niet geïnstalleerd. De PostNL extensie heeft de SOAP extensie nodig om te communiceren met de PostNL servers.
+TIG_PostNL::The OpenSSL extension is not installed. The PostNL extension requires the OpenSSL extension to secure the communications with the PostNL servers.,De OpenSSL extensie is niet geïnstalleerd. De PostNL extensie heeft de OpenSSL extensie nodig de communicatie met de PostNL servers te beveiligen.
+"TIG_PostNL::The specified method ""%s"" is not callable.","De opgegeven methode ""%s"" is niet aanroepbaar."
+TIG_PostNL::The MCrypt extension is not installed. The PostNL extension requires the MCrypt extension to secure the communications with the PostNL servers.,De MCrypt extensie is niet geïnstalleerd. De PostNL extensie heeft de MCrypt extensie nodig de communicatie met de PostNL servers te beveiligen.

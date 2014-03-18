@@ -120,16 +120,14 @@
     </customer_address_form>
 
     <!--  DELIVERY OPTIONS  -->
+
     <checkout_onepage_index>
         <reference name="head">
-            <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions.css</stylesheet></action>
-            <action method="addItem"><type>skin_css</type><name>css/TIG/PostNL/ie8.css</name><params/><if>lt IE 9</if></action>
+            <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/default.css</stylesheet></action>
+            <action method="addItem"><type>skin_css</type><name>css/TIG/PostNL/deliveryoptions/ie8.css</name><params/><if>lt IE 9</if></action>
             <action method="addItem"><type>skin_css</type><file>css/TIG/PostNL/postcodecheck.css</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/ajax.js</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/postcodecheck.js</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/cufon/cufon-yui.js</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/cufon/cufon-fonts.js</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/cufon/cufon-settings.js</file></action>
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="postnl_deliveryoptions/js" name="postnl_google_maps_api" template="TIG/PostNL/delivery_options/js.phtml"/>
         </reference>
@@ -145,21 +143,19 @@
         <reference name="root">
             <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.delivery.options" template="TIG/PostNL/delivery_options/onepage/deliveryoptions.phtml">
                 <block type="core/template" name="postnl.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
+                <block type="core/template" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
             </block>
         </reference>
     </checkout_onepage_shippingmethod>
 
     <onestepcheckout_index_index>
         <reference name="head">
-            <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions.css</stylesheet></action>
-            <action method="addCss"><stylesheet>css/TIG/PostNL/onestepcheckout.css</stylesheet></action>
-            <action method="addItem"><type>skin_css</type><name>css/TIG/PostNL/ie8.css</name><params/><if>lt IE 9</if></action>
+            <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/default.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/TIG/PostNL/deliveryoptions/onestepcheckout.css</stylesheet></action>
+            <action method="addItem"><type>skin_css</type><name>css/TIG/PostNL/deliveryoptions/ie8.css</name><params/><if>lt IE 9</if></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/ajax.js</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/postcodecheck.js</file></action>
             <action method="addItem"><type>skin_css</type><file>css/TIG/PostNL/postcodecheck.css</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/cufon/cufon-yui.js</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/cufon/cufon-fonts.js</file></action>
-            <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/cufon/cufon-settings.js</file></action>
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
         </reference>
@@ -167,6 +163,7 @@
         <reference name="choose-shipping-method">
             <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">
                 <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
+                <block type="core/template" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
             </block>
         </reference>
 
@@ -182,6 +179,7 @@
         <reference name="choose-shipping-method">
             <block type="postnl_deliveryoptions/checkout_onepage_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">
                 <block type="core/template" name="postnl.osc.add.location" template="TIG/PostNL/delivery_options/addlocation.phtml"/>
+                <block type="core/template" name="postnl.add.phonenumber" template="TIG/PostNL/delivery_options/addphonenumber.phtml"/>
             </block>
         </reference>
     </onestepcheckout_ajax_save_billing>

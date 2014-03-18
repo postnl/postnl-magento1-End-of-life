@@ -55,6 +55,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
     public function render(Varien_Object $row)
     {
         /**
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $column
+         */
+        $column = $this->getColumn();
+
+        /**
          * The shipment was not shipped using PostNL
          */
         $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
@@ -66,7 +71,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         /**
          * Check if any data is available
          */
-        $value = $row->getData($this->getColumn()->getIndex());
+        $value = $row->getData($column->getIndex());
         if (is_null($value) || $value === '') {
             return '';
         }
@@ -115,8 +120,13 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
      */
     public function renderProperty()
     {
-        if ($this->getColumn()->hasData('display')
-            && $this->getColumn()->getDisplay() == 'none'
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $column
+         */
+        $column = $this->getColumn();
+
+        if ($column->hasData('display')
+            && $column->getDisplay() == 'none'
         ) {
             return 'style="display:none;"';
         }
@@ -124,8 +134,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         $out = '';
         $width = $this->_defaultWidth;
 
-        if ($this->getColumn()->hasData('width')) {
-            $customWidth = $this->getColumn()->getData('width');
+        if ($column->hasData('width')) {
+            $customWidth = $column->getData('width');
             if ((null === $customWidth) || (preg_match('/^[0-9]+%?$/', $customWidth))) {
                 $width = $customWidth;
             }

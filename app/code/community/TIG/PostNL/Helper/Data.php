@@ -470,6 +470,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
+         * Make sure that the required PHP extensions are loaded.
+         */
+        $phpExtensionsLoaded = $this->areRequiredPHPExtensionsLoaded($registryKey);
+        if ($phpExtensionsLoaded === false) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
          * Check if the module's required configuration options have been filled
          */
         $isConfigured = $this->isConfigured($storeId, $checkGlobal, $forceTestMode);
@@ -494,8 +503,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             );
 
             $errorMessage = $this->__(
-                'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under %sSystem > Config > Shipping Methods%s.',
-                '<a href="' . $shippingMethodSectionurl . '" target="_blank" title="' . $this->__('Shipping Methods') . '">',
+                'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under '
+                    . '%sSystem > Config > Shipping Methods%s.',
+                '<a href="'
+                    . $shippingMethodSectionurl
+                    . '" target="_blank" title="'
+                    . $this->__('Shipping Methods')
+                    . '">',
                 '</a>'
             );
 
@@ -527,6 +541,58 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         Mage::register($registryKey, true);
+        return true;
+    }
+
+    /**
+     * Check if the required SOAP, OpenSSL and MCrypt PHP extensions are loaded.
+     *
+     * @param string $registryKey
+     *
+     * @return bool
+     */
+    public function areRequiredPHPExtensionsLoaded($registryKey)
+    {
+        $errors = array();
+        if (!extension_loaded('soap')) {
+            $errors[] = array(
+                'code'    => 'POSTNL-0134',
+                'message' => $this->__(
+                    'The SOAP extension is not installed. PostNL requires the SOAP extension to communicate with '
+                    . 'PostNL.'
+                ),
+            );
+        }
+
+        if (!extension_loaded('openssl')) {
+            $errors[] = array(
+                'code'    => 'POSTNL-0135',
+                'message' => $this->__(
+                    'The OpenSSL extension is not installed. The PostNL extension requires the OpenSSL extension to '
+                    . 'secure the communications with the PostNL servers.'
+                ),
+            );
+        }
+
+        if (!extension_loaded('mcrypt')) {
+            $errors[] = array(
+                'code'    => 'POSTNL-0137',
+                'message' => $this->__(
+                    'The MCrypt extension is not installed. The PostNL extension requires the MCrypt extension to '
+                    . 'secure the communications with the PostNL servers.'
+                ),
+            );
+        }
+
+        /**
+         * Register any errors that may have ocurred and return false.
+         */
+        if (!empty($errors)) {
+            Mage::register($registryKey . '_errors', $errors);
+
+            return false;
+        }
+
         return true;
     }
 
@@ -601,8 +667,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Check if each required field is filled. If not add the field's label to an array of missing fields so we can later
-         * inform the merchant which fields exactly are missing.
+         * Check if each required field is filled. If not add the field's label to an array of missing fields so we can
+         * later inform the merchant which fields exactly are missing.
          */
         $configFields = Mage::getSingleton('adminhtml/config');
         $sections     = $configFields->getSections('postnl');
@@ -807,7 +873,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Checks if the current edition of Magento is enterprise. Uses Mage::getEdition if available or version_compare if it is not
+     * Checks if the current edition of Magento is enterprise. Uses Mage::getEdition if available or version_compare if
+     * it is not.
      *
      * @return boolean
      *
@@ -887,8 +954,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Gets the knowledge base URL for a specified error code. First we check to see if we have an entry in config.xml for this
-     * error code and if so, if it has an associated URL.
+     * Gets the knowledge base URL for a specified error code. First we check to see if we have an entry in config.xml
+     * for this error code and if so, if it has an associated URL.
      *
      * @param string $errorCode The error code (for example: POSTNL-0001)
      *
@@ -905,8 +972,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Adds an error message to the specified session based on an exception. The exception should contain a valid error code
-     * in order to properly process the error. Exceptions without a (valid) error code will behave like a regular
+     * Adds an error message to the specified session based on an exception. The exception should contain a valid error
+     * code in order to properly process the error. Exceptions without a (valid) error code will behave like a regular
      * $session->addError() call.
      *
      * @param string|Mage_Core_Model_Session_Abstract $session The session to which the messages will be added.
@@ -966,8 +1033,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * Add a message to the specified session. Message can be an error, a success message, an info message or a warning.
-     * If a valid error code is supplied, the message will be prepended with the error code and a link to a knowledgebase article
-     * will be appended.
+     * If a valid error code is supplied, the message will be prepended with the error code and a link to a
+     * knowledgebase article will be appended.
      *
      * If no $code is specified, $messageType and $message will be required
      *
@@ -985,9 +1052,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function addSessionMessage($session, $code = null, $messageType = null, $message = null)
     {
-        /************************************************************************************************************************
+        /***************************************************************************************************************
          * Check that the required arguments are available and valid
-         ***********************************************************************************************************************/
+         **************************************************************************************************************/
 
         /**
          * If $code is null or 0, $messageType and $message are required
@@ -1021,9 +1088,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             );
         }
 
-        /************************************************************************************************************************
+        /***************************************************************************************************************
          * Get the actual error from config.xml if it's available
-         ***********************************************************************************************************************/
+         **************************************************************************************************************/
 
         $error = false;
         $link = false;
@@ -1038,10 +1105,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             }
         }
 
-        /************************************************************************************************************************
-         * Check that the required 'message' and 'messageType' components are available. If they are not yet available, we'll try
-         * to read them from the error itself.
-         ***********************************************************************************************************************/
+        /***************************************************************************************************************
+         * Check that the required 'message' and 'messageType' components are available. If they are not yet available,
+         * we'll try to read them from the error itself.
+         **************************************************************************************************************/
 
         /**
          * If the specified error was found and no message was supplied, get the error's default message
@@ -1078,10 +1145,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             );
         }
 
-        /************************************************************************************************************************
-         * Build the actual message we're going to add. The message will consist of the error code, followed by the actual
-         * message and finally a link to the knowledge base. Only the message part is required.
-         ***********************************************************************************************************************/
+        /***************************************************************************************************************
+         * Build the actual message we're going to add. The message will consist of the error code, followed by the
+         * actual message and finally a link to the knowledge base. Only the message part is required.
+         **************************************************************************************************************/
 
         /**
          * Flag that determines whether the error code and knowledgebase link will be included in the error message
@@ -1116,9 +1183,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                            . '</a>';
         }
 
-        /************************************************************************************************************************
+        /***************************************************************************************************************
          * Finally, let's add the error to the session
-         ***********************************************************************************************************************/
+         **************************************************************************************************************/
 
         /**
          * The method we'll use to add the message to the session has to be built first
@@ -1144,7 +1211,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Checks to see if we can show error details (error code and knowledgebase link) in the frontend when an error occurs.
+     * Checks to see if we can show error details (error code and knowledgebase link) in the frontend when an error
+     * occurs.
      *
      * @return boolean
      */

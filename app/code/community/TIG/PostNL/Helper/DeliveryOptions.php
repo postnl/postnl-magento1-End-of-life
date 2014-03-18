@@ -64,6 +64,25 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const EVENING_TIME = 1900;
 
     /**
+     * @var array
+     */
+    protected $_validTypes = array(
+        'Overdag',
+        'Avond',
+        'PG',
+        'PGE',
+        'PA',
+    );
+
+    /**
+     * @return array
+     */
+    public function getValidTypes()
+    {
+        return $this->_validTypes;
+    }
+
+    /**
      * Mark a set of location results with the 'isEvening' parameter. This will allow the google maps api to easily
      * identify which locations may be filtered out later.
      *

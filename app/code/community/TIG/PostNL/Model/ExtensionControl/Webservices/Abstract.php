@@ -44,6 +44,43 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
     const WEBSERVICE_WSDL_URL = 'http://api.tigpostnl.nl/soap?wsdl';
 
     /**
+     * Check if the required PHP extensions are installed.
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _construct()
+    {
+        if (!extension_loaded('soap')) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The SOAP extension is not installed. PostNL requires the SOAP extension to '
+                    . 'communicate with PostNL.'
+                ),
+                'POSTNL-0134'
+            );
+        }
+
+        if (!extension_loaded('openssl')) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The OpenSSL extension is not installed. The PostNL extension requires the '
+                    . 'OpenSSL extension to secure the communications with the PostNL servers.'
+                ),
+                'POSTNL-0135'
+            );
+        }
+
+        if (!extension_loaded('mcrypt')) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The MCrypt extension is not installed. The PostNL extension requires the '
+                    . 'MCrypt extension to secure the communications with the PostNL servers.'
+                ),
+                'POSTNL-0137'
+            );
+        }
+
+        return parent::_construct();
+    }
+
+    /**
      * Calls a webservice method
      *
      * @param string $method     The method that will be called
