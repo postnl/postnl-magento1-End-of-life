@@ -61,7 +61,7 @@
 .postnl-container .location { color:#fff; height:24px; margin:0 0 2px; }
 .postnl-container .location .bkg { height:24px; background-image:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_location.gif); }
 .postnl-container .location .location-name { font-size:14px; line-height:24px; }
-.postnl-container .location .location-type { color:#eaeaeb; font-size:12px; line-height:24px; margin-left:6px; }
+.postnl-container .location .location-type { color:#eaeaeb; font-size:12px; line-height:25px; margin-left:6px; }
 .postnl-container .location .location-info { float:right; }
 .postnl-container .location .location-info span { margin-right:-7px; display:block; width:24px; height:24px; text-indent:-999em; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) -2px 5px no-repeat; }
 .postnl-container .location .location-info:hover span { width:31px; background-position:5px -41px; }
@@ -217,7 +217,7 @@ body.noscroll { overflow:hidden; }
 
 /* Cufon */
 cufon { overflow:hidden !important; }
-cufon canvas { user-select:all; -moz-user-select:all; -webkit-user-select:all; cursor:text; }
+cufon canvas { user-select:all; -moz-user-select:all; -webkit-user-select:all; }
 cufon[alt=" "] { display:none !important; width:0 !important; height:0 !important; }
 .location-list .location-info:hover cufon,
 .location-option-checkbox:hover cufon,
