@@ -26,7 +26,7 @@
 #postnl_add_moment .add-moment .button.action span span { width:226px; }
 
 /* Delivery Options Popup */
-#postnl_delivery_options .popup-window { width:665px; min-height:469px; padding:17px 17px 0; margin:-235px 0 0 -333px; }
+#postnl_delivery_options .popup-window { width:665px; height:469px; padding:17px 17px 0; margin:-235px 0 0 -333px; }
 #postnl_delivery_options .popup-header { min-height:54px; padding:0; background-position:483px 0; }
 #postnl_delivery_options .popup-content { height:333px; padding:0; }
 #postnl_delivery_options .btn-close { top:0; right:0; }
