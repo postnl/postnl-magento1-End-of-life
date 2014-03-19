@@ -38,6 +38,8 @@
  *
  * @method boolean                                  hasQuote()
  * @method TIG_PostNL_Model_DeliveryOptions_Service setQuote(Mage_Sales_Model_Quote $quote)
+ * @method boolean                                  hasPostnlOrder()
+ * @method TIG_PostNL_Model_DeliveryOptions_Service setPostnlOrder(TIG_PostNL_Model_Checkout_Order $postnlOrder)
  */
 class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 {
@@ -45,6 +47,28 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      * Newly added 'pakje_gemak' address type.
      */
     const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
+
+    /**
+     * Gets a PostNL Order. If none is set; load one.
+     *
+     * @return TIG_PostNL_Model_Checkout_Order
+     */
+    public function getPostnlOrder()
+    {
+        if ($this->hasPostnlOrder()) {
+            $postnlOrder = $this->_getData('postnl_order');
+
+            return $postnlOrder;
+        }
+
+        $quote = $this->getQuote();
+
+        $postnlOrder = Mage::getModel('postnl_checkout/order');
+        $postnlOrder->load($quote->getId(), 'quote_id');
+
+        $this->setPostnlOrder($postnlOrder);
+        return $postnlOrder;
+    }
 
     /**
      * @return Mage_Sales_Model_Quote
@@ -64,6 +88,32 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     }
 
     /**
+     * @param float|int $costs
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return TIG_PostNL_Model_DeliveryOptions_Service
+     */
+    public function saveOptionCosts($costs)
+    {
+        if (!is_float($costs) && !is_int($costs)) {
+            throw new InvalidArgumentException(
+                Mage::helper('postnl')->__('Invalid parameter. Expected a float or an int.')
+            );
+        }
+
+        $quote = $this->getQuote();
+
+        $postnlOrder = $this->getPostnlOrder();
+        $postnlOrder->setQuoteId($quote->getId())
+                    ->setIsActive(true)
+                    ->setShipmentCosts($costs)
+                    ->save();
+
+        return $this;
+    }
+
+    /**
      * @param $data
      *
      * @return $this
@@ -75,7 +125,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         /**
          * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
          */
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder = $this->getPostnlOrder();
         $postnlOrder->setQuoteId($quote->getId())
                     ->setIsActive(true)
                     ->setType($data['type'])

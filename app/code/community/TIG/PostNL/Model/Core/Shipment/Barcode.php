@@ -76,7 +76,11 @@ class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
                    ->addFieldToFilter('barcode_number', array('eq' => $barcodeNumber));
 
         if ($collection->getSize()) {
-            return $collection->getFirstItem();
+            $barcode = $collection->getFirstItem();
+
+            $this->setData($barcode->getData());
+            $this->setOrigData();
+            $this->_afterLoad();
         }
 
         return $this;

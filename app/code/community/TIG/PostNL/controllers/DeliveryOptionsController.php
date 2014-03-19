@@ -167,6 +167,55 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     }
 
     /**
+     * Save Extra costs associated with a selected option.
+     *
+     * @return TIG_PostNL_DeliveryOptionsController
+     */
+    public function saveOptionCostsAction()
+    {
+        /**
+         * This action may only be called using AJAX requests
+         */
+        if (!$this->getRequest()->isAjax()) {
+            $this->getResponse()
+                 ->setBody('not_allowed');
+
+            return $this;
+        }
+
+        if (!$this->_canUseDeliveryOptions()) {
+            $this->getResponse()
+                 ->setBody('not_allowed');
+
+            return $this;
+        }
+
+        $params = $this->getRequest()->getPost();
+
+        try {
+            $costs = $this->_getSaveOptionCostsPostData($params);
+
+            $this->getService()->saveOptionCosts($costs);
+        } catch (Exception $e) {
+            Mage::helper('postnl/deliveryOptions')->logException($e);
+
+            $this->getResponse()
+                 ->setBody('invalid_data');
+
+            return $this;
+        }
+
+        if (isset($params['isOsc']) && $params['isOsc'] == true) {
+            $this->_updateShippingMethod();
+        }
+
+        $this->getResponse()
+             ->setBody('OK');
+
+        return $this;
+    }
+
+    /**
      * Saves the selected shipment option.
      *
      * @return TIG_PostNL_DeliveryOptionsController
@@ -177,7 +226,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          * This action may only be called using AJAX requests
          */
         if (!$this->getRequest()->isAjax()) {
-            $this->_redirect('');
+            $this->getResponse()
+                 ->setBody('not_allowed');
 
             return $this;
         }
@@ -193,6 +243,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         try {
             $data = $this->_getSaveSelectionPostData($params);
+
+            $this->getService()->saveDeliveryOption($data);
         } catch (Exception $e) {
             Mage::helper('postnl/deliveryOptions')->logException($e);
 
@@ -202,7 +254,9 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $this;
         }
 
-        $this->getService()->saveDeliveryOption($data);
+        if (isset($params['isOsc']) && $params['isOsc'] == true) {
+            $this->_updateShippingMethod();
+        }
 
         $this->getResponse()
              ->setBody('OK');
@@ -221,7 +275,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          * This action may only be called using AJAX requests
          */
         if (!$this->getRequest()->isAjax()) {
-            $this->_redirect('');
+            $this->getResponse()
+                 ->setBody('not_allowed');
 
             return $this;
         }
@@ -291,7 +346,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          * This action may only be called using AJAX requests
          */
         if (!$this->getRequest()->isAjax()) {
-            $this->_redirect('');
+            $this->getResponse()
+                 ->setBody('not_allowed');
 
             return $this;
         }
@@ -370,7 +426,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          * This action may only be called using AJAX requests
          */
         if (!$this->getRequest()->isAjax()) {
-            $this->_redirect('');
+            $this->getResponse()
+                 ->setBody('not_allowed');
 
             return $this;
         }
@@ -449,6 +506,50 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         $this->setCanUseDeliveryOptions($canUseDeliveryOptions);
         return $canUseDeliveryOptions;
+    }
+
+    /**
+     * Validates input for the saveOptionCosts action.
+     *
+     * @param array $params
+     *
+     * @return float|int
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getSaveOptionCostsPostData($params)
+    {
+        /**
+         * Costs need to be specified in order to save them.
+         */
+        if (!isset($params['costs'])) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     "Invalid arguments supplied. The 'costs' parameter is required."
+                ),
+                'POSTNL-0142'
+            );
+        }
+
+        $costs = $params['costs'];
+
+        $costsValidator      = new Zend_Validate_Float();
+        $costsRangeValidator = new Zend_Validate_Between(array('min' => 0, 'max' => 2, 'inclusive' => true));
+
+        /**
+         * Validate the costs.
+         */
+        if (!$costsValidator->isValid($costs) || !$costsRangeValidator->isValid($costs)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid costs supplied: %s Costs have to be a float or int between 0 and 2.',
+                     $costs
+                ),
+                'POSTNL-0139'
+            );
+        }
+
+        return (float) $costs;
     }
 
     /**
@@ -709,7 +810,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!$postcodeValidator->isValid($postcode)) {
             throw new TIG_PostNL_Exception(
                 $this->__(
-                    'Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.',
+                    'Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 '
+                    . 'numbers and 2 letters.',
                     $postcode
                 ),
                 'POSTNL-0125'
@@ -722,7 +824,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!$housenumberValidator->isValid($housenumber)) {
             throw new TIG_PostNL_Exception(
                 $this->__(
-                    'Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain digits.',
+                    'Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain'
+                    . ' digits.',
                     $housenumber
                 ),
                 'POSTNL-0126'
@@ -730,7 +833,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         }
 
         /**
-         * Get the delivery date. If it was supplied, we need to validate it. Otherwise we take tomorrow as the delivery day.
+         * Get the delivery date. If it was supplied, we need to validate it. Otherwise we take tomorrow as the delivery
+         * day.
          */
         if (array_key_exists('deliveryDate', $params)) {
             $deliveryDate = $params['deliveryDate'];
@@ -771,7 +875,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     protected function _getLocationPostData($postData)
     {
         /**
-         * This action requires either a postcode or a longitude and latitude in order to get the nearest post office locations.
+         * This action requires either a postcode or a longitude and latitude in order to get the nearest post office
+         * locations.
          */
         if ((!array_key_exists('lat', $postData) || !array_key_exists('long', $postData))
             && !array_key_exists('postcode', $postData)
@@ -785,7 +890,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         }
 
         /**
-         * Get the delivery date. If it was supplied, we need to validate it. Otherwise we take tomorrow as the delivery day.
+         * Get the delivery date. If it was supplied, we need to validate it. Otherwise we take tomorrow as the delivery
+         * day.
          */
         if (array_key_exists('deliveryDate', $postData)) {
             $deliveryDate = $postData['deliveryDate'];
@@ -912,7 +1018,8 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         }
 
         /**
-         * Get the delivery date. If it was supplied, we need to validate it. Otherwise we take tomorrow as the delivery day.
+         * Get the delivery date. If it was supplied, we need to validate it. Otherwise we take tomorrow as the delivery
+         * day.
          */
         if (array_key_exists('deliveryDate', $postData)) {
             $deliveryDate = $postData['deliveryDate'];
@@ -945,5 +1052,27 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         );
 
         return $data;
+    }
+
+    /**
+     * Save new shipping method rate. We need to re-collect the quote's totals as the shipping costs may have changed.
+     *
+     * @return $this|bool
+     */
+    protected function _updateShippingMethod()
+    {
+        $quote = Mage::getSingleton('checkout/type_onepage')->getQuote();
+
+        $shippingAddress = $quote->getShippingAddress();
+        $shippingAddress->removeAllShippingRates();
+
+        $shippingAddress->setCollectShippingRates(true);
+
+        $quote->collectTotals()
+              ->save();
+
+        $shippingAddress->setCollectShippingRates(true);
+
+        return $this;
     }
 }
