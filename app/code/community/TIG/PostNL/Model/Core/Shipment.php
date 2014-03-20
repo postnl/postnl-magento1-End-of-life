@@ -80,6 +80,7 @@
  * @method int                            getTreatAsAbandoned()
  * @method int|null                       getShipmentId
  * @method int                            getLabelsPrinted()
+ * @method string                         getDeliveryDate()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -106,6 +107,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setBarcodeUrl(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPostnlOrder(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabelCollection(TIG_PostNL_Model_Core_Resource_Shipment_LabeL_Collection $value)
+ * @method TIG_PostNL_Model_Core_Shipment setDeliveryDate(string $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()

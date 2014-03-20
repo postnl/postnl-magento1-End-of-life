@@ -45,6 +45,11 @@ $installer = $this;
 $installer->startSetup();
 
 $conn = $installer->getConnection();
+
+/***********************************************************************************************************************
+ * POSTNL ORDER
+ **********************************************************************************************************************/
+
 $conn->addColumn($installer->getTable('postnl_core/shipment'),
     'is_parcelware_exported',
     array(
@@ -82,6 +87,19 @@ $conn->addColumn($installer->getTable('postnl_checkout/order'),
         'nullable' => true,
         'default'  => null,
         'comment'  => 'Mobile Phone Number'
+    )
+);
+
+/***********************************************************************************************************************
+ * POSTNL SHIPMENT
+ **********************************************************************************************************************/
+
+$conn->addColumn($installer->getTable('postnl_core/shipment'),
+    'delivery_date',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
+        'nullable' => true,
+        'comment'  => 'Delivery Date'
     )
 );
 

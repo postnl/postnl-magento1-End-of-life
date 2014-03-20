@@ -60,6 +60,9 @@ class TIG_PostNL_Model_Core_Observer_Barcode
             return $this;
         }
 
+        /**
+         * @var Mage_Sales_Model_Order_Shipment $shipment
+         */
         $shipment = $observer->getShipment();
 
         /**
@@ -78,11 +81,21 @@ class TIG_PostNL_Model_Core_Observer_Barcode
 
         /**
          * Check if this shipment has an associated PostNL Order. If so, copy it's data.
+         *
+         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
          */
         $postnlOrder = Mage::getModel('postnl_checkout/order')->load($shipment->getOrderId(), 'order_id');
+        if (!$postnlOrder->getId()) {
+            $postnlOrder->load($shipment->getOrder()->getQuoteId(), 'quote_id');
+        }
+
         if ($postnlOrder->getId()) {
             if ($postnlOrder->getConfirmDate()) {
                 $postnlShipment->setConfirmDate(strtotime($postnlOrder->getConfirmDate()));
+            }
+
+            if ($postnlOrder->getDeliveryDate()) {
+                $postnlShipment->setDeliveryDate(strtotime($postnlOrder->getDeliveryDate()));
             }
 
             if ($postnlOrder->getIsPakjeGemak()) {
