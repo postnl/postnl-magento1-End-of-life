@@ -128,6 +128,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $postnlOrder = $this->getPostnlOrder();
         $postnlOrder->setQuoteId($quote->getId())
                     ->setIsActive(true)
+                    ->setIsPakjeGemak(false)
                     ->setType($data['type'])
                     ->setShipmentCosts($data['costs']);
 
