@@ -36,28 +36,12 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<div id="postnl_add_phonenumber" style="display: none;">
-    <div class="popup-overlay">
-        <div class="popup-window">
-            <div class="popup-header">
-                <h2><?php echo $this->__('Phone number for Package Dispenser service'); ?></h2>
-                <a title="<?php echo $this->__('Close');?>" class="btn-close"><?php echo $this->__('Close');?></a>
-            </div>
-            <div class="popup-content">
-                <div class="text">
-                    <p><?php echo $this->__('We will send you a text message when the package can be collected from the package dispenser.'); ?></p>
-                    <p><?php echo $this->__('We need your mobile phone number in order to do this.'); ?></p>
-                </div>
-                <div class="number-input">
-                    <input type="text" class="input-text fail" name="" value="<?php echo $this->__('Phone number'); ?>" />
-                    <div class="number-verify" style="display: none;"><?php echo $this->__('Please make sure your phone number is correct. You will not be able to retrieve your order otherwise.'); ?></div>
-                    <div class="number-failed" style="display: none;"><?php echo $this->__('Please enter a mobile phone number.'); ?></div>
-                </div>
-            </div>
-            <div class="button-set">
-                <button type="button" class="button next"><span><span><?php echo $this->__('Continue'); ?></span></span></button>
-            </div>
-        </div>
-    </div>
-</div>
+class TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber extends Mage_Core_Block_Template
+{
+    /**
+     * @var string
+     */
+    protected $_template = 'TIG/PostNL/delivery_options/addphonenumber.phtml';
+
+
+}
