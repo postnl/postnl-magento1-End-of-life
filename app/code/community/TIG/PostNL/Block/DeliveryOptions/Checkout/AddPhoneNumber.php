@@ -35,6 +35,13 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                                  hasPhoneNumber()
+ * @method TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber setPhoneNumber(string $phoneNumber)
+ * @method boolean                                                  hasShippingAddress()
+ * @method TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber setShippingAddress(Mage_Sales_Model_Quote_Address $address)
+ * @method boolean                                                  hasQuote()
+ * @method TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber setQuote(Mage_Sales_Model_Quote $quote)
  */
 class TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber extends Mage_Core_Block_Template
 {
@@ -43,5 +50,70 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber extends Mage_Core
      */
     protected $_template = 'TIG/PostNL/delivery_options/addphonenumber.phtml';
 
+    /**
+     * Gets a phone number.
+     *
+     * @return string
+     */
+    public function getPhoneNumber()
+    {
+        if ($this->hasPhoneNumber()) {
+            return $this->_getData('phone_number');
+        }
 
+        $shippingAddress = $this->getShippingAddress();
+        $phoneNumber = $shippingAddress->getTelephone();
+
+        /**
+         * OSC often replaces missing required fields by a single dash. We want to avoid this behaviour.
+         */
+        if ($phoneNumber == '-') {
+            $phoneNumber = '';
+        }
+
+        $this->setPhoneNumber($phoneNumber);
+        return $phoneNumber;
+    }
+
+    /**
+     * Gets a shipping address object.
+     *
+     * @return Mage_Sales_Model_Quote_Address
+     */
+    public function getShippingAddress()
+    {
+        if ($this->hasShippingAddress()) {
+            return $this->_getData('shipping_address');
+        }
+
+        $quote = $this->getQuote();
+        if (!$quote) {
+            $shippingAddress = Mage::getModel('sales/quote_address');
+
+            $this->setShippingAddress($shippingAddress);
+            return $shippingAddress;
+        }
+
+        $shippingAddress = $quote->getShippingAddress();
+
+        $this->setShippingAddress($shippingAddress);
+        return $shippingAddress;
+    }
+
+    /**
+     * Get the current quote.
+     *
+     * @return Mage_Sales_Model_Quote
+     */
+    public function getQuote()
+    {
+        if ($this->hasQuote()) {
+            return $this->_getData('quote');
+        }
+
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $this->setQuote($quote);
+        return $quote;
+    }
 }

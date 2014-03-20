@@ -37,12 +37,22 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
+<script type="text/javascript">
+    //<![CDATA[
+    Validation.add('validate-postnl-mobilephone',
+        '<?php echo $this->__('Please enter a valid Dutch mobile phone number.'); ?>',
+        {
+            pattern : /^(((\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i
+        }
+    );
+    //]]>
+</script>
 <div id="postnl_add_phonenumber" style="display: none;">
     <div class="popup-overlay">
         <div class="popup-window">
             <div class="popup-header">
                 <h2><?php echo $this->__('Phone number for Package Dispenser service'); ?></h2>
-                <a title="<?php echo $this->__('Close');?>" class="btn-close"><?php echo $this->__('Close');?></a>
+                <a id="add_phone_close" title="<?php echo $this->__('Close');?>" class="btn-close"><?php echo $this->__('Close');?></a>
             </div>
             <div class="popup-content">
                 <div class="text">
@@ -50,14 +60,73 @@
                     <p><?php echo $this->__('We need your mobile phone number in order to do this.'); ?></p>
                 </div>
                 <div class="number-input">
-                    <input type="text" class="input-text fail" name="" value="<?php echo $this->__('Phone number'); ?>" />
-                    <div class="number-verify" style="display: none;"><?php echo $this->__('Please make sure your phone number is correct. You will not be able to retrieve your order otherwise.'); ?></div>
-                    <div class="number-failed" style="display: none;"><?php echo $this->__('Please enter a mobile phone number.'); ?></div>
+                    <input type="text" id="add_phone_input" class="input-text required-entry validate-required validate-postnl-mobilephone" name="add_phone" placeholder="<?php echo $this->__('Please number'); ?>" value="<?php echo $this->getPhoneNumber(); ?>" />
+                    <div id="number_verify_text" class="number-verify" style="display: none;"><?php echo $this->__('Please make sure your phone number is correct.'); ?></div>
+                    <div id="number_verify_fail" class="number-failed" style="display: none;"><?php echo $this->__('Please enter a mobile phone number.'); ?></div>
                 </div>
             </div>
             <div class="button-set">
-                <button type="button" class="button next"><span><span><?php echo $this->__('Continue'); ?></span></span></button>
+                <button id="add_phone_save" type="button" class="button next disabled" disabled="disabled"><span><span><?php echo $this->__('Continue'); ?></span></span></button>
             </div>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    //<![CDATA[
+    validateShippingMethod();
+    $('add_phone_input').observe('keyup', function() {
+        validateShippingMethod();
+    });
+
+    /**
+     * Save the supplied mobile phone number and continue to the next checkout step.
+     */
+    $('add_phone_save').observe('click', function(event) {
+        event.stop();
+
+        if (typeof shippingMethod != 'undefined') {
+            if (shippingMethod.validate()) {
+                deliveryOptions.setPaPhoneCheckPassed(true);
+            } else {
+                return;
+            }
+
+            shippingMethod.save();
+        }
+
+        deliveryOptions.savePaPhoneNumber($('add_phone_input').getValue());
+
+        deliveryOptions.setPaPhoneCheckPassed(false);
+    });
+
+    $('add_phone_close').observe('click', function(event) {
+        event.stop();
+
+        deliveryOptions.closeAddPhoneWindow();
+    });
+
+    function validateShippingMethod() {
+        var saveButton = $('add_phone_save');
+
+        if (typeof shippingMethod != 'undefined') {
+            if (shippingMethod.validate()) {
+                $('number_verify_text').show();
+                $('number_verify_fail').hide();
+
+                saveButton.disabled = false;
+                if (saveButton.hasClassName('disabled')) {
+                    saveButton.removeClassName('disabled');
+                }
+            } else {
+                $('number_verify_text').hide();
+                $('number_verify_fail').show();
+
+                saveButton.disabled = true;
+                if (!saveButton.hasClassName('disabled')) {
+                    saveButton.addClassName('disabled');
+                }
+            }
+        }
+    }
+    //]]>
+</script>

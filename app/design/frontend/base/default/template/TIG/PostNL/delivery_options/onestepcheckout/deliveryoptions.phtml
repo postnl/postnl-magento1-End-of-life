@@ -195,6 +195,7 @@ function startDeliveryOptions(postcode, housenumber, fullAddress) {
         locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
         locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
         saveCostsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/saveOptionCosts', array('_secure' => true)) ?>',
+        savePhoneNumberUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/savePhoneNumber', array('_secure' => true)) ?>',
         postcode           : postcode,
         housenumber        : housenumber,
         deliveryDate       : '<?php echo $_deliveryDate; ?>',

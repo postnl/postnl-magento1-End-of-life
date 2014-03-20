@@ -61,6 +61,8 @@
  * @method int getOrderId()
  * @method TIG_PostNL_Model_Checkout_Order setOrderId(int $value)
  * @method int getEntityId()
+ * @method TIG_PostNL_Model_Checkout_Order setMobilePhoneNumber(string $value)
+ * @method string getMobilePhoneNumber()
  * @method TIG_PostNL_Model_Checkout_Order setEntityId(int $value)
  * @method TIG_PostNL_Model_Checkout_Order setOrder(Mage_Sales_Model_Order $value)
  * @method TIG_PostNL_Model_Checkout_Order setQuote(Mage_Sales_Model_Quote $value)
