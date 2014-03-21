@@ -126,15 +126,15 @@
             <script type="text/javascript">
                 //<![CDATA[
                 var oscScrollbar = new Control.ScrollBar(
-                    'osc_scrollbar_container',
+                    'osc_scrollbar_content',
                     'osc_scrollbar_track'
                 );
 
-                var recalculteOscScrollbar = function() {
+                var recalculateOscScrollbar = function() {
                     oscScrollbar.recalculateLayout();
                 };
-                document.stopObserving('postnl:domModified', recalculteOscScrollbar);
-                document.observe('postnl:domModified', recalculteOscScrollbar);
+                document.stopObserving('postnl:domModified', recalculateOscScrollbar);
+                document.observe('postnl:domModified', recalculateOscScrollbar);
                 //]]>
             </script>
         </div>
@@ -152,6 +152,9 @@
         'albertheijn', 'bruna', 'c1000', 'coop', 'default', 'emte', 'jumbo', 'plus', 'primera', 'readshop', 'spar',
         'staples', 'gamma', 'karwei'
     ];
+
+    var streetnameField  = '<?php echo $this->getStreetnameField(); ?>';
+    var housenumberField = '<?php echo $this->getHousenumberField(); ?>';
 
     var postcode;
     var housenumber;
@@ -290,9 +293,21 @@
      */
     function getPostnlPostcode(billingOrShipping) {
         var postcode = '<?php echo $_postcode; ?>';
+        var addressSelectField;
 
+        if (billingOrShipping == 'billing') {
+            addressSelectField = $('billing-address-select');
+        } else {
+            addressSelectField = $('shipping-address-select');
+        }
+
+        /**
+         * If we don't have a postcode and no preset address is chosen, get the postcode from the postcode address
+         * field.
+         */
         if (!postcode
-            || ($('billing-address-select').getValue() == ''
+            || (
+                (!addressSelectField || addressSelectField.getValue() == '')
                 && postcode != $(billingOrShipping + ':postcode').getValue()
             )
         ) {
@@ -313,21 +328,36 @@
      */
     function getPostnlHousenumber(billingOrShipping) {
         var housenumber = '<?php echo $_housenumber; ?>';
+        var addressSelectField;
 
+        if (billingOrShipping == 'billing') {
+            addressSelectField = $('billing-address-select');
+        } else {
+            addressSelectField = $('shipping-address-select');
+        }
+
+        /**
+         * If we don't have a housenumber and no preset address is chosen, get the housenumber from the housenumber
+         * address field.
+         */
         if (!housenumber
-            || ($('billing-address-select').getValue() == ''
-                && housenumber != $(billingOrShipping + ':street2').getValue()
+            || (
+                (!addressSelectField || addressSelectField.getValue() == '')
+                && housenumber != $(billingOrShipping + ':street' + housenumberField).getValue()
             )
         ) {
-            var housenumberFieldValue = $(billingOrShipping + ':street2').getValue();
+            var housenumberFieldValue = $(billingOrShipping + ':street' + housenumberField).getValue();
 
             if (housenumberFieldValue) {
                 housenumber = housenumberFieldValue;
             }
         }
 
+        /**
+         * If we still don't have a housenumber, get it from the streetname field.
+         */
         if (!housenumber) {
-            var streetname = $(billingOrShipping + ':street1').getValue();
+            var streetname = $(billingOrShipping + ':street' + streetnameField).getValue();
             var housenumberRegex = /([0-9]+)/;
 
             var housenumberArray = streetname.match(housenumberRegex);
@@ -352,41 +382,58 @@
         var url_save_billing = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure'=>true)); ?>';
         var url_set_methods  = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure'=>true)); ?>';
 
+        /**
+         * These fields' values are used to determine available delivery options.
+         */
         var fieldsToObserve = [
-            'virtual:billing:street1',
-            'billing:street1',
-            'virtual:shipping:street1',
-            'shipping:street1',
-            'virtual:billing:street2',
-            'billing:street2',
-            'virtual:shipping:street2',
-            'shipping:street2'
+            'virtual:billing:street' + streetnameField,
+            'billing:street' + streetnameField,
+            'virtual:shipping:street' + streetnameField,
+            'shipping:street' + streetnameField
         ];
 
+        if (streetnameField != housenumberField) {
+            fieldsToObserve.concat([
+                'virtual:billing:street' + housenumberField,
+                'billing:street' + housenumberField,
+                'virtual:shipping:street' + housenumberField,
+                'shipping:street' + housenumberField
+            ]);
+        }
+
+        /**
+         * Open the delivery options popup.
+         */
         if (addMomentLink && postnlDeliveryOptionsDiv) {
             addMomentLink.observe('click', function(event) {
                 event.stop();
 
                 var body = $$('body')[0];
-                if (!body.hasClassName('no-scroll')) {
-                    body.addClassName('no-scroll');
+                if (!body.hasClassName('noscroll')) {
+                    body.addClassName('noscroll');
                 }
                 postnlDeliveryOptionsDiv.show();
             });
         }
 
+        /**
+         * Close the delivery options popup.
+         */
         if (closeOptionsPopup && postnlDeliveryOptionsDiv) {
             closeOptionsPopup.observe('click', function(event) {
                 event.stop();
 
                 var body = $$('body')[0];
-                if (body.hasClassName('no-scroll')) {
-                    body.removeClassName('no-scroll');
+                if (body.hasClassName('noscroll')) {
+                    body.removeClassName('noscroll');
                 }
                 postnlDeliveryOptionsDiv.hide();
             });
         }
 
+        /**
+         * Reload available delivery options with new address data.
+         */
         fieldsToObserve.each(function(field) {
             var element = $(field);
             if (!element) {
@@ -402,17 +449,26 @@
             });
         });
 
+        /**
+         * After delivery options have loaded, show the default option.
+         */
         document.stopObserving('postnl:loadingFinished');
         document.observe('postnl:loadingFinished', function() {
             $('osc_initial_loader').hide();
             $('postnl_add_moment').show();
         });
 
+        /**
+         * When postcodecheck starts, show the OSC spinner so customers know to wait for new information.
+         */
         document.stopObserving('postnl:postcodeCheckStart');
         document.observe('postnl:postcodeCheckStart', function() {
             $$('div.onestepcheckout-shipping-method-block')[0].update('<div class="loading-ajax">&nbsp;</div>');
         });
 
+        /**
+         * After postcode check has found an address, show the new delivery options.
+         */
         document.stopObserving('postnl:postcodeCheckSuccess');
         document.observe('postnl:postcodeCheckSuccess', function() {
             if (deliveryOptions && deliveryOptions.timeframeRequest) {
@@ -422,21 +478,34 @@
             get_save_billing_function(url_save_billing, url_set_methods, true)();
         });
 
+        /**
+         * Show the OSC spinner when new shipping costs are being calculated.
+         */
         document.stopObserving('postnl:saveCostsStart');
         document.observe('postnl:saveCostsStart', function() {
             $$('div.onestepcheckout-summary')[0].update('<div class="loading-ajax">&nbsp;</div>');
         });
 
+        /**
+         * Reload shipping costs after new costs are saved.
+         */
         document.stopObserving('postnl:costsSaved');
         document.observe('postnl:costsSaved', function() {
             get_separate_save_methods_function(url_set_methods, false)();
         });
 
+        /**
+         * Show the OSC spinner whilst a delivery option is being saved.
+         */
         document.stopObserving('postnl:selectOptionSaveStart');
         document.observe('postnl:selectOptionSaveStart', function() {
             $$('div.onestepcheckout-summary')[0].update('<div class="loading-ajax">&nbsp;</div>');
         });
 
+
+        /**
+         * Reload shipping costs after a delivery option has been saved.
+         */
         document.stopObserving('postnl:selectOptionSaved');
         document.observe('postnl:selectOptionSaved', function() {
             get_separate_save_methods_function(url_set_methods, false)();
