@@ -186,16 +186,16 @@ div.pac-container { z-index:5000; width:380px !important;}
 #postnl_add_phonenumber .text p { padding-bottom:20px; }
 
 #postnl_add_phonenumber .number-input { margin-top:14px; }
-#postnl_add_phonenumber .number-input .input-text { color:#b0b0b0; width:204px; height:26px; border:none; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_add-phonenumber_input.gif); padding:0 6px; }
+#postnl_add_phonenumber .number-input .input-text { color:#b0b0b0; width:204px; height:26px; border:none; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_add-phonenumber_input.gif) !important; padding:0 6px; }
 #postnl_add_phonenumber .number-input .input-text:focus { color:#333334; }
-#postnl_add_phonenumber .number-input .input-text.validation-failed { color:#e52629; background-position:0 -26px; }
+#postnl_add_phonenumber .number-input .input-text.validation-failed { color:#e52629 !important; background-position:0 -26px !important; border:none !important; }
 #postnl_add_phonenumber .number-input .validation-advice { display:none; }
 
 #postnl_add_phonenumber .number-verify,
-#postnl_add_phonenumber .number-failed { font-size:14px; height:24px; margin-top:14px; }
+#postnl_add_phonenumber .number-failed { font-size:14px; height:24px; margin-top:14px; line-height:19px; }
 
-#postnl_add_phonenumber .number-verify { line-height:21px; padding-left:31px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_phonenumber_verify.png) 0 0 no-repeat; }
-#postnl_add_phonenumber .number-failed { line-height:17px; padding-left:25px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_phonenumber_failed.png) 0 0 no-repeat; }
+#postnl_add_phonenumber .number-verify { padding-left:31px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_phonenumber_verify.png) 0 0 no-repeat; }
+#postnl_add_phonenumber .number-failed { padding-left:25px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_phonenumber_failed.png) 0 0 no-repeat; }
 /********** < Add Phone Number */
 
 /* ======================================================================================= */
@@ -205,8 +205,10 @@ div.pac-container { z-index:5000; width:380px !important;}
 #postnl_delivery .location-name.overflow-protect { width:100%; }
 #postnl_pickup .location-name.overflow-protect { max-width:158px; float:left; }
 .location-list .overflow-protect { float:left; width:528px; }
-#palocation .location-type { display:none; }
-#palocation .location-name.overflow-protect { max-width:251px !important; }
+#palocation .location-type, 
+.pa-location .location-type { display:none; }
+#palocation .location-name.overflow-protect, 
+.pa-location .location-name.overflow-protect { max-width:251px !important; }
 body.noscroll { overflow:hidden; }
 
 /* Clears */
