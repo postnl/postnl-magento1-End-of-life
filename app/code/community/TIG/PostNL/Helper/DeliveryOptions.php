@@ -57,11 +57,31 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     const XPATH_SHOW_OPTIONS_FOR_LETTER     = 'postnl/delivery_options/show_options_for_letter';
     const XPATH_SHOW_OPTIONS_FOR_BACKORDERS = 'postnl/delivery_options/show_options_for_backorders';
+    const XPATH_ALLOW_SUNDAY_SORTING        = 'postnl/delivery_options/allow_sunday_sorting';
 
     /**
      * The time (as H * 100 + i) we consider to be the start of the evening.
      */
     const EVENING_TIME = 1900;
+
+    /**
+     * @var array
+     */
+    protected $_validTypes = array(
+        'Overdag',
+        'Avond',
+        'PG',
+        'PGE',
+        'PA',
+    );
+
+    /**
+     * @return array
+     */
+    public function getValidTypes()
+    {
+        return $this->_validTypes;
+    }
 
     /**
      * Mark a set of location results with the 'isEvening' parameter. This will allow the google maps api to easily
@@ -249,6 +269,24 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EVENING_TIMEFRAMES, $storeId);
 
         return $enabled;
+    }
+
+    /**
+     * Checks if sunday sorting is allowed.
+     *
+     * @param bool $storeId
+     *
+     * @return bool
+     */
+    public function canUseSundaySorting($storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $allowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+
+        return $allowed;
     }
 
     /**

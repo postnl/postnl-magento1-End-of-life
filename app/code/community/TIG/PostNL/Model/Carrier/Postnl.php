@@ -78,6 +78,9 @@ class TIG_PostNL_Model_Carrier_Postnl
         return $quote;
     }
 
+    /**
+     * @return $this
+     */
     public function getPostnlOrder()
     {
         if ($this->hasPostnlOrder()) {
@@ -92,7 +95,7 @@ class TIG_PostNL_Model_Carrier_Postnl
         }
 
         $this->setPostnlOrder($postnlOrder);
-        return $this;
+        return $postnlOrder;
     }
 
     public function __construct()
@@ -176,20 +179,27 @@ class TIG_PostNL_Model_Carrier_Postnl
 
         if ($rateType == 'flat') {
             $result = $this->_getFlatRate($request);
-            return $result;
         }
 
         if ($rateType == 'table') {
             $result = $this->_getTableRate($request);
-            return $result;
         }
 
-        throw new TIG_PostNL_Exception(
-            $helper->__('Invalid rate type requested: %s', $rateType),
-            'POSTNL-0036'
-        );
+        if (!isset($result)) {
+            throw new TIG_PostNL_Exception(
+                $helper->__('Invalid rate type requested: %s', $rateType),
+                'POSTNL-0036'
+            );
+        }
+
+        return $result;
     }
 
+    /**
+     * @param $request
+     *
+     * @return Mage_Shipping_Model_Rate_Result
+     */
     protected function _getFlatRate($request)
     {
         $freeBoxes = 0;
@@ -238,14 +248,7 @@ class TIG_PostNL_Model_Carrier_Postnl
                 $shippingPrice = '0.00';
             }
 
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
-            if ($quote && $quote->getId()) {
-                $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
-                if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
-                    $costs = $postnlOrder->getShipmentCosts();
-                    $shippingPrice += $costs;
-                }
-            }
+            $shippingPrice += $this->getPostnlFee();
 
             $method->setPrice($shippingPrice);
             $method->setCost($shippingPrice);
@@ -256,6 +259,11 @@ class TIG_PostNL_Model_Carrier_Postnl
         return $result;
     }
 
+    /**
+     * @param Mage_Shipping_Model_Rate_Request $request
+     *
+     * @return Mage_Shipping_Model_Rate_Result
+     */
     protected function _getTableRate(Mage_Shipping_Model_Rate_Request $request)
     {
         // exclude Virtual products price from Package value if pre-configured
@@ -332,7 +340,6 @@ class TIG_PostNL_Model_Carrier_Postnl
             }
 
             $shippingPrice += $this->getPostnlFee();
-
 
             $price = $shippingPrice;
             $cost = $rate['cost'];

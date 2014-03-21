@@ -35,6 +35,16 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * Class TIG_PostNL_Model_Core_Shipment_Barcode@method getBarcode
+ *
+ * @method int getBarcodeNumber()
+ * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeNumber(int $value)
+ * @method int getBarcodeId()
+ * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeId(int $value)
+ * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcode(string $value)
+ * @method int getParentId()
+ * @method TIG_PostNL_Model_Core_Shipment_Barcode setParentId(int $value)
  */
 class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
 {
@@ -66,7 +76,11 @@ class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
                    ->addFieldToFilter('barcode_number', array('eq' => $barcodeNumber));
 
         if ($collection->getSize()) {
-            return $collection->getFirstItem();
+            $barcode = $collection->getFirstItem();
+
+            $this->setData($barcode->getData());
+            $this->setOrigData();
+            $this->_afterLoad();
         }
 
         return $this;

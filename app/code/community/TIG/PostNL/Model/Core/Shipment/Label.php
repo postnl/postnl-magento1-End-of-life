@@ -35,6 +35,16 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * Class TIG_PostNL_Model_Core_Shipment_Label
+ *
+ * @method string getLabelType()
+ * @method TIG_PostNL_Model_Core_Shipment_Label setLabelType(string $value)
+ * @method int getLabelId()
+ * @method TIG_PostNL_Model_Core_Shipment_Label setLabelId(int $value)
+ * @method TIG_PostNL_Model_Core_Shipment_Label setLabel(string $value)
+ * @method int getParentId()
+ * @method TIG_PostNL_Model_Core_Shipment_Label setParentId(int $value)
  */
 class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
 {

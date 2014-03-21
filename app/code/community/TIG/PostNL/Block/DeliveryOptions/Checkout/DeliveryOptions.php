@@ -35,8 +35,10 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method string getMethodName()
  */
-class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends Mage_Core_Block_Template
+class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Core_Block_Template
 {
     /**
      * Xpaths to extra fee config settings.
@@ -68,13 +70,28 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
      *
      * @param Mage_Sales_Model_Quote_Address|null $shippingAddress
      *
-     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions
+     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions
      */
     public function setShippingAddress($shippingAddress)
     {
         $this->_shippingAddress = $shippingAddress;
 
         return $this;
+    }
+
+    /**
+     * @return Mage_Sales_Model_Quote
+     */
+    public function getQuote()
+    {
+        if ($this->hasData('quote')) {
+            return $this->_getData('quote');
+        }
+
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $this->setData('quote', $quote);
+        return $quote;
     }
 
     /**
@@ -89,9 +106,12 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
             return $shippingAddress;
         }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $quote = $this->getQuote();
         $shippingAddress = $quote->getShippingAddress();
 
+        /**
+         * @todo check if this is needed for OSC
+         */
 //        if (!$shippingAddress || $shippingAddress->getSameAsBilling()) {
 //            $shippingAddress = $quote->getBillingAddress();
 //        }
@@ -154,7 +174,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
      *
      * @param string $deliveryDate
      *
-     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions
+     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions
      */
     public function setDeliveryDate($deliveryDate)
     {
@@ -164,46 +184,60 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
     }
 
     /**
-     * Get the currenct store's base currency.
-     *
-     * @return string
-     */
-    public function getBaseCurrency()
-    {
-        if ($this->hasData('base_currency')) {
-            return $this->getData('base_currency');
-        }
-
-        $baseCurrency  = Mage::app()->getStore()->getBaseCurrencyCode();
-
-        $this->setData('base_currency', $baseCurrency);
-        return $baseCurrency;
-    }
-
-    /**
      * Get the fee charged for evening timeframes.
+     *
+     * @param boolean $formatted
      *
      * @return float
      */
-    public function getEveningFee()
+    public function getEveningFee($formatted = false)
     {
         $storeId = Mage::app()->getStore()->getId();
 
         $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
-        return $eveningFee;
+
+        $price = $this->getPriceWithTax($eveningFee, true, $formatted);
+
+        return $price;
     }
 
     /**
      * Get the fee charged for PakjeGemak Express.
      *
+     * @param boolean $formatted
+     *
      * @return float
      */
-    public function getExpressFee()
+    public function getExpressFee($formatted = false)
     {
         $storeId = Mage::app()->getStore()->getId();
 
         $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
-        return $expressFee;
+
+        $price = $this->getPriceWithTax($expressFee, true, $formatted);
+
+        return $price;
+    }
+
+    /**
+     * Convert a value to a formatted price.
+     *
+     * @param float   $price
+     * @param boolean $flag
+     * @param boolean $formatted
+     *
+     * @return float
+     *
+     * @see Mage_Checkout_Block_Onepage_Shipping_Method_Available::getShippingPrice()
+     */
+    public function getPriceWithTax($price, $flag, $formatted = false)
+    {
+        $store = $this->getQuote()->getStore();
+
+        $shippingPrice = Mage::helper('tax')->getShippingPrice($price, $flag, $this->getShippingAddress());
+        $convertedPrice = $store->convertPrice($shippingPrice, $formatted, false);
+
+        return $convertedPrice;
     }
 
     /**
@@ -244,19 +278,16 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions extends 
      */
     public function getFeeText($type)
     {
-        $fee = $this->getFee($type);
-
-        /**
-         * If no fee is entered or an invalid value was entered, return an empty string.
-         */
-        if (!$fee || $fee > 2 || $fee < 0) {
-            return '';
+        switch ($type) {
+            case 'evening':
+                $feeText = $this->getEveningFee(true);
+                break;
+            case 'express':
+                $feeText = $this->getExpressFee(true);
+                break;
+            default:
+                return 0;
         }
-
-        $baseCurrency = $this->getBaseCurrency();
-        $currencyModel = Mage::app()->getLocale()->currency($baseCurrency);
-
-        $feeText = $currencyModel->toCurrency($fee);
 
         return $feeText;
     }

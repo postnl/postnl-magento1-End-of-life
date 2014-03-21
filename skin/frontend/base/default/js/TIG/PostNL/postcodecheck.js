@@ -213,6 +213,9 @@ PostnlPostcodecheck = new Class.create({
                 housenumber : housenumber,
                 isAjax      : true
             },
+            onCreate : function() {
+                document.fire('postnl:postcodeCheckStart');
+            },
             onSuccess: function(response) {
                 if (response.responseText == 'error') {
                     $('postnl_address_error_' + addressType).show();
@@ -268,7 +271,8 @@ PostnlPostcodecheck = new Class.create({
                 postcodeCheck.inProgressRequest = false;
                 $('postnl_postcodecheck_spinner_' + addressType).hide();
 
-                $$('body')[0].fire('postcodecheck:update_success');
+                document.fire('postnl:postcodeCheckSuccess');
+
                 return;
             },
             onFailure: function(response) {
