@@ -619,7 +619,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 $this->__(
                      "Invalid arguments supplied. The 'number' parameter is required."
                 ),
-                'POSTNL-0143'
+                'POSTNL-0148'
             );
         }
 
@@ -636,7 +636,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                      'Invalid mobile phone number supplied: %s',
                      $phoneNumber
                 ),
-                'POSTNL-0144'
+                'POSTNL-0149'
             );
         }
 
