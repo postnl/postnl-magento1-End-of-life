@@ -925,10 +925,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     protected function _splitHousenumber($housenumber)
     {
         $housenumber = trim($housenumber);
-        Mage::log($housenumber, null, "TIG_TEST.log", true);
         $result = preg_match(self::SPLIT_HOUSENUMBER_REGEX, $housenumber, $matches);
-        Mage::log($result, null, "TIG_TEST.log", true);
-        Mage::log($matches, null, "TIG_TEST.log", true);
         if (!$result || !is_array($matches)) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Invalid housnumber supplied: %s', $housenumber),

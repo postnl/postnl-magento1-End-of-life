@@ -55,7 +55,8 @@
 <?php endif; ?>
 
 <?php if ($_showOptions): ?>
-    <div id="postnl_add_moment">
+    <div id="osc_initial_loader"><?php echo $this->__('Loading...'); ?></div>
+    <div id="postnl_add_moment" style="display:none;">
         <ul class="option-list">
             <li class="location">
                 <div class="bkg">
@@ -122,449 +123,475 @@
                     </button>
                 </div>
             </div>
+            <script type="text/javascript">
+                //<![CDATA[
+                var oscScrollbar = new Control.ScrollBar(
+                    'osc_scrollbar_container',
+                    'osc_scrollbar_track'
+                );
+
+                var recalculteOscScrollbar = function() {
+                    oscScrollbar.recalculateLayout();
+                };
+                document.stopObserving('postnl:domModified', recalculteOscScrollbar);
+                document.observe('postnl:domModified', recalculteOscScrollbar);
+                //]]>
+            </script>
         </div>
     </div>
     <?php echo $this->getChildHtml('postnl.osc.add.location') ?>
     <?php echo $this->getChildHtml('postnl.add.phonenumber') ?>
 <?php endif; ?>
 <script type="text/javascript">
-//<![CDATA[
-var deliveryOptions;
-var searchField = $('search_field');
+    //<![CDATA[
+    var deliveryOptions;
+    var searchField = $('search_field');
 
-var baseUrl = '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/locations'); ?>';
-var images = [
-    'albertheijn', 'bruna', 'c1000', 'coop', 'default', 'emte', 'jumbo', 'plus', 'primera', 'readshop', 'spar',
-    'staples', 'gamma', 'karwei'
-];
+    var baseUrl = '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/locations'); ?>';
+    var images = [
+        'albertheijn', 'bruna', 'c1000', 'coop', 'default', 'emte', 'jumbo', 'plus', 'primera', 'readshop', 'spar',
+        'staples', 'gamma', 'karwei'
+    ];
 
-var postcode;
-var housenumber;
-var fullAddress = "<?php echo implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>";
+    var postcode;
+    var housenumber;
+    var fullAddress = "<?php echo implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>";
 
-/**
- * Register OSC specific observers.
- */
-registerOscObservers();
+    /**
+     * Register OSC specific observers.
+     */
+    registerOscObservers();
 
-<?php if ($_showOptions): ?>
-    try {
-        var billingOrShipping = $('billing:use_for_shipping_yes').checked ? 'billing' : 'shipping';
-
-        postcode = getPostnlPostcode(billingOrShipping);
-        housenumber = getPostnlHousenumber(billingOrShipping);
-
-
-        /**
-         * Preload an array of images.
-         */
-        preloadImages(images);
-
-        /**
-         * Start the delivery options script.
-         */
-        startDeliveryOptions(postcode, housenumber, fullAddress);
-
-        /**
-         * Hack to prevent OSC from spamming a set_methods_seperate AJAX call every time the address search field is
-         * clicked.
-         */
-        searchField.stopObserving('click');
-        searchField.observe('click', function() {
-            searchField.stopObserving('click');
-        });
-    } catch(e) {
-        console.error(e);
-    }
-<?php endif; ?>
-
-/**
- * Start the elivery options script.
- *
- * @param {string} postcode
- * @param {int}    housenumber
- * @param {string} fullAddress
- */
-function startDeliveryOptions(postcode, housenumber, fullAddress) {
-    var options;
-    var params;
-
-    params = {
-        saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
-        timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
-        locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
-        locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
-        saveCostsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/saveOptionCosts', array('_secure' => true)) ?>',
-        savePhoneNumberUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/savePhoneNumber', array('_secure' => true)) ?>',
-        postcode           : postcode,
-        housenumber        : housenumber,
-        deliveryDate       : '<?php echo $_deliveryDate; ?>',
-        imageBaseUrl       : baseUrl,
-        fullAddress        : fullAddress
-    };
-
-    options = {
-        isOsc                  : true,
-        oscSaveButton          : 'close_options_popup_btn',
-        oscOptionsPopup        : 'postnl_delivery_options',
-        eveningFee             : <?php echo $this->getFee('evening'); ?>,
-        expressFee             : <?php echo $this->getFee('express'); ?>,
-        eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
-        expressFeeText         : '<?php echo $this->getFeeText('express'); ?>',
-        allowPg                : <?php echo $this->canUsePakjeGemak()        ? 'true' : 'false'; ?>,
-        allowPge               : <?php echo $this->canUsePakjeGemakExpress() ? 'true' : 'false'; ?>,
-        allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
-        allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
-        allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
-        allowStreetview        : <?php echo $this->canUseStreetview() ? 'true' : 'false'; ?>,
-        optionsContainer       : 'osc_scrollbar_container'
-    };
-
-
-    try {
-        deliveryOptions = new PostnlDeliveryOptions(params, options);
-    } catch(e) {
-        console.log(e);
-    }
-
-    if (typeof deliveryOptions != 'undefined') {
+    <?php if ($_showOptions): ?>
         try {
-            deliveryOptions.showOptions();
+            var billingOrShipping = $('billing:use_for_shipping_yes').checked ? 'billing' : 'shipping';
+
+            postcode = getPostnlPostcode(billingOrShipping);
+            housenumber = getPostnlHousenumber(billingOrShipping);
+
+
+            /**
+             * Preload an array of images.
+             */
+            preloadImages(images);
+
+            /**
+             * Start the delivery options script.
+             */
+            startDeliveryOptions(postcode, housenumber, fullAddress);
+
+            /**
+             * Hack to prevent OSC from spamming a set_methods_seperate AJAX call every time the address search field is
+             * clicked.
+             */
+            searchField.stopObserving('click');
+            searchField.observe('click', function() {
+                searchField.stopObserving('click');
+            });
+        } catch(e) {
+            console.error(e);
+        }
+    <?php endif; ?>
+
+    /**
+     * Start the elivery options script.
+     *
+     * @param {string} postcode
+     * @param {int}    housenumber
+     * @param {string} fullAddress
+     */
+    function startDeliveryOptions(postcode, housenumber, fullAddress) {
+        var options;
+        var params;
+
+        params = {
+            saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
+            timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
+            locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
+            locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
+            saveCostsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/saveOptionCosts', array('_secure' => true)) ?>',
+            savePhoneNumberUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/savePhoneNumber', array('_secure' => true)) ?>',
+            postcode           : postcode,
+            housenumber        : housenumber,
+            deliveryDate       : '<?php echo $_deliveryDate; ?>',
+            imageBaseUrl       : baseUrl,
+            fullAddress        : fullAddress
+        };
+
+        options = {
+            isOsc                  : true,
+            oscSaveButton          : 'close_options_popup_btn',
+            oscOptionsPopup        : 'postnl_delivery_options',
+            eveningFee             : <?php echo $this->getFee('evening'); ?>,
+            expressFee             : <?php echo $this->getFee('express'); ?>,
+            eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
+            expressFeeText         : '<?php echo $this->getFeeText('express'); ?>',
+            allowPg                : <?php echo $this->canUsePakjeGemak()        ? 'true' : 'false'; ?>,
+            allowPge               : <?php echo $this->canUsePakjeGemakExpress() ? 'true' : 'false'; ?>,
+            allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
+            allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
+            allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
+            allowStreetview        : <?php echo $this->canUseStreetview() ? 'true' : 'false'; ?>,
+            optionsContainer       : 'osc_scrollbar_container'
+        };
+
+
+        try {
+            deliveryOptions = new PostnlDeliveryOptions(params, options);
         } catch(e) {
             console.log(e);
+        }
+
+        if (typeof deliveryOptions != 'undefined') {
+            try {
+                deliveryOptions.showOptions();
+            } catch(e) {
+                console.log(e);
+                $('initial_loader').hide();
+                $('osc_scrollbar_container').show();
+                $('postnl_pickup').hide();
+                $('add_moment_link').hide();
+                $('osc_initial_loader').hide();
+            }
+        } else {
             $('initial_loader').hide();
             $('osc_scrollbar_container').show();
             $('postnl_pickup').hide();
             $('add_moment_link').hide();
+            $('osc_initial_loader').hide();
+        }
+
+        if (typeof initCufon != 'undefined' && !options.disableCufon) {
+            initCufon();
         }
     }
 
-    if (typeof initCufon != 'undefined') {
-        initCufon();
-    }
-}
+    /**
+     * Preload images.
+     *
+     * @param {Array} images
+     */
+    function preloadImages(images) {
+        var loadedImages = [];
 
-/**
- * Preload images.
- *
- * @param {Array} images
- */
-function preloadImages(images) {
-    var loadedImages = [];
+        for (var i = 0, o = images.length; i < images.length; i++, o++) {
+            loadedImages[i] = new Image();
+            loadedImages[i].src = baseUrl + '/drp_' + images[i] + '.png';
 
-    for (var i = 0, o = images.length; i < images.length; i++, o++) {
-        loadedImages[i] = new Image();
-        loadedImages[i].src = baseUrl + '/drp_' + images[i] + '.png';
-
-        loadedImages[o] = new Image();
-        loadedImages[o].src = baseUrl + '/crc_' + images[i] + '.png';
-    }
-}
-
-/**
- * @param {string} billingOrShipping
- *
- * @returns {string}
- */
-function getPostnlPostcode(billingOrShipping) {
-    var postcode = '<?php echo $_postcode; ?>';
-
-    if (!postcode
-        || ($('billing-address-select').getValue() == ''
-            && postcode != $(billingOrShipping + ':postcode').getValue()
-        )
-    ) {
-        var postcodeFieldValue = postcode = $(billingOrShipping + ':postcode').getValue()
-
-        if (postcodeFieldValue) {
-            postcode = postcodeFieldValue;
+            loadedImages[o] = new Image();
+            loadedImages[o].src = baseUrl + '/crc_' + images[i] + '.png';
         }
     }
 
-    return postcode;
-}
+    /**
+     * @param {string} billingOrShipping
+     *
+     * @returns {string}
+     */
+    function getPostnlPostcode(billingOrShipping) {
+        var postcode = '<?php echo $_postcode; ?>';
 
-/**
- * @param {string} billingOrShipping
- *
- * @returns {string|int}
- */
-function getPostnlHousenumber(billingOrShipping) {
-    var housenumber = '<?php echo $_housenumber; ?>';
+        if (!postcode
+            || ($('billing-address-select').getValue() == ''
+                && postcode != $(billingOrShipping + ':postcode').getValue()
+            )
+        ) {
+            var postcodeFieldValue = $(billingOrShipping + ':postcode').getValue();
 
-    if (!housenumber
-        || ($('billing-address-select').getValue() == ''
-            && housenumber != $(billingOrShipping + ':street2').getValue()
-        )
-    ) {
-        var housenumberFieldValue = $(billingOrShipping + ':street2').getValue();
-
-        if (housenumberFieldValue) {
-            housenumber = housenumberFieldValue;
-        }
-    }
-
-    if (!housenumber) {
-        var streetname = $(billingOrShipping + ':street1').getValue();
-        var housenumberRegex = /([0-9]+)/;
-
-        var housenumberArray = streetname.match(housenumberRegex);
-        if (!housenumberArray || housenumberArray.length < 1) {
-            throw "Unable to parse housenumber";
+            if (postcodeFieldValue) {
+                postcode = postcodeFieldValue;
+            }
         }
 
-        housenumber = housenumberArray[0];
+        return postcode;
     }
 
-    return housenumber;
-}
+    /**
+     * @param {string} billingOrShipping
+     *
+     * @returns {string|int}
+     */
+    function getPostnlHousenumber(billingOrShipping) {
+        var housenumber = '<?php echo $_housenumber; ?>';
 
-/**
- * Register a bunch of OSC specific observers
- */
-function registerOscObservers() {
-    var addMomentLink            = $('add_moment_link');
-    var closeOptionsPopup        = $('close_options_popup');
-    var closeOptionsPopupBtn     = $('close_options_popup_btn');
-    var postnlDeliveryOptionsDiv = $('postnl_delivery_options');
+        if (!housenumber
+            || ($('billing-address-select').getValue() == ''
+                && housenumber != $(billingOrShipping + ':street2').getValue()
+            )
+        ) {
+            var housenumberFieldValue = $(billingOrShipping + ':street2').getValue();
 
-    var url_save_billing = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure'=>true)); ?>';
-    var url_set_methods  = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure'=>true)); ?>';
+            if (housenumberFieldValue) {
+                housenumber = housenumberFieldValue;
+            }
+        }
 
-    var fieldsToObserve = [
-        'virtual:billing:street1',
-        'billing:street1',
-        'virtual:shipping:street1',
-        'shipping:street1',
-        'virtual:billing:street2',
-        'billing:street2',
-        'virtual:shipping:street2',
-        'shipping:street2'
-    ];
+        if (!housenumber) {
+            var streetname = $(billingOrShipping + ':street1').getValue();
+            var housenumberRegex = /([0-9]+)/;
 
-    if (addMomentLink && postnlDeliveryOptionsDiv) {
-        addMomentLink.observe('click', function(event) {
-            event.stop();
+            var housenumberArray = streetname.match(housenumberRegex);
+            if (!housenumberArray || housenumberArray.length < 1) {
+                throw "Unable to parse housenumber";
+            }
 
-            postnlDeliveryOptionsDiv.show();
+            housenumber = housenumberArray[0];
+        }
+
+        return housenumber;
+    }
+
+    /**
+     * Register a bunch of OSC specific observers
+     */
+    function registerOscObservers() {
+        var addMomentLink            = $('add_moment_link');
+        var closeOptionsPopup        = $('close_options_popup');
+        var postnlDeliveryOptionsDiv = $('postnl_delivery_options');
+
+        var url_save_billing = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure'=>true)); ?>';
+        var url_set_methods  = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure'=>true)); ?>';
+
+        var fieldsToObserve = [
+            'virtual:billing:street1',
+            'billing:street1',
+            'virtual:shipping:street1',
+            'shipping:street1',
+            'virtual:billing:street2',
+            'billing:street2',
+            'virtual:shipping:street2',
+            'shipping:street2'
+        ];
+
+        if (addMomentLink && postnlDeliveryOptionsDiv) {
+            addMomentLink.observe('click', function(event) {
+                event.stop();
+
+                var body = $$('body')[0];
+                if (!body.hasClassName('no-scroll')) {
+                    body.addClassName('no-scroll');
+                }
+                postnlDeliveryOptionsDiv.show();
+            });
+        }
+
+        if (closeOptionsPopup && postnlDeliveryOptionsDiv) {
+            closeOptionsPopup.observe('click', function(event) {
+                event.stop();
+
+                var body = $$('body')[0];
+                if (body.hasClassName('no-scroll')) {
+                    body.removeClassName('no-scroll');
+                }
+                postnlDeliveryOptionsDiv.hide();
+            });
+        }
+
+        fieldsToObserve.each(function(field) {
+            var element = $(field);
+            if (!element) {
+                return;
+            }
+
+            element.observe('change', function() {
+                if (deliveryOptions && deliveryOptions.timeframeRequest) {
+                    deliveryOptions.timeframeRequest.transport.abort();
+                }
+
+                get_save_billing_function(url_save_billing, url_set_methods, true)();
+            });
         });
-    }
 
-    if (closeOptionsPopup && postnlDeliveryOptionsDiv) {
-        closeOptionsPopup.observe('click', function(event) {
-            event.stop();
-
-            postnlDeliveryOptionsDiv.hide();
+        document.stopObserving('postnl:loadingFinished');
+        document.observe('postnl:loadingFinished', function() {
+            $('osc_initial_loader').hide();
+            $('postnl_add_moment').show();
         });
-    }
 
-    if (closeOptionsPopupBtn && postnlDeliveryOptionsDiv) {
-        closeOptionsPopupBtn.observe('click', function(event) {
-            event.stop();
-
-            postnlDeliveryOptionsDiv.hide();
+        document.stopObserving('postnl:postcodeCheckStart');
+        document.observe('postnl:postcodeCheckStart', function() {
+            $$('div.onestepcheckout-shipping-method-block')[0].update('<div class="loading-ajax">&nbsp;</div>');
         });
-    }
 
-    fieldsToObserve.each(function(field) {
-        var element = $(field);
-        if (!element) {
-            return;
-        }
-
-        element.observe('change', function() {
+        document.stopObserving('postnl:postcodeCheckSuccess');
+        document.observe('postnl:postcodeCheckSuccess', function() {
             if (deliveryOptions && deliveryOptions.timeframeRequest) {
                 deliveryOptions.timeframeRequest.transport.abort();
             }
 
             get_save_billing_function(url_save_billing, url_set_methods, true)();
         });
-    });
 
-    document.stopObserving('postnl:postcodeCheckStart');
-    document.observe('postnl:postcodeCheckStart', function() {
-        $$('div.onestepcheckout-shipping-method-block')[0].update('<div class="loading-ajax">&nbsp;</div>');
-    });
+        document.stopObserving('postnl:saveCostsStart');
+        document.observe('postnl:saveCostsStart', function() {
+            $$('div.onestepcheckout-summary')[0].update('<div class="loading-ajax">&nbsp;</div>');
+        });
 
-    document.stopObserving('postnl:postcodeCheckSuccess');
-    document.observe('postnl:postcodeCheckSuccess', function() {
-        if (deliveryOptions && deliveryOptions.timeframeRequest) {
-            deliveryOptions.timeframeRequest.transport.abort();
+        document.stopObserving('postnl:costsSaved');
+        document.observe('postnl:costsSaved', function() {
+            get_separate_save_methods_function(url_set_methods, false)();
+        });
+
+        document.stopObserving('postnl:selectOptionSaveStart');
+        document.observe('postnl:selectOptionSaveStart', function() {
+            $$('div.onestepcheckout-summary')[0].update('<div class="loading-ajax">&nbsp;</div>');
+        });
+
+        document.stopObserving('postnl:selectOptionSaved');
+        document.observe('postnl:selectOptionSaved', function() {
+            get_separate_save_methods_function(url_set_methods, false)();
+        });
+    }
+
+    /**
+     * Rewrite base OSC function. This allows us to cancel in-progress save billing requests if another request is
+     * fired before the previous one has finished. This prevents all sorts of problems.
+     */
+    var saveBillingRequest = false;
+    get_save_billing_function = function(url, set_methods_url, update_payments, triggered)
+    {
+        if(typeof update_payments == 'undefined')    {
+            var update_payments = false;
         }
 
-        get_save_billing_function(url_save_billing, url_set_methods, true)();
-    });
-
-    document.stopObserving('postnl:saveCostsStart');
-    document.observe('postnl:saveCostsStart', function() {
-        $$('div.onestepcheckout-summary')[0].update('<div class="loading-ajax">&nbsp;</div>');
-    });
-
-    document.stopObserving('postnl:costsSaved');
-    document.observe('postnl:costsSaved', function() {
-        get_separate_save_methods_function(url_set_methods, false)();
-    });
-
-    document.stopObserving('postnl:selectOptionSaveStart');
-    document.observe('postnl:selectOptionSaveStart', function() {
-        $$('div.onestepcheckout-summary')[0].update('<div class="loading-ajax">&nbsp;</div>');
-    });
-
-    document.stopObserving('postnl:selectOptionSaved');
-    document.observe('postnl:selectOptionSaved', function() {
-        get_separate_save_methods_function(url_set_methods, false)();
-    });
-}
-
-/**
- * Rewrite base OSC function. This allows us to cancel in-progress save billing requests if another request is
- * fired before the previous one has finished. This prevents all sorts of problems.
- */
-var saveBillingRequest = false;
-get_save_billing_function = function(url, set_methods_url, update_payments, triggered)
-{
-    if(typeof update_payments == 'undefined')    {
-        var update_payments = false;
-    }
-
-    if(typeof triggered == 'undefined')    {
-        var triggered = true;
-    }
-
-    if(!triggered){
-        return function(){return;};
-    }
-
-    return function()    {
-        if (saveBillingRequest) {
-            saveBillingRequest.transport.abort();
+        if(typeof triggered == 'undefined')    {
+            var triggered = true;
         }
 
-        var form = $('onestepcheckout-form');
-        var items = exclude_unchecked_checkboxes($$('input[name^=billing]').concat($$('select[name^=billing]')));
-        var names = items.pluck('name');
-        var values = items.pluck('value');
-        var parameters = {
-            shipping_method: $RF(form, 'shipping_method')
-        };
+        if(!triggered){
+            return function(){return;};
+        }
 
-        var street_count = 0;
-        for(var x=0; x < names.length; x++)    {
-            if(names[x] != 'payment[method]')    {
-
-                var current_name = names[x];
-
-                if(names[x] == 'billing[street][]')    {
-                    current_name = 'billing[street][' + street_count + ']';
-                    street_count = street_count + 1;
-                }
-
-                parameters[current_name] = values[x];
+        return function()    {
+            if (saveBillingRequest) {
+                saveBillingRequest.transport.abort();
             }
-        }
 
-        var use_for_shipping = $('billing:use_for_shipping_yes');
+            var form = $('onestepcheckout-form');
+            var items = exclude_unchecked_checkboxes($$('input[name^=billing]').concat($$('select[name^=billing]')));
+            var names = items.pluck('name');
+            var values = items.pluck('value');
+            var parameters = {
+                shipping_method: $RF(form, 'shipping_method')
+            };
 
-        if(use_for_shipping && use_for_shipping.getValue() != '1')    {
-            var items = $$('input[name^=shipping]').concat($$('select[name^=shipping]'));
-            var shipping_names = items.pluck('name');
-            var shipping_values = items.pluck('value');
-            var shipping_parameters = {};
             var street_count = 0;
+            for(var x=0; x < names.length; x++)    {
+                if(names[x] != 'payment[method]')    {
 
-            for(var x=0; x < shipping_names.length; x++)    {
-                if(shipping_names[x] != 'shipping_method')    {
-                    var current_name = shipping_names[x];
-                    if(shipping_names[x] == 'shipping[street][]')    {
-                        current_name = 'shipping[street][' + street_count + ']';
+                    var current_name = names[x];
+
+                    if(names[x] == 'billing[street][]')    {
+                        current_name = 'billing[street][' + street_count + ']';
                         street_count = street_count + 1;
                     }
 
-                    parameters[current_name] = shipping_values[x];
+                    parameters[current_name] = values[x];
                 }
             }
-        }
 
-        var shipment_methods = $$('div.onestepcheckout-shipping-method-block')[0];
-        var shipment_methods_found = false;
+            var use_for_shipping = $('billing:use_for_shipping_yes');
 
-        if(typeof shipment_methods != 'undefined') {
-            shipment_methods_found = true;
-        }
+            if(use_for_shipping && use_for_shipping.getValue() != '1')    {
+                var items = $$('input[name^=shipping]').concat($$('select[name^=shipping]'));
+                var shipping_names = items.pluck('name');
+                var shipping_values = items.pluck('value');
+                var shipping_parameters = {};
+                var street_count = 0;
 
-        if(shipment_methods_found)  {
-            shipment_methods.update('<div class="loading-ajax">&nbsp;</div>');
-        }
+                for(var x=0; x < shipping_names.length; x++)    {
+                    if(shipping_names[x] != 'shipping_method')    {
+                        var current_name = shipping_names[x];
+                        if(shipping_names[x] == 'shipping[street][]')    {
+                            current_name = 'shipping[street][' + street_count + ']';
+                            street_count = street_count + 1;
+                        }
 
-        var payment_method = $RF(form, 'payment[method]');
-        parameters['payment_method'] = payment_method;
-        parameters['payment[method]'] = payment_method;
-
-        if(update_payments){
-            var payment_methods = $$('div.payment-methods')[0];
-            payment_methods.update('<div class="loading-ajax">&nbsp;</div>');
-        }
-
-        var totals = get_totals_element();
-        totals.update('<div class="loading-ajax">&nbsp;</div>');
-
-        saveBillingRequest = new Ajax.Request(url, {
-            method: 'post',
-            onSuccess: function(transport)    {
-                if(transport.status == 200)    {
-
-                    var data = transport.responseText.evalJSON();
-
-                    // Update shipment methods
-                    if(shipment_methods_found)  {
-                        shipment_methods.update(data.shipping_method);
+                        parameters[current_name] = shipping_values[x];
                     }
-
-                    if(update_payments){
-                        payment_methods.replace(data.payment_method);
-                    }
-
-                    totals.update(data.summary);
-
-
                 }
-            },
-            onComplete: function(transport){
-                saveBillingRequest = false;
-                if(transport.status == 200)    {
-                    if(shipment_methods_found)  {
-                        $$('dl.shipment-methods input').invoke('observe', 'click', get_separate_save_methods_function(set_methods_url, update_payments));
-                        $$('dl.shipment-methods input').invoke('observe', 'click', function() {
-                            $$('div.onestepcheckout-shipment-method-error').each(function(item) {
-                                new Effect.Fade(item);
-                            });
-                        });
+            }
+
+            var shipment_methods = $$('div.onestepcheckout-shipping-method-block')[0];
+            var shipment_methods_found = false;
+
+            if(typeof shipment_methods != 'undefined') {
+                shipment_methods_found = true;
+            }
+
+            if(shipment_methods_found)  {
+                shipment_methods.update('<div class="loading-ajax">&nbsp;</div>');
+            }
+
+            var payment_method = $RF(form, 'payment[method]');
+            parameters['payment_method'] = payment_method;
+            parameters['payment[method]'] = payment_method;
+
+            if(update_payments){
+                var payment_methods = $$('div.payment-methods')[0];
+                payment_methods.update('<div class="loading-ajax">&nbsp;</div>');
+            }
+
+            var totals = get_totals_element();
+            totals.update('<div class="loading-ajax">&nbsp;</div>');
+
+            saveBillingRequest = new Ajax.Request(url, {
+                method: 'post',
+                onSuccess: function(transport)    {
+                    if(transport.status == 200)    {
+
+                        var data = transport.responseText.evalJSON();
+
+                        // Update shipment methods
+                        if(shipment_methods_found)  {
+                            shipment_methods.update(data.shipping_method);
+                        }
+
+                        if(update_payments){
+                            payment_methods.replace(data.payment_method);
+                        }
+
+                        totals.update(data.summary);
+
+
                     }
-
-                    if(update_payments){
-                        $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', get_separate_save_methods_function(set_methods_url));
-
-                        $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', function() {
-                            $$('div.onestepcheckout-payment-method-error').each(function(item) {
-                                new Effect.Fade(item);
+                },
+                onComplete: function(transport){
+                    saveBillingRequest = false;
+                    if(transport.status == 200)    {
+                        if(shipment_methods_found)  {
+                            $$('dl.shipment-methods input').invoke('observe', 'click', get_separate_save_methods_function(set_methods_url, update_payments));
+                            $$('dl.shipment-methods input').invoke('observe', 'click', function() {
+                                $$('div.onestepcheckout-shipment-method-error').each(function(item) {
+                                    new Effect.Fade(item);
+                                });
                             });
-                        });
+                        }
 
-                        if($RF(form, 'payment[method]') != null)    {
-                            try    {
-                                var payment_method = $RF(form, 'payment[method]');
-                                $('container_payment_method_' + payment_method).show();
-                                $('payment_form_' + payment_method).show();
-                            } catch(err)    {
+                        if(update_payments){
+                            $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', get_separate_save_methods_function(set_methods_url));
 
+                            $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', function() {
+                                $$('div.onestepcheckout-payment-method-error').each(function(item) {
+                                    new Effect.Fade(item);
+                                });
+                            });
+
+                            if($RF(form, 'payment[method]') != null)    {
+                                try    {
+                                    var payment_method = $RF(form, 'payment[method]');
+                                    $('container_payment_method_' + payment_method).show();
+                                    $('payment_form_' + payment_method).show();
+                                } catch(err)    {
+
+                                }
                             }
                         }
                     }
-                }
-            },
-            parameters: parameters
-        });
-    }
-};
-//]]>
+                },
+                parameters: parameters
+            });
+        }
+    };
+    //]]>
 </script>

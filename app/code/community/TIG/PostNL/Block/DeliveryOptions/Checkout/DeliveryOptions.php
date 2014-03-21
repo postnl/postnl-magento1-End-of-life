@@ -109,13 +109,6 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
         $quote = $this->getQuote();
         $shippingAddress = $quote->getShippingAddress();
 
-        /**
-         * @todo check if this is needed for OSC
-         */
-//        if (!$shippingAddress || $shippingAddress->getSameAsBilling()) {
-//            $shippingAddress = $quote->getBillingAddress();
-//        }
-
         if (
             (!$shippingAddress->getPostcode() || $shippingAddress->getPostcode() == '-')
             && $shippingAddress->getId()
