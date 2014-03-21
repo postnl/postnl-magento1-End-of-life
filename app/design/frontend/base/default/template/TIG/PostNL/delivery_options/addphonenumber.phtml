@@ -94,7 +94,10 @@
             }
 
             shippingMethod.save();
-        } else if (!Validation.validate(phoneInputField)) {
+        } else if (Validation.validate(phoneInputField)) {
+            deliveryOptions.setPaPhoneCheckPassed(true);
+            deliveryOptions.saveOscOptions();
+        } else {
             return;
         }
 
