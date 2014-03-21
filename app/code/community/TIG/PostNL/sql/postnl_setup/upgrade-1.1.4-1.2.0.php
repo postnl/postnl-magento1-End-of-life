@@ -47,7 +47,7 @@ $installer->startSetup();
 $conn = $installer->getConnection();
 
 /***********************************************************************************************************************
- * POSTNL ORDER
+ * POSTNL SHIPMENT
  **********************************************************************************************************************/
 
 $conn->addColumn($installer->getTable('postnl_core/shipment'),
@@ -56,9 +56,24 @@ $conn->addColumn($installer->getTable('postnl_core/shipment'),
         'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
         'nullable' => false,
         'default'  => 0,
-        'comment'  => 'Is Parcelware Exported'
+        'comment'  => 'Is Parcelware Exported',
+        'after'    => 'labels_printed',
     )
 );
+
+$conn->addColumn($installer->getTable('postnl_core/shipment'),
+    'delivery_date',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
+        'nullable' => true,
+        'comment'  => 'Delivery Date',
+        'after'    => 'confirm_date',
+    )
+);
+
+/***********************************************************************************************************************
+ * POSTNL ORDER
+ **********************************************************************************************************************/
 
 $conn->addColumn($installer->getTable('postnl_checkout/order'),
     'type',
@@ -66,7 +81,8 @@ $conn->addColumn($installer->getTable('postnl_checkout/order'),
         'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
         'nullable' => true,
         'default'  => null,
-        'comment'  => 'Type'
+        'comment'  => 'Type',
+        'after'    => 'quote_id',
     )
 );
 
@@ -76,7 +92,8 @@ $conn->addColumn($installer->getTable('postnl_checkout/order'),
         'type'     => Varien_Db_Ddl_Table::TYPE_FLOAT,
         'nullable' => true,
         'default'  => 0,
-        'comment'  => 'Shipment Costs'
+        'comment'  => 'Shipment Costs',
+        'after'    => 'product_code',
     )
 );
 
@@ -86,20 +103,8 @@ $conn->addColumn($installer->getTable('postnl_checkout/order'),
         'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
         'nullable' => true,
         'default'  => null,
-        'comment'  => 'Mobile Phone Number'
-    )
-);
-
-/***********************************************************************************************************************
- * POSTNL SHIPMENT
- **********************************************************************************************************************/
-
-$conn->addColumn($installer->getTable('postnl_core/shipment'),
-    'delivery_date',
-    array(
-        'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
-        'nullable' => true,
-        'comment'  => 'Delivery Date'
+        'comment'  => 'Mobile Phone Number',
+        'after'    => 'is_pakje_gemak',
     )
 );
 
