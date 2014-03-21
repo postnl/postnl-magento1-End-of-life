@@ -232,8 +232,7 @@
             allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
             allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
             allowStreetview        : <?php echo $this->canUseStreetview() ? 'true' : 'false'; ?>,
-            optionsContainer       : 'osc_scrollbar_container',
-            disableCufon           : true
+            optionsContainer       : 'osc_scrollbar_container'
         };
 
 
@@ -370,7 +369,7 @@
 
                 var body = $$('body')[0];
                 if ($$(!body.hasClassName('no-scroll'))) {
-                    $$(body.addClassName('no-scroll'));
+                    body.addClassName('no-scroll');
                 }
                 postnlDeliveryOptionsDiv.show();
             });
@@ -382,7 +381,7 @@
 
                 var body = $$('body')[0];
                 if ($$(body.hasClassName('no-scroll'))) {
-                    $$(body.removeClassName('no-scroll'));
+                    body.removeClassName('no-scroll');
                 }
                 postnlDeliveryOptionsDiv.hide();
             });

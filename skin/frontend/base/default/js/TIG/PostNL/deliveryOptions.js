@@ -1146,8 +1146,8 @@ PostnlDeliveryOptions.prototype = {
         this.saveSelectedOption();
 
         var body = $$('body')[0];
-        if ($$(body.hasClassName('no-scroll'))) {
-            $$(body.removeClassName('no-scroll'));
+        if (body.hasClassName('no-scroll')) {
+            body.removeClassName('no-scroll');
         }
 
         $('postnl_delivery_options').hide();
@@ -1321,8 +1321,8 @@ PostnlDeliveryOptions.prototype = {
         }
 
         var body = $$('body')[0];
-        if ($$(!body.hasClassName('no-scroll'))) {
-            $$(body.addClassName('no-scroll'));
+        if (!body.hasClassName('no-scroll')) {
+            body.addClassName('no-scroll');
         }
 
         phoneWindow.show();
@@ -1339,8 +1339,8 @@ PostnlDeliveryOptions.prototype = {
         }
 
         var body = $$('body')[0];
-        if ($$(body.hasClassName('no-scroll'))) {
-            $$(body.removeClassName('no-scroll'));
+        if (body.hasClassName('no-scroll')) {
+            body.removeClassName('no-scroll');
         }
 
         phoneWindow.hide();
