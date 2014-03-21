@@ -1145,6 +1145,11 @@ PostnlDeliveryOptions.prototype = {
 
         this.saveSelectedOption();
 
+        var body = $$('body')[0];
+        if ($$(body.hasClassName('no-scroll'))) {
+            $$(body.removeClassName('no-scroll'));
+        }
+
         $('postnl_delivery_options').hide();
 
         document.fire('postnl:domModified');
@@ -1315,7 +1320,10 @@ PostnlDeliveryOptions.prototype = {
             return this;
         }
 
-        $$('body')[0].addClassName('noscroll');
+        var body = $$('body')[0];
+        if ($$(!body.hasClassName('no-scroll'))) {
+            $$(body.addClassName('no-scroll'));
+        }
 
         phoneWindow.show();
         return this;
@@ -1330,7 +1338,10 @@ PostnlDeliveryOptions.prototype = {
             return this;
         }
 
-        $$('body')[0].removeClassName('noscroll');
+        var body = $$('body')[0];
+        if ($$(body.hasClassName('no-scroll'))) {
+            $$(body.removeClassName('no-scroll'));
+        }
 
         phoneWindow.hide();
         return this;
