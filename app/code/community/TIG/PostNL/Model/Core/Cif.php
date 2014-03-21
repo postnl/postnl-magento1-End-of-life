@@ -484,8 +484,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Confirms the choen shipment without generating labels
      *
-     * @param        $postnlShipment
-     * @param string $barcode
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * @param string                         $barcode
      *
      * @param bool   $mainBarcode
      * @param bool   $shipmentNumber
@@ -494,7 +494,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @return array
      *
      */
-    public function confirmShipment($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false)
+    public function confirmShipment(TIG_PostNL_Model_Core_Shipment $postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false)
     {
         $shipment = $postnlShipment->getShipment();
 

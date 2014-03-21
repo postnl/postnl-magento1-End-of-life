@@ -213,6 +213,9 @@ PostnlPostcodecheck = new Class.create({
                 housenumber : housenumber,
                 isAjax      : true
             },
+            onCreate : function() {
+                document.fire('postnl:postcodeCheckStart');
+            },
             onSuccess: function(response) {
                 if (response.responseText == 'error') {
                     $('postnl_address_error_' + addressType).show();

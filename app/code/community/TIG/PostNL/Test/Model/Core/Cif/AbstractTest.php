@@ -1,14 +1,20 @@
 <?php
 class TIG_PostNL_Test_Model_Core_Cif_AbstractTest extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
 {
-    protected $_class = 'TIG_PostNL_Model_Core_Cif_Abstract_Fake';
-
     /**
      * @return TIG_PostNL_Model_Core_Cif_Abstract_Fake
      */
     protected function _getInstance()
     {
-        return new $this->_class;
+        return $this->getMockForAbstractClass(
+            'TIG_PostNL_Model_Core_Cif_Abstract',
+            array(),
+            '',
+            true,
+            true,
+            true,
+            array('someNonExistingMethod')
+        );
     }
 
     /**
@@ -221,9 +227,4 @@ class TIG_PostNL_Test_Model_Core_Cif_AbstractTest extends TIG_PostNL_Test_Framew
         $instance = $this->_getInstance();
         $instance->getSoapClient('nonExistingWsdlType');
     }
-}
-
-class TIG_PostNL_Model_Core_Cif_Abstract_Fake extends TIG_PostNL_Model_Core_Cif_Abstract
-{
-
 }

@@ -117,18 +117,38 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
     }
 
     /**
-     * Checks if a PostNL Order is associated with the current quote. If so, deactivate it.
+     * Checks if a PostNL Order is associated with the current quote. If so, deactivate it. Then recalculate the quote
+     * totals so the shipping costs are updated correctly.
      *
      * @return TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable
      */
     protected function _resetPostnlOrder()
     {
         $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        /**
+         * Remove shipment costs from the PostNL order associated with the current quote.
+         *
+         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         */
         $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
         if ($postnlOrder->getId()) {
             $postnlOrder->setIsActive(false)
+                        ->setShipmentCosts(0)
                         ->save();
         }
+
+        $shippingAddress = $quote->getShippingAddress();
+
+        /**
+         * Get the new shipping costs.
+         */
+        $shippingAddress->setCollectShippingRates(true);
+
+        $quote->collectTotals()
+              ->save();
+
+        $shippingAddress->setCollectShippingRates(true);
 
         return $this;
     }

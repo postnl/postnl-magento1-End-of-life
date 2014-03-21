@@ -98,15 +98,46 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
     /**
      * @test
      */
+    public function saveSelectedOptionActionShouldBeCallable()
+    {
+        $instance = $this->_getInstance();
+        $isCallable = is_callable((array($instance, 'saveSelectedOptionAction')));
+
+        $this->assertTrue($isCallable);
+    }
+
+    /**
+     * @test
+     *
+     * @depends saveSelectedOptionActionShouldBeCallable
+     */
     public function shouldRejectSaveSelectedOptionActionWithoutAjax()
     {
         $controller = $this->_getInstance();
+        $controller->setCanUseDeliveryOptions(true);
         $controller->saveSelectedOptionAction();
 
         $body = Mage::app()->getResponse()->getBody();
-        $dataMissing = strpos($body, 'missing_data');
+        $dataMissing = strpos($body, 'not_allowed');
 
         $this->assertTrue($dataMissing !== false, 'Check AJAX fails!');
+    }
+
+    /**
+     * @test
+     *
+     * @depends saveSelectedOptionActionShouldBeCallable
+     */
+    public function shouldRejextSaveSelectedOptionActionIfUnableToUseDeliveryOptions()
+    {
+        $controller = $this->_getInstance(array('isAjax' => true));
+        $controller->setCanUseDeliveryOptions(false);
+        $controller->saveSelectedOptionAction();
+
+        $body = Mage::app()->getResponse()->getBody();
+        $dataMissing = strpos($body, 'not_allowed');
+
+        $this->assertTrue($dataMissing !== false);
     }
 
     /**
@@ -115,6 +146,8 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
      *
      * @test
      *
+     * @depends saveSelectedOptionActionShouldBeCallable
+     *
      * @dataProvider saveSelectedPostDataWithoutAddressProvider
      */
     public function shouldValidatePostDataWithoutAnAddress($data, $success)
@@ -122,18 +155,25 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
         $controller = $this->_getInstance($data);
 
         $mockService = $this->getMock('TIG_PostNL_Model_DeliveryOptions_Service');
+        if ($success) {
+            $mockService->expects($this->once())
+                        ->method('saveDeliveryOption')
+                        ->withAnyParameters()
+                        ->will($this->returnSelf());
+        }
+
         $controller->setService($mockService);
 
         $controller->setCanUseDeliveryOptions(true);
 
-        $controller->saveSelectedOptionAction($data);
+        $controller->saveSelectedOptionAction();
 
         $body = Mage::app()->getResponse()->getBody();
 
         if ($success) {
             $this->assertTrue(strpos($body, 'OK') !== false);
         } else {
-            $this->assertTrue(strpos($body, 'OK') === false);
+            $this->assertTrue(strpos($body, 'invalid_data') !== false);
         }
     }
 
@@ -178,6 +218,286 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
                     'costs' => '1,50',
                 ),
                 false
+            ),
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function saveOptionCostsActionShouldBeCallable()
+    {
+        $instance = $this->_getInstance();
+        $isCallable = is_callable((array($instance, 'saveOptionCostsAction')));
+
+        $this->assertTrue($isCallable);
+    }
+
+    /**
+     * @test
+     *
+     * @depends saveOptionCostsActionShouldBeCallable
+     */
+    public function shouldRejectSaveOptionCostsActionWithoutAjax()
+    {
+        $controller = $this->_getInstance();
+        $controller->setCanUseDeliveryOptions(true);
+        $controller->saveOptionCostsAction();
+
+        $body = Mage::app()->getResponse()->getBody();
+        $dataMissing = strpos($body, 'not_allowed');
+
+        $this->assertTrue($dataMissing !== false, 'Check AJAX fails!');
+    }
+
+    /**
+     * @test
+     *
+     * @depends saveSelectedOptionActionShouldBeCallable
+     */
+    public function shouldRejectSaveOptionCostsActionIfUnableToUseDeliveryOptions()
+    {
+        $controller = $this->_getInstance(array('isAjax' => true));
+        $controller->setCanUseDeliveryOptions(false);
+        $controller->saveOptionCostsAction();
+
+        $body = Mage::app()->getResponse()->getBody();
+        $dataMissing = strpos($body, 'not_allowed');
+
+        $this->assertTrue($dataMissing !== false);
+    }
+
+    /**
+     * @test
+     *
+     * @depends saveOptionCostsActionShouldBeCallable
+     *
+     * @dataProvider saveOptionCostsDataProvider
+     */
+    public function shouldValidatePostDataForSaveOptionCostsAction($data, $success)
+    {
+        $controller = $this->_getInstance($data);
+
+        $mockService = $this->getMock('TIG_PostNL_Model_DeliveryOptions_Service');
+        if ($success) {
+            $mockService->expects($this->once())
+                        ->method('saveOptionCosts')
+                        ->withAnyParameters()
+                        ->will($this->returnSelf());
+        }
+
+        $controller->setService($mockService);
+
+        $controller->setCanUseDeliveryOptions(true);
+
+        $controller->saveOptionCostsAction();
+
+        $body = Mage::app()->getResponse()->getBody();
+
+        if ($success) {
+            $this->assertTrue(strpos($body, 'OK') !== false);
+        } else {
+            $this->assertTrue(strpos($body, 'invalid_data') !== false);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function saveOptionCostsDataProvider()
+    {
+        return array(
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'costs' => 0
+                ),
+                'success' => true
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'costs' => 1
+                ),
+                'success' => true
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'costs' => 1.5
+                ),
+                'success' => true
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'costs' => 3
+                ),
+                'success' => false
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'costs' => 'test'
+                ),
+                'success' => false
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'costs' => '1test'
+                ),
+                'success' => false
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                ),
+                'success' => false
+            ),
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function savePhoneActionShouldBeCallable()
+    {
+        $instance = $this->_getInstance();
+        $isCallable = is_callable((array($instance, 'savePhoneNumberAction')));
+
+        $this->assertTrue($isCallable);
+    }
+
+    /**
+     * @test
+     *
+     * @depends savePhoneActionShouldBeCallable
+     */
+    public function shouldRejectSavePhoneActionWithoutAjax()
+    {
+        $controller = $this->_getInstance();
+        $controller->setCanUseDeliveryOptions(true);
+        $controller->savePhoneNumberAction();
+
+        $body = Mage::app()->getResponse()->getBody();
+        $dataMissing = strpos($body, 'not_allowed');
+
+        $this->assertTrue($dataMissing !== false, 'Check AJAX fails!');
+    }
+
+    /**
+     * @test
+     *
+     * @depends savePhoneActionShouldBeCallable
+     */
+    public function shouldRejectSavePhoneActionIfUnableToUseDeliveryOptions()
+    {
+        $controller = $this->_getInstance(array('isAjax' => true));
+        $controller->setCanUseDeliveryOptions(false);
+        $controller->savePhoneNumberAction();
+
+        $body = Mage::app()->getResponse()->getBody();
+        $dataMissing = strpos($body, 'not_allowed');
+
+        $this->assertTrue($dataMissing !== false);
+    }
+
+    /**
+     * @test
+     *
+     * @depends savePhoneActionShouldBeCallable
+     *
+     * @dataProvider savePhoneDataProvider
+     */
+    public function shouldValidatePostDataForSavePhoneAction($data, $success)
+    {
+        $controller = $this->_getInstance($data);
+
+        $mockService = $this->getMock('TIG_PostNL_Model_DeliveryOptions_Service');
+        if ($success) {
+            $mockService->expects($this->once())
+                        ->method('saveMobilePhoneNumber')
+                        ->withAnyParameters()
+                        ->will($this->returnSelf());
+        }
+
+        $controller->setService($mockService);
+
+        $controller->setCanUseDeliveryOptions(true);
+
+        $controller->savePhoneNumberAction();
+
+        $body = Mage::app()->getResponse()->getBody();
+
+        if ($success) {
+            $this->assertTrue(strpos($body, 'OK') !== false);
+        } else {
+            $this->assertTrue(strpos($body, 'invalid_data') !== false);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function savePhoneDataProvider()
+    {
+        return array(
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'number' => '0612345678'
+                ),
+                true,
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'number' => '0031612345678'
+                ),
+                true,
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'number' => '+31612345678'
+                ),
+                true,
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'number' => '061234567'
+                ),
+                false,
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'number' => '061 234567'
+                ),
+                false,
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'number' => '06-1234567'
+                ),
+                false,
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'number' => ''
+                ),
+                false,
+            ),
+            array(
+                'data' => array(
+                    'isAjax' => true,
+                    'number' => 'test'
+                ),
+                false,
             ),
         );
     }

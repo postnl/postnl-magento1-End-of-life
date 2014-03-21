@@ -742,3 +742,17 @@ TIG_PostNL::The SOAP extension is not installed. PostNL requires the SOAP extens
 TIG_PostNL::The OpenSSL extension is not installed. The PostNL extension requires the OpenSSL extension to secure the communications with the PostNL servers.,De OpenSSL extensie is niet geïnstalleerd. De PostNL extensie heeft de OpenSSL extensie nodig de communicatie met de PostNL servers te beveiligen.
 "TIG_PostNL::The specified method ""%s"" is not callable.","De opgegeven methode ""%s"" is niet aanroepbaar."
 TIG_PostNL::The MCrypt extension is not installed. The PostNL extension requires the MCrypt extension to secure the communications with the PostNL servers.,De MCrypt extensie is niet geïnstalleerd. De PostNL extensie heeft de MCrypt extensie nodig de communicatie met de PostNL servers te beveiligen.
+TIG_PostNL::Confirmation Expired,Voormelding Verlopen
+"TIG_PostNL::Invalid arguments supplied. In order to save a selected option, a type, delivery date and optional extra costs are required.","Ongeldige parameters opgegeven. Om een geselecteerde bezorgoptie op te slaan zijn een type, een bezorgdatum en optioneel extra kosten verplicht."
+TIG_PostNL::Invalid type supplied: %s,Ongeldig type opgegeven: %s
+TIG_PostNL::Invalid extra costs supplied: %s Extra costs must be supplied as a float.,Ongeldige extra kosten opgegeven: %s Extra kosten moeten opgegegevn worden als een float waarde.
+"TIG_PostNL::Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode.","Ongeldig argument opgegeven. Een valide PakjeGemak adres moet minstens een plaatsnaam, een landcode, een straatnaam, een huisnummer en een postcode bevatten."
+TIG_PostNL::Invalid arguments supplied. The 'costs' parameter is required.,Ongeldige parameters opgegeven. De 'costs' parameter is verplicht.
+TIG_PostNL::Please enter a valid Dutch mobile phone number using only digits.,Vul s.v.p. een correct Nederlands mobiel telefoonnummer in met enkel cijfers.
+TIG_PostNL::Phone number for Package Dispenser service,Mobiel telefoonnummer voor pakketautomaat dienst
+TIG_PostNL::We will send you a text message when the package can be collected from the package dispenser.,Wij sturen u een sms bericht wanneer het pakket opgehaald kan worden bij de pakketautomaat.
+TIG_PostNL::We need your mobile phone number in order to do this.,Hiertoe vragen wij u om uw mobiele telefoonnummer.
+TIG_PostNL::Please make sure your phone number is correct.,Controleer goed of dit nummer correct is.
+TIG_PostNL::Continue,Verder
+TIG_PostNL::Please enter a mobile phone number.,Vul s.v.p. een mobiel telefoonnummer in.
+TIG_PostNL::Please number,Telefoonnummer

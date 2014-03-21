@@ -39,7 +39,7 @@
 ?>
 <?php
 /**
- * @var TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions $this
+ * @var TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions $this
  * @var Mage_Sales_Model_Quote_Address $_address
  */
 ?>
@@ -91,6 +91,7 @@
         </div>
     </div>
     <?php echo $this->getChildHtml('postnl.add.location') ?>
+    <?php echo $this->getChildHtml('postnl.add.phonenumber') ?>
 </div>
 <script type="text/javascript">
 //<![CDATA[
@@ -106,13 +107,14 @@
 
     var options;
     var params;
-    var deliveryOptions;
 
     params = {
         saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
         timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
         locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
         locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
+        saveCostsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/saveOptionCosts', array('_secure' => true)) ?>',
+        savePhoneNumberUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/savePhoneNumber', array('_secure' => true)) ?>',
         postcode           : '<?php echo $_postcode; ?>',
         housenumber        : '<?php echo $_housenumber; ?>',
         deliveryDate       : '<?php echo $_deliveryDate; ?>',
@@ -178,7 +180,17 @@
         save: function(){
             if (checkout.loadWaiting!=false) return;
             if (this.validate()) {
-                document.fire('postnl:saveDeliveryOptions');
+                var continueWithSave = false;
+                if (typeof deliveryOptions != 'undefined') {
+                    continueWithSave = deliveryOptions.saveSelectedOption();
+                } else {
+                    continueWithSave = true;
+                }
+
+                if (!continueWithSave) {
+                    return;
+                }
+
                 checkout.setLoadWaiting('shipping-method');
                 var request = new Ajax.Request(
                     this.saveUrl,
@@ -195,4 +207,3 @@
     });
 //]]>
 </script>
-<input id="test" type="text" utocomplete="on">

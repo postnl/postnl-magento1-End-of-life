@@ -43,8 +43,6 @@
     <?php if (count($_shippingRateGroups)=='1' && Mage::getStoreConfig('onestepcheckout/general/hide_shipping_method')):?>
         <dl class="shipment-methods" style="display: none">
             <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
-            <?php $_carrierClassName = strtolower($this->getCarrierName($code)); ?>
-            <?php $_carrierClassName = str_replace(' ', '', $_carrierClassName); ?>
             <dd><?php echo $this->getCarrierName($code) ?></dd>
                 <?php foreach ($_rates as $_rate): ?>
 
@@ -84,8 +82,6 @@
     <?php else: ?>
         <dl class="shipment-methods">
             <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
-                <?php $_carrierClassName = strtolower($this->getCarrierName($code)); ?>
-                <?php $_carrierClassName = str_replace(' ', '', $_carrierClassName); ?>
                 <dd><?php echo $this->getCarrierName($code) ?></dd>
                     <?php foreach ($_rates as $_rate): ?>
 
