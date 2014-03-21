@@ -55,7 +55,8 @@
 <?php endif; ?>
 
 <?php if ($_showOptions): ?>
-    <div id="postnl_add_moment">
+    <div id="osc_initial_loader"><?php echo $this->__('Loading...'); ?></div>
+    <div id="postnl_add_moment" style="display:none;">
         <ul class="option-list">
             <li class="location">
                 <div class="bkg">
@@ -236,7 +237,14 @@ function startDeliveryOptions(postcode, housenumber, fullAddress) {
             $('osc_scrollbar_container').show();
             $('postnl_pickup').hide();
             $('add_moment_link').hide();
+            $('osc_initial_loader').hide();
         }
+    } else {
+        $('initial_loader').hide();
+        $('osc_scrollbar_container').show();
+        $('postnl_pickup').hide();
+        $('add_moment_link').hide();
+        $('osc_initial_loader').hide();
     }
 
     if (typeof initCufon != 'undefined') {
@@ -274,7 +282,7 @@ function getPostnlPostcode(billingOrShipping) {
             && postcode != $(billingOrShipping + ':postcode').getValue()
         )
     ) {
-        var postcodeFieldValue = postcode = $(billingOrShipping + ':postcode').getValue()
+        var postcodeFieldValue = $(billingOrShipping + ':postcode').getValue();
 
         if (postcodeFieldValue) {
             postcode = postcodeFieldValue;
@@ -325,7 +333,6 @@ function getPostnlHousenumber(billingOrShipping) {
 function registerOscObservers() {
     var addMomentLink            = $('add_moment_link');
     var closeOptionsPopup        = $('close_options_popup');
-    var closeOptionsPopupBtn     = $('close_options_popup_btn');
     var postnlDeliveryOptionsDiv = $('postnl_delivery_options');
 
     var url_save_billing = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure'=>true)); ?>';
@@ -358,14 +365,6 @@ function registerOscObservers() {
         });
     }
 
-    if (closeOptionsPopupBtn && postnlDeliveryOptionsDiv) {
-        closeOptionsPopupBtn.observe('click', function(event) {
-            event.stop();
-
-            postnlDeliveryOptionsDiv.hide();
-        });
-    }
-
     fieldsToObserve.each(function(field) {
         var element = $(field);
         if (!element) {
@@ -379,6 +378,12 @@ function registerOscObservers() {
 
             get_save_billing_function(url_save_billing, url_set_methods, true)();
         });
+    });
+
+    document.stopObserving('postnl:loadingFinished');
+    document.observe('postnl:loadingFinished', function() {
+        $('osc_initial_loader').hide();
+        $('postnl_add_moment').show();
     });
 
     document.stopObserving('postnl:postcodeCheckStart');

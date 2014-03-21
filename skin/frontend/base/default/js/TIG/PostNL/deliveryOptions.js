@@ -538,6 +538,8 @@ PostnlDeliveryOptions.prototype = {
      * @returns {PostnlDeliveryOptions}
      */
     showOptions : function() {
+        document.fire('postnl:loadingStart');
+
         this.deliveryOptionsMap = new PostnlDeliveryOptions.Map(this.getFullAddress(), this);
 
         this.getTimeframes(this.getPostcode(), this.getHousenumber(), this.getDeliveryDate());
@@ -1073,6 +1075,8 @@ PostnlDeliveryOptions.prototype = {
         $(this.getOptions().loaderDiv).hide();
         $(this.getOptions().optionsContainer).show();
 
+        document.fire('postnl:loadingFinished');
+
         document.fire('postnl:domModified');
 
         return this;
@@ -1099,24 +1103,29 @@ PostnlDeliveryOptions.prototype = {
     /**
      * Save the selected option for OneStepCheckout.
      *
-     * @returns {PostnlDeliveryOptions}
+     * @returns {boolean}
      */
     saveOscOptions : function() {
         if (!this.getSelectedOption()) {
-            return this;
+            return false;
+        }
+        var selectedType   = this.getSelectedType();
+
+        if (selectedType == 'PA' && !this.getPaPhoneCheckPassed()) {
+            this.openAddPhoneWindow();
+            return false;
         }
 
-        $$('#postnl_add_moment .option').each(function(element) {
-            element.remove();
-        });
-
         var selectedOption = this.getSelectedOption();
-        var selectedType   = this.getSelectedType();
         var isTimeframe    = true;
 
         if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
             isTimeframe = false;
         }
+
+        $$('#postnl_add_moment .option').each(function(element) {
+            element.remove();
+        });
 
         var n = 0;
         $$('#postnl_add_moment .location').each(function(element) {
@@ -1136,9 +1145,11 @@ PostnlDeliveryOptions.prototype = {
 
         this.saveSelectedOption();
 
+        $('postnl_delivery_options').hide();
+
         document.fire('postnl:domModified');
 
-        return this;
+        return true;
     },
 
     /**
@@ -1153,7 +1164,7 @@ PostnlDeliveryOptions.prototype = {
 
         var selectedType   = this.getSelectedType();
 
-        if (selectedType == 'PA' && !this.getPaPhoneCheckPassed()) {
+        if (!this.getOptions().isOsc && selectedType == 'PA' && !this.getPaPhoneCheckPassed()) {
             this.openAddPhoneWindow();
             return false;
         }
@@ -2077,6 +2088,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         this.unselectMarker();
+        this.disableSaveButton();
+
         this.geocode(address, this.panMapToAddress.bind(this, addMarker, getLocations), this.showSearchErrorDiv);
 
         return this;
@@ -2748,6 +2761,8 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
         }
 
+        this.enableSaveButton();
+
         return this;
     },
 
@@ -3111,7 +3126,11 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         if (hasVisibleMarkers === true) {
             $('no_locations_error').hide();
-            this.enableSaveButton();
+            if (this.hasSelectedMarker()) {
+                this.enableSaveButton();
+            } else {
+                this.disableSaveButton();
+            }
         } else {
             $('no_locations_error').show();
             this.disableSaveButton();
@@ -3415,6 +3434,11 @@ PostnlDeliveryOptions.Location = new Class.create({
             deliveryDate.substring(0, 2)
         );
         var availableDeliveryDate = this.getDeliveryDate(date);
+        var paClassName = '';
+
+        if (this.getType().indexOf('PA') > -1) {
+            paClassName = 'pa-location';
+        }
 
         this.counter = 0;
 
@@ -3422,7 +3446,7 @@ PostnlDeliveryOptions.Location = new Class.create({
          * Get the html for this location's header.
          */
         var headerHtml = '';
-        headerHtml += '<li class="location">';
+        headerHtml += '<li class="location ' + paClassName + '">';
         headerHtml += '<div class="bkg">';
         headerHtml += '<div class="bkg">';
         headerHtml += '<div class="content">';
