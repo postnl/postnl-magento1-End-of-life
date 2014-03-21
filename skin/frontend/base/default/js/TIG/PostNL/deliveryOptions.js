@@ -1146,8 +1146,8 @@ PostnlDeliveryOptions.prototype = {
         this.saveSelectedOption();
 
         var body = $$('body')[0];
-        if (body.hasClassName('no-scroll')) {
-            body.removeClassName('no-scroll');
+        if (body.hasClassName('noscroll')) {
+            body.removeClassName('noscroll');
         }
 
         $('postnl_delivery_options').hide();
@@ -1321,11 +1321,15 @@ PostnlDeliveryOptions.prototype = {
         }
 
         var body = $$('body')[0];
-        if (!body.hasClassName('no-scroll')) {
-            body.addClassName('no-scroll');
+        if (!body.hasClassName('noscroll')) {
+            body.addClassName('noscroll');
         }
 
         phoneWindow.show();
+
+        if (typeof validateShippingMethod != 'undefined') {
+            validateShippingMethod();
+        }
         return this;
     },
 
@@ -1339,8 +1343,8 @@ PostnlDeliveryOptions.prototype = {
         }
 
         var body = $$('body')[0];
-        if (body.hasClassName('no-scroll')) {
-            body.removeClassName('no-scroll');
+        if (body.hasClassName('noscroll')) {
+            body.removeClassName('noscroll');
         }
 
         phoneWindow.hide();
@@ -1964,7 +1968,11 @@ PostnlDeliveryOptions.Map = new Class.create({
             event.stop();
         }
 
-        $$('body')[0].addClassName('noscroll');
+        var body = $$('body')[0];
+        if (!this.getOptions().isOsc && !body.hasClassName('noscroll')) {
+            body.addClassName('noscroll');
+        }
+
         this.getAddLocationWindow().show();
 
         /**
@@ -1991,7 +1999,10 @@ PostnlDeliveryOptions.Map = new Class.create({
             event.stop();
         }
 
-        $$('body')[0].removeClassName('noscroll');
+        var body = $$('body')[0];
+        if (!this.getOptions().isOsc && body.hasClassName('noscroll')) {
+            body.removeClassName('noscroll');
+        }
         this.getAddLocationWindow().hide();
 
         return this;
