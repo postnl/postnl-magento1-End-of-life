@@ -84,17 +84,21 @@
     $('add_phone_save').observe('click', function(event) {
         event.stop();
 
+        var phoneInputField = $('add_phone_input');
+
         if (typeof shippingMethod != 'undefined') {
-            if (shippingMethod.validate()) {
+            if (shippingMethod.validator.validate()) {
                 deliveryOptions.setPaPhoneCheckPassed(true);
             } else {
                 return;
             }
 
             shippingMethod.save();
+        } else if (!Validation.validate(phoneInputField)) {
+            return;
         }
 
-        deliveryOptions.savePaPhoneNumber($('add_phone_input').getValue());
+        deliveryOptions.savePaPhoneNumber(phoneInputField.getValue());
 
         deliveryOptions.setPaPhoneCheckPassed(false);
     });
@@ -107,26 +111,32 @@
 
     function validateShippingMethod() {
         var saveButton = $('add_phone_save');
+        var verifyText = $('number_verify_text');
+        var verifyFail = $('number_verify_fail');
 
-        if (typeof shippingMethod != 'undefined') {
-            if (shippingMethod.validate()) {
-                $('number_verify_text').show();
-                $('number_verify_fail').hide();
+        var valid = Validation.validate($('add_phone_input'));
 
-                saveButton.disabled = false;
-                if (saveButton.hasClassName('disabled')) {
-                    saveButton.removeClassName('disabled');
-                }
-            } else {
-                $('number_verify_text').hide();
-                $('number_verify_fail').show();
+        if (valid) {
+            verifyText.show();
+            verifyFail.hide();
 
-                saveButton.disabled = true;
-                if (!saveButton.hasClassName('disabled')) {
-                    saveButton.addClassName('disabled');
-                }
+            saveButton.disabled = false;
+            if (saveButton.hasClassName('disabled')) {
+                saveButton.removeClassName('disabled');
             }
+
+            return this;
         }
+
+        verifyText.hide();
+        verifyFail.show();
+
+        saveButton.disabled = true;
+        if (!saveButton.hasClassName('disabled')) {
+            saveButton.addClassName('disabled');
+        }
+
+        return this;
     }
     //]]>
 </script>

@@ -2691,13 +2691,17 @@ PostnlDeliveryOptions.Map = new Class.create({
             return this;
         }
 
+        if (!marker.location) {
+            return this;
+        }
+
         var element = false;
-        if (marker.location && marker.location.getMapElement()) {
+        if (marker.location.getMapElement()) {
             element = marker.location.getMapElement();
         }
 
         var isPa = false;
-        if (marker.location && marker.location.getType().indexOf('PA') > -1) {
+        if (marker.location.getType().indexOf('PA') > -1) {
             isPa = true;
         }
 
