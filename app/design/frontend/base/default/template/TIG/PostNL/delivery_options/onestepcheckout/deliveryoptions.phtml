@@ -368,7 +368,7 @@
                 event.stop();
 
                 var body = $$('body')[0];
-                if ($$(!body.hasClassName('no-scroll'))) {
+                if (!body.hasClassName('no-scroll')) {
                     body.addClassName('no-scroll');
                 }
                 postnlDeliveryOptionsDiv.show();
@@ -380,7 +380,7 @@
                 event.stop();
 
                 var body = $$('body')[0];
-                if ($$(body.hasClassName('no-scroll'))) {
+                if (body.hasClassName('no-scroll')) {
                     body.removeClassName('no-scroll');
                 }
                 postnlDeliveryOptionsDiv.hide();
