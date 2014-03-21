@@ -35,6 +35,8 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method string getMethodName()
  */
 class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Core_Block_Template
 {
@@ -68,7 +70,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
      *
      * @param Mage_Sales_Model_Quote_Address|null $shippingAddress
      *
-     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions
+     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions
      */
     public function setShippingAddress($shippingAddress)
     {
@@ -172,7 +174,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
      *
      * @param string $deliveryDate
      *
-     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_Onepage_DeliveryOptions
+     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions
      */
     public function setDeliveryDate($deliveryDate)
     {

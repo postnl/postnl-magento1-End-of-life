@@ -124,6 +124,67 @@ class TIG_PostNL_Test_Model_DeliveryOptions_ServiceTest extends TIG_PostNL_Test_
     /**
      * @test
      */
+    public function getConfirmDateShouldBeCallable()
+    {
+        $instance = $this->_getInstance();
+        $isCallable = is_callable(array($instance, 'getConfirmDate'));
+
+        $this->assertTrue($isCallable);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider confirmDateProvider
+     *
+     * @param $deliveryDate
+     * @param $shippingDuration
+     * @param $expected
+     */
+    public function getConfirmDateShouldReturnTheCorrectDate($deliveryDate, $shippingDuration, $expected)
+    {
+        $instance = $this->_getInstance();
+        $instance->setShippingDuration($shippingDuration);
+
+        $confirmDate = $instance->getConfirmDate($deliveryDate);
+
+        $this->assertEquals($expected, $confirmDate);
+    }
+
+    /**
+     * @return array
+     */
+    public function confirmDateProvider()
+    {
+        return array(
+            array(
+                'deliveryDate'     => '2014-04-31',
+                'shippingDuration' => 1,
+                'expected'         => '2014-04-30'
+            ),
+            array(
+                'deliveryDate'     => '2014-04-01',
+                'shippingDuration' => 1,
+                'expected'         => '2014-03-31'
+            ),
+            array(
+                'deliveryDate'     => '2014-04-31',
+                'shippingDuration' => 10,
+                'expected'         => '2014-04-21'
+            ),
+            array(
+                'deliveryDate'     => '2014-01-01',
+                'shippingDuration' => 14,
+                'expected'         => '2013-12-18'
+            ),
+        );
+    }
+
+    /**
+     * @test
+     *
+     * @depends getConfirmDateShouldBeCallable
+     */
     public function saveOptionCostsShouldSetPostnlOrderParameters()
     {
         $instance = $this->_getInstance();
@@ -141,6 +202,8 @@ class TIG_PostNL_Test_Model_DeliveryOptions_ServiceTest extends TIG_PostNL_Test_
                 'setQuoteId',
                 'setIsActive',
                 'setShipmentCosts',
+                'setConfirmDate',
+                'setDeliveryDate',
                 'save'
             )
         );
@@ -157,10 +220,51 @@ class TIG_PostNL_Test_Model_DeliveryOptions_ServiceTest extends TIG_PostNL_Test_
                         ->with(1.5)
                         ->will($this->returnSelf());
         $mockPostnlOrder->expects($this->once())
+                        ->method('setShipmentCosts')
+                        ->with(1.5)
+                        ->will($this->returnSelf());
+        $mockPostnlOrder->expects($this->once())
                         ->method('save')
                         ->will($this->returnSelf());
 
         $instance->setPostnlOrder($mockPostnlOrder);
         $instance->saveOptionCosts(1.5);
+    }
+
+    /**
+     * @test
+     */
+    public function saveMobileNumberShouldBeCallable()
+    {
+        $instance = $this->_getInstance();
+
+        $isCallable = is_callable(array($instance, 'saveMobilePhoneNumber'));
+        $this->assertTrue($isCallable);
+    }
+
+    /**
+     * @test
+     */
+    public function saveMobileNumberShouldSaveTheMobileNumber()
+    {
+        $mockPostnlOrder = $this->getMock(
+            'TIG_PostNL_Model_Checkout_Order',
+            array(
+                'setMobilePhoneNumber',
+                'save'
+            )
+        );
+        $mockPostnlOrder->expects($this->once())
+                        ->method('setMobilePhoneNumber')
+                        ->with('testNumber')
+                        ->will($this->returnSelf());
+        $mockPostnlOrder->expects($this->once())
+                        ->method('save')
+                        ->will($this->returnSelf());
+
+        $instance = $this->_getInstance();
+        $instance->setPostnlOrder($mockPostnlOrder);
+
+        $instance->saveMobilePhoneNumber('testNumber');
     }
 }

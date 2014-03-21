@@ -52,6 +52,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     const HOUSENR_EXT_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
 
     /**
+     * Regular expression to validate dutch mobile phone number.
+     */
+    const MOBILE_PHONE_NUMBER_REGEX = '#^(((\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$#i';
+
+    /**
      * @var null|array
      */
     protected $_validTypes = null;
@@ -207,6 +212,51 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         if (isset($params['isOsc']) && $params['isOsc'] == true) {
             $this->_updateShippingMethod();
+        }
+
+        $this->getResponse()
+             ->setBody('OK');
+
+        return $this;
+    }
+
+    /**
+     * Saves a mobile phonenumber for parceldispenser orders.
+     *
+     * @return TIG_PostNL_DeliveryOptionsController
+     */
+    public function savePhoneNumberAction()
+    {
+        /**
+         * This action may only be called using AJAX requests
+         */
+        if (!$this->getRequest()->isAjax()) {
+            $this->getResponse()
+                 ->setBody('not_allowed');
+
+            return $this;
+        }
+
+        if (!$this->_canUseDeliveryOptions()) {
+            $this->getResponse()
+                 ->setBody('not_allowed');
+
+            return $this;
+        }
+
+        $params = $this->getRequest()->getPost();
+
+        try {
+            $phoneNumber = $this->_getSavePhonePostData($params);
+
+            $this->getService()->saveMobilePhoneNumber($phoneNumber);
+        } catch (Exception $e) {
+            Mage::helper('postnl/deliveryOptions')->logException($e);
+
+            $this->getResponse()
+                 ->setBody('invalid_data');
+
+            return $this;
         }
 
         $this->getResponse()
@@ -496,7 +546,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     protected function _canUseDeliveryOptions()
     {
         if ($this->hasCanUseDeliveryOptions()) {
-            return $this->hasCanUseDeliveryOptions();
+            return $this->getCanUseDeliveryOptions();
         }
 
         $helper = Mage::helper('postnl/deliveryOptions');
@@ -550,6 +600,47 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         }
 
         return (float) $costs;
+    }
+
+    /**
+     * @param $params
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @return string
+     */
+    protected function _getSavePhonePostData($params)
+    {
+        /**
+         * A phone number needs to be specified.
+         */
+        if (!isset($params['number'])) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     "Invalid arguments supplied. The 'number' parameter is required."
+                ),
+                'POSTNL-0143'
+            );
+        }
+
+        $phoneNumber = $params['number'];
+
+        $phoneValidator = new Zend_Validate_Regex(array('pattern' => self::MOBILE_PHONE_NUMBER_REGEX));
+
+        /**
+         * Validate the phone number.
+         */
+        if (!$phoneValidator->isValid($phoneNumber)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid mobile phone number supplied: %s',
+                     $phoneNumber
+                ),
+                'POSTNL-0144'
+            );
+        }
+
+        return $phoneNumber;
     }
 
     /**
