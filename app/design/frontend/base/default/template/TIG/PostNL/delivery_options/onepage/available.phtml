@@ -67,7 +67,7 @@
                    <?php endif ?>
 
                    <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
-                   <?php if (in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
+                   <?php if (in_array($_rate->getCode(), $_postnlShippingMethods) && $this->getChild('postnl.delivery.options')): ?>
                        <div class="postnl-container">
                            <?php echo $this->getChild('postnl.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
                        </div>
