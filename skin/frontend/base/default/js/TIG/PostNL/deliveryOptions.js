@@ -1107,7 +1107,7 @@ PostnlDeliveryOptions.prototype = {
      */
     saveOscOptions : function() {
         if (!this.getSelectedOption()) {
-            return this;
+            return false;
         }
         var selectedType   = this.getSelectedType();
 
@@ -2088,6 +2088,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         this.unselectMarker();
+        this.disableSaveButton();
+
         this.geocode(address, this.panMapToAddress.bind(this, addMarker, getLocations), this.showSearchErrorDiv);
 
         return this;
@@ -2759,6 +2761,8 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
         }
 
+        this.enableSaveButton();
+
         return this;
     },
 
@@ -3122,7 +3126,11 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         if (hasVisibleMarkers === true) {
             $('no_locations_error').hide();
-            this.enableSaveButton();
+            if (this.hasSelectedMarker()) {
+                this.enableSaveButton();
+            } else {
+                this.disableSaveButton();
+            }
         } else {
             $('no_locations_error').show();
             this.disableSaveButton();
@@ -3426,6 +3434,11 @@ PostnlDeliveryOptions.Location = new Class.create({
             deliveryDate.substring(0, 2)
         );
         var availableDeliveryDate = this.getDeliveryDate(date);
+        var paClassName = '';
+
+        if (this.getType().indexOf('PA') > -1) {
+            paClassName = 'pa-location';
+        }
 
         this.counter = 0;
 
@@ -3433,7 +3446,7 @@ PostnlDeliveryOptions.Location = new Class.create({
          * Get the html for this location's header.
          */
         var headerHtml = '';
-        headerHtml += '<li class="location">';
+        headerHtml += '<li class="location ' + paClassName + '">';
         headerHtml += '<div class="bkg">';
         headerHtml += '<div class="bkg">';
         headerHtml += '<div class="content">';
