@@ -37,6 +37,8 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method string getMethodName()
+ * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setStreetnameField(int $value)
+ * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setHousenumberField(int $value)
  */
 class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Core_Block_Template
 {
@@ -283,6 +285,36 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
         }
 
         return $feeText;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStreetnameField()
+    {
+        if ($this->hasData('streetname_field')) {
+            return $this->_getData('streetname_field');
+        }
+
+        $streetnameField = Mage::helper('postnl/addressValidation')->getStreetnameField();
+
+        $this->setStreetnameField($streetnameField);
+        return $streetnameField;
+    }
+
+    /**
+     * @return int
+     */
+    public function getHousenumberField()
+    {
+        if ($this->hasData('housenumber_field')) {
+            return $this->_getData('housenumber_field');
+        }
+
+        $housenumberField = Mage::helper('postnl/addressValidation')->getHousenumberField();
+
+        $this->setHousenumberField($housenumberField);
+        return $housenumberField;
     }
 
     /**
