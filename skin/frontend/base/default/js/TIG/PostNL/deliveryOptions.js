@@ -368,8 +368,11 @@ PostnlDeliveryOptions.prototype = {
             allowPg                : true,
             allowPge               : false,
             allowPa                : true,
-            eveningFee             : 0,
-            expressFee             : 0,
+            taxDisplayType         : 1,
+            eveningFeeIncl         : 0,
+            eveningFeeExcl         : 0,
+            expressFeeIncl         : 0,
+            expressFeeExcl         : 0,
             eveningFeeText         : '',
             expressFeeText         : '',
             allowStreetview        : true,
@@ -1167,7 +1170,7 @@ PostnlDeliveryOptions.prototype = {
             return true;
         }
 
-        var selectedType   = this.getSelectedType();
+        var selectedType = this.getSelectedType();
 
         if (!this.getOptions().isOsc && selectedType == 'PA' && !this.getPaPhoneCheckPassed()) {
             this.openAddPhoneWindow();
@@ -1183,12 +1186,12 @@ PostnlDeliveryOptions.prototype = {
             costs  : 0
         };
 
-        if (selectedType == 'Avond') {
-            params['costs'] = this.getOptions().eveningFee;
-        }
-
-        if (selectedType == 'PGE') {
-            params['costs'] = this.getOptions().expressFee;
+        if (selectedType == 'Avond' || selectedType == 'PGE') {
+            var extraCosts = {
+                incl : this.getExtraCosts(true),
+                excl : this.getExtraCosts(false)
+            };
+            params['costs'] = Object.toJSON(extraCosts);
         }
 
         if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
@@ -1227,7 +1230,7 @@ PostnlDeliveryOptions.prototype = {
      *
      * @returns {Number}
      */
-    getExtraCosts : function() {
+    getExtraCosts : function(inclTax) {
         var selectedType = this.getSelectedType();
         var extraCosts = 0;
 
@@ -1235,10 +1238,18 @@ PostnlDeliveryOptions.prototype = {
             return extraCosts
         }
 
-        if (selectedType == 'PGE') {
-            extraCosts = this.getOptions().expressFee;
-        } else if (selectedType == 'Avond') {
-            extraCosts = this.getOptions().eveningFee;
+        if (inclTax) {
+            if (selectedType == 'PGE') {
+                extraCosts = this.getOptions().expressFeeIncl;
+            } else if (selectedType == 'Avond') {
+                extraCosts = this.getOptions().expressFeeIncl;
+            }
+        } else {
+            if (selectedType == 'PGE') {
+                extraCosts = this.getOptions().expressFeeExcl;
+            } else if (selectedType == 'Avond') {
+                extraCosts = this.getOptions().expressFeeExcl;
+            }
         }
 
         return parseFloat(extraCosts);
@@ -1250,7 +1261,10 @@ PostnlDeliveryOptions.prototype = {
      * @returns {PostnlDeliveryOptions}
      */
     saveExtraCosts : function() {
-        var extraCosts = this.getExtraCosts();
+        var extraCosts = {
+            incl : this.getExtraCosts(true),
+            excl : this.getExtraCosts(false)
+        };
 
         if (this.saveOptionCostsRequest) {
             this.saveOptionCostsRequest.transport.abort();
@@ -1258,7 +1272,7 @@ PostnlDeliveryOptions.prototype = {
 
         var params = {
             isAjax : true,
-            costs  : extraCosts
+            costs  : Object.toJSON(extraCosts)
         };
 
         if (this.getOptions().isOsc) {
@@ -1290,21 +1304,66 @@ PostnlDeliveryOptions.prototype = {
      * @returns {PostnlDeliveryOptions}
      */
     updateShippingPrice : function() {
-        var shippingMethodLabel = $$('label[for="' + this.getOptions().shippingMethodName + '"]')[0];
-        var priceContainer = $$('label[for="' + this.getOptions().shippingMethodName + '"] span.price')[0];
 
-        if (!priceContainer) {
+        var taxDisplayType = this.getOptions().taxDisplayType;
+        if (taxDisplayType == 1) {
+            this.updateShippingPriceExclTax(0);
+        } else if (taxDisplayType == 2) {
+            this.updateShippingPriceInclTax(0);
+        } else {
+            this.updateShippingPriceExclTax(0);
+            this.updateShippingPriceInclTax(1);
+        }
+
+        return this;
+    },
+
+    /**
+     * @param {int} spanNumber
+     *
+     * @returns {PostnlDeliveryOptions}
+     */
+    updateShippingPriceExclTax : function(spanNumber) {
+        var shippingMethodLabel = $$('label[for="' + this.getOptions().shippingMethodName + '"]')[0];
+        var priceContainerExcl = $$('label[for="' + this.getOptions().shippingMethodName + '"] span.price')[spanNumber];
+
+        if (!priceContainerExcl) {
             return this;
         }
 
-        var extraCosts = this.getExtraCosts();
+        var extraCostsExcl = this.getExtraCosts(false);
 
-        var defaultCosts = parseFloat(shippingMethodLabel.readAttribute('data-price'));
+        var defaultCostsExcl = parseFloat(shippingMethodLabel.readAttribute('data-price'));
 
-        var newCosts = defaultCosts + extraCosts;
+        var newCostsExcl = defaultCostsExcl + extraCostsExcl;
 
-        var currency = (newCosts).formatMoney(2, '.', ',');
-        priceContainer.update(this.getOptions().currencySymbol + ' ' + currency);
+        var currencyExcl = (newCostsExcl).formatMoney(2, '.', ',');
+        priceContainerExcl.update(this.getOptions().currencySymbol + ' ' + currencyExcl);
+
+        return this;
+    },
+
+    /**
+     * @param {int} spanNumber
+     *
+     * @returns {PostnlDeliveryOptions}
+     */
+    updateShippingPriceInclTax : function(spanNumber) {
+        var shippingMethodLabel = $$('label[for="' + this.getOptions().shippingMethodName + '"]')[0];
+        var priceContainerIncl = $$('label[for="' + this.getOptions().shippingMethodName + '"] span.price')[spanNumber];
+
+        if (!priceContainerIncl) {
+            return this;
+        }
+
+        var extraCostsIncl = this.getExtraCosts(true);
+
+        var defaultCostsIncl = parseFloat(shippingMethodLabel.readAttribute('data-price-incl'));
+
+        var newCostsIncl = defaultCostsIncl + extraCostsIncl;
+
+        var currencyIncl = (newCostsIncl).formatMoney(2, '.', ',');
+        priceContainerIncl.update(this.getOptions().currencySymbol + ' ' + currencyIncl);
 
         return this;
     },

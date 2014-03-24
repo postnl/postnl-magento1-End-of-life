@@ -123,10 +123,13 @@
     };
 
     options = {
-        eveningFee             : <?php echo $this->getFee('evening'); ?>,
-        expressFee             : <?php echo $this->getFee('express'); ?>,
-        eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
-        expressFeeText         : '<?php echo $this->getFeeText('express'); ?>',
+        taxDisplayType         : <?php echo $this->getTaxDisplayType() ?>,
+        eveningFeeIncl         : <?php echo $this->getFee('evening', true); ?>,
+        eveningFeeExcl         : <?php echo $this->getFee('evening', false); ?>,
+        expressFeeIncl         : <?php echo $this->getFee('express', true); ?>,
+        expressFeeExcl         : <?php echo $this->getFee('express', false); ?>,
+        eveningFeeText         : '<?php echo $this->getFeeText('evening', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
+        expressFeeText         : '<?php echo $this->getFeeText('express', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
         allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
         allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
         allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
