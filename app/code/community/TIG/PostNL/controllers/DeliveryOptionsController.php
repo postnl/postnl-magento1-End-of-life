@@ -582,6 +582,28 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         }
 
         $costs = $params['costs'];
+        $costs = Mage::helper('core')->jsonDecode($costs);
+
+        /**
+         * The costs object should contain an amount incl. VAT and excl. VAT.
+         */
+        if (!isset($costs['incl']) || !isset($costs['incl'])) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     "Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT."
+                ),
+                'POSTNL-0151'
+            );
+        }
+
+        /**
+         * Depending on tax calculation settings we need either the costs with or without VAT.
+         */
+        if (Mage::getSingleton('tax/config')->shippingPriceIncludesTax()) {
+            $costs = $costs['incl'];
+        } else {
+            $costs = $costs['excl'];
+        }
 
         $costsValidator      = new Zend_Validate_Float();
         $costsRangeValidator = new Zend_Validate_Between(array('min' => 0, 'max' => 2, 'inclusive' => true));
@@ -669,7 +691,28 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         $type  = $params['type'];
         $date  = $params['date'];
-        $costs = $params['costs'];
+        $costs = Mage::helper('core')->jsonDecode($params['costs']);
+
+        /**
+         * The costs object should contain an amount incl. VAT and excl. VAT.
+         */
+        if (!isset($costs['incl']) || !isset($costs['incl'])) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     "Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT."
+                ),
+                'POSTNL-0151'
+            );
+        }
+
+        /**
+         * Depending on tax calculation settings we need either the costs with or without VAT.
+         */
+        if (Mage::getSingleton('tax/config')->shippingPriceIncludesTax()) {
+            $costs = $costs['incl'];
+        } else {
+            $costs = $costs['excl'];
+        }
 
         /**
          * Get validation classes for the postcode and housenumber values.

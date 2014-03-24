@@ -39,6 +39,8 @@
  * @method string getMethodName()
  * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setStreetnameField(int $value)
  * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setHousenumberField(int $value)
+ * @method boolean                                                   hasTaxDisplayType()
+ * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setTaxDisplayType(int $value)
  */
 class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Core_Block_Template
 {
@@ -182,16 +184,17 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
      * Get the fee charged for evening timeframes.
      *
      * @param boolean $formatted
+     * @param boolean $includingTax
      *
      * @return float
      */
-    public function getEveningFee($formatted = false)
+    public function getEveningFee($formatted = false, $includingTax = true)
     {
         $storeId = Mage::app()->getStore()->getId();
 
         $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
 
-        $price = $this->getPriceWithTax($eveningFee, true, $formatted);
+        $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted);
 
         return $price;
     }
@@ -200,16 +203,17 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
      * Get the fee charged for PakjeGemak Express.
      *
      * @param boolean $formatted
+     * @param boolean $includingTax
      *
      * @return float
      */
-    public function getExpressFee($formatted = false)
+    public function getExpressFee($formatted = false, $includingTax = true)
     {
         $storeId = Mage::app()->getStore()->getId();
 
         $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
 
-        $price = $this->getPriceWithTax($expressFee, true, $formatted);
+        $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted);
 
         return $price;
     }
@@ -218,18 +222,18 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
      * Convert a value to a formatted price.
      *
      * @param float   $price
-     * @param boolean $flag
+     * @param boolean $includingTax
      * @param boolean $formatted
      *
      * @return float
      *
      * @see Mage_Checkout_Block_Onepage_Shipping_Method_Available::getShippingPrice()
      */
-    public function getPriceWithTax($price, $flag, $formatted = false)
+    public function getPriceWithTax($price, $includingTax, $formatted = false)
     {
         $store = $this->getQuote()->getStore();
 
-        $shippingPrice = Mage::helper('tax')->getShippingPrice($price, $flag, $this->getShippingAddress());
+        $shippingPrice = Mage::helper('tax')->getShippingPrice($price, $includingTax, $this->getShippingAddress());
         $convertedPrice = $store->convertPrice($shippingPrice, $formatted, false);
 
         return $convertedPrice;
@@ -238,17 +242,18 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
     /**
      * Get either the evening or express fee as a float or int.
      *
-     * @param string $type
+     * @param string  $type
+     * @param boolean $includingTax
      *
      * @return float|int
      */
-    public function getFee($type) {
+    public function getFee($type, $includingTax = false) {
         switch ($type) {
             case 'evening':
-                $fee = $this->getEveningFee();
+                $fee = $this->getEveningFee(false, $includingTax);
                 break;
             case 'express':
-                $fee = $this->getExpressFee();
+                $fee = $this->getExpressFee(false, $includingTax);
                 break;
             default:
                 return 0;
@@ -267,18 +272,19 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
     /**
      * Get either the evening or the express fee as a currency value.
      *
-     * @param string $type
+     * @param string  $type
+     * @param boolean $includingTax
      *
      * @return string
      */
-    public function getFeeText($type)
+    public function getFeeText($type, $includingTax = false)
     {
         switch ($type) {
             case 'evening':
-                $feeText = $this->getEveningFee(true);
+                $feeText = $this->getEveningFee(true, $includingTax);
                 break;
             case 'express':
-                $feeText = $this->getExpressFee(true);
+                $feeText = $this->getExpressFee(true, $includingTax);
                 break;
             default:
                 return 0;
@@ -340,6 +346,23 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
             );
         }
         return $streetData;
+    }
+
+    /**
+     * Gets tax display type.
+     *
+     * @return int
+     */
+    public function getTaxDisplayType()
+    {
+        if ($this->hasTaxDisplayType()) {
+            return $this->_getData('tax_display_type');
+        }
+
+        $taxDisplayType = Mage::getSingleton('tax/config')->getShippingPriceDisplayType();
+
+        $this->setTaxDisplayType($taxDisplayType);
+        return $taxDisplayType;
     }
 
     /**
