@@ -376,17 +376,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $storeId = $quote->getStoreId();
 
         /**
-         * Check if PostNL Checkout may be used for 'letter' orders and if not, if the quote could fit in an envelope
+         * Check if PostNL delivery options may be used for 'letter' orders and if not, if the quote could fit in an
+         * envelope.
          */
-        $showCheckoutForLetters = Mage::getStoreConfigFlag(self::XPATH_SHOW_OPTIONS_FOR_LETTER, $storeId);
-        if (!$showCheckoutForLetters) {
+        $showDeliveryOptionsForLetters = Mage::getStoreConfigFlag(self::XPATH_SHOW_OPTIONS_FOR_LETTER, $storeId);
+        if (!$showDeliveryOptionsForLetters) {
             $isLetterQuote = $this->quoteIsLetter($quote, $storeId);
             if ($isLetterQuote) {
                 $errors = array(
                     array(
-                        'code'    => 'POSTNL-0101',
+                        'code'    => 'POSTNL-0150',
                         'message' => $this->__(
-                            "The quote's total weight is below the miniumum required to use PostNL Checkout."
+                            "The quote's total weight is below the miniumum required to use PostNL delivery options."
                         ),
                     )
                 );
@@ -397,11 +398,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
-         * Check if PostNL Checkout may be used for out-og-stock orders and if not, whether the quote has any such
-         * products
+         * Check if PostNL delivery options may be used for out-og-stock orders and if not, whether the quote has any
+         * such products.
          */
-        $showCheckoutForBackorders = Mage::getStoreConfigFlag(self::XPATH_SHOW_OPTIONS_FOR_BACKORDERS, $storeId);
-        if (!$showCheckoutForBackorders) {
+        $showDeliveryOptionsForBackorders = Mage::getStoreConfigFlag(self::XPATH_SHOW_OPTIONS_FOR_BACKORDERS, $storeId);
+        if (!$showDeliveryOptionsForBackorders) {
             $containsOutOfStockItems = $this->quoteHasOutOfStockItems($quote);
             if ($containsOutOfStockItems) {
                 $errors = array(
@@ -450,7 +451,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Checks if PostNL Checkout is enabled.
+     * Checks if PostNL delivery options are enabled.
      *
      * @param null|int $storeId
      *
@@ -490,7 +491,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Checks if PostNL Checkout is active.
+     * Checks if PostNL delivery options is active.
      *
      * @param null|int $storeId
      *
