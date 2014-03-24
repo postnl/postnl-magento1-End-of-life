@@ -284,13 +284,13 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     /**
      * Logs a cendris request and response for debug purposes.
      *
-     * @param SoapClient $client
+     * @param Zend_Soap_Client $client
      *
      * @return TIG_PostNL_Helper_Webservices
      *
      * @see Mage::log()
      */
-    public function logCendrisCall($client)
+    public function logCendrisCall(Zend_Soap_Client $client)
     {
         if (!$this->isLoggingEnabled()) {
             return $this;
@@ -319,7 +319,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
      * Logs a cendris exception in the database and/or a log file
      *
      * @param Mage_Core_Exception|TIG_PostNL_Exception $exception
-     * @param SoapClient|boolean $client
+     * @param Zend_Soap_Client|boolean $client
      *
      * @return TIG_PostNL_Helper_Webservices
      *
@@ -333,7 +333,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
 
         $logMessage = PHP_EOL . $exception->__toString();
 
-        if ($client) {
+        if ($client && $client instanceof Zend_Soap_Client) {
             $requestXml = $this->formatXml($client->getLastRequest());
             $responseXML = $this->formatXml($client->getLastResponse());
 
