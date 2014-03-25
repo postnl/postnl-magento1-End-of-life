@@ -70,7 +70,7 @@
                     <div class="bkg">
                         <div class="bkg">
                             <div class="content">
-                                <strong class="location-name overflow-protect"><?php echo $_address->getStreetFull(); ?></strong>
+                                <strong class="location-name overflow-protect"><?php echo $this->escapeHtml($_address->getStreetFull()); ?></strong>
                             </div>
                         </div>
                     </div>
@@ -115,11 +115,11 @@
         locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
         saveCostsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/saveOptionCosts', array('_secure' => true)) ?>',
         savePhoneNumberUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/savePhoneNumber', array('_secure' => true)) ?>',
-        postcode           : '<?php echo $_postcode; ?>',
-        housenumber        : '<?php echo $_housenumber; ?>',
-        deliveryDate       : '<?php echo $_deliveryDate; ?>',
+        postcode           : '<?php echo $this->escapeHtml($_postcode); ?>',
+        housenumber        : '<?php echo $this->escapeHtml($_housenumber); ?>',
+        deliveryDate       : '<?php echo $this->escapeHtml($_deliveryDate); ?>',
         imageBaseUrl       : baseUrl,
-        fullAddress        : "<?php echo implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>"
+        fullAddress        : "<?php echo $this->escapeHtml(implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry()); ?>"
     };
 
     options = {

@@ -125,12 +125,12 @@ class TIG_PostNL_Block_Checkout_Summary extends Mage_Sales_Block_Items_Abstract
     }
 
     /**
-     * @return bool
+     * @return boolean|string
      */
     public function getPaymentOption()
     {
         $paymentData = Mage::registry('postnl_payment_data');
-        if (!isset($paymentData['method']) || !isset($paymentData['method'])) {
+        if (!isset($paymentData['method']) || !isset($paymentData['option'])) {
             return false;
         }
 
