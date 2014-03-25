@@ -45,12 +45,6 @@
 class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Core_Block_Template
 {
     /**
-     * Xpaths to extra fee config settings.
-     */
-    const XPATH_EVENING_TIMEFRAME_FEE  = 'postnl/delivery_options/evening_timeframe_fee';
-    const XPATH_PAKJEGEMAK_EXPRESS_FEE = 'postnl/delivery_options/pakjegemak_express_fee';
-
-    /**
      * Xpath to 'allow_streetview' setting.
      */
     const XPATH_ALLOW_STREETVIEW = 'postnl/delivery_options/allow_streetview';
@@ -190,13 +184,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
      */
     public function getEveningFee($formatted = false, $includingTax = true)
     {
-        $storeId = Mage::app()->getStore()->getId();
-
-        $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
-
-        $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted);
-
-        return $price;
+        return Mage::helper('postnl/deliveryOptions')->getEveningFee($formatted, $includingTax);
     }
 
     /**
@@ -209,34 +197,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
      */
     public function getExpressFee($formatted = false, $includingTax = true)
     {
-        $storeId = Mage::app()->getStore()->getId();
-
-        $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
-
-        $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted);
-
-        return $price;
-    }
-
-    /**
-     * Convert a value to a formatted price.
-     *
-     * @param float   $price
-     * @param boolean $includingTax
-     * @param boolean $formatted
-     *
-     * @return float
-     *
-     * @see Mage_Checkout_Block_Onepage_Shipping_Method_Available::getShippingPrice()
-     */
-    public function getPriceWithTax($price, $includingTax, $formatted = false)
-    {
-        $store = $this->getQuote()->getStore();
-
-        $shippingPrice = Mage::helper('tax')->getShippingPrice($price, $includingTax, $this->getShippingAddress());
-        $convertedPrice = $store->convertPrice($shippingPrice, $formatted, false);
-
-        return $convertedPrice;
+        return Mage::helper('postnl/deliveryOptions')->getExpressFee($formatted, $includingTax);
     }
 
     /**

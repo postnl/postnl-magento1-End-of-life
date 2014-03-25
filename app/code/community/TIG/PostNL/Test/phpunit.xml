@@ -11,7 +11,11 @@
 
     <filter>
         <whitelist>
-            <directory>../../../PostNL</directory>
+            <directory>../../PostNL/Block</directory>
+            <directory>../../PostNL/controllers</directory>
+            <directory>../../PostNL/Helper</directory>
+            <directory>../../PostNL/Model</directory>
+            <file>../../PostNL/Exception.php</file>
         </whitelist>
     </filter>
 </phpunit>

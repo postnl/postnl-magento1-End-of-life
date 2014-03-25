@@ -72,12 +72,20 @@ class TIG_PostNL_Test_Model_DeliveryOptions_System_Config_Backend_ValidateFeeTes
     {
         $this->registerMockSessions(array('customer'));
 
-        $instance = $this->_getInstance();
+        Mage::getSingleton('tax/config')->setShippingPriceIncludeTax(false);
+
+        $instance = new TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFeeFake();
         $instance->setIsIncludingTax($includingTax);
+
+        if (!$expected) {
+            $this->setExpectedException('TIG_PostNL_Exception');
+        }
 
         $isValid = $instance->validateFee($fee);
 
-        $this->assertSame($expected, $isValid);
+        if ($expected) {
+            $this->assertSame($expected, $isValid);
+        }
     }
 
     /**

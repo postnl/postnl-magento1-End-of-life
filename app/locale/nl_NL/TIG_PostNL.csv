@@ -755,4 +755,14 @@ TIG_PostNL::We need your mobile phone number in order to do this.,Hiertoe vragen
 TIG_PostNL::Please make sure your phone number is correct.,Controleer goed of dit nummer correct is.
 TIG_PostNL::Continue,Verder
 TIG_PostNL::Please enter a mobile phone number.,Vul s.v.p. een mobiel telefoonnummer in.
-TIG_PostNL::Please number,Telefoonnummer
+TIG_PostNL::Phone number,Telefoonnummer
+TIG_PostNL::Invalid country code supplied: %s,Ongeldige landcode opgegeven: %s
+TIG_PostNL::Invalid street supplied: %s,Ongeldige straatnaam opegegeven: %s
+TIG_PostNL::Invalid housenumber supplied: %s,Ongeldig huisnummer opgegeven: %s
+TIG_PostNL::Invalid postcode supplied: %s.,Ongeldige postcode opgegeven: %s.
+TIG_PostNL::Invalid housenumber extension supplied: %s.,Ongeldige huisnummer toevoeging opgegeven: %s.
+TIG_PostNL::Invalid arguments supplied. The 'number' parameter is required.,Ongeldige parameters opgegeven. De 'number' parameter is verplicht.
+TIG_PostNL::Invalid mobile phone number supplied: %s,Ongeldig mobiel telefoonnummer opgegeven : %s
+TIG_PostNL::The quote's total weight is below the miniumum required to use PostNL delivery options.,Het totale gewicht van de bestelling is beneden het minimum om gebruik te maken van PostNL bezorgopties.
+TIG_PostNL::Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT.,Ongeldige parameters opgegeven. De 'costs' parameter moet een bedrag incl. en excl. BTW bevatten.
+TIG_PostNL::Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. VAT.,"Ongeldige toeslag ingevoerd: %s incl. BTW. Vul s.v.p. een waarde in tussen 0,00 en 2,00 EUR incl. BTW."

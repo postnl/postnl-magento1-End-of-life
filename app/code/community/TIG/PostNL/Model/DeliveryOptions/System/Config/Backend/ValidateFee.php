@@ -87,13 +87,22 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
     /**
      * @param mixed $fee
      *
+     * @throws TIG_PostNL_Exception
+     *
      * @return boolean
      */
     public function validateFee($fee)
     {
         $fee = (float) $fee;
         if ($fee !== 0 && !$fee) {
-            return false;
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__(
+                    'Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. '
+                    . 'VAT.',
+                    $fee
+                ),
+                'POSTNL-0153'
+            );
         }
 
         /**
@@ -103,7 +112,14 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
         if ($isIncludingTax
             && ($fee > self::FEE_MAX_AMOUNT || $fee < self::FEE_MIN_AMOUNT)
         ) {
-            return false;
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__(
+                    'Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. '
+                    . 'VAT.',
+                    $fee
+                ),
+                'POSTNL-0153'
+            );
         } elseif($isIncludingTax) {
             return true;
         }
@@ -113,31 +129,28 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
          */
         $shippingAddress = $this->getMockShippingAddress();
 
-        $feeIncludingTax = Mage::helper('tax')->getShippingPrice($fee, true, $shippingAddress);
+        $feeIncludingTax = Mage::helper('tax')->getShippingPrice($fee, true, $shippingAddress, null, 0);
         if ($feeIncludingTax > self::FEE_MAX_AMOUNT || $feeIncludingTax < self::FEE_MIN_AMOUNT) {
-            return false;
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__(
+                    'Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. '
+                    . 'VAT.',
+                    $feeIncludingTax
+                ),
+                'POSTNL-0153'
+            );
         }
 
         return true;
     }
 
     /**
-     * @throws TIG_PostNL_Exception
-     *
      * @return Mage_Core_Model_Abstract
      */
     protected function _beforeSave()
     {
         $value = $this->getValue();
-        if (!$this->validateFee($value)) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__(
-                    'Invalid fee amount entered: %s. Please enter a value between 0.00 and 2.00 EUR incl. VAT.',
-                    $value
-                ),
-                'POSTNL-0153'
-            );
-        }
+        $this->validateFee($value);
 
         return parent::_beforeSave();
     }

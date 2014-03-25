@@ -60,6 +60,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ALLOW_SUNDAY_SORTING        = 'postnl/delivery_options/allow_sunday_sorting';
 
     /**
+     * Xpaths to extra fee config settings.
+     */
+    const XPATH_EVENING_TIMEFRAME_FEE  = 'postnl/delivery_options/evening_timeframe_fee';
+    const XPATH_PAKJEGEMAK_EXPRESS_FEE = 'postnl/delivery_options/pakjegemak_express_fee';
+
+    /**
      * The time (as H * 100 + i) we consider to be the start of the evening.
      */
     const EVENING_TIME = 1900;
@@ -75,12 +81,89 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'PA',
     );
 
+    protected $_quote;
+
     /**
      * @return array
      */
     public function getValidTypes()
     {
         return $this->_validTypes;
+    }
+
+    /**
+     * @return Mage_Sales_Model_Quote
+     */
+    public function getQuote()
+    {
+        if ($this->_quote) {
+            return $this->_quote;
+        }
+
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $this->_quote = $quote;
+        return $quote;
+    }
+
+    /**
+     * Get the fee charged for evening timeframes.
+     *
+     * @param boolean $formatted
+     * @param boolean $includingTax
+     *
+     * @return float
+     */
+    public function getEveningFee($formatted = false, $includingTax = true)
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
+
+        $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted);
+
+        return $price;
+    }
+
+    /**
+     * Get the fee charged for PakjeGemak Express.
+     *
+     * @param boolean $formatted
+     * @param boolean $includingTax
+     *
+     * @return float
+     */
+    public function getExpressFee($formatted = false, $includingTax = true)
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
+
+        $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted);
+
+        return $price;
+    }
+
+    /**
+     * Convert a value to a formatted price.
+     *
+     * @param float   $price
+     * @param boolean $includingTax
+     * @param boolean $formatted
+     *
+     * @return float
+     *
+     * @see Mage_Checkout_Block_Onepage_Shipping_Method_Available::getShippingPrice()
+     */
+    public function getPriceWithTax($price, $includingTax, $formatted = false)
+    {
+        $quote = $this->getQuote();
+        $store = $quote->getStore();
+
+        $shippingPrice = Mage::helper('tax')->getShippingPrice($price, $includingTax, $quote->getShippingAddress());
+        $convertedPrice = $store->convertPrice($shippingPrice, $formatted, false);
+
+        return $convertedPrice;
     }
 
     /**
