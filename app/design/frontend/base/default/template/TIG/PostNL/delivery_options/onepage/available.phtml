@@ -56,9 +56,12 @@
                         <?php endif; ?>
 
                         <?php endif; ?>
-                        <label data-price="<?php echo $_rate->getPrice(); ?>" for="s_method_<?php echo $_rate->getCode() ?>"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
                         <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
                         <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
+
+                       <?php $_priceExcl = Mage::helper('tax')->getShippingPrice($_rate->getPrice(), false, $this->getAddress()); ?>
+                       <?php $_priceIncl = Mage::helper('tax')->getShippingPrice($_rate->getPrice(), true, $this->getAddress()); ?>
+                        <label data-price="<?php echo $_priceExcl; ?>" data-price-incl="<?php echo $_priceIncl; ?>" for="s_method_<?php echo $_rate->getCode() ?>"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
                         <?php echo $_excl; ?>
                         <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
                             (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)

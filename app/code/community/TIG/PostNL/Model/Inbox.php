@@ -35,12 +35,10 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
-
-/**
- * The only reason this class exists is because the add() method and it's derivatives are only present since EE 1.12 and CE 1.7.
- * This class adds those methods in case they're missing. Each method will return it's parent if it exists to ensure
- * forwards compatibility.
+ *
+ * The only reason this class exists is because the add() method and it's derivatives are only present since EE 1.12 and
+ * CE 1.7. This class adds those methods in case they're missing. Each method will return it's parent if it exists to
+ * ensure forwards compatibility.
  */
 class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
 {

@@ -29,7 +29,7 @@
  *
  * DISCLAIMER
  *
-advanced * Do not edit or add to this file if you wish to upgrade this module to newer
+ * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
@@ -43,7 +43,7 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  *
  * @method TIG_PostNL_Model_Core_Cif_Abstract setHelper(Mage_Core_Helper_Abstract $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setSoapClient(Zend_Soap_Client $value)
- * @method TIG_PostNL_Model_Core_Cif_Abstract setTestMode(Zend_Soap_Client $value)
+ * @method TIG_PostNL_Model_Core_Cif_Abstract setTestMode(boolean $value)
  *
  * @method boolean hasSoapClient()
  * @method boolean hasHelper()
@@ -127,7 +127,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             );
         }
 
-        return parent::_construct();
+        parent::_construct();
     }
 
     /**
@@ -325,7 +325,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 );
             }
 
-                /**
+            /**
              * Add SOAP header
              */
             $header = $this->_getSoapHeader($username, $password);
@@ -356,14 +356,17 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     }
 
     /**
-     * returns the URL of the chosen wsdl file based on a wsdl type.
+     * Returns the URL of the chosen wsdl file based on a wsdl type.
      *
-     * available types are:
+     * Available types are:
      * - barcode
      * - confirming
      * - labelling
      * - shippingstatus
      * - checkout
+     * - deliverydate
+     * - timeframe
+     * - location
      *
      * @param string $wsdlType
      *
@@ -421,8 +424,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         /**
-         * Wsdl version numbers are formatted using an underscore instead of a period. Since many people would use a period, we
-         * convert it to CIF specifications.
+         * Wsdl version numbers are formatted using an underscore instead of a period. Since many people would use a
+         * period, we convert it to CIF specifications.
          */
         $wsdlversion = str_replace('.', '_', $wsdlversion);
 
@@ -439,9 +442,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
          * Format the final wsdl URL
          */
         $wsdlUrl .= $wsdlFileName
-                   . '/'
-                   . $wsdlversion
-                   . '/?wsdl';
+                  . '/'
+                  . $wsdlversion
+                  . '/?wsdl';
 
         return $wsdlUrl;
     }
@@ -462,10 +465,13 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         $namespace = self::HEADER_SECURITY_NAMESPACE;
-        $node1     = new SoapVar($username, XSD_STRING,      null, null, 'Username',      $namespace);
-        $node2     = new SoapVar($password, XSD_STRING,      null, null, 'Password',      $namespace);
+        $node1     = new SoapVar($username, XSD_STRING, null, null, 'Username', $namespace);
+        $node2     = new SoapVar($password, XSD_STRING, null, null, 'Password', $namespace);
+
         $token     = new SoapVar(array($node1, $node2), SOAP_ENC_OBJECT, null, null, 'UsernameToken', $namespace);
-        $security  = new SoapVar(array($token),         SOAP_ENC_OBJECT, null, null, 'Security',      $namespace);
+
+        $security  = new SoapVar(array($token), SOAP_ENC_OBJECT, null, null, 'Security', $namespace);
+        
         $header    = new SOAPHeader($namespace, 'Security', $security, false);
 
         return $header;
