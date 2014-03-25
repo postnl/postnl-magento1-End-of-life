@@ -430,7 +430,7 @@
                             <validate>validate-digits validate-length minimum-length-6 maximum-length-6 postnl-validate-empty</validate>
                         </collection_location>
                         <validate_button translate="tooltip" module="postnl">
-                            <tooltip>This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error.</tooltip>
+                            <tooltip>This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error. Please note that the PostNL extension must be active for the validation to succeed.</tooltip>
                             <frontend_model>postnl_adminhtml/system_config_form_field_validateButton</frontend_model>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
