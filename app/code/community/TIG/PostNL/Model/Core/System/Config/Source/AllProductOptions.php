@@ -176,13 +176,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
                     ),
                     /**
-                     * This option has been removed in v1.2.0
+                     * This option has been removed since v1.1.4.
                      *
                      * @deprecated v1.1.2
                      */
                     /*'4955' => array(
-                        'value'         => '4955',
-                        'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                        'value' => '4955',
+                        'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
                         'isBelgiumOnly' => true,
                     ),*/
                     /**
@@ -213,8 +213,12 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             ),
         );
 
-        if ($markDefault) {
-            $this->_markDefault($availableOptions);
+        if ($helper->canUseEpsBEOnlyOption()) {
+            $availableOptions['eu_options']['value']['4955'] = array(
+                'value'         => '4955',
+                'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                'isBelgiumOnly' => true,
+            );
         }
 
         return $availableOptions;
@@ -244,6 +248,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         }
 
         $helper = Mage::helper('postnl');
+        $canUseEpsBEOnly = $helper->canUseEpsBEOnlyOption();
+
         $options = $this->toOptionArray($markDefault);
 
         /**
@@ -266,6 +272,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
          */
         $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
         $supportedOptionsArray = explode(',', $supportedOptions);
+        if ($canUseEpsBEOnly) {
+            $supportedOptionsArray[] = '4955';
+        }
 
         /**
          * Check each standard option to see if it's supprted

@@ -59,7 +59,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
                 'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
             ),
             /**
-             * This option has been removed in v1.2.0
+             * This option has been removed in v1.1.4
              *
              * @deprecated v1.1.2
              */
@@ -84,6 +84,14 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
             ),*/
         );
 
+        if ($helper->canUseEpsBEOnlyOption()) {
+            $availableOptions['4955'] = array(
+                'value'         => '4955',
+                'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                'isBelgiumOnly' => true,
+            );
+        }
+
         return $availableOptions;
     }
 
@@ -101,6 +109,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
 
+        $helper = Mage::helper('postnl');
+        $canUseEpsBEOnly = $helper->canUseEpsBEOnlyOption();
+
         $options = $this->toOptionArray();
 
         /**
@@ -113,6 +124,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
          */
         $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
         $supportedOptionsArray = explode(',', $supportedOptions);
+        if ($canUseEpsBEOnly) {
+            $supportedOptionsArray[] = '4955';
+        }
 
         /**
          * Check each standard option to see if it's supprted

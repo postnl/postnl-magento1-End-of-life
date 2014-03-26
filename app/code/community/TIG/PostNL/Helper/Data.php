@@ -99,6 +99,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
 
     /**
+     * XPATH to allow EPS BE only product option setting.
+     */
+    const XPATH_ALLOW_EPS_BE_ONLY_OPTION = 'postnl/cif_product_options/allow_eps_be_only_options';
+
+    /**
      * Required configuration fields
      *
      * @var array
@@ -303,6 +308,24 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Checks whether the EPS BE only product option is allowed.
+     *
+     * @param bool|int $storeId
+     *
+     * @return bool
+     */
+    public function canUseEpsBEOnlyOption($storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $epsBeOnlyOptionAllowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_EPS_BE_ONLY_OPTION, $storeId);
+
+        return $epsBeOnlyOptionAllowed;
+    }
+
+    /**
      * Save state of configuration field sets
      *
      * @param array $configState
@@ -357,7 +380,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Check if the module is set to test mode
      *
-     * @param bool $storeId
+     * @param bool|int $storeId
      *
      * @return boolean
      */
@@ -744,7 +767,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @param string $dir The directory in question
      * @param string $moduleName
-     * @internal param string $module The module for which the directory is needed
      *
      * @return string
      *
