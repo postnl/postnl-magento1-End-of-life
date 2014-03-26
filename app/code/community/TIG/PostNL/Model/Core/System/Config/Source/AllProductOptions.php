@@ -174,15 +174,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
                     ),
                     /**
-                     * This option will be removed in v1.2.0
+                     * This option has been removed since v1.1.4.
                      *
                      * @deprecated v1.1.2
                      */
+                    /*
                     '4955' => array(
                         'value' => '4955',
                         'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
                         'isBelgiumOnly' => true,
-                    ),
+                    ),*/
                     /**
                      * These are not currently implemented
                      *
@@ -210,6 +211,14 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             ),
         );
 
+        if ($helper->canUseEpsBEOnlyOption()) {
+            $availableOptions['eu_options']['value']['4955'] = array(
+                'value'         => '4955',
+                'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                'isBelgiumOnly' => true,
+            );
+        }
+
         $this->_markDefault($availableOptions);
 
         return $availableOptions;
@@ -218,10 +227,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     /**
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
-     * @param boolean $withDefault Determines whether or not a 'default' option is prepended to the array
-     * @param boolean $witHExtraCover Flag whether or not to include extra cover options
+     * @param boolean     $withDefault Determines whether or not a 'default' option is prepended to the array
+     * @param bool        $withExtraCover
      * @param boolean|int $storeId
-     * @param boolean $codesOnly
+     * @param boolean     $codesOnly
      *
      * @return array
      */
@@ -232,6 +241,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         }
 
         $helper = Mage::helper('postnl');
+        $canUseEpsBEOnly = $helper->canUseEpsBEOnlyOption();
+
         $options = $this->toOptionArray();
 
         /**
@@ -254,6 +265,9 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
          */
         $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
         $supportedOptionsArray = explode(',', $supportedOptions);
+        if ($canUseEpsBEOnly) {
+            $supportedOptionsArray[] = '4955';
+        }
 
         /**
          * Check each standard option to see if it's supprted
