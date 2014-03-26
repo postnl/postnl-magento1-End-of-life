@@ -230,7 +230,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
      * @param boolean     $flat        FLag that dtermines whether to return a flat 'code => label' array
      * @param boolean     $markDefault Flag that determines whether default options will be marked as such.
      *
-     * @internal param bool $witHExtraCover Flag whether or not to include extra cover options
      * @return array
      */
     public function getAvailableOptions($withDefault = false,

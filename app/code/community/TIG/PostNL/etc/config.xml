@@ -1349,17 +1349,17 @@
                 <type>error</type>
             </POSTNL-0142>
             <POSTNL-0143>
-                <message>Invalid country code supplied: %s</message>
+                <message>Invalid country code supplied: %s.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0143>
             <POSTNL-0144>
-                <message>Invalid street supplied: %s</message>
+                <message>Invalid street supplied: %s.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0144>
             <POSTNL-0145>
-                <message>Invalid housenumber supplied: %s</message>
+                <message>Invalid housenumber supplied: %s.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0145>

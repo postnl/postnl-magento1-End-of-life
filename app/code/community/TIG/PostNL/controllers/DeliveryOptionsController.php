@@ -655,7 +655,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!$phoneValidator->isValid($phoneNumber)) {
             throw new TIG_PostNL_Exception(
                 $this->__(
-                     'Invalid mobile phone number supplied: %s',
+                     'Invalid mobile phone number supplied: %s.',
                      $phoneNumber
                 ),
                 'POSTNL-0149'
@@ -821,7 +821,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!$cityValidator->isValid($city)) {
             throw new TIG_PostNL_Exception(
                 $this->__(
-                     'Invalid city supplied: %s',
+                     'Invalid city supplied: %s.',
                      $city
                 ),
                 'POSTNL-0142'
@@ -831,7 +831,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!$countryCodeValidator->isValid($countryCode)) {
             throw new TIG_PostNL_Exception(
                 $this->__(
-                     'Invalid country code supplied: %s',
+                     'Invalid country code supplied: %s.',
                      $countryCode
                 ),
                 'POSTNL-0143'
@@ -841,7 +841,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!$streetValidator->isValid($street)) {
             throw new TIG_PostNL_Exception(
                 $this->__(
-                     'Invalid street supplied: %s',
+                     'Invalid street supplied: %s.',
                      $street
                 ),
                 'POSTNL-0144'
@@ -851,7 +851,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         if (!$housenumberValidator->isValid($houseNumber)) {
             throw new TIG_PostNL_Exception(
                 $this->__(
-                     'Invalid housenumber supplied: %s',
+                     'Invalid housenumber supplied: %s.',
                      $houseNumber
                 ),
                 'POSTNL-0145'
