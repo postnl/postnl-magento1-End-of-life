@@ -70,7 +70,7 @@
                     <div class="bkg">
                         <div class="bkg">
                             <div class="content">
-                                <strong class="location-name overflow-protect"><?php echo $_address->getStreetFull(); ?></strong>
+                                <strong class="location-name overflow-protect"><?php echo $this->escapeHtml($_address->getStreetFull()); ?></strong>
                             </div>
                         </div>
                     </div>
@@ -115,25 +115,28 @@
         locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
         saveCostsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/saveOptionCosts', array('_secure' => true)) ?>',
         savePhoneNumberUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/savePhoneNumber', array('_secure' => true)) ?>',
-        postcode           : '<?php echo $_postcode; ?>',
-        housenumber        : '<?php echo $_housenumber; ?>',
-        deliveryDate       : '<?php echo $_deliveryDate; ?>',
+        postcode           : '<?php echo $this->escapeHtml($_postcode); ?>',
+        housenumber        : '<?php echo $this->escapeHtml($_housenumber); ?>',
+        deliveryDate       : '<?php echo $this->escapeHtml($_deliveryDate); ?>',
         imageBaseUrl       : baseUrl,
-        fullAddress        : "<?php echo implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry(); ?>"
+        fullAddress        : "<?php echo $this->escapeHtml(implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry()); ?>"
     };
 
     options = {
-        eveningFee             : <?php echo $this->getFee('evening'); ?>,
-        expressFee             : <?php echo $this->getFee('express'); ?>,
-        eveningFeeText         : '<?php echo $this->getFeeText('evening'); ?>',
-        expressFeeText         : '<?php echo $this->getFeeText('express'); ?>',
+        taxDisplayType         : <?php echo $this->getTaxDisplayType() ?>,
+        eveningFeeIncl         : <?php echo $this->getFee('evening', true); ?>,
+        eveningFeeExcl         : <?php echo $this->getFee('evening', false); ?>,
+        expressFeeIncl         : <?php echo $this->getFee('express', true); ?>,
+        expressFeeExcl         : <?php echo $this->getFee('express', false); ?>,
+        eveningFeeText         : '<?php echo $this->getFeeText('evening', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
+        expressFeeText         : '<?php echo $this->getFeeText('express', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
         allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
         allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
         allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
         allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
         allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
-        shippingMethodName     : '<?php echo $this->getMethodName() ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
+        shippingMethodName     : '<?php echo $this->getMethodName()          ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
         currencySymbol         : '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(); ?>'
     };
 

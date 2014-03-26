@@ -35,9 +35,7 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
-
-/**
+ *
  * Primary webservices class. Contains all methods used to communicate with the extensioncontrol webservice.
  *
  * @category   TIG
@@ -252,10 +250,13 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     protected function _getVersionData()
     {
         /**
-         * Get Magento and PosTNL extension version numbers
+         * Get Magento and PosTNL extension version numbers.
+         *
+         * @var Varien_Simplexml_Element $moduleConfig
          */
         $magentoVersion = Mage::getVersion();
-        $moduleVersion = (string) Mage::getConfig()->getModuleConfig('TIG_PostNL')->version;
+        $moduleConfig = Mage::getConfig()->getModuleConfig('TIG_PostNL');
+        $moduleVersion = (string) $moduleConfig->version;
 
         /**
          * Get the edition of the current Magento install. Possible options: Enterprise, Community
@@ -285,6 +286,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getWebsites()
     {
+        /**
+         * @var Mage_Core_Model_Website $website
+         */
         $websites = array();
         foreach (Mage::app()->getWebsites() as $website) {
             $extensionEnabled = $website->getConfig(self::XML_PATH_ACTIVE);
@@ -398,10 +402,15 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     {
         /**
          * Get a list of all storeIds associated with this website
+         *
+         * @var Mage_Core_Model_Store_Group $group
          */
         $storeIds = array();
         foreach ($website->getGroups() as $group) {
             $stores = $group->getStores();
+            /**
+             * @var Mage_Core_Model_Store $store
+             */
             foreach ($stores as $store) {
                 $storeIds[] = $store->getId();
             }
@@ -448,10 +457,15 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     {
         /**
          * Get a list of all storeIds associated with this website
+         *
+         * @var Mage_Core_Model_Store_Group $group
          */
         $storeIds = array();
         foreach ($website->getGroups() as $group) {
             $stores = $group->getStores();
+            /**
+             * @var Mage_Core_Model_Store $store
+             */
             foreach ($stores as $store) {
                 $storeIds[] = $store->getId();
             }
@@ -488,7 +502,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         }
 
         /**
-         * Get the created_at date from the only item in the collection
+         * Get the created_at date from the only item in the collection.
+         *
+         * @var Mage_Sales_Model_Order $lastOrder
          */
         $lastOrder = $orderCollection->getFirstItem();
         $createdAt = $lastOrder->getCreatedAt();

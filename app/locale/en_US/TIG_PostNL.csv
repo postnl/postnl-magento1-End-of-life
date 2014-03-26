@@ -37,7 +37,7 @@ TIG_PostNL::The current global barcode type as supplied by PostNL. Must contain 
 TIG_PostNL::Global Barcode Range,Global Barcode Range
 TIG_PostNL::Your global barcode range as supplied by PostNL. Must contain 4 digits.,Your global barcode range as supplied by PostNL. Must contain 4 digits.
 TIG_PostNL::These fields are only required if you wish to use PostNL Checkout.,These fields are only required if you wish to use PostNL Checkout.
-TIG_PostNL::Webshop External ID,Webshop External ID
+TIG_PostNL::Webshop ID,Webshop ID
 TIG_PostNL::Public Webshop ID,Public Webshop ID
 TIG_PostNL::These fields contain your contact information for PostNL.,These fields contain your contact information for PostNL.
 TIG_PostNL::Company Name,Company Name
@@ -197,11 +197,11 @@ TIG_PostNL::If a confirmed shipment has not been shipped after this amount of da
 TIG_PostNL::Send extension usage statistics to PostNL,Send extension usage statistics to PostNL
 TIG_PostNL::PostNL may periodically send important updates regarding new versions of the PostNL extension or important security updates in the same manner as Magento. Disable this setting to no longer ecieve these notifications.,PostNL may periodically send important updates regarding new versions of the PostNL extension or important security updates in the same manner as Magento. Disable this setting to no longer ecieve these notifications.
 TIG_PostNL::The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the extension altogether.,The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the extension altogether.
-TIG_PostNL::ShippingStatus Webservice version,ShippingStatus Webservice version
-TIG_PostNL::Confirming Webservice version,Confirming Webservice version
-TIG_PostNL::Labelling Webservice version,Labelling Webservice version
-TIG_PostNL::Barcode Webservice version,Barcode Webservice version
-TIG_PostNL::Checkout Webservice version,Checkout Webservice version
+TIG_PostNL::ShippingStatus webservice version,ShippingStatus webservice version
+TIG_PostNL::Confirming webservice version,Confirming webservice version
+TIG_PostNL::Labelling webservice version,Labelling webservice version
+TIG_PostNL::Barcode webservice version,Barcode webservice version
+TIG_PostNL::Checkout webservice version,Checkout webservice version
 TIG_PostNL::PostNL Track & Trace Email,PostNL Track & Trace Email
 TIG_PostNL::Unable to set Payment Method.,Unable to set Payment Method.
 "TIG_PostNL::An error occurred while processing your order. Please try again. if this problem persists, please contact the webshop owner.","An error occurred while processing your order. Please try again. if this problem persists, please contact the webshop owner."
@@ -605,3 +605,159 @@ TIG_PostNL::Shipping Product,Shipping Product
 TIG_PostNL::Delivery Date,Delivery Date
 TIG_PostNL::Customize this grid.,Customize this grid.
 TIG_PostNL::Selecting too many columns may cause the shipment grid to no longer fit on your monitor.,Selecting too many columns may cause the shipment grid to no longer fit on your monitor.
+TIG_PostNL::Your PostNL account credentials could not be validated. Please enter valid PostNL account credentials before activating the postcode check functionality.,Your PostNL account credentials could not be validated. Please enter valid PostNL account credentials before activating the postcode check functionality.
+TIG_PostNL::Maximum number of attempts,Maximum number of attempts
+"TIG_PostNL::If a customer exceeds the maximum number of attempts, he/she will be prompted to enter thei address manually. Leave empty to allow an infinite amount of attempts.","If a customer exceeds the maximum number of attempts, he/she will be prompted to enter thei address manually. Leave empty to allow an infinite amount of attempts."
+"TIG_PostNL::Beware, if for some reason a valid address cannot be validated and you have no maximum number of attempts defined, the customer may not be able to place their order.","Beware, if for some reason a valid address cannot be validated and you have no maximum number of attempts defined, the customer may not be able to place their order."
+TIG_PostNL::Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.,Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.
+TIG_PostNL::Please enter a postcode and housenumber.,Please enter a postcode and housenumber.
+TIG_PostNL::Your postcode/housenumber combination could not be found. Please make sure you have entered a valid postcode and housenumber and try again.,Your postcode/housenumber combination could not be found. Please make sure you have entered a valid postcode and housenumber and try again.
+"TIG_PostNL::Please enter a valid postcode. A valid postcode contains 4 numbers and 2 letters without spaces, for example: 1000XX.","Please enter a valid postcode. A valid postcode contains 4 numbers and 2 letters without spaces, for example: 1000XX."
+TIG_PostNL::Please enter a valid housenumber. Housenumbers may only contain digits.,Please enter a valid housenumber. Housenumbers may only contain digits.
+TIG_PostNL::Country,Country
+TIG_PostNL::Zip/Postal Code,Zip/Postal Code
+TIG_PostNL::Housenumber,Housenumber
+TIG_PostNL::Extension,Extension
+TIG_PostNL::Street name,Street name
+TIG_PostNL::City,City
+TIG_PostNL::Street Address %s,Street Address %s
+TIG_PostNL::Delivery date webservice version,Delivery date webservice version
+TIG_PostNL::No data available for GetDeliveryDay request.,No data available for GetDeliveryDay request.
+TIG_PostNL::Invalid GetDeliveryDate response: %s,Invalid GetDeliveryDate response: %s
+TIG_PostNL::No data available for GetDeliveryDay request.,No data available for GetDeliveryDay request.
+TIG_PostNL::Timeframe webservice version,Timeframe webservice version
+TIG_PostNL::More Info,More Info
+TIG_PostNL::from,from
+TIG_PostNL::early delivery,early delivery
+TIG_PostNL::available,available
+TIG_PostNL::evening,evening
+TIG_PostNL::Post Office,Post Office
+TIG_PostNL::Package Dispenser,Package Dispenser
+TIG_PostNL::Delivery Options,Delivery Options
+TIG_PostNL::Delivery,Delivery
+TIG_PostNL::or Pickup,or Pickup
+TIG_PostNL::Su,Su
+TIG_PostNL::Mo,Mo
+TIG_PostNL::Tu,Tu
+TIG_PostNL::We,We
+TIG_PostNL::Th,Th
+TIG_PostNL::Fr,Fr
+TIG_PostNL::Sa,Sa
+TIG_PostNL::in,in
+TIG_PostNL::Business Hours,Business Hours
+TIG_PostNL::Closed,Closed
+TIG_PostNL::Delivery Options,Delivery Options
+TIG_PostNL::Delivery,Delivery
+TIG_PostNL::or Pickup,or Pickup
+TIG_PostNL::More Info,More Info
+TIG_PostNL::choose a different pickup location,choose a different pickup location
+TIG_PostNL::Select pickup location,Select pickup location
+TIG_PostNL::Search,Search
+TIG_PostNL::early pickup,early pickup
+TIG_PostNL::opened in the evening,opened in the evening
+TIG_PostNL::Close,Close
+TIG_PostNL::Pickup locations found,Pickup locations found
+TIG_PostNL::business hours,business hours
+TIG_PostNL::Save,Save
+"TIG_PostNL::Search by zipcode, address or city","Search by zipcode, address or city"
+TIG_PostNL::business hours,business hours
+TIG_PostNL::Early pickup available,Early pickup available
+TIG_PostNL::Evening pickup available,Evening pickup available
+TIG_PostNL::Or pick your own delivery moment,Or pick your own delivery moment
+TIG_PostNL::Connection timeout duration,Connection timeout duration
+"TIG_PostNL::If the postcode check takes more than this nuber of seconds, the user will be prompted to enter their address manually instead.","If the postcode check takes more than this nuber of seconds, the user will be prompted to enter their address manually instead."
+"TIG_PostNL::If this nuber is set too high, customers may have to wait for a long time before being able to proceed with their order. This could happen in case there is a connection problem to the postcode check servers. Leave this field empty to disable the timeout functionality.","If this nuber is set too high, customers may have to wait for a long time before being able to proceed with their order. This could happen in case there is a connection problem to the postcode check servers. Leave this field empty to disable the timeout functionality."
+TIG_PostNL::Show PostNL Checkout exclusively to MijnPakket users,Show PostNL Checkout exclusively to MijnPakket users
+"TIG_PostNL::If enabled, PostNL Checkout will only be available to users who already have a Mijnpakket account.","If enabled, PostNL Checkout will only be available to users who already have a Mijnpakket account."
+TIG_PostNL::This option is only available if delivery options are enabled.,This option is only available if delivery options are enabled.
+TIG_PostNL::PostNL Delivery Options,PostNL Delivery Options
+"TIG_PostNL::Here you can configure your PostNL delivery options.<br />With PostNL delivery options, your customers can choose where and when they want their order delivered. They may choose a date and timeframe for their delivery. Also they can choose to have their order delivered to a nearby post office. New features include the 'evening' delivery option and the option to choose an 'early delivery' post office location.","Here you can configure your PostNL delivery options.<br />With PostNL delivery options, your customers can choose where and when they want their order delivered. They may choose a date and timeframe for their delivery. Also they can choose to have their order delivered to a nearby post office. New features include the 'evening' delivery option and the option to choose an 'early delivery' post office location."
+TIG_PostNL::Enable PostNL delivery options,Enable PostNL delivery options
+TIG_PostNL::You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.,You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.
+TIG_PostNL::Enable PostNL delivery options for orders under 2 kg,Enable PostNL delivery options for orders under 2 kg
+TIG_PostNL::The 2kg limit will be based on the product's weight and the weight unit you selected under the 'Confirm and label printing settings' group.,The 2kg limit will be based on the product's weight and the weight unit you selected under the 'Confirm and label printing settings' group.
+TIG_PostNL::Enable PostNL delivery options for orders containing out of stock products,Enable PostNL delivery options for orders containing out of stock products
+"TIG_PostNL::Customers can select a specific date and time when they want their shipment delivered when they use PostNL delivery options. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL delivery options if they are attempting to order an item that is not in stock, thereby preventing this situation.","Customers can select a specific date and time when they want their shipment delivered when they use PostNL delivery options. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL delivery options if they are attempting to order an item that is not in stock, thereby preventing this situation."
+"TIG_PostNL::PostNL delivery options determine the possible delivery dates based on a few settings. It is important that you configure these as accurately as you can. You should try to be conservative with these settings. If you cannot transfer a shipment to PostNL on time each day, customers may not receive their order on the requested date.<br />You can interpret these settings as ""If ordered by {cut-off time}, the order will be delivered in {shipping duration} days"".","PostNL delivery options determine the possible delivery dates based on a few settings. It is important that you configure these as accurately as you can. You should try to be conservative with these settings. If you cannot transfer a shipment to PostNL on time each day, customers may not receive their order on the requested date.<br />You can interpret these settings as ""If ordered by {cut-off time}, the order will be delivered in {shipping duration} days""."
+TIG_PostNL::Shipping duration,Shipping duration
+TIG_PostNL::The number of days shipping will take after a customer finishes their order.,The number of days shipping will take after a customer finishes their order.
+TIG_PostNL::Order cut-off time,Order cut-off time
+"TIG_PostNL::When an order is placed after this time, another day will be added to the shipping duration.","When an order is placed after this time, another day will be added to the shipping duration."
+TIG_PostNL::Allow weekend sorting,Allow weekend sorting
+"TIG_PostNL::Weekend sorting is a special service where shipments are sorted by PostNL during the weekend, allowing shipments to be delivered on monday. If you enable this field, but weekend sorting is not available for your webshop, parcels will NOT be delivered the next monday.","Weekend sorting is a special service where shipments are sorted by PostNL during the weekend, allowing shipments to be delivered on monday. If you enable this field, but weekend sorting is not available for your webshop, parcels will NOT be delivered the next monday."
+TIG_PostNL::Please ask your PostNL account manager if this service is available for your webshop.,Please ask your PostNL account manager if this service is available for your webshop.
+TIG_PostNL::Weekend cut-off time,Weekend cut-off time
+"TIG_PostNL::When an order is placed after this time on sunday, another day will be added to the shipping duration.","When an order is placed after this time on sunday, another day will be added to the shipping duration."
+"TIG_PostNL::PostNL delivery options allows your customers to choose their delivery date and timeframe, or choose to have their order delivered to a post office, early delivery post office or parcel dispenser. Each of these options can be individually enabled and disabled. In the case of evening- and early delivery, you may charge an additional fee.","PostNL delivery options allows your customers to choose their delivery date and timeframe, or choose to have their order delivered to a post office, early delivery post office or parcel dispenser. Each of these options can be individually enabled and disabled. In the case of evening- and early delivery, you may charge an additional fee."
+TIG_PostNL::Enable timeframes,Enable timeframes
+TIG_PostNL::Timeframes allow customers to specify on which date and at which time they want their order delivered.,Timeframes allow customers to specify on which date and at which time they want their order delivered.
+TIG_PostNL::Enable evening delivery,Enable evening delivery
+TIG_PostNL::Whether or not customers may pick an evening timeframe.,Whether or not customers may pick an evening timeframe.
+TIG_PostNL::Evening timeframes may not be available in all areas. The PostNL extension will automatically determine whether or not evening delivery is available for a specific area.,Evening timeframes may not be available in all areas. The PostNL extension will automatically determine whether or not evening delivery is available for a specific area.
+TIG_PostNL::Evening timeframe fee,Evening timeframe fee
+TIG_PostNL::Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs.,Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs.
+TIG_PostNL::This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for evening timeframes.,This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for evening timeframes.
+TIG_PostNL::Enable post office locations,Enable post office locations
+TIG_PostNL::Whether or not customers may choose to have their order delivered to a nearby post office.,Whether or not customers may choose to have their order delivered to a nearby post office.
+TIG_PostNL::Enable early delivery locations,Enable early delivery locations
+TIG_PostNL::Whether or not customers may choose an 'early delivery' location.,Whether or not customers may choose an 'early delivery' location.
+TIG_PostNL::Not all post offces may support early delivery.,Not all post offces may support early delivery.
+TIG_PostNL::Early delivery fee,Early delivery fee
+TIG_PostNL::Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs.,Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs.
+TIG_PostNL::This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for early delivery locations.,This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for early delivery locations.
+TIG_PostNL::Enable package dispenser locations,Enable package dispenser locations
+TIG_PostNL::Whether or not customers may choose to have their order delivered to a parcel dispenser.,Whether or not customers may choose to have their order delivered to a parcel dispenser.
+TIG_PostNL::Parcel dispensers are available at certain NS train stations across the Netherlands.,Parcel dispensers are available at certain NS train stations across the Netherlands.
+TIG_PostNL::Allow Google Streetview,Allow Google Streetview
+"TIG_PostNL::If enabled, users may use Google Streetview when choosing a post office location.","If enabled, users may use Google Streetview when choosing a post office location."
+TIG_PostNL::No cut-off time,No cut-off time
+TIG_PostNL::day,day
+TIG_PostNL::days,days
+TIG_PostNL::The address you searched for was not found. Please try again.,The address you searched for was not found. Please try again.
+TIG_PostNL::We could not find any locations matching your filters. Please unselect any filters or try again at a different location.,We could not find any locations matching your filters. Please unselect any filters or try again at a different location.
+TIG_PostNL::Invalid GetDeliveryDate response: %s,Invalid GetDeliveryDate response: %s
+TIG_PostNL::No data available for request.,No data available for request.
+TIG_PostNL::Invalid postcode supplied for getNearestLocations request: %s,Invalid postcode supplied for getNearestLocations request: %s
+"TIG_PostNL::Invalid coordinates supplied for getNearestLocations request. lat: %s, long: %s","Invalid coordinates supplied for getNearestLocations request. lat: %s, long: %s"
+TIG_PostNL::Invalid arguments supplied. getNearestLocations requires a postcode or a longitude and latitude.,Invalid arguments supplied. getNearestLocations requires a postcode or a longitude and latitude.
+TIG_PostNL::Invalid delivery date supplied: %s,Invalid delivery date supplied: %s
+TIG_PostNL::Invalid response for GetDeliveryTimeframes request: %s,Invalid response for GetDeliveryTimeframes request: %s
+TIG_PostNL::Invalid response for GetNearestLocations request: %s,Invalid response for GetNearestLocations request: %s
+TIG_PostNL::Invalid arguments supplied. GetDeliveryTimeframes requires a postcode and a housenumber.,Invalid arguments supplied. GetDeliveryTimeframes requires a postcode and a housenumber.
+TIG_PostNL::Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.,Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.
+TIG_PostNL::Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain digits.,Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain digits.
+TIG_PostNL::Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.,Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.
+TIG_PostNL::Invalid arguments supplied. getNearestLocationsInArea requires two sets of coordinates.,Invalid arguments supplied. getNearestLocationsInArea requires two sets of coordinates.
+"TIG_PostNL::Invalid NE coordinates supplied for getLocationsInArea request. lat: %s, long: %s","Invalid NE coordinates supplied for getLocationsInArea request. lat: %s, long: %s"
+"TIG_PostNL::Invalid SW coordinates supplied for getLocationsInArea request. lat: %s, long: %s","Invalid SW coordinates supplied for getLocationsInArea request. lat: %s, long: %s"
+TIG_PostNL::Invalid postcode supplied for GetDeliveryDate request: %s Postcodes may only contain 4 numbers and 2 letters.,Invalid postcode supplied for GetDeliveryDate request: %s Postcodes may only contain 4 numbers and 2 letters.
+TIG_PostNL::PostNL delivery options are only available for Dutch shipping addresses.,PostNL delivery options are only available for Dutch shipping addresses.
+TIG_PostNL::You have not yet enabled PostNL delivery options.,You have not yet enabled PostNL delivery options.
+TIG_PostNL::The SOAP extension is not installed. PostNL requires the SOAP extension to communicate with PostNL.,The SOAP extension is not installed. PostNL requires the SOAP extension to communicate with PostNL.
+TIG_PostNL::The OpenSSL extension is not installed. The PostNL extension requires the OpenSSL extension to secure the communications with the PostNL servers.,The OpenSSL extension is not installed. The PostNL extension requires the OpenSSL extension to secure the communications with the PostNL servers.
+"TIG_PostNL::The specified method ""%s"" is not callable.","The specified method ""%s"" is not callable."
+TIG_PostNL::The MCrypt extension is not installed. The PostNL extension requires the MCrypt extension to secure the communications with the PostNL servers.,The MCrypt extension is not installed. The PostNL extension requires the MCrypt extension to secure the communications with the PostNL servers.
+TIG_PostNL::Confirmation Expired,Confirmation Expired
+"TIG_PostNL::Invalid arguments supplied. In order to save a selected option, a type, delivery date and optional extra costs are required.","Invalid arguments supplied. In order to save a selected option, a type, delivery date and optional extra costs are required."
+TIG_PostNL::Invalid type supplied: %s,Invalid type supplied: %s
+TIG_PostNL::Invalid extra costs supplied: %s Extra costs must be supplied as a float.,Invalid extra costs supplied: %s Extra costs must be supplied as a float.
+"TIG_PostNL::Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode.","Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode."
+TIG_PostNL::Invalid arguments supplied. The 'costs' parameter is required.,Invalid arguments supplied. The 'costs' parameter is required.
+TIG_PostNL::Please enter a valid Dutch mobile phone number using only digits.,Please enter a valid Dutch mobile phone number using only digits.
+TIG_PostNL::Phone number for Package Dispenser service,Phone number for Package Dispenser service
+TIG_PostNL::We will send you a text message when the package can be collected from the package dispenser.,We will send you a text message when the package can be collected from the package dispenser.
+TIG_PostNL::We need your mobile phone number in order to do this.,We need your mobile phone number in order to do this.
+TIG_PostNL::Please make sure your phone number is correct.,Please make sure your phone number is correct.
+TIG_PostNL::Continue,Continue
+TIG_PostNL::Please enter a mobile phone number.,Please enter a mobile phone number.
+TIG_PostNL::Phone number,Phone number
+TIG_PostNL::Invalid country code supplied: %s,Invalid country code supplied: %s
+TIG_PostNL::Invalid street supplied: %s,Invalid street supplied: %s
+TIG_PostNL::Invalid housenumber supplied: %s,Invalid housenumber supplied: %s
+TIG_PostNL::Invalid postcode supplied: %s.,Invalid postcode supplied: %s.
+TIG_PostNL::Invalid housenumber extension supplied: %s.,Invalid housenumber extension supplied: %s.
+TIG_PostNL::Invalid arguments supplied. The 'number' parameter is required.,Invalid arguments supplied. The 'number' parameter is required.
+TIG_PostNL::Invalid mobile phone number supplied: %s,Invalid mobile phone number supplied: %s
+TIG_PostNL::The quote's total weight is below the miniumum required to use PostNL delivery options.,The quote's total weight is below the miniumum required to use PostNL delivery options.
+TIG_PostNL::Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT.,Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT.
+TIG_PostNL::Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. VAT.,Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. VAT.

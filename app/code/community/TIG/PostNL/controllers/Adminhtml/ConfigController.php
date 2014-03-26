@@ -94,6 +94,8 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
 
         /**
          * Load the CIF model and set to test mode to false
+         *
+         * @var TIG_PostNL_Model_Core_Cif $cif
          */
         $cif = Mage::getModel('postnl_core/cif')
                    ->setTestMode(false);

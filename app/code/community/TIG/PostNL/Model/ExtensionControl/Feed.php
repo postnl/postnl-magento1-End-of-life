@@ -78,4 +78,42 @@ class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Mode
         $this->_feedUrl = $feedUrl;
         return $this;
     }
+
+    /**
+     * Check feed for modification
+     *
+     * @return Mage_AdminNotification_Model_Feed
+     */
+    public function checkUpdate()
+    {
+        if (($this->getFrequency() + $this->getLastUpdate()) > time()) {
+            return $this;
+        }
+
+        $helper = Mage::helper('core');
+
+        $feedData = array();
+
+        $feedXml = $this->getFeedData();
+
+        if ($feedXml && $feedXml->channel && $feedXml->channel->item) {
+            foreach ($feedXml->channel->item as $item) {
+                $feedData[] = array(
+                    'severity'      => (int) $item->severity,
+                    'date_added'    => $this->getDate((string) $item->pubDate),
+                    'title'         => $helper->escapeHtml((string) $item->title),
+                    'description'   => $helper->escapeHtml((string) $item->description),
+                    'url'           => $helper->escapeUrl((string) $item->link),
+                );
+            }
+
+            if ($feedData) {
+                Mage::getModel('adminnotification/inbox')->parse(array_reverse($feedData));
+            }
+
+        }
+        $this->setLastUpdate();
+
+        return $this;
+    }
 }

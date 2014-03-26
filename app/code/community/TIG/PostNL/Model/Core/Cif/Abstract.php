@@ -29,7 +29,7 @@
  *
  * DISCLAIMER
  *
-advanced * Do not edit or add to this file if you wish to upgrade this module to newer
+ * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
@@ -43,7 +43,7 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  *
  * @method TIG_PostNL_Model_Core_Cif_Abstract setHelper(Mage_Core_Helper_Abstract $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setSoapClient(Zend_Soap_Client $value)
- * @method TIG_PostNL_Model_Core_Cif_Abstract setTestMode(Zend_Soap_Client $value)
+ * @method TIG_PostNL_Model_Core_Cif_Abstract setTestMode(boolean $value)
  *
  * @method boolean hasSoapClient()
  * @method boolean hasHelper()
@@ -51,7 +51,6 @@ advanced * Do not edit or add to this file if you wish to upgrade this module to
  * @method boolean hasTestMode()
  *
  * @method TIG_PostNL_Model_Core_Cif_Abstract unsTestMode()
- *
  */
 abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 {
@@ -118,6 +117,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 'POSTNL-0134'
             );
         }
+
         if (!extension_loaded('openssl')) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('The OpenSSL extension is not installed. The PostNL extension requires the '
@@ -127,7 +127,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             );
         }
 
-        return parent::_construct();
+        parent::_construct();
     }
 
     /**
@@ -300,7 +300,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      *
      * @throws TIG_PostNL_Exception
      */
-    public function call($wsdlType, $method, $soapParams = null, $username = false, $password = false)
+    public function call($wsdlType, $method, $soapParams = array(), $username = false, $password = false)
     {
         $client = null;
         try {
@@ -325,7 +325,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                 );
             }
 
-                /**
+            /**
              * Add SOAP header
              */
             $header = $this->_getSoapHeader($username, $password);
@@ -356,14 +356,17 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     }
 
     /**
-     * returns the URL of the chosen wsdl file based on a wsdl type.
+     * Returns the URL of the chosen wsdl file based on a wsdl type.
      *
-     * available types are:
+     * Available types are:
      * - barcode
      * - confirming
      * - labelling
      * - shippingstatus
      * - checkout
+     * - deliverydate
+     * - timeframe
+     * - location
      *
      * @param string $wsdlType
      *
@@ -421,8 +424,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         /**
-         * Wsdl version numbers are formatted using an underscore instead of a period. Since many people would use a period, we
-         * convert it to CIF specifications.
+         * Wsdl version numbers are formatted using an underscore instead of a period. Since many people would use a
+         * period, we convert it to CIF specifications.
          */
         $wsdlversion = str_replace('.', '_', $wsdlversion);
 
@@ -439,9 +442,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
          * Format the final wsdl URL
          */
         $wsdlUrl .= $wsdlFileName
-                   . '/'
-                   . $wsdlversion
-                   . '/?wsdl';
+                  . '/'
+                  . $wsdlversion
+                  . '/?wsdl';
 
         return $wsdlUrl;
     }
@@ -462,10 +465,13 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         $namespace = self::HEADER_SECURITY_NAMESPACE;
-        $node1     = new SoapVar($username, XSD_STRING,      null, null, 'Username',      $namespace);
-        $node2     = new SoapVar($password, XSD_STRING,      null, null, 'Password',      $namespace);
+        $node1     = new SoapVar($username, XSD_STRING, null, null, 'Username', $namespace);
+        $node2     = new SoapVar($password, XSD_STRING, null, null, 'Password', $namespace);
+
         $token     = new SoapVar(array($node1, $node2), SOAP_ENC_OBJECT, null, null, 'UsernameToken', $namespace);
-        $security  = new SoapVar(array($token),         SOAP_ENC_OBJECT, null, null, 'Security',      $namespace);
+
+        $security  = new SoapVar(array($token), SOAP_ENC_OBJECT, null, null, 'Security', $namespace);
+
         $header    = new SOAPHeader($namespace, 'Security', $security, false);
 
         return $header;
@@ -485,7 +491,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $responseDOMDoc->loadXML($responseXML);
 
         /**
-         * Search the CIF response for warnings
+         * Search the CIF response for warnings.
          */
         $warnings = $responseDOMDoc->getElementsByTagName('Warning');
 
@@ -494,7 +500,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         /**
-         * add all warning codes and descriptions to an array
+         * Add all warning codes and descriptions to an array.
          *
          * @var DOMDocument $warning
          */
@@ -511,7 +517,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         /**
-         * Check if old warnings are still present in the registry. If so, merge these with the new warnings
+         * Check if old warnings are still present in the registry. If so, merge these with the new warnings.
          */
         if (Mage::registry('postnl_cif_warnings') !== null) {
             $existingWarnings = (array) Mage::registry('postnl_cif_warnings');
@@ -539,13 +545,13 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      *
      * @throws TIG_PostNL_Model_Core_Cif_Exception
      */
-    protected function _handleCifException($e, $client = null)
+    protected function _handleCifException(SoapFault $e, $client = null)
     {
         $cifHelper = Mage::helper('postnl/cif');
         $exception = new TIG_PostNL_Model_Core_Cif_Exception($e->getMessage(), null, $e);
 
-        $requestXML = false;
-        $responseXML = false;
+        $requestXML = '';
+        $responseXML = '';
 
         /**
          * Get the request and response XML data
@@ -555,12 +561,19 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             $responseXML = $cifHelper->formatXml($client->getLastResponse());
         }
 
+        /**
+         * If we got a response, parse it for specific error messages and add these to the exception.
+         */
         if (!empty($responseXML)) {
             /**
              * If we received a response, parse it for errors and create an appropriate exception
              */
             $errorResponse = new DOMDocument();
             $errorResponse->loadXML($responseXML);
+
+            /**
+             * Get all error messages.
+             */
             $errors = $errorResponse->getElementsByTagNameNS(self::CIF_ERROR_NAMESPACE, 'ErrorMsg');
             if ($errors) {
                 $message = '';
@@ -568,11 +581,17 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                     $message .= $error->nodeValue . PHP_EOL;
                 }
 
-                $exception = new TIG_PostNL_Model_Core_Cif_Exception($message, null, $e);
+                /**
+                 * Update the exception.
+                 */
+                $exception->setMessage($message);
             }
 
+            /**
+             * Parse any CIF error numbers we may have received.
+             */
             $errorNumbers = $errorResponse->getElementsByTagNameNS(self::CIF_ERROR_NAMESPACE, 'ErrorNumber');
-            if (isset($exception) && $errorNumbers) {
+            if ($errorNumbers) {
                 foreach ($errorNumbers as $errorNumber) {
                     $exception->addErrorNumber($errorNumber->nodeValue);
                 }
@@ -582,7 +601,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         /**
          * Add the response and request data to the exception (to be logged later)
          */
-        if ($client) {
+        if (!empty($requestXML) || !empty($responseXML)) {
             $exception->setRequestXml($requestXML)
                       ->setResponseXml($responseXML);
         }

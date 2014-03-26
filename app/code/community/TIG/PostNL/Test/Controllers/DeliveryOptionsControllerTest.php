@@ -162,6 +162,13 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
                         ->will($this->returnSelf());
         }
 
+        $mockCoreHelper = $this->getMock('Mage_Core_Helper_Data');
+        $mockCoreHelper->expects($this->any())
+                       ->method('jsonDecode')
+                       ->withAnyParameters()
+                       ->will($this->returnArgument(0));
+        $this->setHelperMock('core', $mockCoreHelper);
+
         $controller->setService($mockService);
 
         $controller->setCanUseDeliveryOptions(true);
@@ -188,7 +195,10 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
                     'isAjax' => true,
                     'type' => 'PGE',
                     'date' => '18-03-2014',
-                    'costs' => 1.5,
+                    'costs' => array(
+                        'incl' => 1,
+                        'excl' => 0.5
+                    ),
                 ),
                 true
             ),
@@ -197,7 +207,10 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
                     'isAjax' => true,
                     'type' => 'testfail',
                     'date' => '18-03-2014',
-                    'costs' => 1.5,
+                    'costs' => array(
+                        'incl' => 1,
+                        'excl' => 0.5
+                    ),
                 ),
                 false
             ),
@@ -206,7 +219,10 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
                     'isAjax' => true,
                     'type' => 'PGE',
                     'date' => '180-03-2014',
-                    'costs' => 1.5,
+                    'costs' => array(
+                        'incl' => 1,
+                        'excl' => 0.5
+                    ),
                 ),
                 false
             ),
@@ -215,7 +231,10 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
                     'isAjax' => true,
                     'type' => 'PGE',
                     'date' => '18-03-2014',
-                    'costs' => '1,50',
+                    'costs' => array(
+                        'incl' => '1,50',
+                        'excl' => '1,50'
+                    ),
                 ),
                 false
             ),
@@ -286,6 +305,13 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
                         ->will($this->returnSelf());
         }
 
+        $mockCoreHelper = $this->getMock('Mage_Core_Helper_Data');
+        $mockCoreHelper->expects($this->any())
+                       ->method('jsonDecode')
+                       ->withAnyParameters()
+                       ->will($this->returnArgument(0));
+        $this->setHelperMock('core', $mockCoreHelper);
+
         $controller->setService($mockService);
 
         $controller->setCanUseDeliveryOptions(true);
@@ -310,48 +336,67 @@ class TIG_PostNL_Test_Controllers_DeliveryOptionsControllerTest extends TIG_Post
             array(
                 'data' => array(
                     'isAjax' => true,
-                    'costs' => 0
+                    'costs' => array(
+                        'incl' => 1,
+                        'excl' => 0.5
+                    ),
                 ),
                 'success' => true
             ),
             array(
                 'data' => array(
                     'isAjax' => true,
-                    'costs' => 1
+                    'costs' => array(
+                        'incl' => 1,
+                        'excl' => 0.5
+                    ),
                 ),
                 'success' => true
             ),
             array(
                 'data' => array(
                     'isAjax' => true,
-                    'costs' => 1.5
+                    'costs' => array(
+                        'incl' => 1,
+                        'excl' => 0.5
+                    ),
                 ),
                 'success' => true
             ),
             array(
                 'data' => array(
                     'isAjax' => true,
-                    'costs' => 3
+                    'costs' => array(
+                        'incl' => 3,
+                        'excl' => 3
+                    ),
                 ),
                 'success' => false
             ),
             array(
                 'data' => array(
                     'isAjax' => true,
-                    'costs' => 'test'
+                    'costs' => array(
+                        'incl' => 'test',
+                        'excl' => 'test'
+                    ),
                 ),
                 'success' => false
             ),
             array(
                 'data' => array(
                     'isAjax' => true,
-                    'costs' => '1test'
+                    'costs' => array(
+                        'incl' => '1test',
+                        'excl' => '1test'
+                    ),
                 ),
                 'success' => false
             ),
             array(
                 'data' => array(
                     'isAjax' => true,
+                    'costs' => array(),
                 ),
                 'success' => false
             ),

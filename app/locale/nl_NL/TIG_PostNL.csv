@@ -701,7 +701,7 @@ TIG_PostNL::Whether or not customers may pick an evening timeframe.,Dit bepaalt 
 TIG_PostNL::Evening timeframes may not be available in all areas. The PostNL extension will automatically determine whether or not evening delivery is available for a specific area.,Avondbezorging is niet overal beschikbaar. De PostNL extensie bepaalt automatisch of avondbezorging is een bepaald gebied beschikbaar is.
 TIG_PostNL::Evening timeframe fee,Avondbezorging toeslag
 TIG_PostNL::Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs.,Additionele kosten voor het gebruik van avondbezorging in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten.
-TIG_PostNL::This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for evening timeframes.,Deze kosten moeten tussen de 0 en 2 EUR liggen. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van avondbezorging.
+TIG_PostNL::This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for evening timeframes.,"Deze kosten moeten tussen de 0,00 en 2,00 EUR liggen incl. BTW. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van avondbezorging."
 TIG_PostNL::Enable post office locations,Activeer postkantoor locaties
 TIG_PostNL::Whether or not customers may choose to have their order delivered to a nearby post office.,Of klanten ervoor kunnen kiezen om hun bestelling te laten bezorgen op een postkantoor locatie.
 TIG_PostNL::Enable early delivery locations,Activeer extra vroeg postkantoor locaties
@@ -709,7 +709,7 @@ TIG_PostNL::Whether or not customers may choose an 'early delivery' location.,Of
 TIG_PostNL::Not all post offces may support early delivery.,Niet alle postkantoren ondersteunen extra vroege bezorging.
 TIG_PostNL::Early delivery fee,Extra vroege bezorging toeslag
 TIG_PostNL::Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs.,Additionele kosten voor het gebruik van extra vroege bezorging in de basis valuta van de storeview. Deze kosten zullen opgeteld worden bij de verzendkosten.
-TIG_PostNL::This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for early delivery locations.,Deze kosten moeten tussen de 0 en 2 EUR liggen. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van extra vroege bezorging.
+TIG_PostNL::This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for early delivery locations.,"Deze kosten moeten tussen de 0,00 en 2,00 EUR liggen incl. BTW. Laat dit veld leeg om geen extra kosten in rekening te brengen voor het gebruik van extra vroege bezorging."
 TIG_PostNL::Enable package dispenser locations,Activeer pakketautomaat locaties
 TIG_PostNL::Whether or not customers may choose to have their order delivered to a parcel dispenser.,Of klanten hun bestelling kunnen laten bezorgen bij een pakketautomaat
 TIG_PostNL::Parcel dispensers are available at certain NS train stations across the Netherlands.,Pakketautomaten zijn beschikbaar op bepaalde NS stations.
@@ -755,4 +755,14 @@ TIG_PostNL::We need your mobile phone number in order to do this.,Hiertoe vragen
 TIG_PostNL::Please make sure your phone number is correct.,Controleer goed of dit nummer correct is.
 TIG_PostNL::Continue,Verder
 TIG_PostNL::Please enter a mobile phone number.,Vul s.v.p. een mobiel telefoonnummer in.
-TIG_PostNL::Please number,Telefoonnummer
+TIG_PostNL::Phone number,Telefoonnummer
+TIG_PostNL::Invalid country code supplied: %s,Ongeldige landcode opgegeven: %s
+TIG_PostNL::Invalid street supplied: %s,Ongeldige straatnaam opegegeven: %s
+TIG_PostNL::Invalid housenumber supplied: %s,Ongeldig huisnummer opgegeven: %s
+TIG_PostNL::Invalid postcode supplied: %s.,Ongeldige postcode opgegeven: %s.
+TIG_PostNL::Invalid housenumber extension supplied: %s.,Ongeldige huisnummer toevoeging opgegeven: %s.
+TIG_PostNL::Invalid arguments supplied. The 'number' parameter is required.,Ongeldige parameters opgegeven. De 'number' parameter is verplicht.
+TIG_PostNL::Invalid mobile phone number supplied: %s,Ongeldig mobiel telefoonnummer opgegeven : %s
+TIG_PostNL::The quote's total weight is below the miniumum required to use PostNL delivery options.,Het totale gewicht van de bestelling is beneden het minimum om gebruik te maken van PostNL bezorgopties.
+TIG_PostNL::Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT.,Ongeldige parameters opgegeven. De 'costs' parameter moet een bedrag incl. en excl. BTW bevatten.
+TIG_PostNL::Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. VAT.,"Ongeldige toeslag ingevoerd: %s incl. BTW. Vul s.v.p. een waarde in tussen 0,00 en 2,00 EUR incl. BTW."
