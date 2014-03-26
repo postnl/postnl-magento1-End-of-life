@@ -60,7 +60,7 @@
                     <p><?php echo $this->__('We need your mobile phone number in order to do this.'); ?></p>
                 </div>
                 <div class="number-input">
-                    <input type="text" id="add_phone_input" class="input-text required-entry validate-required validate-postnl-mobilephone" name="add_phone" placeholder="<?php echo $this->__('Please number'); ?>" value="<?php echo $this->getPhoneNumber(); ?>" />
+                    <input type="text" id="add_phone_input" class="input-text required-entry validate-required validate-postnl-mobilephone" name="add_phone" placeholder="<?php echo $this->__('Phone number'); ?>" value="<?php echo $this->getPhoneNumber(); ?>" />
                     <div id="number_verify_text" class="number-verify" style="display: none;"><?php echo $this->__('Please make sure your phone number is correct.'); ?></div>
                     <div id="number_verify_fail" class="number-failed" style="display: none;"><?php echo $this->__('Please enter a mobile phone number.'); ?></div>
                 </div>
@@ -73,15 +73,7 @@
 </div>
 <script type="text/javascript">
     //<![CDATA[
-    validateShippingMethod();
-    $('add_phone_input').observe('keyup', function() {
-        validateShippingMethod();
-    });
-
-    /**
-     * Save the supplied mobile phone number and continue to the next checkout step.
-     */
-    $('add_phone_save').observe('click', function(event) {
+    savePhoneNumber = function(event) {
         event.stop();
 
         var phoneInputField = $('add_phone_input');
@@ -104,15 +96,15 @@
         deliveryOptions.savePaPhoneNumber(phoneInputField.getValue());
 
         deliveryOptions.setPaPhoneCheckPassed(false);
-    });
+    };
 
-    $('add_phone_close').observe('click', function(event) {
+    closeAddPhoneWindow = function(event) {
         event.stop();
 
         deliveryOptions.closeAddPhoneWindow();
-    });
+    };
 
-    function validateShippingMethod() {
+    validateShippingMethod = function() {
         var saveButton = $('add_phone_save');
         var verifyText = $('number_verify_text');
         var verifyFail = $('number_verify_fail');
@@ -140,6 +132,33 @@
         }
 
         return this;
-    }
+    };
+
+    /**
+     * Validate the input initially.
+     */
+    validateShippingMethod();
+
+    var addPhoneInput = $('add_phone_input');
+    var addPhoneSave  = $('add_phone_save');
+    var addPhoneClose = $('add_phone_close');
+
+    /**
+     * Validate the phone number as it's being typed.
+     */
+    addPhoneInput.stopObserving('keyup', validateShippingMethod);
+    addPhoneInput.observe('keyup', validateShippingMethod);
+
+    /**
+     * Save the supplied mobile phone number and continue to the next checkout step.
+     */
+    addPhoneSave.stopObserving('keyup', savePhoneNumber);
+    addPhoneSave.observe('click', savePhoneNumber);
+
+    /**
+     * Close the add phone pop-up.
+     */
+    addPhoneClose.stopObserving('keyup', closeAddPhoneWindow);
+    addPhoneClose.observe('click', closeAddPhoneWindow);
     //]]>
 </script>

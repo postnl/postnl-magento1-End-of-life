@@ -430,7 +430,7 @@
                             <validate>validate-digits validate-length minimum-length-6 maximum-length-6 postnl-validate-empty</validate>
                         </collection_location>
                         <validate_button translate="tooltip" module="postnl">
-                            <tooltip>This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error.</tooltip>
+                            <tooltip>This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error. Please note that the PostNL extension must be active for the validation to succeed.</tooltip>
                             <frontend_model>postnl_adminhtml/system_config_form_field_validateButton</frontend_model>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1664,13 +1664,14 @@
                         <evening_timeframe_fee translate="label comment tooltip" module="postnl">
                             <label>Evening timeframe fee</label>
                             <comment>Additional costs for evening timeframes in the store's base currency. This fee will be added to the shipping costs.</comment>
-                            <tooltip>This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for evening timeframes.</tooltip>
+                            <tooltip>This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for evening timeframes.</tooltip>
                             <frontend_type>text</frontend_type>
+                            <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <validate>validate-digits-range digits-range-0-2</validate>
+                            <validate>validate-number validate-not-negative-number</validate>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_timeframes>1</enable_timeframes>
@@ -1708,13 +1709,14 @@
                         <pakjegemak_express_fee translate="label comment tooltip" module="postnl">
                             <label>Early delivery fee</label>
                             <comment>Additional costs for early delivery locations in the store's base currency. This fee will be added to the shipping costs.</comment>
-                            <tooltip>This value must be between 0 and 2 EUR. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
+                            <tooltip>This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
                             <frontend_type>text</frontend_type>
+                            <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
                             <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <validate>validate-digits-range digits-range-0-2</validate>
+                            <validate>validate-number validate-not-negative-number</validate>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_pakjegemak>1</enable_pakjegemak>

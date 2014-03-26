@@ -133,7 +133,7 @@
     <?php endif; ?>
 <?php endfor; ?>
 
-<!-- Hidden fields for all the street lines to force them in the proper order regardless of the order in which they are displayed. -->
+<?php /* Hidden fields for all the street lines to force them in the proper order regardless of the order in which they are displayed. */ ?>
 <div style="display:none;">
     <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street1"/>
     <input type="hidden" name="<?php echo $_addressType; ?>[street][]" id="<?php echo $_addressType; ?>:street2"/>
