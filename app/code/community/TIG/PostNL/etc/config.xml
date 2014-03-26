@@ -1379,7 +1379,7 @@
                 <type>error</type>
             </POSTNL-0148>
             <POSTNL-0149>
-                <message>Invalid mobile phone number supplied: %s</message>
+                <message>Invalid mobile phone number supplied: %s.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0149>

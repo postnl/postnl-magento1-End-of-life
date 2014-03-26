@@ -64,6 +64,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     const XPATH_EVENING_TIMEFRAME_FEE  = 'postnl/delivery_options/evening_timeframe_fee';
     const XPATH_PAKJEGEMAK_EXPRESS_FEE = 'postnl/delivery_options/pakjegemak_express_fee';
+    /**
+     * Xpath for shipping duration setting.
+     */
+    const XPATH_SHIPPING_DURATION = 'postnl/delivery_options/shipping_duration';
 
     /**
      * The time (as H * 100 + i) we consider to be the start of the evening.
@@ -142,6 +146,36 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted);
 
         return $price;
+    }
+
+    /**
+     * Get the Shipping date for a specified order date.
+     *
+     * @param null|string $orderDate
+     * @param null|int    $storeId
+     *
+     * @return bool|string
+     */
+    public function getShippingDate($orderDate = null, $storeId = null)
+    {
+        if ($orderDate === null) {
+            $orderDate = date('Y-m-d');
+        }
+
+        if ($storeId === null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $shippingDuration = Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
+        $deliveryTime = strtotime("+{$shippingDuration} days", strtotime($orderDate));
+        $deliveryDay = date('N', $deliveryTime);
+
+        if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
+            $deliveryTime = strtotime('+1 day', $deliveryTime);
+        }
+
+        $deliveryDate = date('Y-m-d', $deliveryTime);
+        return $deliveryDate;
     }
 
     /**

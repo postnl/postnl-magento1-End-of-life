@@ -35,6 +35,8 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method TIG_PostNL_Model_Checkout_Cif setStoreId(int $value)
  */
 class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 {
@@ -488,18 +490,31 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param Mage_Sales_Model_Quote $quote
      *
      * @return array
-     *
-     * @todo figure out why base_shipping_incl_tax is sometimes empty when shipping_incl_tax is not
      */
     protected function _getOrder(Mage_Sales_Model_Quote $quote)
     {
+        /**
+         * @var Mage_Sales_Model_Quote_Address $shippingAddress
+         */
         $shippingAddress = $quote->getShippingAddress();
+        $baseSubtotalIncltax = $shippingAddress->getBaseSubtotalTotalInclTax();
+        if ($baseSubtotalIncltax === null) {
+            $baseSubtotalIncltax = $shippingAddress->getBaseSubtotalWithDiscount()
+                                 + $shippingAddress->getBaseTaxAmount()
+                                 - $shippingAddress->getBaseShippingTaxAmount();
+        }
+
+        $baseShippingAmount = $shippingAddress->getBaseShippingInclTax();
+        if ($baseShippingAmount === null) {
+            $baseShippingAmount = $shippingAddress->getBaseShippingAmount()
+                                + $shippingAddress->getBaseShippingTaxAmount();
+        }
 
         $extRef        = $quote->getId();
         $orderDate     = date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp());
-        $subtotal      = round($shippingAddress->getBaseSubtotalInclTax(), 2);
-        $shippingDate  = $orderDate; //TODO change this to the actual (predicted) shipping date
-        $shippingCosts = round($shippingAddress->getShippingInclTax() * $quote->getBaseToGlobalRate(), 2); //TODO why is base_shipping_incl_tax sometimes empty?
+        $subtotal      = round($baseSubtotalIncltax, 2);
+        $shippingDate  = $orderDate;
+        $shippingCosts = round($baseShippingAmount, 2);
 
         $order = array(
             'ExtRef'        => $extRef,
@@ -592,7 +607,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get a shipment's reference. By default this will be the shipment's increment ID
      *
-     * @param Mage_Sales_Model_Order_Shipment
+     * @param Mage_Sales_Model_Order_Shipment $shipment
      *
      * @return string
      *
@@ -647,12 +662,15 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets a list of parcels associated with a shipment
      *
-     * @param Mage_Sales_Model_Order_Shipment
+     * @param Mage_Sales_Model_Order_Shipment $shipment
      *
      * @return array
      */
     protected function _getParcels($shipment)
     {
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
+         */
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getid(), 'shipment_id');
         $parcelCount = $postnlShipment->getParcelCount();
 
