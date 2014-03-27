@@ -83,6 +83,7 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
         }
 
         $data = $this->_getInheritedValues($data);
+
         $this->_isTestMode = (bool) $data['isTestMode'];
 
         /**
@@ -192,6 +193,7 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
     protected function _getPassword($inherit = false)
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+
         $xpath = self::XML_PATH_LIVE_PASSWORD;
         if ($this->_isTestMode) {
             $xpath = self::XML_PATH_TEST_PASSWORD;
