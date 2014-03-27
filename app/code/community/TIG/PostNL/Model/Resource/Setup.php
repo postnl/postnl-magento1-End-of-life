@@ -56,14 +56,16 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     const EXPAND_SUPPORT_PATH = 'postnl/support/expanded';
 
     /**
-     * Password for the default test account.
+     * Test data.
      */
-    const DEFAULT_TEST_PASSWORD = 'test';
+    const DEFAULT_TEST_PASSWORD = 'z9A4LpFd53Z';
+    const DEFAULT_WEBSHOP_ID    = '853f9d2a4c5242f097daeaf61637609c';
 
     /**
-     * Xpath for test password.
+     * Xpaths for test data.
      */
     const XPATH_TEST_PASSWORD = 'postnl/cif/test_password';
+    const XPATH_WEBSHOP_ID    = 'postnl/cif/webshop_id';
 
     /**
      * callAfterApplyAllUpdates flag. Causes applyAFterUpdates() to be called.
@@ -418,6 +420,29 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
 
         $config->setValue($encryptedPassword)
                ->setPath(self::XPATH_TEST_PASSWORD)
+               ->save();
+
+        return $this;
+    }
+
+    /**
+     * Saves the default test webshop ID as an encrypted string.
+     *
+     * @return $this
+     */ 
+    public function installWebshopId()
+    {
+        $testWebshopId = self::DEFAULT_WEBSHOP_ID;
+        $encryptedWebshopId = Mage::helper('core')->encrypt($testWebshopId);
+
+        /**
+         * @var Mage_Core_Model_Config $config
+         */
+        $config = Mage::getModel('core/config_data')
+                      ->load(self::XPATH_WEBSHOP_ID, 'path');
+
+        $config->setValue($encryptedWebshopId)
+               ->setPath(self::XPATH_WEBSHOP_ID)
                ->save();
 
         return $this;
