@@ -217,6 +217,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function sendTrackAndTraceAction()
     {
         $shipmentId = $this->getRequest()->getParam('shipment_id');
@@ -263,6 +266,128 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__('The track & trace email was sent.')
+        );
+
+        $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+        return $this;
+    }
+
+    /**
+     * Resets a single shipment's confirmation status.
+     *
+     * @return $this
+     */
+    public function resetConfirmationAction()
+    {
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        $helper = Mage::helper('postnl');
+
+        /**
+         * If no shipment was selected, cause an error
+         */
+        if (is_null($shipmentId)) {
+            $helper->addSessionMessage('adminhtml/session', null, 'error',
+                $this->__('Shipment not found.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        try {
+            /**
+             * Load the shipment and check if it exists and is valid
+             */
+            $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__('This action cannot be used on non-PostNL shipments.'),
+                    'POSTNL-0009'
+                );
+            }
+
+            $postnlShipment = $this->_getPostnlShipment($shipmentId);
+            $postnlShipment->resetConfirmation(false)->save();
+        } catch (TIG_PostNL_Exception $e) {
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (Exception $e) {
+            $helper->logException($e);
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
+                $this->__('An error occurred while processing this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        $helper->addSessionMessage('adminhtml/session', null, 'success',
+            $this->__("The shipment's confirmation has been undone.")
+        );
+
+        $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+        return $this;
+    }
+
+    /**
+     * Remove a shipment's shipping labels.
+     *
+     * @return $this
+     */
+    public function removeLabelsAction()
+    {
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        $helper = Mage::helper('postnl');
+
+        /**
+         * If no shipment was selected, cause an error
+         */
+        if (is_null($shipmentId)) {
+            $helper->addSessionMessage('adminhtml/session', null, 'error',
+                $this->__('Shipment not found.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        try {
+            /**
+             * Load the shipment and check if it exists and is valid
+             */
+            $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__('This action cannot be used on non-PostNL shipments.'),
+                    'POSTNL-0009'
+                );
+            }
+
+            $postnlShipment = $this->_getPostnlShipment($shipmentId);
+            $postnlShipment->deleteLabels()
+                           ->setLabelsPrinted(false)
+                           ->save();
+        } catch (TIG_PostNL_Exception $e) {
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (Exception $e) {
+            $helper->logException($e);
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
+                $this->__('An error occurred while processing this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        $helper->addSessionMessage('adminhtml/session', null, 'success',
+            $this->__("The shipment's shipping labels have been deleted.")
         );
 
         $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));

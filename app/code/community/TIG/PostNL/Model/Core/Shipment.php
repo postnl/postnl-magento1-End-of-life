@@ -467,7 +467,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Get the amount of extra cover this shipment has.
      *
-     * @return int | float
+     * @return int|float
      */
     public function getExtraCoverAmount()
     {
@@ -484,7 +484,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * @param boolean $standardize Whether or not to convert the weight to kg
      * @param boolean $toGrams whether or not to convert the standardized weight to g
      *
-     * @return float | int
+     * @return float|int
      */
     public function getTotalWeight($standardize = false, $toGrams = false)
     {
@@ -1193,6 +1193,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Checks if the current entity can be confirmed.
      *
      * @param bool $skipEuCheck
+     *
      * @return boolean
      */
     public function canConfirm($skipEuCheck = false)
@@ -1293,6 +1294,34 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $storeId = $this->getStoreId();
         $canSendTrackAndTrace = Mage::getStoreConfig(self::XML_PATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId);
         if (!$canSendTrackAndTrace) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if this shipment's confirmation status can be reset.
+     *
+     * @return boolean
+     */
+    public function canResetConfirmation()
+    {
+        $confirmStatus = $this->getConfirmStatus();
+        if ($confirmStatus == self::CONFIRM_STATUS_CONFIRM_EXPIRED) {
+            return false;
+        }
+
+        if ($confirmStatus == self::CONFIRM_STATUS_UNCONFIRMED) {
+            return false;
+        }
+
+        $shippingPhase = $this->getShippingPhase();
+        if ($shippingPhase == self::SHIPPING_PHASE_COLLECTION
+            || $shippingPhase == self::SHIPPING_PHASE_DELIVERED
+            || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
+            || $shippingPhase == self::SHIPPING_PHASE_SORTING
+        ) {
             return false;
         }
 
@@ -1810,6 +1839,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Update this shipment's status history
      *
      * @throws TIG_PostNL_Exception
+     *
      * @return TIG_PostNL_Model_Core_Shipment
      */
     public function updateCompleteShippingStatus()
@@ -2349,6 +2379,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Checks if a given product code is only allowed for a specific country
      *
      * @param $code
+     *
      * @return boolean|array Either false if the code is not restricted, or otherwise an array of allowed country IDs
      */
     protected function _isCodeRestricted($code)
@@ -2461,17 +2492,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Resets this shipment to a pre-confirmed state
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @param bool $deleteLabels
+     *
+     * @return $this
      */
-    public function resetConfirmation()
+    public function resetConfirmation($deleteLabels = true)
     {
         $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED) //set status to unconfirmed
              ->setShippingPhase(false) //delete current shipping phase
              ->setConfirmedAt(false) //delete 'confirmed at' date
-             ->setlabelsPrinted(0) //labels have not been printed
-             ->deleteLabels() //delete all associated labels
              ->deleteBarcodes() //delete all associated barcodes
              ->deleteStatusHistory(); //delete all associated status history items
+
+        if ($deleteLabels) {
+            $this->setlabelsPrinted(false) //labels have not been printed
+                 ->deleteLabels(); //delete all associated labels
+        }
 
         return $this;
     }
