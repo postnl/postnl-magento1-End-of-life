@@ -71,7 +71,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $postnlOrder->setOrderId($order->getId())
                     ->save();
 
-        if ($postnlOrder->getIsPakjeGemak()) {
+        if ($postnlOrder->getIsPakjeGemak() || $postnlOrder->getIsPakketautomaat()) {
             $this->copyPakjeGemakAddressToOrder($order);
         }
 

@@ -209,8 +209,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             array('postnl_order' => $resource->getTableName('postnl_checkout/order')),
             '`main_table`.`order_id`=`postnl_order`.`order_id`',
             array(
-                'is_pakje_gemak' => 'postnl_order.is_pakje_gemak',
-                'delivery_date'  => 'postnl_order.delivery_date',
+                'is_pakje_gemak'     => 'postnl_order.is_pakje_gemak',
+                'delivery_date'      => 'postnl_order.delivery_date',
+                'is_pakket_automaat' => 'postnl_order.is_pakketautomaat',
             )
         );
 
@@ -307,10 +308,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'filter_condition_callback' => array($this, '_filterShipmentType'),
                     'sortable'                  => false,
                     'options'                   => array(
-                        'nl'          => $helper->__('Domestic'),
-                        'pakje_gemak' => $helper->__('PakjeGemak'),
-                        'eu'          => $helper->__('EPS'),
-                        'global'      => $helper->__('GlobalPack'),
+                        'nl'             => $helper->__('Domestic'),
+                        'pakje_gemak'    => $helper->__('PakjeGemak'),
+                        'eu'             => $helper->__('EPS'),
+                        'global'         => $helper->__('GlobalPack'),
+                        'pakketautomaat' => $helper->__('Parcel Dispenser'),
                     ),
                 ),
                 $after
@@ -836,6 +838,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          */
         if ($filterCond == 'pakje_gemak') {
             $collection->addFieldToFilter('postnl_shipment.is_pakje_gemak', array('eq' => 1));
+
+            return $this;
+        }
+
+        /**
+         * If the filter condition is Pakket Automaat, filter out all non-Pakket Automaat orders
+         */
+        if ($filterCond == 'pakketautomaat') {
+            $collection->addFieldToFilter('postnl_shipment.is_pakketautomaat', array('eq' => 1));
 
             return $this;
         }

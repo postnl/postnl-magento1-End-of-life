@@ -208,6 +208,13 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                     ->setDeliveryDate($data['date'])
                     ->setConfirmDate($confirmDate);
 
+        if ($data['type'] == 'PA') {
+            $postnlOrder->setIsPakketautomaat(true)
+                        ->setProductCode(3553);
+        } elseif ($data['type'] == 'PG' || $data['type'] == 'PGE') {
+            $postnlOrder->setIsPakjeGemak(true);
+        }
+
         /**
          * Remove any existing PakjeGemak addresses.
          *
@@ -244,8 +251,6 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
             $quote->addAddress($pakjeGemakAddress)
                   ->save();
-
-            $postnlOrder->setIsPakjeGemak(true);
         }
 
         $postnlOrder->save();

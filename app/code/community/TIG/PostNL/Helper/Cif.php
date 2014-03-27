@@ -77,9 +77,10 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * XML paths to default product options settings
      */
-    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION = 'postnl/cif_product_options/default_product_option';
-    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION       = 'postnl/cif_product_options/default_eu_product_option';
-    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION   = 'postnl/cif_product_options/default_global_product_option';
+    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
+    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
+    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
+    const XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
 
     /**
      * Regular expression used to split streetname from housenumber. This regex works well for dutch
@@ -222,6 +223,21 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Get an array of pakketautomaat product codes
+     *
+     * @param bool $storeId
+     *
+     * @return array
+     */
+    public function getPakketautomaatProductCodes($storeId = false)
+    {
+        $pakketautomaatProductCodes = Mage::getSingleton(
+            'postnl_core/system_config_source_pakketautomaatProductOptions'
+        );
+        return $pakketautomaatProductCodes->getAvailableOptions($storeId, true);
+    }
+
+    /**
      * Get an array of eu product codes
      *
      * @param bool $storeId
@@ -351,6 +367,16 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         }
 
         /**
+         * Pakketautomaat product options
+         */
+        if ($this->isPakketautomaatShipment($shipment)) {
+            $options = Mage::getModel('postnl_core/system_config_source_pakketautomaatProductOptions')
+                           ->getAvailableOptions();
+
+            return $options;
+        }
+
+        /**
          * Dutch product options
          */
         if ($this->isDutchShipment($shipment)) {
@@ -390,7 +416,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     * @see TIG_PostNL_Model_Core_Shipment->isPakjeGemakShipment();
      */
     public function isPakjeGemakShipment($shipment)
     {
@@ -406,6 +432,31 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $tempPostnlShipment->setShipment($shipment);
 
         return $tempPostnlShipment->isPakjeGemakShipment();
+    }
+
+    /**
+     * Check if a given shipment is a pakketautomaat shipment.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment|Mage_Sales_Model_Order_Shipment $shipment
+     *
+     * @return boolean
+     *
+     * @see TIG_PostNL_Model_Core_Shipment->isDutchShipment();
+     */
+    public function isPakketautomaatShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isPakketautomaatShipment();
+        }
+
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isPakketautomaatShipment();
     }
 
     /**
@@ -440,7 +491,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     * @see TIG_PostNL_Model_Core_Shipment->isEuShipment();
      */
     public function isEuShipment($shipment)
     {
@@ -465,7 +516,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @see TIG_PostNL_Model_Core_Shipment->isDutchSHipment();
+     * @see TIG_PostNL_Model_Core_Shipment->isGlobalShipment();
      */
     public function isGlobalShipment($shipment)
     {
@@ -513,14 +564,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $storeId = Mage::app()->getStore()->getId();
 
-        $defaultDutchOption  = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
-        $defaultEuOption     = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTION, $storeId);
-        $defaultGlobalOption = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION, $storeId);
+        $defaultDutchOption          = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
+        $defaultEuOption             = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTION, $storeId);
+        $defaultGlobalOption         = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION, $storeId);
+        $defaultPakketautomaatOption = Mage::getStoreConfig(
+            self::XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION,
+            $storeId
+        );
 
         $defaultOptions = array(
-            'dutch'  => $defaultDutchOption,
-            'eu'     => $defaultEuOption,
-            'global' => $defaultGlobalOption,
+            'dutch'          => $defaultDutchOption,
+            'eu'             => $defaultEuOption,
+            'global'         => $defaultGlobalOption,
+            'pakketautomaat' => $defaultPakketautomaatOption,
         );
 
         return $defaultOptions;

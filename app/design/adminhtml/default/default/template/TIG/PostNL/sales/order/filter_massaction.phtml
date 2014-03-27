@@ -63,7 +63,7 @@
     document.observe('dom:loaded', function() {
         $$('.massaction-checkbox').each(function(element) {
             element.observe('click', function(event) {
-                filteredTypes = new Array();
+                filteredTypes = [];
 
                 /**
                  * Get each selected row's shipment type and add it to the filter array
@@ -162,6 +162,16 @@
          */
         if (type == 'global_pack') {
             $$('#product_options optgroup[label="<?php echo $_helper->__('Global options'); ?>"]').each(function(element) {
+                element.removeAttribute('disabled');
+            });
+            return;
+        }
+
+        /**
+         * Enable the GlobalPack options
+         */
+        if (type == 'pakketautomaat') {
+            $$('#product_options optgroup[label="<?php echo $_helper->__('Parcel Dispenser options'); ?>"]').each(function(element) {
                 element.removeAttribute('disabled');
             });
             return;

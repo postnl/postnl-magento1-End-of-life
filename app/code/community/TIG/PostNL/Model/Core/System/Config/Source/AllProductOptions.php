@@ -211,6 +211,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     ),
                 ),
             ),
+            'pakketautomaat' => array(
+                'label' => $helper->__('Parcel Dispenser options'),
+                'value' => array(
+                    '3553' => array(
+                        'value'        => '3553',
+                        'label'        => $helper->__('Parcel Dispenser'),
+                    ),
+                ),
+            ),
         );
 
         if ($helper->canUseEpsBEOnlyOption()) {
@@ -355,7 +364,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         }
 
         /**
-         * Check each eu option to see if it's supprted
+         * Check each global option to see if it's supprted
          */
         $availableGlobalOptions = array();
         if ($helper->isGlobalAllowed()) {
@@ -379,6 +388,34 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 }
 
                 $availableGlobalOptions[] = $option;
+            }
+        }
+
+        /**
+         * Check each pakketautomaat option to see if it's supprted
+         */
+        $availablePakketautomaatOptions = array();
+        if ($helper->isGlobalAllowed()) {
+            foreach ($options['pakketautomaat']['value'] as $option) {
+                if (!in_array($option['value'], $supportedOptionsArray)) {
+                    continue;
+                }
+
+                if (isset($option['isExtraCover']) && $withExtraCover !== true) {
+                    continue;
+                }
+
+                if ($codesOnly === true) {
+                    $availableOptions[] = $option['value'];
+                    continue;
+                }
+
+                if ($flat === true) {
+                    $availableOptions[$option['value']] = $option['label'];
+                    continue;
+                }
+
+                $availablePakketautomaatOptions[] = $option;
             }
         }
 
@@ -418,6 +455,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             $availableOptions['global_options'] = array(
                 'label' => $helper->__('Global options'),
                 'value' => $availableGlobalOptions,
+            );
+        }
+
+        if (!empty($availablePakketautomaatOptions)) {
+            $availableOptions['pakketautomaat_option'] = array(
+                'label' => $helper->__('Parcel Dispenser options'),
+                'value' => $availablePakketautomaatOptions,
             );
         }
 
@@ -520,6 +564,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             && isset($options['global_options']['value'][$defaultOptions['global']])
         ) {
             $options['global_options']['value'][$defaultOptions['global']]['label'] .= ' ' . $helper->__('(default)');
+        }
+
+        if (isset($options['pakketautomaat_options'])
+            && isset($options['pakketautomaat_options']['value'])
+            && isset($options['pakketautomaat_options']['value'][$defaultOptions['pakketautomaat']])
+        ) {
+            $options['pakketautomaat_options']['value'][$defaultOptions['global']]['label'] .= ' ' . $helper->__('(default)');
         }
 
         return $options;

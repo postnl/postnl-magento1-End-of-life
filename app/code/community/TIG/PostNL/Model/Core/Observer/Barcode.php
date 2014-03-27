@@ -101,6 +101,10 @@ class TIG_PostNL_Model_Core_Observer_Barcode
             if ($postnlOrder->getIsPakjeGemak()) {
                 $postnlShipment->setIsPakjeGemak($postnlOrder->getIsPakjeGemak());
             }
+
+            if ($postnlOrder->getIsPakketautomaat()) {
+                $postnlShipment->setIsPakketautomaat($postnlOrder->getIsPakketautomaat());
+            }
         }
 
         /**

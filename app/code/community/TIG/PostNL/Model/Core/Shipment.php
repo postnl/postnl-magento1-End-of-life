@@ -81,6 +81,7 @@
  * @method int|null                       getShipmentId
  * @method int                            getLabelsPrinted()
  * @method string                         getDeliveryDate()
+ * @method bool|int                       getIsPakketautomaat()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -108,6 +109,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setPostnlOrder(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabelCollection(TIG_PostNL_Model_Core_Resource_Shipment_LabeL_Collection $value)
  * @method TIG_PostNL_Model_Core_Shipment setDeliveryDate(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsPakketautomaat(bool $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -121,6 +123,7 @@
  * @method bool                           hasOrderId()
  * @method bool                           hasExtraCoverAmount()
  * @method bool                           hasLabelCollection()
+ * @method bool                           hasIsPakketautomaat()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -155,13 +158,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * XML paths to default product options settings
      */
-    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION   = 'postnl/cif_product_options/default_product_option';
-    const XML_PATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakjegemak_product_option';
-    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION         = 'postnl/cif_product_options/default_eu_product_option';
-    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION     = 'postnl/cif_product_options/default_global_product_option';
-    const XML_PATH_USE_ALTERNATIVE_DEFAULT           = 'postnl/cif_product_options/use_alternative_default';
-    const XML_PATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT    = 'postnl/cif_product_options/alternative_default_max_amount';
-    const XML_PATH_ALTERNATIVE_DEFAULT_OPTION        = 'postnl/cif_product_options/alternative_default_option';
+    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
+    const XML_PATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION     = 'postnl/cif_product_options/default_pakjegemak_product_option';
+    const XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
+    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
+    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
+    const XML_PATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/cif_product_options/use_alternative_default';
+    const XML_PATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/cif_product_options/alternative_default_max_amount';
+    const XML_PATH_ALTERNATIVE_DEFAULT_OPTION            = 'postnl/cif_product_options/alternative_default_option';
 
     /**
      * XML path to weight per parcel config setting
@@ -638,6 +642,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
              * PakjeGemak default option
              */
             $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION, $storeId);
+            $this->_checkProductCodeAllowed($productCode);
+
+            return $productCode;
+        }
+
+        if ($this->isPakketautomaatShipment()) {
+            /**
+             * PakjeGemak default option
+             */
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION, $storeId);
             $this->_checkProductCodeAllowed($productCode);
 
             return $productCode;
@@ -1120,6 +1134,35 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         if (in_array($productCode, $pakjeGemakProductCodes)) {
             $this->setIsPakjeGemak(true);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if this shipment is a pakketautomaat shipment.
+     *
+     * @return boolean
+     */
+    public function isPakketautomaatShipment()
+    {
+        if ($this->hasIsPakketautomaat()) {
+            return $this->getIsPakketautomaat();
+        }
+
+        $postnlOrder = $this->getPostnlOrder();
+        if (!$postnlOrder
+            || !$postnlOrder->getId()
+            || !$postnlOrder->getType()
+        ) {
+            $this->setIsPakketautomaat(false);
+            return false;
+        }
+
+        $type = $postnlOrder->getType();
+        if ($type == 'PA') {
+            $this->setIsPakketautomaat(true);
             return true;
         }
 
@@ -2322,9 +2365,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Here we specifically want shipments that are dutch, but not PakjeGemak
+         * Pakketautomaat shipments are also dutch shipments
          */
-        if ($this->isDutchShipment() && !$this->isPakjeGemakShipment()) {
+        if ($this->isDutchShipment() && $this->isPakketautomaatShipment()) {
+            $allowedProductCodes = $cifHelper->getPakketautomaatProductCodes();
+        }
+
+        /**
+         * Here we specifically want shipments that are dutch, but not PakjeGemak or pakketautomaat.
+         */
+        if ($this->isDutchShipment() && !$this->isPakjeGemakShipment() && !$this->isPakketautomaatShipment()) {
             $allowedProductCodes = $cifHelper->getStandardProductCodes();
         }
 
