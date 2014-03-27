@@ -41,52 +41,61 @@
 <?php $_activateUrl = $this->getUrl('postnl/adminhtml_extensionControl/activate', array('_secure' => true)); ?>
 <?php $_validateUrl = $this->getUrl('postnl/adminhtml_config/validateAccount', array('_secure' => true)); ?>
 <?php $_website = Mage::app()->getRequest()->getParam('website'); ?>
+<?php $_isTestMode = Mage::helper('postnl')->isTestMode(Mage_Core_Model_App::ADMIN_STORE_ID); ?>
 <script type="text/javascript">
     //<![CDATA[
-        var postnlActivationUrl = '<?php echo $_activateUrl; ?>';
-        function activatePostNL() {
-            $('config_edit_form').action = postnlActivationUrl;
-            configForm.submit();
+    var postnlActivationUrl = '<?php echo $_activateUrl; ?>';
+    var isTestMode = <?php echo $_isTestMode ? 'true' : 'false'; ?>;
+    function activatePostNL() {
+        $('config_edit_form').action = postnlActivationUrl;
+        configForm.submit();
+    }
+
+    function validateAccountSettings() {
+        var params = {
+            customerNumber : getConfigValue('postnl_cif_customer_number'),
+            customerCode   : getConfigValue('postnl_cif_customer_code'),
+            locationCode   : getConfigValue('postnl_cif_collection_location'),
+            website        : '<?php echo $_website; ?>',
+            isTestMode     : isTestMode
+        };
+
+        if (isTestMode) {
+            params['username'] = getConfigValue('postnl_cif_test_username');
+            params['password'] = getConfigValue('postnl_cif_test_password');
+        } else {
+            params['username'] = getConfigValue('postnl_cif_live_username');
+            params['password'] = getConfigValue('postnl_cif_live_password');
         }
 
-        function validateAccountSettings() {
-            new Ajax.Request('<?php echo $_validateUrl; ?>',{
-                method: 'post',
-                parameters: {
-                    customerNumber: getConfigValue('postnl_cif_customer_number'),
-                    customerCode:   getConfigValue('postnl_cif_customer_code'),
-                    username:       getConfigValue('postnl_cif_live_username'),
-                    password:       getConfigValue('postnl_cif_live_password'),
-                    locationCode:   getConfigValue('postnl_cif_collection_location'),
-                    website:        '<?php echo $_website; ?>'
-                },
-                onComplete: function(response) {
-                    response = response.responseText;
-                    if (response == 'ok') {
-                        alert('<?php echo $_helper->__('Account settings have been succesfully validated. Please save this page to keep these settings.'); ?>');
-                        return;
-                    }
-
-                    if (response == 'missing_data') {
-                        alert('<?php echo $_helper->__('One or more fields are missing. Please fill these fields and try again.'); ?>');
-                        return;
-                    }
-
-                    alert('<?php echo $_helper->__('Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL.'); ?>');
+        new Ajax.Request('<?php echo $_validateUrl; ?>',{
+            method: 'post',
+            parameters: params,
+            onComplete: function(response) {
+                response = response.responseText;
+                if (response == 'ok') {
+                    alert('<?php echo $_helper->__('Account settings have been succesfully validated. Please save this page to keep these settings.'); ?>');
                     return;
                 }
-            });
-        }
 
-        function getConfigValue(fieldName) {
-            var inheritName = fieldName + '_inherit';
+                if (response == 'missing_data') {
+                    alert('<?php echo $_helper->__('One or more fields are missing. Please fill these fields and try again.'); ?>');
+                    return;
+                }
 
-            if ($(inheritName) && $(inheritName).checked) {
-                return 'inherit';
+                alert('<?php echo $_helper->__('Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL.'); ?>');
             }
+        });
+    }
 
-            var value = $(fieldName).getValue();
-            return value;
+    function getConfigValue(fieldName) {
+        var inheritName = fieldName + '_inherit';
+
+        if ($(inheritName) && $(inheritName).checked) {
+            return 'inherit';
         }
+
+        return $(fieldName).getValue();
+    }
     //]]>
 </script>

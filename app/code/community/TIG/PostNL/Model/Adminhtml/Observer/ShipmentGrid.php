@@ -35,9 +35,7 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
-
-/**
+ *
  * Observer to edit the sales > shipments grid
  */
 class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
@@ -92,7 +90,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     * @return $this
      *
      * @event adminhtml_block_html_before
      *
@@ -153,7 +151,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      *
-     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     * @return $this
      */
     protected function _joinCollection($collection)
     {
@@ -224,7 +222,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Sales_Shipment_Grid $block
      *
-     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     * @return $this
      */
     protected function _modifyColumns($block)
     {
@@ -245,7 +243,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Sales_Shipment_Grid $block
      *
-     * @return TIG_PostNL_Model_Adminhtml_ShipmentGridObserver
+     * @return $this
      */
     protected function _addColumns($block)
     {
@@ -672,7 +670,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Sales_Shipment_Grid $block
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
+     * @return $this
      */
     protected function _addMassaction($block)
     {
@@ -765,7 +763,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
+     * @return $this
      */
     protected function _applySortAndFilter($collection)
     {
@@ -795,7 +793,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      * @param array $filter Array of filters to be added
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
+     * @return $this
      */
     protected function _filterCollection($collection, $filter)
     {
@@ -879,7 +877,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
+     * @return $this
      */
     protected function _addColumnFilterToCollection($column)
     {
@@ -909,7 +907,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * @param string $sort The column that the collection is sorted by
      * @param string $dir The direction that is used to sort the collection
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
+     * @return $this
      */
     protected function _sortCollection($collection, $sort, $dir)
     {
@@ -930,7 +928,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid
+     * @return $this
      */
     protected function _setCollectionOrder($column)
     {
