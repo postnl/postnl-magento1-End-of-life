@@ -35,10 +35,13 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
-
-/**
+ *
  * Observer to edit the sales > order grid
+ *
+ * @method TIG_PostNL_Model_Adminhtml_Observer_OrderGrid setCollection(Varien_Data_Collection $value)
+ * @method Varien_Data_Collection                        getCollection()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_OrderGrid setBlock(Mage_Core_Block_Abstract $value)
+ * @method Mage_Core_Block_Abstract                      getBlock()
  */
 class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 {
@@ -77,7 +80,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_Adminhtml_OrderGridObserver
+     * @return $this
      *
      * @event adminhtml_block_html_before
      *
@@ -95,15 +98,19 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         /**
          * Checks if the current block is the one we want to edit.
          *
-         * Unfortunately there is no unique event for this block
+         * Unfortunately there is no unique event for this block.
          */
         $block = $observer->getBlock();
         $orderGridClass = Mage::getConfig()->getBlockClassName(self::ORDER_GRID_BLOCK_NAME);
 
-        if (get_class($block) !== $orderGridClass) {
+        if (!($block instanceof $orderGridClass)) {
             return $this;
         }
 
+        /**
+         * @var Mage_Adminhtml_Block_Sales_Order_Grid $block
+         * @var Mage_Sales_Model_Resource_Order_Collection $currentCollection
+         */
         $currentCollection = $block->getCollection();
         $select = $currentCollection->getSelect()->reset(Zend_Db_Select::WHERE);
 
@@ -134,9 +141,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Adds additional joins to the collection that will be used by newly added columns
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     * @return $this
      */
     protected function _joinCollection($collection)
     {
@@ -185,35 +192,53 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Sales_Order_Grid $block
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     * @return $this
      */
     protected function _modifyColumns($block)
     {
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $incrementIdColumn
+         */
         $incrementIdColumn = $block->getColumn('real_order_id');
         if ($incrementIdColumn) {
             $incrementIdColumn->setFilterIndex('main_table.increment_id');
         }
 
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $massactionColumn
+         */
         $massactionColumn = $block->getColumn('massaction');
         if ($incrementIdColumn) {
             $massactionColumn->setFilterIndex('main_table.entity_id');
         }
 
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $statusColumn
+         */
         $statusColumn = $block->getColumn('status');
         if ($incrementIdColumn) {
             $statusColumn->setFilterIndex('main_table.status');
         }
 
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $createdAtColumn
+         */
         $createdAtColumn = $block->getColumn('created_at');
         if ($incrementIdColumn) {
             $createdAtColumn->setFilterIndex('main_table.created_at');
         }
 
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $baseGrandTotalColumn
+         */
         $baseGrandTotalColumn = $block->getColumn('base_grand_total');
         if ($incrementIdColumn) {
             $baseGrandTotalColumn->setFilterIndex('main_table.base_grand_total');
         }
 
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $grandTotalColumn
+         */
         $grandTotalColumn = $block->getColumn('grand_total');
         if ($incrementIdColumn) {
             $grandTotalColumn->setFilterIndex('main_table.grand_total');
@@ -227,7 +252,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Sales_Order_Grid $block
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     * @return $this
      */
     protected function _addColumns($block)
     {
@@ -280,7 +305,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Sales_Order_Grid $block
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     * @return $this
      */
     protected function _addMassaction($block)
     {
@@ -327,7 +352,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     * @return $this
      */
     protected function _applySortAndFilter($collection)
     {
@@ -357,7 +382,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      * @param array $filter Array of filters to be added
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     * @return $this
      */
     protected function _filterCollection($collection, $filter)
     {
@@ -379,7 +404,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     * @return $this
      */
     protected function _filterShipmentType($collection, $column)
     {
@@ -438,7 +463,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     * @return $this
      */
     protected function _addColumnFilterToCollection($column)
     {
@@ -468,7 +493,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      * @param string $sort The column that the collection is sorted by
      * @param string $dir The direction that is used to sort the collection
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     * @return $this
      */
     protected function _sortCollection($collection, $sort, $dir)
     {
@@ -489,7 +514,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     * @return $this
      */
     protected function _setCollectionOrder($column)
     {
