@@ -74,7 +74,7 @@ class TIG_PostNL_Model_Checkout_Observer_Shipment
                     'POSTNL-0037'
                 );
             }
-        } catch (TIG_PostNL_CIF_Exception $e) {
+        } catch (TIG_PostNL_Exception $e) {
             $helper = Mage::helper('postnl');
             $helper->addSessionMessage(
                 'adminhtml/session',
