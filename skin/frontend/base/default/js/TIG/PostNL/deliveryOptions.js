@@ -1167,7 +1167,7 @@ PostnlDeliveryOptions.prototype = {
      */
     saveSelectedOption : function() {
         if (!this.getSelectedOption()) {
-            return true;
+            return false;
         }
 
         var selectedType = this.getSelectedType();
@@ -1177,25 +1177,24 @@ PostnlDeliveryOptions.prototype = {
             return false;
         }
 
-
         var selectedOption = this.getSelectedOption();
+        
+        var extraCosts = {
+            incl : this.getExtraCosts(true),
+            excl : this.getExtraCosts(false)
+        };
+
         var params = {
             isAjax : true,
             type   : selectedType,
             date   : selectedOption.getDate(),
-            costs  : 0
+            costs  : Object.toJSON(extraCosts)
         };
 
-        if (selectedType == 'Avond' || selectedType == 'PGE') {
-            var extraCosts = {
-                incl : this.getExtraCosts(true),
-                excl : this.getExtraCosts(false)
-            };
-            params['costs'] = Object.toJSON(extraCosts);
-        }
-
         if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
-            params['address'] = Object.toJSON(selectedOption.getAddress());
+            var address = selectedOption.getAddress();
+            address['Name'] = selectedOption.getName();
+            params['address'] = Object.toJSON(address);
         }
 
         if (this.getOptions().isOsc) {
@@ -1235,7 +1234,7 @@ PostnlDeliveryOptions.prototype = {
         var extraCosts = 0;
 
         if (!selectedType) {
-            return extraCosts
+            return extraCosts;
         }
 
         if (inclTax) {
@@ -1244,12 +1243,14 @@ PostnlDeliveryOptions.prototype = {
             } else if (selectedType == 'Avond') {
                 extraCosts = this.getOptions().expressFeeIncl;
             }
-        } else {
-            if (selectedType == 'PGE') {
-                extraCosts = this.getOptions().expressFeeExcl;
-            } else if (selectedType == 'Avond') {
-                extraCosts = this.getOptions().expressFeeExcl;
-            }
+
+            return parseFloat(extraCosts);
+        }
+
+        if (selectedType == 'PGE') {
+            extraCosts = this.getOptions().expressFeeExcl;
+        } else if (selectedType == 'Avond') {
+            extraCosts = this.getOptions().expressFeeExcl;
         }
 
         return parseFloat(extraCosts);

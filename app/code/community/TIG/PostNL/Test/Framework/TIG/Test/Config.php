@@ -51,23 +51,25 @@ class TIG_PostNL_Test_Framework_TIG_Test_Config extends Mage_Core_Model_Config
     /**
      * @param string $modelClass
      * @param object $mock
+     *
+     * @return $this
      */
     public function setModelMock($modelClass, $mock)
     {
-        if (!array_key_exists($modelClass, $this->_mockModels)) {
-            $this->_mockModels[$modelClass] = $mock;
-        }
+        $this->_mockModels[$modelClass] = $mock;
+        return $this;
     }
 
     /**
      * @param string $modelClass
      * @param object $mock
+     *
+     * @return $this
      */
     public function setResourceModelMock($modelClass, $mock)
     {
-        if (!array_key_exists($modelClass, $this->_mockResourceModels)) {
-            $this->_mockResourceModels[$modelClass] = $mock;
-        }
+        $this->_mockResourceModels[$modelClass] = $mock;
+        return $this;
     }
 
     /**
