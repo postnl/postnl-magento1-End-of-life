@@ -380,6 +380,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Check if the module is set to test mode
      *
+     * @param bool|int $storeId
+     *
      * @return boolean
      */
     public function isTestMode($storeId = false)
@@ -392,12 +394,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $testModeAllowed = $this->isTestModeAllowed();
-        if (!$testModeAllowed) {
-            Mage::register('postnl_test_mode', false);
-            return false;
-        }
-
         $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
 
         Mage::register('postnl_test_mode', $testMode);
@@ -407,20 +403,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Checks if test mode is currently allowed
      *
+     * @deprecated v1.1.4 Will now always return true.
+     *
      * @return boolean
      */
     public function isTestModeAllowed()
     {
-        if (Mage::registry('postnl_test_mode_allowed') !== null) {
-            return Mage::registry('postnl_test_mode_allowed');
-        }
-
-        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-
-        $testModeAllowed = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE_ALLOWED, $storeId);
-
-        Mage::register('postnl_test_mode_allowed', $testModeAllowed);
-        return $testModeAllowed;
+        return true;
     }
 
     /**

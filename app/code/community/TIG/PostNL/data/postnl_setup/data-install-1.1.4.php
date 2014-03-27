@@ -1,3 +1,4 @@
+<?php
 /**
  *                  ___________       __            __
  *                  \__    ___/____ _/  |_ _____   |  |
@@ -32,35 +33,21 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
  */
-document.observe('dom:loaded', function() {
-    $$('.postnl-validate-empty').each(function(element) {
-        if (!element.value.empty()) {
-            element.removeClassName('postnl-validate-empty');
-        }
 
-        element.observe('change', function(event) {
-            var eventElement = Event.element(event);
-            checkEmpty(eventElement);
-        });
+/**
+ * @var TIG_PostNL_Model_Resource_Setup $installer
+ */
+$installer = $this;
 
-        element.observe('keyup', function(event) {
-            var eventElement = Event.element(event);
-            checkEmpty(eventElement);
-        });
-    });
-});
+$installer->startSetup();
 
-function checkEmpty(eventElement) {
-    if (eventElement.value.empty() && !eventElement.hasClassName('postnl-validate-empty')) {
-        eventElement.addClassName('postnl-validate-empty');
-        return;
-    }
+$installer->generateShippingStatusCronExpr()
+          ->generateUpdateStatisticsCronExpr()
+          ->expandSupportTab()
+          ->installTestPassword()
+          ->installWebshopId();
 
-    if (!eventElement.value.empty() && eventElement.hasClassName('postnl-validate-empty')) {
-        eventElement.removeClassName('postnl-validate-empty');
-    }
-}
+$installer->endSetup();
