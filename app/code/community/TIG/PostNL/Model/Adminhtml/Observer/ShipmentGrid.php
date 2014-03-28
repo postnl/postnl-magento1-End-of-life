@@ -37,6 +37,10 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > shipments grid
+ *
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setCollection(Varien_Data_Collection $value)
+ * @method Varien_Data_Collection                           getCollection()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setBlock(Mage_Core_Block_Abstract $value)
  */
 class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 {
@@ -73,7 +77,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Gets an array of optional columns to display
      *
-     * @return boolean
+     * @return array
      */
     public function getOptionalColumnsToDisplay()
     {
@@ -119,6 +123,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $this;
         }
 
+        /**
+         * @var Mage_Adminhtml_Block_Sales_Shipment_Grid $block
+         * @var Mage_Sales_Model_Resource_Order_Shipment_Collection $currentCollection
+         */
         $currentCollection = $block->getCollection();
         $select = $currentCollection->getSelect()->reset(Zend_Db_Select::WHERE);
 
@@ -209,9 +217,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             array('postnl_order' => $resource->getTableName('postnl_checkout/order')),
             '`main_table`.`order_id`=`postnl_order`.`order_id`',
             array(
-                'is_pakje_gemak'     => 'postnl_order.is_pakje_gemak',
-                'delivery_date'      => 'postnl_order.delivery_date',
-                'is_pakket_automaat' => 'postnl_order.is_pakketautomaat',
+                'is_pakje_gemak'    => 'postnl_order.is_pakje_gemak',
+                'delivery_date'     => 'postnl_order.delivery_date',
+                'is_pakketautomaat' => 'postnl_order.is_pakketautomaat',
             )
         );
 

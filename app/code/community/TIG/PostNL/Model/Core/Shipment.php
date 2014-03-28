@@ -2542,11 +2542,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Resets this shipment to a pre-confirmed state
      *
-     * @param bool $deleteLabels
+     * @param boolean $deleteLabels
+     * @param boolean $deleteTracks
      *
      * @return $this
      */
-    public function resetConfirmation($deleteLabels = true)
+    public function resetConfirmation($deleteLabels = true, $deleteTracks = true)
     {
         $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED) //set status to unconfirmed
              ->setShippingPhase(false) //delete current shipping phase
@@ -2557,6 +2558,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if ($deleteLabels) {
             $this->setlabelsPrinted(false) //labels have not been printed
                  ->deleteLabels(); //delete all associated labels
+        }
+
+        if ($deleteTracks) {
+            $this->deleteShipmentTracks(); //delete ale addociated tracks
+        }
+
+        return $this;
+    }
+
+    /**
+     * Delete alle tracks for this shipment.
+     *
+     * @return $this
+     */
+    public function deleteShipmentTracks()
+    {
+        $shipment = $this->getShipment();
+
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Track $track
+         */
+        $tracksCollection = $shipment->getTracksCollection();
+        foreach($tracksCollection as $track) {
+            $track->delete();
         }
 
         return $this;
