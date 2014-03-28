@@ -728,7 +728,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getMessage($barcode, $extra = array())
     {
-        $messageIdString = uniqid('postnl_')
+        $messageIdString = uniqid(
+                             'postnl_'
+                             . ip2long(Mage::helper('core/http')->getServerAddr())
+                         )
                          . $this->_getCustomerNumber()
                          . $barcode
                          . microtime();
@@ -748,7 +751,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets the customer parameter
      *
-     * @param Mage_Sales_Model_Order_Shipment | boolean $shipment
+     * @param Mage_Sales_Model_Order_Shipment|boolean $shipment
      *
      * @return array
      */

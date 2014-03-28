@@ -776,3 +776,6 @@ TIG_PostNL::PostNL - Undo Confirmation,PostNL - Voormelding Ongedaan Maken
 TIG_PostNL::Are you sure that you wish to reset the confirmation status of this shipment? You will need to confirm this shipment with PostNL again before you can send it. You can not undo this action.,Weet u zeker dat u de voormelding van deze zending ongedaan wilt maken? U zult de zending opnieuw moeten voormelden voordat u de zending kunt versturen.
 TIG_PostNL::The shipment's shipping labels have been deleted.,De verzendlabels van deze zending zijn verwijderd.
 TIG_PostNL::The shipment's confirmation has been undone.,De voormelding van deze zending is ongedaan gemaakt.
+TIG_PostNL::Parcel Dispenser,Pakketautomaat
+TIG_PostNL::Parcel Dispenser options,Pakketautomaat opties
+TIG_PostNL::Location webservice version,Locatie webservice versie
