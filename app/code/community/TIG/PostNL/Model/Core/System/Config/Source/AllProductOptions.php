@@ -69,58 +69,71 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                      * @todo implement these options
                      */
                     /*'3086' => array(
-                        'value' => '3086',
-                        'label' => $helper->__('COD'),
+                        'value'   => '3086',
+                        'label'   => $helper->__('COD'),
+                        'isAvond' => true,
                     ),
                     '3091' => array(
-                        'value' => '3091',
-                        'label' => $helper->__('COD + Extra cover'),
+                        'value'   => '3091',
+                        'label'   => $helper->__('COD + Extra cover'),
+                        'isAvond' => true,
                     ),
                     '3093' => array(
-                        'value' => '3093',
-                        'label' => $helper->__('COD + Return when not home'),
+                        'value'   => '3093',
+                        'label'   => $helper->__('COD + Return when not home'),
+                        'isAvond' => true,
                     ),
                     '3097' => array(
-                        'value' => '3097',
-                        'label' => $helper->__('COD + Extra cover + Return when not home'),
+                        'value'   => '3097',
+                        'label'   => $helper->__('COD + Extra cover + Return when not home'),
+                        'isAvond' => true,
                     ),*/
                     '3087' => array(
                         'value'        => '3087',
                         'label'        => $helper->__('Extra Cover'),
                         'isExtraCover' => true,
+                        'isAvond'      => true,
                     ),
                     '3094' => array(
                         'value'        => '3094',
                         'label'        => $helper->__('Extra cover + Return when not home'),
                         'isExtraCover' => true,
+                        'isAvond'      => true,
                     ),
                     '3189' => array(
                         'value' => '3189',
                         'label' => $helper->__('Signature on delivery'),
                     ),
                     '3089' => array(
-                        'value' => '3089',
-                        'label' => $helper->__('Signature on delivery + Delivery to stated address only'),
+                        'value'   => '3089',
+                        'label'   => $helper->__('Signature on delivery + Delivery to stated address only'),
+                        'isAvond' => true,
                     ),
                     '3389' => array(
                         'value' => '3389',
                         'label' => $helper->__('Signature on delivery + Return when not home'),
                     ),
                     '3096' => array(
-                        'value' => '3096',
-                        'label' => $helper->__('Signature on delivery + Deliver to stated address only + Return when not home'),
+                        'value'   => '3096',
+                        'label'   => $helper->__(
+                                       'Signature on delivery + Deliver to stated address only + Return when not home'
+                                    ),
+                        'isAvond' => true,
                     ),
                     '3090' => array(
-                        'value' => '3090',
-                        'label' => $helper->__('Delivery to neighbour + Return when not home'),
+                        'value'   => '3090',
+                        'label'   => $helper->__('Delivery to neighbour + Return when not home'),
+                        'isAvond' => true,
                     ),
                     '3385' => array(
-                        'value' => '3385',
-                        'label' => $helper->__('Deliver to stated address only'),
+                        'value'   => '3385',
+                        'label'   => $helper->__('Deliver to stated address only'),
+                        'isAvond' => true,
                     ),
                     '3390' => array(
-                        'value' => '3390',
-                        'label' => $helper->__('Deliver to stated address only + Return when not home'),
+                        'value'   => '3390',
+                        'label'   => $helper->__('Deliver to stated address only + Return when not home'),
+                        'isAvond' => true,
                     ),
                 ),
             ),
@@ -134,19 +147,22 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                      */
                     /*'3535' => array(
                         'value' => '3535',
-                        'label' => $helper->__('Post Office + COD')
+                        'label' => $helper->__('Post Office + COD'),
                     ),
                     '3545' => array(
                         'value' => '3545',
-                        'label' => $helper->__('Post Office + COD + Notification')
+                        'label' => $helper->__('Post Office + COD + Notification'),
+                        'isPge' => true,
                     ),
                     '3536' => array(
                         'value' => '3536',
-                        'label' => $helper->__('Post Office + COD + Extra Cover')
+                        'label' => $helper->__('Post Office + COD + Extra Cover'),
+                        'isPge' => true,
                     ),
                     '3546' => array(
                         'value' => '3546',
-                        'label' => $helper->__('Post Office + COD + Extra Cover + Notification')
+                        'label' => $helper->__('Post Office + COD + Extra Cover + Notification'),
+                        'isPge' => true,
                     ),*/
                     '3534' => array(
                         'value'        => '3534',
@@ -157,14 +173,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'value'        => '3544',
                         'label'        => $helper->__('Post Office + Extra Cover + Notification'),
                         'isExtraCover' => true,
+                        'isPge'        => true,
                     ),
                     '3533' => array(
                         'value' => '3533',
-                        'label' => $helper->__('Post Office + Signature on Delivery')
+                        'label' => $helper->__('Post Office + Signature on Delivery'),
                     ),
                     '3543' => array(
                         'value' => '3543',
-                        'label' => $helper->__('Post Office + Signature on Delivery + Notification')
+                        'label' => $helper->__('Post Office + Signature on Delivery + Notification'),
+                        'isPge' => true,
                     ),
                 ),
             ),
@@ -538,39 +556,25 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         /**
          * Mark each default option as default if it is present in the available options array
          */
-        if (isset($options['standard_options'])
-            && isset($options['standard_options']['value'])
-            && isset($options['standard_options']['value'][$defaultOptions['dutch']])
-        ) {
-            $options['standard_options']['value'][$defaultOptions['dutch']]['label'] .= ' ' . $helper->__('(default)');
+        $defaultText = ' ' . $helper->__('(default)');
+        if (isset($options['standard_options']['value'][$defaultOptions['dutch']])) {
+            $options['standard_options']['value'][$defaultOptions['dutch']]['label'] .= $defaultText;
         }
 
-        if (isset($options['pakjegemak_options'])
-            && isset($options['pakjegemak_options']['value'])
-            && isset($options['pakjegemak_options']['value'][$defaultOptions['eu']])
-        ) {
-            $options['pakjegemak_options']['value'][$defaultOptions['pakjegemak']]['label'] .= ' ' . $helper->__('(default)');
+        if (isset($options['pakjegemak_options']['value'][$defaultOptions['eu']])) {
+            $options['pakjegemak_options']['value'][$defaultOptions['pakjegemak']]['label'] .= $defaultText;
         }
 
-        if (isset($options['eu_options'])
-            && isset($options['eu_options']['value'])
-            && isset($options['eu_options']['value'][$defaultOptions['eu']])
-        ) {
-            $options['eu_options']['value'][$defaultOptions['eu']]['label'] .= ' ' . $helper->__('(default)');
+        if (isset($options['eu_options']['value'][$defaultOptions['eu']])) {
+            $options['eu_options']['value'][$defaultOptions['eu']]['label'] .= $defaultText;
         }
 
-        if (isset($options['global_options'])
-            && isset($options['global_options']['value'])
-            && isset($options['global_options']['value'][$defaultOptions['global']])
-        ) {
-            $options['global_options']['value'][$defaultOptions['global']]['label'] .= ' ' . $helper->__('(default)');
+        if (isset($options['global_options']['value'][$defaultOptions['global']])) {
+            $options['global_options']['value'][$defaultOptions['global']]['label'] .= $defaultText;
         }
 
-        if (isset($options['pakketautomaat_options'])
-            && isset($options['pakketautomaat_options']['value'])
-            && isset($options['pakketautomaat_options']['value'][$defaultOptions['pakketautomaat']])
-        ) {
-            $options['pakketautomaat_options']['value'][$defaultOptions['global']]['label'] .= ' ' . $helper->__('(default)');
+        if (isset($options['pakketautomaat_options']['value'][$defaultOptions['pakketautomaat']])) {
+            $options['pakketautomaat_options']['value'][$defaultOptions['pakketautomaat']]['label'] .= $defaultText;
         }
 
         return $options;

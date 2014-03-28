@@ -210,6 +210,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Get an array of evening delivery product codes.
+     *
+     * @param bool $storeId
+     *
+     * @return array
+     */
+    public function getAvondProductCodes($storeId = false)
+    {
+        $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
+        return $pakjeGemakProductCodes->getAvailableAvondOptions($storeId, true);
+    }
+
+    /**
      * Get an array of pakjegemak product codes
      *
      * @param bool $storeId
@@ -220,6 +233,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
         return $pakjeGemakProductCodes->getAvailableOptions($storeId, true);
+    }
+
+    /**
+     * Get an array of PakjeGemak Express product codes.
+     *
+     * @param bool $storeId
+     *
+     * @return array
+     */
+    public function getPgeProductCodes($storeId = false)
+    {
+        $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
+        return $pakjeGemakProductCodes->getAvailablePgeOptions($storeId, true);
     }
 
     /**

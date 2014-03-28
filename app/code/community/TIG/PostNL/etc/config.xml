@@ -523,7 +523,9 @@
         		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
         		<alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
         		<alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
-                <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- PakjeGemak + signature on delivery -->
+                <default_evening_product_option>3385</default_evening_product_option> <!-- Deliver to stated address only -->
+                <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- Post Office + signature on delivery -->
+                <default_pge_product_option>3543</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
         		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->

@@ -159,7 +159,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * XML paths to default product options settings
      */
     const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
+    const XML_PATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/cif_product_options/default_evening_product_option';
     const XML_PATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION     = 'postnl/cif_product_options/default_pakjegemak_product_option';
+    const XML_PATH_DEFAULT_PGE_PRODUCT_OPTION            = 'postnl/cif_product_options/default_pge_product_option';
     const XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
     const XML_PATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
     const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
@@ -637,6 +639,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $storeId = $this->getStoreId();
 
+        if ($this->isPgeShipment()) {
+            /**
+             * PakjeGemak Express default option
+             */
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PGE_PRODUCT_OPTION, $storeId);
+            $this->_checkProductCodeAllowed($productCode);
+
+            return $productCode;
+        }
+
+        if ($this->isAvondshipment()) {
+            /**
+             * Evening delivery default option
+             */
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EVENING_PRODUCT_OPTION, $storeId);
+            $this->_checkProductCodeAllowed($productCode);
+
+            return $productCode;
+        }
+
         if ($this->isPakjeGemakShipment()) {
             /**
              * PakjeGemak default option
@@ -817,6 +839,64 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setLabelCollection($labelCollection);
         return $labelCollection;
+    }
+
+    /**
+     * Gets allowed product codes for the current shipment.
+     *
+     * @return array
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function getAllowedProductCodes()
+    {
+        $cifHelper = $this->getHelper('cif');
+
+        /**
+         * Please note the order of these checks as PakjeGemak, PakjeGemak Express, avond and pakketautomaat shipment
+         * would all also be considered Dutch shipments.
+         */
+
+        if ($this->isPgeShipment()) {
+            $allowedProductCodes = $cifHelper->getPgeProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isAvondShipment()) {
+            $allowedProductCodes = $cifHelper->getAvondProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isPakjeGemakShipment()) {
+            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isPakketautomaatShipment()) {
+            $allowedProductCodes = $cifHelper->getPakketautomaatProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isDutchShipment()) {
+            $allowedProductCodes = $cifHelper->getStandardProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isEuShipment()) {
+            $allowedProductCodes = $cifHelper->getEuProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isGlobalShipment() && $cifHelper->isGlobalAllowed()) {
+            $allowedProductCodes = $cifHelper->getGlobalProductCodes();
+            return $allowedProductCodes;
+        }
+
+        /**
+         * If no matches were found, return an empty array.
+         */
+
+        return array();
     }
 
     /*******************************************************************************************************************
@@ -1096,6 +1176,60 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if this shipment is a PakjeGemak Express shipment.
+     *
+     * @return bool
+     */
+    public function isPgeShipment()
+    {
+        /**
+         * We can check the PostNL order's type to see if it's PakjeGemak Express.
+         *
+         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         */
+        $postnlOrder = $this->getPostnlOrder();
+        if (!$postnlOrder
+            || !$postnlOrder->getId()
+        ) {
+            return false;
+        }
+
+        $type = $postnlOrder->getType();
+        if ($type != 'PGE') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if this shipment is an evening delivery shipment.
+     *
+     * @return bool
+     */
+    public function isAvondShipment()
+    {
+        /**
+         * We can check the PostNL order's type to see if it's evening delivery.
+         *
+         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         */
+        $postnlOrder = $this->getPostnlOrder();
+        if (!$postnlOrder
+            || !$postnlOrder->getId()
+        ) {
+            return false;
+        }
+
+        $type = $postnlOrder->getType();
+        if ($type != 'Avond') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Check if the currrent shipment is a PakjeGemak shipment.
      *
      * @return boolean
@@ -1107,7 +1241,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * If the order was placed using PostNL Checkout, we can check if it was a PakjeGEmak order directly.
+         * If the order was placed using PostNL Checkout, we can check if it was a PakjeGemak order directly.
          *
          * @var TIG_PostNL_Model_CHeckout_Order $postnlOrder
          */
@@ -2355,43 +2489,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Helper_Cif $cifHelper
          */
         $cifHelper = $this->getHelper('cif');
-        $allowedProductCodes = array();
-
-        /**
-         * PakjeGemak shipments are also dutch shipments
-         */
-        if ($this->isDutchShipment() && $this->isPakjeGemakShipment()) {
-            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes();
-        }
-
-        /**
-         * Pakketautomaat shipments are also dutch shipments
-         */
-        if ($this->isDutchShipment() && $this->isPakketautomaatShipment()) {
-            $allowedProductCodes = $cifHelper->getPakketautomaatProductCodes();
-        }
-
-        /**
-         * Here we specifically want shipments that are dutch, but not PakjeGemak or pakketautomaat.
-         */
-        if ($this->isDutchShipment() && !$this->isPakjeGemakShipment() && !$this->isPakketautomaatShipment()) {
-            $allowedProductCodes = $cifHelper->getStandardProductCodes();
-        }
-
-        if ($this->isEuShipment()) {
-            $allowedProductCodes = $cifHelper->getEuProductCodes();
-        }
-
-        if ($this->isGlobalShipment()) {
-            if (!$cifHelper->isGlobalAllowed()) {
-                throw new TIG_PostNL_Exception(
-                    $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
-                    'POSTNL-0078'
-                );
-            }
-
-            $allowedProductCodes = $cifHelper->getGlobalProductCodes();
-        }
+        $allowedProductCodes = $this->getAllowedProductCodes();
 
         /**
          * Check if the product code is allowed
