@@ -274,15 +274,16 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $streetData = $this->_getStreetData($address, false);
 
         $data = array(
-            'CompanyName' => $address->getCompany(),
-            'FirstName'   => $address->getFirstname(),
-            'Name'        => $address->getLastname(),
-            'Street'      => $streetData['streetname'],
-            'HouseNr'     => $streetData['housenumber'],
-            'HouseNrExt'  => $streetData['housenumberExtension'],
-            'Zipcode'     => $address->getPostcode(),
-            'City'        => $address->getCity(),
-            'Countrycode' => $address->getCountryId(),
+            'CompanyName'   => $address->getCompany(),
+            'FirstName'     => $address->getFirstname(),
+            'Name'          => $address->getLastname(),
+            'Street'        => $streetData['streetname'],
+            'HouseNr'       => $streetData['housenumber'],
+            'HouseNrExt'    => $streetData['housenumberExtension'],
+            'Zipcode'       => $address->getPostcode(),
+            'City'          => $address->getCity(),
+            'Countrycode'   => $address->getCountryId(),
+            'CustomerEmail' => $address->getEmail(),
         );
 
         return $data;
@@ -317,8 +318,14 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         }
 
         $streetData = $this->_getStreetData($pakjeGemakAddress, false);
+
+        $companyName = $pakjeGemakAddress->getCompany();
+        if (!$companyName) { //PostNL Checkout stores the company name in the lastname field
+            $pakjeGemakAddress->getname();
+        }
+
         $data = array(
-            'PG_CompanyName' => $pakjeGemakAddress->getName(), //PostNL Checkout stores the company name in the lastname field
+            'PG_CompanyName' => $companyName,
             'PG_Street'      => $streetData['streetname'],
             'PG_HouseNr'     => $streetData['housenumber'],
             'PG_HouseNrExt'  => $streetData['housenumberExtension'],
@@ -467,6 +474,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             'Zipcode',
             'City',
             'Countrycode',
+            'CustomerEmail',
             'PG_CompanyName',
             'PG_Street',
             'PG_HouseNr',
@@ -538,13 +546,13 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     /**
      * Get a shipment item's HS tariff.
      *
-     * @param Mage_Sales_Model_Order_Shipment_item
+     * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
      *
      * @return string
      *
      * @see TIG_PostNL_Model_Core_Cif::_getHSTariff()
      */
-    protected function _getHSTariff($shipmentItem)
+    protected function _getHSTariff(Mage_Sales_Model_Order_Shipment_Item $shipmentItem)
     {
         $hsTariff = parent::_getHSTariff($shipmentItem);
         if ($hsTariff == '000000') {
