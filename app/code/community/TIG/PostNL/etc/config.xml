@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.1.3</version>
+			<version>1.1.4</version>
 		</TIG_PostNL>
 	</modules>
 
@@ -373,29 +373,29 @@
         </carriers>
         <postnl>
         	<general>
-        		<active>0</active> <!-- inactive -->
+        		<active>0</active> <!-- Inactive -->
         		<is_activated>0</is_activated> <!-- Not activated -->
         		<email/>
                 <unique_key/>
         		<private_key/>
         	</general>
         	<cif>
-                <customer_number/>
-        		<customer_code/>
+                <customer_number>11223344</customer_number> <!-- Demo customer number -->
+        		<customer_code>TOTA</customer_code> <!-- Demo customer doe -->
                 <live_username/>
                 <live_password/>
-                <test_username/>
-                <test_password/>
-        		<collection_location/>
+                <test_username>Dem0#Magnt01</test_username> <!-- Demo username -->
+                <test_password/> <!-- The demo password will be generated on install -->
+        		<collection_location>103861</collection_location> <!-- Demo collection location -->
         		<use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
-        		<global_barcode_type/>
-        		<global_barcode_range/>
+        		<global_barcode_type>CD</global_barcode_type> <!-- Demo barcode type -->
+        		<global_barcode_range>1660</global_barcode_range> <!-- Demo barcode range -->
         		<use_checkout>0</use_checkout> <!-- Do not use PostNL Checkout -->
-                <webshop_id/>
-                <public_webshop_id/>
+                <webshop_id/> <!-- The demo webshop ID will be generated on install -->
+                <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
         	</cif>
         	<cif_labels_and_confirming>
-                <mode>0</mode> <!-- Live mode -->
+                <mode>1</mode> <!-- Test mode -->
                 <label_size>A4</label_size> <!-- A4 size labels -->
                 <weight_per_parcel>20000</weight_per_parcel> <!-- 20 kg -->
                 <weight_unit>gram</weight_unit> <!-- gram -->
@@ -447,7 +447,8 @@
                 <country>NL</country> <!-- All return addresses must be located in the Netherlands -->
         	</cif_return_address>
         	<cif_product_options>
-        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3534,3544,3533,3543,3535,3545,3536,3546,3534,3544,3533,3543,4952,4955,4945</supported_product_options> <!-- all possible options -->
+        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3534,3544,3533,3543,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945</supported_product_options> <!-- all possible options -->
+                <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->
         		<default_product_option>3085</default_product_option> <!-- standard shipment -->
         		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
         		<alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
@@ -469,7 +470,7 @@
         	</cif_globalpack_settings>
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
-        	    <mode>0</mode> <!-- Live mode -->
+        	    <mode>1</mode> <!-- Test mode -->
         	    <instruction_cms_page/>
         	    <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the PostNL Checkout button for orders under 2 kg -->
         	    <show_checkout_for_backorders>0</show_checkout_for_backorders> <!-- Do not show the PostNL Checkout button if the order contains out-of-stock products -->
@@ -512,7 +513,6 @@
                 <afterpay_method/>
         	</checkout_payment_methods>
         	<advanced>
-        	    <allow_test_mode>0</allow_test_mode>
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
@@ -583,7 +583,7 @@
             </POSTNL-0006>
             <POSTNL-0007>
                 <message>An error occurred whilst processing your request: </message>
-                <url></url>
+                <url/>
                 <type>error</type>
             </POSTNL-0007>
             <POSTNL-0008>
@@ -608,7 +608,7 @@
             </POSTNL-0011>
             <POSTNL-0012>
                 <message>An error occurred whilst creating processing the shipment(s): </message>
-                <url></url>
+                <url/>
                 <type>error</type>
             </POSTNL-0012>
             <POSTNL-0013>
@@ -1036,8 +1036,13 @@
                 <url>http://kb.totalinternetgroup.nl/topic/33064418</url>
                 <type>error</type>
             </POSTNL-0097>
+            <POSTNL-0098>
+                <message>'The PostNL Extension is currently configured in test mode.</message>
+                <url>http://kb.totalinternetgroup.nl/topic/46536473</url>
+                <type>warning</type>
+            </POSTNL-0098>
 
-            <!-- Note: errors 0098 and 0099 are missing. They will be added later. They have no special significance, we just forgot them :) -->
+            <!-- Note: errors 0099 is missing missing. It may be added later. -->
 
             <POSTNL-0100>
                 <!-- This error is generated by CIF, however we have designated it an error code -->

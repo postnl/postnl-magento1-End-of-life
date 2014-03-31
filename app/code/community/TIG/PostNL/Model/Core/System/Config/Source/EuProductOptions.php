@@ -59,15 +59,15 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
                 'label' => $helper->__('EU Pack Special Consumer (incl. signature)'),
             ),
             /**
-             * This option will be removed in v1.2.0
+             * This option has been removed in v1.1.4
              *
              * @deprecated v1.1.2
              */
-            array(
+            /*array(
                 'value' => '4955',
                 'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
                 'isBelgiumOnly' => true,
-            ),
+            ),*/
             /**
              * These are not currently implemented
              *
@@ -84,6 +84,14 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
             ),*/
         );
 
+        if ($helper->canUseEpsBEOnlyOption()) {
+            $availableOptions['4955'] = array(
+                'value'         => '4955',
+                'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                'isBelgiumOnly' => true,
+            );
+        }
+
         return $availableOptions;
     }
 
@@ -91,7 +99,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
      * @param boolean|int $storeId
-     * @param boolean $codesOnly
+     * @param boolean     $codesOnly
      *
      * @return array
      */
@@ -102,6 +110,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
         }
 
         $helper = Mage::helper('postnl');
+        $canUseEpsBEOnly = $helper->canUseEpsBEOnlyOption();
+
         $options = $this->toOptionArray();
 
         /**
@@ -114,11 +124,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
          */
         $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
         $supportedOptionsArray = explode(',', $supportedOptions);
+        if ($canUseEpsBEOnly) {
+            $supportedOptionsArray[] = '4955';
+        }
 
         /**
          * Check each standard option to see if it's supprted
          */
-        $availableStandardOptions = array();
         foreach ($options as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;

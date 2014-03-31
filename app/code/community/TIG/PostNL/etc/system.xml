@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -36,7 +36,7 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */     
+ */
 -->
 <config>
     <sections>
@@ -367,7 +367,7 @@
                             <validate>validate-alpha validate-length minimum-length-3 maximum-length-4 postnl-validate-empty</validate>
                         </customer_code>
                         <live_username translate="label tooltip" module="postnl">
-                            <label>Username</label>
+                            <label>Live Username</label>
                             <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
@@ -377,7 +377,7 @@
                             <validate>postnl-validate-empty</validate>
                         </live_username>
                         <live_password translate="label tooltip" module="postnl">
-                            <label>Password</label>
+                            <label>Live Password</label>
                             <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
@@ -396,10 +396,6 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
                             <depends>
-                                <allow_test_mode>
-                                    <fieldset>advanced</fieldset>
-                                    <value>1</value>
-                                </allow_test_mode>
                             </depends>
                         </test_username>
                         <test_password translate="label" module="postnl">
@@ -412,10 +408,6 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
                             <depends>
-                                <allow_test_mode>
-                                    <fieldset>advanced</fieldset>
-                                    <value>1</value>
-                                </allow_test_mode>
                             </depends>
                         </test_password>
                         <collection_location translate="label comment tooltip" module="postnl">
@@ -550,12 +542,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
-                            <depends>
-                                <allow_test_mode>
-                                    <fieldset>advanced</fieldset>
-                                    <value>1</value>
-                                </allow_test_mode>
-                            </depends>
                         </mode>
                         <label_size translate="label comment" module="postnl">
                             <label>Label size</label>
@@ -1410,10 +1396,6 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <active>1</active>
-                                <allow_test_mode>
-                                    <fieldset>advanced</fieldset>
-                                    <value>1</value>
-                                </allow_test_mode>
                                 <use_checkout>
                                     <fieldset>cif</fieldset>
                                     <value>1</value>
@@ -2513,25 +2495,13 @@
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
-                        <allow_test_mode translate="label comment tooltip" module ="postnl">
-                            <label>Allow test mode</label>
-                            <comment>If enabled new fields will appear allowing you to configure the extension for test mode.</comment>
-                            <tooltip>By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <validate>validate-select</validate>
-                        </allow_test_mode>
                         <debug_mode translate="label comment tooltip" module="postnl">
                             <label>Debug mode</label>
                             <comment>If enabled, debug logs will be created in the var/logs/TIG_PostNL/ directory.</comment>
                             <tooltip>Full logging will log various debugging messages as well as errors. N.B.: these log files may become very large in a short amount of time.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_debugMode</source_model>
-                            <sort_order>20</sort_order>
+                            <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2542,7 +2512,7 @@
                             <comment>By default a maximum of 200 labels can be printed at once. Enable this to remove this limitation. Beware: enabling this may lead to server instability.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2552,7 +2522,7 @@
                             <label>Maximum number of parcels per shipment</label>
                             <comment><![CDATA[Leave empty to allow an infinite amount of parcels per shipment.<br/>If this value is empty or exceeds 200, you need to set 'Allow infinite label printing' to yes in order to be able to print the shipment's labels.]]></comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2561,7 +2531,7 @@
                             <label>Maximum temporary file storage time</label>
                             <comment>In seconds. After this time, temporary files will be deleted. Only increase this if you use custom functionality to create a very large amount of labels at once.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2572,7 +2542,7 @@
                             <comment>In order to continuously improve the PostNL extension, the extension sends usage statistics to a secure PostNL server.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2583,7 +2553,7 @@
                             <comment>PostNL may periodically send important updates regarding new versions of the PostNL extension or important security updates in the same manner as Magento. Disable this setting to no longer ecieve these notifications.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2594,7 +2564,7 @@
                             <comment>If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2603,7 +2573,7 @@
                         <cif_versions_header translate="label" module="postnl">
                             <label>The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the extension altogether.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2611,7 +2581,7 @@
                         <cif_versions_infobox translate="comment" module="postnl">
                             <comment>ONLY CHANGE THESE SETTINGS WITH DIRECT INSTRUCTION FROM POSTNL OR TOTAL INTERNET GROUP</comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_warningBox</frontend_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2619,7 +2589,7 @@
                         <cif_version_shippingstatus translate="label" module="postnl">
                             <label>ShippingStatus Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2627,7 +2597,7 @@
                         <cif_version_confirming translate="label" module="postnl">
                             <label>Confirming Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>120</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2635,7 +2605,7 @@
                         <cif_version_labelling translate="label" module="postnl">
                             <label>Labelling Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>130</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2643,7 +2613,7 @@
                         <cif_version_barcode translate="label" module="postnl">
                             <label>Barcode Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>140</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2651,7 +2621,7 @@
                         <cif_version_checkout translate="label" module="postnl">
                             <label>Checkout Webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>150</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>

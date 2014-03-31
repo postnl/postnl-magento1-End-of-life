@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -43,139 +43,151 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
      */
     const SHIPPING_STATUS_CRON_STRING_PATH = 'crontab/jobs/postnl_update_shipping_status/schedule/cron_expr';
     const SHIPPING_STATUS_CRON_MODEL_PATH  = 'crontab/jobs/postnl_update_shipping_status/run/model';
-    
+
     /**
      * Cron expression and cron model definitions for statistics update cron
      */
     const UPDATE_STATISTICS_CRON_STRING_PATH = 'crontab/jobs/postnl_update_statistics/schedule/cron_expr';
     const UPDATE_STATISTICS_CRON_MODEL_PATH  = 'crontab/jobs/postnl_update_statistics/run/model';
-    
+
     /**
      * XML path to the supporttab_expanded setting
      */
     const EXPAND_SUPPORT_PATH = 'postnl/support/expanded';
-    
+
+    /**
+     * Test data.
+     */
+    const DEFAULT_TEST_PASSWORD = 'z9A4LpFd53Z';
+    const DEFAULT_WEBSHOP_ID    = '853f9d2a4c5242f097daeaf61637609c';
+
+    /**
+     * Xpaths for test data.
+     */
+    const XPATH_TEST_PASSWORD = 'postnl/cif/test_password';
+    const XPATH_WEBSHOP_ID    = 'postnl/cif/webshop_id';
+
     /**
      * callAfterApplyAllUpdates flag. Causes applyAFterUpdates() to be called.
-     * 
+     *
      * @var boolean
      */
     protected $_callAfterApplyAllUpdates = true;
-    
+
     /**
      * Module version as stored in the db at the time of the update
-     * 
+     *
      * @var string
      */
     protected $_dbVer;
-    
+
     /**
      * Module version as specified in the module's configuration at the time of the update
-     * 
+     *
      * @var string
      */
     protected $_configVer;
-    
+
     /**
      * Set the stored DB version to the specified value
-     * 
+     *
      * @param string $dbVer
-     * 
-     * @return TIG_PostNL_Model_Resource_Setup
+     *
+     * @return $this
      */
     public function setDbVer($dbVer)
     {
         $this->_dbVer = $dbVer;
-        
+
         return $this;
     }
-    
+
     /**
      * Set the stored config version to the specified value
-     * 
+     *
      * @param string $configVer
-     * 
-     * @return TIG_PostNL_Model_Resource_Setup
+     *
+     * @return $this
      */
     public function setConfigVer($configVer)
     {
         $this->_configVer = $configVer;
-        
+
         return $this;
     }
-    
+
     /**
      * Get the stored DB version
-     * 
+     *
      * @return string
      */
     public function getDbVer()
     {
         return $this->_dbVer;
     }
-    
+
     /**
      * get the stored config version
-     * 
+     *
      * @return string
      */
     public function getConfigVer()
     {
         return $this->_configVer;
     }
-    
+
     /**
      * Store the applied update versions
-     * 
+     *
      * @return parent::applyUpdates()
      */
     public function applyUpdates()
     {
         $dbVer = $this->_getResource()->getDbVersion($this->_resourceName);
         $configVer = (string)$this->_moduleConfig->version;
-        
+
         $this->setDbVer($dbVer);
         $this->setConfigVer($configVer);
-        
+
         return parent::applyUpdates();
     }
 
     /**
      * Check if the PostNL module has been updated. If so, add an admin notification to the inbox.
      *
-     * @return TIG_PostNL_Model_Resource_Setup
-     * 
-     * @todo prevent window from being shown after every login
+     * @return $this
      */
     public function afterApplyAllUpdates()
     {
         $dbVer = $this->getDbVer();
         $configVer = $this->getConfigVer();
-        
+
         $this->_checkVersionCompatibility();
-        
+
         if (version_compare($configVer, $dbVer) != self::VERSION_COMPARE_GREATER) {
             return $this;
         }
-        
+
         $helper = Mage::helper('postnl');
-        
+
         $inbox = Mage::getModel('postnl/inbox');
         $inbox->addNotice(
                   '[POSTNL-0083] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
                   '[POSTNL-0083] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
-                  'http://kb.totalinternetgroup.nl/topic/31921907', 
+                  'http://kb.totalinternetgroup.nl/topic/31921907',
                   true
               )
               ->save();
-              
+
         return $this;
     }
-    
+
     /**
      * Generate a random cron expression for the status update cron for this merchant and store it in the database
-     * 
-     * @return TIG_PostNL_Model_Resource_Setup
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @return $this
      */
     public function generateShippingStatusCronExpr()
     {
@@ -184,15 +196,15 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
          */
         $cronMorningHour   = mt_rand(10, 12);
         $cronMorningHour  += Mage::getModel('core/date')->getGmtOffset('hours');
-        
+
         $cronAfternoonHour = $cronMorningHour + 4; //4 hours after the morning update
         $cronMinute        = mt_rand(0, 59);
-        
+
         /**
          * Generate a cron expr that runs on a specified minute on a specified hour between 10 and 12 AM, and between 14 and 16 PM.
          */
         $cronExpr = "{$cronMinute} {$cronMorningHour},{$cronAfternoonHour} * * *";
-        
+
         /**
          * Store the cron expression in core_config_data
          */
@@ -214,15 +226,17 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
                 $e
             );
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Generates a semi-random cron expression for the update statistics cron. This is done to spread out the number of calls
      * across each day.
-     * 
-     * @return TIG_PostNL_Model_Resource_Setup
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @return $this
      */
     public function generateUpdateStatisticsCronExpr()
     {
@@ -232,12 +246,12 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $cronMorningHour   = mt_rand(0, 11);
         $cronAfternoonHour = $cronMorningHour + 12; //half a day after the morning update
         $cronMinute        = mt_rand(0, 59);
-        
+
         /**
          * Generate a cron expr that runs on a specified minute on a specified hour twice per day.
          */
         $cronExpr = "{$cronMinute} {$cronMorningHour},{$cronAfternoonHour} * * *";
-        
+
         /**
          * Store the cron expression in core_config_data
          */
@@ -259,15 +273,15 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
                 $e
             );
         }
-        
+
         return $this;
     }
 
     /**
      * Checks the store's config to see if the extension is compatible with the installed Magento version. If not, a message will
      * be added to Mage_Adminnotification.
-     * 
-     * @return TIG_PostNL_Model_Resource_Setup
+     *
+     * @return $this
      */
     public function _checkVersionCompatibility()
     {
@@ -277,39 +291,16 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         } else {
             $edition = 'community';
         }
-        
+
         $inbox = Mage::getModel('postnl/inbox');
-        
+
         $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/' . $edition);
         if ($supportedVersions === false) {
-            $message = '[POSTNL-0086] ' 
+            $message = '[POSTNL-0086] '
                      . $helper->__(
                            'The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.'
                        );
-                       
-            $inbox->addCritical(
-                      $message,
-                      $message,
-                      'http://kb.totalinternetgroup.nl/topic/31925577', 
-                      true
-                  )
-                  ->save();
-                  
-            return $this;
-        }
-        
-        $supportedVersions = (string) $supportedVersions;
-        $supportedVersionArray = explode(',', $supportedVersions);
-        
-        $installedMagentoVersionInfo = Mage::getVersionInfo();
-        $installedMagentoVersion = $installedMagentoVersionInfo['major'] . '.' . $installedMagentoVersionInfo['minor'];
-        
-        if (!in_array($installedMagentoVersion, $supportedVersionArray)) {
-            $message = '[POSTNL-0086] ' 
-                     . $helper->__(
-                           'The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.'
-                       );
-                       
+
             $inbox->addCritical(
                       $message,
                       $message,
@@ -317,27 +308,50 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
                       true
                   )
                   ->save();
-                  
+
             return $this;
         }
-        
+
+        $supportedVersions = (string) $supportedVersions;
+        $supportedVersionArray = explode(',', $supportedVersions);
+
+        $installedMagentoVersionInfo = Mage::getVersionInfo();
+        $installedMagentoVersion = $installedMagentoVersionInfo['major'] . '.' . $installedMagentoVersionInfo['minor'];
+
+        if (!in_array($installedMagentoVersion, $supportedVersionArray)) {
+            $message = '[POSTNL-0086] '
+                     . $helper->__(
+                           'The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.'
+                       );
+
+            $inbox->addCritical(
+                      $message,
+                      $message,
+                      'http://kb.totalinternetgroup.nl/topic/31925577',
+                      true
+                  )
+                  ->save();
+
+            return $this;
+        }
+
         return $this;
     }
 
     /**
      * Makes sure the PostNL support tab is expanded the first time an adin visits the PostNL system/config/edit page.
-     * 
-     * @return TIG_PostNL_Model_Resource_Setup
+     *
+     * @return $this
      */
     public function expandSupportTab()
     {
         $configState = array(
             'postnl_support' => 1,
         );
-        
+
         /**
          * Get all admin users and save the PostNL support tab's state as being expanded for each one.
-         * 
+         *
          * This has the same effect as having every admin log in, go to system/config/edit/section/postnl and manually click on
          * the 'Version & Support' tab before saving the section.
          */
@@ -345,7 +359,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         foreach ($adminUsers as $adminUser) {
             $this->_saveState($adminUser, $configState);
         }
-        
+
         return $this;
     }
 
@@ -355,9 +369,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
      *
      * @param Mage_Admin_Model_User $adminUser
      * @param array $configState
-     * 
-     * @return TIG_PostNL_Model_Resource_Setup
-     * 
+     *
+     * @return $this
+     *
      * @see Mage_Adminhtml_System_ConfigController::_saveState()
      */
     protected function _saveState(Mage_Admin_Model_User $adminUser, $configState = array())
@@ -365,12 +379,12 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         if (!is_array($configState)) {
             return $this;
         }
-        
+
         $extra = $adminUser->getExtra();
         if (!is_array($extra)) {
             $extra = array();
         }
-        
+
         if (!isset($extra['configState'])) {
             $extra['configState'] = array();
         }
@@ -378,12 +392,58 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         foreach ($configState as $fieldset => $state) {
             $extra['configState'][$fieldset] = $state;
         }
-        
+
         try {
             $adminUser->saveExtra($extra);
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
         }
+
+        return $this;
+    }
+
+    /**
+     * Saves the default test password in the database as an encrypted string.
+     *
+     * @return $this
+     */
+    public function installTestPassword()
+    {
+        $testPassword = self::DEFAULT_TEST_PASSWORD;
+        $encryptedPassword = Mage::helper('core')->encrypt($testPassword);
+
+        /**
+         * @var Mage_Core_Model_Config $config
+         */
+        $config = Mage::getModel('core/config_data')
+                      ->load(self::XPATH_TEST_PASSWORD, 'path');
+
+        $config->setValue($encryptedPassword)
+               ->setPath(self::XPATH_TEST_PASSWORD)
+               ->save();
+
+        return $this;
+    }
+
+    /**
+     * Saves the default test webshop ID as an encrypted string.
+     *
+     * @return $this
+     */ 
+    public function installWebshopId()
+    {
+        $testWebshopId = self::DEFAULT_WEBSHOP_ID;
+        $encryptedWebshopId = Mage::helper('core')->encrypt($testWebshopId);
+
+        /**
+         * @var Mage_Core_Model_Config $config
+         */
+        $config = Mage::getModel('core/config_data')
+                      ->load(self::XPATH_WEBSHOP_ID, 'path');
+
+        $config->setValue($encryptedWebshopId)
+               ->setPath(self::XPATH_WEBSHOP_ID)
+               ->save();
 
         return $this;
     }

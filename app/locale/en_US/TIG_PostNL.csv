@@ -22,8 +22,8 @@ During activation 2 secure keys will be sent to this email address.,During activ
 Unique key,Unique key
 Private key,Private key
 Account Settings,Account Settings
-Username,Username
-Password,Password
+Live Username,Live Username
+Live Password,Live Password
 Test Username,Test Username
 Test Password,Test Password
 Customer Number,Customer Number
@@ -37,7 +37,7 @@ The current global barcode type as supplied by PostNL. Must contain 2 letters.,T
 Global Barcode Range,Global Barcode Range
 Your global barcode range as supplied by PostNL. Must contain 4 digits.,Your global barcode range as supplied by PostNL. Must contain 4 digits.
 These fields are only required if you wish to use PostNL Checkout.,These fields are only required if you wish to use PostNL Checkout.
-Webshop External ID,Webshop External ID
+Webshop ID,Webshop ID
 Public Webshop ID,Public Webshop ID
 These fields contain your contact information for PostNL.,These fields contain your contact information for PostNL.
 Company Name,Company Name
@@ -223,10 +223,10 @@ Please select one or more shipments.,Please select one or more shipments.
 You can print a maximum of 200 labels at once.,You can print a maximum of 200 labels at once.
 The shipments have been confirmed successfully.,The shipments have been confirmed successfully.
 Order #%s cannot be shipped at this time.,Order #%s cannot be shipped at this time.
-PostNL replied with the following warnings:,PostNL replied with the following warnings:
+PostNL replied with the following warning(s):,PostNL replied with the following warning(s):
 Error code %s:,Error code %s:
 An error occurred whilst processing your request:,An error occurred whilst processing your request:
-Your webshop has been registered. You should receive an email on the email address you specify shortly. ,Your webshop has been registered. You should receive an email on the email address you specify shortly. 
+Your webshop has been registered. You should receive an email on the email address you specify shortly. ,Your webshop has been registered. You should receive an email on the email address you specify shortly.
 Please read this email carefully as it contains instructions on how to finish the extension activation procedure.,Please read this email carefully as it contains instructions on how to finish the extension activation procedure.
 Please fill in your unique and private keys and try again.,Please fill in your unique and private keys and try again.
 The extension has been successfully activated!,The extension has been successfully activated!
@@ -435,7 +435,7 @@ Documents,Documents
 Commercial Goods,Commercial Goods
 Commercial Sample,Commercial Sample
 Returned Goods,Returned Goods
-An error occurred while processing your request: ,An error occurred while processing your request: 
+An error occurred while processing your request: ,An error occurred while processing your request:
 OrderToken missing for quote #%s,OrderToken missing for quote #%s
 Unable to create an order for quote #%s,Unable to create an order for quote #%s
 Invalid quote supplied.,Invalid quote supplied.
@@ -461,7 +461,7 @@ Before you proceed to use this extension it is very important that you have prop
 "You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.","You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>."
 Register the extension for use,Register the extension for use
 Open the 'General Settings' tab and enter your email address.,Open the 'General Settings' tab and enter your email address.
-Press the 'Activate the extension' button. You will now receive an email at the address you specified containing 2 secure keys.,Press the 'Activate the extension' button. You will now receive an email at the address you specified containing 2 secure keys.
+Press the 'Activate the extension' button. You will now recieve an email at the address you specified containing 2 secure keys.,Press the 'Activate the extension' button. You will now recieve an email at the address you specified containing 2 secure keys.
 Copy the keys and enter them in the 'Unique-' and 'Private key' fields that are now available.,Copy the keys and enter them in the 'Unique-' and 'Private key' fields that are now available.
 Press the 'Finish activation' button.,Press the 'Finish activation' button.
 Set the 'Active' field to 'Yes' and save the configuration. Your extension is now registered.,Set the 'Active' field to 'Yes' and save the configuration. Your extension is now registered.
@@ -483,7 +483,7 @@ Configure your GlobalPack settings,Configure your GlobalPack settings
 Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.,Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.
 "Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office.","Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office."
 Configure your PostNL Checkout settings,Configure your PostNL Checkout settings
-"If you wish to use PostNL Checkout in your webshop, you need to configure your PostNL Checkout settings.","If you wish to use PostNL Checkout in your webshop, you need to configure your PostNL Checkout settings."
+"If you wish to use PostNL Checkout in your webshop, you need to configure your PostNl Checkout settings.","If you wish to use PostNL Checkout in your webshop, you need to configure your PostNl Checkout settings."
 Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.,Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.
 Go to the 'PostNL Checkout' tab and specify your preferences.,Go to the 'PostNL Checkout' tab and specify your preferences.
 "Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected.","Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected."
@@ -579,3 +579,15 @@ PostNL - Print Shipping Label,PostNL - Print Shipping Label
 PostNL - Send Tracking Information,PostNL - Send Tracking Information
 No status history available.,No status history available.
 Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.,Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.
+Confirmation Expired,Confirmation Expired
+The PostNL Extension is currently configured in test mode.,The PostNL Extension is currently configured in test mode.
+"You can enter your live username and password in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode in the 'Confirming and Label Printing Settings' tab. If you use PostNL Checkout you also need to set PostNL Checkout to live mode in the 'PostNL Checkout Settings' tab.","You can enter your live username and password in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode in the 'Confirming and Label Printing Settings' tab. If you use PostNL Checkout you also need to set PostNL Checkout to live mode in the 'PostNL Checkout Settings' tab."
+"You may test the extension, however you cannot send any shipments in this mode. Any shipments that you confirm or whose labels you print while in this mode will be registered as test shipments and may not be physically shipped. If you attempt to do so, you may incur fines from PostNL. To use the extension in live mode you first need to enter your PostNL account credentials and set the extension to live mode. You can then send shipments using the PostNL extension.","You may test the extension, however you cannot send any shipments in this mode. Any shipments that you confirm or whose labels you print while in this mode will be registered as test shipments and may not be physically shipped. If you attempt to do so, you may incur fines from PostNL. To use the extension in live mode you first need to enter your PostNL account credentials and set the extension to live mode. You can then send shipments using the PostNL extension."
+"You can enter your live username and password in the 'Account Settings' tab of the PostNL extension configuration. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode in the 'Confirming and Label Printing Settings' tab. If you use PostNL Checkout you also need to set PostNL Checkout to live mode in the 'PostNL Checkout Settings' tab.","You can enter your live username and password in the 'Account Settings' tab of the PostNL extension configuration. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode in the 'Confirming and Label Printing Settings' tab. If you use PostNL Checkout you also need to set PostNL Checkout to live mode in the 'PostNL Checkout Settings' tab."
+PostNL - Remove Shipping Label,PostNL - Remove Shipping Label
+Are you sure that you wish to remove this shipment\'s shipping label? You will need to print a new shipping label before you can send this shipment.,Are you sure that you wish to remove this shipment\'s shipping label? You will need to print a new shipping label before you can send this shipment.
+PostNL - Change Confirmation,PostNL - Change Confirmation
+Are you sure that you wish to reset the confirmation status of this shipment? You will need to confirm this shipment with PostNL again before you can send it. This action will remove all barcodes and labels associated with this shipment. You can not undo this action.,Are you sure that you wish to reset the confirmation status of this shipment? You will need to confirm this shipment with PostNL again before you can send it. This action will remove all barcodes and labels associated with this shipment. You can not undo this action.
+The shipment's shipping labels have been deleted.,The shipment's shipping labels have been deleted.
+The shipment's confirmation has been undone.,The shipment's confirmation has been undone.
+"By default the extension is pre-configured using a test account. If you already have your PostNL account credentials, you can enter them using the steps below. If you have not yet received these credentials you may keep using the extensions in test mode. In this case you can continue to step 3.","By default the extension is pre-configured using a test account. If you already have your PostNL account credentials, you can enter them using the steps below. If you have not yet received these credentials you may keep using the extensions in test mode. In this case you can continue to step 3."

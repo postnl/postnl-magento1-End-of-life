@@ -1,3 +1,4 @@
+<?php
 /**
  *                  ___________       __            __
  *                  \__    ___/____ _/  |_ _____   |  |
@@ -32,35 +33,21 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
+ * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck $this
  */
-document.observe('dom:loaded', function() {
-    $$('.postnl-validate-empty').each(function(element) {
-        if (!element.value.empty()) {
-            element.removeClassName('postnl-validate-empty');
-        }
+?>
+<?php $_testEnabled = $this->isTestEnabled(); ?>
+<?php $_isTestMode  = $this->isTestModeActive(); ?>
+<?php $_helper      = Mage::helper('postnl'); ?>
+<?php if (!$_testEnabled || !$_isTestMode): ?>
+    <?php return ''; ?>
+<?php endif; ?>
 
-        element.observe('change', function(event) {
-            var eventElement = Event.element(event);
-            checkEmpty(eventElement);
-        });
-
-        element.observe('keyup', function(event) {
-            var eventElement = Event.element(event);
-            checkEmpty(eventElement);
-        });
-    });
-});
-
-function checkEmpty(eventElement) {
-    if (eventElement.value.empty() && !eventElement.hasClassName('postnl-validate-empty')) {
-        eventElement.addClassName('postnl-validate-empty');
-        return;
-    }
-
-    if (!eventElement.value.empty() && eventElement.hasClassName('postnl-validate-empty')) {
-        eventElement.removeClassName('postnl-validate-empty');
-    }
-}
+<div class="module-message warning" id="postnl_testmode_warning">
+    <h4>[POSTNL-0098] <?php echo $this->__('The PostNL Extension is currently configured in test mode.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0098'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
+    <p><?php echo $this->__('You may test the extension, however you cannot send any shipments in this mode. Any shipments that you confirm or whose labels you print while in this mode will be registered as test shipments and may not be physically shipped. If you attempt to do so, you may incur fines from PostNL. To use the extension in live mode you first need to enter your PostNL account credentials and set the extension to live mode. You can then send shipments using the PostNL extension.'); ?></p>
+    <p><?php echo $this->__("You can enter your live username and password in the 'Account Settings' tab of the PostNL extension configuration. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode in the 'Confirming and Label Printing Settings' tab. If you use PostNL Checkout you also need to set PostNL Checkout to live mode in the 'PostNL Checkout Settings' tab."); ?></p>
+</div>
