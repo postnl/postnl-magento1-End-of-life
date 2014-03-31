@@ -84,6 +84,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $labelModel = Mage::getModel('postnl_core/label');
             $labelModel->createPdf($labels);
+
+            /**
+             * Prevent Magento from sending additional headers.
+             */
+            $this->getResponse()->setHttpResponseCode(200)->clearRawHeaders()->clearHeaders();
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -297,7 +302,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             }
 
             $postnlShipment = $this->_getPostnlShipment($shipmentId);
-            $postnlShipment->resetConfirmation(false)->save();
+            $postnlShipment->resetConfirmation(true, true)->save();
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -565,6 +570,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $label = Mage::getModel('postnl_core/label');
             $label->createPdf($labels);
+
+            /**
+             * Prevent Magento from sending additional headers.
+             */
+            $this->getResponse()->setHttpResponseCode(200)->clearRawHeaders()->clearHeaders();
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -638,6 +648,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $label = Mage::getModel('postnl_core/label');
             $label->createPdf($labels);
+
+            /**
+             * Prevent Magento from sending additional headers.
+             */
+            $this->getResponse()->setHttpResponseCode(200)->clearRawHeaders()->clearHeaders();
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -837,8 +852,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          * If the shipment does not have a barcode, generate one
          */
         if (!$postnlShipment->getMainBarcode()) {
-            $postnlShipment->generateBarcodes()
-                           ->addTrackingCodeToShipment();
+            $postnlShipment->generateBarcodes();
         }
 
         if ($confirm === true
