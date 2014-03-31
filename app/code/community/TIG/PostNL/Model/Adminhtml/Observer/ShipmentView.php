@@ -113,11 +113,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             $resetConfirmationUrl = $this->getResetConfirmationUrl($shipment->getId());
             $resetWarningMessage = $helper->__(
                 'Are you sure that you wish to reset the confirmation status of this shipment? You will need to '
-                . 'confirm this shipment with PostNL again before you can send it. You can not undo this action.'
+                . 'confirm this shipment with PostNL again before you can send it. This action will remove all barcodes'
+                . ' and labels associated with this shipment. You can not undo this action.'
             );
 
             $block->addButton('reset_confirmation', array(
-                'label'   => $helper->__('PostNL - Undo Confirmation'),
+                'label'   => $helper->__('PostNL - Change Confirmation'),
                 'onclick' => "deleteConfirm('"
                                  . $resetWarningMessage
                                  . "', '"
