@@ -335,7 +335,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => Mage::helper('postnl')->__('Product options'),
                     'values' => Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                                    ->getAvailableOptions(true, true),
+                                    ->getAvailableOptions(true, true, false, false, false, true, true),
                 ),
             );
         }
@@ -445,6 +445,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         if ($filterCond == 'pakje_gemak') {
             $collection->addFieldToFilter('is_pakje_gemak', array('eq' => 1));
+            $collection->addFieldToFilter('postnl_order.type', array(array('eq' => 'PG'), array('null' => true)));
 
             return $this;
         }
@@ -454,6 +455,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         if ($filterCond == 'pakketautomaat') {
             $collection->addFieldToFilter('is_pakketautomaat', array('eq' => 1));
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'PA'),
+                    array('null' => true)
+                )
+            );
 
             return $this;
         }
@@ -465,9 +473,27 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         if ($filterCond == 'nl') {
             $collection->addFieldToFilter('country_id', $cond);
-            $collection->addFieldToFilter('postnl_order.type', array(array('eq' => 'Overdag'), array('null' => true)));
-            $collection->addFieldToFilter('is_pakje_gemak', array(array('eq' => 0), array('null' => true)));
-            $collection->addFieldToFilter('is_pakketautomaat', array(array('eq' => 0), array('null' => true)));
+            $collection->addFieldToFilter(
+                       'postnl_order.type',
+                       array(
+                           array('eq'   => 'Overdag'),
+                           array('null' => true)
+                       )
+            );
+            $collection->addFieldToFilter(
+                       'is_pakje_gemak',
+                       array(
+                           array('eq'   => 0),
+                           array('null' => true)
+                       )
+            );
+            $collection->addFieldToFilter(
+                       'is_pakketautomaat',
+                       array(
+                           array('eq'   => 0),
+                           array('null' => true)
+                       )
+            );
 
             return $this;
         }

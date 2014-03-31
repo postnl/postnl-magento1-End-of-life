@@ -82,6 +82,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         if ($optionType == 'Avond') {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>avond</div>";
             $renderedValue .= Mage::helper('postnl')->__('Evening Delivery');
+
             return $renderedValue;
         }
 
@@ -89,18 +90,21 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>"
                 . "pakje_gemak_express</div>";
             $renderedValue .= Mage::helper('postnl')->__('Early Pickup');
-            return $renderedValue;
-        }
 
-        if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak</div>";
-            $renderedValue .= Mage::helper('postnl')->__('Post Office');
             return $renderedValue;
         }
 
         if ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakketautomaat</div>";
             $renderedValue .= Mage::helper('postnl')->__('Parcel Dispenser');
+
+            return $renderedValue;
+        }
+
+        if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak</div>";
+            $renderedValue .= Mage::helper('postnl')->__('Post Office');
+
             return $renderedValue;
         }
 
@@ -110,6 +114,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         if ($value == 'NL') {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>standard</div>";
             $renderedValue .= Mage::helper('postnl')->__('Domestic');
+
             return $renderedValue;
         }
 
@@ -120,6 +125,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         if (in_array($value, $euCountries)) {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>eps</div>";
             $renderedValue .= Mage::helper('postnl')->__('EPS');
+
             return $renderedValue;
         }
 
