@@ -366,9 +366,9 @@ TIG_PostNL::Billing Address,Betaaladres
 TIG_PostNL::Shipping Address,Verzendadres
 TIG_PostNL::Collection Address,Afhaal Locatie
 TIG_PostNL::Payment Method,Betaalmethode
-TIG_PostNL::Shipping Method,Verzend methode
+TIG_PostNL::Shipping Method,Verzendmethode
 TIG_PostNL::Items Ordered,Artikelen besteld
-TIG_PostNL::Product Name,Product naam
+TIG_PostNL::Product Name,Productnaam
 TIG_PostNL::Price,Prijs
 TIG_PostNL::Qty,Aantal
 TIG_PostNL::Subtotal,Subtotaal
@@ -478,14 +478,14 @@ TIG_PostNL::Enter a sender and return address,Vul een afzender- en retouradres i
 "TIG_PostNL::Configure your address settings, your confirming & label printing preferences and your preferred product options","Configureer nu uw adres instellingen, uw voormelden en labels printen voorkeuren, en uw product optie voorkeuren."
 "TIG_PostNL::Go to the 'Address Settings' tab and configure this section based on which fields you use in your checkout process. If this does not precisely match your checkout process, orders may not be shipped to the correct address.",Ga nu naar het 'Adres Instellingen' tabje en configureer deze velden op basis van welke velden u gebruikt in uw afreken proces. Indien deze configuratie niet exact overeenkomt met de velden die u gebruikt in uw afrekenproces kan het voorkomen dat bestellingen naar het verkeerde adres verstuurd worden.
 TIG_PostNL::Go to the 'Confirming & Label Printing Settings' tab and change your preferences. You may want to tweak these and then test them repeatedly before deciding on a final configuration.,Ga naar het 'Voormelden & Labels Printen Instellingen' tabje en pas uw voorkeuren aan. Het is verstandig om met deze instellingen te experimenteren en telkens te testen voordat u uw definitieve voorkeuren vastlegt.
-"TIG_PostNL::Go to the 'Product Options' tab and select your supported and preferred product options. If you have questions regarding each product option and which would be most suitable to you, please contact PostNL.","Ga naar het 'Product Opties' tabje en selecteer welke PostNL preoducten u ondersteunt en welke u als standaard wilt aanhouden. Indien u vragen heeft met betrekking tot de mogelijke product opties of als u niet zeker bent welke product opties het beste bij u passen, neem dan contact op met PostNL."
+"TIG_PostNL::Go to the 'Product Options' tab and select your supported and preferred product options. If you have questions regarding each product option and which would be most suitable to you, please contact PostNL.","Ga naar het 'Product Opties' tabje en selecteer welke PostNL producten u ondersteunt en welke u als standaard wilt aanhouden. Indien u vragen heeft met betrekking tot de mogelijke product opties of als u niet zeker bent welke product opties het beste bij u passen, neem dan contact op met PostNL."
 TIG_PostNL::Configure your GlobalPack settings,Configureer uw GlobalPack instellingen
 "TIG_PostNL::If you wish to send orders to outside the EU, you need to configure your GlobalPack settings.",Indien u bestellingen wilt versturen naar buiten de EU moet u uw GlobalPack instellingen configureren.
 TIG_PostNL::Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.,Ga naar het 'Account Instellingen' tabje en vul de 'Globaal barcode type' en 'Globaal barcode bereik' velden in.
 "TIG_PostNL::Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office.","Ga naar het 'GlobalPack Instellingen' tabje en vul uw voorkeuren in. Let op: als u deze instellingen niet correct configureerd, kan het voorkomen dat PostNL of de douane de zending weigert."
 TIG_PostNL::Configure your PostNL Checkout settings,Configureer uw PostNL Checkout instellingen
 "TIG_PostNL::If you wish to use PostNL Checkout in your webshop, you need to configure your PostNL Checkout settings.",Indien u gebruik wilt maken van PostNL Checkout moet u uw PostNL Checkout instellingen configureren.
-TIG_PostNL::Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.,Ga naar het 'Account Instellingen' tabje en vul de 'Webshop ID' en 'Publieke webshop ID' velden ini
+TIG_PostNL::Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.,Ga naar het 'Account Instellingen' tabje en vul de 'Webshop ID' en 'Publieke webshop ID' velden in.
 TIG_PostNL::Go to the 'PostNL Checkout' tab and specify your preferences.,Ga naar het 'PostNL Checkout' tabje en vul uw voorkeuren in.
 "TIG_PostNL::Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected.","Ga naar het 'PostNL Checkout Betalingsinstellingen' tabje en kies welke betaalmethode u wilt aanbieden in PostNL Checkout. Hier moet u ook iedere PostNL Checkout betaalmethode die u ondersteunt, koppelen aan een Magento betaalmethode. Als u dit niet goed instelt, kan het voorkomen dat een klant uiteindelijk met een andere betaalmethode moet afrekenen dan hij of zij heeft gekozen in PostNL Checkout."
 "TIG_PostNL::If you wish to use this extension on an unsupported Magento version or edition, or in combination with an unsupported 3rd party extension, we cannot guarantee the PostNL extension will function as expected. For questions please contact the Total Internet Group servicedesk.","Indien u de extensie wilt gebruiken op een niet-ondersteunde versie of editie van magento, of als u de extensie wilt gebruiken samen met een 3rd party extensie die niet ondersteunt wordt, kunnen wij niet garanderen dat de PostNL extensie feilloos zal functioneren. Voor vragen kunt u contact op nemen met de Total Internet Group servicedesk."
@@ -779,3 +779,8 @@ TIG_PostNL::The shipment's confirmation has been undone.,De voormelding van deze
 TIG_PostNL::Parcel Dispenser,Pakketautomaat
 TIG_PostNL::Parcel Dispenser options,Pakketautomaat opties
 TIG_PostNL::Location webservice version,Locatie webservice versie
+"TIG_PostNL::By default the extension is pre-configured using a test account. If you already have your PostNL account credentials, you can enter them using the steps below. If you have not yet received these credentials you may keep using the extensions in test mode. In this case you can continue to step 3.","De extensie is standaard voorgeconfigureerd met een PostNL test account. Indien u al uw PostNL account gegevens hebt ontvangen, kunt u deze invullen volgens de onderstaande stappen. Indien u deze gegevens nog niet heeft ontvangen, kunt u de extensie blijven gebruiken in test modus. In dit geval kunt u door gaan naar stap 3."
+TIG_PostNL::Evening Delivery,Avondbezorging
+TIG_PostNL::Early Pickup,Extra Vroeg Ophalen
+TIG_PostNL::Evening Delivery options,Avondbezorging opties
+TIG_PostNL::Early Pickup options,Extra Vroeg Ophalen opties

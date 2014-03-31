@@ -37,7 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
-<?php $_helper = $this->helper('postnl'); ?>
+<?php $_helper = Mage::helper('postnl'); ?>
 <?php $_version = (string) Mage::getConfig()->getModuleConfig("TIG_PostNL")->version; ?>
 <tr>
     <td>
@@ -78,6 +78,7 @@
                             </li>
                             <li><strong><?php echo $_helper->__('Configure your PostNL account');?></strong>
                                 <ol>
+                                    <li><?php echo $_helper->__('By default the extension is pre-configured using a test account. If you already have your PostNL account credentials, you can enter them using the steps below. If you have not yet received these credentials you may keep using the extensions in test mode. In this case you can continue to step 3.'); ?></li>
                                     <li><?php echo $_helper->__("Make sure you have your PostNL account info with you. You will need the following info: username & password, customer number, customer code, and BLS code. You need to enter these in the 'Account Settings' tab.");?></li>
                                     <li><?php echo $_helper->__("First enter your username and password. Depending on the status of your account, you may either enter the 'test' or 'live' version of these fields. Please note: if you do not enter the 'live' fields, you will only be able to create test shipments.");?></li>
                                     <li><?php echo $_helper->__('Next enter your customer number, customer code and BLS code. If you are unsure about which information to enter here, please contact PostNL.'); ?></li>
