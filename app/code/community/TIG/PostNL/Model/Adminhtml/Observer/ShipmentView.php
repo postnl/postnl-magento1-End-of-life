@@ -128,9 +128,22 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         }
 
         /**
+         * Update the send tracking info button so that it sends our info, instead of the default
+         */
+        if ($postnlShipment->isConfirmed()) {
+            $resendTrackAndTraceUrl = $this->getResendTrackAndTraceUrl($shipment->getId());
+            $block->updateButton('save', 'label', $helper->__('PostNL - Send Tracking Information'));
+            $block->updateButton('save', 'onclick',
+                "deleteConfirm('"
+                    . $helper->__('Are you sure you want to send PostNL tracking information to the customer?')
+                    . "', '" . $resendTrackAndTraceUrl . "')"
+            );
+        }
+
+        /**
          * Add a button to remove any stored shipping labels for this shipment.
          */
-        if ($postnlShipment->hasLabels()) {
+        if ($postnlShipment->hasLabels() && !$postnlShipment->isConfirmed()) {
             $removeLabelsUrl = $this->getRemoveLabelsUrl($shipment->getId());
             $removeLabelsWarningMessage = $helper->__(
                 "Are you sure that you wish to remove this shipment\'s shipping label? You will need to print a new "
@@ -146,19 +159,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
                     . "')",
                 'class'   => 'delete',
             ));
-        }
-
-        /**
-         * Update the send tracking info button so that it sends our info, instead of the default
-         */
-        if ($postnlShipment->isConfirmed()) {
-            $resendTrackAndTraceUrl = $this->getResendTrackAndTraceUrl($shipment->getId());
-            $block->updateButton('save', 'label', $helper->__('PostNL - Send Tracking Information'));
-            $block->updateButton('save', 'onclick',
-                "deleteConfirm('"
-                    . $helper->__('Are you sure you want to send PostNL tracking information to the customer?')
-                    . "', '" . $resendTrackAndTraceUrl . "')"
-            );
         }
 
         return $this;
