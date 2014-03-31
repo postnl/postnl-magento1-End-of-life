@@ -99,7 +99,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
      * @param boolean|int $storeId
-     * @param boolean $codesOnly
+     * @param boolean     $codesOnly
      *
      * @return array
      */

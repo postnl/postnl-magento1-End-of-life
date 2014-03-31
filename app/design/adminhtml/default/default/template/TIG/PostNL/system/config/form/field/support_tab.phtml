@@ -1,28 +1,28 @@
-<?php 
+<?php
  /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -77,6 +77,7 @@
                             </li>
                             <li><strong><?php echo $this->__('Configure your PostNL account');?></strong>
                                 <ol>
+                                    <li><?php echo $this->__('By default the extension is pre-configured using a test account. If you already have your PostNL account credentials, you can enter them using the steps below. If you have not yet received these credentials you may keep using the extensions in test mode. In this case you can continue to step 3.'); ?></li>
                                     <li><?php echo $this->__("Make sure you have your PostNL account info with you. You will need the following info: username & password, customer number, customer code, and BLS code. You need to enter these in the 'Account Settings' tab.");?></li>
                                     <li><?php echo $this->__("First enter your username and password. Depending on the status of your account, you may either enter the 'test' or 'live' version of these fields. Please note: if you do not enter the 'live' fields, you will only be able to create test shipments.");?></li>
                                     <li><?php echo $this->__('Next enter your customer number, customer code and BLS code. If you are unsure about which information to enter here, please contact PostNL.'); ?></li>
@@ -101,23 +102,23 @@
                                 <ol>
                                    <li><?php echo $this->__('If you wish to send orders to outside the EU, you need to configure your GlobalPack settings.');?></li>
                                    <li><?php echo $this->__("Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.");?></li>
-                                   <li><?php echo $this->__("Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office.");?></li> 
+                                   <li><?php echo $this->__("Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office.");?></li>
                                 </ol>
                             </li>
                             <li><strong><?php echo $this->__('Configure your PostNL Checkout settings');?></strong>
                                 <ol>
                                    <li><?php echo $this->__('If you wish to use PostNL Checkout in your webshop, you need to configure your PostNl Checkout settings.');?></li>
                                    <li><?php echo $this->__("Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.");?></li>
-                                   <li><?php echo $this->__("Go to the 'PostNL Checkout' tab and specify your preferences.");?></li> 
-                                   <li><?php echo $this->__("Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected.");?></li> 
+                                   <li><?php echo $this->__("Go to the 'PostNL Checkout' tab and specify your preferences.");?></li>
+                                   <li><?php echo $this->__("Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected.");?></li>
                                 </ol>
                             </li>
                         </ol>
                     </div>
                 </td>
-                
+
                 <td class="col-faux"></td>
-        
+
                 <td class="col-right">
                     <div class="text-box">
                         <h3><?php echo $this->__('Magento &amp; 3rd party version compatibility');?></h3>
