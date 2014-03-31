@@ -39,6 +39,7 @@
 ?>
 <?php $_helper = $this->helper('postnl'); ?>
 <script type="text/javascript">
+    //<![CDATA[
     var indexOf = function(needle) {
         if(typeof Array.prototype.indexOf === 'function') {
             indexOf = Array.prototype.indexOf;
@@ -176,5 +177,26 @@
             });
             return;
         }
+
+        /**
+         * Enable the Avond options
+         */
+        if (type == 'avond') {
+            $$('#product_options optgroup[label="<?php echo $_helper->__('Evening Delivery options'); ?>"]').each(function(element) {
+                element.removeAttribute('disabled');
+            });
+            return;
+        }
+
+        /**
+         * Enable the PakjeGemak Express options
+         */
+        if (type == 'pakje_gemak_express') {
+            $$('#product_options optgroup[label="<?php echo $_helper->__('Early Pickup options'); ?>"]').each(function(element) {
+                element.removeAttribute('disabled');
+            });
+            return;
+        }
     }
+    //]]>
 </script>

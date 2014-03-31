@@ -217,9 +217,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             array('postnl_order' => $resource->getTableName('postnl_checkout/order')),
             '`main_table`.`order_id`=`postnl_order`.`order_id`',
             array(
-                'is_pakje_gemak'    => 'postnl_order.is_pakje_gemak',
-                'delivery_date'     => 'postnl_order.delivery_date',
-                'is_pakketautomaat' => 'postnl_order.is_pakketautomaat',
+                'is_pakje_gemak'       => 'postnl_order.is_pakje_gemak',
+                'delivery_date'        => 'postnl_order.delivery_date',
+                'is_pakketautomaat'    => 'postnl_order.is_pakketautomaat',
+                'delivery_option_type' => 'postnl_order.type',
             )
         );
 
@@ -316,11 +317,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'filter_condition_callback' => array($this, '_filterShipmentType'),
                     'sortable'                  => false,
                     'options'                   => array(
-                        'nl'             => $helper->__('Domestic'),
-                        'pakje_gemak'    => $helper->__('PakjeGemak'),
-                        'eu'             => $helper->__('EPS'),
-                        'global'         => $helper->__('GlobalPack'),
-                        'pakketautomaat' => $helper->__('Parcel Dispenser'),
+                        'nl'                  => $helper->__('Domestic'),
+                        'pakje_gemak'         => $helper->__('PakjeGemak'),
+                        'eu'                  => $helper->__('EPS'),
+                        'global'              => $helper->__('GlobalPack'),
+                        'pakketautomaat'      => $helper->__('Parcel Dispenser'),
+                        'avond'               => $helper->__('Evening Delivery'),
+                        'pakje_gemak_express' => $helper->__('Early Pickup'),
                     ),
                 ),
                 $after
@@ -828,7 +831,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_OrderGrid
+     * @return $this
      */
     protected function _filterShipmentType($collection, $column)
     {
@@ -842,10 +845,29 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $collection->addFieldToFilter('order.shipping_method', array('in' => $postnlShippingMethods));
 
         /**
+         * If the filter condition is PakjeGemak Express, filter out all non-PakjeGemak Express orders
+         */
+        if ($filterCond == 'pakje_gemak_express') {
+            $collection->addFieldToFilter('postnl_order.type', array('eq' => 'PGE'));
+
+            return $this;
+        }
+
+        /**
+         * If the filter condition is evening delivery, filter out all other orders
+         */
+        if ($filterCond == 'avond') {
+            $collection->addFieldToFilter('postnl_order.type', array('eq' => 'Avond'));
+
+            return $this;
+        }
+
+        /**
          * If the filter condition is PakjeGemak, filter out all non-PakjeGemak orders
          */
         if ($filterCond == 'pakje_gemak') {
-            $collection->addFieldToFilter('postnl_shipment.is_pakje_gemak', array('eq' => 1));
+            $collection->addFieldToFilter('is_pakje_gemak', array('eq' => 1));
+            $collection->addFieldToFilter('postnl_order.type', array(array('eq' => 'PG'), array('null' => true)));
 
             return $this;
         }
@@ -854,16 +876,46 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * If the filter condition is Pakket Automaat, filter out all non-Pakket Automaat orders
          */
         if ($filterCond == 'pakketautomaat') {
-            $collection->addFieldToFilter('postnl_shipment.is_pakketautomaat', array('eq' => 1));
+            $collection->addFieldToFilter('is_pakketautomaat', array('eq' => 1));
+            $collection->addFieldToFilter(
+                       'postnl_order.type',
+                       array(
+                           array('eq'   => 'PA'),
+                           array('null' => true)
+                       )
+            );
 
             return $this;
         }
 
         /**
-         * If the filter condition is NL, filter out all orders not being shipped to the Netherlands
+         * If the filter condition is NL, filter out all orders not being shipped to the Netherlands. PakjeGemak,
+         * PakjeGmak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
+         * need to explicitely filter those as well.
          */
         if ($filterCond == 'nl') {
             $collection->addFieldToFilter('country_id', $cond);
+            $collection->addFieldToFilter(
+                       'postnl_order.type',
+                       array(
+                           array('eq'   => 'Overdag'),
+                           array('null' => true)
+                       )
+            );
+            $collection->addFieldToFilter(
+                       'is_pakje_gemak',
+                       array(
+                           array('eq'   => 0),
+                           array('null' => true)
+                       )
+            );
+            $collection->addFieldToFilter(
+                       'is_pakketautomaat',
+                       array(
+                           array('eq'   => 0),
+                           array('null' => true)
+                       )
+            );
 
             return $this;
         }
@@ -881,7 +933,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
 
         /**
-         * Lastly, filter out all orders that are being shipped to the Netherlands or other EU countries
+         * Lastly, filter out all orders who are being shipped to the Netherlands or other EU countries
          */
         $collection->addFieldToFilter('country_id', array('neq' => 'NL'));
         $collection->addFieldToFilter('country_id', array('nin' => $euCountries));

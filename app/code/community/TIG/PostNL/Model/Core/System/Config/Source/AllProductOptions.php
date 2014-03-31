@@ -254,21 +254,25 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     /**
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
-     * @param boolean     $withDefault Determines whether or not a 'default' option is prepended to the array
+     * @param boolean     $withDefault        Determines whether or not a 'default' option is prepended to the array
      * @param bool        $withExtraCover
      * @param boolean|int $storeId
-     * @param boolean     $codesOnly   Flag that dtermines whether to only return the product codes and not the labels
-     * @param boolean     $flat        FLag that dtermines whether to return a flat 'code => label' array
-     * @param boolean     $markDefault Flag that determines whether default options will be marked as such.
+     * @param boolean     $codesOnly          Flag that dtermines whether to only return the product codes and not the
+     *                                        labels
+     * @param boolean     $flat               FLag that dtermines whether to return a flat 'code => label' array
+     * @param boolean     $markDefault        Flag that determines whether default options will be marked as such.
+     * @param boolean     $addDeliveryOptions If set to true, additional options will be added for evening delivery and
+     *                                        early pickup shipment types.
      *
      * @return array
      */
     public function getAvailableOptions($withDefault = false,
-        $withExtraCover = true,
-        $storeId        = false,
-        $codesOnly      = false,
-        $flat           = false,
-        $markDefault    = true
+        $withExtraCover     = true,
+        $storeId            = false,
+        $codesOnly          = false,
+        $flat               = false,
+        $markDefault        = true,
+        $addDeliveryOptions = false
     ) {
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
@@ -304,9 +308,18 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         }
 
         /**
+         * Initialize empty arrays for each supported shipment type. These will be filled with available options.
+         */
+        $availableStandardOptions   = array();
+        $availableAvondOptions      = array();
+        $availablePakjeGemakOptions = array();
+        $availablePgeOptions        = array();
+        $availableEuOptions         = array();
+        $availableGlobalOptions     = array();
+
+        /**
          * Check each standard option to see if it's supprted
          */
-        $availableStandardOptions = array();
         foreach ($options['standard_options']['value'] as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
@@ -326,13 +339,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
 
+            if (isset($option['isAvond']) && $option['isAvond']) {
+                $availableAvondOptions[] = $option;
+            }
+
             $availableStandardOptions[] = $option;
         }
 
         /**
          * Check each pakje gemak option to see if it's supprted
          */
-        $availablePakjeGemakOptions = array();
         foreach ($options['pakjegemak_options']['value'] as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
@@ -352,13 +368,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
 
+            if (isset($option['isPge']) && $option['isPge']) {
+                $availablePgeOptions[] = $option;
+            }
+
             $availablePakjeGemakOptions[] = $option;
         }
 
         /**
          * Check each eu option to see if it's supprted
          */
-        $availableEuOptions = array();
         foreach ($options['eu_options']['value'] as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
@@ -384,7 +403,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         /**
          * Check each global option to see if it's supprted
          */
-        $availableGlobalOptions = array();
         if ($helper->isGlobalAllowed()) {
             foreach ($options['global_options']['value'] as $option) {
                 if (!in_array($option['value'], $supportedOptionsArray)) {
@@ -480,6 +498,18 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             $availableOptions['pakketautomaat_option'] = array(
                 'label' => $helper->__('Parcel Dispenser options'),
                 'value' => $availablePakketautomaatOptions,
+            );
+        }
+
+        if ($addDeliveryOptions) {
+            $availableOptions['avond_options'] = array(
+                'label' => $helper->__('Evening Delivery options'),
+                'value' => $availableAvondOptions,
+            );
+
+            $availableOptions['pge_options'] = array(
+                'label' => $helper->__('Early Pickup options'),
+                'value' => $availablePgeOptions,
             );
         }
 
