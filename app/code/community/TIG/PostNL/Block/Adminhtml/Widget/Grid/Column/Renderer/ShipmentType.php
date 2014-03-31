@@ -42,9 +42,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
     /**
      * Additional column names used
      */
-    const SHIPPING_METHOD_COLUMN   = 'shipping_method';
-    const IS_PAKJE_GEMAK_COLUMN    = 'is_pakje_gemak';
-    const IS_PAKKETAUTOMAAT_COLUMN = 'is_pakketautomaat';
+    const SHIPPING_METHOD_COLUMN      = 'shipping_method';
+    const IS_PAKJE_GEMAK_COLUMN       = 'is_pakje_gemak';
+    const IS_PAKKETAUTOMAAT_COLUMN    = 'is_pakketautomaat';
+    const DELIVERY_OPTION_TYPE_COLUMN = 'delivery_option_type';
 
     /**
      * Renders the column value as a shipment type value (Domestic, EPS or GlobalPack)
@@ -75,6 +76,20 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         $value = $row->getData($column->getIndex());
         if (is_null($value) || $value === '') {
             return '';
+        }
+
+        $optionType = $row->getData(self::DELIVERY_OPTION_TYPE_COLUMN);
+        if ($optionType == 'Avond') {
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>avond</div>";
+            $renderedValue .= Mage::helper('postnl')->__('Evening Delivery');
+            return $renderedValue;
+        }
+
+        if ($optionType == 'PGE') {
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>"
+                . "pakje_gemak_express</div>";
+            $renderedValue .= Mage::helper('postnl')->__('Early Pickup');
+            return $renderedValue;
         }
 
         if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
