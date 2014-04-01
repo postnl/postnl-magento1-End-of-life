@@ -61,7 +61,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
 
         try {
             /**
-             * Load the shipment and check if it exists and is valid
+             * Load the shipment and check if it exists and is valid.
+             *
+             * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
             $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
@@ -137,6 +139,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         try {
             /**
              * Load the shipment and check if it exists and is valid
+             *
+             * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
             $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
@@ -238,7 +242,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
 
         try {
             /**
-             * Load the shipment and check if it exists and is valid
+             * Load the shipment and check if it exists and is valid.
+             *
+             * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
             $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
@@ -295,7 +301,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
 
         try {
             /**
-             * Load the shipment and check if it exists and is valid
+             * Load the shipment and check if it exists and is valid.
+             *
+             * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
             $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
@@ -307,7 +315,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             }
 
             $postnlShipment = $this->_getPostnlShipment($shipmentId);
-            $postnlShipment->resetConfirmation(false)->save();
+            $postnlShipment->resetConfirmation(true, true)->save();
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -355,7 +363,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
 
         try {
             /**
-             * Load the shipment and check if it exists and is valid
+             * Load the shipment and check if it exists and is valid.
+             *
+             * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
             $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
@@ -775,6 +785,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $shipments = $this->_loadAndCheckShipments($shipmentIds, true);
 
+            /**
+             * @var TIG_PostNL_Model_Parcelware_Export $parcelwareExportModel
+             */
             $parcelwareExportModel = Mage::getModel('postnl_parcelware/export');
             $csvContents = $parcelwareExportModel->exportShipments($shipments);
 
@@ -810,6 +823,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     protected function _createShipment($orderId)
     {
+        /**
+         * @var Mage_Sales_Model_Order $order
+         */
         $order = Mage::getModel('sales/order')->load($orderId);
 
         if (!$order->canShip()) {
@@ -839,6 +855,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     {
         $itemQtys = array();
 
+        /**
+         * @var Mage_Sales_Model_Order_Item $item
+         */
         $items = $order->getAllVisibleItems();
         foreach ($items as $item) {
             /**
@@ -862,10 +881,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     protected function _saveShipment($shipment)
     {
         $shipment->getOrder()->setIsInProcess(true);
-        $transactionSave = Mage::getModel('core/resource_transaction')
-                               ->addObject($shipment)
-                               ->addObject($shipment->getOrder())
-                               ->save();
+        Mage::getModel('core/resource_transaction')
+            ->addObject($shipment)
+            ->addObject($shipment->getOrder())
+            ->save();
 
         return $this;
     }
@@ -920,8 +939,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          * If the shipment does not have a barcode, generate one
          */
         if (!$postnlShipment->getMainBarcode()) {
-            $postnlShipment->generateBarcodes()
-                           ->addTrackingCodeToShipment();
+            $postnlShipment->generateBarcodes();
         }
 
         if ($confirm === true
@@ -1035,7 +1053,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         foreach ($shipmentIds as $shipmentId) {
             /**
-             * Load the shipment
+             * Load the shipment.
+             *
+             * @var Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
              */
             if ($loadPostnlShipments ===  false) {
                 $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
