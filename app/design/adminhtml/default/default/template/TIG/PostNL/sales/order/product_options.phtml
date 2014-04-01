@@ -119,10 +119,10 @@
                 content = "<form id='postnl_extra_cover_form' name='postnl_extra_cover_form'>"; //form element is only to enable Varien form validation
 
                 if (selectedProductOption.value == globalPackOption) {
-                    content += "<input id='extra_cover_value'type='hidden' name='extra_cover_value' class='input-text' value='200'/>"
+                    content += "<input id='extra_cover_value'type='hidden' name='extra_cover_value' class='input-text' value='200'/>";
                     content += "<p>"
                             +  "<label for='globalpack_shipment_type'><?php echo $_helper->__('Shipment type'); ?></label>"
-                            +  "<select id='globalpack_shipment_type' type='text' name='globalpack_shipment_type' class='validate-select required-field'>"
+                            +  "<select id='globalpack_shipment_type' name='globalpack_shipment_type' class='validate-select required-field'>"
                     <?php foreach ($this->getShipmentTypes() as $type => $label): ?>
                             +  "<option value='<?php echo $type; ?>'><?php echo $_helper->__($label); ?></option>"
                     <?php endforeach; ?>
@@ -136,7 +136,7 @@
                 } else {
                     content += "<p>"
                             +  "<label for='extra_cover_value'><?php echo $_helper->__('Extra cover amount (in increments of 500)'); ?></label>"
-                            +  "<input id='extra_cover_value'type='text' name='extra_cover_value' class='input-text required-entry validate-increment-500 validate-not-negative-number' value='0'/>"
+                            +  "<input id='extra_cover_value' type='text' name='extra_cover_value' class='input-text required-entry validate-increment-500 validate-not-negative-number' value='0'/>"
                             +  "</p>";
                 }
 
@@ -167,7 +167,7 @@
                     okLabel:"Submit",
                     ok: this.okDialogWindow.bind(this),
                     cancel: this.closeDialogWindow.bind(this),
-                    onClose: this.closeDialogWindow.bind(this),
+                    onClose: this.closeDialogWindow.bind(this)
                 });
             },
             okDialogWindow : function(dialogWindow) {

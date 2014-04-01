@@ -475,7 +475,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          */
         $shipmentType = $this->getRequest()->getParam('globalpack_shipment_type');
         if ($shipmentType) {
-            $extraOptions['shipment_type'] = $shipmentType;
+            $extraOptions['globalpack_shipment_type'] = $shipmentType;
         }
 
         /**

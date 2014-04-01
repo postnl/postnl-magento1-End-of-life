@@ -839,6 +839,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $shipmentWeight = 1;
         }
 
+        /**
+         * Get and format this shipment's delivery date.
+         */
+        $deliveryTime = strtotime($postnlShipment->getDeliveryDate());
+        $deliveryDate = date('d-m-Y H:i:s', $deliveryTime);
+
         $shipmentData = array(
             'Barcode'                  => $barcode,
             'CollectionTimeStampEnd'   => '',
@@ -853,6 +859,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                            'Weight'  => round($shipmentWeight),
                                        ),
             'Reference'                => $this->_getReference($shipment),
+            'DeliveryDate'             => $deliveryDate,
         );
 
         /**
@@ -1091,6 +1098,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getBarcodeData($barcodeType)
     {
+        $barcodeType = strtoupper($barcodeType);
+
         switch ($barcodeType) {
             case 'NL':
                 $type  = '3S';
@@ -1156,7 +1165,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $extraCover = number_format($postnlShipment->getExtraCoverAmount(), 2, '.', '');
             $amount[] = array(
                 'AccountName'       => '',
-                'AccountNr'         => '',
+                'BIC'               => '',
+                'IBAN'              => '',
                 'AmountType'        => '02', // 01 = COD, 02 = Insured
                 'Currency'          => 'EUR',
                 'Reference'         => '',
@@ -1266,7 +1276,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getCustoms($postnlShipment)
     {
         $shipment = $postnlShipment->getShipment();
-        $shipmentType = $postnlShipment->getShipmentType();
+        $shipmentType = $postnlShipment->getGlobalpackShipmentType();
 
         $customs = array(
             'ShipmentType'           => $shipmentType,
