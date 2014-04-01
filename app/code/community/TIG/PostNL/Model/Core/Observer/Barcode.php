@@ -66,18 +66,17 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         $shipment = $observer->getShipment();
 
         /**
-         * Check if a postnl shipment exists for this shipment
+         * Check if a postnl shipment exists for this shipment.
          */
         if (Mage::helper('postnl/cif')->postnlShipmentExists($shipment->getId())) {
             return $this;
         }
 
         /**
-         * create a new postnl shipment entity
+         * Create a new postnl shipment entity.
          */
         $postnlShipment = Mage::getModel('postnl_core/shipment');
-        $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmDate(Mage::getModel('core/date')->gmtTimestamp());
+        $postnlShipment->setShipmentId($shipment->getId());
 
         /**
          * Check if this shipment has an associated PostNL Order. If so, copy it's data.
@@ -108,7 +107,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         }
 
         /**
-         * We need an ID in order to save the barcodes
+         * We need an ID in order to save the barcodes.
          */
         $postnlShipment->save();
 

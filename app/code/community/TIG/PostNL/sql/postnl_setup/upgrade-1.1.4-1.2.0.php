@@ -82,6 +82,20 @@ $conn->addColumn($installer->getTable('postnl_core/shipment'),
     )
 );
 
+/**
+ * Modify the shipment_type column to avoid confusion with the PostNL order's 'type' column.
+ */
+$conn->changeColumn($installer->getTable('postnl_core/shipment'),
+    'shipment_type',
+    'globalpack_shipment_type',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+        'length'   => 32,
+        'nullable' => true,
+        'comment'  => 'GlobalPack Shipment Type',
+    )
+);
+
 /***********************************************************************************************************************
  * POSTNL ORDER
  **********************************************************************************************************************/

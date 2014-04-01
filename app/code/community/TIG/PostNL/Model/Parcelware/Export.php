@@ -365,7 +365,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     protected function _getGlobalPackData($postnlShipment)
     {
         $shipment = $postnlShipment->getShipment();
-        $shipmentType = $postnlShipment->getShipmentType();
+        $shipmentType = $postnlShipment->getGlobalpackShipmentType();
 
         $globalPackData = array(
             'ShipmentType'           => $shipmentType, // Gift / Documents / Commercial Goods / Commercial Sample / Returned Goods

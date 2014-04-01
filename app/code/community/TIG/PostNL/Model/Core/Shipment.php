@@ -80,7 +80,6 @@
  * @method int                            getTreatAsAbandoned()
  * @method int|null                       getShipmentId
  * @method int                            getLabelsPrinted()
- * @method string                         getDeliveryDate()
  * @method bool|int                       getIsPakketautomaat()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
@@ -91,7 +90,6 @@
  * @method TIG_PostNL_Model_Core_Shipment setEntityId(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setConfirmedAt(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setUpdatedAt(string $value)
- * @method TIG_PostNL_Model_Core_Shipment setConfirmDate(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsPakjeGemak(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setCreatedAt(string $value)
@@ -115,7 +113,7 @@
  * @method bool                           hasPostnlOrder()
  * @method bool                           hasShipment()
  * @method bool                           hasShipmentBaseGrandTotal()
- * @method bool                           hasShipmentType()
+ * @method bool                           hasGlobalpackShipmentType()
  * @method bool                           hasProductCode()
  * @method bool                           hasShippingAddress()
  * @method bool                           hasPakjeGemakAddress()
@@ -124,6 +122,7 @@
  * @method bool                           hasExtraCoverAmount()
  * @method bool                           hasLabelCollection()
  * @method bool                           hasIsPakketautomaat()
+ * @method bool                           hasDeliveryDate()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -188,6 +187,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * XML path to maximum allowed parcel count settings
      */
     const XML_PATH_MAX_PARCEL_COUNT = 'postnl/advanced/max_parcel_count';
+
+    /**
+     * Xpath to default GlobalPack shipment type.
+     */
+    const XPATH_DEFAULT_SHIPMENT_TYPE = 'postnl/cif_globalpack_settings/default_shipment_type';
 
     /**
      * CIF warning code returned when an EPS combi label is not available
@@ -611,23 +615,27 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Gets the shipment's shipment type for intrnational shipments.
-     * If no shipment type is defined, use the default 'commercial goods'.
+     * Gets the shipment's shipment type for intrnational shipments. If no shipment type is defined, use the default
+     * value. This in turn defaults to 'Commercial Goods' if none is specified.
      *
      * @return string|null
      */
-    public function getShipmentType()
+    public function getGlobalpackShipmentType()
     {
-        if ($this->hasShipmentType()) {
-            return $this->_getData('shipment_type');
+        if ($this->hasGlobalpackShipmentType()) {
+            return $this->_getData('globalpack_shipment_type');
         }
 
         if (!$this->isGlobalShipment()) {
             return null;
         }
 
-        $shipmentType = 'Commercial Goods';
-        return $shipmentType;
+        $defaultShipmentType = Mage::getStoreConfig(self::XPATH_DEFAULT_SHIPMENT_TYPE, $this->getStoreId());
+        if (!$defaultShipmentType) {
+            $defaultShipmentType = 'Commercial Goods';
+        }
+
+        return $defaultShipmentType;
     }
 
     /**
@@ -895,8 +903,39 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * If no matches were found, return an empty array.
          */
-
         return array();
+    }
+
+    /**
+     * Gets the delivery date for this shipment.
+     *
+     * @return mixed|string
+     */
+    public function getDeliveryDate()
+    {
+        if ($this->hasDeliveryDate()) {
+            return $this->_getData('delivery_date');
+        }
+
+        /**
+         * Try to get the delivery date fr a PostNL order.
+         */
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getDeliveryDate()) {
+            $deliveryDate = $postnlOrder->getDeliveryDate();
+
+            $this->setDeliveryDate($deliveryDate);
+            return $deliveryDate;
+        }
+
+        /**
+         * Get tomorrow's date as a fallback. Please note that this value is not set as a class variable. We don't want
+         * it to be saved by accident.
+         */
+        $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->gmtTimestamp());
+        $deliveryDate = date('Y-m-d H:i:s', $tomorrow);
+
+        return $deliveryDate;
     }
 
     /*******************************************************************************************************************
@@ -947,7 +986,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @return TIG_PostNL_Model_Core_Shipment
      */
-    public function setShipmentType($type)
+    public function setGlobalpackShipmentType($type)
     {
         /**
          * Only global shipments have a shipment type
@@ -962,7 +1001,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shipmentType = str_replace('_', ' ', $type);
         $shipmentType = ucwords($shipmentType);
 
-        $this->setData('shipment_type', $shipmentType);
+        $this->setData('globalpack_shipment_type', $shipmentType);
         return $this;
     }
 
@@ -1021,6 +1060,58 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $this->_process = $process;
 
+        return $this;
+    }
+
+    /**
+     * Sets the confirm date. If no value is supplied, check if this shipment has an associated PostNL order which might
+     * have a confirm date specified. Otherwise calculate the confirm date based on the delivery date or the current
+     * timestamp.
+     *
+     * @param boolean|string $date
+     *
+     * @return $this
+     */
+    public function setConfirmDate($date = false)
+    {
+        if ($date !== false) {
+            $this->setData('confirm_date', $date);
+            return $this;
+        }
+
+        /**
+         * If this shipment has an associated PostNL order with a confirm date, use that.
+         */
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getConfirmDate()) {
+            $confirmDate = strtotime($postnlOrder->getConfirmDate());
+
+            $this->setData('confirm_date', $confirmDate);
+            return $this;
+        }
+
+        /**
+         * Get the requested delivery date for this shipment.
+         */
+        $deliveryDate = $this->getDeliveryDate();
+
+        /**
+         * If no delivery date is available, set the confirm date to today.
+         */
+        if (!$deliveryDate) {
+            $confirmDate = Mage::getModel('core/date')->gmtTimestamp();
+
+            $this->setData('confirm_date', $confirmDate);
+            return $this;
+        }
+
+        /**
+         * Calculate the confirm based on the delivery date.
+         */
+        $deliveryTimeStamp = strtotime($deliveryDate);
+        $confirmDate = strtotime('-1 day', $deliveryTimeStamp);
+
+        $this->setData('confirm_date', $confirmDate);
         return $this;
     }
 
@@ -1312,7 +1403,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function isCod()
     {
-        return false; //TODO implement this method
+        return false;
     }
 
     /**
@@ -2376,7 +2467,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Check if the returned label is a combi-label
+     * Check if the returned label is a combi-label.
      *
      * @param TIG_PostNL_Model_Core_Shipment_label
      *
@@ -2588,7 +2679,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             'postnl_shipment_saveadditionaloptions_after',
             array(
                 'shipment' => $this,
-                'options' => $additionalOptions
+                'options'  => $additionalOptions
             )
         );
 
@@ -2768,21 +2859,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $currentTimestamp = $dateModel->gmtTimestamp();
 
         /**
-         * Store any shipment options that have been saved in the registry
+         * Store any shipment options that have been saved in the registry.
          */
         if (Mage::registry('postnl_additional_options')) {
             $this->_saveAdditionalShippingOptions();
         }
 
         /**
-         * Set confirm status
+         * Set confirm status.
          */
         if ($this->getConfirmStatus() === null) {
             $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
         }
 
         /**
-         * Set confrirmed at
+         * Set confrirmed at.
          */
         if ($this->getConfirmedStatus() == self::CONFIRM_STATUS_CONFIRMED
             && $this->getConfirmedAt() === null
@@ -2791,14 +2882,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Set whether labels have printed or not
+         * Set whether labels have printed or not.
          */
         if ($this->getlabelsPrinted() == 0 && $this->hasLabels()) {
             $this->setLabelsPrinted(1);
         }
 
         /**
-         * Set a product code
+         * Set a product code.
          */
         if (!$this->getProductCode() || Mage::registry('postnl_product_option') !== null) {
             $productCode = $this->_getProductCode();
@@ -2806,7 +2897,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Set the parcel count
+         * Set the parcel count.
          */
         if (!$this->getParcelCount()) {
             $parcelCount = $this->_calculateParcelCount();
@@ -2814,21 +2905,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Set the confirm date
+         * Set the confirm date.
          */
         if (!$this->getConfirmDate()) {
-            $this->setConfirmDate($currentTimestamp);
+            $this->setConfirmDate();
         }
 
         /**
-         * If this shipment is new, set it's created at date to the current timestamp
+         * If this shipment is new, set it's created at date to the current timestamp.
          */
         if (!$this->getId()) {
             $this->setCreatedAt($currentTimestamp);
         }
 
         /**
-         * Always update the updated at timestamp to the current timestamp
+         * Always update the updated at timestamp to the current timestamp.
          */
         $this->setUpdatedAt($currentTimestamp);
 
