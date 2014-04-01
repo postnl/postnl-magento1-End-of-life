@@ -82,69 +82,82 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
 
         $optionType = $row->getData(self::DELIVERY_OPTION_TYPE_COLUMN);
         if ($optionType == 'Avond') {
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>avond</div>";
-            $renderedValue .= '<strong>' . $helper->__('Domestic') . '</strong><br /><i>'
-                            . $helper->__('Evening Delivery') . '</i>';
+            $label   = $helper->__('Domestic');
+            $comment = $helper->__('Evening Delivery');
+
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>avond</div><b>{$label}"
+                . "</b><br /><em>{$comment}</em>";
 
             return $renderedValue;
         }
 
         if ($optionType == 'PGE') {
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>"
-                . "pakje_gemak_express</div>";
-            $renderedValue .= '<strong>' . $helper->__('Post Office') . '</strong><br /><i>'
-                            . $helper->__('Early Pickup') . '</i>';
+            $label   = $helper->__('Post Office');
+            $comment = $helper->__('Early Pickup');
+
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak_express"
+                . "</div><b>{$label}</b><br /><em>{$comment}</em>";
 
             return $renderedValue;
         }
 
         if ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakketautomaat</div>";
-            $renderedValue .= '<strong>' . $helper->__('Parcel Dispenser') . '</strong>' ;
+            $label = $helper->__('Parcel Dispenser');
+
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakketautomaat</div><b>"
+                . "{$label}</b>";
 
             return $renderedValue;
         }
 
         if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak</div>";
-            $renderedValue .= '<strong>' . $helper->__('Post Office') . '</strong>' ;
+            $label = $helper->__('Post Office');
+
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak</div><b>"
+                . "{$label}</b>";
 
             return $renderedValue;
         }
 
         /**
-         * Check if this order is domestic
+         * Check if this order is domestic.
          */
         if ($value == 'NL') {
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>standard</div>";
-            $renderedValue .= '<strong>' . $helper->__('Domestic') . '</strong>' ;
+            $label = $helper->__('Domestic');
+
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>standard</div><b>"
+                . "{$label}</b>";
 
             return $renderedValue;
         }
 
         /**
-         * Check if this order's shipping address is in an EU country
+         * Check if this order's shipping address is in an EU country.
          */
         $euCountries = $helper->getEuCountries();
         if (in_array($value, $euCountries)) {
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>eps</div>";
-            $renderedValue .= '<strong>' . $helper->__('EPS') . '</strong>' ;
+            $label = $helper->__('EPS');
+
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>eps</div><b>{$label}"
+                . "</b>";
 
             return $renderedValue;
         }
 
         /**
-         * If none of the above, it's an international order
+         * If none of the above apply, it's an international order.
          */
-        $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>global_pack</div>";
-        $renderedValue .= '<strong>' . $helper->__('GlobalPack') . '</strong>' ;
+        $label = $helper->__('GlobalPack');
+
+        $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>global_pack</div><b>{$label}"
+            . "</b>";
 
         return $renderedValue;
     }
 
     /**
-     * Renders the <col> element of the column. Added check for $this->getColumn()->getDisplay() == 'none' that causes the
-     * entire element to be hidden
+     * Renders the <col> element of the column. Added check for $this->getColumn()->getDisplay() == 'none' that causes
+     * the entire element to be hidden.
      *
      * @return string
      *
@@ -157,13 +170,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
          */
         $column = $this->getColumn();
 
-        if ($column->hasData('display')
-            && $column->getDisplay() == 'none'
-        ) {
-            return 'style="display:none;"';
+        $out = '';
+        if ($column->hasData('display')) {
+            $out .= " style='display:{$column->getDisplay()};'";
         }
 
-        $out = '';
         $width = $this->_defaultWidth;
 
         if ($column->hasData('width')) {

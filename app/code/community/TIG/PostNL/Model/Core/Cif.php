@@ -840,10 +840,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         /**
-         * Get and format this shipment's delivery date.
+         * Get and format this shipment's delivery date if available.
          */
-        $deliveryTime = strtotime($postnlShipment->getDeliveryDate());
-        $deliveryDate = date('d-m-Y H:i:s', $deliveryTime);
+        $deliveryDate = $postnlShipment->getDeliveryDate();
+        if ($deliveryDate) {
+            $deliveryTime = strtotime($deliveryDate);
+            $deliveryDate = date('d-m-Y H:i:s', $deliveryTime);
+        }
 
         $shipmentData = array(
             'Barcode'                  => $barcode,

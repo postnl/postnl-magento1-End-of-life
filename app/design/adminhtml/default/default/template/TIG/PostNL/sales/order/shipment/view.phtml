@@ -52,3 +52,13 @@
     editForm = new varienForm('edit_form', '<?php echo $this->getValidationUrl() ?>');
 </script>
 <?php echo $this->getFormScripts() ?>
+<script type="text/javascript">
+    //<![CDATA[
+    printLabel = function(url) {
+        var printWindow = window.open(url);
+        Event.observe(printWindow, 'load', function() {
+            window.location.reload();
+        });
+    };
+    //]]>
+</script>

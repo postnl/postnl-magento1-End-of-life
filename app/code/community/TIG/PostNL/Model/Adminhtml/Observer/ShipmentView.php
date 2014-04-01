@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the shipment view
@@ -97,7 +97,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         $printShippingLabelUrl = $this->getPrintShippingLabelUrl($shipment->getId());
         $block->addButton('print_shipping_label', array(
             'label'   => $helper->__('PostNL - Print Shipping Label'),
-            'onclick' => "setLocation('{$printShippingLabelUrl}')",
+            'onclick' => "printLabel('{$printShippingLabelUrl}')",
             'class'   => 'download',
         ));
 
@@ -159,6 +159,19 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
                     . $removeLabelsUrl
                     . "')",
                 'class'   => 'delete',
+            ));
+        }
+
+        /**
+         * Add a button to confirm this shipment.
+         */
+        if (!$postnlShipment->isConfirmed()) {
+            $confirmUrl = $this->getConfirmUrl($shipment->getId());
+
+            $block->addButton('confirm_shipment', array(
+                'label'   => $helper->__('PostNL - Confirm Shipment'),
+                'onclick' => "setLocation('{$confirmUrl}')",
+                'class'   => 'save',
             ));
         }
 
@@ -228,6 +241,26 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         $url = Mage::helper('adminhtml')->getUrl(
             'postnl/adminhtml_shipment/sendTrackAndTrace',
             array('shipment_id' => $shipmentId)
+        );
+
+        return $url;
+    }
+
+    /**
+     * Get adminhtml url for PostNL confirm shipment action
+     *
+     * @param int $shipmentId The ID of the current shipment
+     *
+     * @return string
+     */
+    public function getConfirmUrl($shipmentId)
+    {
+        $url = Mage::helper('adminhtml')->getUrl(
+            'postnl/adminhtml_shipment/confirm',
+            array(
+                'shipment_id'    => $shipmentId,
+                'return_to_view' => true,
+            )
         );
 
         return $url;

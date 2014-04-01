@@ -909,7 +909,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets the delivery date for this shipment.
      *
-     * @return mixed|string
+     * @return null|string
      */
     public function getDeliveryDate()
     {
@@ -929,13 +929,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Get tomorrow's date as a fallback. Please note that this value is not set as a class variable. We don't want
-         * it to be saved by accident.
+         * If no delivery date is available, return null.
          */
-        $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->gmtTimestamp());
-        $deliveryDate = date('Y-m-d H:i:s', $tomorrow);
-
-        return $deliveryDate;
+        return null;
     }
 
     /*******************************************************************************************************************

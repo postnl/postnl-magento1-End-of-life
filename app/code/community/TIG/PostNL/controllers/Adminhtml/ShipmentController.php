@@ -174,7 +174,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $this->__('The shipment has been successfully confirmed')
         );
 
-        $this->_redirect('adminhtml/sales_shipment/index');
+        /**
+         * Redirect to either the grid or the shipment view.
+         */
+        if ($this->getRequest()->getParam('return_to_view')) {
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+        } else {
+            $this->_redirect('adminhtml/sales_shipment/index');
+        }
         return $this;
     }
 
@@ -897,7 +904,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
      * @param boolean $confirm Optional parameter to also confirm the shipment
      *
-     * @return string The encoded label
+     * @return array
      *
      * @throws TIG_PostNL_Exception
      */
@@ -924,6 +931,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             return $postnlShipment->getlabels();
         }
 
+        /**
+         * If the shipment already has labels,r eturn those.
+         */
         if ($postnlShipment->hasLabels()) {
             return $postnlShipment->getlabels();
         }
