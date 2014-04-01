@@ -87,13 +87,22 @@
                     });
                 } else if(item.url) {
                     if (item.id == 'postnl_print_labels_and_confirm' || item.id == 'postnl_print_labels') {
-                        this.form.setAttribute('target', '_blank');
+                        var printWindow = window.open('', 'printWindow');
+
+                        Event.observe(printWindow, 'unload', function() {
+                            window.location.reload();
+                        });
+                        this.form.setAttribute('target', 'printWindow');
                     } else {
                         this.form.setAttribute('target', '');
                     }
 
                     this.form.action = item.url;
                     this.form.submit();
+
+                    if (typeof printWindow != 'undefined') {
+                        printWindow.focus();
+                    }
                 }
             }
         });

@@ -3707,7 +3707,7 @@ PostnlDeliveryOptions.Location = new Class.create({
             var extraCosts = this.getOptions().expressFeeText;
             var extraCostHtml = '';
 
-            if (extraCosts) {
+            if (this.getOptions().expressFeeIncl) {
                 extraCostHtml += ' + ' + extraCosts;
             }
 
@@ -4405,10 +4405,10 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     getCommentHtml : function() {
         var comment = '';
         if (this.type == 'Avond') {
-            var extraCosts = this.getDeliveryOptions().getOptions().eveningFeeText;
+            var extraCosts = this.getOptions().eveningFeeText;
             var extraCostHtml = '';
 
-            if (extraCosts) {
+            if (this.getOptions().eveningFeeIncl) {
                 extraCostHtml += ' + ' + extraCosts;
             }
 
