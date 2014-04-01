@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > order grid
@@ -266,7 +266,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'index'                     => 'country_id',
             'type'                      => 'options',
             'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_shipmentType',
-            'width'                     => '0px',
+            'width'                     => '110px',
             'filter_condition_callback' => array($this, '_filterShipmentType'),
             'sortable'                  => false,
             'options'                   => array(

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
@@ -71,17 +71,20 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         }
 
         /**
-         * Check if any data is available
+         * Check if any data is available.
          */
         $value = $row->getData($column->getIndex());
         if (is_null($value) || $value === '') {
             return '';
         }
 
+        $helper = Mage::helper('postnl/cif');
+
         $optionType = $row->getData(self::DELIVERY_OPTION_TYPE_COLUMN);
         if ($optionType == 'Avond') {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>avond</div>";
-            $renderedValue .= Mage::helper('postnl')->__('Evening Delivery');
+            $renderedValue .= '<strong>' . $helper->__('Domestic') . '</strong><br /><i>'
+                            . $helper->__('Evening Delivery') . '</i>';
 
             return $renderedValue;
         }
@@ -89,21 +92,22 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         if ($optionType == 'PGE') {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>"
                 . "pakje_gemak_express</div>";
-            $renderedValue .= Mage::helper('postnl')->__('Early Pickup');
+            $renderedValue .= '<strong>' . $helper->__('Post Office') . '</strong><br /><i>'
+                            . $helper->__('Early Pickup') . '</i>';
 
             return $renderedValue;
         }
 
         if ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakketautomaat</div>";
-            $renderedValue .= Mage::helper('postnl')->__('Parcel Dispenser');
+            $renderedValue .= '<strong>' . $helper->__('Parcel Dispenser') . '</strong>' ;
 
             return $renderedValue;
         }
 
         if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak</div>";
-            $renderedValue .= Mage::helper('postnl')->__('Post Office');
+            $renderedValue .= '<strong>' . $helper->__('Post Office') . '</strong>' ;
 
             return $renderedValue;
         }
@@ -113,7 +117,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
          */
         if ($value == 'NL') {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>standard</div>";
-            $renderedValue .= Mage::helper('postnl')->__('Domestic');
+            $renderedValue .= '<strong>' . $helper->__('Domestic') . '</strong>' ;
 
             return $renderedValue;
         }
@@ -121,10 +125,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         /**
          * Check if this order's shipping address is in an EU country
          */
-        $euCountries = Mage::helper('postnl/cif')->getEuCountries();
+        $euCountries = $helper->getEuCountries();
         if (in_array($value, $euCountries)) {
             $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>eps</div>";
-            $renderedValue .= Mage::helper('postnl')->__('EPS');
+            $renderedValue .= '<strong>' . $helper->__('EPS') . '</strong>' ;
 
             return $renderedValue;
         }
@@ -133,7 +137,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
          * If none of the above, it's an international order
          */
         $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>global_pack</div>";
-        $renderedValue .= Mage::helper('postnl')->__('GlobalPack');
+        $renderedValue .= '<strong>' . $helper->__('GlobalPack') . '</strong>' ;
 
         return $renderedValue;
     }
