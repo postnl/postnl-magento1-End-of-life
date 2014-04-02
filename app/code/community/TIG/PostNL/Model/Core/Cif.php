@@ -1195,13 +1195,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @todo check if SMSNr is required for pakjegemak
      */
-    protected function _getContact($address, $postnlShipment)
+    protected function _getContact($address, TIG_PostNL_Model_Core_Shipment $postnlShipment)
     {
-        $smsNr = '';
-        $postnlOrder = $postnlShipment->getPostnlOrder();
-        if ($postnlOrder && $postnlOrder->getMobilePhoneNumber()) {
-            $smsNr = $postnlOrder->getMobilePhoneNumber();
-        }
+        $smsNr = $this->_getMobilePhoneNumber($postnlShipment);
 
         $contact = array(
             'ContactType' => '01', // Receiver
@@ -1211,6 +1207,25 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
 
         return $contact;
+    }
+
+    /**
+     * Gets a mobile phone number for the current shipment.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     *
+     * @return string
+     */
+    protected function _getMobilePhoneNumber(TIG_PostNL_Model_Core_Shipment $postnlShipment)
+    {
+        $mobilePhoneNumber = '';
+
+        $postnlOrder = $postnlShipment->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getMobilePhoneNumber()) {
+            $mobilePhoneNumber = $postnlOrder->getMobilePhoneNumber();
+        }
+
+        return $mobilePhoneNumber;
     }
 
     /**

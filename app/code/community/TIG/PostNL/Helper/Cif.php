@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -140,7 +140,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     );
 
     /**
-     * Array of supported shipment types
+     * Array of supported shipment types.
      *
      * @var array
      */
@@ -150,6 +150,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'commercial_goods'  => 'Commercial Goods',
         'commercial_sample' => 'Commercial Sample',
         'returned_goods'    => 'Returned Goods',
+    );
+
+    /**
+     * Array of supported shipment types and their numeric counterparts.
+     *
+     * @var array
+     */
+    protected $_numericShipmentTypes = array(
+        'Gift'              => 0,
+        'Documents'         => 1,
+        'Commercial Goods'  => 2,
+        'Commercial Sample' => 3,
+        'Returned Goods'    => 4,
     );
 
     /**
@@ -174,6 +187,18 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     protected $_allowedFullStreetCountries = array(
         'NL',
         'BE'
+    );
+
+    /**
+     * Array of EPS product codes and their combi-label counterparts.
+     *
+     * @var array
+     */
+    protected $_combiLabelProductCodes = array(
+        '4940' => '4950',
+        '4924' => '4954',
+        '4946' => '4955',
+        '4944' => '4952',
     );
 
     /**
@@ -300,6 +325,16 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Get an array of numeric shipment types
+     *
+     * @return array
+     */
+    public function getNumericShipmentTypes()
+    {
+        return $this->_numericShipmentTypes;
+    }
+
+    /**
      * Get an array of possible shipping phases
      *
      * @return array
@@ -322,6 +357,16 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     public function getAllowedFullStreetCountries()
     {
         return $this->_allowedFullStreetCountries;
+    }
+
+    /**
+     * Get EPS combilabel codes.
+     *
+     * @return array
+     */
+    public function getCombiLabelProductCodes()
+    {
+        return $this->_combiLabelProductCodes;
     }
 
     /**

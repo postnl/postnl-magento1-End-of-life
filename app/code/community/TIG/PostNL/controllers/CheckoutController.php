@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
@@ -111,6 +111,8 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
                           . PHP_EOL
                           . $helper->__('Ping status response indicated PostNL Checkout is currently not available.');
 
+            $helper->log($errorMessage);
+
             $this->getResponse()
                  ->setBody('NOK');
             return $this;
@@ -118,7 +120,6 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
 
         $this->getResponse()
              ->setBody('OK');
-             $helper = Mage::helper('postnl/checkout');
 
         return $this;
     }
@@ -173,7 +174,9 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $result = $cif->prepareOrder($quote);
 
             /**
-             * Retrieve the order token used to identify the order with PostNL and the checkout URL
+             * Retrieve the order token used to identify the order with PostNL and the checkout URL.
+             *
+             * @var StdClass $result
              */
             $orderToken  = $result->Checkout->OrderToken;
             $checkoutUrl = $result->Checkout->Url;
@@ -189,12 +192,13 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $response = Mage::helper('core')->jsonEncode($responseArray);
 
             /**
-             * Save a new PostNL order containing the current quote ID as well as the received order token
+             * Save a new PostNL order containing the current quote ID as well as the received order token.
+             *
+             * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
              */
             $quote = Mage::getSingleton('checkout/session')->getQuote();
-            $postnlOrder = Mage::getModel('postnl_checkout/order');
-            $postnlOrder->load($quote->getId(), 'quote_id') //load the order in case it aleady exists
-                        ->setQuoteId($quote->getId())
+            $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+            $postnlOrder->setQuoteId($quote->getId())
                         ->setToken($orderToken)
                         ->setIsActive(1)
                         ->save();
@@ -277,7 +281,11 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             $paymentMethod = $quote->getPayment()->getMethodInstance();
             $formBlockType = $paymentMethod->getFormBlockType();
             if ($formBlockType) {
-                $formBlock = $layout->createBlock($formBlockType)->setMethod($paymentMethod);
+                /**
+                 * @var Mage_Payment_Block_Form $formBlock
+                 */
+                $formBlock = $layout->createBlock($formBlockType);
+                $formBlock->setMethod($paymentMethod);
                 $layout->getBlock('postnl_checkout_summary')->setChild('payment_method_form', $formBlock);
             }
 
@@ -353,6 +361,8 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
          */
         $skipUpdatePayment = false;
         $data = $this->getRequest()->getPost('payment', array());
+        $data = $this->_validatePaymentData($data);
+
         if ($data) {
             /**
              * If we have payment method data, process it
@@ -419,11 +429,11 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
 
         /**
-         * Finally we redirect the customer to the success page or payment page
+         * Finally we redirect the customer to the success page or payment page.
          */
 
         /**
-         * Get the redirect URL from the payment method. If none exists, redirect to the order success page
+         * Get the redirect URL from the payment method. If none exists, redirect to the order success page.
          */
         $paymentMethod = $order->getPayment()->getMethodInstance();
 
@@ -556,6 +566,36 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     }
 
     /**
+     * Validate payment method data. Validation of other data is the responsibility of the chosen payment method as we
+     * simply do not know what data we can expect.
+     *
+     * @param array $data
+     *
+     * @return array|bool
+     */
+    protected function _validatePaymentData($data)
+    {
+        if (!isset($data['method'])) {
+            return false;
+        }
+
+        $method = $data['method'];
+        $availablePaymentMethods = array_keys(Mage::getSingleton('payment/config')->getActiveMethods());
+
+        /**
+         * Validate that the method is a string and is listed among available payment methods.
+         */
+        $stringValidator  = new Zend_Validate_Alpha(false);
+        $inArrayValidator = new Zend_Validate_InArray(array('haystack' => $availablePaymentMethods));
+
+        if (!$stringValidator->isValid($method) || !$inArrayValidator->isValid($method)) {
+            return false;
+        }
+
+        return $data;
+    }
+
+    /**
      * Checks if PostNL Checkout is active
      *
      * @return boolean
@@ -576,6 +616,9 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      */
     protected function _validateQuote($quote, $addErrors = true)
     {
+        /**
+         * @var TIG_PostNL_MOdel_Checkout_Order $postnlOrder
+         */
         $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
 
         /**
