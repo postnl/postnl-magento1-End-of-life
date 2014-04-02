@@ -43,7 +43,7 @@
 </span>
 
 <script type="text/javascript">
-//<![CDATA[
+    //<![CDATA[
     document.observe('dom:loaded', function() {
         var link = $('postnl_customize_grid_link');
 
@@ -87,12 +87,13 @@
                     });
                 } else if(item.url) {
                     if (item.id == 'postnl_print_labels_and_confirm' || item.id == 'postnl_print_labels') {
-                        var printWindow = window.open('', 'printWindow');
+                        var windowName = 'printWindow' + (new Date()).getTime();
+                        var printWindow = window.open('', windowName);
 
                         Event.observe(printWindow, 'unload', function() {
                             window.location.reload();
                         });
-                        this.form.setAttribute('target', 'printWindow');
+                        this.form.setAttribute('target', windowName);
                     } else {
                         this.form.setAttribute('target', '');
                     }
@@ -107,9 +108,5 @@
             }
         });
     });
-
-    function test() {
-        alert('test');
-    }
-//]]>
+    //]]>
 </script>

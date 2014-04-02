@@ -540,8 +540,6 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * @param      $data
      * @param null $quote
      *
-     * @internal param \StdClass $orderDetails
-     *
      * @return TIG_PostNL_Model_Checkout_Service
      */
     public function updatePostnlOrder($data, $quote = null)
