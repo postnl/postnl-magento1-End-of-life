@@ -34,7 +34,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
@@ -86,8 +86,11 @@
 
     <adminhtml_sales_shipment_index>
         <reference name="content">
-            <block type="adminhtml/abstract" name="customize_grid_link" template="TIG/PostNL/sales/shipment/customize_link.phtml"/>
-            <block type="postnl_adminhtml/system_config_form_field_configCheck" name="postnl-testmode-warning" template="TIG/PostNL/sales/shipment/testmode_warning.phtml"/>
+            <block type="adminhtml/abstract" name="postnl_customize_grid_link" template="TIG/PostNL/sales/shipment/customize_link.phtml"/>
+            <block type="postnl_adminhtml/system_config_form_field_configCheck" name="postnl_testmode_warning" template="TIG/PostNL/sales/shipment/testmode_warning.phtml"/>
+        </reference>
+        <reference name="before_body_end">
+            <block type="adminhtml/abstract" name="postnl_print_label_action" template="TIG/PostNL/sales/shipment/js.phtml"/>
         </reference>
     </adminhtml_sales_shipment_index>
 
