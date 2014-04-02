@@ -75,6 +75,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $postnlOrder = Mage::getModel('postnl_checkout/order');
         $postnlOrder->load($quote->getId(), 'quote_id');
 
+        if (!$postnlOrder->getId()) {
+            $postnlOrder->setQuoteId($quote->getId());
+        }
+
         $this->setPostnlOrder($postnlOrder);
         return $postnlOrder;
     }
