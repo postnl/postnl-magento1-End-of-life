@@ -35,6 +35,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method TIG_PostNL_Model_Parcelware_Export setIsGlobal(boolean $value)
+ * @method boolean                            getIsGlobal()
  */
 class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
 {
@@ -72,6 +75,9 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $transactionSave = Mage::getModel('core/resource_transaction');
 
         $content = array();
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
+         */
         foreach ($postnlShipments as $postnlShipment) {
             /**
              * Set each shipment's is_parcelware_exported flag to true
@@ -416,9 +422,11 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
          * Add information about the contents of the shipment
          */
         $itemCount = 0;
-        $content = array();
         $items = $this->_sortCustomsItems($shipment->getAllItems());
 
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Item $item
+         */
         foreach ($items as $item) {
             /**
              * A maximum of 5 rows are allowed
