@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Class TIG_PostNL_Model_Core_Shipment_Barcode@method getBarcode
@@ -70,6 +70,9 @@ class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
      */
     public function loadByParentAndBarcodeNumber($parentId, $barcodeNumber)
     {
+        /**
+         * @var TIG_PostNL_Model_Core_Resource_Shipment_Barcode_Collection $collection
+         */
         $collection = $this->getCollection();
         $collection->addFieldToSelect('*')
                    ->addFieldToFilter('parent_id', array('eq' => $parentId))

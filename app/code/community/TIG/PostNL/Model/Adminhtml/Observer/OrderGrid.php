@@ -38,10 +38,10 @@
  *
  * Observer to edit the sales > order grid
  *
- * @method TIG_PostNL_Model_Adminhtml_Observer_OrderGrid setCollection(Varien_Data_Collection $value)
- * @method Varien_Data_Collection                        getCollection()
- * @method TIG_PostNL_Model_Adminhtml_Observer_OrderGrid setBlock(Mage_Core_Block_Abstract $value)
- * @method Mage_Core_Block_Abstract                      getBlock()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_OrderGrid   setCollection(TIG_PostNL_Model_Resource_Order_Grid_Collection $value)
+ * @method TIG_PostNL_Model_Resource_Order_Grid_Collection getCollection()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_OrderGrid   setBlock(Mage_Adminhtml_Block_Sales_Order_Grid $value)
+ * @method Mage_Adminhtml_Block_Sales_Order_Grid           getBlock()
  */
 class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 {
@@ -543,7 +543,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 
         $cond = $column->getFilter()->getCondition();
         if ($field && isset($cond)) {
-            $this->getCollection()->addFieldToFilter($field , $cond);
+            /**
+             * @var TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
+             */
+            $collection = $this->getCollection();
+            $collection->addFieldToFilter($field , $cond);
         }
 
         return $this;
