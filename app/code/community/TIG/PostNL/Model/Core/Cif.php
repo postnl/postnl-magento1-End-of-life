@@ -458,8 +458,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          */
         throw new TIG_PostNL_Exception(
             Mage::helper('postnl')->__(
-                                  'Unable to match barcode to shippingStatus response: %s',
-                                  var_export($response, true)
+                'Unable to match barcode to shippingStatus response: %s',
+                var_export($response, true)
             ),
             'POSTNL-0063'
         );
