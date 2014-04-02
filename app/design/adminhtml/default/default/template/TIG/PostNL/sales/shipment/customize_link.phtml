@@ -50,63 +50,6 @@
         $('sales_shipment_grid').insert({
             before: link
         });
-
-        Object.extend(sales_shipment_grid_massactionJsObject, {
-            apply: function() {
-                if(varienStringArray.count(this.checkedString) == 0) {
-                        alert(this.errorText);
-                        return;
-                    }
-
-                var item = this.getSelectedItem();
-                if(!item) {
-                    this.validator.validate();
-                    return;
-                }
-                this.currentItem = item;
-                var fieldName = (item.field ? item.field : this.formFieldName);
-                var fieldsHtml = '';
-
-                if(this.currentItem.confirm && !window.confirm(this.currentItem.confirm)) {
-                    return;
-                }
-
-                this.formHiddens.update('');
-                new Insertion.Bottom(this.formHiddens, this.fieldTemplate.evaluate({name: fieldName, value: this.checkedString}));
-                new Insertion.Bottom(this.formHiddens, this.fieldTemplate.evaluate({name: 'massaction_prepare_key', value: fieldName}));
-
-                if(!this.validator.validate()) {
-                    return;
-                }
-
-                if(this.useAjax && item.url) {
-                    new Ajax.Request(item.url, {
-                        'method': 'post',
-                        'parameters': this.form.serialize(true),
-                        'onComplete': this.onMassactionComplete.bind(this)
-                    });
-                } else if(item.url) {
-                    if (item.id == 'postnl_print_labels_and_confirm' || item.id == 'postnl_print_labels') {
-                        var windowName = 'printWindow' + (new Date()).getTime();
-                        var printWindow = window.open('', windowName);
-
-                        Event.observe(printWindow, 'unload', function() {
-                            window.location.reload();
-                        });
-                        this.form.setAttribute('target', windowName);
-                    } else {
-                        this.form.setAttribute('target', '');
-                    }
-
-                    this.form.action = item.url;
-                    this.form.submit();
-
-                    if (typeof printWindow != 'undefined') {
-                        printWindow.focus();
-                    }
-                }
-            }
-        });
     });
     //]]>
 </script>
