@@ -169,8 +169,15 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
      */
     public function applyUpdates()
     {
-        $dbVer = $this->_getResource()->getDbVersion($this->_resourceName);
-        $configVer = (string)$this->_moduleConfig->version;
+        /**
+         * @var Mage_Core_Model_Resource_Resource $resource
+         * @var Varien_Simplexml_Element $moduleConfig
+         */
+        $resource = $this->_getResource();
+        $moduleConfig = $this->_moduleConfig;
+
+        $dbVer = $resource->getDbVersion($this->_resourceName);
+        $configVer = (string) $moduleConfig->version;
 
         $this->setDbVer($dbVer);
         $this->setConfigVer($configVer);
@@ -488,7 +495,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $encryptedPassword = Mage::helper('core')->encrypt($testPassword);
 
         /**
-         * @var Mage_Core_Model_Config $config
+         * @var Mage_Core_Model_Config_Data $config
          */
         $config = Mage::getModel('core/config_data')
                       ->load(self::XPATH_TEST_PASSWORD, 'path');
@@ -511,7 +518,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $encryptedWebshopId = Mage::helper('core')->encrypt($testWebshopId);
 
         /**
-         * @var Mage_Core_Model_Config $config
+         * @var Mage_Core_Model_Config_Data $config
          */
         $config = Mage::getModel('core/config_data')
                       ->load(self::XPATH_WEBSHOP_ID, 'path');

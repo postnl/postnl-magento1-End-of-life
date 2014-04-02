@@ -41,7 +41,6 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
     /**
      * Xpaths used to get PostNL account credentials.
      */
-    const XPATH_ALLOW_TEST_MODE     = 'postnl/advanced/allow_test_mode';
     const XPATH_MODE                = 'postnl/cif_labels_and_confirming/mode';
     const XPATH_LIVE_USERNAME       = 'postnl/cif/live_username';
     const XPATH_LIVE_PASSWORD       = 'postnl/cif/live_password';
@@ -185,12 +184,8 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
      */
     protected function _getIsTestMode()
     {
-        $testModeAllowed = $this->_getConfigValue(self::XPATH_ALLOW_TEST_MODE);
-        if (!$testModeAllowed) {
-            return false;
-        }
-
         $cifTestMode = (bool) $this->_getConfigValue(self::XPATH_MODE);
+
         return $cifTestMode;
     }
 
