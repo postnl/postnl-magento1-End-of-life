@@ -89,7 +89,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Obj
         /**
          * Checks if the current block is the one we want to edit.
          *
-         * Unfortunately there is no unique event for this block
+         * Unfortunately there is no unique event for this block.
          */
         $block = $observer->getBlock();
         $blockClass = $this->getAddressBlockClass();

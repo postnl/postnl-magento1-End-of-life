@@ -35,48 +35,75 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @method Varien_Data_Form_Element_Abstract                                    getElement()
- * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract setElement(Varien_Data_Form_Element_Abstract $value)
  */
-abstract class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
-    extends Mage_Adminhtml_Block_Abstract
-    implements Varien_Data_Form_Element_Renderer_Interface
+class TIG_PostNL_Model_Core_System_Config_Source_PakketautomaatProductOptions
 {
     /**
-     * Template file used
-     *
-     * @var string
+     * XML path to supported options configuration setting
      */
-    protected $_template = '';
+    const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
 
     /**
-     * Get the element's HTML ID
+     * Returns an option array for all possible PostNL product options
      *
-     * @return string
+     * @return array
      */
-    public function getHtmlId()
+    public function toOptionArray()
     {
-        if (!$this->getElement()) {
-            return '';
-        }
+        $helper = Mage::helper('postnl');
+        $availableOptions = array(
+            array(
+                'value'        => '3553',
+                'label'        => $helper->__('Parcel Dispenser'),
+            ),
+        );
 
-        $element = $this->getElement();
-        $id = $element->getHtmlId();
-
-        return $id;
+        return $availableOptions;
     }
 
     /**
-     * Render fieldset html
+     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
-     * @param Varien_Data_Form_Element_Abstract $element
-     * @return string
+     * @param boolean|int $storeId
+     * @param boolean $codesOnly
+     *
+     * @return array
      */
-    public function render(Varien_Data_Form_Element_Abstract $element)
+    public function getAvailableOptions($storeId = false, $codesOnly = false)
     {
-        $this->setElement($element);
+        if ($storeId === false) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
 
-        return $this->toHtml();
+        $options = $this->toOptionArray();
+
+        /**
+         * Get a list of all possible options
+         */
+        $availableOptions = array();
+
+        /**
+         * Get the list of supported product options from the shop's configuration
+         */
+        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
+        $supportedOptionsArray = explode(',', $supportedOptions);
+
+        /**
+         * Check each standard option to see if it's supprted
+         */
+        foreach ($options as $option) {
+            if (!in_array($option['value'], $supportedOptionsArray)) {
+                continue;
+            }
+
+            if ($codesOnly === true) {
+                $availableOptions[] = $option['value'];
+                continue;
+            }
+
+            $availableOptions[] = $option;
+        }
+
+        return $availableOptions;
     }
 }

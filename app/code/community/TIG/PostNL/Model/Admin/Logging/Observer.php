@@ -35,48 +35,29 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @method Varien_Data_Form_Element_Abstract                                    getElement()
- * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract setElement(Varien_Data_Form_Element_Abstract $value)
  */
-abstract class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
-    extends Mage_Adminhtml_Block_Abstract
-    implements Varien_Data_Form_Element_Renderer_Interface
+class TIG_PostNL_Model_Admin_Logging_Observer
 {
     /**
-     * Template file used
+     * Check if the Enterprise Logging extension is present and if so, call it's observer method. This prevents errors
+     * in Magento community edition.
      *
-     * @var string
-     */
-    protected $_template = '';
-
-    /**
-     * Get the element's HTML ID
+     * @param Varien_Event_Observer $observer
      *
-     * @return string
+     * @return $this
+     *
+     * @see Enterprise_Logging_Model_Observer::controllerPostdispatch()
      */
-    public function getHtmlId()
+    public function controllerPostdispatch(Varien_Event_Observer $observer)
     {
-        if (!$this->getElement()) {
-            return '';
+        $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
+
+        if (!class_exists($loggingObserverClassName)) {
+            return $this;
         }
 
-        $element = $this->getElement();
-        $id = $element->getHtmlId();
+        Mage::getModel('enterprise_logging/observer')->controllerPostdispatch($observer);
 
-        return $id;
-    }
-
-    /**
-     * Render fieldset html
-     *
-     * @param Varien_Data_Form_Element_Abstract $element
-     * @return string
-     */
-    public function render(Varien_Data_Form_Element_Abstract $element)
-    {
-        $this->setElement($element);
-
-        return $this->toHtml();
+        return $this;
     }
 }

@@ -35,48 +35,19 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @method Varien_Data_Form_Element_Abstract                                    getElement()
- * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract setElement(Varien_Data_Form_Element_Abstract $value)
  */
-abstract class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
-    extends Mage_Adminhtml_Block_Abstract
-    implements Varien_Data_Form_Element_Renderer_Interface
-{
-    /**
-     * Template file used
-     *
-     * @var string
-     */
-    protected $_template = '';
 
-    /**
-     * Get the element's HTML ID
-     *
-     * @return string
-     */
-    public function getHtmlId()
-    {
-        if (!$this->getElement()) {
-            return '';
-        }
+/**
+ * @var TIG_PostNL_Model_Resource_Setup $installer
+ */
+$installer = $this;
 
-        $element = $this->getElement();
-        $id = $element->getHtmlId();
+$installer->startSetup();
 
-        return $id;
-    }
+$installer->generateShippingStatusCronExpr()
+          ->generateUpdateStatisticsCronExpr()
+          ->expandSupportTab()
+          ->installTestPassword()
+          ->installWebshopId();
 
-    /**
-     * Render fieldset html
-     *
-     * @param Varien_Data_Form_Element_Abstract $element
-     * @return string
-     */
-    public function render(Varien_Data_Form_Element_Abstract $element)
-    {
-        $this->setElement($element);
-
-        return $this->toHtml();
-    }
-}
+$installer->endSetup();

@@ -71,6 +71,31 @@ $conn->addColumn($installer->getTable('postnl_core/shipment'),
     )
 );
 
+$conn->addColumn($installer->getTable('postnl_core/shipment'),
+    'is_pakketautomaat',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+        'nullable' => false,
+        'default'  => 0,
+        'comment'  => 'Is Pakketautomaat',
+        'after'    => 'is_pakje_gemak',
+    )
+);
+
+/**
+ * Modify the shipment_type column to avoid confusion with the PostNL order's 'type' column.
+ */
+$conn->changeColumn($installer->getTable('postnl_core/shipment'),
+    'shipment_type',
+    'globalpack_shipment_type',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+        'length'   => 32,
+        'nullable' => true,
+        'comment'  => 'GlobalPack Shipment Type',
+    )
+);
+
 /***********************************************************************************************************************
  * POSTNL ORDER
  **********************************************************************************************************************/
@@ -104,6 +129,17 @@ $conn->addColumn($installer->getTable('postnl_checkout/order'),
         'nullable' => true,
         'default'  => null,
         'comment'  => 'Mobile Phone Number',
+        'after'    => 'is_pakje_gemak',
+    )
+);
+
+$conn->addColumn($installer->getTable('postnl_checkout/order'),
+    'is_pakketautomaat',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+        'nullable' => true,
+        'default'  => 0,
+        'comment'  => 'Is Pakketautomaat',
         'after'    => 'is_pakje_gemak',
     )
 );

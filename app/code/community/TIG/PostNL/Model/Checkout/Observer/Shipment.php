@@ -60,7 +60,7 @@ class TIG_PostNL_Model_Checkout_Observer_Shipment
         $orderId = $postnlShipment->getOrderId();
         $postnlOrder = Mage::getModel('postnl_checkout/order');
         $postnlOrder->load($orderId, 'order_id');
-        if (!$postnlOrder->getId()) {
+        if (!$postnlOrder->getId() || !$postnlOrder->getToken()) {
             return $this;
         }
 

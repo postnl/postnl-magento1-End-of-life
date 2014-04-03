@@ -35,48 +35,32 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @method Varien_Data_Form_Element_Abstract                                    getElement()
- * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract setElement(Varien_Data_Form_Element_Abstract $value)
  */
-abstract class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
-    extends Mage_Adminhtml_Block_Abstract
-    implements Varien_Data_Form_Element_Renderer_Interface
+class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_Model_Handler_Controllers
 {
     /**
-     * Template file used
+     * PostNL mass action postDispatch handler.
      *
-     * @var string
-     */
-    protected $_template = '';
-
-    /**
-     * Get the element's HTML ID
+     * @param Varien_Simplexml_Element       $config
+     * @param Enterprise_Logging_Model_Event $eventModel
      *
-     * @return string
+     * @return boolean
      */
-    public function getHtmlId()
+    public function postDispatchSaveMassAction($config, $eventModel)
     {
-        if (!$this->getElement()) {
-            return '';
+        $request = Mage::app()->getRequest();
+        if ($request->getParam('shipment_ids')) {
+            $eventModel->setInfo($request->getParam('shipment_ids'));
+
+            return true;
         }
 
-        $element = $this->getElement();
-        $id = $element->getHtmlId();
+        if ($request->getParam('order_ids')) {
+            $eventModel->setInfo($request->getParam('order_ids'));
 
-        return $id;
-    }
+            return true;
+        }
 
-    /**
-     * Render fieldset html
-     *
-     * @param Varien_Data_Form_Element_Abstract $element
-     * @return string
-     */
-    public function render(Varien_Data_Form_Element_Abstract $element)
-    {
-        $this->setElement($element);
-
-        return $this->toHtml();
+        return true;
     }
 }

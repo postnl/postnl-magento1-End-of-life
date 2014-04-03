@@ -140,10 +140,20 @@
             <col width="1">
             <col width="1">
             <col width="1">
+            <?php if ($this->helper('tax')->displayCartPriceInclTax() || $this->helper('tax')->displayCartBothPrices()): ?>
+                <col width="1">
+                <col width="1">
+            <?php endif; ?>
             <thead>
                 <th><?php echo $this->__('Product Name'); ?></th>
                 <th class="a-right"><?php echo $this->__('Price'); ?></th>
+                <?php if ($this->helper('tax')->displayCartPriceInclTax() || $this->helper('tax')->displayCartBothPrices()): ?>
+                    <th>&nbsp;</th>
+                <?php endif; ?>
                 <th class="a-center"><?php echo $this->__('Qty'); ?></th>
+                <?php if ($this->helper('tax')->displayCartPriceInclTax() || $this->helper('tax')->displayCartBothPrices()): ?>
+                    <th>&nbsp;</th>
+                <?php endif; ?>
                 <th class="a-right"><?php echo $this->__('Subtotal'); ?></th>
             </thead>
             <tbody>
@@ -154,7 +164,6 @@
             <?php echo $this->getChild('totals')->setQuote($_quote)->toHtml(); ?>
         </table>
     </div>
-
     <div class="buttons-set">
         <p class="back-link">
             <a href="<?php echo $this->getUrl('postnl/checkout/cancel', array('_secure' => true)); ?>" title="<?php echo $this->__('Return to the shopping cart.'); ?>"><?php echo $this->__('Cancel');?></a>

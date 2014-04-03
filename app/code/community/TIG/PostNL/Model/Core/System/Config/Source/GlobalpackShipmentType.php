@@ -35,48 +35,40 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @method Varien_Data_Form_Element_Abstract                                    getElement()
- * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract setElement(Varien_Data_Form_Element_Abstract $value)
  */
-abstract class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
-    extends Mage_Adminhtml_Block_Abstract
-    implements Varien_Data_Form_Element_Renderer_Interface
+class TIG_PostNL_Model_Core_System_Config_Source_GlobalpackShipmentType
 {
     /**
-     * Template file used
+     * Returns an option array for possible GlobalPack shipment types.
      *
-     * @var string
+     * @return array
      */
-    protected $_template = '';
-
-    /**
-     * Get the element's HTML ID
-     *
-     * @return string
-     */
-    public function getHtmlId()
+    public function toOptionArray()
     {
-        if (!$this->getElement()) {
-            return '';
-        }
+        $helper = Mage::helper('postnl');
+        $options = array(
+            array(
+                'value' => 'Gift',
+                'label' => $helper->__('Gift'),
+            ),
+            array(
+                'value' => 'Documents',
+                'label' => $helper->__('Documents'),
+            ),
+            array(
+                'value' => 'Commercial Goods',
+                'label' => $helper->__('Commercial Goods'),
+            ),
+            array(
+                'value' => 'Commercial Sample',
+                'label' => $helper->__('Commercial Sample'),
+            ),
+            array(
+                'value' => 'Returned Goods',
+                'label' => $helper->__('Returned Goods'),
+            ),
+        );
 
-        $element = $this->getElement();
-        $id = $element->getHtmlId();
-
-        return $id;
-    }
-
-    /**
-     * Render fieldset html
-     *
-     * @param Varien_Data_Form_Element_Abstract $element
-     * @return string
-     */
-    public function render(Varien_Data_Form_Element_Abstract $element)
-    {
-        $this->setElement($element);
-
-        return $this->toHtml();
+        return $options;
     }
 }

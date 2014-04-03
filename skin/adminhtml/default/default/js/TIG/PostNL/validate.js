@@ -62,6 +62,5 @@ function checkEmpty(eventElement) {
 
     if (!eventElement.value.empty() && eventElement.hasClassName('postnl-validate-empty')) {
         eventElement.removeClassName('postnl-validate-empty');
-        return;
     }
 }

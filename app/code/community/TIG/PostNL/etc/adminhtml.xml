@@ -55,6 +55,50 @@
 							</config>
 						</children>
 					</system>
+                    <postnl translate="title" module="postnl">
+                        <title>PostNL</title>
+                        <children>
+                            <shipment translate="title" module="postnl">
+                                <title>Shipment</title>
+                                <children>
+                                    <complete_status translate="title" module="postnl">
+                                        <title>Complete Status History</title>
+                                        <sort_order>10</sort_order>
+                                    </complete_status>
+                                    <actions translate="title" module="postnl">
+                                        <title>Actions</title>
+                                        <sort_order>20</sort_order>
+                                        <children>
+                                            <confirm translate="title" module="postnl">
+                                                <title>Confirm</title>
+                                                <sort_order>10</sort_order>
+                                            </confirm>
+                                            <print_label translate="title" module="postnl">
+                                                <title>Print Shipping Label</title>
+                                                <sort_order>20</sort_order>
+                                            </print_label>
+                                            <create_parcelware_export translate="title" module="postnl">
+                                                <title>Create Parcelware Export</title>
+                                                <sort_order>40</sort_order>
+                                            </create_parcelware_export>
+                                            <send_track_and_trace translate="title" module="postnl">
+                                                <title>Send Track &amp; Trace Email</title>
+                                                <sort_order>50</sort_order>
+                                            </send_track_and_trace>
+                                            <reset_confirmation translate="title" module="postnl">
+                                                <title>Change Confirmation</title>
+                                                <sort_order>60</sort_order>
+                                            </reset_confirmation>
+                                            <delete_labels translate="title" module="postnl">
+                                                <title>Delete Shipping Labels</title>
+                                                <sort_order>70</sort_order>
+                                            </delete_labels>
+                                        </children>
+                                    </actions>
+                                </children>
+                            </shipment>
+                        </children>
+                    </postnl>
 				</children>
 			</admin>
         </resources>

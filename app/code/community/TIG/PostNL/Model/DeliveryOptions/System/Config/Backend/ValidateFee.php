@@ -94,15 +94,11 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
     public function validateFee($fee)
     {
         $fee = (float) $fee;
-        if ($fee !== 0 && !$fee) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__(
-                    'Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. '
-                    . 'VAT.',
-                    $fee
-                ),
-                'POSTNL-0153'
-            );
+
+        if (abs($fee) < 0.00001) {
+            $this->setValue(0);
+
+            return true;
         }
 
         /**

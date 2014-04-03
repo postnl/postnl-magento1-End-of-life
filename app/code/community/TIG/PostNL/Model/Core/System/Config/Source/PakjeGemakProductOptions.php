@@ -61,19 +61,21 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
              */
             /*array(
                 'value' => '3535',
-                'label' => $helper->__('Post Office + COD')
+                'label' => $helper->__('Post Office + COD'),
             ),
             array(
                 'value' => '3545',
-                'label' => $helper->__('Post Office + COD + Notification')
+                'label' => $helper->__('Post Office + COD + Notification'),
+                'isPge' => true,
             ),
             array(
                 'value' => '3536',
-                'label' => $helper->__('Post Office + COD + Extra Cover')
+                'label' => $helper->__('Post Office + COD + Extra Cover'),
             ),
             array(
                 'value' => '3546',
-                'label' => $helper->__('Post Office + COD + Extra Cover + Notification')
+                'label' => $helper->__('Post Office + COD + Extra Cover + Notification'),
+                'isPge' => true,
             ),*/
             array(
                 'value'        => '3534',
@@ -84,6 +86,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
                 'value'        => '3544',
                 'label'        => $helper->__('Post Office + Extra Cover + Notification'),
                 'isExtraCover' => true,
+                'isPge'        => true,
             ),
             array(
                 'value' => '3533',
@@ -91,7 +94,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
             ),
             array(
                 'value' => '3543',
-                'label' => $helper->__('Post Office + Signature on Delivery + Notification')
+                'label' => $helper->__('Post Office + Signature on Delivery + Notification'),
+                'isPge' => true,
             ),
         );
 
@@ -99,20 +103,52 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
     }
 
     /**
-     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
+     * Gets an array of possible PGE product options.
      *
-     * @param boolean|int $storeId
-     * @param boolean $codesOnly
+     * @param boolean $asFlatArray
      *
      * @return array
      */
-    public function getAvailableOptions($storeId = false, $codesOnly = false)
+    public function getPgeOptions($asFlatArray = true)
+    {
+        $options = $this->toOptionArray();
+
+        $pgeOptions = array();
+        foreach ($options as $option) {
+            if (!isset($option['isPge']) || !$option['isPge']) {
+                continue;
+            }
+
+            if (!$asFlatArray) {
+                $pgeOptions[] = $option;
+            }
+
+            $pgeOptions[$option['value']] = $option['label'];
+        }
+
+        return $pgeOptions;
+    }
+
+    /**
+     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
+     *
+     * @param boolean|int $storeId
+     * @param boolean     $codesOnly
+     * @param boolean     $isPge
+     *
+     * @return array
+     */
+    public function getAvailableOptions($storeId = false, $codesOnly = false, $isPge = false)
     {
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
 
-        $options = $this->toOptionArray();
+        if (!$isPge) {
+            $options = $this->toOptionArray();
+        } else {
+            $options = $this->getPgeOptions(false);
+        }
 
         /**
          * Get a list of all possible options
@@ -142,5 +178,18 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
         }
 
         return $availableOptions;
+    }
+
+    /**
+     * Alias for getAvailableOptions() with $isPge === true.
+     *
+     * @param bool $storeId
+     * @param bool $codesOnly
+     *
+     * @return array
+     */
+    public function getAvailablePgeOptions($storeId = false, $codesOnly = false)
+    {
+        return $this->getAvailableOptions($storeId, $codesOnly, true);
     }
 }
