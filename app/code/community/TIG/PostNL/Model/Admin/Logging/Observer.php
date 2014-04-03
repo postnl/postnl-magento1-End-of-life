@@ -51,8 +51,9 @@ class TIG_PostNL_Model_Admin_Logging_Observer
     public function controllerPostdispatch(Varien_Event_Observer $observer)
     {
         $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
+        $found = mageFindClassFile($loggingObserverClassName);
 
-        if (!class_exists($loggingObserverClassName)) {
+        if ($found === false) {
             return $this;
         }
 
