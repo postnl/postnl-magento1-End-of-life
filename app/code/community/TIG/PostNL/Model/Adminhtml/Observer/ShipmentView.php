@@ -142,9 +142,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         if ($postnlShipment->canResetConfirmation() && $resetConfirmAllowed) {
             $resetConfirmationUrl = $this->getResetConfirmationUrl($shipment->getId());
             $resetWarningMessage = $helper->__(
-                                          'Are you sure that you wish to reset the confirmation status of this shipment? You will need to '
-                                          . 'confirm this shipment with PostNL again before you can send it. This action will remove all barcodes'
-                                          . ' and labels associated with this shipment. You can not undo this action.'
+                'Are you sure that you wish to reset the confirmation status of this shipment? You will need to '
+                . 'confirm this shipment with PostNL again before you can send it. This action will remove all barcodes'
+                . ' and labels associated with this shipment. You can not undo this action.'
             );
 
             $block->addButton('reset_confirmation', array(
@@ -166,9 +166,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
 
             $block->updateButton('save', 'label', $helper->__('PostNL - Send Tracking Information'));
             $block->updateButton('save', 'onclick',
-                                 "deleteConfirm('"
-                                 . $helper->__('Are you sure you want to send PostNL tracking information to the customer?')
-                                 . "', '" . $resendTrackAndTraceUrl . "')"
+                "deleteConfirm('"
+                . $helper->__('Are you sure you want to send PostNL tracking information to the customer?')
+                . "', '" . $resendTrackAndTraceUrl . "')"
             );
         }
 
@@ -178,8 +178,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         if ($postnlShipment->hasLabels() && !$postnlShipment->isConfirmed() && $deleteLabelsAllowed) {
             $removeLabelsUrl = $this->getRemoveLabelsUrl($shipment->getId());
             $removeLabelsWarningMessage = $helper->__(
-                                                 "Are you sure that you wish to remove this shipment\'s shipping label? You will need to print a new "
-                                                 . "shipping label before you can send this shipment."
+                "Are you sure that you wish to remove this shipment\'s shipping label? You will need to print a new "
+                . "shipping label before you can send this shipment."
             );
 
             $block->addButton('remove_shipping_labels', array(

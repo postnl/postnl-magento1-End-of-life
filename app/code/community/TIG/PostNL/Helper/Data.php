@@ -420,7 +420,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'print_label':
                 $aclPath = 'postnl/shipment/actions/print_label';
                 break;
-            case 'complete_status':
+            case 'view_complete_status':
                 $aclPath = 'postnl/shipment/complete_status';
                 break;
             case 'reset_confirmation':

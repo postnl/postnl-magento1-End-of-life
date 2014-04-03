@@ -204,12 +204,21 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $helper = Mage::helper('postnl');
 
         $inbox = Mage::getModel('postnl/inbox');
-        $inbox->addNotice(
-                  '[POSTNL-0083] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
-                  '[POSTNL-0083] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
-                  'http://kb.totalinternetgroup.nl/topic/31921907',
-                  true
-              )
+        if ($dbVer) {
+            $message = '[POSTNL-0083] ' . $helper->__(
+                'PostNL extension has been successfully updated to version v%s.',
+                $configVer
+            );
+            $url = 'http://kb.totalinternetgroup.nl/topic/31921907';
+        } else {
+            $message = '[POSTNL-0156] ' . $helper->__(
+                'The PostNL extension v%s has been successfully installed.',
+                $configVer
+            );
+            $url = '';
+        }
+
+        $inbox->addNotice($message, $message, $url, true)
               ->save();
 
         return $this;
@@ -234,7 +243,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $cronMinute        = mt_rand(0, 59);
 
         /**
-         * Generate a cron expr that runs on a specified minute on a specified hour between 10 and 12 AM, and between 14 and 16 PM.
+         * Generate a cron expr that runs on a specified minute on a specified hour between 10 and 12 AM, and between 14
+         * and 16 PM.
          */
         $cronExpr = "{$cronMinute} {$cronMorningHour},{$cronAfternoonHour} * * *";
 
@@ -264,8 +274,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     }
 
     /**
-     * Generates a semi-random cron expression for the update statistics cron. This is done to spread out the number of calls
-     * across each day.
+     * Generates a semi-random cron expression for the update statistics cron. This is done to spread out the number of
+     * calls across each day.
      *
      * @throws TIG_PostNL_Exception
      *
@@ -311,8 +321,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     }
 
     /**
-     * Checks the store's config to see if the extension is compatible with the installed Magento version. If not, a message will
-     * be added to Mage_Adminnotification.
+     * Checks the store's config to see if the extension is compatible with the installed Magento version. If not, a
+     * message will be added to Mage_Adminnotification.
      *
      * @return $this
      */
@@ -331,8 +341,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         if ($supportedVersions === false) {
             $message = '[POSTNL-0086] '
                      . $helper->__(
-                           'The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.'
-                       );
+                         'The PostNL extension is not compatible with your Magento version! This may cause unexpected '
+                         . 'behaviour.'
+                     );
 
             $inbox->addCritical(
                       $message,
@@ -354,8 +365,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         if (!in_array($installedMagentoVersion, $supportedVersionArray)) {
             $message = '[POSTNL-0086] '
                      . $helper->__(
-                           'The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.'
-                       );
+                         'The PostNL extension is not compatible with your Magento version! This may cause unexpected '
+                         . 'behaviour.'
+                     );
 
             $inbox->addCritical(
                       $message,
@@ -385,8 +397,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         /**
          * Get all admin users and save the PostNL support tab's state as being expanded for each one.
          *
-         * This has the same effect as having every admin log in, go to system/config/edit/section/postnl and manually click on
-         * the 'Version & Support' tab before saving the section.
+         * This has the same effect as having every admin log in, go to system/config/edit/section/postnl and manually
+         * click on the 'Version & Support' tab before saving the section.
          */
         $adminUsers = Mage::getResourceModel('admin/user_collection');
         foreach ($adminUsers as $adminUser) {
