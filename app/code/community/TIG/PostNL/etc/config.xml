@@ -232,6 +232,16 @@
                     </postnl_adminhtml_shipmentview>
 			    </observers>
 			</adminhtml_block_html_before>
+            <postnl_shipment_confirm_after>
+                <observers>
+                    <!-- Updates a PostNL Checkout order -->
+                    <postnl_checkout_update_order>
+                        <type>model</type>
+                        <class>postnl_checkout/observer_shipment</class>
+                        <method>updateOrder</method>
+                    </postnl_checkout_update_order>
+                </observers>
+            </postnl_shipment_confirm_after>
 			<controller_action_predispatch_adminhtml_sales_order_shipment_save>
                 <observers>
                     <!-- Registers the product option the user selected on the sales_order_shipment_new page -->
@@ -242,25 +252,15 @@
                     </postnl_core_shipment_save>
                 </observers>
 			</controller_action_predispatch_adminhtml_sales_order_shipment_save>
-			<postnl_shipment_confirm_after>
-			    <observers>
-			        <!-- Updates a PostNL Checkout order -->
-			        <postnl_checkout_update_order>
-			            <type>model</type>
-			            <class>postnl_checkout/observer_shipment</class>
-			            <method>updateOrder</method>
-			        </postnl_checkout_update_order>
-			    </observers>
-			</postnl_shipment_confirm_after>
-            <controller_action_postdispatch>
+            <controller_action_postdispatch_postnl>
                 <observers>
                     <!-- Admin logging -->
                     <postnl_enterprise_logging>
-                        <class>enterprise_logging/observer</class>
+                        <class>postnl/admin_logging_observer</class>
                         <method>controllerPostdispatch</method>
                     </postnl_enterprise_logging>
                 </observers>
-            </controller_action_postdispatch>
+            </controller_action_postdispatch_postnl>
 		</events>
 		<layout>
             <updates>
