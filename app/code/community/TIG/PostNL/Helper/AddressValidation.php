@@ -318,7 +318,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     /**
      * Logs a cendris exception in the database and/or a log file
      *
-     * @param Mage_Core_Exception|TIG_PostNL_Exception $exception
+     * @param Mage_Core_Exception|TIG_PostNL_Exception|SoapFault $exception
      * @param Zend_Soap_Client|boolean $client
      *
      * @return TIG_PostNL_Helper_Webservices

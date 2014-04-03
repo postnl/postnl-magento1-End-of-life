@@ -1414,7 +1414,7 @@
                                 </use_globalpack>
                             </depends>
                         </customs_certificate_number>
-                        <default_shipment_type>
+                        <default_shipment_type translate="label comment" module="postnl">
                             <label>Default shipment type</label>
                             <comment>Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.</comment>
                             <frontend_type>select</frontend_type>

@@ -314,11 +314,20 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _addMassaction($block)
     {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Make sure the admin is allowed ship orders.
+         */
+        if (!$helper->checkIsPostnlActionAllowed('create_shipment')) {
+            return $this;
+        }
+
         /**
          * Build an array of options for the massaction item
          */
         $massActionData = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Create Shipments'),
+            'label'=> $helper->__('PostNL - Create Shipments'),
             'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massCreateShipments'),
         );
 
@@ -333,7 +342,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'name'   => 'product_options',
                     'type'   => 'select',
                     'class'  => 'required-entry',
-                    'label'  => Mage::helper('postnl')->__('Product options'),
+                    'label'  => $helper->__('Product options'),
                     'values' => Mage::getModel('postnl_core/system_config_source_allProductOptions')
                                     ->getAvailableOptions(true, true, false, false, false, true, true),
                 ),
