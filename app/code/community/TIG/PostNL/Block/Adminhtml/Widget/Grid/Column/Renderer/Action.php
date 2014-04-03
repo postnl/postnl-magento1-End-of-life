@@ -70,7 +70,28 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
                 continue;
             }
 
-            $action = $this->_disableAction($row, $action);
+            /**
+             * The confirm action may need to be disabled.
+             */
+            if (isset($action['code']) && $action['code'] == 'postnl_confirm') {
+                $action = $this->_checkDisableAction($row, $action);
+            }
+
+            /**
+             * The print label action needs to use a custom onclick event.
+             */
+            if (isset($action['code']) && $action['code'] == 'postnl_print_label') {
+                $printLabelUrl = $this->getUrl(
+                    'postnl/adminhtml_shipment/printLabel',
+                    array('shipment_id' => $row->getId())
+                );
+
+                $action['onClick'] = "printLabel('{$printLabelUrl}')";
+            }
+
+            if (isset($action['code'])) {
+                unset($action['code']);
+            }
 
             if (is_array($action)) {
                 $actionLinks[] = $this->_toLinkHtml($action, $row);
@@ -86,7 +107,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
      * Checks if a certain action is allowed for this row
      *
      * @param Mage_Sales_Model_Order_Shipment $row
-     * @param array &$action
+     * @param array                           &$action
      *
      * @return boolean
      */
@@ -115,33 +136,28 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
      * In some cases an action must be disabled
      *
      * @param Mage_Sales_Model_Order_Shipment $row
-     * @param array $action
+     * @param array                           $action
      *
      * @return array
      */
-    protected function _disableAction($row, $action)
+    protected function _checkDisableAction($row, $action)
     {
-        $helper = Mage::helper('postnl');
+        $helper = Mage::helper('postnl/cif');
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
-        $euCountries = Mage::helper('postnl/cif')->getEuCountries();
-        $countryId = $row->getData(self::COUNTRY_ID_COLUMN);
+        $euCountries   = $helper->getEuCountries();
+        $countryId     = $row->getData(self::COUNTRY_ID_COLUMN);
         $confirmStatus = $row->getData(self::CONFIRM_STATUS_COLUMN);
 
         /**
-         * Right now only the confirm action needs to be disabled in certain instances
-         */
-        if ($action['caption'] != $helper->__('Confirm')) {
-            return $action;
-        }
-
-        /**
-         * If the shipment is confirmed, we can't confirm it again
+         * If the shipment is confirmed, we can't confirm it again.
+         *
+         * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
          */
         if ($confirmStatus == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
-            $action['style'] = 'color:gray; cursor:not-allowed;';
-            $action['onClick'] = 'return false;';
-            $action['title'] = $helper->__('This shipment has already been confirmed.');
+            $message = $helper->__('This shipment has already been confirmed.');
+            $action = $this->_disableAction($action, $message);
+
             return $action;
         }
 
@@ -151,11 +167,28 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
         if (in_array($countryId, $euCountries)
             && !$row->getData(self::LABELS_PRINTED_COLUMN)
         ){
-            $action['style'] = 'color:gray; cursor:not-allowed;;';
-            $action['onClick'] = 'return false;';
-            $action['title'] = $helper->__("You must first print a shipping label for this shipment.");
+            $message = $helper->__("You must first print a shipping label for this shipment.");
+            $action = $this->_disableAction($action, $message);
+
             return $action;
         }
+
+        return $action;
+    }
+
+    /**
+     * Disable a specified action.
+     *
+     * @param array  $action
+     * @param string $message
+     *
+     * @return array
+     */
+    protected function _disableAction($action, $message = '')
+    {
+        $action['style']   = 'color:gray; cursor:not-allowed;';
+        $action['onClick'] = 'return false;';
+        $action['title']   = $message;
 
         return $action;
     }

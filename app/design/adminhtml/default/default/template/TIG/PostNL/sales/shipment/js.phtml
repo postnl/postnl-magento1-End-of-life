@@ -80,6 +80,7 @@
                         var printWindow = window.open('', windowName);
 
                         Event.observe(printWindow, 'unload', function() {
+                            Event.stopObserving(printWindow);
                             window.location.reload();
                         });
                         this.form.setAttribute('target', windowName);
@@ -97,5 +98,14 @@
             }
         });
     });
+    printLabel = function(url) {
+        var printWindow = window.open(url);
+        Event.observe(printWindow, 'unload', function() {
+            Event.stopObserving(printWindow);
+            window.location.reload();
+        });
+
+        return false;
+    };
     //]]>
 </script>

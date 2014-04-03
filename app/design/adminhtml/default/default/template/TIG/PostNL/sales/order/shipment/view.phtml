@@ -56,7 +56,8 @@
     //<![CDATA[
     printLabel = function(url) {
         var printWindow = window.open(url);
-        Event.observe(printWindow, 'load', function() {
+        Event.observe(printWindow, 'unload', function() {
+            Event.stopObserving(printWindow);
             window.location.reload();
         });
     };

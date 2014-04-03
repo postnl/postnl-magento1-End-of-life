@@ -45,8 +45,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function printLabelAction()
     {
-        $shipmentId = $this->getRequest()->getParam('shipment_id');
         $helper = Mage::helper('postnl');
+        if (!$this->_checkIsAllowed('print_label')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
 
         /**
          * If no shipment was selected, cause an error
@@ -122,8 +131,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function confirmAction()
     {
-        $shipmentId = $this->getRequest()->getParam('shipment_id');
         $helper = Mage::helper('postnl');
+        if (!$this->_checkIsAllowed('confirm')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
 
         /**
          * If no shipment was selected, cause an error
@@ -192,6 +210,16 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function statusHistoryAction()
     {
+        $helper = Mage::helper('postnl');
+        if (!$this->_checkIsAllowed('view_complete_status')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         $postnlShipment = $this->_getPostnlShipment($shipmentId);
         Mage::register('current_postnl_shipment', $postnlShipment);
@@ -233,8 +261,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function sendTrackAndTraceAction()
     {
-        $shipmentId = $this->getRequest()->getParam('shipment_id');
         $helper = Mage::helper('postnl');
+        if (!$this->_checkIsAllowed('send_track_and_trace')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
 
         /**
          * If no shipment was selected, cause an error
@@ -292,8 +329,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function resetConfirmationAction()
     {
-        $shipmentId = $this->getRequest()->getParam('shipment_id');
         $helper = Mage::helper('postnl');
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        if (!$this->_checkIsAllowed(array('reset_confirmation', 'delete_labels'))) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
 
         /**
          * If no shipment was selected, cause an error
@@ -356,6 +402,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     {
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         $helper = Mage::helper('postnl');
+        if (!$this->_checkIsAllowed('delete_labels')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
 
         /**
          * If no shipment was selected, cause an error
@@ -432,6 +486,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function statusHistoryGridAction()
     {
+        $this->_checkIsAllowed('view_complete_status');
+
         $this->loadLayout(false);
         $this->renderLayout();
 
@@ -445,8 +501,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function massCreateShipmentsAction()
     {
-        $orderIds = $this->getRequest()->getParam('order_ids');
         $helper = Mage::helper('postnl');
+        if (!$this->_checkIsAllowed('create_shipment')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_order/index');
+            return $this;
+        }
+
+        $orderIds = $this->getRequest()->getParam('order_ids');
 
         /**
          * Check if an order was selected
@@ -542,8 +607,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function massPrintLabelsAndConfirmAction()
     {
-        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
         $helper = Mage::helper('postnl');
+        if (!$this->_checkIsAllowed(array('print_label', 'confirm'))) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
 
         /**
          * Check if a shipment was selected
@@ -630,8 +704,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function massPrintLabelsAction()
     {
-        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
         $helper = Mage::helper('postnl');
+        if (!$this->_checkIsAllowed('print_label')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
 
         /**
          * Check if a shipment was selected
@@ -713,8 +796,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function massConfirmAction()
     {
-        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
         $helper = Mage::helper('postnl');
+        if (!$this->_checkIsAllowed('confirm')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
 
         /**
          * Check if a shipment was selected
@@ -772,8 +864,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     public function massCreateParcelwareExportAction()
     {
-        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
         $helper = Mage::helper('postnl');
+        if (!$this->_checkIsAllowed('create_parcelware_export')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
 
         /**
          * Check if a shipment was selected
@@ -1154,5 +1255,22 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         );
 
         return $this;
+    }
+
+    /**
+     * Checks if the specified actions are allowed.
+     *
+     * @param array $actions
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @return bool
+     */
+    protected function _checkIsAllowed($actions = array())
+    {
+        $helper = Mage::helper('postnl');
+        $isAllowed = $helper->checkIsPostnlActionAllowed($actions, false);
+
+        return $isAllowed;
     }
 }

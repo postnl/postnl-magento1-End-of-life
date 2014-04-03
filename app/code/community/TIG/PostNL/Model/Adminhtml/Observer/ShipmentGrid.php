@@ -501,20 +501,24 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $actionColumn = $block->getColumn('action');
         $actions = $actionColumn->getActions();
 
-        $actions[] = array(
-            'caption'   => $helper->__('Print label'),
-            'url'       => array('base' => 'postnl/adminhtml_shipment/printLabel'),
-            'field'     => 'shipment_id',
-            'is_postnl' => true, //custom flag for renderer
-            'target'    => '_blank',
-        );
+        if ($helper->checkIsPostnlActionAllowed('print_label')) {
+            $actions[] = array(
+                'caption'   => $helper->__('Print label'),
+                'style'     => 'cursor:pointer;',
+                'is_postnl' => true, //custom flag for renderer
+                'code'      => 'postnl_print_label',
+            );
+        }
 
-        $actions[] = array(
-            'caption'   => $helper->__('Confirm'),
-            'url'       => array('base' => 'postnl/adminhtml_shipment/confirm'),
-            'field'     => 'shipment_id',
-            'is_postnl' => true, //custom flag for renderer
-        );
+        if ($helper->checkIsPostnlActionAllowed('confirm')) {
+            $actions[] = array(
+                'caption'   => $helper->__('Confirm'),
+                'url'       => array('base' => 'postnl/adminhtml_shipment/confirm'),
+                'field'     => 'shipment_id',
+                'is_postnl' => true, //custom flag for renderer
+                'code'      => 'postnl_confirm',
+            );
+        }
 
         $actionColumn->setActions($actions)
                      ->setWidth('150px')
@@ -687,7 +691,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     protected function _addMassaction($block)
     {
-        $helper = Mage::helper('postnl');
+        $helper = Mage::helper('postnl/parcelware');
         $adminhtmlHelper = Mage::helper('adminhtml');
 
         $massactionBlock = $block->getMassactionBlock();
@@ -742,26 +746,36 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             // no default
         }
 
+        $printAllowed   = $helper->checkIsPostnlActionAllowed('print_label');
+        $confirmAllowed = $helper->checkIsPostnlActionAllowed('confirm');
+        $exportAllowed  = $helper->checkIsPostnlActionAllowed('create_parcelware_export');
+
         /**
          * Add the mass actions to the grid
          */
-        $massactionBlock->addItem(
-            'postnl_print_labels_and_confirm',
-            $printAndConfirmOptions
-        );
+        if ($printAllowed && $confirmAllowed) {
+            $massactionBlock->addItem(
+                'postnl_print_labels_and_confirm',
+                $printAndConfirmOptions
+            );
+        }
 
-        $massactionBlock->addItem(
-            'postnl_print_labels',
-            $printOptions
-        );
+        if ($printAllowed) {
+            $massactionBlock->addItem(
+                'postnl_print_labels',
+                $printOptions
+            );
+        }
 
-        $massactionBlock->addItem(
-            'postnl_confirm_shipments',
-            $confirmOptions
-        );
+        if ($confirmAllowed) {
+            $massactionBlock->addItem(
+                'postnl_confirm_shipments',
+                $confirmOptions
+            );
+        }
 
-        $parcelwareExportEnabled = Mage::helper('postnl/parcelware')->isParcelwareExportEnabled();
-        if ($parcelwareExportEnabled) {
+        $parcelwareExportEnabled = $helper->isParcelwareExportEnabled();
+        if ($parcelwareExportEnabled && $exportAllowed) {
             $massactionBlock->addItem(
                 'postnl_parcelware_export',
                 $parcelWareOptions
