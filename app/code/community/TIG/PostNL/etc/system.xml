@@ -105,11 +105,48 @@
                                 <rate_type>flat</rate_type>
                             </depends>
                         </price>
+                        <rate_source translate="label" module="postnl">
+                            <label>Rate Source</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_carrier/system_config_source_tablerateSource</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <rate_type>table</rate_type>
+                            </depends>
+                        </rate_source>
+                        <export translate="label">
+                            <label>Export</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_tablerateExport</frontend_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <rate_type>table</rate_type>
+                                <rate_source>postnl_tablerate</rate_source>
+                            </depends>
+                        </export>
+                        <import translate="label">
+                            <label>Import</label>
+                            <frontend_type>import</frontend_type>
+                            <backend_model>postnl_carrier/system_config_backend_tablerate</backend_model>
+                            <sort_order>90</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <rate_type>table</rate_type>
+                                <rate_source>postnl_tablerate</rate_source>
+                            </depends>
+                        </import>
                         <condition_name translate="label" module="postnl">
                             <label>Condition</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_shipping_tablerate</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -121,7 +158,7 @@
                             <label>Include Virtual Products in Price Calculation</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -133,7 +170,7 @@
                             <label>Calculate Handling Fee</label>
                             <frontend_type>select</frontend_type>
                             <source_model>shipping/source_handlingType</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -142,7 +179,7 @@
                             <label>Handling Fee</label>
                             <frontend_type>text</frontend_type>
                             <validate>validate-number validate-zero-or-greater</validate>
-                            <sort_order>100</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -150,7 +187,7 @@
                         <specificerrmsg translate="label" module="postnl">
                             <label>Displayed Error Message</label>
                             <frontend_type>textarea</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -158,7 +195,7 @@
                         <sallowspecific translate="label" module="postnl">
                             <label>Ship to Applicable Countries</label>
                             <frontend_type>select</frontend_type>
-                            <sort_order>120</sort_order>
+                            <sort_order>150</sort_order>
                             <frontend_class>shipping-applicable-country</frontend_class>
                             <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
                             <show_in_default>1</show_in_default>
@@ -168,7 +205,7 @@
                         <specificcountry translate="label" module="postnl">
                             <label>Ship to Specific Countries</label>
                             <frontend_type>multiselect</frontend_type>
-                            <sort_order>130</sort_order>
+                            <sort_order>160</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -178,7 +215,7 @@
                         <showmethod translate="label" module="postnl">
                             <label>Show Method if Not Applicable</label>
                             <frontend_type>select</frontend_type>
-                            <sort_order>140</sort_order>
+                            <sort_order>170</sort_order>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -187,7 +224,7 @@
                         <sort_order translate="label" module="postnl">
                             <label>Sort Order</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>150</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
