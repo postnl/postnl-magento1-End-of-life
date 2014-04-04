@@ -52,9 +52,18 @@
     editForm = new varienForm('edit_form', '<?php echo $this->getValidationUrl() ?>');
 </script>
 <?php echo $this->getFormScripts() ?>
+<div id="print_label_spinner" class="waiting-notification" style="display:none;">
+    <div class="content">
+        <img src="<?php echo $this->getSkinUrl('images/ajax-loader-tr.gif') ?>" alt="spinner" />
+        <p><?php echo Mage::helper('postnl')->__('Your shipping label(s) are being prepared.'); ?></p>
+        <p><?php echo Mage::helper('postnl')->__('This may take a minute. The page will refresh once this is done.'); ?></p>
+    </div>
+</div>
 <script type="text/javascript">
     //<![CDATA[
     printLabel = function(url) {
+        $$('body')[0].addClassName('no-scroll').scrollTo();
+        $('print_label_spinner').show();
         var printWindow = window.open(url);
         Event.observe(printWindow, 'unload', function() {
             Event.stopObserving(printWindow);
