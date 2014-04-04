@@ -669,7 +669,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>dev</postnl>
+            <postnl>stable</postnl>
         </stability>
 
         <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to
