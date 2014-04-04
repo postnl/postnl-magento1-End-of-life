@@ -49,11 +49,11 @@ class TIG_PostNL_Model_Carrier_System_Config_Source_TablerateSource
         $options = array(
             array(
                 'value' => 'shipping_tablerate',
-                'label' => $helper->__("Same as Magento's Table Rates"),
+                'label' => $helper->__("Use Magento's Table Rates"),
             ),
             array(
                 'value' => 'postnl_tablerate',
-                'label' => $helper->__('Specific for PostNL'),
+                'label' => $helper->__('Use seperate table rates for PostNL'),
             ),
         );
 
