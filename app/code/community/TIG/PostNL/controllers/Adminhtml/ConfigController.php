@@ -53,12 +53,11 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
     /**
      * @var boolean
      */
-    protected $_isTestMode;
+    protected $_isTestMode = false;
 
     /**
      * Validate the extension's account settings.
      *
-
      * @return $this
      */
     public function validateAccountAction()
@@ -86,7 +85,9 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
 
         $data = $this->_getInheritedValues($data);
 
-        $this->_isTestMode = (bool) $data['isTestMode'];
+        if ($data['isTestMode'] === 'true') {
+            $this->_isTestMode = true;
+        }
 
         /**
          * If the password field has not been edited since the last time it was saved, it will contain 6 asteriscs for security

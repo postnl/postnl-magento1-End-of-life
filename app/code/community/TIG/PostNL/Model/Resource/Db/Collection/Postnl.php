@@ -39,7 +39,7 @@
 class TIG_PostNL_Model_Resource_Db_Collection_Postnl extends Mage_Core_Model_Resource_Db_Collection_Abstract
 {
     /**
-     * Fix for grid pager count believing there is only 1 item when $collection->getSelect()->groupBy() has been used
+     * Fix for grid pager count believing there is only 1 item when $collection->getSelect()->groupBy() has been used.
      *
      * @see Mage_Core_Model_Resource_Db_Collection_Abstract::getSelectCountSql()
      *
@@ -67,7 +67,7 @@ class TIG_PostNL_Model_Resource_Db_Collection_Postnl extends Mage_Core_Model_Res
     }
 
     /**
-     * Fix for getSize not re-counting the number of records in a collection after clear() had been called
+     * Fix for getSize not re-counting the number of records in a collection after clear() had been called.
      *
      * @return Varien_Data_Collection
      */
