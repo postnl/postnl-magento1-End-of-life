@@ -33,8 +33,11 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                       hasFieldsetParam()
+ * @method TIG_PostNL_Block_Adminhtml_System_Config_Form setFieldsetParam(string $value)
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block_System_Config_Form
 {
@@ -202,16 +205,16 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
     }
 
     /**
-     * Init fieldset fields. Copied from EE1.13 Mage_Adminhtml_Block_System_Config_Form::initFields to allow for cross-fieldset
-     * dependencies in CE 1.6. Only made a small change to core code for backwards compatibility.
+     * Init fieldset fields. Copied from EE1.13 Mage_Adminhtml_Block_System_Config_Form::initFields to allow for
+     * cross-fieldset dependencies in CE 1.6. Only made a small change to core code for backwards compatibility.
      *
      * @param Varien_Data_Form_Element_Fieldset $fieldset
-     * @param Varien_Simplexml_Element $group
-     * @param Varien_Simplexml_Element $section
-     * @param string $fieldPrefix
-     * @param string $labelPrefix
+     * @param Varien_Simplexml_Element          $group
+     * @param Varien_Simplexml_Element          $section
+     * @param string                            $fieldPrefix
+     * @param string                            $labelPrefix
      *
-     * @return Mage_Adminhtml_Block_System_Config_Form
+     * @return $this
      */
     public function initFields($fieldset, $group, $section, $fieldPrefix='', $labelPrefix='')
     {
@@ -266,17 +269,27 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                 $data = $this->_configDataObject->getConfigDataValue($path, $inherit, $this->_configData);
 
                 /**
-                 * Because Magento 1.6 and 1.11 retrieved config data in a different manner, we need to provide backwards
-                 * compatibility for those versions.
+                 * Because Magento 1.6 and 1.11 retrieved config data in a different manner, we need to provide
+                 * backwards compatibility for those versions.
                  */
+                $version = Mage::getVersion();
                 $isEnterprise = Mage::helper('postnl')->isEnterprise();
-                if (!$data
-                    && (
-                        ($isEnterprise
-                            && version_compare(Mage::getVersion(), self::MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY, '<') === true)
-                        || (version_compare(Mage::getVersion(), self::MINIMUM_VERSION_COMPATIBILITY, '<') === true)
-                    )
-                ) {
+
+                /**
+                 * Get the minimum version requirement for the current Magento edition.
+                 */
+                if($isEnterprise) {
+                    $minimumVersion = self::MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY;
+                } else {
+                    $minimumVersion = self::MINIMUM_VERSION_COMPATIBILITY;
+                }
+
+                /**
+                 * Check if the current version is below the minimum version requirement.
+                 */
+                $isBelowMinimumVersion = version_compare($version, $minimumVersion, '<');
+
+                if (!$data && $isBelowMinimumVersion === true) {
                     if (isset($this->_configData[$path])) {
                         $data = $this->_configData[$path];
                         $inherit = false;
@@ -446,6 +459,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                 }
             }
         }
+
         return $this;
     }
 }

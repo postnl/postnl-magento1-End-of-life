@@ -105,11 +105,48 @@
                                 <rate_type>flat</rate_type>
                             </depends>
                         </price>
+                        <rate_source translate="label" module="postnl">
+                            <label>Rate Source</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_carrier/system_config_source_tablerateSource</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <rate_type>table</rate_type>
+                            </depends>
+                        </rate_source>
+                        <export translate="label">
+                            <label>Export</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_tablerateExport</frontend_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <rate_type>table</rate_type>
+                                <rate_source>postnl_tablerate</rate_source>
+                            </depends>
+                        </export>
+                        <import translate="label">
+                            <label>Import</label>
+                            <frontend_type>import</frontend_type>
+                            <backend_model>postnl_carrier/system_config_backend_tablerate</backend_model>
+                            <sort_order>90</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <rate_type>table</rate_type>
+                                <rate_source>postnl_tablerate</rate_source>
+                            </depends>
+                        </import>
                         <condition_name translate="label" module="postnl">
                             <label>Condition</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_shipping_tablerate</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -121,7 +158,7 @@
                             <label>Include Virtual Products in Price Calculation</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -133,7 +170,7 @@
                             <label>Calculate Handling Fee</label>
                             <frontend_type>select</frontend_type>
                             <source_model>shipping/source_handlingType</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -142,7 +179,7 @@
                             <label>Handling Fee</label>
                             <frontend_type>text</frontend_type>
                             <validate>validate-number validate-zero-or-greater</validate>
-                            <sort_order>100</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -150,7 +187,7 @@
                         <specificerrmsg translate="label" module="postnl">
                             <label>Displayed Error Message</label>
                             <frontend_type>textarea</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -158,7 +195,7 @@
                         <sallowspecific translate="label" module="postnl">
                             <label>Ship to Applicable Countries</label>
                             <frontend_type>select</frontend_type>
-                            <sort_order>120</sort_order>
+                            <sort_order>150</sort_order>
                             <frontend_class>shipping-applicable-country</frontend_class>
                             <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
                             <show_in_default>1</show_in_default>
@@ -168,7 +205,7 @@
                         <specificcountry translate="label" module="postnl">
                             <label>Ship to Specific Countries</label>
                             <frontend_type>multiselect</frontend_type>
-                            <sort_order>130</sort_order>
+                            <sort_order>160</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -178,7 +215,7 @@
                         <showmethod translate="label" module="postnl">
                             <label>Show Method if Not Applicable</label>
                             <frontend_type>select</frontend_type>
-                            <sort_order>140</sort_order>
+                            <sort_order>170</sort_order>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -187,7 +224,7 @@
                         <sort_order translate="label" module="postnl">
                             <label>Sort Order</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>150</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -367,7 +404,7 @@
                             <validate>validate-alpha validate-length minimum-length-3 maximum-length-4 postnl-validate-empty</validate>
                         </customer_code>
                         <live_username translate="label tooltip" module="postnl">
-                            <label>Username</label>
+                            <label>Live Username</label>
                             <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
@@ -377,7 +414,7 @@
                             <validate>postnl-validate-empty</validate>
                         </live_username>
                         <live_password translate="label tooltip" module="postnl">
-                            <label>Password</label>
+                            <label>Live Password</label>
                             <tooltip>If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343</tooltip>
                             <frontend_type>obscure</frontend_type>
                             <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
@@ -396,10 +433,6 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
                             <depends>
-                                <allow_test_mode>
-                                    <fieldset>advanced</fieldset>
-                                    <value>1</value>
-                                </allow_test_mode>
                             </depends>
                         </test_username>
                         <test_password translate="label" module="postnl">
@@ -412,10 +445,6 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
                             <depends>
-                                <allow_test_mode>
-                                    <fieldset>advanced</fieldset>
-                                    <value>1</value>
-                                </allow_test_mode>
                             </depends>
                         </test_password>
                         <collection_location translate="label comment tooltip" module="postnl">
@@ -550,12 +579,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
-                            <depends>
-                                <allow_test_mode>
-                                    <fieldset>advanced</fieldset>
-                                    <value>1</value>
-                                </allow_test_mode>
-                            </depends>
                         </mode>
                         <label_size translate="label comment" module="postnl">
                             <label>Label size</label>
@@ -1312,17 +1335,67 @@
                             </depends>
                             <validate>validate-select</validate>
                         </alternative_default_option>
-                        <default_pakjegemak_product_option translate="label comment" module="postnl">
-                            <label>Default 'deliver at the Post Office' option</label>
-                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.</comment>
+                        <default_evening_product_option translate="label comment" module="postnl">
+                            <label>Default evening delivery shipping option</label>
+                            <comment>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions</source_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvondOptions</source_model>
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_timeframes>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_timeframes>
+                                <enable_evening_timeframes>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_evening_timeframes>
+                            </depends>
+                        </default_evening_product_option>
+                        <default_pakjegemak_product_option translate="label comment" module="postnl">
+                            <label>Default 'deliver at the Post Office' option</label>
+                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
                         </default_pakjegemak_product_option>
+                        <default_pge_product_option translate="label comment" module="postnl">
+                            <label>Default early post office pickup option</label>
+                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getPgeOptions</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_pakjegemak>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_pakjegemak>
+                                <enable_pakjegemak_express>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_pakjegemak_express>
+                            </depends>
+                        </default_pge_product_option>
                     </fields>
                 </cif_product_options>
                 <cif_globalpack_settings translate="label comment" module="postnl"> translate="label comment" module="postnl">
@@ -1378,10 +1451,26 @@
                                 </use_globalpack>
                             </depends>
                         </customs_certificate_number>
+                        <default_shipment_type translate="label comment" module="postnl">
+                            <label>Default shipment type</label>
+                            <comment>Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_globalpackShipmentType</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <use_globalpack>
+                                    <fieldset>cif</fieldset>
+                                    <value>1</value>
+                                </use_globalpack>
+                            </depends>
+                        </default_shipment_type>
                         <customs_attributes_header translate="label" module="postnl">
                             <label>The following fields are used to determine several product attributes which are required for international shipping.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1398,7 +1487,7 @@
                             <tooltip>The HS tariff value is a number used to identify the type of product that is shipped. In general this is only required for larger export volumes. If you disable this setting the value '000000' will be used. Please contact PostNL for more information.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1416,7 +1505,7 @@
                             <tooltip>We recommend you make the chosen attribute mandatory. However, should the attribute you selected be empty for a certain product, the label will note '000000' instead.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1434,7 +1523,7 @@
                             <comment>The product attribute used to determine product's customs value.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1451,7 +1540,7 @@
                             <comment>The product attribute used to determine the product's country of origin.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1468,7 +1557,7 @@
                             <comment>The product attribute used to supply the product's customs description.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1483,7 +1572,7 @@
                         <customs_sorting_header translate="label" module="postnl">
                             <label>The following fields determine which products are displayed on international shipping labels and how.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1500,7 +1589,7 @@
                             <tooltip>Only the first 5 products are displayed. All other products will NOT be shown on the shipping label or customs declaration.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_attributes</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1516,7 +1605,7 @@
                             <label>Product sorting direction</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_direction</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1801,10 +1890,6 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <active>1</active>
-                                <allow_test_mode>
-                                    <fieldset>advanced</fieldset>
-                                    <value>1</value>
-                                </allow_test_mode>
                                 <use_checkout>
                                     <fieldset>cif</fieldset>
                                     <value>1</value>
@@ -2926,25 +3011,13 @@
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
-                        <allow_test_mode translate="label comment tooltip" module ="postnl">
-                            <label>Allow test mode</label>
-                            <comment>If enabled new fields will appear allowing you to configure the extension for test mode.</comment>
-                            <tooltip>By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <validate>validate-select</validate>
-                        </allow_test_mode>
                         <debug_mode translate="label comment tooltip" module="postnl">
                             <label>Debug mode</label>
                             <comment>If enabled, debug logs will be created in the var/logs/TIG_PostNL/ directory.</comment>
                             <tooltip>Full logging will log various debugging messages as well as errors. N.B.: these log files may become very large in a short amount of time.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_debugMode</source_model>
-                            <sort_order>20</sort_order>
+                            <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2955,7 +3028,7 @@
                             <comment>By default a maximum of 200 labels can be printed at once. Enable this to remove this limitation. Beware: enabling this may lead to server instability.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2965,7 +3038,7 @@
                             <label>Maximum number of parcels per shipment</label>
                             <comment><![CDATA[Leave empty to allow an infinite amount of parcels per shipment.<br/>If this value is empty or exceeds 200, you need to set 'Allow infinite label printing' to yes in order to be able to print the shipment's labels.]]></comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2974,7 +3047,7 @@
                             <label>Maximum temporary file storage time</label>
                             <comment>In seconds. After this time, temporary files will be deleted. Only increase this if you use custom functionality to create a very large amount of labels at once.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2985,7 +3058,7 @@
                             <comment>In order to continuously improve the PostNL extension, the extension sends usage statistics to a secure PostNL server.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2996,7 +3069,7 @@
                             <comment>PostNL may periodically send important updates regarding new versions of the PostNL extension or important security updates in the same manner as Magento. Disable this setting to no longer ecieve these notifications.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3007,7 +3080,7 @@
                             <comment>If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -3016,7 +3089,7 @@
                         <cif_versions_header translate="label" module="postnl">
                             <label>The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the extension altogether.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3024,7 +3097,7 @@
                         <cif_versions_infobox translate="comment" module="postnl">
                             <comment>ONLY CHANGE THESE SETTINGS WITH DIRECT INSTRUCTION FROM POSTNL OR TOTAL INTERNET GROUP</comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_warningBox</frontend_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3032,7 +3105,7 @@
                         <cif_version_shippingstatus translate="label" module="postnl">
                             <label>ShippingStatus webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3040,7 +3113,7 @@
                         <cif_version_confirming translate="label" module="postnl">
                             <label>Confirming webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>120</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3048,7 +3121,7 @@
                         <cif_version_labelling translate="label" module="postnl">
                             <label>Labelling webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>130</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3056,7 +3129,7 @@
                         <cif_version_barcode translate="label" module="postnl">
                             <label>Barcode webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>140</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3064,7 +3137,7 @@
                         <cif_version_checkout translate="label" module="postnl">
                             <label>Checkout webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>150</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>

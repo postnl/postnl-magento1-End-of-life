@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
@@ -336,6 +336,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function saveConfigState($configState = array())
     {
+        /**
+         * @var Mage_Admin_Model_User $adminUser
+         */
         $adminUser = Mage::getSingleton('admin/session')->getUser();
         if (!$adminUser) {
             return false;
@@ -362,6 +365,87 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                   ->saveExtra($extra);
 
         return true;
+    }
+
+    /**
+     * Checks if the current admin user is allowed for the specified actions.
+     *
+     * @param array|string $actions
+     * @param boolean      $throwException
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @return bool
+     */
+    public function checkIsPostnlActionAllowed($actions = array(), $throwException = false)
+    {
+        if (!is_array($actions)) {
+            $actions = array($actions);
+        }
+
+        foreach ($actions as $action) {
+            if ($this->_isActionAllowed($action)) {
+                continue;
+            }
+
+            if ($throwException) {
+                throw new TIG_PostNL_Exception(
+                    $this->__('The current user is not allowed to perform this action.'),
+                    'POSTNL-0155'
+                );
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if a specified action is allowed for the current admin user.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function _isActionAllowed($action)
+    {
+        switch ($action) {
+            case 'create_shipment':
+                $aclPath = 'sales/order/actions/ship';
+                break;
+            case 'confirm':
+                $aclPath = 'postnl/shipment/actions/confirm';
+                break;
+            case 'print_label':
+                $aclPath = 'postnl/shipment/actions/print_label';
+                break;
+            case 'view_complete_status':
+                $aclPath = 'postnl/shipment/complete_status';
+                break;
+            case 'reset_confirmation':
+                $aclPath = 'postnl/shipment/actions/reset_confirmation';
+                break;
+            case 'delete_labels':
+                $aclPath = 'postnl/shipment/actions/delete_labels';
+                break;
+            case 'create_parcelware_export':
+                $aclPath = 'postnl/shipment/actions/create_parcelware_export';
+                break;
+            case 'send_track_and_trace':
+                $aclPath = 'postnl/shipment/actions/send_track_and_trace';
+                break;
+            default:
+                $aclPath = false;
+                break;
+        }
+
+        if (!$aclPath) {
+            return false;
+        }
+
+        $isAllowed = Mage::getSingleton('admin/session')->isAllowed($aclPath);
+        return $isAllowed;
     }
 
     /**
@@ -394,12 +478,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $testModeAllowed = $this->isTestModeAllowed();
-        if (!$testModeAllowed) {
-            Mage::register('postnl_test_mode', false);
-            return false;
-        }
-
         $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
 
         Mage::register('postnl_test_mode', $testMode);
@@ -409,20 +487,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Checks if test mode is currently allowed
      *
+     * @deprecated v1.1.4 Will now always return true.
+     *
      * @return boolean
      */
     public function isTestModeAllowed()
     {
-        if (Mage::registry('postnl_test_mode_allowed') !== null) {
-            return Mage::registry('postnl_test_mode_allowed');
-        }
-
-        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-
-        $testModeAllowed = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE_ALLOWED, $storeId);
-
-        Mage::register('postnl_test_mode_allowed', $testModeAllowed);
-        return $testModeAllowed;
+        return true;
     }
 
     /**

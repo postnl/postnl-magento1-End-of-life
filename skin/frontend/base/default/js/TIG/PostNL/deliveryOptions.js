@@ -1178,7 +1178,7 @@ PostnlDeliveryOptions.prototype = {
         }
 
         var selectedOption = this.getSelectedOption();
-        
+
         var extraCosts = {
             incl : this.getExtraCosts(true),
             excl : this.getExtraCosts(false)
@@ -1241,7 +1241,7 @@ PostnlDeliveryOptions.prototype = {
             if (selectedType == 'PGE') {
                 extraCosts = this.getOptions().expressFeeIncl;
             } else if (selectedType == 'Avond') {
-                extraCosts = this.getOptions().expressFeeIncl;
+                extraCosts = this.getOptions().eveningFeeIncl;
             }
 
             return parseFloat(extraCosts);
@@ -1250,7 +1250,7 @@ PostnlDeliveryOptions.prototype = {
         if (selectedType == 'PGE') {
             extraCosts = this.getOptions().expressFeeExcl;
         } else if (selectedType == 'Avond') {
-            extraCosts = this.getOptions().expressFeeExcl;
+            extraCosts = this.getOptions().eveningFeeExcl;
         }
 
         return parseFloat(extraCosts);
@@ -3707,7 +3707,7 @@ PostnlDeliveryOptions.Location = new Class.create({
             var extraCosts = this.getOptions().expressFeeText;
             var extraCostHtml = '';
 
-            if (extraCosts) {
+            if (this.getOptions().expressFeeIncl) {
                 extraCostHtml += ' + ' + extraCosts;
             }
 
@@ -4405,10 +4405,10 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     getCommentHtml : function() {
         var comment = '';
         if (this.type == 'Avond') {
-            var extraCosts = this.getDeliveryOptions().getOptions().eveningFeeText;
+            var extraCosts = this.getOptions().eveningFeeText;
             var extraCostHtml = '';
 
-            if (extraCosts) {
+            if (this.getOptions().eveningFeeIncl) {
                 extraCostHtml += ' + ' + extraCosts;
             }
 

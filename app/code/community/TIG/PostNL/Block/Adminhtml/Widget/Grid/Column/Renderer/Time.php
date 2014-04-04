@@ -47,7 +47,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
     /**
      * Retrieve datetime format
      *
-     * @return unknown
+     * @return string
      */
     protected function _getFormat()
     {
@@ -72,21 +72,25 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Time
      * Renders grid column
      *
      * @param   Varien_Object $row
+     *
      * @return  string
      */
     public function render(Varien_Object $row)
     {
-        if ($data = $this->_getValue($row)) {
-            $format = $this->_getFormat();
-            try {
-                $data = Mage::app()->getLocale()
-                    ->date($data, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
-            } catch (Exception $e) {
-                $data = Mage::app()->getLocale()
-                    ->date($data, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
-            }
-            return $data;
+        $data = $this->_getValue($row);
+        if (!$data) {
+            return $this->getColumn()->getDefault();
         }
-        return $this->getColumn()->getDefault();
+
+        $format = $this->_getFormat();
+        try {
+            $data = Mage::app()->getLocale()
+                ->date($data, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
+            return $this->getColumn()->getDefault();
+        }
+        return $data;
     }
 }

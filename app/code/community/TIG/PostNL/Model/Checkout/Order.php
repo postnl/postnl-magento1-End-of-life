@@ -65,6 +65,8 @@
  * @method TIG_PostNL_Model_Checkout_Order setEntityId(int $value)
  * @method TIG_PostNL_Model_Checkout_Order setOrder(Mage_Sales_Model_Order $value)
  * @method TIG_PostNL_Model_Checkout_Order setQuote(Mage_Sales_Model_Quote $value)
+ * @method int getIsPakketautomaat()
+ * @method TIG_PostNL_Model_Checkout_Order setIsPakketautomaat(int $value)
  */
 class TIG_PostNL_Model_Checkout_Order extends Mage_Core_Model_Abstract
 {

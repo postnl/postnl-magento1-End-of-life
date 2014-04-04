@@ -43,7 +43,7 @@ class TIG_PostNL_Model_Core_Observer_SaveShipment
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_Core_Observer
+     * @return $this
      *
      * @event controller_action_predispatch_adminhtml_sales_order_shipment_save
      *
@@ -59,7 +59,9 @@ class TIG_PostNL_Model_Core_Observer_SaveShipment
         }
 
         /**
-         * retrieve and register the chosen option, if any
+         * retrieve and register the chosen option, if any.
+         *
+         * @var Mage_Core_Controller_Varien_Front $controller
          */
         $controller = $observer->getControllerAction();
         $productOption = $controller->getRequest()->getParam('postnl');

@@ -48,10 +48,18 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
      */
     const XML_PATH_LIVE_PASSWORD = 'postnl/cif/live_password';
 
+    const XML_PATH_TEST_PASSWORD = 'postnl/cif/test_password';
+
+    /**
+     * @var boolean
+     */
+    protected $_isTestMode;
+
     /**
      * Validate the extension's account settings.
      *
-     * @return TIG_PostNL_Adminhtml_ConfigController
+
+     * @return $this
      */
     public function validateAccountAction()
     {
@@ -63,11 +71,12 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
         /**
          * Validate that all required fields are entered
          */
-        if (empty($data['customerNumber'])
-            || empty($data['customerCode'])
-            || empty($data['username'])
-            || empty($data['password'])
-            || empty($data['locationCode'])
+        if (!isset($data['customerNumber'])
+            || !isset($data['customerCode'])
+            || !isset($data['username'])
+            || !isset($data['password'])
+            || !isset($data['locationCode'])
+            || !isset($data['isTestMode'])
         ) {
             $this->getResponse()
                  ->setBody('missing_data');
@@ -76,6 +85,8 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
         }
 
         $data = $this->_getInheritedValues($data);
+
+        $this->_isTestMode = (bool) $data['isTestMode'];
 
         /**
          * If the password field has not been edited since the last time it was saved, it will contain 6 asteriscs for security
@@ -98,7 +109,7 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
          * @var TIG_PostNL_Model_Core_Cif $cif
          */
         $cif = Mage::getModel('postnl_core/cif')
-                   ->setTestMode(false);
+                   ->setTestMode($this->_isTestMode);
 
         /**
          * Attempt to generate a barcode to test the account settings. This will result in an exception if the settings are
@@ -140,6 +151,13 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
 
+        $baseXpath = self::XML_BASE_PATH;
+
+        $usernameXpath = $baseXpath . '/live_username';
+        if ($this->_isTestMode) {
+            $usernameXpath = $baseXpath . '/test_username';
+        }
+
         foreach ($data as $key => &$value) {
             if ($value != 'inherit') {
                 continue;
@@ -147,16 +165,16 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
 
             switch ($key) {
                 case 'customerNumber':
-                    $value = Mage::getStoreConfig(self::XML_BASE_PATH . '/customer_number', $storeId);
+                    $value = Mage::getStoreConfig($baseXpath . '/customer_number', $storeId);
                     break;
                 case 'customerCode':
-                    $value = Mage::getStoreConfig(self::XML_BASE_PATH . '/customer_code', $storeId);
+                    $value = Mage::getStoreConfig($baseXpath . '/customer_code', $storeId);
                     break;
                 case 'username':
-                    $value = Mage::getStoreConfig(self::XML_BASE_PATH . '/live_username', $storeId);
+                    $value = Mage::getStoreConfig($usernameXpath, $storeId);
                     break;
                 case 'locationCode':
-                    $value = Mage::getStoreConfig(self::XML_BASE_PATH . '/collection_location', $storeId);
+                    $value = Mage::getStoreConfig($baseXpath . '/collection_location', $storeId);
                     break;
                 //No default
                 //Note that the password field is not checked. That field has it's own check later on.
@@ -178,13 +196,18 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
 
+        $xpath = self::XML_PATH_LIVE_PASSWORD;
+        if ($this->_isTestMode) {
+            $xpath = self::XML_PATH_TEST_PASSWORD;
+        }
+
         try {
             $websiteCode = $this->getRequest()->getParam('website');
             if (!$inherit && !empty($websiteCode)) {
                 $website = Mage::getModel('core/website')->load($websiteCode, 'code');
-                $password = $website->getConfig(self::XML_PATH_LIVE_PASSWORD);
+                $password = $website->getConfig($xpath);
             } else {
-                $password = Mage::getStoreConfig(self::XML_PATH_LIVE_PASSWORD, $storeId);
+                $password = Mage::getStoreConfig($xpath, $storeId);
             }
 
             $password = Mage::helper('core')->decrypt($password);
@@ -193,5 +216,25 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
         }
 
         return trim($password);
+    }
+
+    /**
+     * Export shipping table rates in csv format
+     *
+     */
+    public function exportTableratesAction()
+    {
+        $fileName   = 'tablerates.csv';
+        /** @var $gridBlock Mage_Adminhtml_Block_Shipping_Carrier_Tablerate_Grid */
+        $gridBlock  = $this->getLayout()->createBlock('postnl_adminhtml/carrier_postnl_tablerate_grid');
+        $website    = Mage::app()->getWebsite($this->getRequest()->getParam('website'));
+        if ($this->getRequest()->getParam('conditionName')) {
+            $conditionName = $this->getRequest()->getParam('conditionName');
+        } else {
+            $conditionName = $website->getConfig('carriers/postnl/condition_name');
+        }
+        $gridBlock->setWebsiteId($website->getId())->setConditionName($conditionName);
+        $content    = $gridBlock->getCsvFile();
+        $this->_prepareDownloadResponse($fileName, $content);
     }
 }

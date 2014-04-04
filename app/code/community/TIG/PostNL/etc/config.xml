@@ -81,6 +81,7 @@
             </postnl_core>
             <postnl_carrier>
                 <class>TIG_PostNL_Model_Carrier</class>
+                <resourceModel>postnl_carrier_resource</resourceModel>
             </postnl_carrier>
             <postnl_adminhtml>
             	<class>TIG_PostNL_Model_Adminhtml</class>
@@ -123,6 +124,14 @@
                     </shipment_status_history>
                 </entities>
             </postnl_core_resource>
+            <postnl_carrier_resource>
+                <class>TIG_PostNL_Model_Carrier_Resource</class>
+                <entities>
+                    <tablerate>
+                        <table>tig_postnl_tablerate</table>
+                    </tablerate>
+                </entities>
+            </postnl_carrier_resource>
             <postnl_checkout_resource>
                 <class>TIG_PostNL_Model_Checkout_Resource</class>
                 <entities>
@@ -232,6 +241,16 @@
                     </postnl_adminhtml_shipmentview>
 			    </observers>
 			</adminhtml_block_html_before>
+            <postnl_shipment_confirm_after>
+                <observers>
+                    <!-- Updates a PostNL Checkout order -->
+                    <postnl_checkout_update_order>
+                        <type>model</type>
+                        <class>postnl_checkout/observer_shipment</class>
+                        <method>updateOrder</method>
+                    </postnl_checkout_update_order>
+                </observers>
+            </postnl_shipment_confirm_after>
 			<controller_action_predispatch_adminhtml_sales_order_shipment_save>
                 <observers>
                     <!-- Registers the product option the user selected on the sales_order_shipment_new page -->
@@ -242,16 +261,15 @@
                     </postnl_core_shipment_save>
                 </observers>
 			</controller_action_predispatch_adminhtml_sales_order_shipment_save>
-			<postnl_shipment_confirm_after>
-			    <observers>
-			        <!-- Updates a PostNL Checkout order -->
-			        <postnl_checkout_update_order>
-			            <type>model</type>
-			            <class>postnl_checkout/observer_shipment</class>
-			            <method>updateOrder</method>
-			        </postnl_checkout_update_order>
-			    </observers>
-			</postnl_shipment_confirm_after>
+            <controller_action_postdispatch_postnl>
+                <observers>
+                    <!-- Admin logging -->
+                    <postnl_enterprise_logging>
+                        <class>postnl/admin_logging_observer</class>
+                        <method>controllerPostdispatch</method>
+                    </postnl_enterprise_logging>
+                </observers>
+            </controller_action_postdispatch_postnl>
 		</events>
 		<layout>
             <updates>
@@ -419,6 +437,7 @@
                 <rate_type>flat</rate_type> <!-- Flat rate -->
                 <type>I</type> <!-- Price is calculated per item -->
                 <price>5.00</price> <!-- 5.00 (in base currency) -->
+                <rate_source>shipping_tablerate</rate_source> <!-- Use Magento's tablerates. -->
                 <condition_name>package_weight</condition_name> <!-- Package weight -->
                 <include_virtual_price>1</include_virtual_price> <!-- Include virtual price -->
                 <handling_type>F</handling_type> <!-- Fixed -->
@@ -431,29 +450,29 @@
         </carriers>
         <postnl>
         	<general>
-        		<active>0</active> <!-- inactive -->
+        		<active>0</active> <!-- Inactive -->
         		<is_activated>0</is_activated> <!-- Not activated -->
         		<email/>
                 <unique_key/>
         		<private_key/>
         	</general>
         	<cif>
-                <customer_number/>
-        		<customer_code/>
+                <customer_number>11223344</customer_number> <!-- Demo customer number -->
+        		<customer_code>TOTA</customer_code> <!-- Demo customer doe -->
                 <live_username/>
                 <live_password/>
-                <test_username/>
-                <test_password/>
-        		<collection_location/>
+                <test_username>Dem0#Magnt01</test_username> <!-- Demo username -->
+                <test_password/> <!-- The demo password will be generated on install -->
+        		<collection_location>103861</collection_location> <!-- Demo collection location -->
         		<use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
-        		<global_barcode_type/>
-        		<global_barcode_range/>
+        		<global_barcode_type>CD</global_barcode_type> <!-- Demo barcode type -->
+        		<global_barcode_range>1660</global_barcode_range> <!-- Demo barcode range -->
         		<use_checkout>0</use_checkout> <!-- Do not use PostNL Checkout -->
-                <webshop_id/>
-                <public_webshop_id/>
+                <webshop_id/> <!-- The demo webshop ID will be generated on install -->
+                <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
         	</cif>
         	<cif_labels_and_confirming>
-                <mode>0</mode> <!-- Live mode -->
+                <mode>1</mode> <!-- Test mode -->
                 <label_size>A4</label_size> <!-- A4 size labels -->
                 <weight_per_parcel>20000</weight_per_parcel> <!-- 20 kg -->
                 <weight_unit>gram</weight_unit> <!-- gram -->
@@ -517,19 +536,23 @@
                 <country>NL</country> <!-- All return addresses must be located in the Netherlands -->
         	</cif_return_address>
         	<cif_product_options>
-        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3534,3544,3533,3543,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945</supported_product_options> <!-- all possible options -->
+        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3534,3544,3533,3543,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3533</supported_product_options> <!-- all possible options except for EPS BE only -->
                 <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->
         		<default_product_option>3085</default_product_option> <!-- standard shipment -->
         		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
         		<alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
         		<alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
-                <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- PakjeGemak + signature on delivery -->
+                <default_evening_product_option>3385</default_evening_product_option> <!-- Deliver to stated address only -->
+                <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- Post Office + signature on delivery -->
+                <default_pge_product_option>3543</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
         		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
+                <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
         	</cif_product_options>
         	<cif_globalpack_settings>
         	    <customs_license_number/>
         	    <customs_certificate_number/>
+                <default_shipment_type>Commercial Goods</default_shipment_type>
         		<use_hs_tariff>0</use_hs_tariff> <!-- Do not use a specific HS tariff -->
         		<hs_tariff_attribute/>
         		<customs_value_attribute>price</customs_value_attribute> <!-- price attribute -->
@@ -557,8 +580,7 @@
         	</delivery_options>
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
-        	    <mode>0</mode> <!-- Live mode -->
-                <show_exclusively_for_mijnpakket_users>0</show_exclusively_for_mijnpakket_users> <!-- Do not show PostNL Checkout exclusively to Mijnpakket users -->
+        	    <mode>1</mode> <!-- Test mode -->
         	    <instruction_cms_page/>
         	    <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the PostNL Checkout button for orders under 2 kg -->
         	    <show_checkout_for_backorders>0</show_checkout_for_backorders> <!-- Do not show the PostNL Checkout button if the order contains out-of-stock products -->
@@ -601,7 +623,6 @@
                 <afterpay_method/>
         	</checkout_payment_methods>
         	<advanced>
-                <allow_test_mode>0</allow_test_mode> <!-- Do not allow test mode -->
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
@@ -654,7 +675,7 @@
         <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to
             the associated knowledge base article and a 'type' (whether it's an error, warning or notice) -->
         <errors>
-            <!-- These are errors that are generated by this extension -->
+            <!-- These are errors, warnings and notices that are generated by this extension -->
             <POSTNL-0001>
                 <message>You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.</message>
                 <url>http://kb.totalinternetgroup.nl/topic/31114923</url>
@@ -1140,8 +1161,13 @@
                 <url>http://kb.totalinternetgroup.nl/topic/33064418</url>
                 <type>error</type>
             </POSTNL-0097>
+            <POSTNL-0098>
+                <message>The PostNL Extension is currently configured in test mode.</message>
+                <url>http://kb.totalinternetgroup.nl/topic/46536473</url>
+                <type>warning</type>
+            </POSTNL-0098>
 
-            <!-- Note: errors 0098 and 0099 are missing. They will be added later. They have no special significance, we just forgot them :) -->
+            <!-- Note: error 0099 is missing missing. It may be added later. -->
 
             <POSTNL-0100>
                 <!-- This error is generated by CIF, however we have designated it an error code -->
@@ -1414,6 +1440,16 @@
                 <url/>
                 <type>error</type>
             </POSTNL-0154>
+            <POSTNL-0155>
+                <message>The current user is not allowed to perform this action.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0155>
+            <POSTNL-0156>
+                <message>The PostNL extension v%s has been successfully installed.</message>
+                <url/>
+                <type>notice</type>
+            </POSTNL-0156>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>

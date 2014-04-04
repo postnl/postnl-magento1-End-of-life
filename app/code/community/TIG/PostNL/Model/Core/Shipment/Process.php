@@ -123,6 +123,8 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         $lockFile = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
         @unlink($lockFile);
 
+        $this->_lockFile = null;
+
         return $this;
     }
 
@@ -204,5 +206,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         if (is_file($lockFile)) {
             @unlink($lockFile);
         }
+
+        return;
     }
 }

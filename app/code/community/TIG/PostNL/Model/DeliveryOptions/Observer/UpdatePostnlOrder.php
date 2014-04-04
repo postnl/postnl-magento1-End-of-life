@@ -64,14 +64,15 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         /**
          * If no such PostNL order exists or if the PostNL order has already been updated we don't need to do anything.
          */
-        if (!$postnlOrder->getId() || $postnlOrder->getOrderId()) {
+        if (!$postnlOrder->getId() || $postnlOrder->getOrderId() || !$postnlOrder->getIsActive()) {
             return $this;
         }
 
         $postnlOrder->setOrderId($order->getId())
+                    ->setIsActive(false)
                     ->save();
 
-        if ($postnlOrder->getIsPakjeGemak()) {
+        if ($postnlOrder->getIsPakjeGemak() || $postnlOrder->getIsPakketautomaat()) {
             $this->copyPakjeGemakAddressToOrder($order);
         }
 

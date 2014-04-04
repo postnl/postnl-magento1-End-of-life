@@ -35,6 +35,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method TIG_PostNL_Model_Parcelware_Export setIsGlobal(boolean $value)
+ * @method boolean                            getIsGlobal()
  */
 class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
 {
@@ -72,6 +75,9 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $transactionSave = Mage::getModel('core/resource_transaction');
 
         $content = array();
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
+         */
         foreach ($postnlShipments as $postnlShipment) {
             /**
              * Set each shipment's is_parcelware_exported flag to true
@@ -145,9 +151,9 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         /**
          * Write the CSV headers and then each row of data.
          */
-        $io->streamWriteCsv($csvHeaders);
+        $io->streamWriteCsv($csvHeaders, ',', '"');
         foreach ($content as $item) {
-            $io->streamWriteCsv($item);
+            $io->streamWriteCsv($item, ',', '"');
         }
 
         /**
@@ -186,12 +192,15 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $this->setStoreId($shipment->getStoreId());
 
         /**
-         * Get the address and reference data for this shipment. These are simple associative arrays
+         * Get the data for this shipment. The data consists of several associative arrays.
          */
         $addressData    = $this->_getAddressData($shipment);
+        $addressData['SMSnr'] = $this->_getMobilePhoneNumber($postnlShipment);
+
         $pakjeGemakData = $this->_getPakjeGemakAddressData($postnlShipment, $shipment);
         $referenceData  = $this->_getReferenceData();
         $extraCover     = array($postnlShipment->getExtraCoverAmount());
+        $productOptions = $this->_getProductOptions($postnlShipment);
 
         /**
          * Get the current GMT timestamp as a point of reference
@@ -215,7 +224,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
          */
         if ($parcelCount) {
             $shipmentData = array(
-                'ProductCodeDelivery' => $postnlShipment->getProductCode(),
+                'ProductCodeDelivery' => $this->_getParcelwareProductCode($postnlShipment),
                 'Barcode'             => $postnlShipment->getBarcode($count),
                 'MainBarcode'         => $postnlShipment->getMainBarcode(),
                 'GroupSequence'       => $count + 1,
@@ -225,7 +234,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             );
         } else {
             $shipmentData = array(
-                'ProductCodeDelivery' => $postnlShipment->getProductCode(),
+                'ProductCodeDelivery' => $this->_getParcelwareProductCode($postnlShipment),
                 'Barcode'             => $postnlShipment->getMainBarcode(),
                 'MainBarcode'         => $postnlShipment->getMainBarcode(),
                 'GroupSequence'       => 1,
@@ -255,6 +264,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             $shipmentData,
             $referenceData,
             $extraCover,
+            $productOptions,
             $globalPackData
         );
 
@@ -274,15 +284,16 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $streetData = $this->_getStreetData($address, false);
 
         $data = array(
-            'CompanyName' => $address->getCompany(),
-            'FirstName'   => $address->getFirstname(),
-            'Name'        => $address->getLastname(),
-            'Street'      => $streetData['streetname'],
-            'HouseNr'     => $streetData['housenumber'],
-            'HouseNrExt'  => $streetData['housenumberExtension'],
-            'Zipcode'     => $address->getPostcode(),
-            'City'        => $address->getCity(),
-            'Countrycode' => $address->getCountryId(),
+            'CompanyName'   => $address->getCompany(),
+            'FirstName'     => $address->getFirstname(),
+            'Name'          => $address->getLastname(),
+            'Street'        => $streetData['streetname'],
+            'HouseNr'       => $streetData['housenumber'],
+            'HouseNrExt'    => $streetData['housenumberExtension'],
+            'Zipcode'       => $address->getPostcode(),
+            'City'          => $address->getCity(),
+            'Countrycode'   => $address->getCountryId(),
+            'CustomerEmail' => $address->getEmail(),
         );
 
         return $data;
@@ -317,8 +328,14 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         }
 
         $streetData = $this->_getStreetData($pakjeGemakAddress, false);
+
+        $companyName = $pakjeGemakAddress->getCompany();
+        if (!$companyName) { //PostNL Checkout stores the company name in the lastname field
+            $pakjeGemakAddress->getname();
+        }
+
         $data = array(
-            'PG_CompanyName' => $pakjeGemakAddress->getName(), //PostNL Checkout stores the company name in the lastname field
+            'PG_CompanyName' => $companyName,
             'PG_Street'      => $streetData['streetname'],
             'PG_HouseNr'     => $streetData['housenumber'],
             'PG_HouseNrExt'  => $streetData['housenumberExtension'],
@@ -347,6 +364,57 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
+     * Gets product options based on a specified shipment.
+     *
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     *
+     * @return array
+     */
+    protected function _getProductOptions(TIG_PostnL_Model_Core_Shipment $postnlShipment)
+    {
+        $postnlOrder = $postnlShipment->getPostnlOrder();
+        if (!$postnlOrder) {
+            return array('', '');
+        }
+
+        $type = $postnlOrder->getType();
+        $availableProductOptions = $this->getAvailableProductOptions();
+        if (!array_key_exists($type, $availableProductOptions)) {
+            return array('', '');
+        }
+
+        $option = $availableProductOptions[$type];
+
+        $productOptions = array(
+            'Characteristic' => $option['Characteristic'],
+            'Option'         => $option['Option'],
+
+        );
+
+        return $productOptions;
+    }
+
+    /**
+     * Gets the product code for the specified shipment. If the product code is an EPS combilabel code, return it's
+     * regular counterpart instead.
+     *
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     *
+     * @return int|mixed
+     */
+    protected function _getParcelwareProductCode(TIG_PostnL_Model_Core_Shipment $postnlShipment)
+    {
+        $productCode = $postnlShipment->getProductCode();
+
+        $combiLabelProductCodes = Mage::helper('postnl/cif')->getCombiLabelProductCodes();
+        if (in_array($productCode, $combiLabelProductCodes)) {
+            $productCode = array_search($productCode, $combiLabelProductCodes);
+        }
+
+        return $productCode;
+    }
+
+    /**
      * Get GlobalPack data for a shipment. This is based on TIG_PostNL_Model_Core_Cif::getCustoms()
      *
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
@@ -358,10 +426,10 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     protected function _getGlobalPackData($postnlShipment)
     {
         $shipment = $postnlShipment->getShipment();
-        $shipmentType = $postnlShipment->getShipmentType();
+        $shipmentType = $this->_getParcelwareShipmentType($postnlShipment);
 
         $globalPackData = array(
-            'ShipmentType'           => $shipmentType, // Gift / Documents / Commercial Goods / Commercial Sample / Returned Goods
+            'ShipmentType'           => $shipmentType,
             'HandleAsNonDeliverable' => 0,
             'Invoice'                => 0,
             'Certificate'            => 0,
@@ -370,7 +438,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         );
 
         /**
-         * Check if the shipment should be treated as abandoned when it can't be delivered or if it should be returned to the sender
+         * Check if the shipment should be treated as abandoned when it can't be delivered or if it should be returned
+         * to the sender.
          */
         if ($postnlShipment->getTreatAsAbandoned()) {
             $globalPackData['HandleAsNonDeliverable'] = 1;
@@ -409,9 +478,11 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
          * Add information about the contents of the shipment
          */
         $itemCount = 0;
-        $content = array();
         $items = $this->_sortCustomsItems($shipment->getAllItems());
 
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Item $item
+         */
         foreach ($items as $item) {
             /**
              * A maximum of 5 rows are allowed
@@ -451,6 +522,25 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
+     * gets the numeric shipment type for this shipment.
+     *
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     *
+     * @return string|int
+     */
+    protected function _getParcelwareShipmentType(TIG_PostnL_Model_Core_Shipment $postnlShipment)
+    {
+        $shipmentType = $postnlShipment->getGlobalpackShipmentType();
+        $numericShipmentTypes = Mage::helper('postnl/cif')->getNumericShipmentTypes();
+
+        if (array_key_exists($shipmentType, $numericShipmentTypes)) {
+            $shipmentType = $numericShipmentTypes[$shipmentType];
+        }
+
+        return $shipmentType;
+    }
+
+    /**
      * Gets CSV headers for the parcelware export file.
      *
      * @return array
@@ -467,6 +557,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             'Zipcode',
             'City',
             'Countrycode',
+            'CustomerEmail',
+            'SMSNr',
             'PG_CompanyName',
             'PG_Street',
             'PG_HouseNr',
@@ -485,6 +577,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             'ContractName',
             'SenderReference',
             'InsuredAmount',
+            'Characteristic',
+            'Option',
         );
 
         if (!$this->getIsGlobal()) {
@@ -538,13 +632,13 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     /**
      * Get a shipment item's HS tariff.
      *
-     * @param Mage_Sales_Model_Order_Shipment_item
+     * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
      *
      * @return string
      *
      * @see TIG_PostNL_Model_Core_Cif::_getHSTariff()
      */
-    protected function _getHSTariff($shipmentItem)
+    protected function _getHSTariff(Mage_Sales_Model_Order_Shipment_Item $shipmentItem)
     {
         $hsTariff = parent::_getHSTariff($shipmentItem);
         if ($hsTariff == '000000') {

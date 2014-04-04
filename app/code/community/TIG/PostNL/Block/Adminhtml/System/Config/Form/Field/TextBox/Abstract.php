@@ -35,6 +35,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method Varien_Data_Form_Element_Abstract                                    getElement()
+ * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract setElement(Varien_Data_Form_Element_Abstract $value)
  */
 abstract class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
     extends Mage_Adminhtml_Block_Abstract
