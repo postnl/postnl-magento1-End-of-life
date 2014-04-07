@@ -36,40 +36,16 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Mijnpakket_Cif extends TIG_PostNL_Model_Checkout_Cif
-{
-    /**
-     * Get mijnpakket profile access using a token.
-     *
-     * @param string $token
-     *
-     * @throws TIG_PostNL_Exception
-     *
-     * @return StdClass
-     */
-    public function getProfileAccess($token)
-    {
-        $webshop = $this->_getWebshop();
+?>
+<div id="postnl_mijnpakket_login"></div>
+<script type="text/javascript">
+    //<![CDATA[
+    document.observe('dom:loaded', function() {
+        var profileAccessUrl = '<?php echo $this->getUrl('postnl/mijnpakket/getProfileAccess', array('_secure' => true)); ?>';
 
-        $soapParams = array(
-            'Token'   => $token,
-            'Webshop' => $webshop,
-        );
-
-        $response = $this->call('checkout', 'GetProfileAccessToken', $soapParams);
-
-        if (!is_object($response)
-            || !isset($response->Profiel)
-            || !isset($response->Token)
-        ) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__(
-                    'Invalid GetProfileAccessToken response: %s', "\n" . var_export($response, true)
-                ),
-                'POSTNL-0158'
-            );
-        }
-
-        return $response;
-    }
-}
+        var login = new MijnpakketLogin('3aaa777ab1204a67bd51ddb4f7326be9', profileAccessUrl);
+        login.setCheckout(checkout).setBilling(billing);
+        login.init('postnl_mijnpakket_login', true);
+    });
+    //]]>
+</script>

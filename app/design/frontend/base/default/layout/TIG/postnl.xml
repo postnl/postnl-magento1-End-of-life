@@ -145,8 +145,8 @@
                 <file>js/TIG/PostNL/postcodecheck.js</file>
             </action>
         </reference>
-        <reference name="login">
-            <block type="core/template" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/onepage/login.phtml"/>
+        <reference name="checkout.onepage.login">
+            <block type="core/template" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/login_button.phtml"/>
         </reference>
         <reference name="checkout.onepage.billing">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>

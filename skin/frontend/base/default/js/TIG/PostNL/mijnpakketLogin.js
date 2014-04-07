@@ -45,15 +45,43 @@ MijnpakketLogin.prototype = {
     elementId        : null,
     debug            : null,
 
+    checkout         : null,
+    billing          : null,
+
     /**
      * @constructor
      *
-     * @param publicId
+     * @param {string} publicId
+     * @param {string} profileAccessUrl
      */
     initialize : function(publicId, profileAccessUrl) {
         this.postnlLogin      = PostNL.Login;
         this.publicId         = publicId;
         this.profileAccessUrl = profileAccessUrl;
+    },
+
+    getCheckout : function()
+    {
+        return this.checkout;
+    },
+
+    setCheckout : function(checkout)
+    {
+        this.checkout = checkout;
+
+        return this;
+    },
+
+    getBilling : function()
+    {
+        return this.billing;
+    },
+
+    setBilling : function(billing)
+    {
+        this.billing = billing;
+
+        return this;
     },
 
     /**
@@ -102,6 +130,12 @@ MijnpakketLogin.prototype = {
      * @returns {MijnpakketLogin}
      */
     getProfileData : function(token) {
+        if (this.getCheckout().loadWaiting != false) {
+            return this;
+        }
+
+        this.getCheckout().setLoadWaiting('billing');
+
         var params = {
             isAjax : true,
             token  : token
@@ -113,21 +147,73 @@ MijnpakketLogin.prototype = {
             onCreate   : function() {
                 document.fire('postnl:getProfileDataRequestStart');
             },
-            onSuccess  : function(response) {
-                var responseText = response.responseText;
-                if (responseText != 'OK') {
-                    return;
-                }
-
-                document.fire('postnl:costsSaved');
-            },
-            onComplete : function(response) {
+            onSuccess: this.getBilling().onSave,
+            onFailure: this.getCheckout().ajaxFailure.bind(this.getCheckout()),
+            onComplete : function() {
                 if (this.debug) {
                     console.log(response.responseText);
                 }
-            }
+
+                this.getBilling().onComplete();
+            }.bind(this)
         });
 
         return this;
+    },
+
+    /**
+     * Save billing data.
+     *
+     * @param {[]} billingData
+     *
+     * @returns {MijnpakketLogin}
+     */
+    saveBillingData : function(billingData)
+    {
+        var formData = this.convertToAjaxParams(billingData);
+
+        var request = new Ajax.PostnlRequest(
+            this.getBilling().saveUrl,
+            {
+                method: 'post',
+                parameters: formData,
+                onComplete: this.getBilling().onComplete,
+                onSuccess: this.getBilling().onSave,
+                onFailure: this.getCheckout().ajaxFailure.bind(this.getCheckout())
+            }
+        );
+
+        return this;
+    },
+
+    /**
+     * Converts an object to one that is valid as an AJAX parameters object.
+     *
+     * @param {{}} data
+     *
+     * @returns {{}}
+     */
+    convertToAjaxParams : function(data)
+    {
+        var formData = {};
+        for(var index in data) {
+            if (!data.hasOwnProperty(index)) {
+                continue;
+            }
+
+            var value = data[index];
+            if (value instanceof Array) {
+                formData['billing[' + index + '][]'] = [];
+                for (var n = 0; n < value.length; n++) {
+                    formData['billing[' + index + '][]'].push(value[n]);
+                }
+
+                continue;
+            }
+
+            formData['billing[' + index + ']'] = data[index];
+        }
+
+        return formData;
     }
 };

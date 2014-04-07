@@ -36,40 +36,42 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Mijnpakket_Cif extends TIG_PostNL_Model_Checkout_Cif
+class TIG_PostNL_Model_Mijnpakket_Service extends Varien_Object
 {
     /**
-     * Get mijnpakket profile access using a token.
+     * Parse billing data and return an array such as Magento would expect from Onepage Checkout.
      *
-     * @param string $token
+     * @param StdClass $profile
      *
-     * @throws TIG_PostNL_Exception
-     *
-     * @return StdClass
+     * @return array
      */
-    public function getProfileAccess($token)
+    public function parseBillingData($profile)
     {
-        $webshop = $this->_getWebshop();
-
-        $soapParams = array(
-            'Token'   => $token,
-            'Webshop' => $webshop,
+        $billingData = array(
+            'address_id'           => '',
+            'firstname'            => $profile->Voornaam,
+            'middlename'           => $profile->Tussenvoegsel,
+            'lastname'             => $profile->Achternaam,
+            'company'              => $profile->Bedrijf,
+            'email'                => $profile->Email,
+            'country_id'           => $profile->Land,
+            'postcode'             => $profile->Postcode,
+            'city'                 => $profile->Plaats,
+            'street'               => array(
+                0 => $profile->Straat,
+                1 => $profile->Huisnummer,
+                2 => $profile->HuisnummerExt,
+            ),
+            'region_id'            => '',
+            'region'               => $profile->Regio,
+            'telephone'            => $profile->Mobiel,
+            'fax'                  => '',
+            'customer_password'    => '',
+            'confirm_passowrd'     => '',
+            'save_in_address_book' => 0,
+            'use_for_shipping'     => 1,
         );
 
-        $response = $this->call('checkout', 'GetProfileAccessToken', $soapParams);
-
-        if (!is_object($response)
-            || !isset($response->Profiel)
-            || !isset($response->Token)
-        ) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__(
-                    'Invalid GetProfileAccessToken response: %s', "\n" . var_export($response, true)
-                ),
-                'POSTNL-0158'
-            );
-        }
-
-        return $response;
+        return $billingData;
     }
 }

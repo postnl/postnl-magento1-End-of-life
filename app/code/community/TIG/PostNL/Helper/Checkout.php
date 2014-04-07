@@ -446,6 +446,10 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        if (!parent::isActive()) {
+            return false;
+        }
+
         $useCheckout = Mage::getStoreConfigFlag(self::XML_PATH_USE_CHECKOUT, $storeId);
 
         if (!$useCheckout) {
