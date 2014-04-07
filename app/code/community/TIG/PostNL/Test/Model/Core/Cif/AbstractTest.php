@@ -53,7 +53,7 @@ class TIG_PostNL_Test_Model_Core_Cif_AbstractTest extends TIG_PostNL_Test_Framew
         Mage::unregister('postnl_test_mode_allowed');
         Mage::register('postnl_test_mode_allowed', true);
 
-        Mage::app()->getStore()->setConfig("postnl/cif_labels_and_confirming/mode", (int) $return);
+        Mage::app()->getStore()->setConfig('postnl/cif/mode', (int) $return);
 
         $cif = $this->_getInstance();
 

@@ -463,6 +463,7 @@
         		<private_key/>
         	</general>
         	<cif>
+                <mode>1</mode> <!-- Test mode -->
                 <customer_number>11223344</customer_number> <!-- Demo customer number -->
         		<customer_code>TOTA</customer_code> <!-- Demo customer doe -->
                 <live_username/>
@@ -478,7 +479,6 @@
                 <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
         	</cif>
         	<cif_labels_and_confirming>
-                <mode>1</mode> <!-- Test mode -->
                 <label_size>A4</label_size> <!-- A4 size labels -->
                 <weight_per_parcel>20000</weight_per_parcel> <!-- 20 kg -->
                 <weight_unit>gram</weight_unit> <!-- gram -->

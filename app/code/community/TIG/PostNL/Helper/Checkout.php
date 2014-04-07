@@ -53,7 +53,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     /**
      * XML path to test / live mode setting
      */
-    const XML_PATH_TEST_MODE = 'postnl/checkout/mode';
+    const XML_PATH_TEST_MODE = 'postnl/cif/mode';
 
     /**
      * XML path for config options used to determine whether or not PostNL Checkout is available

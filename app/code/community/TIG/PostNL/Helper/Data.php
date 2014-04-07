@@ -71,7 +71,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * XML path to test/live mode config option
      */
-    const XML_PATH_TEST_MODE = 'postnl/cif_labels_and_confirming/mode';
+    const XML_PATH_TEST_MODE = 'postnl/cif/mode';
 
     /**
      * XML path to the test mode allowed config option
