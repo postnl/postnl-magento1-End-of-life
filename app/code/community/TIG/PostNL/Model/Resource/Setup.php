@@ -541,4 +541,95 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
 
         return $this;
     }
+
+    /**
+     * Moves a config value from one place to another, by copying it's value. If the $removeOldValue parameter is true,
+     * we also remove the old value.
+     *
+     * @param string  $fromXpath
+     * @param string  $toXpath
+     * @param boolean $removeOldValue
+     *
+     * @return $this
+     */
+    public function moveConfigSetting($fromXpath, $toXpath, $removeOldValue = true)
+    {
+        /**
+         * First loop through all stores.
+         *
+         * @var Mage_Core_Model_Store $store
+         */
+        $stores = Mage::app()->getStores();
+        foreach ($stores as $store) {
+            $scope   = 'website';
+            $scopeId = $store->getId();
+
+            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
+        }
+
+        /**
+         * Now loop through all websites.
+         *
+         * @var Mage_Core_Model_Website $website
+         */
+        $websites = Mage::app()->getWebsites();
+        foreach ($websites as $website) {
+            $scope   = 'website';
+            $scopeId = $website->getId();
+
+            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
+        }
+
+        /**
+         * Finally, try to move the config setting for the default scope.
+         */
+        $this->moveConfigSettingForScope($fromXpath, $toXpath, 'default', 0, $removeOldValue);
+
+        return $this;
+    }
+
+    /**
+     * Move a config setting for a specified scope.
+     *
+     * @param string  $fromXpath
+     * @param string  $toXpath
+     * @param string  $scope
+     * @param int     $scopeId
+     * @param boolean $removeOldValue
+     *
+     * @return $this
+     */
+    protected function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
+                                                 $removeOldValue = true)
+    {
+        $config = Mage::getConfig();
+
+        $node = $config->getNode($fromXpath, $scope, $scopeId);
+
+        /**
+         * If the node is not set for the default scope, there is nothing left to do.
+         */
+        if ($node === false) {
+            return $this;
+        }
+
+        /**
+         * Get the string representation of the value.
+         */
+        $currentValue = $node->__toString();
+
+        /**
+         * Save the value to the new xpath for the scope from which we got the old value.
+         */
+        $config->saveConfig($toXpath, $currentValue, $scope, $scopeId);
+
+        /**
+         * Optionally remove the value from the old xpath.
+         */
+        if ($removeOldValue) {
+            $config->deleteConfig($fromXpath, $scope, $scopeId);
+        }
+
+        return $this;
+    }
 }

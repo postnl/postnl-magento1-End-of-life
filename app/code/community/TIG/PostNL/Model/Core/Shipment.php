@@ -1923,13 +1923,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Confirms the shipment using CIF
+     * Confirms the shipment using CIF.
      *
      * @param bool|int|null $barcodeNumber
      *
      * @throws TIG_PostNL_Exception
-     * @return TIG_PostNL_Model_Core_Shipment
      *
+     * @return TIG_PostNL_Model_Core_Shipment
      */
     protected function _confirm($barcodeNumber = false)
     {
