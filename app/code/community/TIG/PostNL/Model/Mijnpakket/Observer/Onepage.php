@@ -35,41 +35,71 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                      hasBlockClass()
+ * @method TIG_PostNL_Model_Mijnpakket_Observer_Onepage setBlockClass(string $value)
  */
-class TIG_PostNL_Model_Mijnpakket_Cif extends TIG_PostNL_Model_Checkout_Cif
+class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
 {
     /**
-     * Get mijnpakket profile access using a token.
-     *
-     * @param string $token
-     *
-     * @throws TIG_PostNL_Exception
-     *
-     * @return StdClass
+     * The block class that we want to edit.
      */
-    public function getProfileAccess($token)
+    const BLOCK_NAME = 'checkout/onepage_login';
+
+    /**
+     * The new login template.
+     */
+    const LOGIN_TEMPLATE = 'TIG/PostNL/mijnpakket/onepage/login.phtml';
+
+    /**
+     * Gets the classname for the block that we want to alter.
+     *
+     * @return string
+     */
+    public function getBlockClass()
     {
-        $webshop = $this->_getWebshop();
-
-        $soapParams = array(
-            'Token'   => $token,
-            'Webshop' => $webshop,
-        );
-
-        $response = $this->call('checkout', 'GetProfileAccessToken', $soapParams);
-
-        if (!is_object($response)
-            || !isset($response->Profiel)
-            || !isset($response->Token)
-        ) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__(
-                    'Invalid GetProfileAccessToken response: %s', "\n" . var_export($response, true)
-                ),
-                'POSTNL-0158'
-            );
+        if ($this->hasBlockClass()) {
+            return $this->_getData('block_class');
         }
 
-        return $response;
+        $blockClass = Mage::getConfig()->getBlockClassName(self::BLOCK_NAME);
+
+        $this->setBlockClass($blockClass);
+        return $blockClass;
+    }
+
+    /**
+     * Replace the onepage checkout login template.
+     *
+     * @param Varien_Event_Observer $observer
+     *
+     * @return $this
+     *
+     * @event core_block_abstract_to_html_before
+     *
+     * @observer checkout_onepage_login
+     */
+    public function addMijnpakketLogin(Varien_Event_Observer $observer)
+    {
+        /**
+         * Checks if the current block is the one we want to edit.
+         *
+         * Unfortunately there is no unique event for this block
+         *
+         * @var Mage_Core_Block_Abstract $block
+         */
+        $block      = $observer->getBlock();
+        $blockClass = $this->getBlockClass();
+
+        if (!($block instanceof $blockClass)) {
+            return $this;
+        }
+
+        /**
+         * @var Mage_Checkout_Block_Onepage_Login $block
+         */
+        $block->setTemplate(self::LOGIN_TEMPLATE);
+
+        return $this;
     }
 }

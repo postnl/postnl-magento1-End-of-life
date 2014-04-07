@@ -84,7 +84,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         $block = $observer->getBlock();
         $blockClass = $this->getBlockClass();
 
-        if (get_class($block) !== $blockClass) {
+        if (!($block instanceof $blockClass)) {
             return $this;
         }
 

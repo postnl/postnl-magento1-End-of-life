@@ -200,7 +200,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
             $configErrors = Mage::registry('postnl_enabled_checkout_errors');
 
             if (is_null($configErrors)) {
-                return $canUseCheckout;
+                return '';
             }
 
             $errorMessage = $helper->__('PostNL Checkout is not available due to the following reasons:');
