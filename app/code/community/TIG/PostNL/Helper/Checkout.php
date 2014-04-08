@@ -344,6 +344,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         }
 
         $totalWeight = 0;
+        /** @var Mage_Sales_Model_Quote_Item $item */
         foreach ($quoteItems as $item) {
             $totalWeight += $item->getRowWeight();
         }
@@ -371,6 +372,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         }
 
         $productIds = array();
+        /** @var Mage_Sales_Model_Quote_Item $item */
         foreach ($quoteItems as $item) {
             $productIds[] = $item->getProductId();
         }
@@ -402,35 +404,6 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         }
 
         return false;
-    }
-
-    /**
-     * Check if the module is set to test mode
-     *
-     * @param bool $storeId
-     *
-     * @return boolean
-     */
-    public function isTestMode($storeId = false)
-    {
-        if (Mage::registry('postnl_checkout_test_mode') !== null) {
-            return Mage::registry('postnl_checkout_test_mode');
-        }
-
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
-
-        $testModeAllowed = $this->isTestModeAllowed();
-        if (!$testModeAllowed) {
-            Mage::register('postnl_checkout_test_mode', false);
-            return false;
-        }
-
-        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
-
-        Mage::register('postnl_checkout_test_mode', $testMode);
-        return $testMode;
     }
 
     /**

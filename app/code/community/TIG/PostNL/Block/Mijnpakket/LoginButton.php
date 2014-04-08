@@ -35,43 +35,70 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                 hasPublicWebshopId()
+ * @method TIG_PostNL_Block_Mijnpakket_LoginButton setPublicWebshopId(string $value)
+ * @method boolean                                 hasSavedMijnpakketData()
+ * @method TIG_PostNL_Block_Mijnpakket_LoginButton setSavedMijnpakketData(string $value)
  */
-class TIG_PostNL_Model_Mijnpakket_Service extends Varien_Object
+class TIG_PostNL_Block_Mijnpakket_LoginButton extends Mage_Core_Block_Template
 {
     /**
-     * Parse billing data and return an array such as Magento would expect from Onepage Checkout.
-     *
-     * @param StdClass $profile
-     *
-     * @return array
+     * The webshop's public webshop ID is used to secure communications with PostNL's servers.
      */
-    public function parseBillingData($profile)
-    {
-        $billingData = array(
-            'address_id'           => '',
-            'firstname'            => $profile->Voornaam,
-            'middlename'           => $profile->Tussenvoegsel,
-            'lastname'             => $profile->Achternaam,
-            'company'              => $profile->Bedrijf,
-            'email'                => $profile->Email,
-            'country_id'           => $profile->Land,
-            'postcode'             => $profile->Postcode,
-            'city'                 => $profile->Plaats,
-            'street'               => array(
-                0 => $profile->Straat,
-                1 => $profile->Huisnummer,
-                2 => $profile->HuisnummerExt,
-            ),
-            'region_id'            => '',
-            'region'               => $profile->Regio,
-            'telephone'            => $profile->Mobiel,
-            'fax'                  => '',
-            'customer_password'    => '',
-            'confirm_password'     => '',
-            'save_in_address_book' => 0,
-            'use_for_shipping'     => 1,
-        );
+    const XPATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
 
-        return $billingData;
+    /**
+     * @var string
+     */
+    protected $_template = 'TIG/PostNL/mijnpakket/login_button.phtml';
+
+    /**
+     * Get the current public webshop ID.
+     *
+     * @return string
+     */
+    public function getPublicWebshopId()
+    {
+        if ($this->hasPublicWebshopId()) {
+            return $this->_getData('public_webshop_id');
+        }
+
+        $publicWebshopId = Mage::getStoreConfig(self::XPATH_PUBLIC_WEBSHOP_ID, Mage::app()->getStore()->getId());
+
+        $this->setPublicWebshopId($publicWebshopId);
+        return $publicWebshopId;
+    }
+
+    /**
+     * Get saved mijnpakkt data if available.
+     *
+     * @return array|null
+     */
+    public function getSavedMijnpakketData()
+    {
+        if ($this->hasSavedMijnpakketData()) {
+            return $this->_getData('saved_mijnpakket_data');
+        }
+
+        $data = Mage::getSingleton('checkout/session')->getPostnlMijnpakketData();
+
+        $this->setSavedMijnpakketData($data);
+        return $data;
+    }
+
+    /**
+     * Check if the current customer may login using Mijnpakket.
+     *
+     * @return string
+     */
+    protected function _tohtml()
+    {
+        $helper = Mage::helper('postnl/mijnpakket');
+        if (!$helper->canLoginWithMijnpakket()) {
+            return '';
+        }
+
+        return parent::_toHtml();
     }
 }

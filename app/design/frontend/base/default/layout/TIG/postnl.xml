@@ -126,15 +126,17 @@
             <action method="addCss">
                 <stylesheet>css/TIG/PostNL/deliveryoptions/default.css</stylesheet>
             </action>
+            <action method="addCss">
+                <stylesheet>css/TIG/PostNL/postcodecheck.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/TIG/PostNL/mijnpakket_login.css</stylesheet>
+            </action>
             <action method="addItem">
                 <type>skin_css</type>
                 <name>css/TIG/PostNL/deliveryoptions/ie8.css</name>
                 <params/>
                 <if>lt IE 9</if>
-            </action>
-            <action method="addItem">
-                <type>skin_css</type>
-                <file>css/TIG/PostNL/postcodecheck.css</file>
             </action>
             <action method="addItem">
                 <type>skin_js</type>
@@ -146,7 +148,7 @@
             </action>
         </reference>
         <reference name="checkout.onepage.login">
-            <block type="core/template" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/login_button.phtml"/>
+            <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/login_button.phtml"/>
         </reference>
         <reference name="checkout.onepage.billing">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>

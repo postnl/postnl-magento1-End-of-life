@@ -148,6 +148,10 @@ PostnlPostcodecheck = new Class.create({
         var housenumber = $(virtualPrefix + housenumberField).getValue();
 
         this.changePostcodeCheckDisabledFields(countryId);
+
+        document.observe('postnl:updateAddressFormsEnd', function() {
+            this.changePostcodeCheckDisabledFields($(countryField).getValue());
+        }.bind(this));
     },
 
     checkPostcode: function(postcode, housenumber) {

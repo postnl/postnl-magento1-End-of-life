@@ -37,15 +37,38 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
+<?php $_checkoutHelper = Mage::helper('checkout'); ?>
+<?php $_savedData = $this->getSavedMijnpakketData(); ?>
 <div id="postnl_mijnpakket_login"></div>
+<div id="postnl_mijnpakket_login_btn" style="display:none;">
+    <span>
+        <img src="https://tppcb-sandbox.e-id.nl/Button/PremiumLogin?publicId=3aaa777ab1204a67bd51ddb4f7326be9" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
+    </span>
+</div>
+<div class="buttons-set" id="login-buttons-container">
+    <span class="please-wait" id="login-please-wait" style="display:none;">
+        <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $_checkoutHelper->__('Loading next step...') ?>" title="<?php echo $_checkoutHelper->__('Loading next step...') ?>" class="v-middle" /> <?php echo $_checkoutHelper->__('Loading next step...') ?>
+    </span>
+</div>
 <script type="text/javascript">
     //<![CDATA[
     document.observe('dom:loaded', function() {
+        var publicWebshopId  = '<?php echo $this->getPublicWebshopId(); ?>';
         var profileAccessUrl = '<?php echo $this->getUrl('postnl/mijnpakket/getProfileAccess', array('_secure' => true)); ?>';
 
-        var login = new MijnpakketLogin('3aaa777ab1204a67bd51ddb4f7326be9', profileAccessUrl);
-        login.setCheckout(checkout).setBilling(billing);
-        login.init('postnl_mijnpakket_login', true);
+        var mijnpakketLogin = new MijnpakketLogin(publicWebshopId, profileAccessUrl);
+        window.mijnpakketLogin = mijnpakketLogin;
+
+        mijnpakketLogin.setCheckout(checkout)
+                       .setBilling(billing)
+                       .setShipping(shipping);
+
+        <?php if ($_savedData): ?>
+            var mijnpakketData = '<?php echo Mage::helper('core')->jsonEncode($_savedData); ?>';
+            mijnpakketLogin.setMijnpakketDataJson(mijnpakketData);
+        <?php endif; ?>
+
+        mijnpakketLogin.init('postnl_mijnpakket_login', true);
     });
     //]]>
 </script>
