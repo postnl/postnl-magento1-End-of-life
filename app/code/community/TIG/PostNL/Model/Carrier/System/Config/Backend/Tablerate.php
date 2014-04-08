@@ -36,32 +36,15 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Admin_Logging_Observer
+class TIG_PostNL_Model_Carrier_System_Config_Backend_Tablerate extends Mage_Core_Model_Config_Data
 {
     /**
-     * Check if the Enterprise Logging extension is present and if so, call it's observer method. This prevents errors
-     * in Magento community edition.
+     * Upload a new csv file.
      *
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     *
-     * @see Enterprise_Logging_Model_Observer::controllerPostdispatch()
+     * @return void
      */
-    public function controllerPostdispatch(Varien_Event_Observer $observer)
+    public function _afterSave()
     {
-        $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
-        $found = mageFindClassFile($loggingObserverClassName);
-
-        /**
-         * If we can't find the model, there's nothing that can be logged.
-         */
-        if ($found === false) {
-            return $this;
-        }
-
-        Mage::getModel('enterprise_logging/observer')->controllerPostdispatch($observer);
-
-        return $this;
+        Mage::getResourceModel('postnl_carrier/tablerate')->uploadAndImport($this);
     }
 }

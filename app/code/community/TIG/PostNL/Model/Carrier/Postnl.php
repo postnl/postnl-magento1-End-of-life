@@ -48,7 +48,15 @@
 class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstract
     implements Mage_Shipping_Model_Carrier_Interface
 {
+    /**
+     * Rate type (tablerate or flatrate).
+     */
     const XML_PATH_RATE_TYPE = 'carriers/postnl/rate_type';
+
+    /**
+     * Whether to use Magento's tabelrates or PostNL's.
+     */
+    const XPATH_RATE_SOURCE = 'carriers/postnl/rate_source';
 
     /**
      * PostNL carrier code
@@ -430,7 +438,17 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
      */
     public function getRate(Mage_Shipping_Model_Rate_Request $request)
     {
-        return Mage::getResourceModel('shipping/carrier_tablerate')->getRate($request);
+        $websiteId = $request->getWebsiteId();
+        $website = Mage::getModel('core/website')->load($websiteId);
+
+        $rateSource = $website->getConfig(self::XPATH_RATE_SOURCE);
+        if ($rateSource == 'shipping_tablerate') {
+            $rate = Mage::getResourceModel('shipping/carrier_tablerate')->getRate($request);
+        } else {
+            $rate = Mage::getResourceModel('postnl_carrier/tablerate')->getRate($request);
+        }
+
+        return $rate;
     }
 
     /**

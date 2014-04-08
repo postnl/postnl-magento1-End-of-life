@@ -36,32 +36,23 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Admin_Logging_Observer
+class TIG_PostNL_Block_Adminhtml_Carrier_Postnl_Tablerate_Grid
+    extends Mage_Adminhtml_Block_Shipping_Carrier_Tablerate_Grid
 {
     /**
-     * Check if the Enterprise Logging extension is present and if so, call it's observer method. This prevents errors
-     * in Magento community edition.
+     * Prepare shipping table rate collection
      *
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     *
-     * @see Enterprise_Logging_Model_Observer::controllerPostdispatch()
+     * @return Mage_Adminhtml_Block_Shipping_Carrier_Tablerate_Grid
      */
-    public function controllerPostdispatch(Varien_Event_Observer $observer)
+    protected function _prepareCollection()
     {
-        $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
-        $found = mageFindClassFile($loggingObserverClassName);
+        /** @var $collection Mage_Shipping_Model_Mysql4_Carrier_Tablerate_Collection */
+        $collection = Mage::getResourceModel('postnl_carrier/tablerate_collection');
+        $collection->setConditionFilter($this->getConditionName())
+                   ->setWebsiteFilter($this->getWebsiteId());
 
-        /**
-         * If we can't find the model, there's nothing that can be logged.
-         */
-        if ($found === false) {
-            return $this;
-        }
+        $this->setCollection($collection);
 
-        Mage::getModel('enterprise_logging/observer')->controllerPostdispatch($observer);
-
-        return $this;
+        return Mage_Adminhtml_Block_Widget_Grid::_prepareCollection();
     }
 }

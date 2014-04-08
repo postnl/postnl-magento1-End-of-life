@@ -49,10 +49,12 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     const XML_PATH_SENDER_REF_NR   = 'postnl/parcelware_export/sender_ref_nr';
 
     /**
-     * Creates a parcelware export csv based for an array of PostNL shipments. This method basically consists of 3 parts:
+     * Creates a parcelware export csv based for an array of PostNL shipments. This method basically consists of 3
+     * parts:
      *  1. Fetch data from every shipment that we're going to put in the export file.
      *  2. Update the shipments.
-     *  3. Actually create the CSV file and return an array containing data for whoever called this method (probably a controller).
+     *  3. Actually create the CSV file and return an array containing data for whoever called this method (probably a
+     *     controller).
      *
      * @param $postnlShipments
      *
@@ -69,8 +71,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $autoConfirmEnabled = $helper->isAutoConfirmEnabled();
 
         /**
-         * Prepare a transaction save object. We're going to edit all the postbl shipments that we're going to export, however
-         * we want all of them to be saved at the same time AFTER the export has been generated.
+         * Prepare a transaction save object. We're going to edit all the postbl shipments that we're going to export,
+         * however we want all of them to be saved at the same time AFTER the export has been generated.
          */
         $transactionSave = Mage::getModel('core/resource_transaction');
 
@@ -85,7 +87,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             $postnlShipment->setIsParcelwareExported(true);
 
             /**
-             * If auto_confirm is enabled, confirm each shipment manually. Please note that we do not yet save these shipments.
+             * If auto_confirm is enabled, confirm each shipment manually. Please note that we do not yet save these
+             * shipments.
              */
             if ($autoConfirmEnabled === true && !$postnlShipment->isConfirmed()) {
                 $postnlShipment->registerConfirmation();
@@ -97,8 +100,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             $transactionSave->addObject($postnlShipment);
 
             /**
-             * If this is a multi-colli shipment we need to treat each parcel as a seperate shipment and therefore, as a seperate
-             * row in the csv export file.
+             * If this is a multi-colli shipment we need to treat each parcel as a seperate shipment and therefore, as a
+             * seperate row in the csv export file.
              */
             $parcelCount = $postnlShipment->getParcelCount();
             if ($parcelCount > 1) {
@@ -133,8 +136,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $io = Mage::getModel('varien/io_file');
 
         /**
-         * Some parameters for the file. Please note that the filename is purely temporary. The name of the file you'll end up
-         * downloading will be defined in the controller.
+         * Some parameters for the file. Please note that the filename is purely temporary. The name of the file you'll
+         * end up downloading will be defined in the controller.
          */
         $path = Mage::getBaseDir('var') . DS . 'export' . DS;
         $name = md5(microtime());
@@ -245,8 +248,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         }
 
         /**
-         * If this is an international (GlobalPack) shipment, we need some additional information regarding the contents of the
-         * shipment.
+         * If this is an international (GlobalPack) shipment, we need some additional information regarding the contents
+         * of the shipment.
          */
         $globalPackData = array();
         if ($postnlShipment->isGlobalShipment()) {
@@ -255,8 +258,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         }
 
         /**
-         * Merge all the data we fetched above. Please note that the order in which we merge these arrays is critical to ensure
-         * all values are placed in their respective columns.
+         * Merge all the data we fetched above. Please note that the order in which we merge these arrays is critical to
+         * ensure all values are placed in their respective columns.
          */
         $shipmentData = array_merge(
             $addressData,

@@ -81,6 +81,7 @@
             </postnl_core>
             <postnl_carrier>
                 <class>TIG_PostNL_Model_Carrier</class>
+                <resourceModel>postnl_carrier_resource</resourceModel>
             </postnl_carrier>
             <postnl_adminhtml>
             	<class>TIG_PostNL_Model_Adminhtml</class>
@@ -123,6 +124,14 @@
                     </shipment_status_history>
                 </entities>
             </postnl_core_resource>
+            <postnl_carrier_resource>
+                <class>TIG_PostNL_Model_Carrier_Resource</class>
+                <entities>
+                    <tablerate>
+                        <table>tig_postnl_tablerate</table>
+                    </tablerate>
+                </entities>
+            </postnl_carrier_resource>
             <postnl_checkout_resource>
                 <class>TIG_PostNL_Model_Checkout_Resource</class>
                 <entities>
@@ -428,6 +437,7 @@
                 <rate_type>flat</rate_type> <!-- Flat rate -->
                 <type>I</type> <!-- Price is calculated per item -->
                 <price>5.00</price> <!-- 5.00 (in base currency) -->
+                <rate_source>shipping_tablerate</rate_source> <!-- Use Magento's tablerates. -->
                 <condition_name>package_weight</condition_name> <!-- Package weight -->
                 <include_virtual_price>1</include_virtual_price> <!-- Include virtual price -->
                 <handling_type>F</handling_type> <!-- Fixed -->
@@ -659,7 +669,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>dev</postnl>
+            <postnl>stable</postnl>
         </stability>
 
         <!-- A list of possible error codes recognized by this extension. Each error has a default message, a link to

@@ -36,32 +36,27 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Admin_Logging_Observer
+class TIG_PostNL_Model_Carrier_System_Config_Source_TablerateSource
 {
     /**
-     * Check if the Enterprise Logging extension is present and if so, call it's observer method. This prevents errors
-     * in Magento community edition.
+     * Returns an option array for rate source options.
      *
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     *
-     * @see Enterprise_Logging_Model_Observer::controllerPostdispatch()
+     * @return array
      */
-    public function controllerPostdispatch(Varien_Event_Observer $observer)
+    public function toOptionArray()
     {
-        $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
-        $found = mageFindClassFile($loggingObserverClassName);
+        $helper = Mage::helper('postnl');
+        $options = array(
+            array(
+                'value' => 'shipping_tablerate',
+                'label' => $helper->__("Use Magento's Table Rates"),
+            ),
+            array(
+                'value' => 'postnl_tablerate',
+                'label' => $helper->__('Use seperate table rates for PostNL'),
+            ),
+        );
 
-        /**
-         * If we can't find the model, there's nothing that can be logged.
-         */
-        if ($found === false) {
-            return $this;
-        }
-
-        Mage::getModel('enterprise_logging/observer')->controllerPostdispatch($observer);
-
-        return $this;
+        return $options;
     }
 }

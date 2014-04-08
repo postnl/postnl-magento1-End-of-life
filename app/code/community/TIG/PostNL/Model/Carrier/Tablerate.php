@@ -35,33 +35,20 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * This is a dummy class for the tablerate export/import functionality.
  */
-class TIG_PostNL_Model_Admin_Logging_Observer
+class TIG_PostNL_Model_Carrier_Tablerate extends Mage_Core_Model_Abstract
 {
     /**
-     * Check if the Enterprise Logging extension is present and if so, call it's observer method. This prevents errors
-     * in Magento community edition.
+     * Prefix of model events names
      *
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     *
-     * @see Enterprise_Logging_Model_Observer::controllerPostdispatch()
+     * @var string
      */
-    public function controllerPostdispatch(Varien_Event_Observer $observer)
+    protected $_eventPrefix = 'postnl_carrier_tablerate';
+
+    public function _construct()
     {
-        $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
-        $found = mageFindClassFile($loggingObserverClassName);
-
-        /**
-         * If we can't find the model, there's nothing that can be logged.
-         */
-        if ($found === false) {
-            return $this;
-        }
-
-        Mage::getModel('enterprise_logging/observer')->controllerPostdispatch($observer);
-
-        return $this;
+        $this->_init('postnl_carrier/tablerate');
     }
 }

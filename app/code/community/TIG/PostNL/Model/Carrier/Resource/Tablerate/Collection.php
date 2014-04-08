@@ -36,32 +36,18 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Admin_Logging_Observer
+class TIG_PostNL_Model_Carrier_Resource_Tablerate_Collection
+    extends Mage_Shipping_Model_Resource_Carrier_Tablerate_Collection
 {
     /**
-     * Check if the Enterprise Logging extension is present and if so, call it's observer method. This prevents errors
-     * in Magento community edition.
+     * Define resource model and item
      *
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     *
-     * @see Enterprise_Logging_Model_Observer::controllerPostdispatch()
      */
-    public function controllerPostdispatch(Varien_Event_Observer $observer)
+    protected function _construct()
     {
-        $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
-        $found = mageFindClassFile($loggingObserverClassName);
-
-        /**
-         * If we can't find the model, there's nothing that can be logged.
-         */
-        if ($found === false) {
-            return $this;
-        }
-
-        Mage::getModel('enterprise_logging/observer')->controllerPostdispatch($observer);
-
-        return $this;
+        $this->_init('postnl_carrier/tablerate');
+        $this->_shipTable       = $this->getMainTable();
+        $this->_countryTable    = $this->getTable('directory/country');
+        $this->_regionTable     = $this->getTable('directory/country_region');
     }
 }

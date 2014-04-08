@@ -37,6 +37,14 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
+<div id="print_label_spinner" class="waiting-notification" style="display:none;">
+    <div class="content">
+        <img src="<?php echo $this->getSkinUrl('images/ajax-loader-tr.gif') ?>" alt="spinner" />
+        <p><?php echo Mage::helper('postnl')->__('Your shipping label(s) are being prepared.'); ?></p>
+        <p><?php echo Mage::helper('postnl')->__('This may take a minute. The page will refresh once this is done.'); ?></p>
+    </div>
+</div>
+
 <script type="text/javascript">
     //<![CDATA[
     document.observe('dom:loaded', function() {
@@ -92,6 +100,8 @@
                     this.form.submit();
 
                     if (typeof printWindow != 'undefined') {
+                        $$('body')[0].addClassName('no-scroll').scrollTo();
+                        $('print_label_spinner').show();
                         printWindow.focus();
                     }
                 }
@@ -99,6 +109,8 @@
         });
     });
     printLabel = function(url) {
+        $$('body')[0].addClassName('no-scroll').scrollTo();
+        $('print_label_spinner').show();
         var printWindow = window.open(url);
         Event.observe(printWindow, 'unload', function() {
             Event.stopObserving(printWindow);

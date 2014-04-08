@@ -966,8 +966,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Checks if the current edition of Magento is enterprise. Uses Mage::getEdition if available or version_compare if
-     * it is not.
+     * Checks if the current edition of Magento is enterprise. Uses Mage::getEdition if available. If not, look for the
+     * Enterprise_Enterprise extension. Finally, check the version number.
      *
      * @return boolean
      *
@@ -976,7 +976,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function isEnterprise()
     {
         /**
-         * Use Mage::getEdition, which is available since CE 1.7 and EE 1.12
+         * Use Mage::getEdition, which is available since CE 1.7 and EE 1.12.
          */
         if (method_exists('Mage', 'getEdition')) {
             $edition = Mage::getEdition();
@@ -989,7 +989,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             }
 
             /**
-             * If the edition is not community or enterprise, it is not supported
+             * If the edition is not community or enterprise, it is not supported.
              */
             throw new TIG_PostNL_Exception(
                 $this->__('Invalid Magento edition detected: %s', $edition),
@@ -998,10 +998,17 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Do a version check instead
+         * Check if the Enterprise_Enterprise extension is installed.
+         */
+        if (Mage::getConfig()->getNode('modules')->Enterprise_Enterprise) {
+            return true;
+        }
+
+        /**
+         * Do a version check instead.
          */
         $version = Mage::getVersion();
-        if (version_compare($version, '1.9.0.0', '>=')) { //1.9.0.0 was the first Magento Enterprise version
+        if (version_compare($version, '1.9.0.0', '>=')) {
             return true;
         }
 
@@ -1020,7 +1027,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Fallback check in case the previous check returns a false positive
+         * Fallback check in case the previous check returns a false negative.
          */
         if (Mage::getDesign()->getArea() == 'adminhtml') {
             return true;

@@ -36,32 +36,55 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Admin_Logging_Observer
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TablerateImport
+    extends Mage_Adminhtml_Block_System_Config_Form_Field
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
     /**
-     * Check if the Enterprise Logging extension is present and if so, call it's observer method. This prevents errors
-     * in Magento community edition.
+     * Get a hidden form element and some JS to support it.
      *
-     * @param Varien_Event_Observer $observer
+     * @param Varien_Data_Form_Element_Abstract $element
      *
-     * @return $this
+     * @return string
      *
-     * @see Enterprise_Logging_Model_Observer::controllerPostdispatch()
+     * @see Mage_Adminhtml_Block_System_Config_Form_Field_Import
      */
-    public function controllerPostdispatch(Varien_Event_Observer $observer)
+    public function _getJsHtml(Varien_Data_Form_Element_Abstract $element)
     {
-        $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
-        $found = mageFindClassFile($loggingObserverClassName);
+        $html = '<input id="postnl_time_condition" type="hidden" name="'.$element->getName().'" value="'.time().'" />';
 
-        /**
-         * If we can't find the model, there's nothing that can be logged.
-         */
-        if ($found === false) {
-            return $this;
-        }
+        $html .= "<script type='text/javascript'>
+        document.observe('dom:loaded', function() {
+            Event.observe($('carriers_postnl_condition_name'), 'change', checkConditionName.bind(this));
+            function checkConditionName(event)
+            {
+                var conditionNameElement = Event.element(event);
+                if (conditionNameElement && conditionNameElement.id) {
+                    $('postnl_time_condition').value = '_' + conditionNameElement.value + '/' + Math.random();
+                }
+            }
+        });
+        </script>";
 
-        Mage::getModel('enterprise_logging/observer')->controllerPostdispatch($observer);
+        return $html;
+    }
 
-        return $this;
+    /**
+     * Render the element.
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
+     * @return string
+     */
+    public function render(Varien_Data_Form_Element_Abstract $element)
+    {
+        $element->setType('file')
+                ->removeClass('input-text');
+
+        $html = parent::render($element);
+
+        $html .= $this->_getJsHtml($element);
+
+        return $html;
     }
 }

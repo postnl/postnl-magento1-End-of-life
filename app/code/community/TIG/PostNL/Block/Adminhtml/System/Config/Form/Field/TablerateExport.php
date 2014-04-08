@@ -36,32 +36,48 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Admin_Logging_Observer
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TablerateExport
+    extends Mage_Adminhtml_Block_System_Config_Form_Field
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
     /**
-     * Check if the Enterprise Logging extension is present and if so, call it's observer method. This prevents errors
-     * in Magento community edition.
+     * @param Varien_Data_Form_Element_Abstract $element
      *
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     *
-     * @see Enterprise_Logging_Model_Observer::controllerPostdispatch()
+     * @return string
      */
-    public function controllerPostdispatch(Varien_Event_Observer $observer)
+    public function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
-        $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
-        $found = mageFindClassFile($loggingObserverClassName);
+        $buttonBlock = $this->getLayout()->createBlock('adminhtml/widget_button');
 
-        /**
-         * If we can't find the model, there's nothing that can be logged.
-         */
-        if ($found === false) {
-            return $this;
-        }
+        $params = array(
+            'website' => $buttonBlock->getRequest()->getParam('website')
+        );
 
-        Mage::getModel('enterprise_logging/observer')->controllerPostdispatch($observer);
+        $onClick = 'setLocation(\''
+                 . Mage::helper('adminhtml')->getUrl("postnl/adminhtml_config/exportTablerates", $params)
+                 . 'conditionName/\' + $(\'carriers_postnl_condition_name\').value + \'/tablerates.csv\' )';
 
-        return $this;
+        $data = array(
+            'label'   => Mage::helper('postnl')->__('Export CSV'),
+            'onclick' => $onClick,
+            'class'   => '',
+            'id'      => $element->getHtmlId(),
+            'type'    => 'button',
+            'class'   => 'scalable postnl-button',
+        );
+
+        $html = $buttonBlock->setData($data)->toHtml();
+
+        return $html;
+    }
+
+    /**
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
+     * @return string
+     */
+    public function render(Varien_Data_Form_Element_Abstract $element)
+    {
+        return parent::render($element);
     }
 }
