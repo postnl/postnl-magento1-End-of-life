@@ -823,3 +823,5 @@ TIG_PostNL::Import Rates,Importeer Tarieven
 TIG_PostNL::You can import and export rates on the website scope. You can change your current scope with the dropdown at the top left of this page.,U kunt tarieven importeren en exporteren op website niveau. U kunt het huidige niveau van de configuratie aanpassen met het selectieveld links bovenaan deze pagina.
 TIG_PostNL::Your shipping label(s) are being prepared.,Uw verzendlabel(s) worden voorbereid.
 TIG_PostNL::This may take a minute. The page will refresh once this is done.,Dit kan even duren. De pagina wordt ververst wanneer dit gedaan is.
+TIG_PostNL::View the user manual.,Bekijk de geberuikershandleiding.
+TIG_PostNL::User manual,Gebruikershandleiding
