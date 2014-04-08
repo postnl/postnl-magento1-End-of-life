@@ -68,6 +68,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     const XPATH_WEBSHOP_ID    = 'postnl/cif/webshop_id';
 
     /**
+     * Xpath to supported options configuration setting
+     */
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+
+    /**
      * callAfterApplyAllUpdates flag. Causes applyAFterUpdates() to be called.
      *
      * @var boolean
@@ -629,6 +634,51 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         if ($removeOldValue) {
             $config->deleteConfig($fromXpath, $scope, $scopeId);
         }
+
+        return $this;
+    }
+
+    /**
+     * Adds new supported product codes.
+     *
+     * @param array|string|int $codes
+     *
+     * @return $this
+     */
+    public function addSupportedProductCode($codes)
+    {
+        if (!is_array($codes)) {
+            $codes = array((string) $codes);
+        }
+
+        /**
+         * Get the currently supported product codes.
+         */
+        $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        $supportedProductCodes = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $adminStoreId);
+
+        /**
+         * If no supported product codes are set, it means the default option is used, which should already contain the
+         * new codes.
+         */
+        if ($supportedProductCodes === null) {
+            return $this;
+        }
+
+        $supportedCodesArray = explode(',', $supportedProductCodes);
+
+        /**
+         * Add the new codes to the existing codes by merging both arrays and then getting only the unique values.
+         * Finally we implode the array, so that we can store it in the core_config_data table.
+         */
+        $mergedCodes = array_merge($supportedCodesArray, $codes);
+        $uniqueCodes = array_unique($mergedCodes);
+        $newCodes    = implode(',', $uniqueCodes);
+
+        /**
+         * Save the supported product codes.
+         */
+        Mage::getConfig()->saveConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $newCodes, 'default', 0);
 
         return $this;
     }

@@ -1312,7 +1312,9 @@
                             <label>Default shipping option</label>
                             <comment>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_standardProductOptions</source_model>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
@@ -1346,7 +1348,9 @@
                             <label>Alternative default shipping option</label>
                             <comment>This option will be used as default when the shipment's total value exceeds the given amount.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_standardProductOptions</source_model>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
@@ -1360,7 +1364,9 @@
                             <label>Default evening delivery shipping option</label>
                             <comment>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvondOptions</source_model>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondOptions</source_model>
+                            <multidimensional>true</multidimensional>
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
@@ -1385,7 +1391,9 @@
                             <label>Default 'deliver at the Post Office' option</label>
                             <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions</source_model>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
@@ -1396,7 +1404,9 @@
                             <label>Default early post office pickup option</label>
                             <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getPgeOptions</source_model>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
+                            <multidimensional>true</multidimensional>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>

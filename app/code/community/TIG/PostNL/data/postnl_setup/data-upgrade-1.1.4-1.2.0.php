@@ -48,6 +48,11 @@ $settingsToReset = array(
     'cif_version_labelling',
 );
 
-$installer->resetWebserviceVersions($settingsToReset);
-
-$installer->moveConfigSetting('postnl/cif_labels_and_confirming/mode', 'postnl/cif/mode', true);
+/**
+ * When upgrading from v1.1.x we need to reset the webservice versions used to default, add a new product option and
+ * move a config setting. If you're installing the extension for the first time, all of this will be handled by the
+ * default settings in config.xml.
+ */
+$installer->resetWebserviceVersions($settingsToReset)
+          ->addSupportedProductCode('3533')
+          ->moveConfigSetting('postnl/cif_labels_and_confirming/mode', 'postnl/cif/mode', true);
