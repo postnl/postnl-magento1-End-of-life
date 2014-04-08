@@ -48,4 +48,5 @@ $settingsToReset = array(
     'cif_version_labelling',
 );
 
-$installer->resetWebserviceVersions($settingsToReset);
+$installer->resetWebserviceVersions($settingsToReset)
+          ->addSupportedProductCode('3533');
