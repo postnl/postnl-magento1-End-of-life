@@ -44,9 +44,11 @@ MijnpakketLogin.prototype = {
 
     elementId        : null,
     debug            : null,
+    mijnpakketData   : null,
 
     checkout         : null,
     billing          : null,
+    shipping         : null,
 
     /**
      * @constructor
@@ -58,13 +60,26 @@ MijnpakketLogin.prototype = {
         this.postnlLogin      = PostNL.Login;
         this.publicId         = publicId;
         this.profileAccessUrl = profileAccessUrl;
+
+        this.onProfileAccessCreate   = this.fireGetProfileDataRequestStart.bindAsEventListener(this);
+        this.onProfileAccess         = this.updateCheckout.bindAsEventListener(this);
+        this.onProfileAccessFailure  = this.ajaxFailure.bindAsEventListener(this);
+        this.onProfileAccessComplete = this.fireGetProfileDataRequestEnd.bindAsEventListener(this);
     },
 
+    /**
+     * @returns {null|Checkout}
+     */
     getCheckout : function()
     {
         return this.checkout;
     },
 
+    /**
+     * @param {Checkout} checkout
+     *
+     * @returns {MijnpakketLogin}
+     */
     setCheckout : function(checkout)
     {
         this.checkout = checkout;
@@ -72,11 +87,19 @@ MijnpakketLogin.prototype = {
         return this;
     },
 
+    /**
+     * @returns {null|Billing}
+     */
     getBilling : function()
     {
         return this.billing;
     },
 
+    /**
+     * @param {Billing} billing
+     *
+     * @returns {MijnpakketLogin}
+     */
     setBilling : function(billing)
     {
         this.billing = billing;
@@ -85,20 +108,87 @@ MijnpakketLogin.prototype = {
     },
 
     /**
-     * @param elementId
-     * @param debug
+     * @returns {null|Shipping}
+     */
+    getShipping : function()
+    {
+        return this.shipping;
+    },
+
+    /**
+     * @param {Shipping} shipping
+     * @returns {MijnpakketLogin}
+     */
+    setShipping : function(shipping)
+    {
+        this.shipping = shipping;
+
+        return this;
+    },
+
+    /**
+     * @returns {null|{}}
+     */
+    getMijnpakketData : function()
+    {
+        return this.mijnpakketData;
+    },
+
+    /**
+     * @param {{}} mijnpakketData
+     *
+     * @returns {MijnpakketLogin}
+     */
+    setMijnpakketData : function(mijnpakketData)
+    {
+        this.mijnpakketData = mijnpakketData;
+
+        return this;
+    },
+
+    /**
+     * @param {{}} mijnpakketDataJson
+     *
+     * @returns {MijnpakketLogin}
+     */
+    setMijnpakketDataJson : function(mijnpakketDataJson)
+    {
+        var mijnpakketData = mijnpakketDataJson.evalJSON(true);
+        this.setMijnpakketData(mijnpakketData);
+
+        return this;
+    },
+
+    /**
+     * @param {string}  elementId
+     * @param {boolean} debug
      *
      * @returns {MijnpakketLogin}
      */
     init : function(elementId, debug) {
+        if (!this.getCheckout() || !this.getBilling() || !this.getShipping()) {
+            throw 'Please set a Checkout, Billing and Shipping object before initializing MijnpakketLogin.'
+        }
+
         this.elementId = elementId;
         this.debug = debug;
 
+        this.registerObservers();
+
+        if (this.getMijnpakketData()) {
+            if (debug) {
+                console.log('Saved mijnpakket data found. Replacing login button with dummy.');
+            }
+            this.showDummyButton();
+
+            return this;
+        }
+
         var params = {
-            elementId  : this.elementId,
+            elementId  : elementId,
             pId        : this.publicId,
             onResponse : this.loginResponse.bind(this),
-            debug      : this.debug
+            debug      : debug
         };
 
         this.postnlLogin.init(params);
@@ -107,7 +197,57 @@ MijnpakketLogin.prototype = {
     },
 
     /**
-     * @param data
+     * Register observers.
+     *
+     * @returns {MijnpakketLogin}
+     */
+    registerObservers : function() {
+        document.observe('postnl:getProfileDataRequestStart', function() {
+            $$('#checkout-step-login .button').each(function(button) {
+                button.disabled = true;
+
+                if (!button.hasClassName('disabled')) {
+                    button.addClassName('disabled');
+                }
+            });
+
+            this.getCheckout().setLoadWaiting('login');
+        }.bind(this));
+
+        document.observe('postnl:getProfileDataRequestEnd', function() {
+            $$('#checkout-step-login .button').each(function(button) {
+                button.disabled = false;
+
+                if (button.hasClassName('disabled')) {
+                    button.removeClassName('disabled');
+                }
+            });
+
+            this.getCheckout().setLoadWaiting(false);
+        }.bind(this));
+
+        return this;
+    },
+
+    /**
+     * Shows a dummy login button that skips the actual login step and goes immediately to the shipping_method checkout
+     * step.
+     *
+     * @returns {MijnpakketLogin}
+     */
+    showDummyButton : function() {
+        $('postnl_mijnpakket_login').hide();
+
+        var button = $('postnl_mijnpakket_login_btn');
+
+        button.show();
+        button.observe('click', this.getProfileData.bind(this, ''));
+
+        return this;
+    },
+
+    /**
+     * @param {{}} data
      *
      * @returns {MijnpakketLogin}
      */
@@ -144,76 +284,140 @@ MijnpakketLogin.prototype = {
         this.getProfileDataRequest = new Ajax.PostnlRequest(this.profileAccessUrl, {
             method     : 'post',
             parameters : params,
-            onCreate   : function() {
-                document.fire('postnl:getProfileDataRequestStart');
-            },
-            onSuccess: this.getBilling().onSave,
-            onFailure: this.getCheckout().ajaxFailure.bind(this.getCheckout()),
-            onComplete : function() {
-                if (this.debug) {
-                    console.log(response.responseText);
-                }
-
-                this.getBilling().onComplete();
-            }.bind(this)
+            onCreate   : this.onProfileAccessCreate,
+            onSuccess  : this.onProfileAccess,
+            onFailure  : this.onProfileAccessFailure,
+            onComplete : this.onProfileAccessComplete
         });
 
         return this;
     },
 
     /**
-     * Save billing data.
-     *
-     * @param {[]} billingData
-     *
-     * @returns {MijnpakketLogin}
+     * @param {Ajax.Response} response
      */
-    saveBillingData : function(billingData)
-    {
-        var formData = this.convertToAjaxParams(billingData);
+    updateCheckout : function(response) {
+        this.getBilling().onSave(response);
+        this.updateAddressForms(response.responseText.evalJSON(true).origData);
 
-        var request = new Ajax.PostnlRequest(
-            this.getBilling().saveUrl,
-            {
-                method: 'post',
-                parameters: formData,
-                onComplete: this.getBilling().onComplete,
-                onSuccess: this.getBilling().onSave,
-                onFailure: this.getCheckout().ajaxFailure.bind(this.getCheckout())
-            }
-        );
+        this.showDummyButton();
+    },
 
-        return this;
+    ajaxFailure : function() {
+        this.getCheckout().ajaxFailure.bind(this.getCheckout());
+    },
+
+    fireGetProfileDataRequestStart : function() {
+        document.fire('postnl:getProfileDataRequestStart');
+    },
+
+    fireGetProfileDataRequestEnd : function() {
+        document.fire('postnl:getProfileDataRequestEnd');
     },
 
     /**
-     * Converts an object to one that is valid as an AJAX parameters object.
+     * Update existing billing and shipping forms so customers can change their address.
      *
      * @param {{}} data
      *
-     * @returns {{}}
+     * @returns {MijnpakketLogin}
      */
-    convertToAjaxParams : function(data)
-    {
-        var formData = {};
-        for(var index in data) {
+    updateAddressForms : function(data) {
+        document.fire('postnl:updateAddressFormsStart');
+
+        var field;
+        var virtualField;
+
+        /**
+         * If guest checkout is allowed, set it as the chosen checkout method.
+         */
+        if ($('login:guest')) {
+            $('login:guest').checked = true;
+            this.getCheckout().method = 'guest';
+            var request = new Ajax.Request(
+                this.getCheckout().saveMethodUrl,
+                {
+                    method: 'post',
+                    parameters: {
+                        method:'guest'
+                    },
+                    onFailure: this.getCheckout().ajaxFailure.bind(this)
+                }
+            );
+            Element.hide('register-customer-password');
+        }
+
+        /**
+         * Copy all data to the billing address form.
+         */
+        for (var index in data) {
             if (!data.hasOwnProperty(index)) {
                 continue;
             }
 
-            var value = data[index];
-            if (value instanceof Array) {
-                formData['billing[' + index + '][]'] = [];
-                for (var n = 0; n < value.length; n++) {
-                    formData['billing[' + index + '][]'].push(value[n]);
+            /**
+             * If the value is an array, loop through the array's contents.
+             */
+            if (data[index] instanceof Array) {
+                var dataArray = data[index];
+
+                for (var n = 0; n < dataArray.length; n++) {
+                    field = $('billing:' + index + (n + 1));
+                    virtualField = $('virtual:billing:' + index + (n + 1));
+
+                    if (field) {
+                        field.setValue(dataArray[n]);
+                    }
+
+                    if (virtualField) {
+                        virtualField.setValue(dataArray[n]);
+                    }
                 }
 
                 continue;
             }
 
-            formData['billing[' + index + ']'] = data[index];
+            field = $('billing:' + index);
+
+            if (field) {
+                field.setValue(data[index]);
+            }
         }
 
-        return formData;
+        /**
+         * Sync billing and shipping address forms.
+         */
+        this.getShipping().syncWithBilling();
+
+        /**
+         * Copy PostNL postcode check fields from billing to shipping.
+         */
+        var virtualBillingStreet1 = $('virtual:billing:street1');
+        var virtualBillingStreet2 = $('virtual:billing:street2');
+        var virtualBillingStreet3 = $('virtual:billing:street3');
+        if (virtualBillingStreet1) {
+            $('virtual:shipping:street1').setValue(virtualBillingStreet1.getValue());
+        }
+        if (virtualBillingStreet2) {
+            $('virtual:shipping:street2').setValue(virtualBillingStreet2.getValue());
+        }
+        if (virtualBillingStreet3) {
+            $('virtual:shipping:street3').setValue(virtualBillingStreet3.getValue());
+        }
+
+        /**
+         * Update region updaters.
+         */
+        if (window.billingRegionUpdater) {
+            billingRegionUpdater.update();
+        }
+
+        if (window.shippingRegionUpdater) {
+            shippingRegionUpdater.update();
+        }
+
+        document.fire('postnl:updateAddressFormsEnd');
+
+        return this;
     }
 };

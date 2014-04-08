@@ -35,6 +35,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                        hasIsTestMode()
+ * @method TIG_PostNL_Block_Mijnpakket_Js setIsTestMode(boolean $value)
  */
 class TIG_PostNL_Block_Mijnpakket_Js extends Mage_Core_Block_Template
 {
@@ -50,13 +53,33 @@ class TIG_PostNL_Block_Mijnpakket_Js extends Mage_Core_Block_Template
     const LOGIN_LIVE_URL = 'https://mijnpakket.postnl.nl/Checkout2/Login.js';
 
     /**
-     * @todo implement this method.
+     * @return boolean
+     */
+    public function getIsTestMode()
+    {
+        if ($this->hasIsTestMode()) {
+            return $this->_getData('is_test_mode');
+        }
+
+        $isTestMode = Mage::helper('postnl/mijnpakket')->isTestMode();
+
+        $this->setIsTestMode($isTestMode);
+        return $isTestMode;
+    }
+
+    /**
+     * gets the Mijnpakket Login JS URL for either live or test mode.
      *
      * @return string
      */
     public function getLoginJsUrl()
     {
-        return self::LOGIN_TEST_URL;
+        $isTestMode = $this->getIsTestMode();
+        if ($isTestMode) {
+            return self::LOGIN_TEST_URL;
+        }
+
+        return self::LOGIN_LIVE_URL;
     }
 
     /**

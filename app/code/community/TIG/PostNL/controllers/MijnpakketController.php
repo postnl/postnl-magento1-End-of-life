@@ -49,6 +49,11 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
     protected $_onepage;
 
     /**
+     * @var Mage_Checkout_Model_Session
+     */
+    protected $_checkoutSession;
+
+    /**
      * @return Mage_Checkout_Model_Type_Onepage
      */
     public function getOnepage()
@@ -61,6 +66,21 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
 
         $this->_onepage = $onepage;
         return $onepage;
+    }
+
+    /**
+     * @return Mage_Checkout_Model_Session
+     */
+    public function getCheckoutSession()
+    {
+        if ($this->_checkoutSession) {
+            return $this->_checkoutSession;
+        }
+
+        $session = Mage::getSingleton('checkout/session');
+
+        $this->_checkoutSession = $session;
+        return $session;
     }
 
     /**
@@ -80,23 +100,58 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
             return $this;
         }
 
-        /**
-         * Get the profile token and validate it.
-         */
-        $token = $this->getRequest()->getParam('token');
         try {
-            $token = $this->_validateToken($token);
+            $billingData = $this->_getBillingData();
         } catch (Exception $e) {
             Mage::helper('postnl/mijnpakket')->logException($e);
 
             $this->getResponse()
-                 ->setBody('invalid_data');
+                 ->setBody('error');
 
             return $this;
         }
 
         /**
-         * Get profile data using the access token.
+         * Save the data as the billing and shipping address and get the result.
+         */
+        $result = $this->_formResultArray($billingData);
+
+        /**
+         * Return the result as JSON.
+         */
+        $json = Mage::helper('core')->jsonEncode($result);
+        $this->getResponse()
+             ->setHeader('Content-type', 'application/x-json')
+             ->setBody($json);
+
+        return $this;
+    }
+
+    /**
+     * Gets billing data. If we have stored data in the checkout session, use that. Otherwise get new data from CIF.
+     *
+     * @return array
+     */
+    protected function _getBillingData()
+    {
+        $checkoutSession = $this->getCheckoutSession();
+        $savedData = $checkoutSession->getPostnlMijnpakketData();
+
+        /**
+         * If we still have stored data, return that.
+         */
+        if ($savedData) {
+            return $savedData;
+        }
+
+        /**
+         * Get the profile token and validate it.
+         */
+        $token = $this->getRequest()->getParam('token');
+        $token = $this->_validateToken($token);
+
+        /**
+         * Otherwise we need to get data from CIF using the access token.
          */
         $cif = Mage::getModel('postnl_mijnpakket/cif');
         $response = $cif->getProfileAccess($token);
@@ -108,29 +163,47 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
         $billingData = Mage::getModel('postnl_mijnpakket/service')->parseBillingData($profile);
 
         /**
-         * Save the data as the billing and shipping address.
+         * Store the data in the customer's checkout session.
+         */
+        $checkoutSession->setPostnlMijnpakketData($billingData);
+
+        return $billingData;
+    }
+
+    /**
+     * Form the result array.
+     *
+     * @param $billingData
+     *
+     * @return mixed
+     */
+    protected function _formResultArray($billingData)
+    {
+        /**
+         * Save the address data and get the result.
          */
         $result = $this->getOnepage()->saveBilling($billingData, '');
 
         /**
-         * Get the next step's html.
+         * If we encountered an error, only return the error.
          */
-        if (!isset($result['error'])) {
-            $result['goto_section'] = 'shipping_method';
-            $result['update_section'] = array(
-                'name' => 'shipping-method',
-                'html' => $this->_getShippingMethodsHtml()
-            );
-
-            $result['duplicateBillingInfo'] = 'true';
+        if (isset($result['error'])) {
+            return $result;
         }
 
-        $json = Mage::helper('core')->jsonEncode($result);
-        $this->getResponse()
-             ->setHeader('Content-type', 'application/x-json')
-             ->setBody($json);
+        /**
+         * Set required parameters in the result array, including the next step's html.
+         */
+        $result['duplicateBillingInfo'] = 'true';
+        $result['origData']             = $billingData;
+        $result['allow_sections']       = array('billing', 'shipping');
+        $result['goto_section']         = 'shipping_method';
+        $result['update_section']       = array(
+            'name' => 'shipping-method',
+            'html' => $this->_getShippingMethodsHtml()
+        );
 
-        return $this;
+        return $result;
     }
 
     /**
