@@ -42,7 +42,7 @@
     Validation.add('validate-postnl-mobilephone',
         '<?php echo $this->__('Please enter a valid Dutch mobile phone number.'); ?>',
         {
-            pattern : /^(((\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i
+            pattern : /^\s*(((\+31|0|0031)([\s]*[-]?)?[\s]*6){1}[\s]*[-]?[\s]*[1-9]{1}[\s-]*([0-9]{1}[\s]*){6}[0-9]{1})\s*$/i
         }
     );
     //]]>
@@ -93,8 +93,6 @@
             return;
         }
 
-        deliveryOptions.savePaPhoneNumber(phoneInputField.getValue());
-
         deliveryOptions.setPaPhoneCheckPassed(false);
     };
 
@@ -109,7 +107,10 @@
         var verifyText = $('number_verify_text');
         var verifyFail = $('number_verify_fail');
 
-        var valid = Validation.validate($('add_phone_input'));
+        var input = $('add_phone_input');
+        var inputValue = input.getValue();
+
+        var valid = Validation.validate(input);
 
         if (valid) {
             verifyText.show();

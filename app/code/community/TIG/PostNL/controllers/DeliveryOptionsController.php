@@ -647,6 +647,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         }
 
         $phoneNumber = $params['number'];
+        $phoneNumber = str_replace(array('-', ' '), '', $phoneNumber);
 
         $phoneValidator = new Zend_Validate_Regex(array('pattern' => self::MOBILE_PHONE_NUMBER_REGEX));
 
@@ -768,6 +769,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             'date'  => $date,
             'costs' => $costs,
         );
+
+        if (isset($params['number'])) {
+            $phoneNumber = $this->_getSavePhonePostData($params);
+            $data['number'] = $phoneNumber;
+        }
 
         if (!array_key_exists('address', $params)) {
             return $data;
