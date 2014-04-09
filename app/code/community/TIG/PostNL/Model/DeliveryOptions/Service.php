@@ -180,8 +180,6 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
      */
     public function saveMobilePhoneNumber($phoneNumber)
     {
-        $quote = $this->getQuote();
-
         $postnlOrder = $this->getPostnlOrder();
         $postnlOrder->setMobilePhoneNumber($phoneNumber)
                     ->save();
@@ -214,7 +212,8 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
         if ($data['type'] == 'PA') {
             $postnlOrder->setIsPakketautomaat(true)
-                        ->setProductCode(3553);
+                        ->setProductCode(3553)
+                        ->setMobilePhoneNumber($data['number']);
         } elseif ($data['type'] == 'PG' || $data['type'] == 'PGE') {
             $postnlOrder->setIsPakjeGemak(true);
         }

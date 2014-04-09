@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Model_Feed
@@ -103,7 +103,7 @@ class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Mode
                     'date_added'    => $this->getDate((string) $item->pubDate),
                     'title'         => $helper->escapeHtml((string) $item->title),
                     'description'   => $helper->escapeHtml((string) $item->description),
-                    'url'           => $helper->escapeUrl((string) $item->link),
+                    'url'           => $helper->escapeHtml((string) $item->link),
                 );
             }
 

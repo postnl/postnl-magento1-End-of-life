@@ -1197,6 +1197,10 @@ PostnlDeliveryOptions.prototype = {
             params['address'] = Object.toJSON(address);
         }
 
+        if (selectedType == 'PA') {
+            params['number'] = $('add_phone_input').getValue();
+        }
+
         if (this.getOptions().isOsc) {
             params['isOsc'] = true;
         }
@@ -1415,6 +1419,8 @@ PostnlDeliveryOptions.prototype = {
      * @param phoneNumber
      *
      * @returns {PostnlDeliveryOptions}
+     *
+     * @deprecated
      */
     savePaPhoneNumber : function(phoneNumber) {
         var savePhoneUrl = this.getSavePhoneNumberUrl();
