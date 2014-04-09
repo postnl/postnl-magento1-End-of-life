@@ -396,7 +396,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets the process used for locking and unlocking this shipment
      *
-     * @return TIG_PostNL_Model_Core_Shipment_Process
+     * @return $this_Process
      */
     public function getProcess()
     {
@@ -943,7 +943,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param array $labels
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function setLabelsToSave($labels)
     {
@@ -980,7 +980,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param string $type
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function setGlobalpackShipmentType($type)
     {
@@ -1008,7 +1008,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @throws TIG_PostNL_Exception
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function setParcelCount($count)
     {
@@ -1038,7 +1038,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param mixed $isExported
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function setIsExported($isExported)
     {
@@ -1050,7 +1050,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param TIG_PostNL_Model_Core_Shipment_Process
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function setProcess(TIG_PostNL_Model_Core_Shipment_Process $process)
     {
@@ -1599,7 +1599,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Lock this shipment to prevent simultaneous execution
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function lock()
     {
@@ -1614,7 +1614,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Unlock this shipment
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function unlock()
     {
@@ -1646,7 +1646,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Barcodes are the basis for all CIF functionality and must therefore be generated before any further action is
      * possible.
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1739,7 +1739,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Generates a shipping labels for a shipment without confirming it with PostNL.
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1848,7 +1848,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Manually confirms a shipment without communicating with PostNL. This should be used if you wish to update the
      * confirmation status in Magento, while actually confirming the shipment through other means, such as parcelware.
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1871,7 +1871,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Confirm the shipment with PostNL without generating new labels
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1929,7 +1929,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @throws TIG_PostNL_Exception
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     protected function _confirm($barcodeNumber = false)
     {
@@ -1992,7 +1992,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Generates a shipping label and confirms the shipment with postNL.
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -2062,7 +2062,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Requests a shipping status update for this shipment
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -2104,7 +2104,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @throws TIG_PostNL_Exception
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function updateCompleteShippingStatus()
     {
@@ -2193,7 +2193,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Adds Magento tracking information to the order containing the previously retrieved barcode
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -2245,7 +2245,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @throws TIG_PostNL_Exception
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function sendTrackAndTraceEmail($ignoreAlreadySent = false)
     {
@@ -2330,7 +2330,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * @param string $barcode The barcode to add
      * @param int $barcodeNumber The number of this barcode
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     protected function _addBarcode($barcode, $barcodeNumber)
     {
@@ -2355,7 +2355,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param mixed $labels An array of labels or a single label object
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function addLabels($labels)
     {
@@ -2382,7 +2382,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param stdClass $label
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     protected function _addLabel($label)
     {
@@ -2410,7 +2410,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param TIG_PostNL_Model_Core_Shipment_Label $label
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     protected function _addLabelToSave($label)
     {
@@ -2426,7 +2426,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Save all newly added labels at once
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     protected function _saveLabels()
     {
@@ -2646,7 +2646,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Public alias for _saveAdditionalShippingOptions()
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @see TIG_PostNL_Model_Core_Shipment::_saveAdditionalShippingOptions()
      */
@@ -2658,7 +2658,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Stores additionally selected shipping options
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     protected function _saveAdditionalShippingOptions()
     {
@@ -2775,7 +2775,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Removes all labels associated with this shipment
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function deleteLabels()
     {
@@ -2797,7 +2797,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Removes all barcodes associated with this shipment
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function deleteBarcodes()
     {
@@ -2819,7 +2819,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Deletes all status history items associated with this shipment
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function deleteStatusHistory()
     {

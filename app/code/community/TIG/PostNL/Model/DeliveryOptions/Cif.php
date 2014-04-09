@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_DeliveryOptions_Cif setStoreId(int $value)
@@ -143,8 +143,9 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         $startDate = $data['deliveryDate'];
+
         /**
-         * @todo base this off of a new config setting
+         * This may become configurable in the future.
          */
         $endDate = date('d-m-Y', strtotime('+6 days', strtotime($startDate)));
 

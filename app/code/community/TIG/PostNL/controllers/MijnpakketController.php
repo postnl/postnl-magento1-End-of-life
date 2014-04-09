@@ -100,8 +100,18 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
             return $this;
         }
 
+        /**
+         * If the session is expired, return a 403 HTTP status code.
+         */
+        if ($this->_expireAjax()) {
+            return $this;
+        }
+
+        /**
+         * Get profile data.
+         */
         try {
-            $billingData = $this->_getBillingData();
+            $profileData = $this->_getProfileData();
         } catch (Exception $e) {
             Mage::helper('postnl/mijnpakket')->logException($e);
 
@@ -114,7 +124,7 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
         /**
          * Save the data as the billing and shipping address and get the result.
          */
-        $result = $this->_formResultArray($billingData);
+        $result = $this->_formResultArray($profileData);
 
         /**
          * Return the result as JSON.
@@ -132,7 +142,7 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
      *
      * @return array
      */
-    protected function _getBillingData()
+    protected function _getProfileData()
     {
         $checkoutSession = $this->getCheckoutSession();
         $savedData = $checkoutSession->getPostnlMijnpakketData();
@@ -160,20 +170,20 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
          * Parse the data into an array that Magento's checkout can use.
          */
         $profile = $response->Profiel;
-        $billingData = Mage::getModel('postnl_mijnpakket/service')->parseBillingData($profile);
+        $profileData = Mage::getModel('postnl_mijnpakket/service')->parseProfileData($profile);
 
         /**
          * Store the data in the customer's checkout session.
          */
-        $checkoutSession->setPostnlMijnpakketData($billingData);
+        $checkoutSession->setPostnlMijnpakketData($profileData);
 
-        return $billingData;
+        return $profileData;
     }
 
     /**
      * Form the result array.
      *
-     * @param $billingData
+     * @param array $billingData
      *
      * @return mixed
      */
@@ -213,7 +223,7 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
      */
     protected function _getShippingMethodsHtml()
     {
-        $layout = $this->getLayout('checkout_onepage_index');
+        $layout = $this->getLayout();
 
         $update = $layout->getUpdate();
         $update->load('checkout_onepage_shippingmethod');
@@ -245,5 +255,45 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
         }
 
         return $token;
+    }
+
+    /**
+     * Validate ajax request and redirect on failure
+     *
+     * @see Mage_Checkout_OnepageController::_ajaxRedirectResponse()
+     *
+     * @return bool
+     */
+    protected function _expireAjax()
+    {
+        $onepage = $this->getOnepage();
+        $quote = $onepage->getQuote();
+
+        if (!$quote->hasItems()
+            || $quote->getHasError()
+            || $quote->getIsMultiShipping()
+        ) {
+            $this->_ajaxRedirectResponse();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Send Ajax redirect response
+     *
+     * @see Mage_Checkout_OnepageController::_ajaxRedirectResponse()
+     *
+     * @return $this
+     */
+    protected function _ajaxRedirectResponse()
+    {
+        $this->getResponse()
+             ->setHeader('HTTP/1.1', '403 Session Expired')
+             ->setHeader('Login-Required', 'true')
+             ->sendResponse();
+
+        return $this;
     }
 }

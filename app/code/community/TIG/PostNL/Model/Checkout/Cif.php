@@ -613,7 +613,6 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @throws TIG_PostNL_Exception
      *
-     * @todo shouldn't we save this with the shipment in case the value changes later?
      * @todo merge this with TIG_PostNL_Model_Core_Cif::_getReference()
      */
      protected function _getReference($shipment)

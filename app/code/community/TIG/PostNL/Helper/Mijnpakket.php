@@ -39,12 +39,17 @@
 class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
 {
     /**
-     * @todo implement this method.
-     *
-     * @return bool
+     * @return boolean
      */
     public function canLoginWithMijnpakket()
     {
-        return true;
+        /**
+         * Mijnpakket login is always available if delivery options are available.
+         */
+        if (Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -132,9 +132,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 
         /**
          * replace the collection as the default collection has a bug preventing it from being reset.
-         * Without being able to reset it, we can't edit it. Therefore we are forced to replace it altogether
-         *
-         * TODO see if this can be avoided in any way
+         * Without being able to reset it, we can't edit it. Therefore we are forced to replace it altogether.
          */
         $collection = Mage::getResourceModel('postnl/order_shipment_grid_collection');
         $collection->setSelect($select)

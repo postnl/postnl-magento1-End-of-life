@@ -304,7 +304,7 @@ MijnpakketLogin.prototype = {
     },
 
     ajaxFailure : function() {
-        this.getCheckout().ajaxFailure.bind(this.getCheckout());
+        window.location.href = this.getCheckout().failureUrl;
     },
 
     fireGetProfileDataRequestStart : function() {
