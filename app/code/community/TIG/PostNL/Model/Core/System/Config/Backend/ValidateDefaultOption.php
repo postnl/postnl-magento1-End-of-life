@@ -59,6 +59,9 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ValidateDefaultOption extends 
      */
     public function validateDefaultOption($value)
     {
+        /**
+         * Get a list of supported options.
+         */
         $postData = Mage::app()->getRequest()->getPost();
         if (isset($postData['groups']['cif_product_options']['fields']['supported_product_options']['value'])) {
             $options = $postData['groups']['cif_product_options']['fields']['supported_product_options']['value'];
@@ -67,15 +70,68 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ValidateDefaultOption extends 
             $options = explode(',', $options);
         }
 
-        if (!in_array($value, $options)) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__(
-                    "You have chosen a default shipping option that is not supported. Please only select default " .
-                    "options that you have selected in the 'Select supported option' field."
-                ),
-                'POSTNL-0159'
-            );
+        /**
+         * Check if the current field's value is among them.
+         */
+        if (in_array($value, $options)) {
+            return true;
         }
+
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Get the system.xml configuration.
+         */
+        $configFields = Mage::getSingleton('adminhtml/config');
+        $sections     = $configFields->getSections('postnl');
+
+        /**
+         * Get the path of the current field split into parts.
+         */
+        $path      = $this->getPath();
+        $pathParts = explode('/', $path);
+
+        /**
+         * Search for the label of the current field and translate it.
+         */
+        $label = $sections->$pathParts[0]->groups->$pathParts[1]->fields->$pathParts[2]->label;
+        $label = $helper->__($label);
+
+        /**
+         * Get the translated label of the supported options field.
+         */
+        $supportedOptionsLabel =(string) $sections->postnl
+                                                  ->groups
+                                                  ->cif_product_options
+                                                  ->fields
+                                                  ->supported_product_options
+                                                  ->label;
+        $supportedOptionsLabel = $helper->__($supportedOptionsLabel);
+
+        /**
+         * Format the warning message.
+         */
+        $message = $helper->__(
+            "You have chosen a value for the '%s' field that is not supported. Please select a option that you have " .
+            "selected in the '%s' field, otherwise you may not be able to send shipments of this type.",
+            $label,
+            $supportedOptionsLabel
+        );
+
+        /**
+         * Add the warning.
+         */
+        $helper->addSessionMessage(
+            'adminhtml',
+            'POSTNL-0159',
+            'warning',
+            $message
+        );
+
+        /**
+         * Set this field's value to null, as it's selected option is invalid.
+         */
+        $this->setValue(null);
 
         return true;
     }
@@ -86,7 +142,10 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ValidateDefaultOption extends 
     protected function _beforeSave()
     {
         $value = $this->getValue();
-        $this->validateDefaultOption($value);
+
+        if ($value) {
+            $this->validateDefaultOption($value);
+        }
 
         return parent::_beforeSave();
     }

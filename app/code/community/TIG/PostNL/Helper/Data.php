@@ -1171,8 +1171,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * If the session is a string, treat it as a class name and instantiate it
          */
-        if (is_string($session)) {
+        if (is_string($session) && strpos($session, '/') !== false) {
             $session = Mage::getSingleton($session);
+        } elseif (is_string($session)) {
+            $session = Mage::getSingleton($session . '/session');
         }
 
         /**

@@ -48,8 +48,6 @@ class TIG_PostNL_Model_Core_Observer_Barcode
      * @event sales_order_shipment_save_after
      *
      * @observer postnl_shipment_generate_barcode
-     *
-     * @todo change confirm date to the correct value, taking into account 'ordered before X, delivered on Y' settings
      */
     public function generateBarcode(Varien_Event_Observer $observer)
     {
