@@ -36,39 +36,25 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Checkout_Observer_Order
+class TIG_PostNL_Model_Core_Resource_Order_Collection extends TIG_PostNL_Model_Resource_Db_Collection_Postnl
 {
     /**
-     * Cancels a PostNL Checkout order after it's Magento order has been cancelled.
+     * Event prefix
      *
-     * @param Varien_Event_Observer $observer
-     *
-     * @return TIG_PostNL_Model_Checkout_Observer_Order
-     *
-     * @event order_cancel_after
-     *
-     * @observer postnl_cancel_checkout_order
+     * @var string
      */
-    public function cancelOrder(Varien_Event_Observer $observer)
+    protected $_eventPrefix = 'postnl_order_collection';
+
+    /**
+     * Event object
+     *
+     * @var string
+     */
+    protected $_eventObject = 'postnl_order_collection';
+
+    public function _construct()
     {
-        /**
-         * @var Mage_Sales_Model_Order          $order
-         * @var TIG_PostNL_Model_Core_Order $postnlOrder
-         */
-        $order = $observer->getOrder();
-        $postnlOrder = Mage::getModel('postnl_core/order')->load($order->getId(), 'order_id');
-
-        if (!$postnlOrder->getId() || !$postnlOrder->getToken()) {
-            return $this;
-        }
-
-        try {
-            $postnlOrder->cancel()
-                        ->save();
-        } catch (Exception $e) {
-            Mage::helper('postnl/checkout')->logException($e);
-        }
-
-        return $this;
+        parent::_construct();
+        $this->_init('postnl_core/order');
     }
 }

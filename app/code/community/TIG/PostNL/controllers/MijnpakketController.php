@@ -84,6 +84,21 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
     }
 
     /**
+     * Checks if this controller was called from OneStepCheckout.
+     *
+     * @return bool
+     */
+    public function isOsc()
+    {
+        $isOsc = $this->getRequest()->getparam('isOsc');
+        if ($isOsc) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Get mijnpakket profile access using a token.
      *
      * @return $this
@@ -125,6 +140,13 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
          * Save the data as the billing and shipping address and get the result.
          */
         $result = $this->_formResultArray($profileData);
+
+        if ($result === false) {
+            $this->getResponse()
+                 ->setBody('error');
+
+            return $this;
+        }
 
         /**
          * Return the result as JSON.
@@ -185,7 +207,7 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
      *
      * @param array $billingData
      *
-     * @return mixed
+     * @return array|boolean
      */
     protected function _formResultArray($billingData)
     {
@@ -198,6 +220,12 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
          * If we encountered an error, only return the error.
          */
         if (isset($result['error'])) {
+            return false;
+        }
+
+        $result['origData'] = $billingData;
+
+        if ($this->isOsc()) {
             return $result;
         }
 
@@ -205,7 +233,6 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
          * Set required parameters in the result array, including the next step's html.
          */
         $result['duplicateBillingInfo'] = 'true';
-        $result['origData']             = $billingData;
         $result['allow_sections']       = array('billing', 'shipping');
         $result['goto_section']         = 'shipping_method';
         $result['update_section']       = array(

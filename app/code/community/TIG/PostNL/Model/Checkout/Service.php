@@ -555,7 +555,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
 
         $this->_verifyData($data, $quote);
 
-        $postnlOrder = Mage::getModel('postnl_checkout/order');
+        $postnlOrder = Mage::getModel('postnl_core/order');
         $postnlOrder->load($quote->getId(), 'quote_id');
 
         /**
@@ -678,9 +678,9 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
               ->save();
 
         /**
-         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
         $postnlOrder->setOrderId($order->getId())
                     ->setIsActive(false)
                     ->save();
@@ -719,7 +719,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $quote = $this->getQuote();
         }
 
-        $postnlOrder = Mage::getModel('postnl_checkout/order')
+        $postnlOrder = Mage::getModel('postnl_core/order')
                            ->load($quote->getId(), 'quote_id');
 
         $cif = Mage::getModel('postnl_checkout/cif');

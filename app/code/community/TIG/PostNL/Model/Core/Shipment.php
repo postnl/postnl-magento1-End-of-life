@@ -812,7 +812,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets a PostNL order associated with this shipment (if any exist)
      *
-     * @return boolean|TIG_PostNL_Model_Checkout_Order
+     * @return boolean|TIG_PostNL_Model_Core_Order
      */
     public function getPostnlOrder()
     {
@@ -820,7 +820,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this->_getData('postnl_order');
         }
 
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($this->getOrderId(), 'order_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($this->getOrderId(), 'order_id');
         if (!$postnlOrder->getId()) {
             $this->setPostnlOrder(false);
 
@@ -1272,7 +1272,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * We can check the PostNL order's type to see if it's PakjeGemak Express.
          *
-         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
         $postnlOrder = $this->getPostnlOrder();
         if (!$postnlOrder
@@ -1299,7 +1299,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * We can check the PostNL order's type to see if it's evening delivery.
          *
-         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
         $postnlOrder = $this->getPostnlOrder();
         if (!$postnlOrder
@@ -1330,7 +1330,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * If the order was placed using PostNL Checkout, we can check if it was a PakjeGemak order directly.
          *
-         * @var TIG_PostNL_Model_CHeckout_Order $postnlOrder
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
         $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder

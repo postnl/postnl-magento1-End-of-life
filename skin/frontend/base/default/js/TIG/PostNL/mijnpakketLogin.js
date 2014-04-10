@@ -41,6 +41,7 @@ MijnpakketLogin.prototype = {
     postnlLogin      : null,
     publicId         : null,
     profileAccessUrl : null,
+    isOsc            : false,
 
     elementId        : null,
     debug            : null,
@@ -56,10 +57,11 @@ MijnpakketLogin.prototype = {
      * @param {string} publicId
      * @param {string} profileAccessUrl
      */
-    initialize : function(publicId, profileAccessUrl) {
+    initialize : function(publicId, profileAccessUrl, isOsc) {
         this.postnlLogin      = PostNL.Login;
         this.publicId         = publicId;
         this.profileAccessUrl = profileAccessUrl;
+        this.isOsc            = isOsc;
 
         this.onProfileAccessCreate   = this.fireGetProfileDataRequestStart.bindAsEventListener(this);
         this.onProfileAccess         = this.updateCheckout.bindAsEventListener(this);
@@ -147,7 +149,7 @@ MijnpakketLogin.prototype = {
     },
 
     /**
-     * @param {{}} mijnpakketDataJson
+     * @param {string} mijnpakketDataJson
      *
      * @returns {MijnpakketLogin}
      */
@@ -166,10 +168,6 @@ MijnpakketLogin.prototype = {
      * @returns {MijnpakketLogin}
      */
     init : function(elementId, debug) {
-        if (!this.getCheckout() || !this.getBilling() || !this.getShipping()) {
-            throw 'Please set a Checkout, Billing and Shipping object before initializing MijnpakketLogin.'
-        }
-
         this.elementId = elementId;
         this.debug = debug;
 
@@ -270,16 +268,24 @@ MijnpakketLogin.prototype = {
      * @returns {MijnpakketLogin}
      */
     getProfileData : function(token) {
-        if (this.getCheckout().loadWaiting != false) {
+        if (this.getCheckout() && this.getCheckout().loadWaiting != false) {
             return this;
         }
 
-        this.getCheckout().setLoadWaiting('billing');
+        if (!this.isOsc && this.getCheckout()) {
+            this.getCheckout().setLoadWaiting('billing');
+        } else {
+            $('postnl_login_spinner').show();
+        }
 
         var params = {
             isAjax : true,
             token  : token
         };
+
+        if (this.isOsc) {
+            params['isOsc'] = true;
+        }
 
         this.getProfileDataRequest = new Ajax.PostnlRequest(this.profileAccessUrl, {
             method     : 'post',
@@ -295,16 +301,36 @@ MijnpakketLogin.prototype = {
 
     /**
      * @param {Ajax.Response} response
+     *
+     * @returns {MijnpakketLogin}
      */
     updateCheckout : function(response) {
-        this.getBilling().onSave(response);
-        this.updateAddressForms(response.responseText.evalJSON(true).origData);
+        if (response.responseText == 'error'
+            || response.responseText == 'not_allowed'
+            || response.responseText == 'invalid_data'
+        ) {
+            //todo error handling
+            return this;
+        }
+
+        document.fire('postnl:getProfileDataSuccess');
+
+        var data = response.responseText.evalJSON(true).origData;
+
+        if (!this.isOsc && this.getBilling()) {
+            this.getBilling().onSave(response);
+        }
+
+        this.updateAddressForms(data);
 
         this.showDummyButton();
+        return this;
     },
 
     ajaxFailure : function() {
-        window.location.href = this.getCheckout().failureUrl;
+        if (this.getCheckout()) {
+            window.location.href = this.getCheckout().failureUrl;
+        }
     },
 
     fireGetProfileDataRequestStart : function() {
@@ -331,7 +357,7 @@ MijnpakketLogin.prototype = {
         /**
          * If guest checkout is allowed, set it as the chosen checkout method.
          */
-        if ($('login:guest')) {
+        if ($('login:guest') && this.getCheckout()) {
             $('login:guest').checked = true;
             this.getCheckout().method = 'guest';
             var request = new Ajax.Request(
@@ -387,7 +413,9 @@ MijnpakketLogin.prototype = {
         /**
          * Sync billing and shipping address forms.
          */
-        this.getShipping().syncWithBilling();
+        if (this.getShipping()) {
+            this.getShipping().syncWithBilling();
+        }
 
         /**
          * Copy PostNL postcode check fields from billing to shipping.
