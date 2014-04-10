@@ -199,6 +199,12 @@
         </reference>
     </onestepcheckout_index_index>
 
+    <checkout_onepage_success>
+        <reference name="checkout.success">
+            <block type="postnl_mijnpakket/accountNotification" name="postnl_mijnpakket_account_notification" template="TIG/PostNL/mijnpakket/account_notification.phtml"/>
+        </reference>
+    </checkout_onepage_success>
+
     <onestepcheckout_ajax_save_billing>
         <reference name="choose-shipping-method">
             <block type="postnl_deliveryoptions/checkout_deliveryOptions" name="postnl.osc.delivery.options" template="TIG/PostNL/delivery_options/onestepcheckout/deliveryoptions.phtml">

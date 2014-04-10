@@ -255,6 +255,8 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
     }
 
     /**
+     * Get the field used for the address's streetname.
+     *
      * @return int
      */
     public function getStreetnameField()
@@ -270,6 +272,8 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
     }
 
     /**
+     * Get the field used for the address's housenumber.
+     *
      * @return int
      */
     public function getHousenumberField()

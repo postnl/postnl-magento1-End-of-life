@@ -36,35 +36,56 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
- * @method boolean                                      hasBlockClass()
- * @method TIG_PostNL_Model_Mijnpakket_Observer_Onepage setBlockClass(string $value)
+ * @method boolean                                      hasLoginBlockClass()
+ * @method TIG_PostNL_Model_Mijnpakket_Observer_Onepage setLoginBlockClass(string $value)
+ * @method boolean                                      hasSuccessBlockClass()
+ * @method TIG_PostNL_Model_Mijnpakket_Observer_Onepage setSuccessBlockClass(string $value)
  */
 class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
 {
     /**
-     * The block class that we want to edit.
+     * The block classes that we want to edit.
      */
-    const BLOCK_NAME = 'checkout/onepage_login';
+    const LOGIN_BLOCK_NAME   = 'checkout/onepage_login';
+    const SUCCESS_BLOCK_NAME = 'checkout/onepage_success';
 
     /**
-     * The new login template.
+     * The new templates.
      */
-    const LOGIN_TEMPLATE = 'TIG/PostNL/mijnpakket/onepage/login.phtml';
+    const LOGIN_TEMPLATE                = 'TIG/PostNL/mijnpakket/onepage/login.phtml';
+    const ACCOUNT_NOTIFICATION_TEMPLATE = 'TIG/PostNL/mijnpakket/onepage/success.phtml';
 
     /**
-     * Gets the classname for the block that we want to alter.
+     * Gets the classname for the login block that we want to alter.
      *
      * @return string
      */
-    public function getBlockClass()
+    public function getLoginBlockClass()
     {
-        if ($this->hasBlockClass()) {
-            return $this->_getData('block_class');
+        if ($this->hasLoginBlockClass()) {
+            return $this->_getData('login_block_class');
         }
 
-        $blockClass = Mage::getConfig()->getBlockClassName(self::BLOCK_NAME);
+        $blockClass = Mage::getConfig()->getBlockClassName(self::LOGIN_BLOCK_NAME);
 
-        $this->setBlockClass($blockClass);
+        $this->setLoginBlockClass($blockClass);
+        return $blockClass;
+    }
+
+    /**
+     * Gets the classname for the checkout success block that we want to alter.
+     *
+     * @return string
+     */
+    public function getSucessBlockClass()
+    {
+        if ($this->hasSuccessBlockClass()) {
+            return $this->_getData('success_block_class');
+        }
+
+        $blockClass = Mage::getConfig()->getBlockClassName(self::SUCCESS_BLOCK_NAME);
+
+        $this->setSuccessBlockClass($blockClass);
         return $blockClass;
     }
 
@@ -77,19 +98,19 @@ class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
      *
      * @event core_block_abstract_to_html_before
      *
-     * @observer checkout_onepage_login
+     * @observer checkout_onepage_mijnpakket_login
      */
     public function addMijnpakketLogin(Varien_Event_Observer $observer)
     {
         /**
          * Checks if the current block is the one we want to edit.
          *
-         * Unfortunately there is no unique event for this block
+         * Unfortunately there is no unique event for this block.
          *
          * @var Mage_Core_Block_Abstract $block
          */
         $block      = $observer->getBlock();
-        $blockClass = $this->getBlockClass();
+        $blockClass = $this->getLoginBlockClass();
 
         if (!($block instanceof $blockClass)) {
             return $this;
@@ -99,6 +120,41 @@ class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
          * @var Mage_Checkout_Block_Onepage_Login $block
          */
         $block->setTemplate(self::LOGIN_TEMPLATE);
+
+        return $this;
+    }
+
+    /**
+     * Replace the onepage checkout success template.
+     *
+     * @param Varien_Event_Observer $observer
+     *
+     * @return $this
+     *
+     * @event core_block_abstract_to_html_before
+     *
+     * @observer checkout_onepage_mijnpakket_success
+     */
+    public function addAccountNotification(Varien_Event_Observer $observer)
+    {
+        /**
+         * Checks if the current block is the one we want to edit.
+         *
+         * Unfortunately there is no unique event for this block.
+         *
+         * @var Mage_Core_Block_Abstract $block
+         */
+        $block      = $observer->getBlock();
+        $blockClass = $this->getSucessBlockClass();
+
+        if (!($block instanceof $blockClass)) {
+            return $this;
+        }
+
+        /**
+         * @var Mage_Checkout_Block_Onepage_Success $block
+         */
+        $block->setTemplate(self::ACCOUNT_NOTIFICATION_TEMPLATE);
 
         return $this;
     }
