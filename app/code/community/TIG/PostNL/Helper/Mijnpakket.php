@@ -52,4 +52,24 @@ class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
 
         return false;
     }
+
+    /**
+     * Get initials based on a firstname.
+     *
+     * @param string $firstName
+     *
+     * @return string
+     */
+    public function getInitials($firstName)
+    {
+        $nameParts = preg_split("/\s+/", $firstName);
+
+        $initials = '';
+        foreach ($nameParts as $name) {
+            $initials .= substr($name, 0, 1) . '.';
+        }
+
+        $initials = strtoupper($initials);
+        return $initials;
+    }
 }

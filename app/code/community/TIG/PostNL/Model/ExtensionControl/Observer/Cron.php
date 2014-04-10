@@ -113,6 +113,8 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         $feed = Mage::getModel('postnl_extensioncontrol/feed');
         $feedXml = $feed->getFeedData();
 
+        $coreHelper = Mage::helper('core');
+
         /**
          * Parse the feed
          */
@@ -129,9 +131,9 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
                 $feedData[] = array(
                     'severity'      => $severity,
                     'date_added'    => $feed->getDate((string) $item->pubDate),
-                    'title'         => (string) $item->title,
-                    'description'   => (string) $item->description,
-                    'url'           => (string) $item->link,
+                    'title'         => $coreHelper->escapeHtml((string) $item->title),
+                    'description'   => $coreHelper->escapeHtml((string) $item->description),
+                    'url'           => $coreHelper->escapeHtml((string) $item->link),
                 );
             }
 

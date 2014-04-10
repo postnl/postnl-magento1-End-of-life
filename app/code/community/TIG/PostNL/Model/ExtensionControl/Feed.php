@@ -38,11 +38,14 @@
  */
 class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Model_Feed
 {
+    /**
+     * The XMl feed's url and protocol.
+     */
     const XML_PATH_FEED_USE_HTTPS  = 'postnl/advanced/feed_use_https';
     const XML_PATH_FEED_URL        = 'postnl/advanced/feed_url';
 
     /**
-     * Retrieve feed url
+     * Retrieve feed url.
      *
      * @return string
      */
