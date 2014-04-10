@@ -100,7 +100,7 @@ $conn->changeColumn($installer->getTable('postnl_core/shipment'),
  * POSTNL ORDER
  **********************************************************************************************************************/
 
-$conn->addColumn($installer->getTable('postnl_checkout/order'),
+$conn->addColumn($installer->getTable('postnl_core/order'),
     'type',
     array(
         'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
@@ -111,7 +111,7 @@ $conn->addColumn($installer->getTable('postnl_checkout/order'),
     )
 );
 
-$conn->addColumn($installer->getTable('postnl_checkout/order'),
+$conn->addColumn($installer->getTable('postnl_core/order'),
     'shipment_costs',
     array(
         'type'     => Varien_Db_Ddl_Table::TYPE_FLOAT,
@@ -122,7 +122,7 @@ $conn->addColumn($installer->getTable('postnl_checkout/order'),
     )
 );
 
-$conn->addColumn($installer->getTable('postnl_checkout/order'),
+$conn->addColumn($installer->getTable('postnl_core/order'),
     'mobile_phone_number',
     array(
         'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
@@ -133,7 +133,7 @@ $conn->addColumn($installer->getTable('postnl_checkout/order'),
     )
 );
 
-$conn->addColumn($installer->getTable('postnl_checkout/order'),
+$conn->addColumn($installer->getTable('postnl_core/order'),
     'is_pakketautomaat',
     array(
         'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,

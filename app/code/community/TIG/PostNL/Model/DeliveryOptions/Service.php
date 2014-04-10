@@ -39,7 +39,7 @@
  * @method boolean                                  hasQuote()
  * @method TIG_PostNL_Model_DeliveryOptions_Service setQuote(Mage_Sales_Model_Quote $quote)
  * @method boolean                                  hasPostnlOrder()
- * @method TIG_PostNL_Model_DeliveryOptions_Service setPostnlOrder(TIG_PostNL_Model_Checkout_Order $postnlOrder)
+ * @method TIG_PostNL_Model_DeliveryOptions_Service setPostnlOrder(TIG_PostNL_Model_Core_Order $postnlOrder)
  * @method boolean                                  hasShippingDuration()
  * @method TIG_PostNL_Model_DeliveryOptions_Service setShippingDuration(int $duration)
  * @method boolean                                  hasConfirmDate()
@@ -60,7 +60,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     /**
      * Gets a PostNL Order. If none is set; load one.
      *
-     * @return TIG_PostNL_Model_Checkout_Order
+     * @return TIG_PostNL_Model_Core_Order
      */
     public function getPostnlOrder()
     {
@@ -72,7 +72,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
         $quote = $this->getQuote();
 
-        $postnlOrder = Mage::getModel('postnl_checkout/order');
+        $postnlOrder = Mage::getModel('postnl_core/order');
         $postnlOrder->load($quote->getId(), 'quote_id');
 
         $postnlOrder->setQuoteId($quote->getId());
@@ -199,7 +199,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $confirmDate = $this->getConfirmDate($data['date']);
 
         /**
-         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
         $postnlOrder = $this->getPostnlOrder();
         $postnlOrder->setQuoteId($quote->getId())

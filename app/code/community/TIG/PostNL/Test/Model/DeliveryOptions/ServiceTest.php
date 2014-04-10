@@ -76,10 +76,10 @@ class TIG_PostNL_Test_Model_DeliveryOptions_ServiceTest extends TIG_PostNL_Test_
     {
         $instance = $this->_getInstance();
 
-        $mockPostnlOrder = $this->getMock('TIG_PostNL_Model_Checkout_Order');
+        $mockPostnlOrder = $this->getMock('TIG_PostNL_Model_Core_Order');
         $instance->setPostnlOrder($mockPostnlOrder);
 
-        $this->assertInstanceOf('TIG_PostNL_Model_Checkout_Order', $instance->getPostnlOrder());
+        $this->assertInstanceOf('TIG_PostNL_Model_Core_Order', $instance->getPostnlOrder());
     }
 
     /**
@@ -95,7 +95,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_ServiceTest extends TIG_PostNL_Test_
 
         $instance->setQuote($mockQuote);
 
-        $this->assertInstanceOf('TIG_PostNL_Model_Checkout_Order', $instance->getPostnlOrder());
+        $this->assertInstanceOf('TIG_PostNL_Model_Core_Order', $instance->getPostnlOrder());
     }
 
     /**
@@ -197,7 +197,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_ServiceTest extends TIG_PostNL_Test_
         $instance->setQuote($mockQuote);
 
         $mockPostnlOrder = $this->getMock(
-            'TIG_PostNL_Model_Checkout_Order',
+            'TIG_PostNL_Model_Core_Order',
             array(
                 'setQuoteId',
                 'setIsActive',
@@ -248,7 +248,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_ServiceTest extends TIG_PostNL_Test_
     public function saveMobileNumberShouldSaveTheMobileNumber()
     {
         $mockPostnlOrder = $this->getMock(
-            'TIG_PostNL_Model_Checkout_Order',
+            'TIG_PostNL_Model_Core_Order',
             array(
                 'setMobilePhoneNumber',
                 'save'

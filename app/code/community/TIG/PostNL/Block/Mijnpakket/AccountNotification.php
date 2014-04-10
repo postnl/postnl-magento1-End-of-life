@@ -1,0 +1,264 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                         hasPublicWebshopId()
+ * @method TIG_PostNL_Block_Mijnpakket_AccountNotification setPublicWebshopId(string $value)
+ * @method boolean                                         hasOrder()
+ * @method TIG_PostNL_Block_Mijnpakket_AccountNotification setOrder(mixed $value)
+ * @method boolean                                         hasShippingAddress()
+ * @method TIG_PostNL_Block_Mijnpakket_AccountNotification setShippingAddress(mixed $value)
+ * @method boolean                                         hasCreateAccountUrl()
+ * @method TIG_PostNL_Block_Mijnpakket_AccountNotification setCreateAccountUrl(string $value)
+ * @method boolean                                         hasCreateAccountBaseUrl()
+ * @method TIG_PostNL_Block_Mijnpakket_AccountNotification setCreateAccountBaseUrl(string $value)
+ */
+class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Template
+{
+    /**
+     * Base URL to create a new mijnpakket account.
+     */
+    const CREATE_ACCOUNT_BASE_URL = 'https://mijnpakket.postnl.nl/Register/RegisterFromWebshop?';
+
+    /**
+     * The webshop's public webshop ID is used to secure communications with PostNL's servers.
+     */
+    const XPATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
+
+    /**
+     * @var string
+     */
+    protected $_template = 'TIG/PostNL/mijnpakket/account_notification.phtml';
+
+    /**
+     * Get the current public webshop ID.
+     *
+     * @return string
+     */
+    public function getPublicWebshopId()
+    {
+        if ($this->hasPublicWebshopId()) {
+            return $this->_getData('public_webshop_id');
+        }
+
+        $publicWebshopId = Mage::getStoreConfig(self::XPATH_PUBLIC_WEBSHOP_ID, Mage::app()->getStore()->getId());
+
+        $this->setPublicWebshopId($publicWebshopId);
+        return $publicWebshopId;
+    }
+
+    /**
+     * Gets the last placed order.
+     *
+     * @return Mage_Sales_Model_Order|boolean
+     */
+    public function getOrder()
+    {
+        if ($this->hasOrder()) {
+            return $this->_getData('order');
+        }
+
+        $orderId = Mage::getSingleton('checkout/session')->getLastOrderId();
+        if (!$orderId) {
+            return false;
+        }
+
+        $order = Mage::getModel('sales/order')->load($orderId);
+
+        $this->setOrder($order);
+        return $order;
+    }
+
+    /**
+     * Gets the shipping address of the last placed order.
+     *
+     * @return Mage_Sales_Model_Order_Address|boolean
+     */
+    public function getShippingAddress()
+    {
+        if ($this->hasShippingAddress()) {
+            return $this->_getData('shipping_address');
+        }
+
+        $order = $this->getOrder();
+        if (!$order) {
+            $this->setShippingAddress(false);
+            return false;
+        }
+
+        $shippingAddress = $order->getShippingAddress();
+        if (!$shippingAddress) {
+            $this->setShippingAddress(false);
+            return false;
+        }
+
+        $this->setShippingAddress($shippingAddress);
+        return $shippingAddress;
+    }
+
+    /**
+     * Gets the base create mijnpakket account URL.
+     *
+     * @return string
+     */
+    public function getCreateAccountBaseUrl()
+    {
+        if ($this->hasCreateAccountBaseUrl()) {
+            return $this->_getData('create_account_base_url');
+        }
+
+        $baseUrl = self::CREATE_ACCOUNT_BASE_URL;
+
+        $this->setCreateAccountBaseUrl($baseUrl);
+        return $baseUrl;
+    }
+
+    /**
+     * Form the create mijnpakket account url based on the hardcoded base URL and a dynamic set of parameters.
+     *
+     * @return string
+     */
+    public function getCreateAccountUrl()
+    {
+        if ($this->hasCreateAccountUrl()) {
+            return $this->_getData('create_account_url');
+        }
+
+        $baseUrl     = $this->getCreateAccountBaseUrl();
+
+        /**
+         * Add the optional params to the base url.
+         */
+        $urlParams   = $this->_getUrlParams();
+        $queryString = http_build_query($urlParams);
+
+        $createAccountUrl = $baseUrl . $queryString;
+
+        $this->setCreateAccountUrl($createAccountUrl);
+        return $createAccountUrl;
+    }
+
+    /**
+     * Gets all the URL parameters to create a mijnpakket account. While alle parameters are optional, the more we add,
+     * the less the customer will have to add manually later on.
+     *
+     * @return array
+     */
+    protected function _getUrlParams()
+    {
+        /**
+         * get the webshop's public ID. This should be the only parameter that is always available.
+         */
+        $publicWebshopId = $this->getPublicWebshopId();
+
+        /**
+         * If no order or shipping address is available, return just the public webshop ID.
+         */
+        $order = $this->getOrder();
+        $shippingAddress = $this->getShippingAddress();
+        if (!$order || !$shippingAddress) {
+            return array('webshopPublicId' => $publicWebshopId);
+        }
+
+        $helper = Mage::helper('postnl/mijnpakket');
+
+        /**
+         * Get the basic order parameters.
+         */
+        $firstname = $shippingAddress->getFirstname();
+        $params = array(
+            'webshopPublicId' => $publicWebshopId,
+            'initials'        => $helper->getInitials($firstname),
+            'firstName'       => $firstname,
+            'middleName'      => $shippingAddress->getMiddlename(),
+            'lastName'        => $shippingAddress->getLastname(),
+            'email'           => $shippingAddress->getEmail(),
+            'postalCode'      => $shippingAddress->getPostcode(),
+            'business'        => 'P',
+        );
+
+        /**
+         * If this address hads a VAT ID, it's probably a B2B client.
+         */
+        $vat = $shippingAddress->getVatId();
+        if ($vat) {
+            $params['business'] = 'Z';
+        }
+
+        /**
+         * Optionally add the dob.
+         */
+        $dob = $shippingAddress->getDob();
+        if ($dob) {
+            $dob = date('d-m-Y', strtotime($dob));
+            $params['birthDate'] = $dob;
+        }
+
+        /**
+         * If we have a mobile phonenumber for this address, add that as well.
+         *
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($order->getId(), 'order_id');
+        if ($postnlOrder->getId() && $postnlOrder->getMobilePhoneNumber()) {
+            $params['mobileNumber'] = $postnlOrder->getMobilePhoneNumber();
+        }
+
+        /**
+         * Get the split address data of this order.
+         */
+        $streetData = false;
+        try {
+            $streetData = Mage::helper('postnl/cif')->getStreetData($order->getStoreId(), $shippingAddress, false);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+        }
+
+        /**
+         * If we have split address data, add the housenumber and housenumber extension.
+         */
+        if ($streetData && isset($streetData['housenumber'])) {
+            $params['houseNumber'] = $streetData['housenumber'];
+
+            if (isset($streetData['housenumberExtension']) && !empty($streetData['housenumberExtension'])) {
+                $params['houseNumberSuffix'] = $streetData['housenumberExtension'];
+            }
+        }
+
+        return $params;
+    }
+}

@@ -277,7 +277,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Confirms the PostNL order.
      *
-     * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
      *
      * @throws TIG_PostNL_Exception
      *
@@ -317,7 +317,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Updates an order with CIF once a shipment has been confirmed in order to link the shipment to the PostNL CHeckout order
      *
-     * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
      * @param boolean $cancel
      *
      * @return StdClass
@@ -530,7 +530,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Builds the confirmOrder Order soap object based on the current postnl order.
      *
-     * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
      *
      * @return array
      */
@@ -554,7 +554,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Builds the updateOrder Order soap object based on the current postnl order.
      *
-     * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
      * @param boolean $cancel
      *
      * @return array
@@ -584,7 +584,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets a list of shipments associated with a PostNL order
      *
-     * @param TIG_PostNL_Model_Checkout_Order $postnlOrder
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
      *
      * @return array
      */
@@ -762,7 +762,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets the order token used to identify a PostNL order
      *
-     * @param Mage_Sales_Model_Quote | TIG_PostNL_Model_Checkout_Order $object
+     * @param Mage_Sales_Model_Quote | TIG_PostNL_Model_Core_Order $object
      *
      * @return array
      *
@@ -771,8 +771,8 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getCheckout($object)
     {
         if ($object instanceof Mage_Sales_Model_Quote) {
-            $postnlOrder = Mage::getModel('postnl_checkout/order')->load($object->getId(), 'quote_id');
-        } elseif ($object instanceof TIG_PostNL_Model_Checkout_Order) {
+            $postnlOrder = Mage::getModel('postnl_core/order')->load($object->getId(), 'quote_id');
+        } elseif ($object instanceof TIG_PostNL_Model_Core_Order) {
             $postnlOrder = $object;
         } else {
             throw new TIG_PostNL_Exception(

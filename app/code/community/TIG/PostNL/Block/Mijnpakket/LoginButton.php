@@ -88,6 +88,23 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends Mage_Core_Block_Template
     }
 
     /**
+     * Checks if debug mode is allowed. Debug mode is enabled if the PostNl extension's debug mode is set to 'full'.
+     *
+     * @return bool
+     */
+    public function isDebugEnabled()
+    {
+        $helper = Mage::helper('postnl');
+        $debugMode = $helper->getDebugMode();
+
+        if ($debugMode > 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Check if the current customer may login using Mijnpakket.
      *
      * @return string

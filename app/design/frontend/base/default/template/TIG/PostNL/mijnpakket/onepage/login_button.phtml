@@ -39,11 +39,13 @@
 ?>
 <?php $_checkoutHelper = Mage::helper('checkout'); ?>
 <?php $_savedData = $this->getSavedMijnpakketData(); ?>
-<div id="postnl_mijnpakket_login"></div>
-<div id="postnl_mijnpakket_login_btn" style="display:none;">
-    <span>
-        <img src="https://tppcb-sandbox.e-id.nl/Button/PremiumLogin?publicId=3aaa777ab1204a67bd51ddb4f7326be9" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
-    </span>
+<div id="postnl_mijnpakket">
+    <div id="postnl_mijnpakket_login"></div>
+    <div id="postnl_mijnpakket_login_btn" style="display:none;">
+        <span>
+            <img src="https://tppcb-sandbox.e-id.nl/Button/PremiumLogin?publicId=3aaa777ab1204a67bd51ddb4f7326be9" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
+        </span>
+    </div>
 </div>
 <div class="buttons-set" id="login-buttons-container">
     <span class="please-wait" id="login-please-wait" style="display:none;">
@@ -56,19 +58,26 @@
         var publicWebshopId  = '<?php echo $this->getPublicWebshopId(); ?>';
         var profileAccessUrl = '<?php echo $this->getUrl('postnl/mijnpakket/getProfileAccess', array('_secure' => true)); ?>';
 
-        var mijnpakketLogin = new MijnpakketLogin(publicWebshopId, profileAccessUrl);
+        var mijnpakketLogin = new MijnpakketLogin(publicWebshopId, profileAccessUrl, false);
         window.mijnpakketLogin = mijnpakketLogin;
 
         mijnpakketLogin.setCheckout(checkout)
                        .setBilling(billing)
                        .setShipping(shipping);
 
-        <?php if ($_savedData): ?>
+        <?php if ($_savedData && false): ?>
             var mijnpakketData = '<?php echo Mage::helper('core')->jsonEncode($_savedData); ?>';
             mijnpakketLogin.setMijnpakketDataJson(mijnpakketData);
         <?php endif; ?>
 
-        mijnpakketLogin.init('postnl_mijnpakket_login', true);
+        mijnpakketLogin.init('postnl_mijnpakket_login', <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>);
+
+        var oscLoginLink = $('onestepcheckout-login-link');
+        if (oscLoginLink) {
+            oscLoginLink.insert({
+                after: $('postnl_mijnpakket')
+            });
+        }
     });
     //]]>
 </script>

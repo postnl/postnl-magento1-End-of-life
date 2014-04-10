@@ -116,6 +116,9 @@
             <postnl_core_resource>
                 <class>TIG_PostNL_Model_Core_Resource</class>
                 <entities>
+                    <order>
+                        <table>tig_postnl_order</table>
+                    </order>
                     <shipment>
                         <table>tig_postnl_shipment</table>
                     </shipment>
@@ -138,14 +141,6 @@
                     </tablerate>
                 </entities>
             </postnl_carrier_resource>
-            <postnl_checkout_resource>
-                <class>TIG_PostNL_Model_Checkout_Resource</class>
-                <entities>
-                    <order>
-                        <table>tig_postnl_order</table>
-                    </order>
-                </entities>
-            </postnl_checkout_resource>
         </models>
         <resources>
             <postnl_setup>
