@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -49,7 +49,7 @@
             onComplete: function(response) {
                 var responseText = response.responseText;
                 $('waiting_for_ping_spinner').hide();
-                
+
                 $('postnl_checkout_seperator').show();
                 if (responseText == 'OK') {
                     $('postnl_checkout').show();
@@ -58,34 +58,34 @@
                 }
             }
         });
-    
+
         var PostNLCheckout = new Class.create();
         PostNLCheckout.prototype = {
             initialize: function(url, successUrl, environment) {
                 this.url = url;
                 this.createIframe();
                 this.overlay = $('postnl-overlay');
-                
+
                 PostNL_OP_Checkout.initCheckout(
                     function() {
                         if ($('postnl-overlay')) {
                             $('postnl-overlay').show();
                         }
                         window.location = successUrl;
-                    }, 
+                    },
                     function() {
                         // Cancel Action
-                    }, 
+                    },
                     function() {
                         // Login Action
-                    }, 
+                    },
                     environment
                 );
             },
             createIframe: function() {
                 var iframe = document.createElement("div");
                 iframe.id = "iframe";
-                iframe.setAttribute("style", "z-index:9999999;"); 
+                iframe.setAttribute("style", "z-index:9999999;");
                 document.body.appendChild(iframe);
             },
             startCheckout: function(elem) {
@@ -106,19 +106,19 @@
                     alert('<?php echo $this->__('An error occurred. Please use our regular checkout instead.'); ?>');
                     document.body.style.cursor = 'default';
                     this.overlay.hide();
-                    
+
                     return false;
                 }
-                
+
                 var data = eval('(' + transport.responseText + ')');
                 PostNL_OP_Checkout.showCheckout(data[0].orderToken);
                 document.body.style.cursor = 'default';
                 this.overlay.hide();
             }
         };
-        
+
         postnlcheckoutWidget = new PostNLCheckout(
-            '<?php echo $this->getUrl('postnl/checkout/prepareOrder', array('_secure' => true)); ?>',
+            '<?php echo $this->getUrl('postnl/checkout/prepareOrder'); ?>',
             '<?php echo $_continueUrl; ?>',
             <?php echo $_environment; ?>
         );
