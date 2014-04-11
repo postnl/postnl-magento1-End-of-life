@@ -127,26 +127,26 @@
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
     /**
-     * Prefix of model events names
+     * Prefix of model events names.
      *
      * @var string
      */
     protected $_eventPrefix = 'postnl_shipment';
 
     /**
-     * Carrier code used by postnl
+     * Carrier code used by postnl.
      */
     const POSTNL_CARRIER_CODE = 'postnl';
 
     /**
-     * Possible confirm statusses
+     * Possible confirm statusses.
      */
     const CONFIRM_STATUS_CONFIRMED       = 'confirmed';
     const CONFIRM_STATUS_UNCONFIRMED     = 'unconfirmed';
     const CONFIRM_STATUS_CONFIRM_EXPIRED = 'confirm_expired';
 
     /**
-     * Possible shipping phases
+     * Possible shipping phases.
      */
     const SHIPPING_PHASE_COLLECTION     = '1';
     const SHIPPING_PHASE_SORTING        = '2';
@@ -155,7 +155,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPPING_PHASE_NOT_APPLICABLE = '99';
 
     /**
-     * XML paths to default product options settings
+     * XML paths to default product options settings.
      */
     const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
     const XML_PATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/cif_product_options/default_evening_product_option';
@@ -169,22 +169,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XML_PATH_ALTERNATIVE_DEFAULT_OPTION            = 'postnl/cif_product_options/alternative_default_option';
 
     /**
-     * XML path to weight per parcel config setting
+     * XML path to weight per parcel config setting.
      */
     const XML_PATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
 
     /**
-     * XML path to setting that determines whether or not to send track and trace emails
+     * XML path to setting that determines whether or not to send track and trace emails.
      */
     const XML_PATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
 
     /**
-     * XML path to track and trace email template setting
+     * XML path to track and trace email template setting.
      */
     const XML_PATH_TRACK_AND_TRACE_EMAIL_TEMPLATE = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
 
     /**
-     * XML path to maximum allowed parcel count settings
+     * XML path to maximum allowed parcel count settings.
      */
     const XML_PATH_MAX_PARCEL_COUNT = 'postnl/advanced/max_parcel_count';
 
@@ -194,17 +194,17 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_SHIPMENT_TYPE = 'postnl/cif_globalpack_settings/default_shipment_type';
 
     /**
-     * CIF warning code returned when an EPS combi label is not available
+     * CIF warning code returned when an EPS combi label is not available.
      */
     const EPS_COMBI_LABEL_WARNING_CODE = 'LIRS_0';
 
     /**
-     * Newly added 'pakje_gemak' address type
+     * Newly added 'pakje_gemak' address type.
      */
     const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
 
     /**
-     * Array of product codes that have extra cover
+     * Array of product codes that have extra cover.
      *
      * @var array
      */
@@ -231,7 +231,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Contains an instance of TIG_PostNL_Model_Core_Shipment_Process which locks a shipment and prevents it from being
      * modified.
      *
-     * @var void|TIG_PostNL_Model_Core_Shipment_Process
+     * @var TIG_PostNL_Model_Core_Shipment_Process
      */
     protected $_process;
 
@@ -396,7 +396,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets the process used for locking and unlocking this shipment
      *
-     * @return $this_Process
+     * @return TIG_PostNL_Model_Core_Shipment_Process
      */
     public function getProcess()
     {
@@ -2740,13 +2740,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
              ->deleteBarcodes() //delete all associated barcodes
              ->deleteStatusHistory(); //delete all associated status history items
 
+
         if ($deleteLabels) {
             $this->setlabelsPrinted(false) //labels have not been printed
                  ->deleteLabels(); //delete all associated labels
         }
 
         if ($deleteTracks) {
-            $this->deleteShipmentTracks(); //delete ale addociated tracks
+            $this->deleteShipmentTracks() //delete ale addociated tracks
+                 ->setTrackAndTraceEmailSent(false); //make sure that a new T&T e-mail is sent
         }
 
         return $this;

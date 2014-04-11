@@ -121,7 +121,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
 
-        $receiveUpdates =  Mage::getStoreConfigFlag(self::XML_PATH_RECEIVE_UPDATES);
+        $receiveUpdates =  Mage::getStoreConfigFlag(self::XML_PATH_RECEIVE_UPDATES, $storeId);
         if (!$receiveUpdates) {
             return false;
         }

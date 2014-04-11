@@ -77,7 +77,7 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
             );
         }
 
-        return parent::_construct();
+        parent::_construct();
     }
 
     /**

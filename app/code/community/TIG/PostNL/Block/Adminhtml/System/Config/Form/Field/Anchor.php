@@ -40,6 +40,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Anchor
     extends Varien_Data_Form_Element_Link
     implements Varien_Data_Form_Element_Renderer_Interface
 {
+    /**
+     * Get the element's HTML.
+     *
+     * @return string
+     */
     public function getElementHtml()
     {
         $originalData = $this->getElement()->getOriginalData();

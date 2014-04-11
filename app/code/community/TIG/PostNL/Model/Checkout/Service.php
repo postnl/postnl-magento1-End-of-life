@@ -244,6 +244,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * Extra checks used by Magento
          *
+         * @var $paymentMethodAbstractClass Mage_Payment_Model_Method_Abstract
+         *
          * @since Magento v1.13
          */
         $paymentMethodAbstractClass = Mage::getConfig()->getModelClassName('payment/method_abstract');
@@ -719,6 +721,9 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $quote = $this->getQuote();
         }
 
+        /**
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
         $postnlOrder = Mage::getModel('postnl_core/order')
                            ->load($quote->getId(), 'quote_id');
 
