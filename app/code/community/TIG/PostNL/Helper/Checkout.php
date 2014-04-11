@@ -370,35 +370,13 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $quoteItems = $quoteItems->getAllItems();
         }
 
-        $productIds = array();
+        /** @var Mage_Sales_Model_Quote_Item $item */
         foreach ($quoteItems as $item) {
-            $productIds[] = $item->getProductId();
-        }
+            $product = $item->getProduct();
 
-        /**
-         * Filter the stock collection by the products in the quote and whose quantity is equal to or below 0
-         *
-         * The resulting query:
-         * SELECT `main_table`.`item_id` , `cp_table`.`type_id`
-         * FROM `cataloginventory_stock_item` AS `main_table`
-         * INNER JOIN `catalog_product_entity` AS `cp_table` ON main_table.product_id = cp_table.entity_id
-         * WHERE (
-         *     product_id
-         *     IN (
-         *         {$productIds}
-         *     )
-         * )
-         * AND (
-         *     qty <=0
-         * )
-         */
-        $stockCollection = Mage::getResourceModel('cataloginventory/stock_item_collection');
-        $stockCollection->addFieldToSelect('item_id')
-                        ->addFieldToFilter('product_id', array('in' => $productIds))
-                        ->addFieldToFilter('qty', array('lteq' => 0));
-
-        if ($stockCollection->getSize() > 0) {
-            return true;
+            if (!$product->isInStock()) {
+                return true;
+            }
         }
 
         return false;

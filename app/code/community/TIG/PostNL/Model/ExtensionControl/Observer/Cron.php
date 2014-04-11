@@ -129,9 +129,9 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
                 $feedData[] = array(
                     'severity'      => $severity,
                     'date_added'    => $feed->getDate((string) $item->pubDate),
-                    'title'         => (string) $item->title,
-                    'description'   => (string) $item->description,
-                    'url'           => (string) $item->link,
+                    'title'         => $helper->escapeHtml((string) $item->title),
+                    'description'   => $helper->escapeHtml((string) $item->description),
+                    'url'           => $helper->escapeHtml((string) $item->link),
                 );
             }
 
