@@ -285,7 +285,7 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
     }
 
     /**
-     * Validate ajax request and redirect on failure
+     * Validate ajax request and redirect on failure.
      *
      * @see Mage_Checkout_OnepageController::_ajaxRedirectResponse()
      *
@@ -308,7 +308,7 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
     }
 
     /**
-     * Send Ajax redirect response
+     * Send Ajax redirect response.
      *
      * @see Mage_Checkout_OnepageController::_ajaxRedirectResponse()
      *

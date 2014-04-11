@@ -235,11 +235,28 @@ MijnpakketLogin.prototype = {
      */
     showDummyButton : function() {
         $('postnl_mijnpakket_login').hide();
+        $('postnl_mijnpakket_login_btn_disabled').hide();
 
         var button = $('postnl_mijnpakket_login_btn');
 
         button.show();
         button.observe('click', this.getProfileData.bind(this, ''));
+
+        return this;
+    },
+
+    /**
+     * Shows a disabled login button.
+     *
+     * @returns {MijnpakketLogin}
+     */
+    showDisabledButton : function() {
+        $('postnl_mijnpakket_login').hide();
+        $('postnl_mijnpakket_login_btn').hide();
+
+        var button = $('postnl_mijnpakket_login_btn_disabled');
+
+        button.show();
 
         return this;
     },
@@ -317,13 +334,18 @@ MijnpakketLogin.prototype = {
 
         var data = response.responseText.evalJSON(true).origData;
 
-        if (!this.isOsc && this.getBilling()) {
-            this.getBilling().onSave(response);
+        if (!this.isOsc) {
+            if (this.getBilling()) {
+                this.getBilling().onSave(response);
+            }
+
+            this.showDummyButton();
+        } else {
+            this.showDisabledButton();
         }
 
         this.updateAddressForms(data);
 
-        this.showDummyButton();
         return this;
     },
 
