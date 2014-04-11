@@ -45,6 +45,11 @@
             <img src="https://tppcb-sandbox.e-id.nl/Button/PremiumLogin?publicId=3aaa777ab1204a67bd51ddb4f7326be9" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
         </span>
     </div>
+    <div id="postnl_mijnpakket_login_btn_disabled" style="display:none;">
+        <span>
+            <img src="https://tppcb-sandbox.e-id.nl/Button/PremiumLogin?publicId=3aaa777ab1204a67bd51ddb4f7326be9&disabled=true" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
+        </span>
+    </div>
 </div>
 <span class="please-wait" id="postnl_login_spinner" style="display:none;">
     <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->__('Loading mijnpakket data...') ?>" title="<?php echo $this->__('Loading mijnpakket data...') ?>" class="v-middle" /> <?php echo $this->__('Loading mijnpakket data...') ?>
@@ -62,7 +67,7 @@
                        .setBilling(billing)
                        .setShipping(shipping);
 
-        <?php if ($_savedData && false): ?>
+        <?php if ($_savedData): ?>
             var mijnpakketData = '<?php echo Mage::helper('core')->jsonEncode($_savedData); ?>';
             mijnpakketLogin.setMijnpakketDataJson(mijnpakketData);
         <?php endif; ?>
@@ -70,14 +75,48 @@
         mijnpakketLogin.init('postnl_mijnpakket_login', <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>);
 
         var oscLoginLink = $('onestepcheckout-login-link');
+        var oscCheckoutContainer = $$('.checkoutcontainer')[0];
+
         if (oscLoginLink) {
             oscLoginLink.insert({
                 after: $('postnl_mijnpakket')
             });
+        } else if (oscCheckoutContainer) {
+            oscCheckoutContainer.insert({
+                before: $('postnl_mijnpakket')
+            });
+        } else {
+            $('postnl_mijnpakket').hide();
         }
 
-        var saveBillingUrl = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure'=>true)); ?>';
-        var setMethodsUrl  = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure'=>true)); ?>';
+        var saveBillingUrl = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure' => true)); ?>';
+        var setMethodsUrl  = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure' => true)); ?>';
+
+        document.observe('postnl:updateAddressFormsStart', function() {
+            var billingSelect = $('billing-address-select');
+            if (billingSelect) {
+                var newBillingAddressOption = $$("#billing-address-select option[value='']")[0];
+                if (!newBillingAddressOption.selected) {
+                    newBillingAddressOption.selected = true;
+                    billing.newAddress(true);
+                }
+                billingSelect.hide();
+            }
+
+            var shippingSelect = $('shipping-address-select');
+            if (shippingSelect) {
+                var newShippingAddressOption = $$("#billing-address-select option[value='']")[0];
+                if (!newShippingAddressOption.selected) {
+                    newShippingAddressOption.selected = true;
+                    shipping.newAddress(true);
+                }
+                shippingSelect.hide();
+            }
+
+            $('billing:use_for_shipping_yes').checked = true;
+            $('shipping_address').hide();
+            $('shipping_address_list').show();
+        });
 
         document.observe('postnl:updateAddressFormsEnd', function() {
             get_save_billing_function(saveBillingUrl, setMethodsUrl, true)();

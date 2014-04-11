@@ -92,7 +92,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     /**
      * Gets the order associated with this PostNL Checkout Order
      *
-     * @return Mage_Sales_Model_Order | null
+     * @return Mage_Sales_Model_Order|null
      */
     public function getOrder()
     {
@@ -113,7 +113,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     /**
      * Gets the quote associated with this PostNL Checkout Order
      *
-     * @return Mage_Sales_Model_Quote | null
+     * @return Mage_Sales_Model_Quote|null
      */
     public function getQuote()
     {

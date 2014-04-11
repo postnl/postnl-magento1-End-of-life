@@ -66,13 +66,17 @@
                 <type>skin_css</type>
                 <file>css/TIG/PostNL/cart.css</file>
             </action>
-            <block type="postnl_checkout/cart_js" name="postnl_checkout_js" template="TIG/PostNL/checkout/cart/js.phtml"/>
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/checkout.js</file>
+            </action>
         </reference>
         <reference name="checkout.cart.methods">
             <block type="postnl_checkout/cart_checkoutLink" name="checkout.cart.methods.postnlcheckout" template="TIG/PostNL/checkout/cart/link.phtml" before="checkout.cart.methods.multishipping"/>
         </reference>
         <reference name="before_body_end">
             <block type="core/template" name="postnl_spinner" template="TIG/PostNL/checkout/cart/spinner.phtml"/>
+            <block type="postnl_checkout/cart_js" name="postnl_checkout_js" template="TIG/PostNL/checkout/cart/js.phtml"/>
         </reference>
     </checkout_cart_index>
 
