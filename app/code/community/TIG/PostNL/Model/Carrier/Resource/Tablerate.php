@@ -141,7 +141,7 @@ class TIG_PostNL_Model_Carrier_Resource_Tablerate extends Mage_Shipping_Model_Re
 
         if ($this->_importErrors) {
             $error = Mage::helper('shipping')->__(
-                'File has not been imported. See the following list of errors: %s', 
+                'File has not been imported. See the following list of errors: %s',
                 implode(" \n", $this->_importErrors)
             );
             Mage::throwException($error);

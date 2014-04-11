@@ -53,6 +53,9 @@ class TIG_PostNL_Model_Admin_Logging_Observer
         $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
         $found = mageFindClassFile($loggingObserverClassName);
 
+        /**
+         * If we can't find the model, there's nothing that can be logged.
+         */
         if ($found === false) {
             return $this;
         }

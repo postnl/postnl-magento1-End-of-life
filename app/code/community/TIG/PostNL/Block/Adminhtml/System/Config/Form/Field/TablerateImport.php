@@ -33,20 +33,58 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TablerateImport
+    extends Mage_Adminhtml_Block_System_Config_Form_Field
+    implements Varien_Data_Form_Element_Renderer_Interface
+{
+    /**
+     * Get a hidden form element and some JS to support it.
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
+     * @return string
+     *
+     * @see Mage_Adminhtml_Block_System_Config_Form_Field_Import
+     */
+    public function _getJsHtml(Varien_Data_Form_Element_Abstract $element)
+    {
+        $html = '<input id="postnl_time_condition" type="hidden" name="'.$element->getName().'" value="'.time().'" />';
 
-/**
- * @var TIG_PostNL_Model_Resource_Setup $installer
- */
-$installer = $this;
+        $html .= "<script type='text/javascript'>
+        document.observe('dom:loaded', function() {
+            Event.observe($('carriers_postnl_condition_name'), 'change', checkConditionName.bind(this));
+            function checkConditionName(event)
+            {
+                var conditionNameElement = Event.element(event);
+                if (conditionNameElement && conditionNameElement.id) {
+                    $('postnl_time_condition').value = '_' + conditionNameElement.value + '/' + Math.random();
+                }
+            }
+        });
+        </script>";
 
-$settingsToReset = array(
-    'cif_version_shippingstatus',
-    'cif_version_confirming',
-    'cif_version_labelling',
-);
+        return $html;
+    }
 
-$installer->resetWebserviceVersions($settingsToReset)
-          ->addSupportedProductCode('3533');
+    /**
+     * Render the element.
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
+     * @return string
+     */
+    public function render(Varien_Data_Form_Element_Abstract $element)
+    {
+        $element->setType('file')
+                ->removeClass('input-text');
+
+        $html = parent::render($element);
+
+        $html .= $this->_getJsHtml($element);
+
+        return $html;
+    }
+}

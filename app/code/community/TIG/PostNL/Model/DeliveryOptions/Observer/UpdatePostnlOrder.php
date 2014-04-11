@@ -120,6 +120,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $order->addAddress($orderAddress)
               ->save();
 
+        $orderAddress->save();
+
         return $this;
     }
 }

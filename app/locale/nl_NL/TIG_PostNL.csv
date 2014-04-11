@@ -814,3 +814,12 @@ TIG_PostNL::Print labels and confirm shipment,Labels printen en voormelden
 TIG_PostNL::Print labels,Labels printen
 TIG_PostNL::Confirm shipments,Zendingen voormelden
 TIG_PostNL::Create parcelware export,Parcelware export aanmaken
+TIG_PostNL::You can use the rates you have entered for Magento's Table Rates shipping method or you can choose to enter table rates specific for the PostNL shipping method.,U kunt gebruik maken van de tarieven die u heeft ingevuld voor Magento's Tabel Tarieven betaalmethode of u kunt aparte tarieven invullen specifiek voor de PostNL verzendmethode.
+TIG_PostNL::Rate Source,Tarieven bron
+TIG_PostNL::Use Magento's Table Rates,Gebruik Magento's Tabel Tarieven
+TIG_PostNL::Use seperate table rates for PostNL,Gebruik specifieke tarieven voor PostNL
+TIG_PostNL::Export Rates,Exporteer Tarieven
+TIG_PostNL::Import Rates,Importeer Tarieven
+TIG_PostNL::You can import and export rates on the website scope. You can change your current scope with the dropdown at the top left of this page.,U kunt tarieven importeren en exporteren op website niveau. U kunt het huidige niveau van de configuratie aanpassen met het selectieveld links bovenaan deze pagina.
+TIG_PostNL::Your shipping label(s) are being prepared.,Uw verzendlabel(s) worden voorbereid.
+TIG_PostNL::This may take a minute. The page will refresh once this is done.,Dit kan even duren. De pagina wordt ververst wanneer dit gedaan is.

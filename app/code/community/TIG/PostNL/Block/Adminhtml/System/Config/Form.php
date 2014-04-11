@@ -444,7 +444,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                         $sourceModel->setPath($path);
                     }
                     if ($method) {
-                        if ($fieldType == 'multiselect') {
+                        if ($fieldType == 'multiselect' || $element->multidimensional) {
                             $optionArray = $sourceModel->$method();
                         } else {
                             $optionArray = array();

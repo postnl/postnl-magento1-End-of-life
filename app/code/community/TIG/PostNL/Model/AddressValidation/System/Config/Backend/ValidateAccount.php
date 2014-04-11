@@ -154,8 +154,8 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
                    ->setTestMode($testMode);
 
         /**
-         * Attempt to generate a barcode to test the account settings. This will result in an exception if the settings are
-         * invalid.
+         * Attempt to generate a barcode to test the account settings. This will result in an exception if the settings
+         * are invalid.
          */
         try {
             $response = $cif->generateBarcodePing($data);
@@ -190,8 +190,8 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
     }
 
     /**
-     * Gets a config value. First we try to get the value from the fields we are currently trying to save. if the path is not
-     * among the fields we're saving, get it from the database for the current scope.
+     * Gets a config value. First we try to get the value from the fields we are currently trying to save. if the path
+     * is not among the fields we're saving, get it from the database for the current scope.
      *
      * @param string $path An xpath to the setting we're trying to retreive
      *
@@ -212,7 +212,8 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
         /**
          * Check if the value is among the fields we're currently saving.
          *
-         * In the case of password fields, the value '******' might be used. This is not a valid value and should be ignored.
+         * In the case of password fields, the value '******' might be used. This is not a valid value and should be
+         * ignored.
          */
         if (isset($groups[$pathParts[1]]['fields'][$pathParts[2]]['value'])
             && $groups[$pathParts[1]]['fields'][$pathParts[2]]['value'] != '******'
@@ -242,9 +243,9 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
     }
 
     /**
-     * Get the error message in case the PostNL account credentials could not be validated. Normally the controller would catch
-     * an exception and parse it to create this message, however we have no control over the system_config controller, so we
-     * need to format the message in advance.
+     * Get the error message in case the PostNL account credentials could not be validated. Normally the controller
+     * would catch an exception and parse it to create this message, however we have no control over the system_config
+     * controller, so we need to format the message in advance.
      *
      * @return string
      */

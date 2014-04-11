@@ -150,7 +150,9 @@ $conn->addColumn($installer->getTable('postnl_checkout/order'),
 
 $table = $installer->getConnection()
                    ->newTable($installer->getTable('postnl_carrier/tablerate'));
-$table->addColumn('pk', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+
+$table->addColumn('pk', Varien_Db_Ddl_Table::TYPE_INTEGER, null,
+    array(
         'identity'  => true,
         'unsigned'  => true,
         'nullable'  => false,
@@ -163,7 +165,7 @@ $table->addColumn('pk', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
     ->addColumn('dest_country_id', Varien_Db_Ddl_Table::TYPE_TEXT, 4, array(
         'nullable'  => false,
         'default'   => '0',
-    ), 'Destination coutry ISO/2 or ISO/3 code')
+    ), 'Destination country ISO/2 or ISO/3 code')
     ->addColumn('dest_region_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
         'nullable'  => false,
         'default'   => '0',

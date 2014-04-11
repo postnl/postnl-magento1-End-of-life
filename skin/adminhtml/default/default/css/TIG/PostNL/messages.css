@@ -8,3 +8,12 @@ a.postnl-message {color:#EA7601 !important; text-decoration:underline;}
 .module-message.warning { background:#fff7bd url(../../../images/TIG/PostNL/glyph_warning.gif) 9px 9px no-repeat; border-color:#c68c05; }
 .module-message.error { background:#fdece4 url(../../../images/TIG/PostNL/glyph_error.gif) 9px 9px no-repeat; border-color:#c63625; }
 .module-message ul.postnl-errors {list-style:disc inside; }
+
+/* Waiting notification */
+.waiting-notification { width:100%; height:999em; position:absolute; top:83px; left:0; background:rgba(255, 255, 255, .7); }
+.waiting-notification .content { text-align:center; background:#fef4eb; border:4px solid #f5bf8c; height:136px; width:436px; position:fixed; left:50%; top:50%; margin:-68px 0 0 -218px; z-index:100; }
+.waiting-notification .content img { margin:20px 0 15px; }
+
+/* General */
+body.no-scroll { overflow:hidden !important; }
+

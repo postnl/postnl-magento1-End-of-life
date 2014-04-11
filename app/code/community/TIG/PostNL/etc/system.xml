@@ -105,8 +105,9 @@
                                 <rate_type>flat</rate_type>
                             </depends>
                         </price>
-                        <rate_source translate="label" module="postnl">
+                        <rate_source translate="label comment" module="postnl">
                             <label>Rate Source</label>
+                            <comment>You can use the rates you have entered for Magento's Table Rates shipping method or you can choose to enter table rates specific for the PostNL shipping method.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_carrier/system_config_source_tablerateSource</source_model>
                             <sort_order>70</sort_order>
@@ -118,7 +119,7 @@
                             </depends>
                         </rate_source>
                         <export translate="label">
-                            <label>Export</label>
+                            <label>Export Rates</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_tablerateExport</frontend_model>
                             <sort_order>80</sort_order>
                             <show_in_default>0</show_in_default>
@@ -130,8 +131,8 @@
                             </depends>
                         </export>
                         <import translate="label">
-                            <label>Import</label>
-                            <frontend_type>import</frontend_type>
+                            <label>Import Rates</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_tablerateImport</frontend_model>
                             <backend_model>postnl_carrier/system_config_backend_tablerate</backend_model>
                             <sort_order>90</sort_order>
                             <show_in_default>0</show_in_default>
@@ -142,11 +143,23 @@
                                 <rate_source>postnl_tablerate</rate_source>
                             </depends>
                         </import>
+                        <import_export_header translate="label" module="postnl">
+                            <label>You can import and export rates on the website scope. You can change your current scope with the dropdown at the top left of this page.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <rate_type>table</rate_type>
+                                <rate_source>postnl_tablerate</rate_source>
+                            </depends>
+                        </import_export_header>
                         <condition_name translate="label" module="postnl">
                             <label>Condition</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_shipping_tablerate</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -158,7 +171,7 @@
                             <label>Include Virtual Products in Price Calculation</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -170,7 +183,7 @@
                             <label>Calculate Handling Fee</label>
                             <frontend_type>select</frontend_type>
                             <source_model>shipping/source_handlingType</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -179,7 +192,7 @@
                             <label>Handling Fee</label>
                             <frontend_type>text</frontend_type>
                             <validate>validate-number validate-zero-or-greater</validate>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -187,7 +200,7 @@
                         <specificerrmsg translate="label" module="postnl">
                             <label>Displayed Error Message</label>
                             <frontend_type>textarea</frontend_type>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -195,7 +208,7 @@
                         <sallowspecific translate="label" module="postnl">
                             <label>Ship to Applicable Countries</label>
                             <frontend_type>select</frontend_type>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <frontend_class>shipping-applicable-country</frontend_class>
                             <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
                             <show_in_default>1</show_in_default>
@@ -205,7 +218,7 @@
                         <specificcountry translate="label" module="postnl">
                             <label>Ship to Specific Countries</label>
                             <frontend_type>multiselect</frontend_type>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -215,7 +228,7 @@
                         <showmethod translate="label" module="postnl">
                             <label>Show Method if Not Applicable</label>
                             <frontend_type>select</frontend_type>
-                            <sort_order>170</sort_order>
+                            <sort_order>180</sort_order>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -224,7 +237,7 @@
                         <sort_order translate="label" module="postnl">
                             <label>Sort Order</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>180</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1291,7 +1304,9 @@
                             <label>Default shipping option</label>
                             <comment>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_standardProductOptions</source_model>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
@@ -1325,7 +1340,9 @@
                             <label>Alternative default shipping option</label>
                             <comment>This option will be used as default when the shipment's total value exceeds the given amount.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_standardProductOptions</source_model>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
@@ -1339,7 +1356,9 @@
                             <label>Default evening delivery shipping option</label>
                             <comment>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvondOptions</source_model>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondOptions</source_model>
+                            <multidimensional>true</multidimensional>
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
@@ -1364,7 +1383,9 @@
                             <label>Default 'deliver at the Post Office' option</label>
                             <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions</source_model>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
@@ -1375,7 +1396,9 @@
                             <label>Default early post office pickup option</label>
                             <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getPgeOptions</source_model>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
+                            <multidimensional>true</multidimensional>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
