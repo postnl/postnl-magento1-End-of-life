@@ -70,6 +70,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmStatus
             return parent::render($row);
         }
 
+        /**
+         * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
+         */
         $postnlShipmentClass = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
         if ($value == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
             $value = Mage::helper('postnl')->__('Confirmed');

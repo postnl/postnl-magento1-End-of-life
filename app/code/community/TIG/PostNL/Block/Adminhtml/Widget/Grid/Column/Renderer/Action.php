@@ -65,6 +65,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
         foreach ($actions as $action) {
             /**
              * Check if this action is allowed.
+             *
+             * @var Mage_Sales_Model_Order_Shipment $row
              */
             if (!$this->_isActionAllowed($row, $action)) {
                 continue;

@@ -39,62 +39,62 @@
 class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 {
     /**
-     * Log filename to log all non-specific PostNL exceptions
+     * Log filename to log all non-specific PostNL exceptions.
      */
     const POSTNL_EXCEPTION_LOG_FILE = 'TIG_PostNL_Exception.log';
 
     /**
-     * Log filename to log all non-specific PostNL debug messages
+     * Log filename to log all non-specific PostNL debug messages.
      */
     const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_Debug.log';
 
     /**
-     * Directory inside var/log where PostNL log files will be logged
+     * Directory inside var/log where PostNL log files will be logged.
      */
     const POSTNL_LOG_DIRECTORY = 'TIG_PostNL';
 
     /**
-     * Log filename to log all cron log messages
+     * Log filename to log all cron log messages.
      */
     const POSTNL_CRON_DEBUG_LOG_FILE = 'TIG_PostNL_Cron_Debug.log';
 
     /**
-     * XML path to postnl general active/inactive setting
+     * XML path to postnl general active/inactive setting.
      */
     const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
 
     /**
-     * XML path to postnl carier active/inactive setting
+     * XML path to postnl carier active/inactive setting.
      */
     const XML_PATH_CARRIER_ACTIVE = 'carriers/postnl/active';
 
     /**
-     * XML path to test/live mode config option
+     * XML path to test/live mode config option.
      */
     const XML_PATH_TEST_MODE = 'postnl/cif/mode';
 
     /**
-     * XML path to the test mode allowed config option
+     * XML path to the test mode allowed config option.
      */
     const XML_PATH_TEST_MODE_ALLOWED = 'postnl/advanced/allow_test_mode';
 
     /**
-     * XML path to debug mode config option
+     * XML path to debug mode config option.
      */
     const XML_PATH_DEBUG_MODE = 'postnl/advanced/debug_mode';
 
     /**
-     * XML path to 'is_activated' flag
+     * XML path to 'is_activated' flag.
      */
     const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
 
     /**
-     * XML path to 'show_error_details_in_frontend' flag
+     * XML path to 'show_error_details_in_frontend' flag.
      */
     const XML_PATH_SHOW_ERROR_DETAILS_IN_FRONTEND = 'postnl/advanced/show_error_details_in_frontend';
 
     /**
-     * XML path to use_globalpack settings
+     * XML path to use_globalpack settings.
      */
     const XML_PATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
 
@@ -104,7 +104,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_ALLOW_EPS_BE_ONLY_OPTION = 'postnl/cif_product_options/allow_eps_be_only_options';
 
     /**
-     * Required configuration fields
+     * Required configuration fields.
      *
      * @var array
      */
@@ -122,7 +122,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
-     * Required configuration fields for live mode
+     * Required configuration fields for live mode.
      *
      * @var array
      */
@@ -132,7 +132,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
-     * Required configuration fields for test mode
+     * Required configuration fields for test mode.
      *
      * @var array
      */
@@ -142,7 +142,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
-     * Required configuration fields when using global shipments
+     * Required configuration fields when using global shipments.
      *
      * @var array
      */
@@ -156,7 +156,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
-     * Get required fields array
+     * Get required fields array.
      *
      * @return array
      */
@@ -166,7 +166,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get required fields for live mode array
+     * Get required fields for live mode array.
      *
      * @return array
      */
@@ -176,7 +176,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get required fields for test mode array
+     * Get required fields for test mode array.
      *
      * @return array
      */
@@ -186,7 +186,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get required fields for global shipments array
+     * Get required fields for global shipments array.
      *
      * @return array
      */
@@ -196,7 +196,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get debug mode config setting
+     * Get debug mode config setting.
      *
      * @return int
      */
@@ -213,7 +213,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Checks to see if the module may ship to the Netherlands using PostNL standard shipments
+     * Checks to see if the module may ship to the Netherlands using PostNL standard shipments.
      *
      * @param boolean|int $storeId
      *
@@ -235,7 +235,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Checks to see if the module may ship using PakjeGemak
+     * Checks to see if the module may ship using PakjeGemak.
      *
      * @param boolean|int $storeId
      *
@@ -487,7 +487,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Checks if test mode is currently allowed
      *
-     * @deprecated v1.1.4 Will now always return true.
+     * @deprecated 1.2.0 Test mode is now always allowed, regardless of configuration. This method should therefore not
+     *                   be used anymore and may be removed in the future.
      *
      * @return boolean
      */
@@ -499,8 +500,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Alias for isEnabled()
      *
-     * @param int | bool $storeId
-     * @param boolean $checkGlobal
+     * @param int|boolean  $storeId
+     * @param boolean      $checkGlobal
      * @param null|boolean $forceTestMode
      *
      * @return boolean

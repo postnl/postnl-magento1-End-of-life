@@ -82,6 +82,9 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
      */
     protected $_conditionNames = array();
 
+    /**
+     * Class constructor.
+     */
     public function __construct()
     {
         parent::__construct();

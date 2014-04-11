@@ -76,9 +76,10 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     const MOBILE_PHONE_NUMBER_REGEX              = '/^(((\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i';
     const MOBILE_PHONE_NUMBER_PREFIX_REGEX       = '/^(06|00316){1}(.*?)$/i';
     const MOBILE_PHONE_NUMBER_PREFIX_REPLACEMENT = '+316$2';
+    const MOBILE_PHONE_NUMBER_CONTENT_REGEX      = '/[^0-9+]/';
 
     /**
-     * Prefix of model events names
+     * Prefix of model events names.
      *
      * @var string
      */
@@ -90,7 +91,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Gets the order associated with this PostNL Checkout Order
+     * Gets the order associated with this PostNL Checkout Order.
      *
      * @return Mage_Sales_Model_Order|null
      */
@@ -104,6 +105,9 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
             return null;
         }
 
+        /**
+         * @var Mage_Sales_Model_Order $order
+         */
         $order = Mage::getModel('sales/order')->load($this->getOrderId());
 
         $this->setOrder($order);
@@ -111,7 +115,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Gets the quote associated with this PostNL Checkout Order
+     * Gets the quote associated with this PostNL Checkout Order.
      *
      * @return Mage_Sales_Model_Quote|null
      */
@@ -132,7 +136,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Alias for magic getToken()
+     * Alias for magic getToken().
      *
      * @return string
      */
@@ -142,7 +146,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Alias for magic getQuoteId()
+     * Alias for magic getQuoteId().
      *
      * @return int
      */
@@ -154,8 +158,8 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     /**
      * Set a mobile phone number.
      *
-     * @param      $phoneNumber
-     * @param bool $skipValidation
+     * @param string  $phoneNumber
+     * @param boolean $skipValidation
      *
      * @throws TIG_PostNL_Exception
      *
@@ -169,33 +173,33 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
         }
 
         /**
+         * Parse the number so that it starts with '+316' and remove any invalid characters.
+         */
+        $parsedPhoneNumber = preg_replace(
+            array(self::MOBILE_PHONE_NUMBER_CONTENT_REGEX, self::MOBILE_PHONE_NUMBER_PREFIX_REGEX),
+            array('', self::MOBILE_PHONE_NUMBER_PREFIX_REPLACEMENT),
+            $phoneNumber
+        );
+
+        /**
          * Validate the phone number. It should be a valid Dutch mobile phone number.
          */
-        $validPhoneNumber = preg_match(self::MOBILE_PHONE_NUMBER_REGEX, $phoneNumber);
+        $validPhoneNumber = preg_match(self::MOBILE_PHONE_NUMBER_REGEX, $parsedPhoneNumber);
         if (!$validPhoneNumber) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid mobile phone number supplied: %s', $phoneNumber),
+                Mage::helper('postnl')->__('Invalid mobile phone number supplied: %s', $parsedPhoneNumber),
                 'POSTNL-0149'
             );
         }
-
-        /**
-         * Parse the number so that it starts with '+316'.
-         */
-        $parsedPhoneNumber = preg_replace(
-            self::MOBILE_PHONE_NUMBER_PREFIX_REGEX,
-            self::MOBILE_PHONE_NUMBER_PREFIX_REPLACEMENT,
-            $phoneNumber
-        );
 
         $this->setData('mobile_phone_number', $parsedPhoneNumber);
         return $this;
     }
 
     /**
-     * Cancels the PostNL order
+     * Cancels the PostNL order.
      *
-     * @return TIG_PostNL_Model_Core_Order
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */

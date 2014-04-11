@@ -412,8 +412,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     'scope'                 => $this->getScope(),
                     'scope_id'              => $this->getScopeId(),
                     'scope_label'           => $this->getScopeLabel($element),
-                    'can_use_default_value' => $this->canUseDefaultValue((int)$element->show_in_default),
-                    'can_use_website_value' => $this->canUseWebsiteValue((int)$element->show_in_website),
+                    'can_use_default_value' => $this->canUseDefaultValue($element),
+                    'can_use_website_value' => $this->canUseWebsiteValue($element),
                 ));
                 $this->_prepareFieldOriginalData($field, $element);
 

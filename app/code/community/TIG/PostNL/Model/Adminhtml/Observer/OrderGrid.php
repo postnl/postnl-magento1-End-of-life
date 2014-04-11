@@ -364,7 +364,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Applies sorting and filtering to the collection
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
      *
      * @return $this
      */

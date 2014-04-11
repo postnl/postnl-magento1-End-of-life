@@ -400,6 +400,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
 
         if (in_array('confirm_status', $columnsToDisplay)) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
+             */
             $postnlShipmentClass = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
 
             $block->addColumnAfter(
@@ -545,6 +548,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 
         $origValue = $row->getData($column->getIndex());
 
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
+         */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         $class = '';
@@ -587,6 +593,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $value;
         }
 
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
+         */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         switch ($row->getData($column->getIndex())) {
             case null: //rows with no value (non-PostNL shipments)
@@ -655,9 +664,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $value;
         }
 
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
+         */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
-        $class = '';
         switch ($row->getData($column->getIndex())) {
             case null: //rows with no value (non-PostNL shipments) or unconfirmed shipments
                 $class = '';
