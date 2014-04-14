@@ -489,10 +489,27 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-digits validate-length minimum-length-6 maximum-length-6 postnl-validate-empty</validate>
                         </collection_location>
+                        <webshop_id translate="label" module="postnl">
+                            <label>Webshop ID</label>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </webshop_id>
+                        <public_webshop_id translate="label" module="postnl">
+                            <label>Public Webshop ID</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </public_webshop_id>
                         <validate_button translate="tooltip" module="postnl">
                             <tooltip>This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error. Please note that the PostNL extension must be active for the validation to succeed.</tooltip>
                             <frontend_model>postnl_adminhtml/system_config_form_field_validateButton</frontend_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -500,7 +517,7 @@
                         <global_fields_header translate="label" module="postnl">
                             <label>These fields are only required if you intend to send products to countries outside the EU.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -510,7 +527,7 @@
                             <comment>GlobalPack is used to ship orders outside the EU. Otherwise you can leave this field disabled.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -519,7 +536,7 @@
                             <label>Global Barcode Type</label>
                             <comment>The current global barcode type as supplied by PostNL. Must contain 2 letters.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -532,7 +549,7 @@
                             <label>Global Barcode Range</label>
                             <comment>Your global barcode range as supplied by PostNL. Must contain 4 digits.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>120</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -541,55 +558,6 @@
                                 <use_globalpack>1</use_globalpack>
                             </depends>
                         </global_barcode_range>
-                        <checkout_ids_header translate="label" module="postnl">
-                            <label>These fields are only required if you wish to use PostNL Checkout or Mijnpakket login.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>130</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </checkout_ids_header>
-                        <checkout_infobox translate="comment" module="postnl">
-                            <comment><![CDATA[You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.]]></comment>
-                            <frontend_model>postnl_adminhtml/system_config_form_field_infoBox</frontend_model>
-                            <sort_order>140</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </checkout_infobox>
-                        <use_checkout translate="label comment" module="postnl">
-                            <label>Use PostNL Checkout and Mijnpakket login</label>
-                            <comment>If you wish to make use of PostNL Checkout or Mijnpakket login, set this field to 'yes'.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </use_checkout>
-                        <webshop_id translate="label" module="postnl">
-                            <label>Webshop ID</label>
-                            <frontend_type>obscure</frontend_type>
-                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
-                            <sort_order>160</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <use_checkout>1</use_checkout>
-                            </depends>
-                        </webshop_id>
-                        <public_webshop_id translate="label" module="postnl">
-                            <label>Public Webshop ID</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>170</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <use_checkout>1</use_checkout>
-                            </depends>
-                        </public_webshop_id>
                    </fields>
                 </cif>
                 <cif_labels_and_confirming translate="label comment" module="postnl">
@@ -1886,34 +1854,14 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <checkout_disabled_header translate="label" module="postnl">
-                            <label>You have not enabled PostNL Checkout. Please enable PostNL Checkout under 'Account Settings' in order to configure your PostNL Checkout preferences.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>0</value>
-                                </use_checkout>
-                            </depends>
-                        </checkout_disabled_header>
                         <active translate="label" module="postnl">
                             <label>Enable PostNL Checkout</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>20</sort_order>
+                            <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
                         </active>
                         <show_exclusively_for_mijnpakket_users translate="label comment tooltip" module="postnl">
                             <label>Show PostNL Checkout exclusively to MijnPakket users</label>
@@ -1921,16 +1869,12 @@
                             <tooltip>This option is only available if delivery options are enabled.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                                 <delivery_options_active>
                                     <fieldset>delivery_options</fieldset>
                                     <value>1</value>
@@ -1940,16 +1884,12 @@
                         <checkout_button_header translate="label" module="postnl">
                             <label>Here you can customize when and how the PostNL Checkout button is displayed.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </checkout_button_header>
                         <instruction_cms_page translate="label comment" module="postnl">
@@ -1957,21 +1897,30 @@
                             <comment>Select a page containing instructions on how to use PostNL Checkout. A link to this page will be shown underneath the PostNL Checkout button to aid customers. Select 'none' to hide this link.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_cmsPage</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </instruction_cms_page>
+                        <show_checkout_for_letter translate="label comment" module="postnl">
+                            <label>Enable PostNL Checkout for orders under 2 kg</label>
+                            <comment>The 2kg limit will be based on the product's weight and the weight unit you selected under the 'Confirm and label printing settings' group.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
-                        </instruction_cms_page>
-                        <show_checkout_for_letter translate="label comment" module="postnl">
-                            <label>Enable PostNL Checkout for orders under 2 kg</label>
-                            <comment>The 2kg limit will be based on the product's weight and the weight unit you selected under the 'Confirm and label printing settings' group.</comment>
+                        </show_checkout_for_letter>
+                        <show_checkout_for_backorders translate="label tooltip" module="postnl">
+                            <label>Enable PostNL Checkout for orders containing out of stock products</label>
+                            <tooltip>Customers can select a specific date and time when they want their shipment delivered when they use PostNL Checkout. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL Checkout if they are attempting to order an item that is not in stock, thereby preventing this situation.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>60</sort_order>
@@ -1980,47 +1929,37 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
-                        </show_checkout_for_letter>
-                        <show_checkout_for_backorders translate="label tooltip" module="postnl">
-                            <label>Enable PostNL Checkout for orders containing out of stock products</label>
-                            <tooltip>Customers can select a specific date and time when they want their shipment delivered when they use PostNL Checkout. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL Checkout if they are attempting to order an item that is not in stock, thereby preventing this situation.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                        </show_checkout_for_backorders>
+                        <checkout_customization_header translate="label" module="postnl">
+                            <label>Here you can customaize the way PostNL Checkout behaves in your webshop.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </show_checkout_for_backorders>
-                        <checkout_customization_header translate="label" module="postnl">
-                            <label>Here you can customaize the way PostNL Checkout behaves in your webshop.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </checkout_customization_header>
                         <show_summary_page translate="label comment" module="postnl">
                             <label>Show order summary page</label>
                             <comment>Whether or not to show the customer a final order summary page before finalizing the order.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </show_summary_page>
+                        <newsletter_subscription translate="label comment tooltip" module="postnl">
+                            <label>Newsletter subscription</label>
+                            <comment>Whether or not PostNL Checkout will offer the customer the ability to subscribe to your newsletter.</comment>
+                            <tooltip>Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>90</sort_order>
@@ -2030,16 +1969,11 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
-                        </show_summary_page>
-                        <newsletter_subscription translate="label comment tooltip" module="postnl">
-                            <label>Newsletter subscription</label>
-                            <comment>Whether or not PostNL Checkout will offer the customer the ability to subscribe to your newsletter.</comment>
-                            <tooltip>Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature.</tooltip>
+                        </newsletter_subscription>
+                        <remark translate="label comment" module="postnl">
+                            <label>Remark</label>
+                            <comment>Whether or not the customer can leave a remark.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>100</sort_order>
@@ -2049,15 +1983,12 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
-                        </newsletter_subscription>
-                        <remark translate="label comment" module="postnl">
-                            <label>Remark</label>
-                            <comment>Whether or not the customer can leave a remark.</comment>
+                        </remark>
+                        <use_mobile translate="label comment tooltip" module="postnl">
+                            <label>Use mobile phonenumber</label>
+                            <comment>Whether or not the customer's mobile phonenumber will be returned by PostNL if available.</comment>
+                            <tooltip>The mobile phonenumber will be saved as the customer's regular phonenumber when used.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>110</sort_order>
@@ -2067,16 +1998,11 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
-                        </remark>
-                        <use_mobile translate="label comment tooltip" module="postnl">
-                            <label>Use mobile phonenumber</label>
-                            <comment>Whether or not the customer's mobile phonenumber will be returned by PostNL if available.</comment>
-                            <tooltip>The mobile phonenumber will be saved as the customer's regular phonenumber when used.</tooltip>
+                        </use_mobile>
+                        <use_dob translate="label comment" module="postnl">
+                            <label>Use date of birth</label>
+                            <comment>Whether or not the customer's date of birth will be returned by PostNL if available.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>120</sort_order>
@@ -2086,15 +2012,11 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
-                        </use_mobile>
-                        <use_dob translate="label comment" module="postnl">
-                            <label>Use date of birth</label>
-                            <comment>Whether or not the customer's date of birth will be returned by PostNL if available.</comment>
+                        </use_dob>
+                        <allow_retail_location translate="label comment" module="postnl">
+                            <label>Allow post office locations</label>
+                            <comment>Whether or not the customer may choose a retail location as their delivery address.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>130</sort_order>
@@ -2104,15 +2026,12 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
-                        </use_dob>
-                        <allow_retail_location translate="label comment" module="postnl">
-                            <label>Allow post office locations</label>
-                            <comment>Whether or not the customer may choose a retail location as their delivery address.</comment>
+                        </allow_retail_location>
+                        <allow_foreign_address translate="label comment tooltip" module="postnl">
+                            <label>Allow foreign addresses</label>
+                            <comment>Whether or not the customer may choose a foreign address as their shipping address.</comment>
+                            <tooltip>All addresses outside of the Netherlands are considered 'foreign'. Addresses outside the EU are not possible regardless of this setting.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>140</sort_order>
@@ -2122,16 +2041,12 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
-                        </allow_retail_location>
-                        <allow_foreign_address translate="label comment tooltip" module="postnl">
-                            <label>Allow foreign addresses</label>
-                            <comment>Whether or not the customer may choose a foreign address as their shipping address.</comment>
-                            <tooltip>All addresses outside of the Netherlands are considered 'foreign'. Addresses outside the EU are not possible regardless of this setting.</tooltip>
+                        </allow_foreign_address>
+                        <allow_price_overview translate="label comment tooltip" module="postnl">
+                            <label>Allow price overview</label>
+                            <comment>Whether or not the user will see a price overview in PostNL Checkout</comment>
+                            <tooltip>The price overview will contain the order's subtotal and shipping costs only.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>150</sort_order>
@@ -2141,16 +2056,12 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
-                        </allow_foreign_address>
-                        <allow_price_overview translate="label comment tooltip" module="postnl">
-                            <label>Allow price overview</label>
-                            <comment>Whether or not the user will see a price overview in PostNL Checkout</comment>
-                            <tooltip>The price overview will contain the order's subtotal and shipping costs only.</tooltip>
+                        </allow_price_overview>
+                        <agree_conditions translate="label comment tooltip" module="postnl">
+                            <label>Agree conditions</label>
+                            <comment>Whether or not the customer must agree to the terms and conditions before being allowed to proceed.</comment>
+                            <tooltip>You can enter a URL where the customer can find your terms and conditions in your PostNL Checkout account at http://checkout.postnl.nl</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>160</sort_order>
@@ -2160,49 +2071,34 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </allow_price_overview>
-                        <agree_conditions translate="label comment tooltip" module="postnl">
-                            <label>Agree conditions</label>
-                            <comment>Whether or not the customer must agree to the terms and conditions before being allowed to proceed.</comment>
-                            <tooltip>You can enter a URL where the customer can find your terms and conditions in your PostNL Checkout account at http://checkout.postnl.nl</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>170</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-select</validate>
-                            <depends>
-                                <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </agree_conditions>
                         <checkout_urls_header translate="label" module="postnl">
                             <label>These URLs allow the customer to contact you. They will be shown on the user's MijnPakket page.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>170</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </checkout_urls_header>
+                        <contact_url translate="label comment" module="postnl">
+                            <label>Contact URL</label>
+                            <comment>URL of a page where customers can find contact information for your webshop. Leave empty to disable this feature.</comment>
+                            <frontend_type>text</frontend_type>
                             <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
-                        </checkout_urls_header>
-                        <contact_url translate="label comment" module="postnl">
-                            <label>Contact URL</label>
-                            <comment>URL of a page where customers can find contact information for your webshop. Leave empty to disable this feature.</comment>
+                        </contact_url>
+                        <service_url translate="label comment" module="postnl">
+                            <label>Service URL</label>
+                            <comment>URL of a page where customers can find information regarding the webshop's customer service department. Leave empty to disable this feature.</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2210,26 +2106,6 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </contact_url>
-                        <service_url translate="label comment" module="postnl">
-                            <label>Service URL</label>
-                            <comment>URL of a page where customers can find information regarding the webshop's customer service department. Leave empty to disable this feature.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>200</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>1</active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </service_url>
                     </fields>
@@ -2243,24 +2119,10 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <checkout_disabled_header translate="label" module="postnl">
-                            <label>You have not enabled PostNL Checkout. Please enable PostNL Checkout under 'Account Settings' in order to configure your PostNL Checkout preferences.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>0</value>
-                                </use_checkout>
-                            </depends>
-                        </checkout_disabled_header>
                         <postnl_checkout_inactive_header translate="label" module="postnl">
                             <label>PostNL Checkout is disabled. please enable PostNL Checkout in order to configure these settings.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>20</sort_order>
+                            <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2269,16 +2131,27 @@
                                     <fieldset>checkout</fieldset>
                                     <value>0</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </postnl_checkout_inactive_header>
                         <!-- iDEAL -->
                         <ideal_header translate="label" module="postnl">
                             <label>iDEAL</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </ideal_header>
+                        <ideal translate="label" module="postnl">
+                            <label>Use iDEAL</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2288,35 +2161,28 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </ideal_header>
-                        <ideal translate="label" module="postnl">
-                            <label>Use iDEAL</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </ideal>
                         <ideal_method translate="label" module="postnl">
                             <label>iDEAL payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <ideal>1</ideal>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </ideal_method>
+                        <ideal_option_field translation="label comment" module="postnl">
+                            <label>iDeal Bank Field</label>
+                            <comment>Enter the field name used by the selected payment method for the 'bank' field.</comment>
+                            <frontend_type>text</frontend_type>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2327,40 +2193,31 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </ideal_method>
-                        <ideal_option_field translation="label comment" module="postnl">
-                            <label>iDeal Bank Field</label>
-                            <comment>Enter the field name used by the selected payment method for the 'bank' field.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <ideal>1</ideal>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
                                 <show_summary_page>
                                     <fieldset>checkout</fieldset>
                                     <value>0</value>
                                 </show_summary_page>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </ideal_option_field>
                         <!-- Creditcard -->
                         <creditcard_header translate="label" module="postnl">
                             <label>Creditcard</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </creditcard_header>
+                        <creditcard translate="label" module="postnl">
+                            <label>Use creditcard</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2370,35 +2227,28 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </creditcard_header>
-                        <creditcard translate="label" module="postnl">
-                            <label>Use creditcard</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </creditcard>
                         <creditcard_method translate="label" module="postnl">
                             <label>Creditcard payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <creditcard>1</creditcard>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </creditcard_method>
+                        <creditcard_option_field translation="label comment" module="postnl">
+                            <label>Creditcard card type field</label>
+                            <comment>Enter the field name used by the selected payment method for the 'creditcard type' field.</comment>
+                            <frontend_type>text</frontend_type>
                             <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2409,40 +2259,31 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </creditcard_method>
-                        <creditcard_option_field translation="label comment" module="postnl">
-                            <label>Creditcard card type field</label>
-                            <comment>Enter the field name used by the selected payment method for the 'creditcard type' field.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <creditcard>1</creditcard>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
                                 <show_summary_page>
                                     <fieldset>checkout</fieldset>
                                     <value>0</value>
                                 </show_summary_page>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </creditcard_option_field>
                         <!-- Checkpay -->
                         <creckpay_header translate="label" module="postnl">
                             <label>Checkpay</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </creckpay_header>
+                        <checkpay translate="label" module="postnl">
+                            <label>Use CheckPay</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2452,36 +2293,13 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </creckpay_header>
-                        <checkpay translate="label" module="postnl">
-                            <label>Use CheckPay</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </checkpay>
                         <checkpay_method translate="label" module="postnl">
                             <label>CheckPay payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2491,16 +2309,27 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </checkpay_method>
                         <!-- Paypal -->
                         <paypal_header translate="label" module="postnl">
                             <label>PayPal</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>130</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </paypal_header>
+                        <paypal translate="label" module="postnl">
+                            <label>Use PayPal</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2510,36 +2339,13 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </paypal_header>
-                        <paypal translate="label" module="postnl">
-                            <label>Use PayPal</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </paypal>
                         <paypal_method translate="label" module="postnl">
                             <label>PayPal payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2549,16 +2355,27 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </paypal_method>
                         <!-- Machtiging -->
                         <directdebit_header translate="label" module="postnl">
                             <label>Direct Debit</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>160</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </directdebit_header>
+                        <directdebit translate="label" module="postnl">
+                            <label>Use direct debit</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2568,36 +2385,13 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </directdebit_header>
-                        <directdebit translate="label" module="postnl">
-                            <label>Use direct debit</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>180</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </directdebit>
                         <directdebit_method translate="label" module="postnl">
                             <label>Direct debit payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>190</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2607,16 +2401,27 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </directdebit_method>
                         <!-- Accept Giro -->
                         <acceptgiro_header translate="label" module="postnl">
                             <label>Acceptgiro</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>190</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </acceptgiro_header>
+                        <acceptgiro translate="label" module="postnl">
+                            <label>Use acceptgiro</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2626,36 +2431,13 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </acceptgiro_header>
-                        <acceptgiro translate="label" module="postnl">
-                            <label>Use acceptgiro</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>210</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </acceptgiro>
                         <acceptgiro_method translate="label" module="postnl">
                             <label>Acceptgiro payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>220</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2665,16 +2447,27 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </acceptgiro_method>
                         <!-- Betaling Vooraf -->
                         <vooraf_betalen_header translate="label" module="postnl">
                             <label>Vooraf Betalen</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>220</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </vooraf_betalen_header>
+                        <vooraf_betalen translate="label" module="postnl">
+                            <label>Use vooraf betalen</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2684,36 +2477,13 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </vooraf_betalen_header>
-                        <vooraf_betalen translate="label" module="postnl">
-                            <label>Use vooraf betalen</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>240</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </vooraf_betalen>
                         <vooraf_betalen_method translate="label" module="postnl">
                             <label>Vooraf betalen payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>250</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2723,16 +2493,27 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </vooraf_betalen_method>
                         <!-- Termijnen -->
                         <termijnen_header translate="label" module="postnl">
                             <label>Betaling in Termijnen</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>250</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </termijnen_header>
+                        <termijnen translate="label" module="postnl">
+                            <label>Use betaling in termijnen</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2742,36 +2523,13 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </termijnen_header>
-                        <termijnen translate="label" module="postnl">
-                            <label>Use betaling in termijnen</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>270</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </termijnen>
                         <termijnen_method translate="label" module="postnl">
                             <label>In termijnen betalen payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>280</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2781,16 +2539,27 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </termijnen_method>
                         <!-- Kadobon -->
                         <giftcard_header translate="label" module="postnl">
                             <label>Giftcard</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>280</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </giftcard_header>
+                        <giftcard translate="label" module="postnl">
+                            <label>Use giftcard</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>290</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2800,36 +2569,13 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </giftcard_header>
-                        <giftcard translate="label" module="postnl">
-                            <label>Use giftcard</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>300</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </giftcard>
                         <giftcard_method translate="label" module="postnl">
                             <label>Giftcard payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>310</sort_order>
+                            <sort_order>300</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2839,16 +2585,27 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </giftcard_method>
                         <!-- Rabobank Internet Kassa -->
                         <rabobank_internetkassa_header translate="label" module="postnl">
                             <label>Rabobank Internetkassa</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>310</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </rabobank_internetkassa_header>
+                        <rabobank_internetkassa translate="label" module="postnl">
+                            <label>Use RaboBank internetkassa</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>320</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2858,36 +2615,13 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </rabobank_internetkassa_header>
-                        <rabobank_internetkassa translate="label" module="postnl">
-                            <label>Use RaboBank internetkassa</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>330</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </rabobank_internetkassa>
                         <rabobank_internetkassa_method translate="label" module="postnl">
                             <label>Rabobank internetkassa payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>340</sort_order>
+                            <sort_order>330</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2897,16 +2631,27 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </rabobank_internetkassa_method>
                         <!-- Afterpay -->
                         <afterpay_header translate="label" module="postnl">
                             <label>AfterPay</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>340</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </afterpay_header>
+                        <afterpay translate="label" module="postnl">
+                            <label>Use AfterPay</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>350</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2916,36 +2661,13 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </afterpay_header>
-                        <afterpay translate="label" module="postnl">
-                            <label>Use AfterPay</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>360</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </afterpay>
                         <afterpay_method translate="label" module="postnl">
                             <label>AfterPay payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>370</sort_order>
+                            <sort_order>360</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2955,16 +2677,27 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </afterpay_method>
                         <!-- Klarna -->
                         <klarna_header translate="label" module="postnl">
                             <label>Klarna</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>370</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>
+                                    <fieldset>checkout</fieldset>
+                                    <value>1</value>
+                                </active>
+                            </depends>
+                        </klarna_header>
+                        <klarna translate="label" module="postnl">
+                            <label>Use Klarna</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>380</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2974,36 +2707,13 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
-                            </depends>
-                        </klarna_header>
-                        <klarna translate="label" module="postnl">
-                            <label>Use Klarna</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>390</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <active>
-                                    <fieldset>checkout</fieldset>
-                                    <value>1</value>
-                                </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </klarna>
                         <klarna_method translate="label" module="postnl">
                             <label>Klarna payment method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_checkout/system_config_source_activePaymentMethods</source_model>
-                            <sort_order>400</sort_order>
+                            <sort_order>390</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -3013,10 +2723,6 @@
                                     <fieldset>checkout</fieldset>
                                     <value>1</value>
                                 </active>
-                                <use_checkout>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_checkout>
                             </depends>
                         </klarna_method>
                     </fields>
