@@ -77,7 +77,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
         }
 
         /**
-         * If the shipment hasn't been confirmed yet, the barcode will not be known by PostNL track & trace
+         * If the shipment hasn't been confirmed yet, the barcode will not be known by PostNL track & trace.
+         *
+         * @var $postnlShipmentClassName TIG_PostNL_Model_Core_Shipment
          */
         $postnlShipmentClassName = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($row->getData(self::CONFIRM_STATUS_COLUMN) != $postnlShipmentClassName::CONFIRM_STATUS_CONFIRMED) {

@@ -35,6 +35,17 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                           hasWebshopId()
+ * @method TIG_PostNL_Block_Checkout_Cart_Js setWebshopId(string $value)
+ * @method boolean                           hasCheckoutJsUrl()
+ * @method TIG_PostNL_Block_Checkout_Cart_Js setCheckoutJsUrl(string $value)
+ * @method boolean                           hasCheckoutPremiumJsUrl()
+ * @method TIG_PostNL_Block_Checkout_Cart_Js setCheckoutPremiumJsUrl(string $value)
+ * @method boolean                           hasEnvironment()
+ * @method TIG_PostNL_Block_Checkout_Cart_Js setEnvironment(string $value)
+ * @method boolean                           hasContinueUrl()
+ * @method TIG_PostNL_Block_Checkout_Cart_Js setContinueUrl(string $value)
  */
 class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
 {
@@ -51,8 +62,10 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
     /**
      * URLs of the primary PostNL Checkout JS files for test and live mode
      */
-    const TEST_CHECKOUT_JS_URL = 'https://tppwscheckout-sandbox.e-id.nl/Checkout2/Scripts/Checkout.js';
-    const LIVE_CHECKOUT_JS_URL = 'https://mijnpakket.postnl.nl/Checkout2/Scripts/Checkout.js';
+    const TEST_CHECKOUT_JS_URL         = 'https://tppwscheckout-sandbox.e-id.nl/Checkout2/Scripts/Checkout.js';
+    const LIVE_CHECKOUT_JS_URL         = 'https://mijnpakket.postnl.nl/Checkout2/Scripts/Checkout.js';
+    const TEST_CHECKOUT_PREMIUM_JS_URL = 'https://tppwscheckout-sandbox.e-id.nl/Checkout2/CheckoutPremium.js';
+    const LIVE_CHECKOUT_PREMIUM_JS_URL = 'https://mijnpakket.postnl.nl/Checkout2/CheckoutPremium.js';
 
     /**
      * Possible Checkout environments
@@ -67,8 +80,8 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
      */
     public function getWebshopId()
     {
-        if ($this->getData('webshop_id')) {
-            return $this->getData('webshop_id');
+        if ($this->hasWebshopId()) {
+            return $this->_getData('webshop_id');
         }
 
         $storeId = Mage::app()->getStore()->getId();
@@ -86,8 +99,8 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
      */
     public function getCheckoutJsUrl()
     {
-        if ($this->getData('checkout_js_url')) {
-            return $this->getData('checkout_js_url');
+        if ($this->hasCheckoutJsUrl()) {
+            return $this->_getData('checkout_js_url');
         }
 
         $storeId = Mage::app()->getStore()->getId();
@@ -106,14 +119,40 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
     }
 
     /**
+     * Gets the correct checkout premium js URL depending on whether PostNL Checkout is set to test or live mode
+     *
+     * @return string
+     */
+    public function getCheckoutPremiumJsUrl()
+    {
+        if ($this->hasCheckoutPremiumJsUrl()) {
+            return $this->_getData('checkout_premium_js_url');
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+
+        if (Mage::helper('postnl/checkout')->isTestMode($storeId)) {
+            $url = self::TEST_CHECKOUT_PREMIUM_JS_URL;
+
+            $this->setCheckoutPremiumJsUrl($url);
+            return $url;
+        }
+
+        $url = self::LIVE_CHECKOUT_PREMIUM_JS_URL;
+
+        $this->setCheckoutPremiumJsUrl($url);
+        return $url;
+    }
+
+    /**
      * Gets the current PostNL Checkout environment value
      *
      * @return string
      */
     public function getEnvironment()
     {
-        if ($this->getData('environment')) {
-            return $this->getData('environment');
+        if ($this->hasEnvironment()) {
+            return $this->_getData('environment');
         }
 
         $storeId = Mage::app()->getStore()->getId();
@@ -138,8 +177,8 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
      */
     public function getContinueUrl()
     {
-        if ($this->getData('continue_url')) {
-            return $this->getData('continue_url');
+        if ($this->hasContinueUrl()) {
+            return $this->_getData('continue_url');
         }
 
         $storeId = Mage::app()->getStore()->getId();

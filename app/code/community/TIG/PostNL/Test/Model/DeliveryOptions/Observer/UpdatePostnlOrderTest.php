@@ -73,7 +73,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_Observer_UpdatePostnlOrderTest exten
                   ->method('getQuoteId')
                   ->will($this->returnValue(1));
 
-        $mockPostnlOrder = $this->getMock('TIG_PostNL_Model_Checkout_Order', array('load', 'getId', 'getOrderId'));
+        $mockPostnlOrder = $this->getMock('TIG_PostNL_Model_Core_Order', array('load', 'getId', 'getOrderId'));
         $mockPostnlOrder->expects($this->once())
                         ->method('load')
                         ->with(1, 'quote_id')
@@ -87,7 +87,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_Observer_UpdatePostnlOrderTest exten
                      ->method('getOrder')
                      ->will($this->returnValue($mockOrder));
 
-        $this->setModelMock('postnl_checkout/order', $mockPostnlOrder);
+        $this->setModelMock('postnl_core/order', $mockPostnlOrder);
 
         $observer = $this->_getInstance($mockObserver);
         $this->assertInstanceOf(
@@ -110,7 +110,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_Observer_UpdatePostnlOrderTest exten
                   ->will($this->returnValue(3));
 
         $mockPostnlOrder = $this->getMock(
-            'TIG_PostNL_Model_Checkout_Order',
+            'TIG_PostNL_Model_Core_Order',
             array('load', 'getId', 'getOrderId', 'setOrderId', 'save', 'getIsPakjeGemak')
         );
         $mockPostnlOrder->expects($this->once())
@@ -139,7 +139,7 @@ class TIG_PostNL_Test_Model_DeliveryOptions_Observer_UpdatePostnlOrderTest exten
                      ->method('getOrder')
                      ->will($this->returnValue($mockOrder));
 
-        $this->setModelMock('postnl_checkout/order', $mockPostnlOrder);
+        $this->setModelMock('postnl_core/order', $mockPostnlOrder);
 
         $observer = $this->_getInstance($mockObserver);
         $this->assertInstanceOf(

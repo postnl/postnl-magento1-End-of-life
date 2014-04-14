@@ -36,11 +36,11 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Test_Model_Checkout_OrderTest extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
+class TIG_PostNL_Test_Model_Core_OrderTest extends TIG_PostNL_Test_Framework_TIG_Test_TestCase
 {
     protected function _getInstance()
     {
-        return Mage::getModel('postnl_checkout/order');
+        return Mage::getModel('postnl_core/order');
     }
 
     /**
@@ -50,7 +50,7 @@ class TIG_PostNL_Test_Model_Checkout_OrderTest extends TIG_PostNL_Test_Framework
     {
         $instance = $this->_getInstance();
 
-        $this->assertInstanceOf('TIG_PostNL_Model_Checkout_Order', $instance);
+        $this->assertInstanceOf('TIG_PostNL_Model_Core_Order', $instance);
     }
 
     /**

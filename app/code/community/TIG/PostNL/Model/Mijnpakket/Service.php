@@ -33,28 +33,45 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Checkout_Resource_Order_Collection extends TIG_PostNL_Model_Resource_Db_Collection_Postnl
+class TIG_PostNL_Model_Mijnpakket_Service extends Varien_Object
 {
     /**
-     * Event prefix
+     * Parse billing data and return an array such as Magento would expect from Onepage Checkout.
      *
-     * @var string
-     */
-    protected $_eventPrefix = 'postnl_order_collection';
-
-    /**
-     * Event object
+     * @param StdClass $profile
      *
-     * @var string
+     * @return array
      */
-    protected $_eventObject = 'postnl_order_collection';
-
-    public function _construct()
+    public function parseProfileData($profile)
     {
-        parent::_construct();
-        $this->_init('postnl_checkout/order');
+        $billingData = array(
+            'address_id'           => '',
+            'firstname'            => $profile->Voornaam,
+            'middlename'           => $profile->Tussenvoegsel,
+            'lastname'             => $profile->Achternaam,
+            'company'              => $profile->Bedrijf,
+            'email'                => $profile->Email,
+            'country_id'           => $profile->Land,
+            'postcode'             => $profile->Postcode,
+            'city'                 => $profile->Plaats,
+            'street'               => array(
+                0 => $profile->Straat,
+                1 => $profile->Huisnummer,
+                2 => $profile->HuisnummerExt,
+            ),
+            'region_id'            => '',
+            'region'               => $profile->Regio,
+            'telephone'            => $profile->Mobiel,
+            'fax'                  => '',
+            'customer_password'    => '',
+            'confirm_password'     => '',
+            'save_in_address_book' => 0,
+            'use_for_shipping'     => 1,
+        );
+
+        return $billingData;
     }
 }

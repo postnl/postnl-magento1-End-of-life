@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
@@ -85,6 +85,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'PA',
     );
 
+    /**
+     * @var Mage_Sales_Model_Quote
+     */
     protected $_quote;
 
     /**
@@ -304,8 +307,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK, $storeId);
+        if (!$enabled) {
+            return false;
+        }
 
-        return $enabled;
+        $canUsePakjeGemak = parent::canUsePakjeGemak($storeId);
+
+        return $canUsePakjeGemak;
     }
 
     /**
@@ -326,8 +334,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK_EXPRESS, $storeId);
+        if (!$enabled) {
+            return false;
+        }
 
-        return $enabled;
+        $pgeOptions = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions')
+                          ->getAvailablePgeOptions($storeId);
+
+        if (empty($pgeOptions)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -344,8 +362,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS, $storeId);
+        if (!$enabled) {
+            return false;
+        }
 
-        return $enabled;
+        $pakketautomaatOptions = Mage::getModel('postnl_core/system_config_source_pakketautomaatProductOptions')
+                                     ->getAvailableOptions($storeId);
+
+        if (empty($pakketautomaatOptions)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -384,8 +412,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EVENING_TIMEFRAMES, $storeId);
+        if (!$enabled) {
+            return false;
+        }
 
-        return $enabled;
+        $eveningOptions = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
+                              ->getAvailableAvondOptions($storeId);
+
+        if (empty($eveningOptions)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -553,12 +591,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         if ($storeId === false) {
             $storeId = Mage::app()->getStore()->getId();
-        }
-
-        $testModeAllowed = $this->isTestModeAllowed();
-        if (!$testModeAllowed) {
-            Mage::register('delivery_options_test_mode', false);
-            return false;
         }
 
         $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);

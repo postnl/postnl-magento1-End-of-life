@@ -96,25 +96,28 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingDescription
     {
         $options = $this->getColumn()->getOptions();
         $showMissingOptionValues = (bool)$this->getColumn()->getShowMissingOptionValues();
-        if (!empty($options) && is_array($options)) {
-            $value = $row->getData(self::PRODUCT_CODE_COLUMN);
-            if (is_array($value)) {
-                $res = array();
-                foreach ($value as $item) {
-                    if (isset($options[$item])) {
-                        $res[] = $this->escapeHtml($options[$item]);
-                    }
-                    elseif ($showMissingOptionValues) {
-                        $res[] = $this->escapeHtml($item);
-                    }
-                }
-                return implode(', ', $res);
-            } elseif (isset($options[$value])) {
-                return $this->escapeHtml($options[$value]);
-            } elseif (in_array($value, $options)) {
-                return $this->escapeHtml($value);
-            }
+
+        $value = '';
+        if (empty($options) || !is_array($options)) {
+            return $value;
         }
+
+        $value = $row->getData(self::PRODUCT_CODE_COLUMN);
+        if (is_array($value)) {
+            $res = array();
+            foreach ($value as $item) {
+                if (isset($options[$item])) {
+                    $res[] = $this->escapeHtml($options[$item]);
+                }
+                elseif ($showMissingOptionValues) {
+                    $res[] = $this->escapeHtml($item);
+                }
+            }
+            return implode(', ', $res);
+        } elseif (isset($options[$value])) {
+            return $this->escapeHtml($options[$value]);
+        }
+
         return $this->escapeHtml($value);
     }
 }

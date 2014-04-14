@@ -36,7 +36,7 @@ TIG_PostNL::Global Barcode Type,Globaal barcode type
 TIG_PostNL::The current global barcode type as supplied by PostNL. Must contain 2 letters.,De huidige barcodetype zoals aangeleverd door PostNL. Moet bestaan uit 2 letters
 TIG_PostNL::Global Barcode Range,Globaal barcode bereik
 TIG_PostNL::Your global barcode range as supplied by PostNL. Must contain 4 digits.,Uw globaal barcode bereik zoals aangeleverd door PostNL. Moet bestaan uit 4 cijfers
-TIG_PostNL::These fields are only required if you wish to use PostNL Checkout.,Deze velden zijn alleen verplicht als u gebruik wenst te maken van PostNL Checkout.
+TIG_PostNL::These fields are only required if you wish to use PostNL Checkout or Mijnpakket login.,Deze velden zijn alleen verplicht als u gebruik wenst te maken van PostNL Checkout of Mijnpakket login.
 TIG_PostNL::Webshop ID,Webshop ID
 TIG_PostNL::Public Webshop ID,Publiek Webshop ID
 TIG_PostNL::These fields contain your contact information for PostNL.,Deze velden bevatten uw contact informatie voor PostNL
@@ -566,8 +566,8 @@ TIG_PostNL::The price overview will contain the order's subtotal and shipping co
 TIG_PostNL::Shipping Methods,Verzendmethodes
 TIG_PostNL::Use GlobalPack,Gebruik GlobalPack
 TIG_PostNL::GlobalPack is used to ship orders outside the EU. Otherwise you can leave this field disabled.,"GlobalPack wordt gebruikt om bestellingen buiten de EU te verzenden. Indien u hier geen gebruik van maakt, kunt u deze instelling uit laten staan."
-TIG_PostNL::Use PostNL Checkout,Gebruik PostNL Checkout
-"TIG_PostNL::If you wish to make use of PostNL Checkout, set this field to 'yes'.",Indien u gebruik wilt maken van PostNL Checkout moet u deze instelling op 'ja' zetten.
+TIG_PostNL::Use PostNL Checkout and Mijnpakket login,Gebruik PostNL Checkout en Mijnpakket login
+"TIG_PostNL::If you wish to make use of PostNL Checkout or Mijnpakket login, set this field to 'yes'.",Indien u gebruik wilt maken van PostNL Checkout of Mijnpakket login moet u deze instelling op 'ja' zetten.
 TIG_PostNL::You have not enabled GlobalPack. Please enable GlobalPack under 'Account Settings' in order to configure your GlobalPack preferences.,U heeft GlobalPack niet geactiveerd. Activeer GlobalPack onder 'Account Instellingen' om uw GlobalPack voorkeuren te configureren.
 TIG_PostNL::You have not enabled PostNL Checkout. Please enable PostNL Checkout under 'Account Settings' in order to configure your PostNL Checkout preferences.,U heeft PostNL Checkout niet geactiveerd. Activeer PostNL Checkout onder 'Account Instellingen' om uw PostNL Checkout voorkeuren te configureren.
 "TIG_PostNL::If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343","Als u een contractklant bent van PostNL heeft u een e-mail ontvangen met deze informatie. Indien u deze e-mail niet kan vinden, neem dan contact op met PostNL support op 058-2333343"
@@ -823,3 +823,5 @@ TIG_PostNL::Import Rates,Importeer Tarieven
 TIG_PostNL::You can import and export rates on the website scope. You can change your current scope with the dropdown at the top left of this page.,U kunt tarieven importeren en exporteren op website niveau. U kunt het huidige niveau van de configuratie aanpassen met het selectieveld links bovenaan deze pagina.
 TIG_PostNL::Your shipping label(s) are being prepared.,Uw verzendlabel(s) worden voorbereid.
 TIG_PostNL::This may take a minute. The page will refresh once this is done.,Dit kan even duren. De pagina wordt ververst wanneer dit gedaan is.
+TIG_PostNL::View the user manual.,Bekijk de geberuikershandleiding.
+TIG_PostNL::User manual,Gebruikershandleiding

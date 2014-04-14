@@ -57,9 +57,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         /**
          * Get the PostNL order associated with this order.
          *
-         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($order->getQuoteId(), 'quote_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($order->getQuoteId(), 'quote_id');
 
         /**
          * If no such PostNL order exists or if the PostNL order has already been updated we don't need to do anything.
@@ -119,8 +119,6 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
 
         $order->addAddress($orderAddress)
               ->save();
-
-        $orderAddress->save();
 
         return $this;
     }

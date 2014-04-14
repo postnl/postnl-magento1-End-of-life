@@ -48,8 +48,6 @@ class TIG_PostNL_Model_Core_Observer_Barcode
      * @event sales_order_shipment_save_after
      *
      * @observer postnl_shipment_generate_barcode
-     *
-     * @todo change confirm date to the correct value, taking into account 'ordered before X, delivered on Y' settings
      */
     public function generateBarcode(Varien_Event_Observer $observer)
     {
@@ -81,9 +79,9 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         /**
          * Check if this shipment has an associated PostNL Order. If so, copy it's data.
          *
-         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($shipment->getOrderId(), 'order_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($shipment->getOrderId(), 'order_id');
         if (!$postnlOrder->getId()) {
             $postnlOrder->load($shipment->getOrder()->getQuoteId(), 'quote_id');
         }

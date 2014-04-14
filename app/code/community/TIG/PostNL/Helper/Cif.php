@@ -342,7 +342,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     public function getShippingPhases()
     {
         $shippingPhases = $this->_shippingPhases;
-        foreach ($shippingPhases as $key => &$value) {
+        foreach ($shippingPhases as &$value) {
             $value = $this->__($value);
         }
 
@@ -794,7 +794,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
 
         $unitUsed = Mage::getStoreConfig(self::XML_PATH_WEIGHT_UNIT, $storeId);
 
-        $returnWeight = $weight;
         switch ($unitUsed) {
             case 'tonne':
                 $returnWeight = $weight * 1000;
@@ -882,7 +881,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * use Enterprise, in customers > attributes > manage customer address attributes.
      *
      * @param int                            $storeId
-     * @param Mage_Sales_Model_Order_Address $address
+     * @param Mage_Customer_Model_Address    $address
      * @param boolean                        $allowFullStreet
      *
      * @return array

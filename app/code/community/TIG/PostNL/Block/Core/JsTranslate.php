@@ -105,7 +105,7 @@ class TIG_PostNL_Block_Core_JsTranslate extends Mage_Core_Block_Template
     }
 
     /**
-     * Get JS translations for PostNl JS files.
+     * Get JS translations for PostNL JS files.
      *
      * @return string
      */

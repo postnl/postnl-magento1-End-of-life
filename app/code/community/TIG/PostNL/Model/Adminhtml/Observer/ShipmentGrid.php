@@ -132,9 +132,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 
         /**
          * replace the collection as the default collection has a bug preventing it from being reset.
-         * Without being able to reset it, we can't edit it. Therefore we are forced to replace it altogether
-         *
-         * TODO see if this can be avoided in any way
+         * Without being able to reset it, we can't edit it. Therefore we are forced to replace it altogether.
          */
         $collection = Mage::getResourceModel('postnl/order_shipment_grid_collection');
         $collection->setSelect($select)
@@ -214,7 +212,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * Join tig_postnl_order table
          */
         $select->joinLeft(
-            array('postnl_order' => $resource->getTableName('postnl_checkout/order')),
+            array('postnl_order' => $resource->getTableName('postnl_core/order')),
             '`main_table`.`order_id`=`postnl_order`.`order_id`',
             array(
                 'is_pakje_gemak'       => 'postnl_order.is_pakje_gemak',
@@ -402,6 +400,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
 
         if (in_array('confirm_status', $columnsToDisplay)) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
+             */
             $postnlShipmentClass = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
 
             $block->addColumnAfter(
@@ -547,6 +548,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 
         $origValue = $row->getData($column->getIndex());
 
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
+         */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         $class = '';
@@ -589,6 +593,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $value;
         }
 
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
+         */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         switch ($row->getData($column->getIndex())) {
             case null: //rows with no value (non-PostNL shipments)
@@ -657,9 +664,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $value;
         }
 
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
+         */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
-        $class = '';
         switch ($row->getData($column->getIndex())) {
             case null: //rows with no value (non-PostNL shipments) or unconfirmed shipments
                 $class = '';

@@ -41,7 +41,7 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
     /**
      * Xpaths used to get PostNL account credentials.
      */
-    const XPATH_MODE                = 'postnl/cif_labels_and_confirming/mode';
+    const XPATH_MODE                = 'postnl/cif/mode';
     const XPATH_LIVE_USERNAME       = 'postnl/cif/live_username';
     const XPATH_LIVE_PASSWORD       = 'postnl/cif/live_password';
     const XPATH_TEST_USERNAME       = 'postnl/cif/test_username';

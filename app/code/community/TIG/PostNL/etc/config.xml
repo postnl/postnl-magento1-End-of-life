@@ -63,6 +63,9 @@
             <postnl_deliveryoptions>
                 <class>TIG_PostNL_Block_DeliveryOptions</class>
             </postnl_deliveryoptions>
+            <postnl_mijnpakket>
+                <class>TIG_PostNL_Block_Mijnpakket</class>
+            </postnl_mijnpakket>
 		</blocks>
 		<helpers>
 			<postnl>
@@ -102,6 +105,9 @@
             <postnl_deliveryoptions>
                 <class>TIG_PostNL_Model_DeliveryOptions</class>
             </postnl_deliveryoptions>
+            <postnl_mijnpakket>
+                <class>TIG_PostNL_Model_Mijnpakket</class>
+            </postnl_mijnpakket>
 
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
@@ -110,6 +116,9 @@
             <postnl_core_resource>
                 <class>TIG_PostNL_Model_Core_Resource</class>
                 <entities>
+                    <order>
+                        <table>tig_postnl_order</table>
+                    </order>
                     <shipment>
                         <table>tig_postnl_shipment</table>
                     </shipment>
@@ -132,14 +141,6 @@
                     </tablerate>
                 </entities>
             </postnl_carrier_resource>
-            <postnl_checkout_resource>
-                <class>TIG_PostNL_Model_Checkout_Resource</class>
-                <entities>
-                    <order>
-                        <table>tig_postnl_order</table>
-                    </order>
-                </entities>
-            </postnl_checkout_resource>
         </models>
         <resources>
             <postnl_setup>
@@ -323,6 +324,18 @@
                         <class>postnl_deliveryoptions/observer_shippingMethodAvailable</class>
                         <method>addDeliveryOptions</method>
                     </checkout_deliveryoptions>
+                    <!-- Adds Mijnpakket login functionality to onepage checkout. -->
+                    <checkout_onepage_mijnpakket_login>
+                        <type>singleton</type>
+                        <class>postnl_mijnpakket/observer_onepage</class>
+                        <method>addMijnpakketLogin</method>
+                    </checkout_onepage_mijnpakket_login>
+                    <!-- Adds Mijnpakket login functionality to onepage checkout. -->
+                    <checkout_onepage_mijnpakket_success>
+                        <type>singleton</type>
+                        <class>postnl_mijnpakket/observer_onepage</class>
+                        <method>addAccountNotification</method>
+                    </checkout_onepage_mijnpakket_success>
                 </observers>
             </core_block_abstract_to_html_before>
         </events>
@@ -457,6 +470,7 @@
         		<private_key/>
         	</general>
         	<cif>
+                <mode>1</mode> <!-- Test mode -->
                 <customer_number>11223344</customer_number> <!-- Demo customer number -->
         		<customer_code>TOTA</customer_code> <!-- Demo customer doe -->
                 <live_username/>
@@ -472,7 +486,6 @@
                 <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
         	</cif>
         	<cif_labels_and_confirming>
-                <mode>1</mode> <!-- Test mode -->
                 <label_size>A4</label_size> <!-- A4 size labels -->
                 <weight_per_parcel>20000</weight_per_parcel> <!-- 20 kg -->
                 <weight_unit>gram</weight_unit> <!-- gram -->
@@ -580,7 +593,7 @@
         	</delivery_options>
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
-        	    <mode>1</mode> <!-- Test mode -->
+                <show_exclusively_for_mijnpakket_users>0</show_exclusively_for_mijnpakket_users> <!-- Do not show PostNL Checkout exclusively to mijnpakket users -->
         	    <instruction_cms_page/>
         	    <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the PostNL Checkout button for orders under 2 kg -->
         	    <show_checkout_for_backorders>0</show_checkout_for_backorders> <!-- Do not show the PostNL Checkout button if the order contains out-of-stock products -->
@@ -626,11 +639,11 @@
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
         		<max_parcel_count>200</max_parcel_count> <!-- Maximum of 200 parcels per shipment allowed -->
-        		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 min) -->
+        		<max_temp_file_storage_time>300</max_temp_file_storage_time> <!-- 300 seconds (5 minutes) -->
         		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
         		<send_statistics>1</send_statistics> <!-- Send extension usage statistics to PostNL -->
         		<receive_updates>1</receive_updates> <!-- Automatically receive updates regarding the PostNL extension -->
-        		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
+        		<feed_url>ext.tigpostnltest.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
         		<feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
         		<show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
         		<cif_version_shippingstatus>1_3</cif_version_shippingstatus> <!-- v1.3 -->
@@ -1450,10 +1463,20 @@
                 <url/>
                 <type>notice</type>
             </POSTNL-0156>
+            <POSTNL-0157>
+                <message>Invalid token specified: %s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0157>
+            <POSTNL-0158>
+                <message>Invalid GetProfileAccessToken response: %s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0158>
             <POSTNL-0159>
                 <message>You have chosen a default shipping option that is not supported. Please only select default options that you have selected in the 'Select supported option' field.</message>
                 <url/>
-                <type>error</type>
+                <type>warning</type>
             </POSTNL-0159>
 
             <!-- These error codes are generated by CIF, not by this extension -->
