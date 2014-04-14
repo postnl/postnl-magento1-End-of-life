@@ -29,7 +29,7 @@
 
 #postnl_delivery_options .popup-header { background:none; }
 #postnl_delivery_options .title h2 { font-weight:normal; font-size:15px; text-transform:uppercase; color:#1a1a1a; }
-#postnl_delivery_options .btn-close:hover { background-position:0 0; opacity:.6; }
+#postnl_delivery_options .btn-close:hover { background-position:0 0; opacity:.6; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)"; }
 
 #postnl_delivery_options .location { border-top:1px solid #d6d6d4; }
 #postnl_delivery_options .location .bkg { background:#f2f2f2; }
