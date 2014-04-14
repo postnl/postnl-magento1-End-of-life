@@ -38,6 +38,8 @@
  *
  * @method boolean                        hasIsTestMode()
  * @method TIG_PostNL_Block_Mijnpakket_Js setIsTestMode(boolean $value)
+ * @method boolean                        hasBaseUrl()
+ * @method TIG_PostNL_Block_Mijnpakket_Js setBaseUrl(string $value)
  */
 class TIG_PostNL_Block_Mijnpakket_Js extends Mage_Core_Block_Template
 {
@@ -49,8 +51,9 @@ class TIG_PostNL_Block_Mijnpakket_Js extends Mage_Core_Block_Template
     /**
      * Available URl's for PostNL's login API.
      */
-    const LOGIN_TEST_URL = 'https://tppwscheckout-sandbox.e-id.nl/Checkout2/Login.js';
-    const LOGIN_LIVE_URL = 'https://mijnpakket.postnl.nl/Checkout2/Login.js';
+    const LIVE_BASE_URL = 'https://mijnpakket.postnl.nl/';
+    const TEST_BASE_URL = 'https://tppwscheckout-sandbox.e-id.nl/';
+    const LOGIN_JS_PATH = 'Checkout2/Login.js';
 
     /**
      * @return boolean
@@ -68,18 +71,39 @@ class TIG_PostNL_Block_Mijnpakket_Js extends Mage_Core_Block_Template
     }
 
     /**
+     * Gets the current base URL based on whether the extension is set to test mode.
+     *
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        if ($this->hasBaseUrl()) {
+            return $this->_getData('base_url');
+        }
+
+        $isTestMode = $this->getIsTestMode();
+        if ($isTestMode) {
+            $baseUrl = static::TEST_BASE_URL;
+        } else {
+            $baseUrl = static::LIVE_BASE_URL;
+        }
+
+        $this->setBaseUrl($baseUrl);
+        return $baseUrl;
+    }
+
+    /**
      * gets the Mijnpakket Login JS URL for either live or test mode.
      *
      * @return string
      */
     public function getLoginJsUrl()
     {
-        $isTestMode = $this->getIsTestMode();
-        if ($isTestMode) {
-            return self::LOGIN_TEST_URL;
-        }
+        $baseUrl = $this->getBaseUrl();
 
-        return self::LOGIN_LIVE_URL;
+        $url = $baseUrl . self::LOGIN_JS_PATH;
+
+        return $url;
     }
 
     /**

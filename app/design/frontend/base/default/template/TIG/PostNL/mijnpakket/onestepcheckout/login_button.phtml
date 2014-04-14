@@ -42,12 +42,12 @@
     <div id="postnl_mijnpakket_login"></div>
     <div id="postnl_mijnpakket_login_btn" style="display:none;">
         <span>
-            <img src="https://tppcb-sandbox.e-id.nl/Button/PremiumLogin?publicId=3aaa777ab1204a67bd51ddb4f7326be9" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
+            <img src="<?php echo $this->getButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
         </span>
     </div>
     <div id="postnl_mijnpakket_login_btn_disabled" style="display:none;">
         <span>
-            <img src="https://tppcb-sandbox.e-id.nl/Button/PremiumLogin?publicId=3aaa777ab1204a67bd51ddb4f7326be9&disabled=true" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
+            <img src="<?php echo $this->getDisabledButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
         </span>
     </div>
 </div>
@@ -74,7 +74,7 @@
 
         mijnpakketLogin.init('postnl_mijnpakket_login', <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>);
 
-        var oscLoginLink = $('onestepcheckout-login-link');
+        var oscLoginLink         = $('onestepcheckout-login-link');
         var oscCheckoutContainer = $$('.checkoutcontainer')[0];
 
         if (oscLoginLink) {

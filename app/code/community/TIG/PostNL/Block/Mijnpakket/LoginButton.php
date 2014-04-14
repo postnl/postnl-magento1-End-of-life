@@ -36,10 +36,18 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
+ * @method boolean                                 hasIsTestMode()
+ * @method TIG_PostNL_Block_Mijnpakket_LoginButton setIsTestMode(boolean $value)
+ * @method boolean                                 hasBaseUrl()
+ * @method TIG_PostNL_Block_Mijnpakket_LoginButton setBaseUrl(string $value)
  * @method boolean                                 hasPublicWebshopId()
  * @method TIG_PostNL_Block_Mijnpakket_LoginButton setPublicWebshopId(string $value)
  * @method boolean                                 hasSavedMijnpakketData()
  * @method TIG_PostNL_Block_Mijnpakket_LoginButton setSavedMijnpakketData(string $value)
+ * @method boolean                                 hasButtonUrl()
+ * @method TIG_PostNL_Block_Mijnpakket_LoginButton setButtonUrl(string $value)
+ * @method boolean                                 hasDisabledButtonUrl()
+ * @method TIG_PostNL_Block_Mijnpakket_LoginButton setDisabledButtonUrl(string $value)
  */
 class TIG_PostNL_Block_Mijnpakket_LoginButton extends Mage_Core_Block_Template
 {
@@ -49,9 +57,53 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends Mage_Core_Block_Template
     const XPATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
 
     /**
+     * Available URl's for PostNL's login buttons.
+     */
+    const LIVE_BASE_URL   = 'https://checkout.postnl.nl/';
+    const TEST_BASE_URL   = 'https://tppcb-sandbox.e-id.nl/';
+    const BUTTON_URL_PATH = 'Button/PremiumLogin';
+
+    /**
      * @var string
      */
     protected $_template = 'TIG/PostNL/mijnpakket/login_button.phtml';
+
+    /**
+     * @return boolean
+     */
+    public function getIsTestMode()
+    {
+        if ($this->hasIsTestMode()) {
+            return $this->_getData('is_test_mode');
+        }
+
+        $isTestMode = Mage::helper('postnl/mijnpakket')->isTestMode();
+
+        $this->setIsTestMode($isTestMode);
+        return $isTestMode;
+    }
+
+    /**
+     * Gets the current base URL based on whether the extension is set to test mode.
+     *
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        if ($this->hasBaseUrl()) {
+            return $this->_getData('base_url');
+        }
+
+        $isTestMode = $this->getIsTestMode();
+        if ($isTestMode) {
+            $baseUrl = self::TEST_BASE_URL;
+        } else {
+            $baseUrl = self::LIVE_BASE_URL;
+        }
+
+        $this->setBaseUrl($baseUrl);
+        return $baseUrl;
+    }
 
     /**
      * Get the current public webshop ID.
@@ -85,6 +137,44 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends Mage_Core_Block_Template
 
         $this->setSavedMijnpakketData($data);
         return $data;
+    }
+
+    /**
+     * Gets the button URL.
+     *
+     * @return string
+     */
+    public function getButtonUrl()
+    {
+        if ($this->hasButtonUrl()) {
+            return $this->_getData('button_url');
+        }
+
+        $baseUrl = $this->getBaseUrl();
+        $url = $baseUrl . self::BUTTON_URL_PATH;
+
+        $url .= '?publicId=' . $this->getPublicWebshopId();
+
+        $this->setButtonUrl($url);
+        return $url;
+    }
+
+    /**
+     * Gets the URL for the disabled button.
+     *
+     * @return string
+     */
+    public function getDisabledButtonUrl()
+    {
+        if ($this->hasDisabledButtonUrl()) {
+            return $this->_getData('disabled_button_url');
+        }
+
+        $buttonUrl = $this->getButtonUrl();
+        $buttonUrl .= '&disabled=true';
+
+        $this->setDisabledButtonUrl($buttonUrl);
+        return $buttonUrl;
     }
 
     /**
