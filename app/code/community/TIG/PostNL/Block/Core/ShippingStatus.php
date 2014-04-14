@@ -47,6 +47,9 @@ class TIG_PostNL_Block_Core_ShippingStatus extends Mage_Core_Block_Template
      */
     public function isConfirmed($shipment)
     {
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
+         */
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
         if ($postnlShipment->getConfirmStatus() == $postnlShipment::CONFIRM_STATUS_CONFIRMED) {
             return true;

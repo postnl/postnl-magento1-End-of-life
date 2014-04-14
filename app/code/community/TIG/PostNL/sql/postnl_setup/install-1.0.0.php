@@ -321,7 +321,7 @@ $postnlShipmentStatusHistoryTable = $installer->getConnection()
 $installer->getConnection()->createTable($postnlShipmentStatusHistoryTable);
 
 $postnlOrderTable = $installer->getConnection()
-    ->newTable($installer->getTable('postnl_checkout/order'))
+    ->newTable($installer->getTable('postnl_core/order'))
     /**
      * Entity ID
      */
@@ -388,14 +388,14 @@ $postnlOrderTable = $installer->getConnection()
     ->addColumn('delivery_date', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
         'nullable'  => true,
         ), 'Delivery Date')
-    ->addIndex($installer->getIdxName('postnl_checkout/order', array('order_id')),
+    ->addIndex($installer->getIdxName('postnl_core/order', array('order_id')),
         array('order_id'))
-    ->addIndex($installer->getIdxName('postnl_checkout/order', array('quote_id')),
+    ->addIndex($installer->getIdxName('postnl_core/order', array('quote_id')),
         array('quote_id'))
-    ->addForeignKey($installer->getFkName('postnl_checkout/order', 'order_id', 'sales/order', 'entity_id'),
+    ->addForeignKey($installer->getFkName('postnl_core/order', 'order_id', 'sales/order', 'entity_id'),
         'order_id', $installer->getTable('sales/order'), 'entity_id',
         Varien_Db_Ddl_Table::ACTION_SET_NULL, Varien_Db_Ddl_Table::ACTION_CASCADE)
-    ->addForeignKey($installer->getFkName('postnl_checkout/order', 'quote_id', 'sales/quote', 'entity_id'),
+    ->addForeignKey($installer->getFkName('postnl_core/order', 'quote_id', 'sales/quote', 'entity_id'),
         'quote_id', $installer->getTable('sales/quote'), 'entity_id',
         Varien_Db_Ddl_Table::ACTION_SET_NULL, Varien_Db_Ddl_Table::ACTION_CASCADE)
     ->setComment('TIG PostNL Order');

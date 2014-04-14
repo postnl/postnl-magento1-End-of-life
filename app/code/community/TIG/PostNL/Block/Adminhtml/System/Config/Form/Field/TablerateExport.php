@@ -60,7 +60,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TablerateExport
         $data = array(
             'label'   => Mage::helper('postnl')->__('Export CSV'),
             'onclick' => $onClick,
-            'class'   => '',
             'id'      => $element->getHtmlId(),
             'type'    => 'button',
             'class'   => 'scalable postnl-button',

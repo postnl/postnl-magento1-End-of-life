@@ -63,7 +63,7 @@ class TIG_PostNL_Test_Model_Carrier_Postnl extends TIG_PostNL_Test_Framework_TIG
     {
         $carrier = $this->_getInstance();
 
-        $mockPostnlOrder = $this->getMock('TIG_PostNL_Model_Checkout_Order');
+        $mockPostnlOrder = $this->getMock('TIG_PostNL_Model_Core_Order');
         $mockPostnlOrder->expects($this->once())
                         ->method('getId')
                         ->will($this->returnValue(1));

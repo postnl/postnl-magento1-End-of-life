@@ -177,7 +177,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * Join tig_postnl_order table
          */
         $select->joinLeft(
-            array('postnl_order' => $resource->getTableName('postnl_checkout/order')),
+            array('postnl_order' => $resource->getTableName('postnl_core/order')),
             '`main_table`.`entity_id`=`postnl_order`.`order_id`',
             array(
                 'is_pakje_gemak'       => 'postnl_order.is_pakje_gemak',
@@ -364,7 +364,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Applies sorting and filtering to the collection
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
      *
      * @return $this
      */

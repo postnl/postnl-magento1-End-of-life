@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * The only reason this class exists is because the add() method and it's derivatives are only present since EE 1.12 and
@@ -43,7 +43,7 @@
 class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
 {
     /**
-     * Add new message
+     * Add new message.
      *
      * @param int          $severity
      * @param string       $title

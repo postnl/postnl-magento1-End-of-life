@@ -799,8 +799,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param bool $shipmentNumber
      *
      * @return array
-     *
-     * @todo     modify to support OVM and PostNL checkout shipments
      */
     protected function _getShipment(TIG_PostnL_Model_Core_Shipment $postnlShipment,
                                     $barcode, $mainBarcode = false, $shipmentNumber = false)
@@ -1179,7 +1177,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         if ($postnlShipment->isCod()) {
-            //TODO implement COD here
+            /** @todo implement COD here */
         }
 
         return $amount;
@@ -1192,8 +1190,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      *
      * @return array
-     *
-     * @todo check if SMSNr is required for pakjegemak
      */
     protected function _getContact($address, TIG_PostNL_Model_Core_Shipment $postnlShipment)
     {

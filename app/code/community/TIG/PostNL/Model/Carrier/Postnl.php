@@ -41,7 +41,7 @@
  * @method boolean                         hasQuote()
  * @method TIG_PostNL_Model_Carrier_Postnl setQuote(Mage_Sales_Model_Quote $value)
  * @method boolean                         hasPostnlOrder()
- * @method TIG_PostNL_Model_Carrier_Postnl setPostnlOrder(TIG_PostNL_Model_Checkout_Order $value)
+ * @method TIG_PostNL_Model_Carrier_Postnl setPostnlOrder(TIG_PostNL_Model_Core_Order $value)
  * @method boolean                         hasHelper()
  * @method TIG_PostNL_Model_Carrier_Postnl setHelper(TIG_PostNL_Helper_Carrier $value)
  */
@@ -82,6 +82,9 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
      */
     protected $_conditionNames = array();
 
+    /**
+     * Class constructor.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -106,7 +109,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     }
 
     /**
-     * @return TIG_PostNL_Model_Checkout_Order
+     * @return TIG_PostNL_Model_Core_Order
      */
     public function getPostnlOrder()
     {
@@ -115,7 +118,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         }
 
         $quote = $this->getQuote();
-        $postnlOrder = Mage::getModel('postnl_checkout/order');
+        $postnlOrder = Mage::getModel('postnl_core/order');
 
         if ($quote->getId()) {
             $postnlOrder->load($quote->getId(), 'quote_id');

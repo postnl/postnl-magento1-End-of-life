@@ -100,4 +100,7 @@
     <evening_pickup_available translate="message" module="postnl">
         <message>Evening pickup available</message>
     </evening_pickup_available>
+    <postnl_checkout_error translate="message" module="postnl">
+        <message>An error occurred. Please use our regular checkout instead.</message>
+    </postnl_checkout_error>
 </jstranslator>

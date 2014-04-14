@@ -84,7 +84,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         $block = $observer->getBlock();
         $blockClass = $this->getBlockClass();
 
-        if (get_class($block) !== $blockClass) {
+        if (!($block instanceof $blockClass)) {
             return $this;
         }
 
@@ -129,9 +129,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         /**
          * Remove shipment costs from the PostNL order associated with the current quote.
          *
-         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
         if ($postnlOrder->getId()) {
             $postnlOrder->setIsActive(false)
                         ->setShipmentCosts(0)

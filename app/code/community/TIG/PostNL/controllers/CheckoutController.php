@@ -194,10 +194,10 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             /**
              * Save a new PostNL order containing the current quote ID as well as the received order token.
              *
-             * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+             * @var TIG_PostNL_Model_Core_Order $postnlOrder
              */
             $quote = Mage::getSingleton('checkout/session')->getQuote();
-            $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+            $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
             $postnlOrder->setQuoteId($quote->getId())
                         ->setToken($orderToken)
                         ->setIsActive(1)
@@ -467,7 +467,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
             return $this;
         }
 
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
         $postnlOrder->setIsActive(false)
                     ->save();
 
@@ -617,9 +617,9 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     protected function _validateQuote($quote, $addErrors = true)
     {
         /**
-         * @var TIG_PostNL_MOdel_Checkout_Order $postnlOrder
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
 
         /**
          * Check if the quote is active
