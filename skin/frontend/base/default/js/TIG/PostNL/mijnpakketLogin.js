@@ -173,6 +173,7 @@ MijnpakketLogin.prototype = {
 
         this.registerObservers();
 
+        console.log(this);
         if (this.getMijnpakketData()) {
             if (debug) {
                 console.log('Saved mijnpakket data found. Replacing login button with dummy.');
