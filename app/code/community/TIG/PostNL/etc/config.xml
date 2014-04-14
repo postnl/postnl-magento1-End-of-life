@@ -695,14 +695,14 @@
                     <label>Default PostNL theme</label>
                     <use_cufon>1</use_cufon>
                 </default>
-                <!-- An unbranded white, gray and blue theme -->
+                <!-- An unbranded, white, gray and blue theme -->
                 <unbranded translate="label" module="postnl">
                     <label>Unbranded theme</label>
+                    <use_cufon>0</use_cufon>
                     <files>
                         <onepage>css/TIG/PostNL/deliveryoptions/unbranded.css</onepage>
                         <onestepcheckout>css/TIG/PostNL/deliveryoptions/onestepcheckout_unbranded.css</onestepcheckout>
                     </files>
-                    <use_cufon>0</use_cufon>
                 </unbranded>
             </themes>
         </delivery_options>

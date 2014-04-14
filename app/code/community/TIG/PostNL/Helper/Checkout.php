@@ -42,7 +42,6 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      * XML path to checkout on/off switch
      */
     const XML_PATH_CHECKOUT_ACTIVE = 'postnl/checkout/active';
-    const XML_PATH_USE_CHECKOUT    = 'postnl/cif/use_checkout';
 
     /**
      * XML path to all PostNL Checkout payment methods.
@@ -400,12 +399,6 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             return false;
         }
 
-        $useCheckout = Mage::getStoreConfigFlag(self::XML_PATH_USE_CHECKOUT, $storeId);
-
-        if (!$useCheckout) {
-            return false;
-        }
-
         $isActive = Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ACTIVE, $storeId);
         return $isActive;
     }
@@ -471,7 +464,9 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         $errors = array();
 
         /**
-         * Get the system > config fields for this section
+         * Get the system > config fields for this section.
+         *
+         * @var Varien_Simplexml_Element $section
          */
         $configFields = Mage::getSingleton('adminhtml/config');
         $sections     = $configFields->getSections('postnl');
@@ -484,22 +479,29 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         foreach ($requiredFields as $requiredField) {
             $value = Mage::getStoreConfig($requiredField, $storeId);
 
-            if ($value === null || $value === '') {
-                $fieldParts = explode('/', $requiredField);
-                $field = $fieldParts[2];
-                $group = $fieldParts[1];
-
-                $label      = (string) $section->groups->$group->fields->$field->label;
-                $groupLabel = (string) $section->groups->$group->label;
-                $groupName = $section->groups->$group->getName();
-
-                $errors[] = array(
-                    'code'    => 'POSTNL-0034',
-                    'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
-                );
-
-                $this->saveConfigState(array('postnl_' . $groupName => 1));
+            if ($value !== null && $value !== '') {
+                continue;
             }
+
+            $fieldParts = explode('/', $requiredField);
+            $field = $fieldParts[2];
+            $group = $fieldParts[1];
+
+            /**
+             * @var Varien_Simplexml_Element $sectionGroup
+             */
+            $sectionGroup = $section->groups->$group;
+
+            $label      = (string) $sectionGroup->fields->$field->label;
+            $groupLabel = (string) $sectionGroup->label;
+            $groupName  = $sectionGroup->getName();
+
+            $errors[] = array(
+                'code'    => 'POSTNL-0034',
+                'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
+            );
+
+            $this->saveConfigState(array('postnl_' . $groupName => 1));
         }
 
         /**
