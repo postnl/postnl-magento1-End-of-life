@@ -500,8 +500,8 @@ TIG_PostNL::Request help directly:,Direct assistentie vragen:
 TIG_PostNL::Email:,E-mailadres:
 TIG_PostNL::Documentation,Documentatie
 TIG_PostNL::A list of documents regarding the extension.,Een lijst van documenten met betrekking tot de extensie.
-TIG_PostNL::View the installation and configuration manual.,Bekijk de installatie en configuratie handleiding.
-TIG_PostNL::Installation and configuration manual,Installatie en configuratie handleiding
+TIG_PostNL::View the installation and configuration manual.,Bekijk de installatie- en configuratiehandleiding.
+TIG_PostNL::Installation and configuration manual,Installatie- en configuratiehandleiding
 TIG_PostNL::View the complete changelog of the extension.,Bekijk de volledige changelog van de extensie.
 TIG_PostNL::Full changelog,Volledig changelog
 TIG_PostNL::PostNL Checkout has been disabled,PostNL Checkout is uitgeschakeld
@@ -825,3 +825,7 @@ TIG_PostNL::Your shipping label(s) are being prepared.,Uw verzendlabel(s) worden
 TIG_PostNL::This may take a minute. The page will refresh once this is done.,Dit kan even duren. De pagina wordt ververst wanneer dit gedaan is.
 TIG_PostNL::View the user manual.,Bekijk de geberuikershandleiding.
 TIG_PostNL::User manual,Gebruikershandleiding
+TIG_PostNL::Delivery options theme,Bezorgopties thema
+"TIG_PostNL::You can view an example of the different themes <a href=""http://servicedesk.totalinternetgroup.nl"" target=""_blank"" title=""PostNL delivery option themes"">here</a>.","U kunt een voorbeeld van de verschillende thema's <a href=""http://servicedesk.totalinternetgroup.nl"" target=""_blank"" title=""PostNL bezorgopties thema's"">hier</a> bekijken."
+TIG_PostNL::Default PostNL theme,Standaard PostNL thema
+TIG_PostNL::Unbranded theme,Unbranded thema

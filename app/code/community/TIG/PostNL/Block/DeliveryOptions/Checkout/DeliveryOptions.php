@@ -42,7 +42,7 @@
  * @method boolean                                                   hasTaxDisplayType()
  * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setTaxDisplayType(int $value)
  */
-class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Core_Block_Template
+class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_PostNL_Block_DeliveryOptions_Template
 {
     /**
      * Xpath to 'allow_streetview' setting.
@@ -406,6 +406,36 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends Mage_Cor
 
         $streetviewAllowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_STREETVIEW, $storeId);
         return $streetviewAllowed;
+    }
+
+    /**
+     * Checks whether the current theme uses cufon.
+     *
+     * @return boolean
+     */
+    public function getUseCufon()
+    {
+        /**
+         * @var Varien_Simplexml_Element $theme
+         */
+        $theme = $this->getCurrentTheme();
+        if (!$theme) {
+            return false;
+        }
+
+        /**
+         * @var Varien_Simplexml_Element $files
+         */
+        $useCufon = $theme->use_cufon;
+        if (!$useCufon) {
+            return false;
+        }
+
+        if ($useCufon == 1) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

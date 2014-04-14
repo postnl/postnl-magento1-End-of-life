@@ -238,9 +238,9 @@
             allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
             allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
             allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
+            disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
             optionsContainer       : 'osc_scrollbar_container'
         };
-
 
         try {
             deliveryOptions = new PostnlDeliveryOptions(params, options);
