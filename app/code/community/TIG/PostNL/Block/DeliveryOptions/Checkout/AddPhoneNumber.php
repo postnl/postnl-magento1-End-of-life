@@ -43,7 +43,7 @@
  * @method boolean                                                  hasQuote()
  * @method TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber setQuote(Mage_Sales_Model_Quote $quote)
  */
-class TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber extends Mage_Core_Block_Template
+class TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber extends TIG_PostNL_Block_DeliveryOptions_Template
 {
     /**
      * @var string

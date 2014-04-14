@@ -33,30 +33,83 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean hasIsOsc()
  */
-class TIG_PostNL_Block_DeliveryOptions_Js extends TIG_PostNL_Block_DeliveryOptions_Template
+class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOptions_Template
 {
     /**
      * @var string
      */
-    protected $_template = 'TIG/PostNL/delivery_options/js.phtml';
+    protected $_template = 'TIG/PostNL/delivery_options/theme.phtml';
 
     /**
-     * Get the configured Google maps API key.
+     * Gets whether the current checkout page is OneStepCheckout.
+     *
+     * @return boolean|mixed
+     */
+    public function getIsOsc()
+    {
+        if (!$this->hasIsOsc()) {
+            return false;
+        }
+
+        return $this->_getData('is_osc');
+    }
+
+    /**
+     * Gets a css file path for the current theme.
      *
      * @return string
      */
-    public function getApiKey()
+    public function getThemeCssFile()
     {
-        if ($this->hasApiKey()) {
-            return $this->_getData('api_key');
+        /**
+         * @var Varien_Simplexml_Element $theme
+         */
+        $theme = $this->getCurrentTheme();
+        if (!$theme) {
+            return '';
         }
 
-        $apiKey = Mage::getStoreConfig('postnl/google_maps/api_key', Mage::app()->getStore()->getId());
+        /**
+         * @var Varien_Simplexml_Element $files
+         */
+        $files = $theme->files;
+        if (!$files) {
+            return '';
+        }
 
-        $this->setApiKey($apiKey);
-        return $apiKey;
+        if ($this->getIsOsc()) {
+            $file = (string) $files->onestepcheckout;
+        } else {
+            $file = (string) $files->onepage;
+        }
+
+        return $file;
+    }
+
+    /**
+     * Check if PostNL delivery options are available for the current quote.
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        if (!$helper->canUseDeliveryOptions($quote, false)) {
+            return '';
+        }
+
+        if (!$this->getThemeCssFile()) {
+            return '';
+        }
+
+        return parent::_toHtml();
     }
 }
