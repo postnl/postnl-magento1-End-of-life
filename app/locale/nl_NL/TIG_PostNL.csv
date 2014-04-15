@@ -838,3 +838,4 @@ TIG_PostNL::Show create MijnPakket account link,Toon MijnPakket account aanmaken
 "TIG_PostNL::If enabled, customers who do not yet have a MijnPakket account will be shown a link through which they can create a MijnPakket account without having to fully fill in the registration form.","Indien deze instelling aan staat, zal er aan consumenten die nog geen MijnPakket account hebben een link getoond worden waarmee zij snel een MijnPakket account kunnen aanmaken zonder het gehele registratieformulier in te hoeven vullen."
 TIG_PostNL::Show MijnPakket app link,Toon MijnPakket app link
 "TIG_PostNL::If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order.","Indien deze instelling aan staat, zal er een link naar de MijnPakket app getoond worden aan consumenten die al een MijnPakket account hebben."
+TIG_PostNL::Loading MijnPakket data...,MijnPakket data ophalen...

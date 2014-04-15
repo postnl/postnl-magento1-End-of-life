@@ -436,7 +436,7 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
                             <depends>
-                                <cif_mode>0</cif_mode>
+                                <mode>0</mode>
                             </depends>
                         </live_username>
                         <live_password translate="label tooltip" module="postnl">
@@ -450,7 +450,7 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
                             <depends>
-                                <cif_mode>0</cif_mode>
+                                <mode>0</mode>
                             </depends>
                         </live_password>
                         <test_username translate="label" module="postnl">
@@ -462,7 +462,7 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
                             <depends>
-                                <cif_mode>1</cif_mode>
+                                <mode>1</mode>
                             </depends>
                         </test_username>
                         <test_password translate="label" module="postnl">
@@ -475,7 +475,7 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
                             <depends>
-                                <cif_mode>1</cif_mode>
+                                <mode>1</mode>
                             </depends>
                         </test_password>
                         <collection_location translate="label comment tooltip" module="postnl">
