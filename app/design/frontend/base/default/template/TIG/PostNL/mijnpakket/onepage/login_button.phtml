@@ -56,11 +56,13 @@
         <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->__('Loading MijnPakket data...') ?>" title="<?php echo $this->__('Loading MijnPakket data...') ?>" class="v-middle" /> <?php echo $this->__('Loading MijnPakket data...') ?>
     </span>
 </div>
+<div id="postnl_placeholder" style="display:none;"></div>
 <script type="text/javascript">
     //<![CDATA[
     document.observe('dom:loaded', function() {
         var publicWebshopId  = '<?php echo $this->getPublicWebshopId(); ?>';
         var profileAccessUrl = '<?php echo $this->getUrl('postnl/mijnpakket/getProfileAccess', array('_secure' => true)); ?>';
+        var debug = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
 
         var mijnpakketLogin = new MijnpakketLogin(publicWebshopId, profileAccessUrl, false);
         window.mijnpakketLogin = mijnpakketLogin;
@@ -74,14 +76,26 @@
             mijnpakketLogin.setMijnpakketDataJson(mijnpakketData);
         <?php endif; ?>
 
-        mijnpakketLogin.init('postnl_mijnpakket_login', <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>);
+        var updateLoggedIn = function(data) {
+            if (debug) {
+                console.log('Logged-in status:', data);
+            }
 
-        var oscLoginLink = $('onestepcheckout-login-link');
-        if (oscLoginLink) {
-            oscLoginLink.insert({
-                after: $('postnl_mijnpakket')
-            });
-        }
+            if (!data.Ok) {
+                return;
+            }
+
+            mijnpakketLogin.init('postnl_mijnpakket_login', debug);
+        };
+
+        checkout = PostNL.Checkout.init({
+            userLoggedin     : updateLoggedIn,
+            detectPopupState : function() {},
+            elementId        : 'postnl_placeholder',
+            pId              : '<?php echo $this->getPublicWebshopId(); ?>'
+        });
+
+        checkout.checkLogin();
     });
     //]]>
 </script>

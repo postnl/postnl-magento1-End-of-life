@@ -51,9 +51,10 @@ class TIG_PostNL_Block_Mijnpakket_Js extends Mage_Core_Block_Template
     /**
      * Available URl's for PostNL's login API.
      */
-    const LIVE_BASE_URL = 'https://mijnpakket.postnl.nl/';
-    const TEST_BASE_URL = 'https://tppwscheckout-sandbox.e-id.nl/';
-    const LOGIN_JS_PATH = 'Checkout2/Login.js';
+    const LIVE_BASE_URL            = 'https://mijnpakket.postnl.nl/';
+    const TEST_BASE_URL            = 'https://tppwscheckout-sandbox.e-id.nl/';
+    const LOGIN_JS_PATH            = 'Checkout2/Login.js';
+    const CHECKOUT_PREMIUM_JS_PATH = 'Checkout2/CheckoutPremium.js';
 
     /**
      * @return boolean
@@ -83,9 +84,9 @@ class TIG_PostNL_Block_Mijnpakket_Js extends Mage_Core_Block_Template
 
         $isTestMode = $this->getIsTestMode();
         if ($isTestMode) {
-            $baseUrl = static::TEST_BASE_URL;
+            $baseUrl = self::TEST_BASE_URL;
         } else {
-            $baseUrl = static::LIVE_BASE_URL;
+            $baseUrl = self::LIVE_BASE_URL;
         }
 
         $this->setBaseUrl($baseUrl);
@@ -102,6 +103,20 @@ class TIG_PostNL_Block_Mijnpakket_Js extends Mage_Core_Block_Template
         $baseUrl = $this->getBaseUrl();
 
         $url = $baseUrl . self::LOGIN_JS_PATH;
+
+        return $url;
+    }
+
+    /**
+     * Get the Checkout premium JS URL which is used to check if the customer has a MijnPakket account.
+     *
+     * @return string
+     */
+    public function getCheckoutPremiumJsUrl()
+    {
+        $baseUrl = $this->getBaseUrl();
+
+        $url = $baseUrl . self::CHECKOUT_PREMIUM_JS_PATH;
 
         return $url;
     }

@@ -54,11 +54,13 @@
 <span class="please-wait" id="postnl_login_spinner" style="display:none;">
     <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->__('Loading MijnPakket data...') ?>" title="<?php echo $this->__('Loading MijnPakket data...') ?>" class="v-middle" /> <?php echo $this->__('Loading MijnPakket data...') ?>
 </span>
+<div id="postnl_placeholder" style="display:none;"></div>
 <script type="text/javascript">
     //<![CDATA[
     document.observe('dom:loaded', function() {
         var publicWebshopId  = '<?php echo $this->getPublicWebshopId(); ?>';
         var profileAccessUrl = '<?php echo $this->getUrl('postnl/mijnpakket/getProfileAccess', array('_secure' => true)); ?>';
+        var debug            = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
 
         var mijnpakketLogin = new MijnpakketLogin(publicWebshopId, profileAccessUrl, true);
         window.mijnpakketLogin = mijnpakketLogin;
@@ -72,7 +74,27 @@
             mijnpakketLogin.setMijnpakketDataJson(mijnpakketData);
         <?php endif; ?>
 
-        mijnpakketLogin.init('postnl_mijnpakket_login', <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>);
+        var updateLoggedIn = function(data) {
+            if (debug) {
+                console.log('Logged-in status:', data);
+            }
+
+            if (!data.Ok) {
+                return;
+            }
+
+            mijnpakketLogin.init('postnl_mijnpakket_login', debug);
+        };
+
+        checkout = PostNL.Checkout.init({
+            userLoggedin     : updateLoggedIn,
+            detectPopupState : function() {},
+            elementId        : 'postnl_placeholder',
+            pId              : '<?php echo $this->getPublicWebshopId(); ?>'
+        });
+
+        checkout.checkLogin();
+        registerOscMijnpakketObservers();
 
         var oscLoginLink         = $('onestepcheckout-login-link');
         var oscCheckoutContainer = $$('.checkoutcontainer')[0];
@@ -88,7 +110,9 @@
         } else {
             $('postnl_mijnpakket').hide();
         }
+    });
 
+    function registerOscMijnpakketObservers() {
         var saveBillingUrl = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure' => true)); ?>';
         var setMethodsUrl  = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure' => true)); ?>';
 
@@ -122,6 +146,6 @@
             get_save_billing_function(saveBillingUrl, setMethodsUrl, true)();
             $('postnl_login_spinner').hide();
         });
-    });
+    }
     //]]>
 </script>

@@ -54,8 +54,9 @@ MijnpakketLogin.prototype = {
     /**
      * @constructor
      *
-     * @param {string} publicId
-     * @param {string} profileAccessUrl
+     * @param {string}  publicId
+     * @param {string}  profileAccessUrl
+     * @param {boolean} isOsc
      */
     initialize : function(publicId, profileAccessUrl, isOsc) {
         this.postnlLogin      = PostNL.Login;
@@ -171,11 +172,15 @@ MijnpakketLogin.prototype = {
         this.elementId = elementId;
         this.debug = debug;
 
+        if (debug) {
+            console.info('Starting MijnPakket login...');
+        }
+
         this.registerObservers();
 
         if (this.getMijnpakketData()) {
             if (debug) {
-                console.log('Saved mijnpakket data found. Replacing login button with dummy.');
+                console.info('Saved mijnpakket data found. Replacing login button with dummy.');
             }
             this.showDummyButton();
 
@@ -289,6 +294,10 @@ MijnpakketLogin.prototype = {
             return this;
         }
 
+        if (this.debug) {
+            console.info('Getting MijnPakket data.');
+        }
+
         if (!this.isOsc && this.getCheckout()) {
             this.getCheckout().setLoadWaiting('billing');
         } else {
@@ -334,6 +343,10 @@ MijnpakketLogin.prototype = {
 
         var data = response.responseText.evalJSON(true).origData;
 
+        if (this.debug) {
+            console.log('Received data:', data);
+        }
+
         if (!this.isOsc) {
             if (this.getBilling()) {
                 this.getBilling().onSave(response);
@@ -373,16 +386,21 @@ MijnpakketLogin.prototype = {
     updateAddressForms : function(data) {
         document.fire('postnl:updateAddressFormsStart');
 
+        if (this.debug) {
+            console.info('Updating forms.');
+        }
+
         var field;
         var virtualField;
 
         /**
          * If guest checkout is allowed, set it as the chosen checkout method.
          */
-        if ($('login:guest') && this.getCheckout()) {
-            $('login:guest').checked = true;
+        var guestLoginCheckbox = $('login:guest');
+        if (guestLoginCheckbox && this.getCheckout()) {
+            guestLoginCheckbox.checked = true;
             this.getCheckout().method = 'guest';
-            var request = new Ajax.Request(
+            new Ajax.Request(
                 this.getCheckout().saveMethodUrl,
                 {
                     method: 'post',
@@ -464,6 +482,10 @@ MijnpakketLogin.prototype = {
 
         if (window.shippingRegionUpdater) {
             shippingRegionUpdater.update();
+        }
+
+        if (this.debug) {
+            console.info('Finished updating forms.');
         }
 
         document.fire('postnl:updateAddressFormsEnd');
