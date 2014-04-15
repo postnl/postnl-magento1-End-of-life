@@ -1843,6 +1843,58 @@
                                 <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </allow_streetview>
+                        <mijnpakket_notification_header translate="label" module="postnl">
+                            <label>You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>180</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </mijnpakket_notification_header>
+                        <mijnpakket_notification translate="label comment" module="postnl">
+                            <label>Show MijnPakket notification on the order success page</label>
+                            <comment>This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>190</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </mijnpakket_notification>
+                        <show_create_mijnpakket_account_link translate="label comment" module="postnl">
+                            <label>Show create MijnPakket account link</label>
+                            <comment>If enabled, customers who do not yet have a MijnPakket account will be shown a link through which they can create a MijnPakket account without having to fully fill in the registration form.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <mijnpakket_notification>1</mijnpakket_notification>
+                            </depends>
+                        </show_create_mijnpakket_account_link>
+                        <show_mijnpakket_app_link translate="label comment" module="postnl">
+                            <label>Show MijnPakket app link</label>
+                            <comment>If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>210</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <mijnpakket_notification>1</mijnpakket_notification>
+                            </depends>
+                        </show_mijnpakket_app_link>
                     </fields>
                 </delivery_options>
                 <checkout translate="label comment" module="postnl">
