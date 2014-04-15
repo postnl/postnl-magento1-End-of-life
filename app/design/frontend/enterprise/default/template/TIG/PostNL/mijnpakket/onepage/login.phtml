@@ -112,10 +112,10 @@
             <?php else: ?>
                 <input type="hidden" name="checkout_method" id="login:register" value="register" checked="checked" />
             <?php endif; ?>
-            <?php echo $this->getChildHtml('postnl_mijnpakket_login'); ?>
             <div class="buttons-set">
                 <button type="button" class="button" onclick="checkout.setMethod();"><span><span><?php echo ($this->getQuote()->isAllowedGuestCheckout() ? $this->__('Continue') : $this->__('Register')) ?></span></span></button>
             </div>
+            <?php echo $this->getChildHtml('postnl_mijnpakket_login'); ?>
         </div>
     <?php endif; ?>
     <script type="text/javascript">

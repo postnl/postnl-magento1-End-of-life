@@ -1,4 +1,11 @@
 /* Generic =============================================================================== */
-#postnl_mijnpakket_login_btn span {border:none; cursor:pointer;}
-#postnl_mijnpakket_login_btn span img {border:none;}
+#postnl_mijnpakket_login_btn span { border:none; cursor:pointer; }
+#postnl_mijnpakket_login_btn span img { border:none; }
+
+hr.mijnpakket_seperator { clear:both; border:none; display:block; height:1px; background:#cfcfcf; margin:15px 0; }
+#mijnpakket_buttons { float:right; }
+#checkout-step-billing #mijnpakket_text { float:left; }
+#checkout-step-billing #mijnpakket_text p { padding-top:5px; }
+#checkout-step-billing #postnl_mijnpakket div { padding-top:6px; }
+#postnl_mijnpakket_login iframe { margin:0 -8px -6px 0 !important; }
 /* ======================================================================================= */

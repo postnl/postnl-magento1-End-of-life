@@ -44,33 +44,14 @@
 class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
 {
     /**
-     * The block classes that we want to edit.
+     * The block class that we want to edit.
      */
-    const LOGIN_BLOCK_NAME   = 'checkout/onepage_login';
     const SUCCESS_BLOCK_NAME = 'checkout/onepage_success';
 
     /**
-     * The new templates.
+     * The new template.
      */
-    const LOGIN_TEMPLATE                = 'TIG/PostNL/mijnpakket/onepage/login.phtml';
     const ACCOUNT_NOTIFICATION_TEMPLATE = 'TIG/PostNL/mijnpakket/onepage/success.phtml';
-
-    /**
-     * Gets the classname for the login block that we want to alter.
-     *
-     * @return string
-     */
-    public function getLoginBlockClass()
-    {
-        if ($this->hasLoginBlockClass()) {
-            return $this->_getData('login_block_class');
-        }
-
-        $blockClass = Mage::getConfig()->getBlockClassName(self::LOGIN_BLOCK_NAME);
-
-        $this->setLoginBlockClass($blockClass);
-        return $blockClass;
-    }
 
     /**
      * Gets the classname for the checkout success block that we want to alter.
@@ -90,41 +71,6 @@ class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
     }
 
     /**
-     * Replace the onepage checkout login template.
-     *
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     *
-     * @event core_block_abstract_to_html_before
-     *
-     * @observer checkout_onepage_mijnpakket_login
-     */
-    public function addMijnpakketLogin(Varien_Event_Observer $observer)
-    {
-        /**
-         * Checks if the current block is the one we want to edit.
-         *
-         * Unfortunately there is no unique event for this block.
-         *
-         * @var Mage_Core_Block_Abstract $block
-         */
-        $block      = $observer->getBlock();
-        $blockClass = $this->getLoginBlockClass();
-
-        if (!($block instanceof $blockClass)) {
-            return $this;
-        }
-
-        /**
-         * @var Mage_Checkout_Block_Onepage_Login $block
-         */
-        $block->setTemplate(self::LOGIN_TEMPLATE);
-
-        return $this;
-    }
-
-    /**
      * Replace the onepage checkout success template.
      *
      * @param Varien_Event_Observer $observer
@@ -137,6 +83,10 @@ class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
      */
     public function addAccountNotification(Varien_Event_Observer $observer)
     {
+        if (!Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions()) {
+            return $this;
+        }
+
         /**
          * Checks if the current block is the one we want to edit.
          *

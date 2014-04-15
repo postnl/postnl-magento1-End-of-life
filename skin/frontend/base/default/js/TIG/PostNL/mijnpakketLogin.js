@@ -214,6 +214,14 @@ MijnpakketLogin.prototype = {
                 }
             });
 
+            $$('#checkout-step-billing .button').each(function(button) {
+                button.disabled = true;
+
+                if (!button.hasClassName('disabled')) {
+                    button.addClassName('disabled');
+                }
+            });
+
             this.getCheckout().setLoadWaiting('login');
         }.bind(this));
 
@@ -223,6 +231,14 @@ MijnpakketLogin.prototype = {
 
                 if (button.hasClassName('disabled')) {
                     button.removeClassName('disabled');
+                }
+            });
+
+            $$('#checkout-step-billing .button').each(function(button) {
+                button.disabled = true;
+
+                if (!button.hasClassName('disabled')) {
+                    button.addClassName('disabled');
                 }
             });
 
@@ -293,6 +309,7 @@ MijnpakketLogin.prototype = {
         if (this.getCheckout() && this.getCheckout().loadWaiting != false) {
             return this;
         }
+        document.fire('postnl:getProfileDataStart');
 
         if (this.debug) {
             console.info('Getting MijnPakket data.');
@@ -351,6 +368,8 @@ MijnpakketLogin.prototype = {
             if (this.getBilling()) {
                 this.getBilling().onSave(response);
             }
+
+            this.addMijnpakketDataLoadedMessage();
 
             this.showDummyButton();
         } else {
@@ -489,6 +508,38 @@ MijnpakketLogin.prototype = {
         }
 
         document.fire('postnl:updateAddressFormsEnd');
+
+        return this;
+    },
+
+    /**
+     * Add a success message to the shipping method step.
+     *
+     * @returns {MijnpakketLogin}
+     */
+    addMijnpakketDataLoadedMessage : function() {
+        var dataLoadedMessage = $('mijnpakket_data_loaded');
+        if (dataLoadedMessage) {
+            dataLoadedMessage.show();
+
+            return this;
+        }
+
+        dataLoadedMessage = new Element('div', {id : 'mijnpakket_data_loaded'});
+
+        var dataLoadedContent = new Element('p');
+        dataLoadedContent.update(
+            Translator.translate(
+                'Your preferred address has been loaded from your MijnPakket account and set as your '
+                + 'billing and shipping address. You may now choose a shipping method and complete your order.'
+            )
+        );
+
+        dataLoadedMessage.insert(dataLoadedContent);
+
+        $('checkout-step-shipping_method').insert({
+            top : dataLoadedMessage
+        });
 
         return this;
     }

@@ -86,26 +86,21 @@
             mijnpakketLogin.init('postnl_mijnpakket_login', debug);
         };
 
-        checkout = PostNL.Checkout.init({
+        var mijnpakketLoginCheck = PostNL.Checkout.init({
             userLoggedin     : updateLoggedIn,
             detectPopupState : function() {},
             elementId        : 'postnl_placeholder',
             pId              : '<?php echo $this->getPublicWebshopId(); ?>'
         });
 
-        checkout.checkLogin();
+        mijnpakketLoginCheck.checkLogin();
         registerOscMijnpakketObservers();
 
-        var oscLoginLink         = $('onestepcheckout-login-link');
-        var oscCheckoutContainer = $$('.checkoutcontainer')[0];
+        var oscCheckoutContainer = $$('#billing_address ul li')[0];
 
-        if (oscLoginLink) {
-            oscLoginLink.insert({
-                after: $('postnl_mijnpakket')
-            });
-        } else if (oscCheckoutContainer) {
+        if (oscCheckoutContainer) {
             oscCheckoutContainer.insert({
-                before: $('postnl_mijnpakket')
+                bottom: $('postnl_mijnpakket')
             });
         } else {
             $('postnl_mijnpakket').hide();

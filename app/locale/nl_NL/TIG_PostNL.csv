@@ -839,3 +839,6 @@ TIG_PostNL::Show create MijnPakket account link,Toon MijnPakket account aanmaken
 TIG_PostNL::Show MijnPakket app link,Toon MijnPakket app link
 "TIG_PostNL::If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order.","Indien deze instelling aan staat, zal er een link naar de MijnPakket app getoond worden aan consumenten die al een MijnPakket account hebben."
 TIG_PostNL::Loading MijnPakket data...,MijnPakket data ophalen...
+TIG_PostNL::Your preferred address has been loaded from your MijnPakket account and set as your billing and shipping address. You may now choose a shipping method and complete your order.,Uw voorkeursadres is ingeladen uit uw MijnPakket account en ingevuld als uw factuur- en verzendadres. U kunt nu een verzendmethode kiezen en uw bestelling verder afronden.
+TIG_PostNL::Checkout using MijnPakket,Afrekenen met MijnPakket
+TIG_PostNL::Login with your MijnPakket account to automatically use your preferred address.,Log in met uw MijnPakket account om automatisch gebruik te maken van uw voorkeursadres.
