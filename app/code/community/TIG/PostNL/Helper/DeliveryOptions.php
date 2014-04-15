@@ -447,12 +447,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Check if PostNL delivery options may be used based on a quote.
      *
-     * @param Mage_Sales_Model_Quote $quote
+     * @param Mage_Sales_Model_Quote|boolean $quote
      * @param boolean $checkCountry
      *
      * @return boolean
      */
-    public function canUseDeliveryOptions(Mage_Sales_Model_Quote $quote, $checkCountry = true)
+    public function canUseDeliveryOptions($quote = false, $checkCountry = true)
     {
         if (Mage::registry('can_use_delivery_options') !== null) {
             return Mage::registry('can_use_delivery_options');
@@ -467,7 +467,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * PostNL delivery options cannot be used for virtual orders
          */
-        if ($quote->isVirtual()) {
+        if ($quote && $quote->isVirtual()) {
             $errors = array(
                 array(
                     'code'    => 'POSTNL-0104',
@@ -482,7 +482,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Check if the quote has a valid minimum amount
          */
-        if (!$quote->validateMinimumAmount()) {
+        if ($quote && !$quote->validateMinimumAmount()) {
             $errors = array(
                 array(
                     'code'    => 'POSTNL-0105',
@@ -511,7 +511,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
-        if ($checkCountry) {
+        if ($quote && $checkCountry) {
             $shippingAddress = $quote->getShippingAddress();
             if ($shippingAddress->getCountry() != 'NL') {
                 $errors = array(
@@ -526,6 +526,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 Mage::register('can_use_delivery_options', false);
                 return false;
             }
+        }
+
+        /**
+         * If we have no quote, we have no further checks to perform.
+         */
+        if (!$quote) {
+            Mage::register('can_use_delivery_options', true);
+            return true;
         }
 
         $storeId = $quote->getStoreId();

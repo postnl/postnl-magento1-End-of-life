@@ -36,6 +36,12 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
+ * @method boolean                                         hasCanShowNotification()
+ * @method TIG_PostNL_Block_Mijnpakket_AccountNotification setCanShowNotification(bool $value)
+ * @method boolean                                         hasCanShowCreateAccountLink()
+ * @method TIG_PostNL_Block_Mijnpakket_AccountNotification setCanShowCreateAccountLink(bool $value)
+ * @method boolean                                         hasCanShowAppLink()
+ * @method TIG_PostNL_Block_Mijnpakket_AccountNotification setCanShowAppLink(bool $value)
  * @method boolean                                         hasPublicWebshopId()
  * @method TIG_PostNL_Block_Mijnpakket_AccountNotification setPublicWebshopId(string $value)
  * @method boolean                                         hasOrder()
@@ -60,9 +66,75 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Te
     const XPATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
 
     /**
+     * Xpaths determining various options regarding the MijnPakket notification.
+     */
+    const XPATH_MIJNPAKKET_NOTIFICATION             = 'postnl/delivery_options/mijnpakket_notification';
+    const XPATH_SHOW_CREATE_MIJNPAKKET_ACCOUNT_LINK = 'postnl/delivery_options/show_create_mijnpakket_account_link';
+    const XPATH_SHOW_MIJNPAKKET_APP_LINK            = 'postnl/delivery_options/show_mijnpakket_app_link';
+
+    /**
      * @var string
      */
     protected $_template = 'TIG/PostNL/mijnpakket/account_notification.phtml';
+
+    /**
+     * Checks if showing the MijnPakket notification is allowed.
+     *
+     * @return bool|mixed
+     */
+    public function getCanShowNotification()
+    {
+        if ($this->hasCanShowNotification()) {
+            return $this->_getData('can_show_notification');
+        }
+
+        if (!Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions()) {
+            $this->setCanShowNotification(false);
+            return false;
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $canShowNotification = Mage::getStoreConfigFlag(self::XPATH_MIJNPAKKET_NOTIFICATION, $storeId);
+
+        $this->setCanShowNotification($canShowNotification);
+        return $canShowNotification;
+    }
+
+    /**
+     * Checks if showing the MijnPakket create account link is allowed.
+     *
+     * @return bool|mixed
+     */
+    public function getCanShowCreateAccountLink()
+    {
+        if ($this->hasCanShowCreateAccountLink()) {
+            return $this->_getData('can_show_create_account_link');
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $canShowLink = Mage::getStoreConfigFlag(self::XPATH_SHOW_CREATE_MIJNPAKKET_ACCOUNT_LINK, $storeId);
+
+        $this->setCanShowCreateAccountLink($canShowLink);
+        return $canShowLink;
+    }
+
+    /**
+     * Checks if showing the MijnPakket app link is allowed.
+     *
+     * @return bool|mixed
+     */
+    public function getCanShowAppLink()
+    {
+        if ($this->hasCanShowAppLink()) {
+            return $this->_getData('can_show_app_link');
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $canShowLink = Mage::getStoreConfigFlag(self::XPATH_SHOW_MIJNPAKKET_APP_LINK, $storeId);
+
+        $this->setCanShowAppLink($canShowLink);
+        return $canShowLink;
+    }
 
     /**
      * Get the current public webshop ID.
@@ -260,5 +332,19 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Te
         }
 
         return $params;
+    }
+
+    /**
+     * Check if MijnPakket notification can be shown before rendering the template.
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        if (!$this->getCanShowNotification()) {
+            return '';
+        }
+
+        return parent::_toHtml();
     }
 }
