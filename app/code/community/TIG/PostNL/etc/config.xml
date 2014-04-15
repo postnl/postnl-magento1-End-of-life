@@ -325,12 +325,6 @@
                         <method>addDeliveryOptions</method>
                     </checkout_deliveryoptions>
                     <!-- Adds Mijnpakket login functionality to onepage checkout. -->
-                    <checkout_onepage_mijnpakket_login>
-                        <type>singleton</type>
-                        <class>postnl_mijnpakket/observer_onepage</class>
-                        <method>addMijnpakketLogin</method>
-                    </checkout_onepage_mijnpakket_login>
-                    <!-- Adds Mijnpakket login functionality to onepage checkout. -->
                     <checkout_onepage_mijnpakket_success>
                         <type>singleton</type>
                         <class>postnl_mijnpakket/observer_onepage</class>

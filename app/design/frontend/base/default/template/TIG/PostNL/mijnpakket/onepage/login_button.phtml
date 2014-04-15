@@ -38,23 +38,31 @@
  */
 ?>
 <?php $_savedData = $this->getSavedMijnpakketData(); ?>
-<div id="postnl_mijnpakket">
-    <div id="postnl_mijnpakket_login"></div>
-    <div id="postnl_mijnpakket_login_btn" style="display:none;">
-        <span>
-            <img src="<?php echo $this->getButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
-        </span>
+<div id="postnl_mijnpakket" style="display:none;">
+    <div class="clearfix">
+        <div id="mijnpakket_text">
+            <h4><?php echo $this->__('Checkout using MijnPakket') ?></h4>
+            <p><?php echo $this->__('Login with your MijnPakket account to automatically use your preferred address.') ?></p>
+        </div>
+        <div id="mijnpakket_buttons">
+            <div id="postnl_mijnpakket_login"></div>
+            <div id="postnl_mijnpakket_login_btn" style="display:none;">
+            <span>
+                <img src="<?php echo $this->getButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
+            </span>
+            </div>
+            <div id="postnl_mijnpakket_login_btn_disabled" style="display:none;">
+            <span>
+                <img src="<?php echo $this->getDisabledButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
+            </span>
+            </div>
+        </div>
+        <div id="login-buttons-container">
+            <span class="please-wait" id="login-please-wait" style="display:none;">
+                <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->__('Loading MijnPakket data...') ?>" title="<?php echo $this->__('Loading MijnPakket data...') ?>" class="v-middle" /> <?php echo $this->__('Loading MijnPakket data...') ?>
+            </span>
+        </div>
     </div>
-    <div id="postnl_mijnpakket_login_btn_disabled" style="display:none;">
-        <span>
-            <img src="<?php echo $this->getDisabledButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
-        </span>
-    </div>
-</div>
-<div class="buttons-set" id="login-buttons-container">
-    <span class="please-wait" id="login-please-wait" style="display:none;">
-        <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->__('Loading MijnPakket data...') ?>" title="<?php echo $this->__('Loading MijnPakket data...') ?>" class="v-middle" /> <?php echo $this->__('Loading MijnPakket data...') ?>
-    </span>
 </div>
 <div id="postnl_placeholder" style="display:none;"></div>
 <script type="text/javascript">
@@ -62,7 +70,7 @@
     document.observe('dom:loaded', function() {
         var publicWebshopId  = '<?php echo $this->getPublicWebshopId(); ?>';
         var profileAccessUrl = '<?php echo $this->getUrl('postnl/mijnpakket/getProfileAccess', array('_secure' => true)); ?>';
-        var debug = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
+        var debug            = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
 
         var mijnpakketLogin = new MijnpakketLogin(publicWebshopId, profileAccessUrl, false);
         window.mijnpakketLogin = mijnpakketLogin;
@@ -85,17 +93,42 @@
                 return;
             }
 
+            $('postnl_mijnpakket').show();
             mijnpakketLogin.init('postnl_mijnpakket_login', debug);
         };
 
-        checkout = PostNL.Checkout.init({
+        var mijnpakketLoginCheck = PostNL.Checkout.init({
             userLoggedin     : updateLoggedIn,
             detectPopupState : function() {},
             elementId        : 'postnl_placeholder',
             pId              : '<?php echo $this->getPublicWebshopId(); ?>'
         });
 
-        checkout.checkLogin();
+        var loginContainer      = $$('#checkout-step-login .col-2')[0];
+        var billingContainer    = $('checkout-step-billing');
+        var mijnpakketContainer = $('postnl_mijnpakket');
+
+        if (loginContainer) {
+            mijnpakketContainer.insert({
+                top: new Element('hr', {'class':'mijnpakket_seperator'})
+            });
+
+            loginContainer.insert({
+                bottom: mijnpakketContainer
+            });
+
+            mijnpakketLoginCheck.checkLogin();
+        } else if (billingContainer) {
+            mijnpakketContainer.insert({
+                bottom: new Element('hr', {'class':'mijnpakket_seperator'})
+            });
+
+            billingContainer.insert({
+                top: mijnpakketContainer
+            });
+
+            mijnpakketLoginCheck.checkLogin();
+        }
     });
     //]]>
 </script>
