@@ -352,16 +352,42 @@ MijnpakketLogin.prototype = {
             || response.responseText == 'not_allowed'
             || response.responseText == 'invalid_data'
         ) {
-            //todo error handling
+            if (this.debug) {
+                console.error('Invalid response received:', response.responseText);
+            }
+
+            this.showDisabledButton();
+            alert(
+                Translator.translate(
+                    'Unfortunately MijnPakket login is currently not available. Please use a different checkout method.'
+                )
+            );
+
             return this;
         }
 
         document.fire('postnl:getProfileDataSuccess');
 
-        var data = response.responseText.evalJSON(true).origData;
+        var responseData = response.responseText.evalJSON(true);
+        if (!responseData) {
+            if (this.debug) {
+                console.error('Response data received:', responseData);
+            }
+
+            this.showDisabledButton();
+            alert(
+                Translator.translate(
+                    'Unfortunately MijnPakket login is currently not available. Please use a different checkout method.'
+                )
+            );
+
+            return this;
+        }
+
+        var data = responseData.origData;
 
         if (this.debug) {
-            console.log('Received data:', data);
+            console.log(data);
         }
 
         if (!this.isOsc) {
