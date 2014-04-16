@@ -641,7 +641,7 @@
         		<confirm_expire_days>9</confirm_expire_days> <!-- 9 days -->
         		<send_statistics>1</send_statistics> <!-- Send extension usage statistics to PostNL -->
         		<receive_updates>1</receive_updates> <!-- Automatically receive updates regarding the PostNL extension -->
-        		<feed_url>ext.tigpostnltest.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
+        		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
         		<feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
         		<show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
         		<cif_version_shippingstatus>1_3</cif_version_shippingstatus> <!-- v1.3 -->
