@@ -97,7 +97,7 @@ class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
         $block      = $observer->getBlock();
         $blockClass = $this->getSucessBlockClass();
 
-        if (!($block instanceof $blockClass)) {
+        if (!$block || !is_object($block) || get_class($block) != $blockClass) {
             return $this;
         }
 
