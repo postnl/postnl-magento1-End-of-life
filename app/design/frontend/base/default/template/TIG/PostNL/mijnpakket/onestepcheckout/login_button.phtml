@@ -39,21 +39,30 @@
 ?>
 <?php $_savedData = $this->getSavedMijnpakketData(); ?>
 <div id="postnl_mijnpakket">
-    <div id="postnl_mijnpakket_login"></div>
-    <div id="postnl_mijnpakket_login_btn" style="display:none;">
-        <span>
-            <img src="<?php echo $this->getButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
-        </span>
+    <div class="clearfix">
+        <div id="mijnpakket_text">
+            <h4><?php echo $this->__('Checkout using MijnPakket') ?></h4>
+            <p><?php echo $this->__('Login with your MijnPakket account to automatically use your preferred address.') ?></p>
+        </div>
+        <div id="mijnpakket_buttons">
+            <div id="postnl_mijnpakket_login"></div>
+            <div id="postnl_mijnpakket_login_btn" style="display:none;">
+                <span>
+                    <img src="<?php echo $this->getButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
+                </span>
+            </div>
+            <div id="postnl_mijnpakket_login_btn_disabled" style="display:none;">
+                <span>
+                    <img src="<?php echo $this->getDisabledButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
+                </span>
+            </div>
+        </div>
     </div>
-    <div id="postnl_mijnpakket_login_btn_disabled" style="display:none;">
-        <span>
-            <img src="<?php echo $this->getDisabledButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
-        </span>
-    </div>
+    <span class="please-wait" id="postnl_login_spinner" style="display:none;">
+        <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->__('Loading MijnPakket data...') ?>" title="<?php echo $this->__('Loading MijnPakket data...') ?>" class="v-middle" /> <?php echo $this->__('Loading MijnPakket data...') ?>
+    </span>
+    <hr class="mijnpakket_seperator"/>
 </div>
-<span class="please-wait" id="postnl_login_spinner" style="display:none;">
-    <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->__('Loading MijnPakket data...') ?>" title="<?php echo $this->__('Loading MijnPakket data...') ?>" class="v-middle" /> <?php echo $this->__('Loading MijnPakket data...') ?>
-</span>
 <div id="postnl_placeholder" style="display:none;"></div>
 <script type="text/javascript">
     //<![CDATA[
@@ -93,9 +102,6 @@
             pId              : '<?php echo $this->getPublicWebshopId(); ?>'
         });
 
-        mijnpakketLoginCheck.checkLogin();
-        registerOscMijnpakketObservers();
-
         var oscCheckoutContainer = $$('#billing_address ul li')[0];
 
         if (oscCheckoutContainer) {
@@ -105,6 +111,9 @@
         } else {
             $('postnl_mijnpakket').hide();
         }
+
+        mijnpakketLoginCheck.checkLogin();
+        registerOscMijnpakketObservers();
     });
 
     function registerOscMijnpakketObservers() {
@@ -119,7 +128,7 @@
                     newBillingAddressOption.selected = true;
                     billing.newAddress(true);
                 }
-                billingSelect.hide();
+                billingSelect.up().up().hide();
             }
 
             var shippingSelect = $('shipping-address-select');
@@ -129,7 +138,7 @@
                     newShippingAddressOption.selected = true;
                     shipping.newAddress(true);
                 }
-                shippingSelect.hide();
+                shippingSelect.up().up().hide();
             }
 
             $('billing:use_for_shipping_yes').checked = true;
