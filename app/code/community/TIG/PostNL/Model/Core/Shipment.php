@@ -80,7 +80,7 @@
  * @method int                            getTreatAsAbandoned()
  * @method int|null                       getShipmentId
  * @method int                            getLabelsPrinted()
- * @method string                         getDeliveryDate()
+ * @method bool|int                       getIsPakketautomaat()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -90,7 +90,6 @@
  * @method TIG_PostNL_Model_Core_Shipment setEntityId(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setConfirmedAt(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setUpdatedAt(string $value)
- * @method TIG_PostNL_Model_Core_Shipment setConfirmDate(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsPakjeGemak(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setCreatedAt(string $value)
@@ -108,12 +107,13 @@
  * @method TIG_PostNL_Model_Core_Shipment setPostnlOrder(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabelCollection(TIG_PostNL_Model_Core_Resource_Shipment_LabeL_Collection $value)
  * @method TIG_PostNL_Model_Core_Shipment setDeliveryDate(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsPakketautomaat(bool $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
  * @method bool                           hasShipment()
  * @method bool                           hasShipmentBaseGrandTotal()
- * @method bool                           hasShipmentType()
+ * @method bool                           hasGlobalpackShipmentType()
  * @method bool                           hasProductCode()
  * @method bool                           hasShippingAddress()
  * @method bool                           hasPakjeGemakAddress()
@@ -121,30 +121,32 @@
  * @method bool                           hasOrderId()
  * @method bool                           hasExtraCoverAmount()
  * @method bool                           hasLabelCollection()
+ * @method bool                           hasIsPakketautomaat()
+ * @method bool                           hasDeliveryDate()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
     /**
-     * Prefix of model events names
+     * Prefix of model events names.
      *
      * @var string
      */
     protected $_eventPrefix = 'postnl_shipment';
 
     /**
-     * Carrier code used by postnl
+     * Carrier code used by postnl.
      */
     const POSTNL_CARRIER_CODE = 'postnl';
 
     /**
-     * Possible confirm statusses
+     * Possible confirm statusses.
      */
     const CONFIRM_STATUS_CONFIRMED       = 'confirmed';
     const CONFIRM_STATUS_UNCONFIRMED     = 'unconfirmed';
     const CONFIRM_STATUS_CONFIRM_EXPIRED = 'confirm_expired';
 
     /**
-     * Possible shipping phases
+     * Possible shipping phases.
      */
     const SHIPPING_PHASE_COLLECTION     = '1';
     const SHIPPING_PHASE_SORTING        = '2';
@@ -153,48 +155,56 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPPING_PHASE_NOT_APPLICABLE = '99';
 
     /**
-     * XML paths to default product options settings
+     * XML paths to default product options settings.
      */
-    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION   = 'postnl/cif_product_options/default_product_option';
-    const XML_PATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakjegemak_product_option';
-    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION         = 'postnl/cif_product_options/default_eu_product_option';
-    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION     = 'postnl/cif_product_options/default_global_product_option';
-    const XML_PATH_USE_ALTERNATIVE_DEFAULT           = 'postnl/cif_product_options/use_alternative_default';
-    const XML_PATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT    = 'postnl/cif_product_options/alternative_default_max_amount';
-    const XML_PATH_ALTERNATIVE_DEFAULT_OPTION        = 'postnl/cif_product_options/alternative_default_option';
+    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
+    const XML_PATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/cif_product_options/default_evening_product_option';
+    const XML_PATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION     = 'postnl/cif_product_options/default_pakjegemak_product_option';
+    const XML_PATH_DEFAULT_PGE_PRODUCT_OPTION            = 'postnl/cif_product_options/default_pge_product_option';
+    const XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
+    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
+    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
+    const XML_PATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/cif_product_options/use_alternative_default';
+    const XML_PATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/cif_product_options/alternative_default_max_amount';
+    const XML_PATH_ALTERNATIVE_DEFAULT_OPTION            = 'postnl/cif_product_options/alternative_default_option';
 
     /**
-     * XML path to weight per parcel config setting
+     * XML path to weight per parcel config setting.
      */
     const XML_PATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
 
     /**
-     * XML path to setting that determines whether or not to send track and trace emails
+     * XML path to setting that determines whether or not to send track and trace emails.
      */
     const XML_PATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
 
     /**
-     * XML path to track and trace email template setting
+     * XML path to track and trace email template setting.
      */
     const XML_PATH_TRACK_AND_TRACE_EMAIL_TEMPLATE = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
 
     /**
-     * XML path to maximum allowed parcel count settings
+     * XML path to maximum allowed parcel count settings.
      */
     const XML_PATH_MAX_PARCEL_COUNT = 'postnl/advanced/max_parcel_count';
 
     /**
-     * CIF warning code returned when an EPS combi label is not available
+     * Xpath to default GlobalPack shipment type.
+     */
+    const XPATH_DEFAULT_SHIPMENT_TYPE = 'postnl/cif_globalpack_settings/default_shipment_type';
+
+    /**
+     * CIF warning code returned when an EPS combi label is not available.
      */
     const EPS_COMBI_LABEL_WARNING_CODE = 'LIRS_0';
 
     /**
-     * Newly added 'pakje_gemak' address type
+     * Newly added 'pakje_gemak' address type.
      */
     const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
 
     /**
-     * Array of product codes that have extra cover
+     * Array of product codes that have extra cover.
      *
      * @var array
      */
@@ -221,7 +231,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Contains an instance of TIG_PostNL_Model_Core_Shipment_Process which locks a shipment and prevents it from being
      * modified.
      *
-     * @var void|TIG_PostNL_Model_Core_Shipment_Process
+     * @var TIG_PostNL_Model_Core_Shipment_Process
      */
     protected $_process;
 
@@ -467,7 +477,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Get the amount of extra cover this shipment has.
      *
-     * @return int | float
+     * @return int|float
      */
     public function getExtraCoverAmount()
     {
@@ -484,7 +494,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * @param boolean $standardize Whether or not to convert the weight to kg
      * @param boolean $toGrams whether or not to convert the standardized weight to g
      *
-     * @return float | int
+     * @return float|int
      */
     public function getTotalWeight($standardize = false, $toGrams = false)
     {
@@ -605,23 +615,27 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Gets the shipment's shipment type for intrnational shipments.
-     * If no shipment type is defined, use the default 'commercial goods'.
+     * Gets the shipment's shipment type for intrnational shipments. If no shipment type is defined, use the default
+     * value. This in turn defaults to 'Commercial Goods' if none is specified.
      *
      * @return string|null
      */
-    public function getShipmentType()
+    public function getGlobalpackShipmentType()
     {
-        if ($this->hasShipmentType()) {
-            return $this->_getData('shipment_type');
+        if ($this->hasGlobalpackShipmentType()) {
+            return $this->_getData('globalpack_shipment_type');
         }
 
         if (!$this->isGlobalShipment()) {
             return null;
         }
 
-        $shipmentType = 'Commercial Goods';
-        return $shipmentType;
+        $defaultShipmentType = Mage::getStoreConfig(self::XPATH_DEFAULT_SHIPMENT_TYPE, $this->getStoreId());
+        if (!$defaultShipmentType) {
+            $defaultShipmentType = 'Commercial Goods';
+        }
+
+        return $defaultShipmentType;
     }
 
     /**
@@ -633,11 +647,41 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $storeId = $this->getStoreId();
 
+        if ($this->isPgeShipment()) {
+            /**
+             * PakjeGemak Express default option
+             */
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PGE_PRODUCT_OPTION, $storeId);
+            $this->_checkProductCodeAllowed($productCode);
+
+            return $productCode;
+        }
+
+        if ($this->isAvondshipment()) {
+            /**
+             * Evening delivery default option
+             */
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EVENING_PRODUCT_OPTION, $storeId);
+            $this->_checkProductCodeAllowed($productCode);
+
+            return $productCode;
+        }
+
         if ($this->isPakjeGemakShipment()) {
             /**
              * PakjeGemak default option
              */
             $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION, $storeId);
+            $this->_checkProductCodeAllowed($productCode);
+
+            return $productCode;
+        }
+
+        if ($this->isPakketautomaatShipment()) {
+            /**
+             * PakjeGemak default option
+             */
+            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION, $storeId);
             $this->_checkProductCodeAllowed($productCode);
 
             return $productCode;
@@ -768,7 +812,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets a PostNL order associated with this shipment (if any exist)
      *
-     * @return boolean|TIG_PostNL_Model_Checkout_Order
+     * @return boolean|TIG_PostNL_Model_Core_Order
      */
     public function getPostnlOrder()
     {
@@ -776,7 +820,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this->_getData('postnl_order');
         }
 
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($this->getOrderId(), 'order_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($this->getOrderId(), 'order_id');
         if (!$postnlOrder->getId()) {
             $this->setPostnlOrder(false);
 
@@ -805,6 +849,91 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $labelCollection;
     }
 
+    /**
+     * Gets allowed product codes for the current shipment.
+     *
+     * @return array
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function getAllowedProductCodes()
+    {
+        $cifHelper = $this->getHelper('cif');
+
+        /**
+         * Please note the order of these checks as PakjeGemak, PakjeGemak Express, avond and pakketautomaat shipment
+         * would all also be considered Dutch shipments.
+         */
+
+        if ($this->isPgeShipment()) {
+            $allowedProductCodes = $cifHelper->getPgeProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isAvondShipment()) {
+            $allowedProductCodes = $cifHelper->getAvondProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isPakjeGemakShipment()) {
+            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isPakketautomaatShipment()) {
+            $allowedProductCodes = $cifHelper->getPakketautomaatProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isDutchShipment()) {
+            $allowedProductCodes = $cifHelper->getStandardProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isEuShipment()) {
+            $allowedProductCodes = $cifHelper->getEuProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isGlobalShipment() && $cifHelper->isGlobalAllowed()) {
+            $allowedProductCodes = $cifHelper->getGlobalProductCodes();
+            return $allowedProductCodes;
+        }
+
+        /**
+         * If no matches were found, return an empty array.
+         */
+        return array();
+    }
+
+    /**
+     * Gets the delivery date for this shipment.
+     *
+     * @return null|string
+     */
+    public function getDeliveryDate()
+    {
+        if ($this->hasDeliveryDate()) {
+            return $this->_getData('delivery_date');
+        }
+
+        /**
+         * Try to get the delivery date fr a PostNL order.
+         */
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getDeliveryDate()) {
+            $deliveryDate = $postnlOrder->getDeliveryDate();
+
+            $this->setDeliveryDate($deliveryDate);
+            return $deliveryDate;
+        }
+
+        /**
+         * If no delivery date is available, return null.
+         */
+        return null;
+    }
+
     /*******************************************************************************************************************
      * SETTER METHODS
      ******************************************************************************************************************/
@@ -814,7 +943,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param array $labels
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function setLabelsToSave($labels)
     {
@@ -851,9 +980,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param string $type
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
-    public function setShipmentType($type)
+    public function setGlobalpackShipmentType($type)
     {
         /**
          * Only global shipments have a shipment type
@@ -868,7 +997,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shipmentType = str_replace('_', ' ', $type);
         $shipmentType = ucwords($shipmentType);
 
-        $this->setData('shipment_type', $shipmentType);
+        $this->setData('globalpack_shipment_type', $shipmentType);
         return $this;
     }
 
@@ -879,7 +1008,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @throws TIG_PostNL_Exception
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function setParcelCount($count)
     {
@@ -909,7 +1038,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param mixed $isExported
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function setIsExported($isExported)
     {
@@ -921,12 +1050,64 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param TIG_PostNL_Model_Core_Shipment_Process
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function setProcess(TIG_PostNL_Model_Core_Shipment_Process $process)
     {
         $this->_process = $process;
 
+        return $this;
+    }
+
+    /**
+     * Sets the confirm date. If no value is supplied, check if this shipment has an associated PostNL order which might
+     * have a confirm date specified. Otherwise calculate the confirm date based on the delivery date or the current
+     * timestamp.
+     *
+     * @param boolean|string $date
+     *
+     * @return $this
+     */
+    public function setConfirmDate($date = false)
+    {
+        if ($date !== false) {
+            $this->setData('confirm_date', $date);
+            return $this;
+        }
+
+        /**
+         * If this shipment has an associated PostNL order with a confirm date, use that.
+         */
+        $postnlOrder = $this->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getConfirmDate()) {
+            $confirmDate = strtotime($postnlOrder->getConfirmDate());
+
+            $this->setData('confirm_date', $confirmDate);
+            return $this;
+        }
+
+        /**
+         * Get the requested delivery date for this shipment.
+         */
+        $deliveryDate = $this->getDeliveryDate();
+
+        /**
+         * If no delivery date is available, set the confirm date to today.
+         */
+        if (!$deliveryDate) {
+            $confirmDate = Mage::getModel('core/date')->gmtTimestamp();
+
+            $this->setData('confirm_date', $confirmDate);
+            return $this;
+        }
+
+        /**
+         * Calculate the confirm based on the delivery date.
+         */
+        $deliveryTimeStamp = strtotime($deliveryDate);
+        $confirmDate = strtotime('-1 day', $deliveryTimeStamp);
+
+        $this->setData('confirm_date', $confirmDate);
         return $this;
     }
 
@@ -1082,6 +1263,60 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if this shipment is a PakjeGemak Express shipment.
+     *
+     * @return bool
+     */
+    public function isPgeShipment()
+    {
+        /**
+         * We can check the PostNL order's type to see if it's PakjeGemak Express.
+         *
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
+        $postnlOrder = $this->getPostnlOrder();
+        if (!$postnlOrder
+            || !$postnlOrder->getId()
+        ) {
+            return false;
+        }
+
+        $type = $postnlOrder->getType();
+        if ($type != 'PGE') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if this shipment is an evening delivery shipment.
+     *
+     * @return bool
+     */
+    public function isAvondShipment()
+    {
+        /**
+         * We can check the PostNL order's type to see if it's evening delivery.
+         *
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
+        $postnlOrder = $this->getPostnlOrder();
+        if (!$postnlOrder
+            || !$postnlOrder->getId()
+        ) {
+            return false;
+        }
+
+        $type = $postnlOrder->getType();
+        if ($type != 'Avond') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Check if the currrent shipment is a PakjeGemak shipment.
      *
      * @return boolean
@@ -1093,9 +1328,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * If the order was placed using PostNL Checkout, we can check if it was a PakjeGEmak order directly.
+         * If the order was placed using PostNL Checkout, we can check if it was a PakjeGemak order directly.
          *
-         * @var TIG_PostNL_Model_CHeckout_Order $postnlOrder
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
         $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder
@@ -1127,6 +1362,35 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Check if this shipment is a pakketautomaat shipment.
+     *
+     * @return boolean
+     */
+    public function isPakketautomaatShipment()
+    {
+        if ($this->hasIsPakketautomaat()) {
+            return $this->getIsPakketautomaat();
+        }
+
+        $postnlOrder = $this->getPostnlOrder();
+        if (!$postnlOrder
+            || !$postnlOrder->getId()
+            || !$postnlOrder->getType()
+        ) {
+            $this->setIsPakketautomaat(false);
+            return false;
+        }
+
+        $type = $postnlOrder->getType();
+        if ($type == 'PA') {
+            $this->setIsPakketautomaat(true);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Checks if this shipment is a COD shipment
      *
      * @return boolean
@@ -1135,7 +1399,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function isCod()
     {
-        return false; //TODO implement this method
+        return false;
     }
 
     /**
@@ -1193,6 +1457,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Checks if the current entity can be confirmed.
      *
      * @param bool $skipEuCheck
+     *
      * @return boolean
      */
     public function canConfirm($skipEuCheck = false)
@@ -1299,6 +1564,34 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return true;
     }
 
+    /**
+     * Checks if this shipment's confirmation status can be reset.
+     *
+     * @return boolean
+     */
+    public function canResetConfirmation()
+    {
+        $confirmStatus = $this->getConfirmStatus();
+        if ($confirmStatus == self::CONFIRM_STATUS_CONFIRM_EXPIRED) {
+            return false;
+        }
+
+        if ($confirmStatus == self::CONFIRM_STATUS_UNCONFIRMED) {
+            return false;
+        }
+
+        $shippingPhase = $this->getShippingPhase();
+        if ($shippingPhase == self::SHIPPING_PHASE_COLLECTION
+            || $shippingPhase == self::SHIPPING_PHASE_DELIVERED
+            || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
+            || $shippingPhase == self::SHIPPING_PHASE_SORTING
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
     /*******************************************************************************************************************
      * SHIPMENT LOCKING AND UNLOCKING FUNCTIONS
      ******************************************************************************************************************/
@@ -1306,7 +1599,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Lock this shipment to prevent simultaneous execution
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function lock()
     {
@@ -1321,7 +1614,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Unlock this shipment
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function unlock()
     {
@@ -1353,7 +1646,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Barcodes are the basis for all CIF functionality and must therefore be generated before any further action is
      * possible.
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1446,7 +1739,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Generates a shipping labels for a shipment without confirming it with PostNL.
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1555,7 +1848,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Manually confirms a shipment without communicating with PostNL. This should be used if you wish to update the
      * confirmation status in Magento, while actually confirming the shipment through other means, such as parcelware.
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1578,7 +1871,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Confirm the shipment with PostNL without generating new labels
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1630,13 +1923,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Confirms the shipment using CIF
+     * Confirms the shipment using CIF.
      *
      * @param bool|int|null $barcodeNumber
      *
      * @throws TIG_PostNL_Exception
-     * @return TIG_PostNL_Model_Core_Shipment
      *
+     * @return $this
      */
     protected function _confirm($barcodeNumber = false)
     {
@@ -1699,7 +1992,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Generates a shipping label and confirms the shipment with postNL.
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1769,7 +2062,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Requests a shipping status update for this shipment
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1810,7 +2103,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Update this shipment's status history
      *
      * @throws TIG_PostNL_Exception
-     * @return TIG_PostNL_Model_Core_Shipment
+     *
+     * @return $this
      */
     public function updateCompleteShippingStatus()
     {
@@ -1899,7 +2193,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Adds Magento tracking information to the order containing the previously retrieved barcode
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1951,7 +2245,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @throws TIG_PostNL_Exception
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function sendTrackAndTraceEmail($ignoreAlreadySent = false)
     {
@@ -2036,7 +2330,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * @param string $barcode The barcode to add
      * @param int $barcodeNumber The number of this barcode
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     protected function _addBarcode($barcode, $barcodeNumber)
     {
@@ -2061,7 +2355,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param mixed $labels An array of labels or a single label object
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function addLabels($labels)
     {
@@ -2088,7 +2382,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param stdClass $label
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     protected function _addLabel($label)
     {
@@ -2116,7 +2410,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param TIG_PostNL_Model_Core_Shipment_Label $label
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     protected function _addLabelToSave($label)
     {
@@ -2132,7 +2426,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Save all newly added labels at once
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     protected function _saveLabels()
     {
@@ -2169,7 +2463,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Check if the returned label is a combi-label
+     * Check if the returned label is a combi-label.
      *
      * @param TIG_PostNL_Model_Core_Shipment_label
      *
@@ -2282,36 +2576,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Helper_Cif $cifHelper
          */
         $cifHelper = $this->getHelper('cif');
-        $allowedProductCodes = array();
-
-        /**
-         * PakjeGemak shipments are also dutch shipments
-         */
-        if ($this->isDutchShipment() && $this->isPakjeGemakShipment()) {
-            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes();
-        }
-
-        /**
-         * Here we specifically want shipments that are dutch, but not PakjeGemak
-         */
-        if ($this->isDutchShipment() && !$this->isPakjeGemakShipment()) {
-            $allowedProductCodes = $cifHelper->getStandardProductCodes();
-        }
-
-        if ($this->isEuShipment()) {
-            $allowedProductCodes = $cifHelper->getEuProductCodes();
-        }
-
-        if ($this->isGlobalShipment()) {
-            if (!$cifHelper->isGlobalAllowed()) {
-                throw new TIG_PostNL_Exception(
-                    $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
-                    'POSTNL-0078'
-                );
-            }
-
-            $allowedProductCodes = $cifHelper->getGlobalProductCodes();
-        }
+        $allowedProductCodes = $this->getAllowedProductCodes();
 
         /**
          * Check if the product code is allowed
@@ -2349,6 +2614,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Checks if a given product code is only allowed for a specific country
      *
      * @param $code
+     *
      * @return boolean|array Either false if the code is not restricted, or otherwise an array of allowed country IDs
      */
     protected function _isCodeRestricted($code)
@@ -2380,7 +2646,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Public alias for _saveAdditionalShippingOptions()
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      *
      * @see TIG_PostNL_Model_Core_Shipment::_saveAdditionalShippingOptions()
      */
@@ -2392,7 +2658,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Stores additionally selected shipping options
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     protected function _saveAdditionalShippingOptions()
     {
@@ -2409,7 +2675,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             'postnl_shipment_saveadditionaloptions_after',
             array(
                 'shipment' => $this,
-                'options' => $additionalOptions
+                'options'  => $additionalOptions
             )
         );
 
@@ -2461,17 +2727,49 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Resets this shipment to a pre-confirmed state
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @param boolean $deleteLabels
+     * @param boolean $deleteTracks
+     *
+     * @return $this
      */
-    public function resetConfirmation()
+    public function resetConfirmation($deleteLabels = true, $deleteTracks = true)
     {
         $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED) //set status to unconfirmed
              ->setShippingPhase(false) //delete current shipping phase
              ->setConfirmedAt(false) //delete 'confirmed at' date
-             ->setlabelsPrinted(0) //labels have not been printed
-             ->deleteLabels() //delete all associated labels
              ->deleteBarcodes() //delete all associated barcodes
              ->deleteStatusHistory(); //delete all associated status history items
+
+
+        if ($deleteLabels) {
+            $this->setlabelsPrinted(false) //labels have not been printed
+                 ->deleteLabels(); //delete all associated labels
+        }
+
+        if ($deleteTracks) {
+            $this->deleteShipmentTracks() //delete ale addociated tracks
+                 ->setTrackAndTraceEmailSent(false); //make sure that a new T&T e-mail is sent
+        }
+
+        return $this;
+    }
+
+    /**
+     * Delete alle tracks for this shipment.
+     *
+     * @return $this
+     */
+    public function deleteShipmentTracks()
+    {
+        $shipment = $this->getShipment();
+
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Track $track
+         */
+        $tracksCollection = $shipment->getTracksCollection();
+        foreach($tracksCollection as $track) {
+            $track->delete();
+        }
 
         return $this;
     }
@@ -2479,7 +2777,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Removes all labels associated with this shipment
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function deleteLabels()
     {
@@ -2501,7 +2799,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Removes all barcodes associated with this shipment
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function deleteBarcodes()
     {
@@ -2523,7 +2821,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Deletes all status history items associated with this shipment
      *
-     * @return TIG_PostNL_Model_Core_Shipment
+     * @return $this
      */
     public function deleteStatusHistory()
     {
@@ -2559,21 +2857,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $currentTimestamp = $dateModel->gmtTimestamp();
 
         /**
-         * Store any shipment options that have been saved in the registry
+         * Store any shipment options that have been saved in the registry.
          */
         if (Mage::registry('postnl_additional_options')) {
             $this->_saveAdditionalShippingOptions();
         }
 
         /**
-         * Set confirm status
+         * Set confirm status.
          */
         if ($this->getConfirmStatus() === null) {
             $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
         }
 
         /**
-         * Set confrirmed at
+         * Set confrirmed at.
          */
         if ($this->getConfirmedStatus() == self::CONFIRM_STATUS_CONFIRMED
             && $this->getConfirmedAt() === null
@@ -2582,14 +2880,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Set whether labels have printed or not
+         * Set whether labels have printed or not.
          */
         if ($this->getlabelsPrinted() == 0 && $this->hasLabels()) {
             $this->setLabelsPrinted(1);
         }
 
         /**
-         * Set a product code
+         * Set a product code.
          */
         if (!$this->getProductCode() || Mage::registry('postnl_product_option') !== null) {
             $productCode = $this->_getProductCode();
@@ -2597,7 +2895,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Set the parcel count
+         * Set the parcel count.
          */
         if (!$this->getParcelCount()) {
             $parcelCount = $this->_calculateParcelCount();
@@ -2605,21 +2903,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Set the confirm date
+         * Set the confirm date.
          */
         if (!$this->getConfirmDate()) {
-            $this->setConfirmDate($currentTimestamp);
+            $this->setConfirmDate();
         }
 
         /**
-         * If this shipment is new, set it's created at date to the current timestamp
+         * If this shipment is new, set it's created at date to the current timestamp.
          */
         if (!$this->getId()) {
             $this->setCreatedAt($currentTimestamp);
         }
 
         /**
-         * Always update the updated at timestamp to the current timestamp
+         * Always update the updated at timestamp to the current timestamp.
          */
         $this->setUpdatedAt($currentTimestamp);
 

@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_DeliveryOptions_Js extends Mage_Core_Block_Template
+class TIG_PostNL_Block_DeliveryOptions_Js extends TIG_PostNL_Block_DeliveryOptions_Template
 {
     /**
      * @var string
@@ -58,23 +58,5 @@ class TIG_PostNL_Block_DeliveryOptions_Js extends Mage_Core_Block_Template
 
         $this->setApiKey($apiKey);
         return $apiKey;
-    }
-
-    /**
-     * Check if PostNL delivery options are available for the current quote.
-     *
-     * @return string
-     */
-    protected function _toHtml()
-    {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
-
-        $helper = Mage::helper('postnl/deliveryOptions');
-
-        if (!$helper->canUseDeliveryOptions($quote, false)) {
-            return '';
-        }
-
-        return parent::_toHtml();
     }
 }

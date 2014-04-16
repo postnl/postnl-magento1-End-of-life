@@ -35,8 +35,12 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                                         hasPostnlHelper()
+ * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck setPostnlHelper(TIG_PostnL_Helper_Data $value)
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
+    extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
     /**
      * XML paths to use GlobalPack/Checkout settings
@@ -123,6 +127,19 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck extends TI
     }
 
     /**
+     * Check if the extension is currently set to test mode.
+     *
+     * @return boolean
+     */
+    public function isTestModeActive()
+    {
+        $helper = $this->getPostnlHelper();
+
+        $isTestMode = $helper->isTestMode();
+        return $isTestMode;
+    }
+
+    /**
      * Check if global shipments are
      *
      * @return boolean
@@ -136,7 +153,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck extends TI
 
         $helper = $this->getPostnlHelper();
 
-        return $helper->isEnabled(false, true, false);
+        return $helper->isEnabled(false, true, $this->isTestModeActive());
     }
 
     /**
@@ -161,11 +178,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck extends TI
      */
     public function isCheckoutEnabled()
     {
-        $checkoutEnabled = Mage::getStoreConfigFlag(self::XML_PATH_USE_CHECKOUT, Mage_Core_Model_App::ADMIN_STORE_ID);
-        if (!$checkoutEnabled) {
-            return true;
-        }
-
         $helper = Mage::helper('postnl/checkout');
 
         return $helper->isCheckoutEnabled(false);

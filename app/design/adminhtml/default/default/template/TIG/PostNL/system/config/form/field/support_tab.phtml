@@ -37,7 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
-<?php $_helper = $this->helper('postnl'); ?>
+<?php $_helper = Mage::helper('postnl'); ?>
 <?php $_version = (string) Mage::getConfig()->getModuleConfig("TIG_PostNL")->version; ?>
 <tr>
     <td>
@@ -78,6 +78,7 @@
                             </li>
                             <li><strong><?php echo $_helper->__('Configure your PostNL account');?></strong>
                                 <ol>
+                                    <li><?php echo $_helper->__('By default the extension is pre-configured using a test account. If you already have your PostNL account credentials, you can enter them using the steps below. If you have not yet received these credentials you may keep using the extensions in test mode. In this case you can continue to step 3.'); ?></li>
                                     <li><?php echo $_helper->__("Make sure you have your PostNL account info with you. You will need the following info: username & password, customer number, customer code, and BLS code. You need to enter these in the 'Account Settings' tab.");?></li>
                                     <li><?php echo $_helper->__("First enter your username and password. Depending on the status of your account, you may either enter the 'test' or 'live' version of these fields. Please note: if you do not enter the 'live' fields, you will only be able to create test shipments.");?></li>
                                     <li><?php echo $_helper->__('Next enter your customer number, customer code and BLS code. If you are unsure about which information to enter here, please contact PostNL.'); ?></li>
@@ -107,7 +108,7 @@
                             </li>
                             <li><strong><?php echo $_helper->__('Configure your PostNL Checkout settings');?></strong>
                                 <ol>
-                                   <li><?php echo $_helper->__('If you wish to use PostNL Checkout in your webshop, you need to configure your PostNl Checkout settings.');?></li>
+                                   <li><?php echo $_helper->__('If you wish to use PostNL Checkout in your webshop, you need to configure your PostNL Checkout settings.');?></li>
                                    <li><?php echo $_helper->__("Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.");?></li>
                                    <li><?php echo $_helper->__("Go to the 'PostNL Checkout' tab and specify your preferences.");?></li>
                                    <li><?php echo $_helper->__("Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected.");?></li>
@@ -175,7 +176,8 @@
                         <h3><?php echo $_helper->__('Documentation');?></h3>
                         <p><?php echo $_helper->__('A list of documents regarding the extension.');?></p>
                         <ul>
-                            <li><a class="pdf" target="_blank" href="<?php echo $this->getSkinUrl('media/TIG/PostNL/manual.pdf')?>" title="<?php echo $_helper->__('View the installation and configuration manual.');?>"><?php echo $_helper->__('Installation and configuration manual');?></a></li>
+                            <li><a class="pdf" target="_blank" href="<?php echo $this->getSkinUrl('media/TIG/PostNL/tig_postnl_installatiehandleiding.pdf')?>" title="<?php echo $_helper->__('View the installation and configuration manual.');?>"><?php echo $_helper->__('Installation and configuration manual');?></a></li>
+                            <li><a class="pdf" target="_blank" href="<?php echo $this->getSkinUrl('media/TIG/PostNL/tig_postnl_gebruikershandleiding.pdf')?>" title="<?php echo $_helper->__('View the user manual.');?>"><?php echo $_helper->__('User manual');?></a></li>
                             <li><a target="_blank" href="http://servicedesk.totalinternetgroup.nl/entries/38584893" title="<?php echo $_helper->__('View the complete changelog of the extension.');?>"><?php echo $_helper->__('Full changelog');?></a></li>
                         </ul>
                     </div>

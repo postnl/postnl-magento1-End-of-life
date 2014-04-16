@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Checkout_Summary extends Mage_Sales_Block_Items_Abstract
@@ -158,12 +158,12 @@ class TIG_PostNL_Block_Checkout_Summary extends Mage_Sales_Block_Items_Abstract
     /**
      * Gets the PostNL order associated with the current quote
      *
-     * @return TIG_PostNL_Model_Checkout_Order
+     * @return TIG_PostNL_Model_Core_Order
      */
     public function getPostnlOrder()
     {
         $quote = $this->getQuote();
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
 
         return $postnlOrder;
     }

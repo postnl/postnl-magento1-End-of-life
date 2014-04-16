@@ -81,7 +81,7 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
     }
 
     /**
-     * Check feed for modification
+     * Check feed for modification.
      *
      * @return TIG_PostNL_Model_ExtensionControl_Observer_Cron
      */
@@ -90,14 +90,14 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         $helper = Mage::helper('postnl');
 
         /**
-         * Check if the PostNL module is active
+         * Check if the PostNL module is active.
          */
         if (!$helper->isEnabled()) {
             return $this;
         }
 
         /**
-         * Check if the extension may send statistics to the extension control system
+         * Check if the extension may send statistics to the extension control system.
          */
         if (!Mage::helper('postnl/webservices')->canReceiveUpdates()) {
             return $this;
@@ -108,13 +108,13 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
         $feedData = array();
 
         /**
-         * Get the feed
+         * Get the feed.
          */
         $feed = Mage::getModel('postnl_extensioncontrol/feed');
         $feedXml = $feed->getFeedData();
 
         /**
-         * Parse the feed
+         * Parse the feed.
          */
         if ($feedXml && $feedXml->channel && $feedXml->channel->item) {
             foreach ($feedXml->channel->item as $item) {
@@ -124,14 +124,14 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
                 }
 
                 /**
-                 * Add a notification for each item that is new
+                 * Add a notification for each item that is new.
                  */
                 $feedData[] = array(
                     'severity'      => $severity,
                     'date_added'    => $feed->getDate((string) $item->pubDate),
-                    'title'         => (string) $item->title,
-                    'description'   => (string) $item->description,
-                    'url'           => (string) $item->link,
+                    'title'         => $helper->escapeHtml((string) $item->title),
+                    'description'   => $helper->escapeHtml((string) $item->description),
+                    'url'           => $helper->escapeHtml((string) $item->link),
                 );
             }
 

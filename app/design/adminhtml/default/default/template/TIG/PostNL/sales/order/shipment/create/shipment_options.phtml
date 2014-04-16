@@ -89,7 +89,7 @@
 <?php if ($_isGlobalPackShipment): ?>
     <p id="postnl_shipment_type_container">
         <label class="normal" for="postnl_shipment_type"><?php echo $_helper->__('Shipment type'); ?></label>
-        <select name="postnl[shipment_type]" class="validate-select required-field" id="postnl_shipment_type">
+        <select name="postnl[globalpack_shipment_type]" class="validate-select required-field" id="postnl_shipment_type">
             <?php foreach ($this->getShipmentTypes() as $type => $label): ?>
                 <option value="<?php echo $type; ?>"><?php echo $_helper->__($label); ?></option>
             <?php endforeach; ?>

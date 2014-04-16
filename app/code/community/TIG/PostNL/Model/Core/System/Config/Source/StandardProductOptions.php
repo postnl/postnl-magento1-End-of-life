@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
@@ -61,61 +61,73 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             /**
              * These are not currently implemented
              *
-             * TODO implement these options
+             * @todo implement these options
              */
             /*array(
-                'value' => '3086',
-                'label' => $helper->__('COD'),
+                'value'   => '3086',
+                'label'   => $helper->__('COD'),
+                'isAvond' => true,
             ),
             array(
-                'value' => '3091',
-                'label' => $helper->__('COD + Extra cover'),
+                'value'   => '3091',
+                'label'   => $helper->__('COD + Extra cover'),
+                'isAvond' => true,
             ),
             array(
-                'value' => '3093',
-                'label' => $helper->__('COD + Return when not home'),
+                'value'   => '3093',
+                'label'   => $helper->__('COD + Return when not home'),
+                'isAvond' => true,
             ),
             array(
-                'value' => '3097',
-                'label' => $helper->__('COD + Extra cover + Return when not home'),
+                'value'   => '3097',
+                'label'   => $helper->__('COD + Extra cover + Return when not home'),
+                'isAvond' => true,
             ),*/
             array(
                 'value'        => '3087',
                 'label'        => $helper->__('Extra Cover'),
                 'isExtraCover' => true,
+                'isAvond'      => true,
             ),
             array(
                 'value'        => '3094',
                 'label'        => $helper->__('Extra cover + Return when not home'),
                 'isExtraCover' => true,
+                'isAvond'      => true,
             ),
             array(
                 'value' => '3189',
                 'label' => $helper->__('Signature on delivery'),
             ),
             array(
-                'value' => '3089',
-                'label' => $helper->__('Signature on delivery + Delivery to stated address only'),
+                'value'   => '3089',
+                'label'   => $helper->__('Signature on delivery + Delivery to stated address only'),
+                'isAvond' => true,
             ),
             array(
                 'value' => '3389',
                 'label' => $helper->__('Signature on delivery + Return when not home'),
             ),
             array(
-                'value' => '3096',
-                'label' => $helper->__('Signature on delivery + Deliver to stated address only + Return when not home'),
+                'value'   => '3096',
+                'label'   => $helper->__(
+                                 'Signature on delivery + Deliver to stated address only + Return when not home'
+                             ),
+                'isAvond' => true,
             ),
             array(
                 'value' => '3090',
                 'label' => $helper->__('Delivery to neighbour + Return when not home'),
             ),
             array(
-                'value' => '3385',
-                'label' => $helper->__('Deliver to stated address only'),
+                'value'   => '3385',
+                'label'   => $helper->__('Deliver to stated address only'),
+                'isAvond' => true,
             ),
             array(
-                'value' => '3390',
-                'label' => $helper->__('Deliver to stated address only + Return when not home'),
+                'value'   => '3390',
+                'label'   => $helper->__('Deliver to stated address only + Return when not home'),
+                'isAvond' => true,
             ),
         );
 
@@ -123,20 +135,52 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
     }
 
     /**
-     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
+     * Gets an array of possible evening delivery product options.
      *
-     * @param boolean|int $storeId
-     * @param boolean $codesOnly
+     * @param boolean $asFlatArray
      *
      * @return array
      */
-    public function getAvailableOptions($storeId = false, $codesOnly = false)
+    public function getAvondOptions($asFlatArray = true)
+    {
+        $options = $this->toOptionArray();
+
+        $pgeOptions = array();
+        foreach ($options as $option) {
+            if (!isset($option['isAvond']) || !$option['isAvond']) {
+                continue;
+            }
+
+            if (!$asFlatArray) {
+                $pgeOptions[] = $option;
+            }
+
+            $pgeOptions[$option['value']] = $option['label'];
+        }
+
+        return $pgeOptions;
+    }
+
+    /**
+     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
+     *
+     * @param boolean|int $storeId
+     * @param boolean     $codesOnly
+     * @param boolean     $isAvond
+     *
+     * @return array
+     */
+    public function getAvailableOptions($storeId = false, $codesOnly = false, $isAvond = false)
     {
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
 
-        $options = $this->toOptionArray();
+        if (!$isAvond) {
+            $options = $this->toOptionArray();
+        } else {
+            $options = $this->getAvondOptions(false);
+        }
 
         /**
          * Get a list of all possible options
@@ -166,5 +210,18 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
         }
 
         return $availableOptions;
+    }
+
+    /**
+     * Alias for getAvailableOptions() with $isAvond === true.
+     *
+     * @param bool $storeId
+     * @param bool $codesOnly
+     *
+     * @return array
+     */
+    public function getAvailableAvondOptions($storeId = false, $codesOnly = false)
+    {
+        return $this->getAvailableOptions($storeId, $codesOnly, true);
     }
 }

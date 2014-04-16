@@ -1167,7 +1167,7 @@ PostnlDeliveryOptions.prototype = {
      */
     saveSelectedOption : function() {
         if (!this.getSelectedOption()) {
-            return true;
+            return false;
         }
 
         var selectedType = this.getSelectedType();
@@ -1177,25 +1177,28 @@ PostnlDeliveryOptions.prototype = {
             return false;
         }
 
-
         var selectedOption = this.getSelectedOption();
+
+        var extraCosts = {
+            incl : this.getExtraCosts(true),
+            excl : this.getExtraCosts(false)
+        };
+
         var params = {
             isAjax : true,
             type   : selectedType,
             date   : selectedOption.getDate(),
-            costs  : 0
+            costs  : Object.toJSON(extraCosts)
         };
 
-        if (selectedType == 'Avond' || selectedType == 'PGE') {
-            var extraCosts = {
-                incl : this.getExtraCosts(true),
-                excl : this.getExtraCosts(false)
-            };
-            params['costs'] = Object.toJSON(extraCosts);
+        if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
+            var address = selectedOption.getAddress();
+            address['Name'] = selectedOption.getName();
+            params['address'] = Object.toJSON(address);
         }
 
-        if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
-            params['address'] = Object.toJSON(selectedOption.getAddress());
+        if (selectedType == 'PA') {
+            params['number'] = $('add_phone_input').getValue();
         }
 
         if (this.getOptions().isOsc) {
@@ -1235,21 +1238,23 @@ PostnlDeliveryOptions.prototype = {
         var extraCosts = 0;
 
         if (!selectedType) {
-            return extraCosts
+            return extraCosts;
         }
 
         if (inclTax) {
             if (selectedType == 'PGE') {
                 extraCosts = this.getOptions().expressFeeIncl;
             } else if (selectedType == 'Avond') {
-                extraCosts = this.getOptions().expressFeeIncl;
+                extraCosts = this.getOptions().eveningFeeIncl;
             }
-        } else {
-            if (selectedType == 'PGE') {
-                extraCosts = this.getOptions().expressFeeExcl;
-            } else if (selectedType == 'Avond') {
-                extraCosts = this.getOptions().expressFeeExcl;
-            }
+
+            return parseFloat(extraCosts);
+        }
+
+        if (selectedType == 'PGE') {
+            extraCosts = this.getOptions().expressFeeExcl;
+        } else if (selectedType == 'Avond') {
+            extraCosts = this.getOptions().eveningFeeExcl;
         }
 
         return parseFloat(extraCosts);
@@ -1414,6 +1419,8 @@ PostnlDeliveryOptions.prototype = {
      * @param phoneNumber
      *
      * @returns {PostnlDeliveryOptions}
+     *
+     * @deprecated
      */
     savePaPhoneNumber : function(phoneNumber) {
         var savePhoneUrl = this.getSavePhoneNumberUrl();
@@ -3706,7 +3713,7 @@ PostnlDeliveryOptions.Location = new Class.create({
             var extraCosts = this.getOptions().expressFeeText;
             var extraCostHtml = '';
 
-            if (extraCosts) {
+            if (this.getOptions().expressFeeIncl) {
                 extraCostHtml += ' + ' + extraCosts;
             }
 
@@ -4404,10 +4411,10 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     getCommentHtml : function() {
         var comment = '';
         if (this.type == 'Avond') {
-            var extraCosts = this.getDeliveryOptions().getOptions().eveningFeeText;
+            var extraCosts = this.getOptions().eveningFeeText;
             var extraCostHtml = '';
 
-            if (extraCosts) {
+            if (this.getOptions().eveningFeeIncl) {
                 extraCostHtml += ' + ' + extraCosts;
             }
 

@@ -42,7 +42,6 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      * XML path to checkout on/off switch
      */
     const XML_PATH_CHECKOUT_ACTIVE = 'postnl/checkout/active';
-    const XML_PATH_USE_CHECKOUT    = 'postnl/cif/use_checkout';
 
     /**
      * XML path to all PostNL Checkout payment methods.
@@ -53,7 +52,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     /**
      * XML path to test / live mode setting
      */
-    const XML_PATH_TEST_MODE = 'postnl/checkout/mode';
+    const XML_PATH_TEST_MODE = 'postnl/cif/mode';
 
     /**
      * XML path for config options used to determine whether or not PostNL Checkout is available
@@ -344,6 +343,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         }
 
         $totalWeight = 0;
+        /** @var Mage_Sales_Model_Quote_Item $item */
         foreach ($quoteItems as $item) {
             $totalWeight += $item->getRowWeight();
         }
@@ -370,67 +370,16 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $quoteItems = $quoteItems->getAllItems();
         }
 
-        $productIds = array();
+        /** @var Mage_Sales_Model_Quote_Item $item */
         foreach ($quoteItems as $item) {
-            $productIds[] = $item->getProductId();
-        }
+            $product = $item->getProduct();
 
-        /**
-         * Filter the stock collection by the products in the quote and whose quantity is equal to or below 0
-         *
-         * The resulting query:
-         * SELECT `main_table`.`item_id` , `cp_table`.`type_id`
-         * FROM `cataloginventory_stock_item` AS `main_table`
-         * INNER JOIN `catalog_product_entity` AS `cp_table` ON main_table.product_id = cp_table.entity_id
-         * WHERE (
-         *     product_id
-         *     IN (
-         *         {$productIds}
-         *     )
-         * )
-         * AND (
-         *     qty <=0
-         * )
-         */
-        $stockCollection = Mage::getResourceModel('cataloginventory/stock_item_collection');
-        $stockCollection->addFieldToSelect('item_id')
-                        ->addFieldToFilter('product_id', array('in' => $productIds))
-                        ->addFieldToFilter('qty', array('lteq' => 0));
-
-        if ($stockCollection->getSize() > 0) {
-            return true;
+            if (!$product->isInStock()) {
+                return true;
+            }
         }
 
         return false;
-    }
-
-    /**
-     * Check if the module is set to test mode
-     *
-     * @param bool $storeId
-     *
-     * @return boolean
-     */
-    public function isTestMode($storeId = false)
-    {
-        if (Mage::registry('postnl_checkout_test_mode') !== null) {
-            return Mage::registry('postnl_checkout_test_mode');
-        }
-
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
-
-        $testModeAllowed = $this->isTestModeAllowed();
-        if (!$testModeAllowed) {
-            Mage::register('postnl_checkout_test_mode', false);
-            return false;
-        }
-
-        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
-
-        Mage::register('postnl_checkout_test_mode', $testMode);
-        return $testMode;
     }
 
     /**
@@ -446,9 +395,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $useCheckout = Mage::getStoreConfigFlag(self::XML_PATH_USE_CHECKOUT, $storeId);
-
-        if (!$useCheckout) {
+        if (!parent::isActive()) {
             return false;
         }
 
@@ -517,7 +464,9 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         $errors = array();
 
         /**
-         * Get the system > config fields for this section
+         * Get the system > config fields for this section.
+         *
+         * @var Varien_Simplexml_Element $section
          */
         $configFields = Mage::getSingleton('adminhtml/config');
         $sections     = $configFields->getSections('postnl');
@@ -530,22 +479,29 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         foreach ($requiredFields as $requiredField) {
             $value = Mage::getStoreConfig($requiredField, $storeId);
 
-            if ($value === null || $value === '') {
-                $fieldParts = explode('/', $requiredField);
-                $field = $fieldParts[2];
-                $group = $fieldParts[1];
-
-                $label      = (string) $section->groups->$group->fields->$field->label;
-                $groupLabel = (string) $section->groups->$group->label;
-                $groupName = $section->groups->$group->getName();
-
-                $errors[] = array(
-                    'code'    => 'POSTNL-0034',
-                    'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
-                );
-
-                $this->saveConfigState(array('postnl_' . $groupName => 1));
+            if ($value !== null && $value !== '') {
+                continue;
             }
+
+            $fieldParts = explode('/', $requiredField);
+            $field = $fieldParts[2];
+            $group = $fieldParts[1];
+
+            /**
+             * @var Varien_Simplexml_Element $sectionGroup
+             */
+            $sectionGroup = $section->groups->$group;
+
+            $label      = (string) $sectionGroup->fields->$field->label;
+            $groupLabel = (string) $sectionGroup->label;
+            $groupName  = $sectionGroup->getName();
+
+            $errors[] = array(
+                'code'    => 'POSTNL-0034',
+                'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
+            );
+
+            $this->saveConfigState(array('postnl_' . $groupName => 1));
         }
 
         /**

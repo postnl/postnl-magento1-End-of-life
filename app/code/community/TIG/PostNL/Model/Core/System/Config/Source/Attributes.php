@@ -50,6 +50,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_Attributes
 
         $attributes->getSelect()->order('frontend_label ASC');
 
+        $options = array();
+        /**
+         * @var Mage_Catalog_Model_Entity_Attribute $attribute
+         */
         foreach ($attributes as $attribute) {
             $label = $attribute->getFrontendLabel();
             if (empty($label)) {

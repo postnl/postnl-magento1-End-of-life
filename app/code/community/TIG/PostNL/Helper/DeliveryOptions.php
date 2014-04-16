@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
@@ -85,6 +85,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         'PA',
     );
 
+    /**
+     * @var Mage_Sales_Model_Quote
+     */
     protected $_quote;
 
     /**
@@ -304,8 +307,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK, $storeId);
+        if (!$enabled) {
+            return false;
+        }
 
-        return $enabled;
+        $canUsePakjeGemak = parent::canUsePakjeGemak($storeId);
+
+        return $canUsePakjeGemak;
     }
 
     /**
@@ -326,8 +334,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK_EXPRESS, $storeId);
+        if (!$enabled) {
+            return false;
+        }
 
-        return $enabled;
+        $pgeOptions = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions')
+                          ->getAvailablePgeOptions($storeId);
+
+        if (empty($pgeOptions)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -344,8 +362,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS, $storeId);
+        if (!$enabled) {
+            return false;
+        }
 
-        return $enabled;
+        $pakketautomaatOptions = Mage::getModel('postnl_core/system_config_source_pakketautomaatProductOptions')
+                                     ->getAvailableOptions($storeId);
+
+        if (empty($pakketautomaatOptions)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -384,8 +412,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EVENING_TIMEFRAMES, $storeId);
+        if (!$enabled) {
+            return false;
+        }
 
-        return $enabled;
+        $eveningOptions = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
+                              ->getAvailableAvondOptions($storeId);
+
+        if (empty($eveningOptions)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -409,12 +447,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Check if PostNL delivery options may be used based on a quote.
      *
-     * @param Mage_Sales_Model_Quote $quote
+     * @param Mage_Sales_Model_Quote|boolean $quote
      * @param boolean $checkCountry
      *
      * @return boolean
      */
-    public function canUseDeliveryOptions(Mage_Sales_Model_Quote $quote, $checkCountry = true)
+    public function canUseDeliveryOptions($quote = false, $checkCountry = true)
     {
         if (Mage::registry('can_use_delivery_options') !== null) {
             return Mage::registry('can_use_delivery_options');
@@ -429,7 +467,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * PostNL delivery options cannot be used for virtual orders
          */
-        if ($quote->isVirtual()) {
+        if ($quote && $quote->isVirtual()) {
             $errors = array(
                 array(
                     'code'    => 'POSTNL-0104',
@@ -444,7 +482,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Check if the quote has a valid minimum amount
          */
-        if (!$quote->validateMinimumAmount()) {
+        if ($quote && !$quote->validateMinimumAmount()) {
             $errors = array(
                 array(
                     'code'    => 'POSTNL-0105',
@@ -473,7 +511,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
-        if ($checkCountry) {
+        if ($quote && $checkCountry) {
             $shippingAddress = $quote->getShippingAddress();
             if ($shippingAddress->getCountry() != 'NL') {
                 $errors = array(
@@ -488,6 +526,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 Mage::register('can_use_delivery_options', false);
                 return false;
             }
+        }
+
+        /**
+         * If we have no quote, we have no further checks to perform.
+         */
+        if (!$quote) {
+            Mage::register('can_use_delivery_options', true);
+            return true;
         }
 
         $storeId = $quote->getStoreId();
@@ -553,12 +599,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         if ($storeId === false) {
             $storeId = Mage::app()->getStore()->getId();
-        }
-
-        $testModeAllowed = $this->isTestModeAllowed();
-        if (!$testModeAllowed) {
-            Mage::register('delivery_options_test_mode', false);
-            return false;
         }
 
         $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);

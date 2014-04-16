@@ -35,6 +35,8 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton setElement(Varien_Data_Form_Element_Abstract $value)
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
     extends Mage_Adminhtml_Block_System_Config_Form_Field
@@ -55,8 +57,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
     protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
         $this->setElement($element);
-
-        $url = $this->getUrl('postnl/adminhtml_extensionControl/activate');
 
         $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($isActivated === '1') {

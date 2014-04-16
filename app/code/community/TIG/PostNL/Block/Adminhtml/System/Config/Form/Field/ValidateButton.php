@@ -51,8 +51,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ValidateButton
     {
         $this->setElement($element);
 
-        $url = $this->getUrl('postnl/adminhtml_extensionControl/activate');
-
         $html = $this->getLayout()->createBlock('adminhtml/widget_button')
                      ->setId($element->getHtmlId())
                      ->setType('button')

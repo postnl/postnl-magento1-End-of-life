@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
@@ -96,7 +96,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     public function lockAndBlock()
     {
         $this->_isLocked = true;
-        $file = $this->_getLockFile();
+        $this->_getLockFile();
 
         flock($this->_getLockFile(), LOCK_EX);
 
@@ -122,6 +122,8 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         $varDir   = Mage::getConfig()->getVarDir('locks');
         $lockFile = $varDir . DS . 'postnl_process_' . $this->getId() . '.lock';
         @unlink($lockFile);
+
+        $this->_lockFile = null;
 
         return $this;
     }
@@ -204,5 +206,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
         if (is_file($lockFile)) {
             @unlink($lockFile);
         }
+
+        return;
     }
 }

@@ -33,8 +33,12 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method TIG_PostNL_Model_Checkout_Service setQuote(Mage_Sales_Model_Quote $value)
+ * @method TIG_PostNL_Model_Checkout_Service setStoreId(int $value)
+ * @method int                               getStoreId()
  */
 class TIG_PostNL_Model_Checkout_Service extends Varien_Object
 {
@@ -136,7 +140,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $shippingAddress = Mage::getModel('sales/quote_address');
         $shippingAddress->setAddressType($shippingAddress::TYPE_SHIPPING)
                         ->setEmail($email)
-                        ->setPhone($phone);
+                        ->setTelephone($phone);
 
         $shippingAddress = $this->_parseAddress($shippingAddress, $shippingAddressData);
 
@@ -153,7 +157,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $billingAddress = Mage::getModel('sales/quote_address');
         $billingAddress->setAddressType($billingAddress::TYPE_BILLING)
                        ->setEmail($email)
-                       ->setPhone($phone);
+                       ->setTelephone($phone);
 
         $billingAddress = $this->_parseAddress($billingAddress, $billingAddressData);
 
@@ -165,7 +169,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $pakjeGemakAddress = Mage::getModel('sales/quote_address');
             $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK)
                               ->setEmail($email)
-                              ->setPhone($phone);
+                              ->setTelephone($phone);
 
             $pakjeGemakAddress = $this->_parseAddress($pakjeGemakAddress, $serviceLocationData);
 
@@ -239,6 +243,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
 
         /**
          * Extra checks used by Magento
+         *
+         * @var $paymentMethodAbstractClass Mage_Payment_Model_Method_Abstract
          *
          * @since Magento v1.13
          */
@@ -383,7 +389,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * Extra checks used by Magento
          *
-         * @since Magento v1.13
+         * @since Magento CE v1.7
+         * @since Magento EE v1.13
+         *
+         * @var $paymentMethodAbstractClass Mage_Payment_Model_Method_Abstract
          */
         $paymentMethodAbstractClass = Mage::getConfig()->getModelClassName('payment/method_abstract');
         if (defined($paymentMethodAbstractClass . '::CHECK_USE_CHECKOUT')
@@ -533,8 +542,6 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * @param      $data
      * @param null $quote
      *
-     * @internal param \StdClass $orderDetails
-     *
      * @return TIG_PostNL_Model_Checkout_Service
      */
     public function updatePostnlOrder($data, $quote = null)
@@ -550,7 +557,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
 
         $this->_verifyData($data, $quote);
 
-        $postnlOrder = Mage::getModel('postnl_checkout/order');
+        $postnlOrder = Mage::getModel('postnl_core/order');
         $postnlOrder->load($quote->getId(), 'quote_id');
 
         /**
@@ -628,7 +635,9 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         }
 
         /**
-         * If a pakje_gemak address is present, add it to the order as well
+         * If a pakje_gemak address is present, add it to the order as well.
+         *
+         * @var Mage_Sales_Model_Quote_Address $address
          */
         $quoteAddresses = $quote->getAllAddresses();
         foreach ($quoteAddresses as $address) {
@@ -670,9 +679,11 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $quote->setIsActive(false)
               ->save();
 
-        $postnlOrder = Mage::getModel('postnl_checkout/order');
-        $postnlOrder->load($quote->getId(), 'quote_id')
-                    ->setOrderId($order->getId())
+        /**
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder->setOrderId($order->getId())
                     ->setIsActive(false)
                     ->save();
 
@@ -710,7 +721,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             $quote = $this->getQuote();
         }
 
-        $postnlOrder = Mage::getModel('postnl_checkout/order')
+        /**
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
+        $postnlOrder = Mage::getModel('postnl_core/order')
                            ->load($quote->getId(), 'quote_id');
 
         $cif = Mage::getModel('postnl_checkout/cif');
@@ -777,7 +791,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
 
         $address->setFirstname($firstname)
                 ->setLastname($lastname)
-                ->setMiddelname($middlename)
+                ->setMiddlename($middlename)
                 ->setCountryId($country)
                 ->setCity($city)
                 ->setPostcode($postcode);
@@ -927,7 +941,9 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     protected function _removeAllQuoteAddresses(&$quote)
     {
         /**
-         * Truly delete the PakjeGemak address
+         * Truly delete the PakjeGemak address.
+         *
+         * @var Mage_Sales_Model_Quote_Address $address
          */
         $addresses = $quote->getAllAddresses();
         foreach ($addresses as $address) {

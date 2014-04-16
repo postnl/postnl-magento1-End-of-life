@@ -113,9 +113,9 @@ class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien
             case self::BILLING_ADDRESS_BLOCK_ALIAS:
                 $block->setTemplate('TIG/PostNL/onestepcheckout/billing_fields.phtml');
                 break;
-//            case self::SHIPPING_ADDRESS_BLOCK_ALIAS:
-//                $block->setTemplate('TIG/PostNL/onestepcheckout/shipping_fields.phtml');
-//                break;
+            case self::SHIPPING_ADDRESS_BLOCK_ALIAS:
+                $block->setTemplate('TIG/PostNL/onestepcheckout/shipping_fields.phtml');
+                break;
             //no default
         }
 

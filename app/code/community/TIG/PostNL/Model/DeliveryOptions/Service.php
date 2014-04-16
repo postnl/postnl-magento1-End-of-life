@@ -39,7 +39,7 @@
  * @method boolean                                  hasQuote()
  * @method TIG_PostNL_Model_DeliveryOptions_Service setQuote(Mage_Sales_Model_Quote $quote)
  * @method boolean                                  hasPostnlOrder()
- * @method TIG_PostNL_Model_DeliveryOptions_Service setPostnlOrder(TIG_PostNL_Model_Checkout_Order $postnlOrder)
+ * @method TIG_PostNL_Model_DeliveryOptions_Service setPostnlOrder(TIG_PostNL_Model_Core_Order $postnlOrder)
  * @method boolean                                  hasShippingDuration()
  * @method TIG_PostNL_Model_DeliveryOptions_Service setShippingDuration(int $duration)
  * @method boolean                                  hasConfirmDate()
@@ -60,7 +60,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     /**
      * Gets a PostNL Order. If none is set; load one.
      *
-     * @return TIG_PostNL_Model_Checkout_Order
+     * @return TIG_PostNL_Model_Core_Order
      */
     public function getPostnlOrder()
     {
@@ -72,8 +72,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
         $quote = $this->getQuote();
 
-        $postnlOrder = Mage::getModel('postnl_checkout/order');
+        $postnlOrder = Mage::getModel('postnl_core/order');
         $postnlOrder->load($quote->getId(), 'quote_id');
+
+        $postnlOrder->setQuoteId($quote->getId());
 
         $this->setPostnlOrder($postnlOrder);
         return $postnlOrder;
@@ -197,7 +199,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $confirmDate = $this->getConfirmDate($data['date']);
 
         /**
-         * @var TIG_PostNL_Model_Checkout_Order $postnlOrder
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
         $postnlOrder = $this->getPostnlOrder();
         $postnlOrder->setQuoteId($quote->getId())
@@ -207,6 +209,14 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                     ->setShipmentCosts($data['costs'])
                     ->setDeliveryDate($data['date'])
                     ->setConfirmDate($confirmDate);
+
+        if ($data['type'] == 'PA') {
+            $postnlOrder->setIsPakketautomaat(true)
+                        ->setProductCode(3553)
+                        ->setMobilePhoneNumber($data['number']);
+        } elseif ($data['type'] == 'PG' || $data['type'] == 'PGE') {
+            $postnlOrder->setIsPakjeGemak(true);
+        }
 
         /**
          * Remove any existing PakjeGemak addresses.
@@ -225,22 +235,25 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         if (array_key_exists('address', $data)) {
             $address = $data['address'];
 
-            $pakjeGemakAddress = Mage::getModel('sales/quote_address');
-            $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK);
-            $pakjeGemakAddress->setCity($address['city'])
-                              ->setCountryId($address['countryCode'])
-                              ->setStreet1($address['street'])
-                              ->setStreet2($address['houseNumber'])
-                              ->setPostcode($address['postcode']);
+            $street = array(
+                $address['street'],
+                $address['houseNumber']
+            );
 
             if (array_key_exists('houseNumberExtension', $address)) {
-                $pakjeGemakAddress->setStreet3($address['houseNumberExtension']);
+                $street[] = $address['houseNumberExtension'];
             }
+
+            $pakjeGemakAddress = Mage::getModel('sales/quote_address');
+            $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK)
+                              ->setCity($address['city'])
+                              ->setCountryId($address['countryCode'])
+                              ->setPostcode($address['postcode'])
+                              ->setCompany($address['name'])
+                              ->setStreet($street);
 
             $quote->addAddress($pakjeGemakAddress)
                   ->save();
-
-            $postnlOrder->setIsPakjeGemak(true);
         }
 
         $postnlOrder->save();

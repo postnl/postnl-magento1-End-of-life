@@ -33,28 +33,35 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Checkout_Resource_Order_Collection extends TIG_PostNL_Model_Resource_Db_Collection_Postnl
+class TIG_PostNL_Model_Admin_Logging_Observer
 {
     /**
-     * Event prefix
+     * Check if the Enterprise Logging extension is present and if so, call it's observer method. This prevents errors
+     * in Magento community edition.
      *
-     * @var string
-     */
-    protected $_eventPrefix = 'postnl_order_collection';
-
-    /**
-     * Event object
+     * @param Varien_Event_Observer $observer
      *
-     * @var string
+     * @return $this
+     *
+     * @see Enterprise_Logging_Model_Observer::controllerPostdispatch()
      */
-    protected $_eventObject = 'postnl_order_collection';
-
-    public function _construct()
+    public function controllerPostdispatch(Varien_Event_Observer $observer)
     {
-        parent::_construct();
-        $this->_init('postnl_checkout/order');
+        $loggingObserverClassName = Mage::getConfig()->getModelClassName('enterprise_logging/observer');
+        $found = mageFindClassFile($loggingObserverClassName);
+
+        /**
+         * If we can't find the model, there's nothing that can be logged.
+         */
+        if ($found === false) {
+            return $this;
+        }
+
+        Mage::getModel('enterprise_logging/observer')->controllerPostdispatch($observer);
+
+        return $this;
     }
 }

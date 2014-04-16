@@ -33,13 +33,26 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Checkout_Resource_Order extends Mage_Core_Model_Resource_Db_Abstract
+class TIG_PostNL_Block_Adminhtml_Carrier_Postnl_Tablerate_Grid
+    extends Mage_Adminhtml_Block_Shipping_Carrier_Tablerate_Grid
 {
-    public function _construct()
+    /**
+     * Prepare shipping table rate collection
+     *
+     * @return Mage_Adminhtml_Block_Shipping_Carrier_Tablerate_Grid
+     */
+    protected function _prepareCollection()
     {
-        $this->_init('postnl_checkout/order', 'entity_id');
+        /** @var $collection Mage_Shipping_Model_Mysql4_Carrier_Tablerate_Collection */
+        $collection = Mage::getResourceModel('postnl_carrier/tablerate_collection');
+        $collection->setConditionFilter($this->getConditionName())
+                   ->setWebsiteFilter($this->getWebsiteId());
+
+        $this->setCollection($collection);
+
+        return Mage_Adminhtml_Block_Widget_Grid::_prepareCollection();
     }
 }

@@ -40,7 +40,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Translate
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
 {
     /**
-     * Translate the column's value before rendering it
+     * Translate the column's value before rendering it.
      *
      * @param Varien_Object $row
      *

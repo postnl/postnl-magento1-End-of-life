@@ -35,6 +35,8 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method TIG_PostNL_Model_Core_Label setLabelSize(string $value)
  */
 class TIG_PostNL_Model_Core_Label extends Varien_Object
 {
@@ -280,10 +282,11 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     /**
      * Adds a lebl to the pdf by storing it in a temporary pdf file and then adding it to the master pdf object
      *
-     * @param TIG_PostNL_Fpdi $pdf
-     * @param string          $label
+     * @param TIG_PostNL_Fpdi                      $pdf
+     * @param TIG_PostNL_Model_Core_Shipment_Label $label
      *
      * @throws TIG_PostNL_Exception
+     *
      * @return TIG_PostNL_Fpdi $pdf
      */
     protected function _addPdfTemplate($pdf, $label)
@@ -294,6 +297,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         $tempFilename = $this->_saveTempLabel($label->getLabel());
 
         switch ($label->getLabelType()) {
+            /** @noinspection PhpMissingBreakStatementInspection */
             case 'Label-combi':
                 $this->_convertTempLabelToCombi($tempFilename); //NO BREAK
             case 'Label':
@@ -464,8 +468,12 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     protected function _sortLabels($labels)
     {
         $generalLabels = array();
-        $globalLabels = array();
-        $codCards = array();
+        $globalLabels  = array();
+        $codCards      = array();
+
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment_Label $label
+         */
         foreach ($labels as $label) {
             /**
              * Seperate general labels from the rest
@@ -569,6 +577,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * @param bool|int $counter
      *
      * @throws TIG_PostNL_Exception
+     *
      * @return array
      *
      */
@@ -607,8 +616,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * Converts pixels to points. 3.8 pixels is 1 pt in pdfs
      *
      * @param int $pixels
-     *
-     * @internal param float $input
      *
      * @return int
      */

@@ -33,13 +33,13 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Checkout_Observer_Order
 {
     /**
-     * Cancels a PostNL Checkout order
+     * Cancels a PostNL Checkout order after it's Magento order has been cancelled.
      *
      * @param Varien_Event_Observer $observer
      *
@@ -51,10 +51,14 @@ class TIG_PostNL_Model_Checkout_Observer_Order
      */
     public function cancelOrder(Varien_Event_Observer $observer)
     {
+        /**
+         * @var Mage_Sales_Model_Order          $order
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
         $order = $observer->getOrder();
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($order->getId(), 'order_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($order->getId(), 'order_id');
 
-        if (!$postnlOrder->getId()) {
+        if (!$postnlOrder->getId() || !$postnlOrder->getToken()) {
             return $this;
         }
 

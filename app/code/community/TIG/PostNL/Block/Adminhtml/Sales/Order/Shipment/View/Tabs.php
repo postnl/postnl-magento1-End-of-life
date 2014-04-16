@@ -60,7 +60,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tabs extends Mage_Adm
     protected function _prepareLayout()
     {
         /**
-         * Add the 'information' tab. this contains all default features of the shipment view page and is selected by default
+         * Add the 'information' tab. this contains all default features of the shipment view page and is selected by
+         * default.
          */
         $this->addTab('shipment_info', array(
             'label'     => Mage::helper('sales')->__('Information'),
@@ -76,9 +77,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tabs extends Mage_Adm
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipmentId, 'shipment_id');
 
         /**
-         * Only show the status history tab if a postnl shipment entity was found for the current shipment
+         * Only show the status history tab if a postnl shipment entity was found for the current shipment and the
+         * current admin user is allowed to view the complete shipment status history.
          */
-        if ($postnlShipment->getId()) {
+        $historyAllowed = Mage::helper('postnl')->checkIsPostnlActionAllowed('view_complete_status');
+        if ($historyAllowed && $postnlShipment->getId()) {
             /**
              * Add the status history tab. This is added by PostNL
              */

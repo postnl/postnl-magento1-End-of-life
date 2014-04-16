@@ -56,7 +56,24 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     const EXPAND_SUPPORT_PATH = 'postnl/support/expanded';
 
     /**
-     * callAfterApplyAllUpdates flag. Causes applyAfterUpdates() to be called.
+     * Test data.
+     */
+    const DEFAULT_TEST_PASSWORD = 'z9A4LpFd53Z';
+    const DEFAULT_WEBSHOP_ID    = '853f9d2a4c5242f097daeaf61637609c';
+
+    /**
+     * Xpaths for test data.
+     */
+    const XPATH_TEST_PASSWORD = 'postnl/cif/test_password';
+    const XPATH_WEBSHOP_ID    = 'postnl/cif/webshop_id';
+
+    /**
+     * Xpath to supported options configuration setting
+     */
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+
+    /**
+     * callAfterApplyAllUpdates flag. Causes applyAFterUpdates() to be called.
      *
      * @var boolean
      */
@@ -97,7 +114,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
      *
      * @param string $dbVer
      *
-     * @return TIG_PostNL_Model_Resource_Setup
+     * @return $this
      */
     public function setDbVer($dbVer)
     {
@@ -111,7 +128,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
      *
      * @param string $configVer
      *
-     * @return TIG_PostNL_Model_Resource_Setup
+     * @return $this
      */
     public function setConfigVer($configVer)
     {
@@ -157,8 +174,15 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
      */
     public function applyUpdates()
     {
-        $dbVer = $this->_getResource()->getDbVersion($this->_resourceName);
-        $configVer = (string)$this->_moduleConfig->version;
+        /**
+         * @var Mage_Core_Model_Resource_Resource $resource
+         * @var Varien_Simplexml_Element $moduleConfig
+         */
+        $resource = $this->_getResource();
+        $moduleConfig = $this->_moduleConfig;
+
+        $dbVer = $resource->getDbVersion($this->_resourceName);
+        $configVer = (string) $moduleConfig->version;
 
         $this->setDbVer($dbVer);
         $this->setConfigVer($configVer);
@@ -169,7 +193,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     /**
      * Check if the PostNL module has been updated. If so, add an admin notification to the inbox.
      *
-     * @return TIG_PostNL_Model_Resource_Setup
+     * @return $this
      */
     public function afterApplyAllUpdates()
     {
@@ -185,12 +209,21 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $helper = Mage::helper('postnl');
 
         $inbox = Mage::getModel('postnl/inbox');
-        $inbox->addNotice(
-                  '[POSTNL-0083] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
-                  '[POSTNL-0083] ' . $helper->__('PostNL extension has been successfully updated to version %s.', $configVer),
-                  'http://kb.totalinternetgroup.nl/topic/31921907',
-                  true
-              )
+        if ($dbVer) {
+            $message = '[POSTNL-0083] ' . $helper->__(
+                'PostNL extension has been successfully updated to version v%s.',
+                $configVer
+            );
+            $url = 'http://kb.totalinternetgroup.nl/topic/31921907';
+        } else {
+            $message = '[POSTNL-0156] ' . $helper->__(
+                'The PostNL extension v%s has been successfully installed.',
+                $configVer
+            );
+            $url = '';
+        }
+
+        $inbox->addNotice($message, $message, $url, true)
               ->save();
 
         return $this;
@@ -201,7 +234,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
      *
      * @throws TIG_PostNL_Exception
      *
-     * @return TIG_PostNL_Model_Resource_Setup
+     * @return $this
      */
     public function generateShippingStatusCronExpr()
     {
@@ -215,7 +248,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         $cronMinute        = mt_rand(0, 59);
 
         /**
-         * Generate a cron expr that runs on a specified minute on a specified hour between 10 and 12 AM, and between 14 and 16 PM.
+         * Generate a cron expr that runs on a specified minute on a specified hour between 10 and 12 AM, and between 14
+         * and 16 PM.
          */
         $cronExpr = "{$cronMinute} {$cronMorningHour},{$cronAfternoonHour} * * *";
 
@@ -245,12 +279,12 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     }
 
     /**
-     * Generates a semi-random cron expression for the update statistics cron. This is done to spread out the number of calls
-     * across each day.
+     * Generates a semi-random cron expression for the update statistics cron. This is done to spread out the number of
+     * calls across each day.
      *
      * @throws TIG_PostNL_Exception
      *
-     * @return TIG_PostNL_Model_Resource_Setup
+     * @return $this
      */
     public function generateUpdateStatisticsCronExpr()
     {
@@ -292,10 +326,10 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     }
 
     /**
-     * Checks the store's config to see if the extension is compatible with the installed Magento version. If not, a message will
-     * be added to Mage_Adminnotification.
+     * Checks the store's config to see if the extension is compatible with the installed Magento version. If not, a
+     * message will be added to Mage_Adminnotification.
      *
-     * @return TIG_PostNL_Model_Resource_Setup
+     * @return $this
      */
     public function _checkVersionCompatibility()
     {
@@ -312,8 +346,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         if ($supportedVersions === false) {
             $message = '[POSTNL-0086] '
                      . $helper->__(
-                           'The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.'
-                       );
+                         'The PostNL extension is not compatible with your Magento version! This may cause unexpected '
+                         . 'behaviour.'
+                     );
 
             $inbox->addCritical(
                       $message,
@@ -335,8 +370,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         if (!in_array($installedMagentoVersion, $supportedVersionArray)) {
             $message = '[POSTNL-0086] '
                      . $helper->__(
-                           'The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.'
-                       );
+                         'The PostNL extension is not compatible with your Magento version! This may cause unexpected '
+                         . 'behaviour.'
+                     );
 
             $inbox->addCritical(
                       $message,
@@ -355,7 +391,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
     /**
      * Makes sure the PostNL support tab is expanded the first time an adin visits the PostNL system/config/edit page.
      *
-     * @return TIG_PostNL_Model_Resource_Setup
+     * @return $this
      */
     public function expandSupportTab()
     {
@@ -366,8 +402,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         /**
          * Get all admin users and save the PostNL support tab's state as being expanded for each one.
          *
-         * This has the same effect as having every admin log in, go to system/config/edit/section/postnl and manually click on
-         * the 'Version & Support' tab before saving the section.
+         * This has the same effect as having every admin log in, go to system/config/edit/section/postnl and manually
+         * click on the 'Version & Support' tab before saving the section.
          */
         $adminUsers = Mage::getResourceModel('admin/user_collection');
         foreach ($adminUsers as $adminUser) {
@@ -384,7 +420,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
      * @param Mage_Admin_Model_User $adminUser
      * @param array $configState
      *
-     * @return TIG_PostNL_Model_Resource_Setup
+     * @return $this
      *
      * @see Mage_Adminhtml_System_ConfigController::_saveState()
      */
@@ -461,6 +497,188 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
         foreach ($configFields as $setting) {
             $config->deleteConfig($setting);
         }
+
+        return $this;
+    }
+
+    /**
+     * Saves the default test password in the database as an encrypted string.
+     *
+     * @return $this
+     */
+    public function installTestPassword()
+    {
+        $testPassword = self::DEFAULT_TEST_PASSWORD;
+        $encryptedPassword = Mage::helper('core')->encrypt($testPassword);
+
+        /**
+         * @var Mage_Core_Model_Config_Data $config
+         */
+        $config = Mage::getModel('core/config_data')
+                      ->load(self::XPATH_TEST_PASSWORD, 'path');
+
+        $config->setValue($encryptedPassword)
+               ->setPath(self::XPATH_TEST_PASSWORD)
+               ->save();
+
+        return $this;
+    }
+
+    /**
+     * Saves the default test webshop ID as an encrypted string.
+     *
+     * @return $this
+     */
+    public function installWebshopId()
+    {
+        $testWebshopId = self::DEFAULT_WEBSHOP_ID;
+        $encryptedWebshopId = Mage::helper('core')->encrypt($testWebshopId);
+
+        /**
+         * @var Mage_Core_Model_Config_Data $config
+         */
+        $config = Mage::getModel('core/config_data')
+                      ->load(self::XPATH_WEBSHOP_ID, 'path');
+
+        $config->setValue($encryptedWebshopId)
+               ->setPath(self::XPATH_WEBSHOP_ID)
+               ->save();
+
+        return $this;
+    }
+
+    /**
+     * Moves a config value from one place to another, by copying it's value. If the $removeOldValue parameter is true,
+     * we also remove the old value.
+     *
+     * @param string  $fromXpath
+     * @param string  $toXpath
+     * @param boolean $removeOldValue
+     *
+     * @return $this
+     */
+    public function moveConfigSetting($fromXpath, $toXpath, $removeOldValue = true)
+    {
+        /**
+         * First loop through all stores.
+         *
+         * @var Mage_Core_Model_Store $store
+         */
+        $stores = Mage::app()->getStores();
+        foreach ($stores as $store) {
+            $scope   = 'website';
+            $scopeId = $store->getId();
+
+            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
+        }
+
+        /**
+         * Now loop through all websites.
+         *
+         * @var Mage_Core_Model_Website $website
+         */
+        $websites = Mage::app()->getWebsites();
+        foreach ($websites as $website) {
+            $scope   = 'website';
+            $scopeId = $website->getId();
+
+            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
+        }
+
+        /**
+         * Finally, try to move the config setting for the default scope.
+         */
+        $this->moveConfigSettingForScope($fromXpath, $toXpath, 'default', 0, $removeOldValue);
+
+        return $this;
+    }
+
+    /**
+     * Move a config setting for a specified scope.
+     *
+     * @param string  $fromXpath
+     * @param string  $toXpath
+     * @param string  $scope
+     * @param int     $scopeId
+     * @param boolean $removeOldValue
+     *
+     * @return $this
+     */
+    protected function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
+                                                 $removeOldValue = true)
+    {
+        $config = Mage::getConfig();
+
+        $node = $config->getNode($fromXpath, $scope, $scopeId);
+
+        /**
+         * If the node is not set for the default scope, there is nothing left to do.
+         */
+        if ($node === false) {
+            return $this;
+        }
+
+        /**
+         * Get the string representation of the value.
+         */
+        $currentValue = $node->__toString();
+
+        /**
+         * Save the value to the new xpath for the scope from which we got the old value.
+         */
+        $config->saveConfig($toXpath, $currentValue, $scope, $scopeId);
+
+        /**
+         * Optionally remove the value from the old xpath.
+         */
+        if ($removeOldValue) {
+            $config->deleteConfig($fromXpath, $scope, $scopeId);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Adds new supported product codes.
+     *
+     * @param array|string|int $codes
+     *
+     * @return $this
+     */
+    public function addSupportedProductCode($codes)
+    {
+        if (!is_array($codes)) {
+            $codes = array((string) $codes);
+        }
+
+        /**
+         * Get the currently supported product codes.
+         */
+        $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        $supportedProductCodes = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $adminStoreId);
+
+        /**
+         * If no supported product codes are set, it means the default option is used, which should already contain the
+         * new codes.
+         */
+        if ($supportedProductCodes === null) {
+            return $this;
+        }
+
+        $supportedCodesArray = explode(',', $supportedProductCodes);
+
+        /**
+         * Add the new codes to the existing codes by merging both arrays and then getting only the unique values.
+         * Finally we implode the array, so that we can store it in the core_config_data table.
+         */
+        $mergedCodes = array_merge($supportedCodesArray, $codes);
+        $uniqueCodes = array_unique($mergedCodes);
+        $newCodes    = implode(',', $uniqueCodes);
+
+        /**
+         * Save the supported product codes.
+         */
+        Mage::getConfig()->saveConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $newCodes, 'default', 0);
 
         return $this;
     }
