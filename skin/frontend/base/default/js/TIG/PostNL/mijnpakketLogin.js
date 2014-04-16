@@ -369,12 +369,12 @@ MijnpakketLogin.prototype = {
                 this.getBilling().onSave(response);
             }
 
-            this.addMijnpakketDataLoadedMessage();
-
             this.showDummyButton();
         } else {
             this.showDisabledButton();
         }
+
+        this.addMijnpakketDataLoadedMessage();
 
         this.updateAddressForms(data);
 
@@ -537,7 +537,18 @@ MijnpakketLogin.prototype = {
 
         dataLoadedMessage.insert(dataLoadedContent);
 
-        $('checkout-step-shipping_method').insert({
+        var messageContainer;
+        if (!this.isOsc) {
+            messageContainer = $('checkout-step-shipping_method')
+        } else {
+            messageContainer = $('billing_address_list');
+        }
+
+        if (!messageContainer) {
+            return this;
+        }
+
+        messageContainer.insert({
             top : dataLoadedMessage
         });
 
