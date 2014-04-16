@@ -106,4 +106,7 @@
     <mijnpakket_data_loaded_message translate="message" module="postnl">
         <message>Your preferred address has been loaded from your MijnPakket account and set as your billing and shipping address. You may now choose a shipping method and complete your order.</message>
     </mijnpakket_data_loaded_message>
+    <mijnpakket_login_unavailable translate="message" module="postnl">
+        <message>Unfortunately MijnPakket login is currently not available. Please use a different checkout method.</message>
+    </mijnpakket_login_unavailable>
 </jstranslator>

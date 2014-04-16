@@ -176,11 +176,11 @@
     </checkout_onepage_shippingmethod>
 
     <checkout_onepage_success>
-        <reference name="head">
-            <block type="postnl_mijnpakket/orderSuccessJs" name="postnl_mijnpakket_order_success_js" template="TIG/PostNL/mijnpakket/order_success_js.phtml"/>
-        </reference>
         <reference name="checkout.success">
             <block type="postnl_mijnpakket/accountNotification" name="postnl_mijnpakket_account_notification" template="TIG/PostNL/mijnpakket/account_notification.phtml"/>
+        </reference>
+        <reference name="before_body_end">
+            <block type="postnl_mijnpakket/orderSuccessJs" name="postnl_mijnpakket_order_success_js" template="TIG/PostNL/mijnpakket/order_success_js.phtml" output="toHtml"/>
         </reference>
     </checkout_onepage_success>
 

@@ -60,6 +60,6 @@ class TIG_PostNL_Block_Mijnpakket_OrderSuccessJs extends TIG_PostNL_Block_Checko
             return '';
         }
 
-        return parent::_toHtml();
+        return Mage_Core_Block_Template::_toHtml();
     }
 }

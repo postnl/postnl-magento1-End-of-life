@@ -180,6 +180,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
     {
         $helper = Mage::helper('postnl/checkout');
 
+        if (!$helper->isCheckoutActive()) {
+            return true;
+        }
+
         return $helper->isCheckoutEnabled(false);
     }
 
