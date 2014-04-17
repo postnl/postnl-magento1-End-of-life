@@ -55,5 +55,6 @@ $settingsToReset = array(
  * default settings in config.xml.
  */
 $installer->resetWebserviceVersions($settingsToReset)
-          ->addSupportedProductCode('3533')
-          ->moveConfigSetting('postnl/cif_labels_and_confirming/mode', 'postnl/cif/mode', true);
+          ->addSupportedProductCode('3553')
+          ->moveConfigSetting('postnl/cif_labels_and_confirming/mode', 'postnl/cif/mode', true)
+          ->clearConfigCache();
