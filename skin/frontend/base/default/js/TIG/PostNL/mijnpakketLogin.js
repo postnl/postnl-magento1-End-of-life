@@ -54,8 +54,9 @@ MijnpakketLogin.prototype = {
     /**
      * @constructor
      *
-     * @param {string} publicId
-     * @param {string} profileAccessUrl
+     * @param {string}  publicId
+     * @param {string}  profileAccessUrl
+     * @param {boolean} isOsc
      */
     initialize : function(publicId, profileAccessUrl, isOsc) {
         this.postnlLogin      = PostNL.Login;
@@ -171,12 +172,15 @@ MijnpakketLogin.prototype = {
         this.elementId = elementId;
         this.debug = debug;
 
+        if (debug) {
+            console.info('Starting MijnPakket login...');
+        }
+
         this.registerObservers();
 
-        console.log(this);
         if (this.getMijnpakketData()) {
             if (debug) {
-                console.log('Saved mijnpakket data found. Replacing login button with dummy.');
+                console.info('Saved mijnpakket data found. Replacing login button with dummy.');
             }
             this.showDummyButton();
 
@@ -210,6 +214,14 @@ MijnpakketLogin.prototype = {
                 }
             });
 
+            $$('#checkout-step-billing .button').each(function(button) {
+                button.disabled = true;
+
+                if (!button.hasClassName('disabled')) {
+                    button.addClassName('disabled');
+                }
+            });
+
             this.getCheckout().setLoadWaiting('login');
         }.bind(this));
 
@@ -219,6 +231,14 @@ MijnpakketLogin.prototype = {
 
                 if (button.hasClassName('disabled')) {
                     button.removeClassName('disabled');
+                }
+            });
+
+            $$('#checkout-step-billing .button').each(function(button) {
+                button.disabled = true;
+
+                if (!button.hasClassName('disabled')) {
+                    button.addClassName('disabled');
                 }
             });
 
@@ -289,6 +309,11 @@ MijnpakketLogin.prototype = {
         if (this.getCheckout() && this.getCheckout().loadWaiting != false) {
             return this;
         }
+        document.fire('postnl:getProfileDataStart');
+
+        if (this.debug) {
+            console.info('Getting MijnPakket data.');
+        }
 
         if (!this.isOsc && this.getCheckout()) {
             this.getCheckout().setLoadWaiting('billing');
@@ -327,13 +352,43 @@ MijnpakketLogin.prototype = {
             || response.responseText == 'not_allowed'
             || response.responseText == 'invalid_data'
         ) {
-            //todo error handling
+            if (this.debug) {
+                console.error('Invalid response received:', response.responseText);
+            }
+
+            this.showDisabledButton();
+            alert(
+                Translator.translate(
+                    'Unfortunately MijnPakket login is currently not available. Please use a different checkout method.'
+                )
+            );
+
             return this;
         }
 
         document.fire('postnl:getProfileDataSuccess');
 
-        var data = response.responseText.evalJSON(true).origData;
+        var responseData = response.responseText.evalJSON(true);
+        if (!responseData) {
+            if (this.debug) {
+                console.error('Response data received:', responseData);
+            }
+
+            this.showDisabledButton();
+            alert(
+                Translator.translate(
+                    'Unfortunately MijnPakket login is currently not available. Please use a different checkout method.'
+                )
+            );
+
+            return this;
+        }
+
+        var data = responseData.origData;
+
+        if (this.debug) {
+            console.log(data);
+        }
 
         if (!this.isOsc) {
             if (this.getBilling()) {
@@ -344,6 +399,8 @@ MijnpakketLogin.prototype = {
         } else {
             this.showDisabledButton();
         }
+
+        this.addMijnpakketDataLoadedMessage();
 
         this.updateAddressForms(data);
 
@@ -374,16 +431,21 @@ MijnpakketLogin.prototype = {
     updateAddressForms : function(data) {
         document.fire('postnl:updateAddressFormsStart');
 
+        if (this.debug) {
+            console.info('Updating forms.');
+        }
+
         var field;
         var virtualField;
 
         /**
          * If guest checkout is allowed, set it as the chosen checkout method.
          */
-        if ($('login:guest') && this.getCheckout()) {
-            $('login:guest').checked = true;
+        var guestLoginCheckbox = $('login:guest');
+        if (guestLoginCheckbox && this.getCheckout()) {
+            guestLoginCheckbox.checked = true;
             this.getCheckout().method = 'guest';
-            var request = new Ajax.Request(
+            new Ajax.Request(
                 this.getCheckout().saveMethodUrl,
                 {
                     method: 'post',
@@ -467,7 +529,54 @@ MijnpakketLogin.prototype = {
             shippingRegionUpdater.update();
         }
 
+        if (this.debug) {
+            console.info('Finished updating forms.');
+        }
+
         document.fire('postnl:updateAddressFormsEnd');
+
+        return this;
+    },
+
+    /**
+     * Add a success message to the shipping method step.
+     *
+     * @returns {MijnpakketLogin}
+     */
+    addMijnpakketDataLoadedMessage : function() {
+        var dataLoadedMessage = $('mijnpakket_data_loaded');
+        if (dataLoadedMessage) {
+            dataLoadedMessage.show();
+
+            return this;
+        }
+
+        dataLoadedMessage = new Element('div', {id : 'mijnpakket_data_loaded'});
+
+        var dataLoadedContent = new Element('p');
+        dataLoadedContent.update(
+            Translator.translate(
+                'Your preferred address has been loaded from your MijnPakket account and set as your '
+                + 'billing and shipping address. You may now choose a shipping method and complete your order.'
+            )
+        );
+
+        dataLoadedMessage.insert(dataLoadedContent);
+
+        var messageContainer;
+        if (!this.isOsc) {
+            messageContainer = $('checkout-step-shipping_method')
+        } else {
+            messageContainer = $('billing_address_list');
+        }
+
+        if (!messageContainer) {
+            return this;
+        }
+
+        messageContainer.insert({
+            top : dataLoadedMessage
+        });
 
         return this;
     }

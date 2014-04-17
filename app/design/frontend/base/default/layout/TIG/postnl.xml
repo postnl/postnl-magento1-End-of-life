@@ -150,9 +150,7 @@
                 <type>skin_js</type>
                 <file>js/TIG/PostNL/postcodecheck.js</file>
             </action>
-        </reference>
-        <reference name="checkout.onepage.login">
-            <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/onepage/login_button.phtml"/>
+            <block type="postnl_deliveryoptions/theme" name="postnl_deliveryoptions_theme" template="TIG/PostNL/delivery_options/theme.phtml"/>
         </reference>
         <reference name="checkout.onepage.billing">
             <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>
@@ -164,6 +162,7 @@
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
             <block type="postnl_mijnpakket/js" name="postnl_mijnpakket_js" template="TIG/PostNL/mijnpakket/js.phtml"/>
+            <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/onepage/login_button.phtml"/>
         </reference>
     </checkout_onepage_index>
 
@@ -180,6 +179,9 @@
         <reference name="checkout.success">
             <block type="postnl_mijnpakket/accountNotification" name="postnl_mijnpakket_account_notification" template="TIG/PostNL/mijnpakket/account_notification.phtml"/>
         </reference>
+        <reference name="before_body_end">
+            <block type="postnl_mijnpakket/orderSuccessJs" name="postnl_mijnpakket_order_success_js" template="TIG/PostNL/mijnpakket/order_success_js.phtml" output="toHtml"/>
+        </reference>
     </checkout_onepage_success>
 
     <onestepcheckout_index_index>
@@ -193,6 +195,11 @@
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/postcodecheck.js</file></action>
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
             <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
+            <block type="postnl_deliveryoptions/theme" name="postnl_deliveryoptions_theme" template="TIG/PostNL/delivery_options/theme.phtml">
+                <action method="setIsOsc">
+                    <isOsc>true</isOsc>
+                </action>
+            </block>
         </reference>
 
         <reference name="conestepcheckout.checkout">

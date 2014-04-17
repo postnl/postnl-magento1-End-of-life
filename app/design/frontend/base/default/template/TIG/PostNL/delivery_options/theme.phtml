@@ -35,10 +35,7 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @var TIG_PostNL_Block_Mijnpakket_Js $this
  */
 ?>
-<script src="<?php echo $this->getLoginJsUrl() ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/mijnpakketLogin.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getCheckoutPremiumJsUrl(); ?>" type="text/javascript"></script>
+<?php $_filePath = $this->getThemeCssFile(); ?>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl($_filePath); ?>" media="all">

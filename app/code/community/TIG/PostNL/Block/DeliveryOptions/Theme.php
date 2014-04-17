@@ -36,9 +36,80 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
- * @var TIG_PostNL_Block_Mijnpakket_Js $this
+ * @method boolean hasIsOsc()
  */
-?>
-<script src="<?php echo $this->getLoginJsUrl() ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getSkinUrl('js/TIG/PostNL/mijnpakketLogin.js'); ?>" type="text/javascript"></script>
-<script src="<?php echo $this->getCheckoutPremiumJsUrl(); ?>" type="text/javascript"></script>
+class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOptions_Template
+{
+    /**
+     * @var string
+     */
+    protected $_template = 'TIG/PostNL/delivery_options/theme.phtml';
+
+    /**
+     * Gets whether the current checkout page is OneStepCheckout.
+     *
+     * @return boolean|mixed
+     */
+    public function getIsOsc()
+    {
+        if (!$this->hasIsOsc()) {
+            return false;
+        }
+
+        return $this->_getData('is_osc');
+    }
+
+    /**
+     * Gets a css file path for the current theme.
+     *
+     * @return string
+     */
+    public function getThemeCssFile()
+    {
+        /**
+         * @var Varien_Simplexml_Element $theme
+         */
+        $theme = $this->getCurrentTheme();
+        if (!$theme) {
+            return '';
+        }
+
+        /**
+         * @var Varien_Simplexml_Element $files
+         */
+        $files = $theme->files;
+        if (!$files) {
+            return '';
+        }
+
+        if ($this->getIsOsc()) {
+            $file = (string) $files->onestepcheckout;
+        } else {
+            $file = (string) $files->onepage;
+        }
+
+        return $file;
+    }
+
+    /**
+     * Check if PostNL delivery options are available for the current quote.
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $helper = Mage::helper('postnl/deliveryOptions');
+
+        if (!$helper->canUseDeliveryOptions($quote, false)) {
+            return '';
+        }
+
+        if (!$this->getThemeCssFile()) {
+            return '';
+        }
+
+        return parent::_toHtml();
+    }
+}
