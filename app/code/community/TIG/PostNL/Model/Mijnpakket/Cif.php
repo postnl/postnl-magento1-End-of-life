@@ -39,7 +39,7 @@
 class TIG_PostNL_Model_Mijnpakket_Cif extends TIG_PostNL_Model_Checkout_Cif
 {
     /**
-     * Get mijnpakket profile access using a token.
+     * Get MijnPakket profile access using a token.
      *
      * @param string $token
      *

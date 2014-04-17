@@ -451,7 +451,7 @@
                 <handling_fee/>
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
                 <sallowspecific>1</sallowspecific> <!-- Allow only specific countries -->
-                <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,Sk,ES,CZ,SE</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
+                <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,SK,ES,CZ,SE</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
                 <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
             </postnl>
         </carriers>
@@ -466,18 +466,17 @@
         	<cif>
                 <mode>1</mode> <!-- Test mode -->
                 <customer_number>11223344</customer_number> <!-- Demo customer number -->
-        		<customer_code>TOTA</customer_code> <!-- Demo customer doe -->
+        		<customer_code>TOTA</customer_code> <!-- Demo customer code -->
                 <live_username/>
                 <live_password/>
                 <test_username>Dem0#Magnt01</test_username> <!-- Demo username -->
                 <test_password/> <!-- The demo password will be generated on install -->
         		<collection_location>103861</collection_location> <!-- Demo collection location -->
+                <webshop_id/> <!-- The demo webshop ID will be generated on install -->
+                <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
         		<use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
         		<global_barcode_type>CD</global_barcode_type> <!-- Demo barcode type -->
         		<global_barcode_range>1660</global_barcode_range> <!-- Demo barcode range -->
-        		<use_checkout>0</use_checkout> <!-- Do not use PostNL Checkout -->
-                <webshop_id/> <!-- The demo webshop ID will be generated on install -->
-                <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
         	</cif>
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
@@ -530,7 +529,7 @@
         		<country>NL</country> <!-- All sender addresses must be located in the Netherlands -->
         	</cif_sender_address>
         	<cif_return_address>
-        	    <use_sender_address>1</use_sender_address> <!-- use the sender address as the return address -->
+        	    <use_sender_address>1</use_sender_address> <!-- Use the sender address as the return address -->
                 <firstname/>
                 <lastname/>
                 <company/>
@@ -591,7 +590,7 @@
         	</delivery_options>
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
-                <show_exclusively_for_mijnpakket_users>0</show_exclusively_for_mijnpakket_users> <!-- Do not show PostNL Checkout exclusively to mijnpakket users -->
+                <show_exclusively_for_mijnpakket_users>0</show_exclusively_for_mijnpakket_users> <!-- Do not show PostNL Checkout exclusively to MijnPakket users -->
         	    <instruction_cms_page/>
         	    <show_checkout_for_letter>0</show_checkout_for_letter> <!-- Do not show the PostNL Checkout button for orders under 2 kg -->
         	    <show_checkout_for_backorders>0</show_checkout_for_backorders> <!-- Do not show the PostNL Checkout button if the order contains out-of-stock products -->

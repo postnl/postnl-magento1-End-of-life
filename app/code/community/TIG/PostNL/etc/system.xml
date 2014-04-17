@@ -507,7 +507,7 @@
                             <show_in_store>0</show_in_store>
                         </public_webshop_id>
                         <validate_button translate="tooltip" module="postnl">
-                            <tooltip>This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error. Please note that the PostNL extension must be active for the validation to succeed.</tooltip>
+                            <tooltip>This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error. Please note that the PostNL extension must be active for the validation to succeed. Please note that the webshop ID and public webshop ID fields will not be validated. Only your CIF credentials will be checked.</tooltip>
                             <frontend_model>postnl_adminhtml/system_config_form_field_validateButton</frontend_model>
                             <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>

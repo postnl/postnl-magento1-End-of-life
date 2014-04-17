@@ -682,4 +682,17 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
 
         return $this;
     }
+
+    /**
+     * Clears the config cache. This should be called after changes have been made to the shop's configuration.
+     *
+     * @return $this
+     */
+    public function clearConfigCache()
+    {
+        Mage::getConfig()->reinit();
+        Mage::app()->reinitStores();
+
+        return $this;
+    }
 }

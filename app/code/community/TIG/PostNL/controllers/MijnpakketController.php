@@ -99,7 +99,7 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
     }
 
     /**
-     * Get mijnpakket profile access using a token.
+     * Get MijnPakket profile access using a token.
      *
      * @return $this
      */
