@@ -6,7 +6,9 @@
 
 #postnl_mijnpakket_login_btn span { display:inline-block; cursor:pointer; }
 
-#mijnpakket_data_loaded { background:url(../../../images/TIG/PostNL/mijnpakket/logo_small.png) 15px 20px no-repeat; padding:10px 20px 10px 60px; margin-bottom:1em; border:1px solid #f2f2f2; }
+#mijnpakket_data_loaded { background:url(../../../images/TIG/PostNL/mijnpakket/logo_small.png) 15px 10px no-repeat; padding:10px 20px 10px 60px; margin-bottom:1em; border:1px solid #f2f2f2; }
+
+#login-buttons-container { opacity:1 !important; }
 
 /* Tooltip (Default Magento) */
 .postnl-tooltip { display:inline-block; width:15px; height:15px; position:relative; z-index:1; background:url(../../../images/TIG/PostNL/icon-tooltip.png) no-repeat 0 0; margin-left:2px; cursor:help; vertical-align:sub; }
