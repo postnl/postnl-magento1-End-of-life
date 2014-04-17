@@ -239,6 +239,7 @@
             allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
             allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
             disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
+            shippingMethodName     : '<?php echo $this->getMethodName()          ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
             optionsContainer       : 'osc_scrollbar_container'
         };
 

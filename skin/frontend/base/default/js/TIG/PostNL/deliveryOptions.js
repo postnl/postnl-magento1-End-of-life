@@ -1153,6 +1153,12 @@ PostnlDeliveryOptions.prototype = {
             body.removeClassName('noscroll');
         }
 
+        this.getOptions().postnlShippingMethods.each(function(shippingMethod) {
+            if ($(shippingMethod)) {
+                $(shippingMethod).checked = true;
+            }
+        });
+
         $('postnl_delivery_options').hide();
 
         document.fire('postnl:domModified');
@@ -1308,8 +1314,8 @@ PostnlDeliveryOptions.prototype = {
      *
      * @returns {PostnlDeliveryOptions}
      */
-    updateShippingPrice : function() {
-
+    updateShippingPrice : function()
+    {
         var taxDisplayType = this.getOptions().taxDisplayType;
         if (taxDisplayType == 1) {
             this.updateShippingPriceExclTax(0);
@@ -1368,7 +1374,12 @@ PostnlDeliveryOptions.prototype = {
         var newCostsIncl = defaultCostsIncl + extraCostsIncl;
 
         var currencyIncl = (newCostsIncl).formatMoney(2, '.', ',');
-        priceContainerIncl.update(this.getOptions().currencySymbol + ' ' + currencyIncl);
+
+        var updateText   = this.getOptions().currencySymbol
+                         + ' '
+                         + currencyIncl;
+
+        priceContainerIncl.update(updateText);
 
         return this;
     },
