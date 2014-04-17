@@ -81,6 +81,8 @@
         if (typeof shippingMethod != 'undefined') {
             if (shippingMethod.validator.validate()) {
                 deliveryOptions.setPaPhoneCheckPassed(true);
+
+                deliveryOptions.closeAddPhoneWindow();
             } else {
                 return;
             }
@@ -89,6 +91,8 @@
         } else if (Validation.validate(phoneInputField)) {
             deliveryOptions.setPaPhoneCheckPassed(true);
             deliveryOptions.saveOscOptions();
+
+            deliveryOptions.closeAddPhoneWindow();
         } else {
             return;
         }
