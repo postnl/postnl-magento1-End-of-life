@@ -235,15 +235,43 @@ MijnpakketLogin.prototype = {
             });
 
             $$('#checkout-step-billing .button').each(function(button) {
-                button.disabled = true;
+                button.disabled = false;
 
-                if (!button.hasClassName('disabled')) {
-                    button.addClassName('disabled');
+                if (button.hasClassName('disabled')) {
+                    button.removeClassName('disabled');
                 }
             });
 
             this.getCheckout().setLoadWaiting(false);
         }.bind(this));
+
+        document.observe('postnl:updateAddressFormsStart', function() {
+            var billingSelect = $('billing-address-select');
+            if (billingSelect) {
+                var newBillingAddressOption = $$("#billing-address-select option[value='']")[0];
+                if (!newBillingAddressOption.selected) {
+                    newBillingAddressOption.selected = true;
+                    billing.newAddress(true);
+                }
+                billingSelect.up().up().hide();
+            }
+
+            var shippingSelect = $('shipping-address-select');
+            if (shippingSelect) {
+                var newShippingAddressOption = $$("#shipping-address-select option[value='']")[0];
+                if (!newShippingAddressOption.selected) {
+                    newShippingAddressOption.selected = true;
+                    shipping.newAddress(true);
+                }
+                shippingSelect.up().up().hide();
+            }
+
+            $('billing:use_for_shipping_yes').checked = true;
+            if (this.isOsc) {
+                $('shipping_address').hide();
+                $('shipping_address_list').show();
+            }
+        });
 
         return this;
     },
@@ -390,16 +418,12 @@ MijnpakketLogin.prototype = {
             console.log(data);
         }
 
-        if (!this.isOsc) {
-            if (this.getBilling()) {
-                this.getBilling().onSave(response);
-            }
-
-            this.showDummyButton();
-        } else {
-            this.showDisabledButton();
+        if (!this.isOsc && this.getBilling()) {
+            this.getBilling().onSave(response);
         }
 
+        this.showDisabledButton();
+        this.updateMijnpakketLoginMessage();
         this.addMijnpakketDataLoadedMessage();
 
         this.updateAddressForms(data);
@@ -435,9 +459,6 @@ MijnpakketLogin.prototype = {
             console.info('Updating forms.');
         }
 
-        var field;
-        var virtualField;
-
         /**
          * If guest checkout is allowed, set it as the chosen checkout method.
          */
@@ -458,64 +479,31 @@ MijnpakketLogin.prototype = {
             Element.hide('register-customer-password');
         }
 
-        /**
-         * Copy all data to the billing address form.
-         */
-        for (var index in data) {
-            if (!data.hasOwnProperty(index)) {
-                continue;
-            }
-
-            /**
-             * If the value is an array, loop through the array's contents.
-             */
-            if (data[index] instanceof Array) {
-                var dataArray = data[index];
-
-                for (var n = 0; n < dataArray.length; n++) {
-                    field = $('billing:' + index + (n + 1));
-                    virtualField = $('virtual:billing:' + index + (n + 1));
-
-                    if (field) {
-                        field.setValue(dataArray[n]);
-                    }
-
-                    if (virtualField) {
-                        virtualField.setValue(dataArray[n]);
-                    }
-                }
-
-                continue;
-            }
-
-            field = $('billing:' + index);
-
-            if (field) {
-                field.setValue(data[index]);
-            }
-        }
+        this.updateFormData('billing', data);
 
         /**
          * Sync billing and shipping address forms.
          */
-        if (this.getShipping()) {
+        if (!this.isOsc && this.getShipping()) {
             this.getShipping().syncWithBilling();
+        } else {
+            this.updateFormData('shipping', data);
         }
 
         /**
          * Copy PostNL postcode check fields from billing to shipping.
          */
-        var virtualBillingStreet1 = $('virtual:billing:street1');
-        var virtualBillingStreet2 = $('virtual:billing:street2');
-        var virtualBillingStreet3 = $('virtual:billing:street3');
-        if (virtualBillingStreet1) {
-            $('virtual:shipping:street1').setValue(virtualBillingStreet1.getValue());
+        var virtualStreet1 = $('virtual:billing:street1');
+        var virtualStreet2 = $('virtual:billing:street2');
+        var virtualStreet3 = $('virtual:billing:street3');
+        if (virtualStreet1) {
+            $('virtual:shipping:street1').setValue(virtualStreet1.getValue());
         }
-        if (virtualBillingStreet2) {
-            $('virtual:shipping:street2').setValue(virtualBillingStreet2.getValue());
+        if (virtualStreet2) {
+            $('virtual:shipping:street2').setValue(virtualStreet2.getValue());
         }
-        if (virtualBillingStreet3) {
-            $('virtual:shipping:street3').setValue(virtualBillingStreet3.getValue());
+        if (virtualStreet3) {
+            $('virtual:shipping:street3').setValue(virtualStreet3.getValue());
         }
 
         /**
@@ -534,6 +522,84 @@ MijnpakketLogin.prototype = {
         }
 
         document.fire('postnl:updateAddressFormsEnd');
+
+        return this;
+    },
+
+    /**
+     * Updates form data for either the billing or shipping address form.
+     *
+     * @param {string} type
+     * @param {{}}     data
+     *
+     * @returns {MijnpakketLogin}
+     */
+    updateFormData : function (type, data) {
+        var field;
+        var virtualField;
+
+        /**
+         * Copy all data to the billing address form.
+         */
+        for (var index in data) {
+            if (!data.hasOwnProperty(index)) {
+                continue;
+            }
+
+            /**
+             * If the value is an array, loop through the array's contents.
+             */
+            if (data[index] instanceof Array) {
+                var dataArray = data[index];
+
+                for (var n = 0; n < dataArray.length; n++) {
+                    field = $(type + ':' + index + (n + 1));
+                    virtualField = $('virtual:' + type + ':' + index + (n + 1));
+
+                    if (field) {
+                        field.setValue(dataArray[n]);
+                    }
+
+                    if (virtualField) {
+                        virtualField.setValue(dataArray[n]);
+                    }
+                }
+
+                continue;
+            }
+
+            field = $(type + ':' + index);
+
+            if (field) {
+                field.setValue(data[index]);
+            }
+        }
+
+        var saveInAddressBook = $(type + ':save_in_address_book');
+        if(saveInAddressBook) {
+            saveInAddressBook.checked = false;
+        }
+
+        return this;
+    },
+
+    /**
+     * Updates the login with MijnPakket message to indicate your address has been loaded.
+     *
+     * @returns {MijnpakketLogin}
+     */
+    updateMijnpakketLoginMessage : function() {
+        var loginMessage = $$('#mijnpakket_text p')[0];
+        if (!loginMessage) {
+            return this;
+        }
+
+        loginMessage.update(
+            Translator.translate(
+                'Your preferred address has been loaded from your MijnPakket account and set as your '
+                    + 'billing and shipping address. You may now choose a shipping method and complete your order.'
+            )
+        );
 
         return this;
     },

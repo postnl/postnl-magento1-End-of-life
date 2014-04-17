@@ -121,32 +121,6 @@
         var saveBillingUrl = '<?php echo $this->getUrl('onestepcheckout/ajax/save_billing', array('_secure' => true)); ?>';
         var setMethodsUrl  = '<?php echo $this->getUrl('onestepcheckout/ajax/set_methods_separate', array('_secure' => true)); ?>';
 
-        document.observe('postnl:updateAddressFormsStart', function() {
-            var billingSelect = $('billing-address-select');
-            if (billingSelect) {
-                var newBillingAddressOption = $$("#billing-address-select option[value='']")[0];
-                if (!newBillingAddressOption.selected) {
-                    newBillingAddressOption.selected = true;
-                    billing.newAddress(true);
-                }
-                billingSelect.up().up().hide();
-            }
-
-            var shippingSelect = $('shipping-address-select');
-            if (shippingSelect) {
-                var newShippingAddressOption = $$("#billing-address-select option[value='']")[0];
-                if (!newShippingAddressOption.selected) {
-                    newShippingAddressOption.selected = true;
-                    shipping.newAddress(true);
-                }
-                shippingSelect.up().up().hide();
-            }
-
-            $('billing:use_for_shipping_yes').checked = true;
-            $('shipping_address').hide();
-            $('shipping_address_list').show();
-        });
-
         document.observe('postnl:updateAddressFormsEnd', function() {
             get_save_billing_function(saveBillingUrl, setMethodsUrl, true)();
             $('postnl_login_spinner').hide();

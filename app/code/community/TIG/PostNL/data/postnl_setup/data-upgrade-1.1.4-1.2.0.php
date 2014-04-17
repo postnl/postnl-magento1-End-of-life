@@ -46,6 +46,7 @@ $settingsToReset = array(
     'cif_version_shippingstatus',
     'cif_version_confirming',
     'cif_version_labelling',
+    'cif_version_checkout',
 );
 
 /**

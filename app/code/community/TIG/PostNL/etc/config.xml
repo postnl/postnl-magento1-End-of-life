@@ -1274,187 +1274,187 @@
             </POSTNL-0113>
             <POSTNL-0114>
                 <message>Your PostNL account credentials could not be validated. Please enter valid PostNL account credentials before activating the postcode check functionality.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52364673</url>
                 <type>error</type>
             </POSTNL-0114>
             <POSTNL-0115>
                 <message>No data available for GetDeliveryDay request.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52364963</url>
                 <type>error</type>
             </POSTNL-0115>
             <POSTNL-0116>
                 <message>Invalid GetDeliveryDate response: %s</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52982498</url>
                 <type>error</type>
             </POSTNL-0116>
             <POSTNL-0117>
                 <message>No data available for request.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53527926</url>
                 <type>error</type>
             </POSTNL-0117>
             <POSTNL-0118>
                 <message>Invalid postcode supplied for getNearestLocations request: %s</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53014647</url>
                 <type>error</type>
             </POSTNL-0118>
             <POSTNL-0119>
                 <message>Invalid coordinates supplied for getNearestLocations request. lat: %s, long: %s</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53015967</url>
                 <type>error</type>
             </POSTNL-0119>
             <POSTNL-0120>
                 <message>Invalid arguments supplied. getNearestLocations requires a postcode or a longitude and latitude.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52369463</url>
                 <type>error</type>
             </POSTNL-0120>
             <POSTNL-0121>
                 <message>Invalid delivery date supplied: %s</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52985978</url>
                 <type>error</type>
             </POSTNL-0121>
             <POSTNL-0122>
                 <message>Invalid response for GetDeliveryTimeframes request: %s</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53017197</url>
                 <type>error</type>
             </POSTNL-0122>
             <POSTNL-0123>
                 <message>Invalid response for GetNearestLocations request: %s</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52986878</url>
                 <type>error</type>
             </POSTNL-0123>
             <POSTNL-0124>
                 <message>Invalid arguments supplied. GetDeliveryTimeframes requires a postcode and a housenumber.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53532186</url>
                 <type>error</type>
             </POSTNL-0124>
             <POSTNL-0125>
                 <message>Invalid postcode supplied for GetDeliveryTimeframes request: %s Postcodes may only contain 4 numbers and 2 letters.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52371803</url>
                 <type>error</type>
             </POSTNL-0125>
             <POSTNL-0126>
                 <message>Invalid housenumber supplied for GetDeliveryTimeframes request: %s Housenumbers may only contain digits.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52988088</url>
                 <type>error</type>
             </POSTNL-0126>
             <POSTNL-0127>
                 <message>Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52372583</url>
                 <type>error</type>
             </POSTNL-0127>
             <POSTNL-0128>
                 <message>Invalid arguments supplied. getNearestLocationsInArea requires two sets of coordinates.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53020717</url>
                 <type>error</type>
             </POSTNL-0128>
             <POSTNL-0129>
                 <message>Invalid NE coordinates supplied for getLocationsInArea request. lat: %s, long: %s</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53534856</url>
                 <type>error</type>
             </POSTNL-0129>
             <POSTNL-0130>
                 <message>Invalid SW coordinates supplied for getLocationsInArea request. lat: %s, long: %s</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53535436</url>
                 <type>error</type>
             </POSTNL-0130>
             <POSTNL-0131>
                 <message>Invalid postcode supplied for GetDeliveryDate request: %s Postcodes may only contain 4 numbers and 2 letters.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53022657</url>
                 <type>error</type>
             </POSTNL-0131>
             <POSTNL-0132>
                 <message>PostNL delivery options are only available for Dutch shipping addresses.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52384143</url>
                 <type>error</type>
             </POSTNL-0132>
             <POSTNL-0133>
                 <message>You have not yet enabled PostNL delivery options.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53003058</url>
                 <type>error</type>
             </POSTNL-0133>
             <POSTNL-0134>
                 <message>The SOAP extension is not installed. PostNL requires the SOAP extension to communicate with PostNL.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52387393</url>
                 <type>error</type>
             </POSTNL-0134>
             <POSTNL-0135>
                 <message>The OpenSSL extension is not installed. The PostNL extension requires the OpenSSL extension to secure the communications with the PostNL servers.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52387703</url>
                 <type>error</type>
             </POSTNL-0135>
             <POSTNL-0136>
                 <message>The specified method "%s" is not callable.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53034097</url>
                 <type>error</type>
             </POSTNL-0136>
             <POSTNL-0137>
                 <message>The MCrypt extension is not installed. The PostNL extension requires the MCrypt extension to secure the communications with the PostNL servers.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53550106</url>
                 <type>error</type>
             </POSTNL-0137>
             <POSTNL-0138>
                 <message>Invalid arguments supplied. In order to save a selected option, a type, delivery date and optional extra costs are required.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52389583</url>
                 <type>error</type>
             </POSTNL-0138>
             <POSTNL-0139>
                 <message>Invalid type supplied: %s</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53035527</url>
                 <type>error</type>
             </POSTNL-0139>
             <POSTNL-0140>
                 <message>Invalid extra costs supplied: %s Extra costs must be supplied as a float.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53552216</url>
                 <type>error</type>
             </POSTNL-0140>
             <POSTNL-0141>
                 <message>Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53037577</url>
                 <type>error</type>
             </POSTNL-0141>
             <POSTNL-0142>
                 <message>Invalid arguments supplied. The 'costs' parameter is required.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53037947</url>
                 <type>error</type>
             </POSTNL-0142>
             <POSTNL-0143>
                 <message>Invalid country code supplied: %s.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53554796</url>
                 <type>error</type>
             </POSTNL-0143>
             <POSTNL-0144>
                 <message>Invalid street supplied: %s.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/52393003</url>
                 <type>error</type>
             </POSTNL-0144>
             <POSTNL-0145>
                 <message>Invalid housenumber supplied: %s.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53038967</url>
                 <type>error</type>
             </POSTNL-0145>
             <POSTNL-0146>
                 <message>Invalid postcode supplied: %s.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53039527</url>
                 <type>error</type>
             </POSTNL-0146>
             <POSTNL-0147>
                 <message>Invalid housenumber extension supplied: %s.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53009848</url>
                 <type>error</type>
             </POSTNL-0147>
             <POSTNL-0148>
                 <message>Invalid arguments supplied. The 'number' parameter is required.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53009968</url>
                 <type>error</type>
             </POSTNL-0148>
             <POSTNL-0149>
                 <message>Invalid mobile phone number supplied: %s.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53039917</url>
                 <type>error</type>
             </POSTNL-0149>
             <POSTNL-0150>
                 <message>The quote's total weight is below the miniumum required to use PostNL delivery options.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53040387</url>
                 <type>error</type>
             </POSTNL-0150>
 
@@ -1462,42 +1462,42 @@
 
             <POSTNL-0152>
                 <message>Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/53557046</url>
                 <type>error</type>
             </POSTNL-0152>
             <POSTNL-0153>
                 <message>Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. VAT.</message>
-                <url/>
+                <url></url>
                 <type>error</type>
             </POSTNL-0153>
             <POSTNL-0154>
                 <message>Invalid name supplied: %s.</message>
-                <url/>
+                <url></url>
                 <type>error</type>
             </POSTNL-0154>
             <POSTNL-0155>
                 <message>The current user is not allowed to perform this action.</message>
-                <url/>
+                <url></url>
                 <type>error</type>
             </POSTNL-0155>
             <POSTNL-0156>
                 <message>The PostNL extension v%s has been successfully installed.</message>
-                <url/>
+                <url></url>
                 <type>notice</type>
             </POSTNL-0156>
             <POSTNL-0157>
                 <message>Invalid token specified: %s</message>
-                <url/>
+                <url></url>
                 <type>error</type>
             </POSTNL-0157>
             <POSTNL-0158>
                 <message>Invalid GetProfileAccessToken response: %s</message>
-                <url/>
+                <url></url>
                 <type>error</type>
             </POSTNL-0158>
             <POSTNL-0159>
                 <message>You have chosen a default shipping option that is not supported. Please only select default options that you have selected in the 'Select supported option' field.</message>
-                <url/>
+                <url></url>
                 <type>warning</type>
             </POSTNL-0159>
 
