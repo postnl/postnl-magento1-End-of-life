@@ -41,21 +41,21 @@
 <?php $_createAccountLinkTitle = $this->__('Create a new MijnPakket account.'); ?>
 <?php $_createAccountLink      = "<a href='{$_createAccountUrl}' title='{$_createAccountLinkTitle}' target='_blank'>"; ?>
 <?php $_appLinkTitle           = $this->__('Download the PostNL MijnPakket app'); ?>
-<div id="create_mijnpakket_account" style="display:none;">
-    <p>
-        <?php echo $this->__("Following your shipment becomes even easier by using your own MijnPakket account. With a MijnPakket account you have the ability to track your shipment online or by using the MijnPakket app from the moment your place your order to the moment it is delivered. You can also change the destinationof your order after it's been shipped if it turns out you will not be home to accept it. You can also use your MijnPakket account to login quickly at hundreds of webshops without having to enter your personal data. So create a MijnPakket account now at %shttps://mijnpakket.postnl.nl%s!", $_createAccountLink, '</a>'); ?>
-    </p>
-</div>
-<div id="mijnpakket_app" style="display:none;">
-    <p>
-        <?php echo $this->__("Did you know that you can also track your shipments using your MijnPakket account and the PostNL MijnPakket app? The MijnPakket app is available for iOS and Android and deliveres all the easy-to-use features of MijnPakket straight to your cellphone! Using this app you can view your shipment's status and change the intended delivery address. Useful for when you are not at home! Download the app today!"); ?>
-    </p>
-    <p>
-        <a href='https://itunes.apple.com/nl/app/track-trace/id513218878' title='<?php echo $_appLinkTitle; ?>' target='_blank'>https://itunes.apple.com/nl/app/track-trace/id513218878</a>
-    </p>
-    <p>
-        <a href='https://play.google.com/store/apps/details?id=nl.tpp.mobile.android' title='<?php echo $_appLinkTitle; ?>' target='_blank'>https://play.google.com/store/apps/details?id=nl.tpp.mobile.android</a>
-    </p>
+<div id="postnl_notifications">
+    <div id="create_mijnpakket_account" style="display:none;">
+        <p>
+            <?php echo $this->__("Following your shipment becomes even easier by using your own MijnPakket account. With a MijnPakket account you have the ability to track your shipment online or by using the MijnPakket app from the moment your place your order to the moment it is delivered. You can also change the destinationof your order after it's been shipped if it turns out you will not be home to accept it. You can also use your MijnPakket account to login quickly at hundreds of webshops without having to enter your personal data. So create a MijnPakket account now at %shttps://mijnpakket.postnl.nl%s!", $_createAccountLink, '</a>'); ?>
+        </p>
+    </div>
+    <div id="mijnpakket_app" style="display:none;">
+        <p>
+            <?php echo $this->__("Did you know that you can also track your shipments using your MijnPakket account and the PostNL MijnPakket app? The MijnPakket app is available for iOS and Android and deliveres all the easy-to-use features of MijnPakket straight to your cellphone! Using this app you can view your shipment's status and change the intended delivery address. Useful for when you are not at home! Download the app today!"); ?>
+        </p>
+        <ul class="app-links">
+            <li id="apple_store"><a href="https://itunes.apple.com/nl/app/track-trace/id513218878" title="<?php echo $_appLinkTitle; ?>" target="_blank">https://itunes.apple.com/nl/app/track-trace/id513218878</a></li>
+            <li id="google_play"><a href="https://play.google.com/store/apps/details?id=nl.tpp.mobile.android" title="<?php echo $_appLinkTitle; ?>" target="_blank">https://play.google.com/store/apps/details?id=nl.tpp.mobile.android</a></li>
+        </ul>
+    </div>
 </div>
 
 <div id="postnl_placeholder" style="display:none;"></div>
