@@ -136,7 +136,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
     }
 
     /**
-     * Gets a link to this shipment's mijnpakket page as the grid's header.
+     * Gets a link to this shipment's MijnPakket page as the grid's header.
      *
      * @return string
      */

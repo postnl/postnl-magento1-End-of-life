@@ -180,7 +180,7 @@ MijnpakketLogin.prototype = {
 
         if (this.getMijnpakketData()) {
             if (debug) {
-                console.info('Saved mijnpakket data found. Replacing login button with dummy.');
+                console.info('Saved MijnPakket data found. Replacing login button with dummy.');
             }
             this.showDummyButton();
 
@@ -384,12 +384,7 @@ MijnpakketLogin.prototype = {
                 console.error('Invalid response received:', response.responseText);
             }
 
-            this.showDisabledButton();
-            alert(
-                Translator.translate(
-                    'Unfortunately MijnPakket login is currently not available. Please use a different checkout method.'
-                )
-            );
+            this.updateCheckoutError();
 
             return this;
         }
@@ -402,12 +397,7 @@ MijnpakketLogin.prototype = {
                 console.error('Response data received:', responseData);
             }
 
-            this.showDisabledButton();
-            alert(
-                Translator.translate(
-                    'Unfortunately MijnPakket login is currently not available. Please use a different checkout method.'
-                )
-            );
+            this.updateCheckoutError();
 
             return this;
         }
@@ -427,6 +417,26 @@ MijnpakketLogin.prototype = {
         this.addMijnpakketDataLoadedMessage();
 
         this.updateAddressForms(data);
+
+        return this;
+    },
+
+    /**
+     * @returns {MijnpakketLogin}
+     */
+    updateCheckoutError : function() {
+        if (!this.isOsc && this.getCheckout()) {
+            this.getCheckout().setLoadWaiting(false);
+        } else {
+            $('postnl_login_spinner').hide();
+        }
+
+        this.showDisabledButton();
+        alert(
+            Translator.translate(
+                'Unfortunately MijnPakket login is currently not available. Please use a different checkout method.'
+            )
+        );
 
         return this;
     },

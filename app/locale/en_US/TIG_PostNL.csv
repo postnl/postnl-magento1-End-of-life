@@ -36,7 +36,7 @@ TIG_PostNL::Global Barcode Type,Global Barcode Type
 TIG_PostNL::The current global barcode type as supplied by PostNL. Must contain 2 letters.,The current global barcode type as supplied by PostNL. Must contain 2 letters.
 TIG_PostNL::Global Barcode Range,Global Barcode Range
 TIG_PostNL::Your global barcode range as supplied by PostNL. Must contain 4 digits.,Your global barcode range as supplied by PostNL. Must contain 4 digits.
-TIG_PostNL::These fields are only required if you wish to use PostNL Checkout.,These fields are only required if you wish to use PostNL Checkout.
+TIG_PostNL::These fields are only required if you wish to use PostNL Checkout or Mijnpakket login.,These fields are only required if you wish to use PostNL Checkout or Mijnpakket login.
 TIG_PostNL::Webshop ID,Webshop ID
 TIG_PostNL::Public Webshop ID,Public Webshop ID
 TIG_PostNL::These fields contain your contact information for PostNL.,These fields contain your contact information for PostNL.
@@ -336,7 +336,7 @@ TIG_PostNL::Use default,Use default
 TIG_PostNL::Standard options,Standard options
 TIG_PostNL::Global options,Global options
 TIG_PostNL::(default),(default)
-TIG_PostNL::PostNL extension has been successfully updated to version %s,PostNL extension has been successfully updated to version %s
+TIG_PostNL::PostNL extension has been successfully updated to version v%s.,PostNL extension has been successfully updated to version v%s.
 TIG_PostNL::Test,Test
 TIG_PostNL::Live,Live
 TIG_PostNL::Your shipment has been shipped on %s. Click %s to track your shipment.,Your shipment has been shipped on %s. Click %s to track your shipment.
@@ -483,7 +483,7 @@ TIG_PostNL::Configure your GlobalPack settings,Configure your GlobalPack setting
 TIG_PostNL::Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.,Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.
 "TIG_PostNL::Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office.","Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office."
 TIG_PostNL::Configure your PostNL Checkout settings,Configure your PostNL Checkout settings
-"TIG_PostNL::If you wish to use PostNL Checkout in your webshop, you need to configure your PostNl Checkout settings.","If you wish to use PostNL Checkout in your webshop, you need to configure your PostNl Checkout settings."
+"TIG_PostNL::If you wish to use PostNL Checkout in your webshop, you need to configure your PostNL Checkout settings.","If you wish to use PostNL Checkout in your webshop, you need to configure your PostNL Checkout settings."
 TIG_PostNL::Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.,Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.
 TIG_PostNL::Go to the 'PostNL Checkout' tab and specify your preferences.,Go to the 'PostNL Checkout' tab and specify your preferences.
 "TIG_PostNL::Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected.","Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected."
@@ -561,15 +561,15 @@ TIG_PostNL::The price overview will contain the order's subtotal and shipping co
 TIG_PostNL::Shipping Methods,Shipping Methods
 TIG_PostNL::Use GlobalPack,Use GlobalPack
 TIG_PostNL::GlobalPack is used to ship orders outside the EU. Otherwise you can leave this field disabled.,GlobalPack is used to ship orders outside the EU. Otherwise you can leave this field disabled.
-TIG_PostNL::Use PostNL Checkout,Use PostNL Checkout
-"TIG_PostNL::If you wish to make use of PostNL Checkout, set this field to 'yes'.","If you wish to make use of PostNL Checkout, set this field to 'yes'."
+TIG_PostNL::Use PostNL Checkout and Mijnpakket login,Use PostNL Checkout and Mijnpakket login
+"TIG_PostNL::If you wish to make use of PostNL Checkout or Mijnpakket login, set this field to 'yes'.","If you wish to make use of PostNL Checkout or Mijnpakket login, set this field to 'yes'."
 TIG_PostNL::You have not enabled GlobalPack. Please enable GlobalPack under 'Account Settings' in order to configure your GlobalPack preferences.,You have not enabled GlobalPack. Please enable GlobalPack under 'Account Settings' in order to configure your GlobalPack preferences.
 TIG_PostNL::You have not enabled PostNL Checkout. Please enable PostNL Checkout under 'Account Settings' in order to configure your PostNL Checkout preferences.,You have not enabled PostNL Checkout. Please enable PostNL Checkout under 'Account Settings' in order to configure your PostNL Checkout preferences.
 "TIG_PostNL::If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343","If you are a contract customer of PostNL, you will have received an email containing this setting. If you cannot find this email, please contact PostNL support at 058-2333343"
 TIG_PostNL::Account settings have been succesfully validated. Please save this page to keep these settings.,Account settings have been succesfully validated. Please save this page to keep these settings.
 TIG_PostNL::One or more fields are missing. Please fill these fields and try again.,One or more fields are missing. Please fill these fields and try again.
 "TIG_PostNL::Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL.","Your account settings are incorrect. Please check all fields and try again. If this error persists, please contact PostNL."
-"TIG_PostNL::This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error.","This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error."
+"TIG_PostNL::This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error. Please note that the PostNL extension must be active for the validation to succeed. Please note that the webshop ID and public webshop ID fields will not be validated. Only your CIF credentials will be checked.","This will send a 'test' request to PostNL. If the above fields are not entered correctly, this will result in an error. Please note that the PostNL extension must be active for the validation to succeed. Please note that the webshop ID and public webshop ID fields will not be validated. Only your CIF credentials will be checked."
 TIG_PostNL::Validate account settings,Validate account settings
 TIG_PostNL::Unconfirmed,Unconfirmed
 TIG_PostNL::Confirm Status,Confirm Status
@@ -669,9 +669,9 @@ TIG_PostNL::Connection timeout duration,Connection timeout duration
 TIG_PostNL::Show PostNL Checkout exclusively to MijnPakket users,Show PostNL Checkout exclusively to MijnPakket users
 "TIG_PostNL::If enabled, PostNL Checkout will only be available to users who already have a Mijnpakket account.","If enabled, PostNL Checkout will only be available to users who already have a Mijnpakket account."
 TIG_PostNL::This option is only available if delivery options are enabled.,This option is only available if delivery options are enabled.
-TIG_PostNL::PostNL Delivery Options,PostNL Delivery Options
-"TIG_PostNL::Here you can configure your PostNL delivery options.<br />With PostNL delivery options, your customers can choose where and when they want their order delivered. They may choose a date and timeframe for their delivery. Also they can choose to have their order delivered to a nearby post office. New features include the 'evening' delivery option and the option to choose an 'early delivery' post office location.","Here you can configure your PostNL delivery options.<br />With PostNL delivery options, your customers can choose where and when they want their order delivered. They may choose a date and timeframe for their delivery. Also they can choose to have their order delivered to a nearby post office. New features include the 'evening' delivery option and the option to choose an 'early delivery' post office location."
-TIG_PostNL::Enable PostNL delivery options,Enable PostNL delivery options
+TIG_PostNL::PostNL Delivery Options & MijnPakket login,PostNL Delivery Options & MijnPakket login
+"TIG_PostNL::Here you can configure your PostNL delivery options.<br />With PostNL delivery options, your customers can choose where and when they want their order delivered. They may choose a date and timeframe for their delivery. Also they can choose to have their order delivered to a nearby post office. New features include the 'evening' delivery option and the option to choose an 'early delivery' post office location. By using PostNL delivery options you will automatically also use MijnPakket login. MijnPakket login gives your customers the option to quickly fill in their preferred billing and shipping address by logging in with their PostNL MijnPakket account.","Here you can configure your PostNL delivery options.<br />With PostNL delivery options, your customers can choose where and when they want their order delivered. They may choose a date and timeframe for their delivery. Also they can choose to have their order delivered to a nearby post office. New features include the 'evening' delivery option and the option to choose an 'early delivery' post office location. By using PostNL delivery options you will automatically also use MijnPakket login. MijnPakket login gives your customers the option to quickly fill in their preferred billing and shipping address by logging in with their PostNL MijnPakket account."
+TIG_PostNL::Enable PostNL delivery options and MijnPakket login,Enable PostNL delivery options and MijnPakket login
 TIG_PostNL::You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.,You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.
 TIG_PostNL::Enable PostNL delivery options for orders under 2 kg,Enable PostNL delivery options for orders under 2 kg
 TIG_PostNL::The 2kg limit will be based on the product's weight and the weight unit you selected under the 'Confirm and label printing settings' group.,The 2kg limit will be based on the product's weight and the weight unit you selected under the 'Confirm and label printing settings' group.
@@ -778,3 +778,67 @@ TIG_PostNL::Evening Delivery,Evening Delivery
 TIG_PostNL::Early Pickup,Early Pickup
 TIG_PostNL::Evening Delivery options,Evening Delivery options
 TIG_PostNL::Early Pickup options,Early Pickup options
+TIG_PostNL::Default shipment type,Default shipment type
+TIG_PostNL::Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.,Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.
+TIG_PostNL::Confirm,Confirm
+TIG_PostNL::Print Shipping Label,Print Shipping Label
+TIG_PostNL::Complete Status History,Complete Status History
+TIG_PostNL::Create Parcelware Export,Create Parcelware Export
+TIG_PostNL::Send Track & Trace Email,Send Track & Trace Email
+TIG_PostNL::Change Confirmation,Change Confirmation
+TIG_PostNL::Delete Shipping Labels,Delete Shipping Labels
+TIG_PostNL::The current user is not allowed to perform this action.,The current user is not allowed to perform this action.
+TIG_PostNL::Actions,Actions
+TIG_PostNL::Default evening delivery shipping option,Default evening delivery shipping option
+TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.,This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.
+TIG_PostNL::Default early post office pickup option,Default early post office pickup option
+TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.,This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.
+TIG_PostNL::Default shipment type,Default shipment type
+TIG_PostNL::Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.,Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.
+TIG_PostNL::Shipment,Shipment
+TIG_PostNL::PostNL,PostNL
+TIG_PostNL::The PostNL extension v%s has been successfully installed.,The PostNL extension v%s has been successfully installed.
+TIG_PostNL::Print label,Print label
+TIG_PostNL::Confirm shipment,Confirm shipment
+TIG_PostNL::Send track &amp; trace email,Send track &amp; trace email
+TIG_PostNL::View status history,View status history
+TIG_PostNL::Change confirmation,Change confirmation
+TIG_PostNL::Delete labels,Delete labels
+TIG_PostNL::Create shipments,Create shipments
+TIG_PostNL::Print labels and confirm shipment,Print labels and confirm shipment
+TIG_PostNL::Print labels,Print labels
+TIG_PostNL::Confirm shipments,Confirm shipments
+TIG_PostNL::Create parcelware export,Create parcelware export
+TIG_PostNL::You can use the rates you have entered for Magento's Table Rates shipping method or you can choose to enter table rates specific for the PostNL shipping method.,You can use the rates you have entered for Magento's Table Rates shipping method or you can choose to enter table rates specific for the PostNL shipping method.
+TIG_PostNL::Rate Source,Rate Source
+TIG_PostNL::Use Magento's Table Rates,Use Magento's Table Rates
+TIG_PostNL::Use seperate table rates for PostNL,Use seperate table rates for PostNL
+TIG_PostNL::Export Rates,Export Rates
+TIG_PostNL::Import Rates,Import Rates
+TIG_PostNL::You can import and export rates on the website scope. You can change your current scope with the dropdown at the top left of this page.,You can import and export rates on the website scope. You can change your current scope with the dropdown at the top left of this page.
+TIG_PostNL::Your shipping label(s) are being prepared.,Your shipping label(s) are being prepared.
+TIG_PostNL::This may take a minute. The page will refresh once this is done.,This may take a minute. The page will refresh once this is done.
+TIG_PostNL::View the user manual.,View the user manual.
+TIG_PostNL::User manual,User manual
+TIG_PostNL::Delivery options theme,Delivery options theme
+"TIG_PostNL::You can view an example of the different themes <a href=""http://servicedesk.totalinternetgroup.nl"" target=""_blank"" title=""PostNL delivery option themes"">here</a>.","You can view an example of the different themes <a href=""http://servicedesk.totalinternetgroup.nl"" target=""_blank"" title=""PostNL delivery option themes"">here</a>."
+TIG_PostNL::Default PostNL theme,Default PostNL theme
+TIG_PostNL::Unbranded theme,Unbranded theme
+TIG_PostNL::Following your shipment becomes even easier by using your own MijnPakket account. With a MijnPakket account you have the ability to track your shipment online or by using the MijnPakket app from the moment your place your order to the moment it is delivered. You can also change the destinationof your order after it's been shipped if it turns out you will not be home to accept it. You can also use your MijnPakket account to login quickly at hundreds of webshops without having to enter your personal data. So create a MijnPakket account now at %shttps://mijnpakket.postnl.nl%s!,Following your shipment becomes even easier by using your own MijnPakket account. With a MijnPakket account you have the ability to track your shipment online or by using the MijnPakket app from the moment your place your order to the moment it is delivered. You can also change the destinationof your order after it's been shipped if it turns out you will not be home to accept it. You can also use your MijnPakket account to login quickly at hundreds of webshops without having to enter your personal data. So create a MijnPakket account now at %shttps://mijnpakket.postnl.nl%s!
+TIG_PostNL::Did you know that you can also track your shipments using your MijnPakket account and the PostNL MijnPakket app? The MijnPakket app is available for iOS and Android and deliveres all the easy-to-use features of MijnPakket straight to your cellphone! Using this app you can view your shipment's status and change the intended delivery address. Useful for when you are not at home! Download the app today!,Did you know that you can also track your shipments using your MijnPakket account and the PostNL MijnPakket app? The MijnPakket app is available for iOS and Android and deliveres all the easy-to-use features of MijnPakket straight to your cellphone! Using this app you can view your shipment's status and change the intended delivery address. Useful for when you are not at home! Download the app today!
+"TIG_PostNL::You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order.","You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order."
+TIG_PostNL::Show MijnPakket notification on the order success page,Show MijnPakket notification on the order success page
+TIG_PostNL::This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.,This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.
+TIG_PostNL::Show create MijnPakket account link,Show create MijnPakket account link
+"TIG_PostNL::If enabled, customers who do not yet have a MijnPakket account will be shown a link through which they can create a MijnPakket account without having to fully fill in the registration form.","If enabled, customers who do not yet have a MijnPakket account will be shown a link through which they can create a MijnPakket account without having to fully fill in the registration form."
+TIG_PostNL::Show MijnPakket app link,Show MijnPakket app link
+"TIG_PostNL::If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order.","If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order."
+TIG_PostNL::Loading MijnPakket data...,Loading MijnPakket data...
+TIG_PostNL::Your preferred address has been loaded from your MijnPakket account and set as your billing and shipping address. You may now choose a shipping method and complete your order.,Your preferred address has been loaded from your MijnPakket account and set as your billing and shipping address. You may now choose a shipping method and complete your order.
+TIG_PostNL::Checkout using MijnPakket,Checkout using MijnPakket
+TIG_PostNL::Log in with your MijnPakket account to automatically use your preferred address.,Log in with your MijnPakket account to automatically use your preferred address.
+TIG_PostNL::If you have a MijnPakket account you can use the button below to log in to your account. When you log in to your MijnPakket account the webshop will read your preferred address and select it as your billing and shipping address. You can change this address in the forms below.,If you have a MijnPakket account you can use the button below to log in to your account. When you log in to your MijnPakket account the webshop will read your preferred address and select it as your billing and shipping address. You can change this address in the forms below.
+TIG_PostNL::MijnPakket login will only be available to customers who have a MijnPakket account. This will be automatically detected.,MijnPakket login will only be available to customers who have a MijnPakket account. This will be automatically detected.
+TIG_PostNL::Create a new MijnPakket account.,Create a new MijnPakket account.
+TIG_PostNL::Download the PostNL MijnPakket app,Download the PostNL MijnPakket app
+TIG_PostNL::Unfortunately MijnPakket login is currently not available. Please use a different checkout method.,Unfortunately MijnPakket login is currently not available. Please use a different checkout method.

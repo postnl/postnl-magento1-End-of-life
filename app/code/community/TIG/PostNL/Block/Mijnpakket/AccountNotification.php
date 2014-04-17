@@ -56,7 +56,7 @@
 class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Template
 {
     /**
-     * Base URL to create a new mijnpakket account.
+     * Base URL to create a new MijnPakket account.
      */
     const CREATE_ACCOUNT_BASE_URL = 'https://mijnpakket.postnl.nl/Register/RegisterFromWebshop?';
 
@@ -203,7 +203,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Te
     }
 
     /**
-     * Gets the base create mijnpakket account URL.
+     * Gets the base create MijnPakket account URL.
      *
      * @return string
      */
@@ -220,7 +220,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Te
     }
 
     /**
-     * Form the create mijnpakket account url based on the hardcoded base URL and a dynamic set of parameters.
+     * Form the create MijnPakket account url based on the hardcoded base URL and a dynamic set of parameters.
      *
      * @return string
      */
@@ -245,7 +245,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Te
     }
 
     /**
-     * Gets all the URL parameters to create a mijnpakket account. While alle parameters are optional, the more we add,
+     * Gets all the URL parameters to create a MijnPakket account. While alle parameters are optional, the more we add,
      * the less the customer will have to add manually later on.
      *
      * @return array
