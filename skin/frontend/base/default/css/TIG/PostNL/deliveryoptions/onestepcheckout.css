@@ -22,6 +22,7 @@
 
 /* Add moment */
 #postnl_add_moment .add-moment { text-align:center; margin:4px 0; }
+#postnl_add_moment .location .location-type { display:none; }
 #postnl_add_moment .add-moment .button.action { display:inline-block; }
 #postnl_add_moment .add-moment .button.action span { text-align:left; }
 #postnl_add_moment .add-moment .button.action span span { width:226px; }
