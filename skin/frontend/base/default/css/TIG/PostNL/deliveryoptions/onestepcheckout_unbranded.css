@@ -20,6 +20,7 @@
 
 #postnl_add_moment .option { height:40px; border-bottom:1px solid #ededed; }
 #postnl_add_moment .option .bkg { background:#fff; }
+#postnl_add_moment .option .option-comment { color:#546f91; font-weight:bold; }
 
 #osc_initial_loader { display:inline-block; width:14px; height:16px; background:url(../../../../images/TIG/PostNL/deliveryoptions/unbranded/loader_mini.gif) 0 2px no-repeat; padding-left:17px; line-height:18px; margin:6px 0; }
 
