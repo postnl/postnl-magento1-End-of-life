@@ -235,10 +235,10 @@ MijnpakketLogin.prototype = {
             });
 
             $$('#checkout-step-billing .button').each(function(button) {
-                button.disabled = true;
+                button.disabled = false;
 
-                if (!button.hasClassName('disabled')) {
-                    button.addClassName('disabled');
+                if (button.hasClassName('disabled')) {
+                    button.removeClassName('disabled');
                 }
             });
 
@@ -390,16 +390,12 @@ MijnpakketLogin.prototype = {
             console.log(data);
         }
 
-        if (!this.isOsc) {
-            if (this.getBilling()) {
-                this.getBilling().onSave(response);
-            }
-
-            this.showDummyButton();
-        } else {
-            this.showDisabledButton();
+        if (!this.isOsc && this.getBilling()) {
+            this.getBilling().onSave(response);
         }
 
+        this.showDisabledButton();
+        this.updateMijnpakketLoginMessage();
         this.addMijnpakketDataLoadedMessage();
 
         this.updateAddressForms(data);
@@ -534,6 +530,27 @@ MijnpakketLogin.prototype = {
         }
 
         document.fire('postnl:updateAddressFormsEnd');
+
+        return this;
+    },
+
+    /**
+     * Updates the login with MijnPakket message to indicate your address has been loaded.
+     *
+     * @returns {MijnpakketLogin}
+     */
+    updateMijnpakketLoginMessage : function() {
+        var loginMessage = $$('#mijnpakket_text p')[0];
+        if (!loginMessage) {
+            return this;
+        }
+
+        loginMessage.update(
+            Translator.translate(
+                'Your preferred address has been loaded from your MijnPakket account and set as your '
+                    + 'billing and shipping address. You may now choose a shipping method and complete your order.'
+            )
+        );
 
         return this;
     },

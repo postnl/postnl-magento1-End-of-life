@@ -7,13 +7,15 @@ hr.mijnpakket_seperator { clear:both; border:none; display:block; height:1px; ba
 #onestepcheckout-form hr.mijnpakket_seperator { background:#d8d2c7;}
 #postnl_mijnpakket_login iframe { margin:0 -8px -6px 0 !important; }
 #mijnpakket_text .clearfix h4 { float:left; }
-#checkout-step-billing #mijnpakket_text { float:left; }
+#checkout-step-billing #mijnpakket_text { float:left; width:500px; }
 #checkout-step-billing #mijnpakket_text p { padding-top:5px; }
 #checkout-step-login #mijnpakket_buttons,
 #checkout-step-billing #mijnpakket_buttons { float:right; }
 #checkout-step-billing #postnl_mijnpakket div,
 #onestepcheckout-form #postnl_mijnpakket div { padding-top:6px; }
 #postnl_mijnpakket_tooltip { float:left; margin-left:10px; }
+#login-buttons-container { opacity:1 !important; }
+#mijnpakket_data_loaded { border: 1px solid #ccc; background: #fff; padding: 5px; margin-bottom: 16px; }
 
 /* Tooltip from config =================================================================== */
 .with-tooltip {}
