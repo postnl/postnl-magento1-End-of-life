@@ -414,7 +414,9 @@ MijnpakketLogin.prototype = {
 
         this.showDisabledButton();
         this.updateMijnpakketLoginMessage();
-        this.addMijnpakketDataLoadedMessage();
+        if (!this.isOsc) {
+            this.addMijnpakketDataLoadedMessage();
+        }
 
         this.updateAddressForms(data);
 

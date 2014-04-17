@@ -63,7 +63,7 @@
     //<![CDATA[
     var checkout                 = null;
     var canShowCreateAccountLink = <?php echo $this->getCanShowCreateAccountLink() ? 'true' : 'false'; ?>;
-    var canShowAppLink           = <?php echo $this->getCanShowAppLink() ? 'true' : 'false'; ?>;
+    var canShowAppLink           = <?php echo $this->getCanShowAppLink()           ? 'true' : 'false'; ?>;
 
     document.observe('dom:loaded', function() {
         if (!canShowAppLink && !canShowCreateAccountLink) {
