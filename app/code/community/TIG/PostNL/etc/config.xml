@@ -679,7 +679,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>dev</postnl>
+            <postnl>alpha</postnl>
         </stability>
 
         <!-- PostNL delivery option configuration -->
