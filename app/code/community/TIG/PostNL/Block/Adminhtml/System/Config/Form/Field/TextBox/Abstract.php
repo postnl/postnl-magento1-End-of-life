@@ -40,9 +40,14 @@
  * @method TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract setElement(Varien_Data_Form_Element_Abstract $value)
  */
 abstract class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
-    extends Mage_Adminhtml_Block_Abstract
+    extends TIG_PostNL_Block_Adminhtml_Template
     implements Varien_Data_Form_Element_Renderer_Interface
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_textbox_abstract';
+
     /**
      * Template file used
      *

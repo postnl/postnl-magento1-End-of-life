@@ -620,6 +620,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        if (Mage::registry('postnl_enabled_delivery_options_errors')) {
+            return false;
+        }
+
         $isPostnlEnabled = $this->isEnabled($storeId, false, $this->isTestMode());
         if ($isPostnlEnabled === false) {
             $errors = array(

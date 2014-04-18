@@ -43,6 +43,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
     extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
     /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_configcheck';
+
+    /**
      * XML paths to use GlobalPack/Checkout settings
      */
     const XML_PATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';

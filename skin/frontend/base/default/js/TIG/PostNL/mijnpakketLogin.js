@@ -412,7 +412,12 @@ MijnpakketLogin.prototype = {
             this.getBilling().onSave(response);
         }
 
-        this.showDisabledButton();
+        if (!this.isOsc && $('checkout-step-login')) {
+            this.showDummyButton();
+        } else {
+            this.showDisabledButton();
+        }
+
         this.updateMijnpakketLoginMessage();
         if (!this.isOsc) {
             this.addMijnpakketDataLoadedMessage();

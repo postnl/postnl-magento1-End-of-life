@@ -36,8 +36,14 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck
+    extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_splitaddresscheck';
+
     /**
      * XML path to split street configuration option
      */

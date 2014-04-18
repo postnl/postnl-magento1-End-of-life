@@ -33,35 +33,28 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_DeliveryOptions_Js extends TIG_PostNL_Block_DeliveryOptions_Template
+abstract class TIG_PostNL_Block_Core_Template extends Mage_Core_Block_Template
 {
     /**
      * @var string
      */
-    protected $_eventPrefix = 'postnl_deliveryoptions_js';
+    protected $_eventPrefix = 'postnl_core_template';
 
     /**
-     * @var string
-     */
-    protected $_template = 'TIG/PostNL/delivery_options/js.phtml';
-
-    /**
-     * Get the configured Google maps API key.
+     * Renders a template block. Also throws 2 events based on the current event prefix.
      *
      * @return string
      */
-    public function getApiKey()
+    protected function _toHtml()
     {
-        if ($this->hasApiKey()) {
-            return $this->_getData('api_key');
-        }
+        Mage::dispatchEvent($this->_eventPrefix . '_to_html_before');
 
-        $apiKey = Mage::getStoreConfig('postnl/google_maps/api_key', Mage::app()->getStore()->getId());
+        $html = parent::_toHtml();
 
-        $this->setApiKey($apiKey);
-        return $apiKey;
+        Mage::dispatchEvent($this->_eventPrefix . '_to_html_after');
+        return $html;
     }
 }

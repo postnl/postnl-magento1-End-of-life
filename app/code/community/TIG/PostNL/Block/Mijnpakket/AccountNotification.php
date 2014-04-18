@@ -53,8 +53,13 @@
  * @method boolean                                         hasCreateAccountBaseUrl()
  * @method TIG_PostNL_Block_Mijnpakket_AccountNotification setCreateAccountBaseUrl(string $value)
  */
-class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_Core_Template
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_mijnpakket_accountnotification';
+
     /**
      * Base URL to create a new MijnPakket account.
      */

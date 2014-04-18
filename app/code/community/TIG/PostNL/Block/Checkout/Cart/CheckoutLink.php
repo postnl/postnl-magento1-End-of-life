@@ -41,8 +41,13 @@
  * @method boolean                                     hasDoLoginCheck()
  * @method TIG_PostNL_Block_Checkout_Cart_CheckoutLink setDoLoginCheck(boolean $value)
  */
-class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends TIG_PostNL_Block_Core_Template
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_checkout_cart_checkoutlink';
+
     /**
      * Base URLs of the checkout button
      */

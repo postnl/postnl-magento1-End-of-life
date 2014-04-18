@@ -36,8 +36,13 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-abstract class TIG_PostNL_Block_DeliveryOptions_Template extends Mage_Core_Block_Template
+abstract class TIG_PostNL_Block_DeliveryOptions_Template extends TIG_PostNL_Block_Core_Template
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_deliveryoptions_template';
+
     /**
      * Xpath to the current theme setting.
      */
