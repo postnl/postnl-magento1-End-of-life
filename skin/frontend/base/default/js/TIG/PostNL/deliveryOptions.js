@@ -977,7 +977,7 @@ PostnlDeliveryOptions.prototype = {
 
         this.updateShippingPrice();
 
-        this.saveExtraCosts();
+        this.saveSelectedOption();
 
         return false;
     },
