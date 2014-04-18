@@ -565,8 +565,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
          * @var Mage_Core_Model_Store $store
          */
         $stores = Mage::app()->getStores();
+        $scope  = 'store';
         foreach ($stores as $store) {
-            $scope   = 'website';
             $scopeId = $store->getId();
 
             $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
@@ -578,8 +578,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
          * @var Mage_Core_Model_Website $website
          */
         $websites = Mage::app()->getWebsites();
+        $scope    = 'website';
         foreach ($websites as $website) {
-            $scope   = 'website';
             $scopeId = $website->getId();
 
             $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
