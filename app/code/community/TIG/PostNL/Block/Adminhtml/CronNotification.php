@@ -36,8 +36,13 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_CronNotification extends Mage_Adminhtml_Block_Abstract
+class TIG_PostNL_Block_Adminhtml_CronNotification extends TIG_PostNL_Block_Adminhtml_Template
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_cronnotification';
+
     /**
      * Cron expression for cronjobs working in 'always' cron mode
      */

@@ -46,6 +46,11 @@ class TIG_PostNL_Block_Mijnpakket_OrderSuccessJs extends TIG_PostNL_Block_Checko
     /**
      * @var string
      */
+    protected $_eventPrefix = 'postnl_mijnpakket_ordersuccessjs';
+
+    /**
+     * @var string
+     */
     protected $_template = 'TIG/PostNL/mijnpakket/order_success_js.phtml';
 
     /**
@@ -60,6 +65,6 @@ class TIG_PostNL_Block_Mijnpakket_OrderSuccessJs extends TIG_PostNL_Block_Checko
             return '';
         }
 
-        return Mage_Core_Block_Template::_toHtml();
+        return TIG_PostNL_Block_Core_Template::_toHtml();
     }
 }

@@ -48,6 +48,11 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber extends TIG_PostN
     /**
      * @var string
      */
+    protected $_eventPrefix = 'postnl_deliveryoptions_checkout_addphonenumber';
+
+    /**
+     * @var string
+     */
     protected $_template = 'TIG/PostNL/delivery_options/addphonenumber.phtml';
 
     /**

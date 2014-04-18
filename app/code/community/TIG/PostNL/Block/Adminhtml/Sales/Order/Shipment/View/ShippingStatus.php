@@ -36,8 +36,13 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_ShippingStatus extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_ShippingStatus extends TIG_PostNL_Block_Adminhtml_Template
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_sales_order_shipment_view_shippingstatus';
+
     /**
      * Available status classes for the status bar html element
      */

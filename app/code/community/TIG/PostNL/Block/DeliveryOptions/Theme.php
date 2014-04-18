@@ -43,6 +43,11 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
     /**
      * @var string
      */
+    protected $_eventPrefix = 'postnl_deliveryoptions_theme';
+
+    /**
+     * @var string
+     */
     protected $_template = 'TIG/PostNL/delivery_options/theme.phtml';
 
     /**

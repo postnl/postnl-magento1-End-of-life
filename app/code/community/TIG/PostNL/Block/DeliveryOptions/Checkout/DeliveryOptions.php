@@ -45,6 +45,11 @@
 class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_PostNL_Block_DeliveryOptions_Template
 {
     /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_deliveryoptions_checkout_deliveryoptions';
+
+    /**
      * Xpath to 'allow_streetview' setting.
      */
     const XPATH_ALLOW_STREETVIEW = 'postnl/delivery_options/allow_streetview';
