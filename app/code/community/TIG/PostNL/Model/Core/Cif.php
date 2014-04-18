@@ -402,7 +402,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
      *
      * @throws TIG_PostNL_Exception
-     * @internal param \TIG_PostNL_Model_Core_Shipment $shipment
      *
      * @return StdClass
      *
@@ -470,7 +469,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
      * @throws TIG_PostNL_Exception
-     * @internal param \TIG_PostNL_Model_Core_Shipment $shipment
      *
      * @return StdClass
      *
@@ -532,13 +530,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      * @param string                         $barcode
+     * @param bool                           $mainBarcode
+     * @param bool                           $shipmentNumber
      *
-     * @param bool   $mainBarcode
-     * @param bool   $shipmentNumber
      * @throws TIG_PostNL_Exception
-     * @internal param \Mage_Sales_Model_Order_Shipment $shipment
-     * @return array
      *
+     * @return array
      */
     public function confirmShipment(TIG_PostNL_Model_Core_Shipment $postnlShipment, $barcode, $mainBarcode = false,
                                     $shipmentNumber = false)
@@ -604,7 +601,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param string $printerType The printertype used. Currently only 'GraphicFile|PDF' is fully supported
      *
      * @throws TIG_PostNL_Exception
-     * @internal param \Mage_Sales_Model_Order_Shipment $shipment
+     *
      * @return array
      *
      */

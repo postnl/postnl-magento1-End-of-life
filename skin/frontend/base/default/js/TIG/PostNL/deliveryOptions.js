@@ -763,6 +763,10 @@ PostnlDeliveryOptions.prototype = {
         return this;
     },
 
+    /**
+     * @param response
+     * @returns {*}
+     */
     processGetLocationsSuccess : function(response) {
         /**
          * Check that the response is valid.
@@ -913,6 +917,9 @@ PostnlDeliveryOptions.prototype = {
         return this;
     },
 
+    /**
+     * @returns {PostnlDeliveryOptions}
+     */
     renderLocations : function() {
         var pickUpList = $('postnl_pickup');
         pickUpList.show();
@@ -947,6 +954,9 @@ PostnlDeliveryOptions.prototype = {
         return this;
     },
 
+    /**
+     * @returns {PostnlDeliveryOptions}
+     */
     hideLocations : function() {
         this.setParsedLocations(true)
             .hideSpinner();
@@ -954,6 +964,10 @@ PostnlDeliveryOptions.prototype = {
         return this;
     },
 
+    /**
+     * @param element
+     * @returns {*}
+     */
     selectTimeframe : function(element) {
         if (!element) {
             return this;
@@ -982,6 +996,9 @@ PostnlDeliveryOptions.prototype = {
         return false;
     },
 
+    /**
+     * @returns {PostnlDeliveryOptions}
+     */
     unSelectTimeframe : function() {
         var timeframes = this.timeframes;
 
@@ -992,6 +1009,10 @@ PostnlDeliveryOptions.prototype = {
         return this;
     },
 
+    /**
+     * @param element
+     * @returns {PostnlDeliveryOptions}
+     */
     selectLocation : function(element) {
         if (!element) {
             return this;

@@ -56,9 +56,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      *  3. Actually create the CSV file and return an array containing data for whoever called this method (probably a
      *     controller).
      *
-     * @param $postnlShipments
-     *
-     * @internal param array $shipments An array of TIG_PostNL_Model_Core_Shipment objects
+     * @param array $postnlShipments An array of TIG_PostNL_Model_Core_Shipment objects
      *
      * @return array
      */

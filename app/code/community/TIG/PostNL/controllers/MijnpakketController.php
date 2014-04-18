@@ -127,6 +127,11 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
          */
         try {
             $profileData = $this->_getProfileData();
+
+            /**
+             * Save the data as the billing and shipping address and get the result.
+             */
+            $result = $this->_formResultArray($profileData);
         } catch (Exception $e) {
             Mage::helper('postnl/mijnpakket')->logException($e);
 
@@ -135,11 +140,6 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
 
             return $this;
         }
-
-        /**
-         * Save the data as the billing and shipping address and get the result.
-         */
-        $result = $this->_formResultArray($profileData);
 
         if ($result === false) {
             $this->getResponse()
@@ -194,11 +194,6 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
         $profile = $response->Profiel;
         $profileData = Mage::getModel('postnl_mijnpakket/service')->parseProfileData($profile);
 
-        /**
-         * Store the data in the customer's checkout session.
-         */
-        $checkoutSession->setPostnlMijnpakketData($profileData);
-
         return $profileData;
     }
 
@@ -206,6 +201,8 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
      * Form the result array.
      *
      * @param array $billingData
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return array|boolean
      */
@@ -217,11 +214,21 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
         $result = $this->getOnepage()->saveBilling($billingData, '');
 
         /**
-         * If we encountered an error, only return the error.
+         * If we encountered an error, throw the error as an exception.
          */
         if (isset($result['error'])) {
-            return false;
+            if (isset($result['message'][0])) {
+                $message = $result['message'][0];
+            } else {
+                $message = $this->__('An unknown error has occurred.');
+            }
+            throw new TIG_PostNL_Exception($message);
         }
+
+        /**
+         * Store the data in the customer's checkout session.
+         */
+        $this->getCheckoutSession()->setPostnlMijnpakketData($billingData);
 
         $result['origData'] = $billingData;
 
