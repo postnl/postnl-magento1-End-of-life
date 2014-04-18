@@ -811,7 +811,6 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      *
      * @param Mage_Sales_Model_Quote_Address $address
      * @param                                $serviceLocationData
-     * @internal param \StdClass $addressData
      *
      * @return Mage_Sales_Model_Quote_Address
      */

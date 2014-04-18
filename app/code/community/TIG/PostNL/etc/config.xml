@@ -682,7 +682,7 @@
             <postnl>alpha</postnl>
         </stability>
 
-        <!-- PostNL delivery option configuration -->
+        <!-- PostNL delivery options configuration -->
         <delivery_options>
             <!-- Themes for PostNL delivery options -->
             <themes>
