@@ -245,6 +245,7 @@
 
         try {
             deliveryOptions = new PostnlDeliveryOptions(params, options);
+            window.deliveryOptions = deliveryOptions;
         } catch(e) {
             console.log(e);
         }

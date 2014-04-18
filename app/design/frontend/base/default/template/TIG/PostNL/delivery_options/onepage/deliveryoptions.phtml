@@ -150,6 +150,7 @@
     if (typeof deliveryOptions != 'undefined') {
         try {
             deliveryOptions.showOptions();
+            window.deliveryOptions = deliveryOptions;
         } catch(e) {
             console.log(e);
             $('initial_loader').hide();

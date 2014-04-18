@@ -80,27 +80,27 @@
 
         if (typeof shippingMethod != 'undefined') {
             if (shippingMethod.validator.validate()) {
-                deliveryOptions.setPaPhoneCheckPassed(true);
+                window.deliveryOptions.setPaPhoneCheckPassed(true);
             } else {
                 return;
             }
 
             shippingMethod.save();
         } else if (Validation.validate(phoneInputField)) {
-            deliveryOptions.setPaPhoneCheckPassed(true);
-            deliveryOptions.saveOscOptions();
+            window.deliveryOptions.setPaPhoneCheckPassed(true);
+            window.deliveryOptions.saveOscOptions();
         } else {
             return;
         }
 
-        deliveryOptions.closeAddPhoneWindow();
-        deliveryOptions.setPaPhoneCheckPassed(false);
+        window.deliveryOptions.closeAddPhoneWindow();
+        window.deliveryOptions.setPaPhoneCheckPassed(false);
     };
 
     closeAddPhoneWindow = function(event) {
         event.stop();
 
-        deliveryOptions.closeAddPhoneWindow();
+        window.deliveryOptions.closeAddPhoneWindow();
     };
 
     validateShippingMethod = function() {

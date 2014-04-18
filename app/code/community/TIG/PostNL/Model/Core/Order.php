@@ -167,7 +167,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
      */
     public function setMobilePhoneNumber($phoneNumber, $skipValidation = false)
     {
-        if ($skipValidation) {
+        if ($skipValidation || empty($phoneNumber)) {
             $this->setData('mobile_phone_number', $phoneNumber);
             return $this;
         }

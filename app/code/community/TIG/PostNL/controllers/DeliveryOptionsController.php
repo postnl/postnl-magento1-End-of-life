@@ -294,7 +294,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         try {
             $data = $this->_getSaveSelectionPostData($params);
-
             $this->getService()->saveDeliveryOption($data);
         } catch (Exception $e) {
             Mage::helper('postnl/deliveryOptions')->logException($e);

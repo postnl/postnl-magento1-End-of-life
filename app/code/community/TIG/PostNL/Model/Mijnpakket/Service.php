@@ -48,7 +48,6 @@ class TIG_PostNL_Model_Mijnpakket_Service extends Varien_Object
     public function parseProfileData($profile)
     {
         $billingData = array(
-            'address_id'           => '',
             'firstname'            => $profile->Voornaam,
             'middlename'           => $profile->Tussenvoegsel,
             'lastname'             => $profile->Achternaam,
