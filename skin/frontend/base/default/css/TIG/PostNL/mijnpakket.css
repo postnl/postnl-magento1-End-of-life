@@ -10,6 +10,8 @@
 
 #login-buttons-container { opacity:1 !important; }
 
+#postnl_login_spinner { top: 500px; }
+
 /* Tooltip (Default Magento) */
 .postnl-tooltip { display:inline-block; width:15px; height:15px; position:relative; z-index:1; background:url(../../../images/TIG/PostNL/icon-tooltip.png) no-repeat 0 0; margin-left:2px; cursor:help; vertical-align:sub; }
 .postnl-tooltip:hover { z-index:100; }

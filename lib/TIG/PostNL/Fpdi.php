@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -204,7 +204,7 @@ class TIG_PostNL_Fpdi extends FPDI
         $this->_out('>>');
         $this->_out('endobj');
     }
-    
+
     function Output($name='', $dest='')
     {
         // Output PDF to some destination
@@ -226,7 +226,7 @@ class TIG_PostNL_Fpdi extends FPDI
             case 'I':
                 // Send to standard output
                 $this->_checkoutput();
-                
+
                 return $this->buffer;
                 // if(PHP_SAPI!='cli')
                 // {
