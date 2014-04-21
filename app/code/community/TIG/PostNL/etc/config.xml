@@ -452,6 +452,8 @@
                 <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg> <!-- Method not available message -->
                 <sallowspecific>1</sallowspecific> <!-- Allow only specific countries -->
                 <specificcountry>NL,BE,BG,DK,DE,EE,FI,FR,GB,HU,IE,IT,LV,LT,LU,AT,PL,PT,RO,SI,SK,ES,CZ,SE</specificcountry> <!-- Allow the Netherlands and all EPS countries -->
+                <showmethod>0</showmethod> <!-- Do not show the shipping method if unavailable -->
+                <sort_order>0</sort_order> <!-- First method shown -->
                 <model>postnl_carrier/postnl</model> <!-- TIG_PostNL_Model_Carrier_Postnl -->
             </postnl>
         </carriers>
@@ -570,11 +572,13 @@
         	<delivery_options>
         	    <delivery_options_active>0</delivery_options_active> <!-- Delivery options are disabled -->
                 <theme>default</theme> <!-- Use the default PostNL theme -->
+                <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <show_options_for_letter>0</show_options_for_letter> <!-- Do not show delivery options if the order's total weight is less than 2 kg -->
                 <show_options_for_backorders>0</show_options_for_backorders> <!-- Do not show delivery options if the order is not in stock -->
         	    <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
-        	    <cutoff_time/>
-        	    <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
+        	    <cutoff_time>17:00:00</cutoff_time> <!-- Add an extra shipping day if customers order after 17:00 P.M. -->
+        	    <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
+                <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
         	    <sunday_cutoff_time/>
         	    <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
         	    <enable_evening_timeframes>0</enable_evening_timeframes> <!-- Evening timeframes are disabled -->
@@ -661,7 +665,7 @@
 
             <!-- Google maps API key. Only change this value if you wish to use your own API key instead. -->
             <google_maps>
-                <api_key>AIzaSyAMgkBSmIBbZpQSAANpQ2JMnJvPUeatLYo</api_key>
+                <api_key>AIzaSyCHq62q_WNkFPdfgQkQzX46H4n2AGD0ubs</api_key>
             </google_maps>
         </postnl>
     </default>
@@ -679,7 +683,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>alpha</postnl>
+            <postnl>beta</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->

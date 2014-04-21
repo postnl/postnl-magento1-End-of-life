@@ -55,6 +55,20 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $order = $observer->getOrder();
 
         /**
+         * Check if this order was placed using PostNL.
+         */
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $shippingMethod = $order->getShippingMethod();
+
+        /**
+         * If this order was not placed with PostNL, remove any PakjeGemak addresses that may have been saved.
+         */
+        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+            $this->_removePakjeGemakAddress($order);
+            return $this;
+        }
+
+        /**
          * Get the PostNL order associated with this order.
          *
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
@@ -119,6 +133,29 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
 
         $order->addAddress($orderAddress)
               ->save();
+
+        return $this;
+    }
+
+    /**
+     * Deletes any PakjeGemak addresses associated with this order.
+     *
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return $this
+     */
+    public function _removePakjeGemakAddress(Mage_Sales_Model_Order $order)
+    {
+        /**
+         * @var Mage_Sales_Model_Order_Address $address
+         */
+        $addressCollection = $order->getAddressesCollection();
+        foreach ($addressCollection as $address) {
+            if ($address->getAddressType() == 'pakje_gemak') {
+                $address->delete()
+                        ->save();
+            }
+        }
 
         return $this;
     }

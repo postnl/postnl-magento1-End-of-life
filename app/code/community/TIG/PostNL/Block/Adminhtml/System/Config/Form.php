@@ -421,6 +421,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     $field->addClass($element->validate);
                 }
 
+                if (isset($element->autocomplete)) {
+                    $field->setAutocomplete($element->autocomplete);
+                }
+
                 if (isset($element->frontend_type)
                     && 'multiselect' === (string)$element->frontend_type
                     && isset($element->can_be_empty)

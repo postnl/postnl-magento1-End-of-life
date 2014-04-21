@@ -40,20 +40,22 @@
 class TIG_PostNL_Model_System_Config_Source_Testlive
 {
     /**
-     * Source model for test / live setting
+     * Source model for test / live setting.
      *
      * @return array
      */
     public function toOptionArray()
     {
+        $helper = Mage::helper('postnl');
+
         $array = array(
              array(
                 'value' => '1',
-                'label' => Mage::helper('postnl')->__('Test')
+                'label' => $helper->__('Test')
              ),
              array(
                 'value' => '0',
-                'label' => Mage::helper('postnl')->__('Live')
+                'label' => $helper->__('Live')
              ),
         );
         return $array;

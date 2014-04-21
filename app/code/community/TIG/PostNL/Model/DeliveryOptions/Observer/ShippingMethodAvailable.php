@@ -44,6 +44,38 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
     const BLOCK_NAME = 'checkout/onepage_shipping_method_available';
 
     /**
+     * @var boolean|null
+     */
+    protected $_canUseDeliveryOptions = null;
+
+    /**
+     * @param boolean $canUseDeliveryOptions
+     */
+    public function setCanUseDeliveryOptions($canUseDeliveryOptions)
+    {
+        $this->_canUseDeliveryOptions = $canUseDeliveryOptions;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getCanUseDeliveryOptions()
+    {
+        if ($this->_canUseDeliveryOptions !== null) {
+            return $this->_canUseDeliveryOptions;
+        }
+
+        /**
+         * Check if delivery options are available for the current quote.
+         */
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $canUseDeliveryOptions = Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($quote, false);
+
+        $this->setCanUseDeliveryOptions($canUseDeliveryOptions);
+        return $this->_canUseDeliveryOptions;
+    }
+
+    /**
      * Gets the classname for the block that we want to alter.
      *
      * @return string
@@ -88,13 +120,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
             return $this;
         }
 
-        /**
-         * Check if delivery options are available for the current quote.
-         */
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $canUseDeliveryOptions = Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($quote);
-
-        if (!$canUseDeliveryOptions) {
+        if (!$this->getCanUseDeliveryOptions()) {
             return $this;
         }
 

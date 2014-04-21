@@ -36,65 +36,55 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Obscure
+    extends Mage_Adminhtml_Block_System_Config_Form_Field
 {
     /**
-     * Xpath to 'mijnpakket_login_active' setting.
-     */
-    const XPATH_MIJNPAKKET_LOGIN_ACTIVE = 'postnl/delivery_options/mijnpakket_login_active';
-
-    /**
-     * Check whether MijnPakket login is active.
+     * Gets the element's HTML.
      *
-     * @return bool
-     */
-    public function isMijnpakketLoginActive()
-    {
-        $storeId = Mage::app()->getStore()->getId();
-
-        $isActive = Mage::getStoreConfigFlag(self::XPATH_MIJNPAKKET_LOGIN_ACTIVE, $storeId);
-
-        return $isActive;
-    }
-
-    /**
-     * Checks whether MijnPakket login is currently available for use.
-     *
-     * @return boolean
-     */
-    public function canLoginWithMijnpakket()
-    {
-        /**
-         * MijnPakket login is only available if delivery options are enabled.
-         */
-        if (!Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
-            return false;
-        }
-
-        if (!$this->isMijnpakketLoginActive()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Get initials based on a firstname.
-     *
-     * @param string $firstName
+     * @param Varien_Data_Form_Element_Abstract $element
      *
      * @return string
+     *
+     * @see Varien_Data_Form_Element_Abstract::getElementHtml()
      */
-    public function getInitials($firstName)
+    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
-        $nameParts = preg_split("/\s+/", $firstName);
+        $html = '<input id="'
+              . $element->getHtmlId()
+              . '" name="'
+              . $element->getName()
+              . '" value="'
+              . $element->getEscapedValue()
+              . '" '
+              . $element->serialize($this->getHtmlAttributes())
+              . '/>'
+              . "\n"
+              . $element->getAfterElementHtml();
 
-        $initials = '';
-        foreach ($nameParts as $name) {
-            $initials .= substr($name, 0, 1) . '.';
-        }
+        return $html;
+    }
 
-        $initials = strtoupper($initials);
-        return $initials;
+    /**
+     * Gets a list of supported HTML attributes for this element.
+     *
+     * @return array
+     */
+    public function getHtmlAttributes()
+    {
+        $attributes = array(
+            'type',
+            'title',
+            'class',
+            'style',
+            'onclick',
+            'onchange',
+            'disabled',
+            'readonly',
+            'tabindex',
+            'autocomplete',
+        );
+
+        return $attributes;
     }
 }

@@ -391,6 +391,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'index'        => 'delivery_date',
                     'filter_index' => 'postnl_order.delivery_date',
                     'renderer'     => 'postnl_adminhtml/widget_grid_column_renderer_deliveryDate',
+                    'width'        => '100px',
                     'filter'       => false,
                 ),
                 $after
@@ -533,10 +534,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Decorates the confirm_sate column
      *
-     * @param string | null $value
-     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param string|null                             $value
+     * @param Mage_Sales_Model_Order_Shipment         $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
-     * @param boolean $isExport
+     * @param boolean                                 $isExport
      *
      * @return string
      */
@@ -546,35 +547,54 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $value;
         }
 
-        $origValue = $row->getData($column->getIndex());
+        $class = $this->_getConfirmDateClass($row, $column);
 
+        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
+    }
+
+    /**
+     * Gets classname for the confirmDate column of the current row.
+     *
+     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     *
+     * @return string
+     */
+    protected function _getConfirmDateClass($row, $column)
+    {
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
-        $class = '';
+        $origValue = $row->getData($column->getIndex());
+        $dateModel = Mage::getModel('core/date');
+
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
-            $class = 'grid-severity-notice';
+            return 'grid-severity-notice';
         }
 
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED) {
-            $class = 'grid-severity-critical';
+            return 'grid-severity-critical';
         }
 
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && date('Ymd', Mage::getModel('core/date')->gmtTimestamp()) == date('Ymd', strtotime($origValue))
+            && date('Ymd', $dateModel->gmtTimestamp()) == date('Ymd', strtotime($origValue))
         ) {
-            $class = 'grid-severity-major';
-        } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && Mage::getModel('core/date')->gmtTimestamp() > strtotime($origValue)
-        ) {
-            $class = 'grid-severity-critical';
-        } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
-            $class = 'grid-severity-minor';
+            return 'grid-severity-major';
         }
 
-        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
+        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
+            && $dateModel->gmtTimestamp() > strtotime($origValue)
+        ) {
+            return 'grid-severity-critical';
+        }
+
+        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
+            return 'grid-severity-minor';
+        }
+
+        return '';
     }
 
     /**

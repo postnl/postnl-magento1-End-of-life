@@ -36,65 +36,38 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
-{
-    /**
-     * Xpath to 'mijnpakket_login_active' setting.
-     */
-    const XPATH_MIJNPAKKET_LOGIN_ACTIVE = 'postnl/delivery_options/mijnpakket_login_active';
+?>
+<?php $_helper = Mage::helper('postnl'); ?>
+<?php $_shipment = Mage::registry('current_shipment'); ?>
+<?php $_pakjeGemakAddress = $_helper->getPakjeGemakAddressForShipment($_shipment); ?>
+<?php if (!$_pakjeGemakAddress): ?>
+    <?php return ''; ?>
+<?php endif; ?>
 
-    /**
-     * Check whether MijnPakket login is active.
-     *
-     * @return bool
-     */
-    public function isMijnpakketLoginActive()
-    {
-        $storeId = Mage::app()->getStore()->getId();
+<div class="three-column box-right" id="pakjegemak_address">
+    <!--PakjeGemak Address-->
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-pakjegemak-address"><?php echo $_helper->__('Post Office Address'); ?></h4>
+            <div class="tools"><a href="<?php echo $this->getUrl('adminhtml/sales_order/address', array('address_id' => $_pakjeGemakAddress->getId())); ?>"><?php echo $this->__('Edit'); ?></a></div>
+        </div>
+        <fieldset>
+            <address><?php echo $_pakjeGemakAddress->getFormated(true) ?></address>
+        </fieldset>
+    </div>
+</div>
+<script type="text/javascript">
+    //<[CDATA[
+    document.observe('dom:loaded', function() {
+        var billingAddress = $$('#sales_shipment_view_tabs_shipment_info_content .box-left')[1];
+        var shippingAddress = $$('#sales_shipment_view_tabs_shipment_info_content .box-right')[1];
 
-        $isActive = Mage::getStoreConfigFlag(self::XPATH_MIJNPAKKET_LOGIN_ACTIVE, $storeId);
-
-        return $isActive;
-    }
-
-    /**
-     * Checks whether MijnPakket login is currently available for use.
-     *
-     * @return boolean
-     */
-    public function canLoginWithMijnpakket()
-    {
-        /**
-         * MijnPakket login is only available if delivery options are enabled.
-         */
-        if (!Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
-            return false;
-        }
-
-        if (!$this->isMijnpakketLoginActive()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Get initials based on a firstname.
-     *
-     * @param string $firstName
-     *
-     * @return string
-     */
-    public function getInitials($firstName)
-    {
-        $nameParts = preg_split("/\s+/", $firstName);
-
-        $initials = '';
-        foreach ($nameParts as $name) {
-            $initials .= substr($name, 0, 1) . '.';
-        }
-
-        $initials = strtoupper($initials);
-        return $initials;
-    }
-}
+        billingAddress.addClassName('three-column');
+        shippingAddress.addClassName('three-column box-middle')
+            .removeClassName('box-right')
+            .insert({
+                after : $('pakjegemak_address')
+            });
+    });
+    //]]>
+</script>

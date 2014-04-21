@@ -114,8 +114,9 @@ $dataHelper = Mage::helper('onestepcheckout');
 <?php endif; ?>
 
 <?php $shippingFields = $this->getshippingFieldsOrder($shippingFields);?>
+<?php $_streetFieldSortOrder = Mage::helper('postnl/addressValidation')->getOscStreetFieldSortOrder(); ?>
 <?php foreach($shippingFields as $key => $value):?>
-    <?php if(!empty($value['has_li'])):?>
+    <?php if(!empty($value['has_li']) || $key == $_streetFieldSortOrder):?>
         <?php echo implode('',$value['fields']);?>
     <?php else:?>
         <li class="clearfix"><?php echo implode('',$value['fields']);?></li>
