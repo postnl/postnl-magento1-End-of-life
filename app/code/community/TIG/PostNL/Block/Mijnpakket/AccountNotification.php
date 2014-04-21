@@ -235,7 +235,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
             return $this->_getData('create_account_url');
         }
 
-        $baseUrl     = $this->getCreateAccountBaseUrl();
+        $baseUrl = $this->getCreateAccountBaseUrl();
 
         /**
          * Add the optional params to the base url.

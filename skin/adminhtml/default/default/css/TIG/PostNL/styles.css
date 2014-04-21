@@ -16,4 +16,5 @@ a.postnl-message {color:#EA7601 !important; text-decoration:underline;}
 
 /* General */
 body.no-scroll { overflow:hidden !important; }
-
+.three-column { width:32%; }
+.box-middle  { float:left; margin-left:2%; }

@@ -55,6 +55,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     const XPATH_CUTOFF_TIME          = 'postnl/delivery_options/cutoff_time';
     const XPATH_ALLOW_SUNDAY_SORTING = 'postnl/delivery_options/allow_sunday_sorting';
     const XPATH_SUNDAY_CUTOFF_TIME   = 'postnl/delivery_options/sunday_cutoff_time';
+    const XPATH_DELIVERY_DAYS_NUMBER = 'postnl/delivery_options/delivery_days_number';
 
     /**
      * Check if the module is set to test mode
@@ -144,10 +145,9 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $startDate = $data['deliveryDate'];
 
-        /**
-         * This may become configurable in the future.
-         */
-        $endDate = date('d-m-Y', strtotime('+6 days', strtotime($startDate)));
+        $storeId = Mage::app()->getStore()->getId();
+        $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
+        $endDate = date('d-m-Y', strtotime("+{$maximumNumberOfDeliveryDays} days", strtotime($startDate)));
 
         $soapParams = array(
             'Timeframe' => array(
