@@ -2268,7 +2268,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shippingAddress = $this->getShippingAddress();
         $recipient = array(
             'email' => $this->getShipment()->getOrder()->getCustomerEmail(),
-            'name'  => $shippingAddress->getFirstname() . ' ' . $shippingAddress->getLastname(),
+            'name'  => $shippingAddress->getName(),
         );
 
         $mailTemplate->setDesignConfig(
