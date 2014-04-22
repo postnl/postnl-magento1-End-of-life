@@ -96,9 +96,6 @@ class TIG_PostNL_Model_Core_Observer_Barcode
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
         $postnlOrder = Mage::getModel('postnl_core/order')->load($shipment->getOrderId(), 'order_id');
-        if (!$postnlOrder->getId()) {
-            $postnlOrder->load($shipment->getOrder()->getQuoteId(), 'quote_id');
-        }
 
         if ($postnlOrder->getId()) {
             if ($postnlOrder->getConfirmDate()) {

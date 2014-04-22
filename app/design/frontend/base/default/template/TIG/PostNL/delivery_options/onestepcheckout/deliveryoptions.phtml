@@ -147,6 +147,7 @@
 <?php endif; ?>
 <script type="text/javascript">
     //<![CDATA[
+    var showOptions = <?php echo $_showOptions ? 'true' : 'false'; ?>;
     var deliveryOptions;
     var searchField = $('search_field');
 
@@ -168,7 +169,7 @@
      */
     registerOscObservers();
 
-    <?php if ($_showOptions): ?>
+    if (showOptions) {
         try {
             var billingOrShipping = $('billing:use_for_shipping_yes').checked ? 'billing' : 'shipping';
 
@@ -197,7 +198,7 @@
         } catch(e) {
             console.error(e);
         }
-    <?php endif; ?>
+    }
 
     /**
      * Start the elivery options script.

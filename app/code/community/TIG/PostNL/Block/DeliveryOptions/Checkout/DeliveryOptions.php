@@ -114,6 +114,18 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         $shippingAddress = $quote->getShippingAddress();
 
         /**
+         * If we have billing data, the customer may still be entering their address, so we shouldn't do anything else
+         * for now.
+         */
+        if (Mage::app()->getRequest()->getPost('billing')) {
+            $this->setShippingAddress($shippingAddress);
+
+            return $shippingAddress;
+        }
+
+        $customerHelper = Mage::helper('customer');
+
+        /**
          * OneStepCheckout sometimes stores a partial shipping address in the quote. This hack is meant to detect this
          * and retrieve the full address from the customer's account if available. This is only done if we have no
          * billing data in the $_POST superglobal to prevent conflicts with customers still entering their address.
@@ -126,12 +138,23 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             )
             && $shippingAddress->getId()
             && $shippingAddress->getCustomerAddressId()
-            && Mage::helper('customer')->isLoggedIn()
-            && !Mage::app()->getRequest()->getPost('billing')
+            && $customerHelper->isLoggedIn()
         ) {
             $shippingAddress = $quote->getCustomer()->getAddressById($shippingAddress->getCustomerAddressId());
         }
-        
+
+        /**
+         * If we still don't have a full address, get the customer's default shipping address if available.
+         */
+        if (!$shippingAddress->getPostcode()
+            || $shippingAddress->getPostcode() == '-'
+            || !$shippingAddress->getStreetFull()
+            && $customerHelper->isLoggedIn()
+            && $customerHelper->customerHasAddresses()
+        ) {
+            $shippingAddress = Mage::getSingleton('customer/session')->getCustomer()->getDefaultShippingAddress();
+        }
+
         $this->setShippingAddress($shippingAddress);
 
         return $shippingAddress;
