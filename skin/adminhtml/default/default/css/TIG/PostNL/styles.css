@@ -18,3 +18,10 @@ a.postnl-message {color:#EA7601 !important; text-decoration:underline;}
 body.no-scroll { overflow:hidden !important; }
 .three-column { width:32%; }
 .box-middle  { float:left; margin-left:2%; }
+
+/* Label printing position-picker */
+.startpos-picker { width:100%; height:999em; position:absolute; top:83px; left:0; background:rgba(255, 255, 255, .7); }
+.startpos-picker .content { text-align:center; background-color:#fef4eb; border:4px solid #f5bf8c; height:300px; width:209px; position:fixed; left:50%; top:50%; margin:-68px 0 0 -234px; z-index:100; }
+.startpos-picker .content table { width:210px; height:297px; border-spacing:0; }
+.startpos-picker .content table td { border:2px solid #ccc; background-color:#fff; font-size:large; cursor:pointer; }
+.startpos-picker .content table td.active { background-color:#f5bf8c; }

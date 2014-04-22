@@ -1,0 +1,140 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * Observer to edit the sales > shipments grid
+ *
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setCollection(Varien_Data_Collection $value)
+ * @method Varien_Data_Collection                           getCollection()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setBlock(Mage_Core_Block_Abstract $value)
+ */
+?>
+<div class="entry-edit">
+    <span class="field-row">
+        <label for="<?php echo $this->getName(); ?>"><a href="#" onclick="choose_print_startpos()"><?php echo $this->getLabel(); ?></a></label>
+        <input type="hidden" id="<?php echo $this->getName(); ?>" name="<?php echo $this->getName(); ?>" class="required-entry absolute-advice"/>
+    </span>
+</div>
+<div id="position_picker" class="startpos-picker" style="display:none;">
+    <div class="content">
+        <table>
+            <tbody>
+                <tr>
+                    <td id="pos1">1</td>
+                    <td id="pos2">2</td>
+                </tr>
+                <tr>
+                    <td id="pos3">3</td>
+                    <td id="pos4">4</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    //<![CDATA[
+    var pickerWindow = $('position_picker');
+
+    var posField = $("<?php echo $this->getName(); ?>");
+
+    var pos1 = $('pos1');
+    var pos2 = $('pos2');
+    var pos3 = $('pos3');
+    var pos4 = $('pos4');
+    pos1.observe('click', function() {
+        posField.setValue(1);
+        pickerWindow.hide();
+    });
+
+    pos2.observe('click', function() {
+        posField.setValue(2);
+        pickerWindow.hide();
+    });
+
+    pos3.observe('click', function() {
+        posField.setValue(3);
+        pickerWindow.hide();
+    });
+
+    pos4.observe('click', function() {
+        posField.setValue(4);
+        pickerWindow.hide();
+    });
+
+    pos1.observe('mouseover', function() {
+        pos1.addClassName('active');
+        pos2.addClassName('active');
+        pos3.addClassName('active');
+        pos4.addClassName('active');
+    });
+    pos2.observe('mouseover', function() {
+        pos2.addClassName('active');
+        pos3.addClassName('active');
+        pos4.addClassName('active');
+    });
+    pos3.observe('mouseover', function() {
+        pos3.addClassName('active');
+        pos4.addClassName('active');
+    });
+    pos4.observe('mouseover', function() {
+        pos4.addClassName('active');
+    });
+    pos1.observe('mouseout', function() {
+        pos1.removeClassName('active');
+        pos2.removeClassName('active');
+        pos3.removeClassName('active');
+        pos4.removeClassName('active');
+    });
+    pos2.observe('mouseout', function() {
+        pos2.removeClassName('active');
+        pos3.removeClassName('active');
+        pos4.removeClassName('active');
+    });
+    pos3.observe('mouseout', function() {
+        pos3.removeClassName('active');
+        pos4.removeClassName('active');
+    });
+    pos4.observe('mouseout', function() {
+        pos4.removeClassName('active');
+    });
+
+    var choose_print_startpos = function() {
+        $('position_picker').show();
+    };
+
+    //]]>
+</script>

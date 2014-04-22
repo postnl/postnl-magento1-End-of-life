@@ -733,9 +733,18 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
         );
 
+        $printAdditional = Mage::app()->getLayout()
+                                      ->createBlock('postnl_adminhtml/widget_grid_massaction_labelStartPos');
         $printOptions = array(
             'label'=> $helper->__('PostNL - Print shipping labels'),
             'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
+//            'additional' => $printAdditional->setData(
+//                array(
+//                    'name'   => 'start_pos',
+//                    'type'   => 'text',
+//                    'label'  => $helper->__('Choose printing start position'),
+//                )
+//            ),
         );
 
         $confirmOptions = array(
