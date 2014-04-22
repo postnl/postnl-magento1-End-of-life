@@ -1482,7 +1482,7 @@ PostnlDeliveryOptions.prototype = {
         }
 
         if (this.debug) {
-            console.info('Reinitializing cufon...');
+            console.info('Refreshing cufon...');
         }
 
         initCufon();
@@ -2690,6 +2690,8 @@ PostnlDeliveryOptions.Map = new Class.create({
              */
             google.maps.event.addListener(marker, "click", this.selectMarker.bind(this, marker, true, true));
             google.maps.event.addListener(marker, "mouseover", this.markerOnMouseOver.bind(this, marker));
+            google.maps.event.addListener(marker, "mousedown", this.markerOnMouseDown.bind(this));
+            google.maps.event.addListener(marker, "mouseup", this.markerOnMouseUp.bind(this));
             google.maps.event.addListener(marker, "mouseout", this.markerOnMouseOut.bind(this, marker));
 
             /**
@@ -2983,6 +2985,16 @@ PostnlDeliveryOptions.Map = new Class.create({
         });
 
         return this;
+    },
+
+    markerOnMouseDown : function()
+    {
+        this.setIsBeingDragged(true);
+    },
+
+    markerOnMouseUp : function()
+    {
+        this.setIsBeingDragged(false);
     },
 
 
@@ -4121,7 +4133,7 @@ PostnlDeliveryOptions.Location = new Class.create({
                 this.setOldCenter(map.map.getCenter());
                 map.map.panTo(this.getMarker().getPosition());
                 return true;
-            }.bind(this), 1000);
+            }.bind(this), 250);
 
             return true;
         }.bind(this));
