@@ -218,6 +218,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         'Returned Goods',
     );
 
+    /**
+     * These shipment types need specific product options.
+     *
+     * @var array
+     */
     protected $_availableProductOptions = array(
         'PGE' => array(
             'Characteristic' => '002',
@@ -468,6 +473,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Retrieves the latest shipping status of a shipment from CIF including full status history
      *
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     *
      * @throws TIG_PostNL_Exception
      *
      * @return StdClass
@@ -667,7 +673,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @param        boolean|string                 $mainBarcode
      * @param        bool|int                       $shipmentNumber
      * @param        string                         $printerType The printertype used. Currently only
-     *                                                           'GraphicFile|PDF' is fully supported
+     *                                                           'GraphicFile|PDF' is fully supported.
+     *
      *
      * @throws TIG_PostNL_Exception
      *
@@ -1048,7 +1055,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
     /**
      * Forms an array of address data compatible with CIF
-     *
+
      * @param Mage_Sales_Model_Order_Address|Varien_Object $address
      * @param array|boolean                                $streetData Optional parameter containing streetname,
      *                                                                 housenr, housenr extension and fullStreet values.
@@ -1706,6 +1713,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Get the area field from an address if enabled
      *
      * @param Mage_Sales_Model_Order_Address $address
+     *
      * @return string
      */
     protected function _getArea($address)
@@ -1731,6 +1739,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Get the area building name from an address if enabled
      *
      * @param Mage_Sales_Model_Order_Address $address
+     *
      * @return string
      */
     protected function _getBuildingName($address)
@@ -1756,6 +1765,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Get the department field from an address if enabled
      *
      * @param Mage_Sales_Model_Order_Address $address
+     *
      * @return string
      */
     protected function _getDepartment($address)
@@ -1781,6 +1791,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Get the doorcode field from an address if enabled
      *
      * @param Mage_Sales_Model_Order_Address $address
+     *
      * @return string
      */
     protected function _getDoorcode($address)
@@ -1806,6 +1817,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Get the floor field from an address if enabled
      *
      * @param Mage_Sales_Model_Order_Address $address
+     *
      * @return string
      */
     protected function _getFloor($address)
@@ -1831,6 +1843,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Get the remark field from an address if enabled
      *
      * @param Mage_Sales_Model_Order_Address $address
+     *
      * @return string
      */
     protected function _getRemark($address)
@@ -1898,6 +1911,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
              $reference = str_replace('{{var shipment_increment_id}}', $shipment->getIncrementId(), $reference);
              $reference = str_replace('{{var order_increment_id}}', $shipment->getOrder()->getIncrementId(), $reference);
+
              $reference = str_replace('{{var store_frontend_name}}', $store->getFrontendName(), $reference);
          }
 
