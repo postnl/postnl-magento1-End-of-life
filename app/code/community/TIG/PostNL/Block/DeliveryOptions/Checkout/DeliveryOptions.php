@@ -66,6 +66,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      *
      * @var null|string
      */
+    protected $_deliveryDate = null;
 
     /**
      * Set the currently selected shipping address.
@@ -110,6 +111,23 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             return $shippingAddress;
         }
 
+        $shippingAddress = $this->_getShippingAddress();
+
+        if (!$shippingAddress) {
+            $shippingAddress = Mage::getModel('sales/quote_address');
+        }
+
+        $this->setShippingAddress($shippingAddress);
+        return $shippingAddress;
+    }
+
+    /**
+     * Gets a shipping address from the current quote or from the customer if the customer is logged in.
+     *
+     * @return Mage_Customer_Model_Address|Mage_Sales_Model_Quote_Address
+     */
+    protected function _getShippingAddress()
+    {
         $quote = $this->getQuote();
         $shippingAddress = $quote->getShippingAddress();
 
@@ -118,8 +136,6 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
          * for now.
          */
         if (Mage::app()->getRequest()->getPost('billing')) {
-            $this->setShippingAddress($shippingAddress);
-
             return $shippingAddress;
         }
 
@@ -146,16 +162,17 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         /**
          * If we still don't have a full address, get the customer's default shipping address if available.
          */
-        if (!$shippingAddress->getPostcode()
-            || $shippingAddress->getPostcode() == '-'
-            || !$shippingAddress->getStreetFull()
+        if (
+            (
+                !$shippingAddress->getPostcode()
+                || $shippingAddress->getPostcode() == '-'
+                || !$shippingAddress->getStreetFull()
+            )
             && $customerHelper->isLoggedIn()
             && $customerHelper->customerHasAddresses()
         ) {
             $shippingAddress = Mage::getSingleton('customer/session')->getCustomer()->getDefaultShippingAddress();
         }
-
-        $this->setShippingAddress($shippingAddress);
 
         return $shippingAddress;
     }

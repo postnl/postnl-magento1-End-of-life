@@ -665,6 +665,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * The label wills be base64 encoded strings. Convert these to a single pdf
              */
             $label = Mage::getModel('postnl_core/label');
+
+            if ($this->getRequest()->getPost('print_start_pos')) {
+                $label->setLabelCounter($this->getRequest()->getPost('print_start_pos'));
+            }
+
             $output = $label->createPdf($labels);
 
             $this->getResponse()
@@ -757,6 +762,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * The label wills be base64 encoded strings. Convert these to a single pdf
              */
             $label = Mage::getModel('postnl_core/label');
+
+            if ($this->getRequest()->getPost('print_start_pos')) {
+                $label->setLabelCounter($this->getRequest()->getPost('print_start_pos'));
+            }
+
             $output = $label->createPdf($labels);
 
             $this->getResponse()

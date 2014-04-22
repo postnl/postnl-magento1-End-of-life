@@ -21,7 +21,18 @@ body.no-scroll { overflow:hidden !important; }
 
 /* Label printing position-picker */
 .startpos-picker { width:100%; height:999em; position:absolute; top:83px; left:0; background:rgba(255, 255, 255, .7); }
-.startpos-picker .content { text-align:center; background-color:#fef4eb; border:4px solid #f5bf8c; height:300px; width:209px; position:fixed; left:50%; top:50%; margin:-68px 0 0 -234px; z-index:100; }
-.startpos-picker .content table { width:210px; height:297px; border-spacing:0; }
-.startpos-picker .content table td { border:2px solid #ccc; background-color:#fff; font-size:large; cursor:pointer; }
-.startpos-picker .content table td.active { background-color:#f5bf8c; }
+.startpos-picker .content { text-align:center; background:#fef4eb; border:4px solid #f5bf8c; height:370px; width:285px; position:fixed; left:43%; top:30%; z-index:100; }
+.startpos-picker .content p { text-align:left; }
+.startpos-picker .content table { width:210px; height:297px; border-spacing:0; margin:0 auto; }
+.startpos-picker .content table td { border:2px solid #ccc; background:#fff; font-size:18px; cursor:pointer; }
+.startpos-picker .content table td.active { background:#f5bf8c; }
+
+/* Tooltip (Default Magento) */
+.postnl-tooltip { display:inline-block; width:15px; height:15px; position:relative; z-index:1; background:url(../../../images/TIG/PostNL/icon-tooltip.png) no-repeat 0 0; margin:3px 5px 0 0; cursor:help; vertical-align:sub; }
+.postnl-tooltip:hover { z-index:100; }
+.postnl-tooltip > span { display:none; }
+.postnl-tooltip:hover > div:hover,
+.postnl-tooltip > div { width:301px; background:#f6f6f6 url(../../../images/TIG/PostNL/bkg_tooltip.png) repeat-y 100%; opacity:0; position:absolute; z-index:999; left:-296px; bottom:28px; padding:0 12px; color:#464d50; visibility:hidden; }
+.postnl-tooltip > div:before { position:absolute; top:-5px; left:0; content:''; width:325px; height:5px; overflow:hidden; background:url(../../../images/TIG/PostNL/bkg_tooltip.png) no-repeat 0 0; }
+.postnl-tooltip > div:after { position:absolute; bottom:-14px; left:-1px; content:''; width:325px; height:14px; overflow:hidden; background:url(../../../images/TIG/PostNL/bkg_tooltip.png) no-repeat -325px 0; }
+.postnl-tooltip:hover > div { opacity:1; width:301px; visibility:visible; bottom:30px;}

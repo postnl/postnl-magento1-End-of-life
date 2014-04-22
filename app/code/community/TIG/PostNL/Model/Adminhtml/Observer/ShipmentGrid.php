@@ -38,9 +38,10 @@
  *
  * Observer to edit the sales > shipments grid
  *
- * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setCollection(Varien_Data_Collection $value)
- * @method Varien_Data_Collection                           getCollection()
- * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setBlock(Mage_Core_Block_Abstract $value)
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid    setCollection(Mage_Sales_Model_Resource_Order_Shipment_Collection $value)
+ * @method Mage_Sales_Model_Resource_Order_Shipment_Collection getCollection()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid    setBlock(Mage_Adminhtml_Block_Sales_Shipment_Grid $value)
+ * @method Mage_Adminhtml_Block_Sales_Shipment_Grid            getBlock()
  */
 class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 {
@@ -726,30 +727,36 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $massactionBlock = $block->getMassactionBlock();
 
         /**
+         * Get the additional options block for 'label printing' mass actions.
+         */
+        $printAdditional = Mage::app()->getLayout()
+                               ->createBlock('postnl_adminhtml/widget_grid_massaction_labelStartPos');
+
+        $printAdditional->setData(
+            array(
+                'name'   => 'print_start_pos',
+                'label'  => $helper->__('Choose printing start position'),
+            )
+        );
+
+        /**
          * Build all the mass action option arrays
          */
         $printAndConfirmOptions = array(
-            'label'=> $helper->__('PostNL - Print shipping labels & confirm shipment'),
-            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
+            'label'      => $helper->__('PostNL - Print shipping labels & confirm shipment'),
+            'url'        => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
+            'additional' => $printAdditional,
         );
 
-        $printAdditional = Mage::app()->getLayout()
-                                      ->createBlock('postnl_adminhtml/widget_grid_massaction_labelStartPos');
         $printOptions = array(
-            'label'=> $helper->__('PostNL - Print shipping labels'),
-            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
-//            'additional' => $printAdditional->setData(
-//                array(
-//                    'name'   => 'start_pos',
-//                    'type'   => 'text',
-//                    'label'  => $helper->__('Choose printing start position'),
-//                )
-//            ),
+            'label'      => $helper->__('PostNL - Print shipping labels'),
+            'url'        => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
+            'additional' => $printAdditional,
         );
 
         $confirmOptions = array(
-            'label'=> $helper->__('PostNL - Confirm shipments'),
-            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massConfirm'),
+            'label' => $helper->__('PostNL - Confirm shipments'),
+            'url'   => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massConfirm'),
         );
 
         $parcelWareOptions = array(

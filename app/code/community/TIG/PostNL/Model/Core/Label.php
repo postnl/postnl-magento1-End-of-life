@@ -67,6 +67,33 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     protected $_labelCounter = null;
 
     /**
+     * Flag if the current label is the first of a set of labels.
+     *
+     * @var bool
+     */
+    protected $_isFirstLabel = false;
+
+    /**
+     * @param boolean $isFirstLabel
+     *
+     * @return TIG_PostNL_Model_Core_Label
+     */
+    public function setIsFirstLabel($isFirstLabel)
+    {
+        $this->_isFirstLabel = $isFirstLabel;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getIsFirstLabel()
+    {
+        return $this->_isFirstLabel;
+    }
+
+    /**
      * Get the array of saved temporary labels
      *
      * @return array
@@ -271,6 +298,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             );
         }
 
+        $this->setIsFirstLabel(true);
         $labels = $this->_sortLabels($labels);
         foreach ($labels as $label) {
             $pdf = $this->_addPdfTemplate($pdf, $label);
@@ -309,6 +337,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 ) {
                     $pdf->addOrientedPage('L', 'A4');
                     $this->resetLabelCounter();
+                } elseif ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
+                    $pdf->addOrientedPage('L', 'A4');
+                    $this->setIsFirstLabel(false);
                 }
 
                 /**
