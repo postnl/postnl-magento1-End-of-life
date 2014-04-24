@@ -868,7 +868,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     }
 
     /**
-     * Creates a parcelware export file based on the selected shipments
+     * Creates a Parcelware export file based on the selected shipments
      *
      * @return TIG_PostNL_Adminhtml_ShipmentController
      */

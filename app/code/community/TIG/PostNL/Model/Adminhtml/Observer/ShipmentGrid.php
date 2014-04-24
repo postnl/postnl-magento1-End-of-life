@@ -42,6 +42,8 @@
  * @method Mage_Sales_Model_Resource_Order_Shipment_Collection getCollection()
  * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid    setBlock(Mage_Adminhtml_Block_Sales_Shipment_Grid $value)
  * @method Mage_Adminhtml_Block_Sales_Shipment_Grid            getBlock()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid    setLabelSize(string $value)
+ * @method boolean                                             hasLabelSize()
  */
 class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 {
@@ -76,6 +78,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     const XML_PATH_SHIPPING_GRID_MASSACTION_DEFAULT = 'postnl/cif_labels_and_confirming/shipping_grid_massaction_default';
 
     /**
+     * Xpath to label size setting.
+     */
+    const XPATH_LABEL_SIZE = 'postnl/cif_labels_and_confirming/label_size';
+
+    /**
      * Gets an array of optional columns to display
      *
      * @return array
@@ -88,6 +95,23 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $columnsToDisplay = explode(',', $columnsToDisplay);
 
         return $columnsToDisplay;
+    }
+
+    /**
+     * Get the configured label size.
+     *
+     * @return string
+     */
+    public function getLabelSize()
+    {
+        if ($this->hasLabelSize()) {
+            return $this->_getData('label_size');
+        }
+
+        $labelSize = Mage::getStoreConfig(self::XPATH_LABEL_SIZE, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        $this->setLabelSize($labelSize);
+        return $labelSize;
     }
 
     /**
@@ -727,31 +751,16 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $massactionBlock = $block->getMassactionBlock();
 
         /**
-         * Get the additional options block for 'label printing' mass actions.
-         */
-        $printAdditional = Mage::app()->getLayout()
-                               ->createBlock('postnl_adminhtml/widget_grid_massaction_labelStartPos');
-
-        $printAdditional->setData(
-            array(
-                'name'   => 'print_start_pos',
-                'label'  => $helper->__('Choose printing start position'),
-            )
-        );
-
-        /**
          * Build all the mass action option arrays
          */
         $printAndConfirmOptions = array(
             'label'      => $helper->__('PostNL - Print shipping labels & confirm shipment'),
             'url'        => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
-            'additional' => $printAdditional,
         );
 
         $printOptions = array(
             'label'      => $helper->__('PostNL - Print shipping labels'),
             'url'        => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
-            'additional' => $printAdditional,
         );
 
         $confirmOptions = array(
@@ -760,9 +769,33 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         );
 
         $parcelWareOptions = array(
-            'label' => $helper->__('PostNL - Create parcelware export'),
+            'label' => $helper->__('PostNL - Create Parcelware export'),
             'url'   => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massCreateParcelwareExport')
         );
+
+        /**
+         * Add an additional option to the 'label printing' mass actions if the configured label size is A4.
+         */
+        if ($this->getLabelSize() == 'A4') {
+            /**
+             * Get the additional options block for 'label printing' mass actions.
+             */
+            $printAdditional = Mage::app()->getLayout()
+                                          ->createBlock('postnl_adminhtml/widget_grid_massaction_labelStartPos');
+
+            $printAdditional->setData(
+                            array(
+                                'name'   => 'print_start_pos',
+                                'label'  => $helper->__('Choose printing start position'),
+                            )
+            );
+
+            /**
+             * Add the additional option block.
+             */
+            $printAndConfirmOptions['additional'] = $printAdditional;
+            $printOptions['additional']           = $printAdditional;
+        }
 
         /**
          * Check which mass action should be selected by default
@@ -796,7 +829,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $exportAllowed  = $helper->checkIsPostnlActionAllowed('create_parcelware_export');
 
         /**
-         * Add the mass actions to the grid
+         * Add the mass actions to the grid if the current admin user is allowed to use them.
          */
         if ($printAllowed && $confirmAllowed) {
             $massactionBlock->addItem(

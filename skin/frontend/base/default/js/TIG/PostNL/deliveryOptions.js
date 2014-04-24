@@ -3596,6 +3596,11 @@ PostnlDeliveryOptions.Location = new Class.create({
         headerHtml += '<div class="bkg">';
         headerHtml += '<div class="bkg">';
         headerHtml += '<div class="content">';
+        headerHtml += '<a href="#" title="'
+                    + Translator.translate('Show on the map')
+                    + '" class="show-map" id="show_map_'
+                    + this.getLocationCode()
+                    + '">';
         headerHtml += '<strong class="location-name overflow-protect">' + this.getName() + '</strong>';
 
         if (this.getType().indexOf('PA') != -1) {
@@ -3603,8 +3608,10 @@ PostnlDeliveryOptions.Location = new Class.create({
         } else {
             headerHtml += '<span class="location-type">' + Translator.translate('Post Office') + '</span>';
         }
+        headerHtml += '</a>';
 
         if (!noTooltip) {
+            headerHtml += '<div class="tooltip-container">';
             headerHtml += '<a class="location-info" id="tooltip_anchor_'
                         + this.getLocationCode()
                         + '">';
@@ -3612,6 +3619,7 @@ PostnlDeliveryOptions.Location = new Class.create({
             headerHtml += '</a>';
 
             headerHtml += this.getTooltipHtml();
+            headerHtml += '</div>';
         }
 
         headerHtml += '</div>';
@@ -3653,14 +3661,15 @@ PostnlDeliveryOptions.Location = new Class.create({
          * Add observers to display the tooltip on mouseover.
          */
         var tooltipElement = $('location_tooltip_' + this.getLocationCode());
-        var tooltipAnchor = $('tooltip_anchor_' + this.getLocationCode());
+        var showOnMapAnchor = $('show_map_' + this.getLocationCode());
 
-        tooltipAnchor.observe('mouseover', function() {
-            tooltipElement.show();
-        }.bind(this));
+        showOnMapAnchor.observe('click', function(event) {
+            event.stop();
 
-        tooltipAnchor.observe('mouseout', function() {
-            tooltipElement.hide();
+            this.getMap().openAddLocationWindow();
+            if (this.getMarker()) {
+                this.getMap().selectMarker(this.getMarker(), false, true);
+            }
         }.bind(this));
 
         this.setTooltipElement(tooltipElement);
@@ -3883,7 +3892,7 @@ PostnlDeliveryOptions.Location = new Class.create({
                  + this.getTooltipClassName()
                  + '" id="location_tooltip_'
                  + this.getLocationCode()
-                 + '" style="display:none;">';
+                 + '">';
         html += '<div class="tooltip-header">';
         html += '<strong class="location-name">' + this.getName() + '</strong>';
         html += '<strong class="location-address">' + addressText + '</strong>';
