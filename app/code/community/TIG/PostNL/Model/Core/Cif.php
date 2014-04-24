@@ -808,6 +808,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                     $barcode, $mainBarcode = false, $shipmentNumber = false)
     {
         $shipment        = $postnlShipment->getShipment();
+        $order           = $shipment->getOrder();
         $shippingAddress = $shipment->getShippingAddress();
 
         $parcelCount = $postnlShipment->getParcelCount();
@@ -858,7 +859,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'DownPartnerID'            => '',
             'ProductCodeDelivery'      => $postnlShipment->getProductCode(),
             'Contacts'                 => array(
-                                           'Contact' => $this->_getContact($shippingAddress, $postnlShipment),
+                                           'Contact' => $this->_getContact($shippingAddress, $postnlShipment, $order),
                                        ),
             'Dimension'                => array(
                                            'Weight'  => round($shipmentWeight),
@@ -1192,16 +1193,18 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @param Mage_Sales_Model_Order_Address $address
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * @param Mage_Sales_Model_Order         $order
      *
      * @return array
      */
-    protected function _getContact($address, TIG_PostNL_Model_Core_Shipment $postnlShipment)
+    protected function _getContact($address, TIG_PostNL_Model_Core_Shipment $postnlShipment,
+                                   Mage_Sales_Model_Order $order)
     {
         $smsNr = $this->_getMobilePhoneNumber($postnlShipment);
 
         $contact = array(
             'ContactType' => '01', // Receiver
-            'Email'       => $address->getEmail(),
+            'Email'       => $order->getCustomerEmail(),
             'SMSNr'       => $smsNr,
             'TelNr'       => $address->getTelephone(),
         );

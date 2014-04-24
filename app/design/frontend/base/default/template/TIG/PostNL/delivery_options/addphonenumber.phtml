@@ -35,6 +35,8 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber $this
  */
 ?>
 <script type="text/javascript">
@@ -60,7 +62,7 @@
                     <p><?php echo $this->__('We need your mobile phone number in order to do this.'); ?></p>
                 </div>
                 <div class="number-input">
-                    <input type="text" id="add_phone_input" class="input-text required-entry validate-required validate-postnl-mobilephone" name="add_phone" placeholder="<?php echo $this->__('Phone number'); ?>" value="<?php echo $this->getPhoneNumber(); ?>" />
+                    <input type="text" id="add_phone_input" class="input-text required-entry validate-required validate-postnl-mobilephone" name="add_phone" placeholder="<?php echo $this->__('Phone number'); ?>" value="<?php echo $this->escapeHtml($this->getPhoneNumber()); ?>" />
                     <div id="number_verify_text" class="number-verify" style="display: none;"><?php echo $this->__('Please make sure your phone number is correct.'); ?></div>
                     <div id="number_verify_fail" class="number-failed" style="display: none;"><?php echo $this->__('Please enter a mobile phone number.'); ?></div>
                 </div>

@@ -1846,7 +1846,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
     /**
      * Manually confirms a shipment without communicating with PostNL. This should be used if you wish to update the
-     * confirmation status in Magento, while actually confirming the shipment through other means, such as parcelware.
+     * confirmation status in Magento, while actually confirming the shipment through other means, such as Parcelware.
      *
      * @return $this
      *

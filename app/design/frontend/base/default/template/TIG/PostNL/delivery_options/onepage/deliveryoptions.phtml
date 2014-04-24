@@ -75,6 +75,11 @@
                     </div>
                 </li>
             </ul>
+            <ul class="option-list" id="change_address">
+                <li class="add-location">
+                    <a id="change_address_link" href="#" ><?php echo $this->__('choose a different shipping address'); ?></a>
+                </li>
+            </ul>
         </div>
         <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
             <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
@@ -93,7 +98,7 @@
     <?php echo $this->getChildHtml('postnl.add.phonenumber') ?>
 </div>
 <script type="text/javascript">
-//<![CDATA[
+    //<![CDATA[
     /**
      * Preload an array of images.
      */
@@ -162,6 +167,12 @@
         $('postnl_pickup').hide();
     }
 
+    var changeAddressLink = $('change_address_link');
+    changeAddressLink.stopObserving('click');
+    changeAddressLink.observe('click', function() {
+        checkout.gotoSection('shipping');
+    });
+
     /**
      * Preload images.
      *
@@ -208,5 +219,5 @@
             }
         }
     });
-//]]>
+    //]]>
 </script>

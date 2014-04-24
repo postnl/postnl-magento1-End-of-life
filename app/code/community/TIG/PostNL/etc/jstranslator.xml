@@ -109,4 +109,7 @@
     <mijnpakket_login_unavailable translate="message" module="postnl">
         <message>Unfortunately MijnPakket login is currently not available. Please use a different checkout method.</message>
     </mijnpakket_login_unavailable>
+    <show_on_map translate="message" module="postnl">
+        <message>Show on the map</message>
+    </show_on_map>
 </jstranslator>

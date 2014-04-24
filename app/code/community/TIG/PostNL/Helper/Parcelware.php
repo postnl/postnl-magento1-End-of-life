@@ -80,7 +80,7 @@ class TIG_PostNL_Helper_Parcelware extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Check to see if parcelware export functionality is enabled.
+     * Check to see if Parcelware export functionality is enabled.
      */
     public function isParcelwareExportEnabled($storeId = null)
     {
