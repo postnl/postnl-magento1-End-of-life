@@ -37,6 +37,7 @@
 #postnl_delivery_options .location .location-name { font-weight:normal; font-size:13px; }
 #postnl_delivery_options .location .location-type { font-size:11px; color:#555; }
 #postnl_delivery_options .location .location-info span { background:url(../../../../images/TIG/PostNL/deliveryoptions/unbranded/bkg_more-info.png) -2px 5px no-repeat; }
+#postnl_delivery_options .location .tooltip-container:hover .location-info span,
 #postnl_delivery_options .location .location-info:hover span { position:relative; z-index:600; background-position:5px -41px; }
 
 #postnl_delivery_options .add-location { border:none; }
