@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                           hasWebshopId()
@@ -47,8 +47,13 @@
  * @method boolean                           hasContinueUrl()
  * @method TIG_PostNL_Block_Checkout_Cart_Js setContinueUrl(string $value)
  */
-class TIG_PostNL_Block_Checkout_Cart_Js extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Checkout_Cart_Js extends TIG_PostNL_Block_Core_Template
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_checkout_cart_js';
+
     /**
      * XML path for webshop ID setting
      */

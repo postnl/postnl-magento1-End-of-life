@@ -38,9 +38,12 @@
  *
  * Observer to edit the sales > shipments grid
  *
- * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setCollection(Varien_Data_Collection $value)
- * @method Varien_Data_Collection                           getCollection()
- * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setBlock(Mage_Core_Block_Abstract $value)
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid    setCollection(Mage_Sales_Model_Resource_Order_Shipment_Collection $value)
+ * @method Mage_Sales_Model_Resource_Order_Shipment_Collection getCollection()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid    setBlock(Mage_Adminhtml_Block_Sales_Shipment_Grid $value)
+ * @method Mage_Adminhtml_Block_Sales_Shipment_Grid            getBlock()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid    setLabelSize(string $value)
+ * @method boolean                                             hasLabelSize()
  */
 class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 {
@@ -75,6 +78,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     const XML_PATH_SHIPPING_GRID_MASSACTION_DEFAULT = 'postnl/cif_labels_and_confirming/shipping_grid_massaction_default';
 
     /**
+     * Xpath to label size setting.
+     */
+    const XPATH_LABEL_SIZE = 'postnl/cif_labels_and_confirming/label_size';
+
+    /**
      * Gets an array of optional columns to display
      *
      * @return array
@@ -87,6 +95,23 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $columnsToDisplay = explode(',', $columnsToDisplay);
 
         return $columnsToDisplay;
+    }
+
+    /**
+     * Get the configured label size.
+     *
+     * @return string
+     */
+    public function getLabelSize()
+    {
+        if ($this->hasLabelSize()) {
+            return $this->_getData('label_size');
+        }
+
+        $labelSize = Mage::getStoreConfig(self::XPATH_LABEL_SIZE, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        $this->setLabelSize($labelSize);
+        return $labelSize;
     }
 
     /**
@@ -391,6 +416,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'index'        => 'delivery_date',
                     'filter_index' => 'postnl_order.delivery_date',
                     'renderer'     => 'postnl_adminhtml/widget_grid_column_renderer_deliveryDate',
+                    'width'        => '100px',
                     'filter'       => false,
                 ),
                 $after
@@ -533,10 +559,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Decorates the confirm_sate column
      *
-     * @param string | null $value
-     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param string|null                             $value
+     * @param Mage_Sales_Model_Order_Shipment         $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
-     * @param boolean $isExport
+     * @param boolean                                 $isExport
      *
      * @return string
      */
@@ -546,35 +572,54 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return $value;
         }
 
-        $origValue = $row->getData($column->getIndex());
+        $class = $this->_getConfirmDateClass($row, $column);
 
+        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
+    }
+
+    /**
+     * Gets classname for the confirmDate column of the current row.
+     *
+     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     *
+     * @return string
+     */
+    protected function _getConfirmDateClass($row, $column)
+    {
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
-        $class = '';
+        $origValue = $row->getData($column->getIndex());
+        $dateModel = Mage::getModel('core/date');
+
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
-            $class = 'grid-severity-notice';
+            return 'grid-severity-notice';
         }
 
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED) {
-            $class = 'grid-severity-critical';
+            return 'grid-severity-critical';
         }
 
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && date('Ymd', Mage::getModel('core/date')->gmtTimestamp()) == date('Ymd', strtotime($origValue))
+            && date('Ymd', $dateModel->gmtTimestamp()) == date('Ymd', strtotime($origValue))
         ) {
-            $class = 'grid-severity-major';
-        } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && Mage::getModel('core/date')->gmtTimestamp() > strtotime($origValue)
-        ) {
-            $class = 'grid-severity-critical';
-        } elseif ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
-            $class = 'grid-severity-minor';
+            return 'grid-severity-major';
         }
 
-        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
+        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
+            && $dateModel->gmtTimestamp() > strtotime($origValue)
+        ) {
+            return 'grid-severity-critical';
+        }
+
+        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
+            return 'grid-severity-minor';
+        }
+
+        return '';
     }
 
     /**
@@ -709,24 +754,48 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * Build all the mass action option arrays
          */
         $printAndConfirmOptions = array(
-            'label'=> $helper->__('PostNL - Print shipping labels & confirm shipment'),
-            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
+            'label'      => $helper->__('PostNL - Print shipping labels & confirm shipment'),
+            'url'        => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabelsAndConfirm'),
         );
 
         $printOptions = array(
-            'label'=> $helper->__('PostNL - Print shipping labels'),
-            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
+            'label'      => $helper->__('PostNL - Print shipping labels'),
+            'url'        => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massPrintLabels'),
         );
 
         $confirmOptions = array(
-            'label'=> $helper->__('PostNL - Confirm shipments'),
-            'url'  => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massConfirm'),
+            'label' => $helper->__('PostNL - Confirm shipments'),
+            'url'   => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massConfirm'),
         );
 
         $parcelWareOptions = array(
-            'label' => $helper->__('PostNL - Create parcelware export'),
+            'label' => $helper->__('PostNL - Create Parcelware export'),
             'url'   => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massCreateParcelwareExport')
         );
+
+        /**
+         * Add an additional option to the 'label printing' mass actions if the configured label size is A4.
+         */
+        if ($this->getLabelSize() == 'A4') {
+            /**
+             * Get the additional options block for 'label printing' mass actions.
+             */
+            $printAdditional = Mage::app()->getLayout()
+                                          ->createBlock('postnl_adminhtml/widget_grid_massaction_labelStartPos');
+
+            $printAdditional->setData(
+                            array(
+                                'name'   => 'print_start_pos',
+                                'label'  => $helper->__('Choose printing start position'),
+                            )
+            );
+
+            /**
+             * Add the additional option block.
+             */
+            $printAndConfirmOptions['additional'] = $printAdditional;
+            $printOptions['additional']           = $printAdditional;
+        }
 
         /**
          * Check which mass action should be selected by default
@@ -760,7 +829,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $exportAllowed  = $helper->checkIsPostnlActionAllowed('create_parcelware_export');
 
         /**
-         * Add the mass actions to the grid
+         * Add the mass actions to the grid if the current admin user is allowed to use them.
          */
         if ($printAllowed && $confirmAllowed) {
             $massactionBlock->addItem(

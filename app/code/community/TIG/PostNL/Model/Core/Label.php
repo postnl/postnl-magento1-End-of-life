@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_Core_Label setLabelSize(string $value)
@@ -65,6 +65,33 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * @var null | int
      */
     protected $_labelCounter = null;
+
+    /**
+     * Flag if the current label is the first of a set of labels.
+     *
+     * @var bool
+     */
+    protected $_isFirstLabel = false;
+
+    /**
+     * @param boolean $isFirstLabel
+     *
+     * @return TIG_PostNL_Model_Core_Label
+     */
+    public function setIsFirstLabel($isFirstLabel)
+    {
+        $this->_isFirstLabel = $isFirstLabel;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getIsFirstLabel()
+    {
+        return $this->_isFirstLabel;
+    }
 
     /**
      * Get the array of saved temporary labels
@@ -271,6 +298,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             );
         }
 
+        $this->setIsFirstLabel(true);
         $labels = $this->_sortLabels($labels);
         foreach ($labels as $label) {
             $pdf = $this->_addPdfTemplate($pdf, $label);
@@ -309,6 +337,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 ) {
                     $pdf->addOrientedPage('L', 'A4');
                     $this->resetLabelCounter();
+                } elseif ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
+                    $pdf->addOrientedPage('L', 'A4');
+                    $this->setIsFirstLabel(false);
                 }
 
                 /**

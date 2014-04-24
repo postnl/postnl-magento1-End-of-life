@@ -132,12 +132,6 @@
 
             $('<?php echo $_addressType; ?>:street<?php echo $_i; ?>').setValue(value);
         });
-        $('virtual:<?php echo $_addressType; ?>:street<?php echo $_i; ?>').observe('change', function(event) {
-            var element = Event.element(event);
-            var value = element.getValue();
-
-            $('<?php echo $_addressType; ?>:street<?php echo $_i; ?>').setValue(value);
-        });
     <?php endfor; ?>
 
     document.observe('dom:loaded', function() {

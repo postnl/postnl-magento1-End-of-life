@@ -40,7 +40,6 @@
 <?php
 /**
  * @var TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions $this
- * @var Mage_Sales_Model_Quote_Address $_address
  */
 ?>
 <?php $_address                 = $this->getShippingAddress(); ?>
@@ -76,6 +75,11 @@
                     </div>
                 </li>
             </ul>
+            <ul class="option-list" id="change_address">
+                <li class="add-location">
+                    <a id="change_address_link" href="#" ><?php echo $this->__('choose a different shipping address'); ?></a>
+                </li>
+            </ul>
         </div>
         <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
             <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
@@ -94,7 +98,7 @@
     <?php echo $this->getChildHtml('postnl.add.phonenumber') ?>
 </div>
 <script type="text/javascript">
-//<![CDATA[
+    //<![CDATA[
     /**
      * Preload an array of images.
      */
@@ -107,14 +111,13 @@
 
     var options;
     var params;
+    var debug = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
 
     params = {
         saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
         timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
         locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
         locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
-        saveCostsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/saveOptionCosts', array('_secure' => true)) ?>',
-        savePhoneNumberUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/savePhoneNumber', array('_secure' => true)) ?>',
         postcode           : '<?php echo $this->escapeHtml($_postcode); ?>',
         housenumber        : '<?php echo $this->escapeHtml($_housenumber); ?>',
         deliveryDate       : '<?php echo $this->escapeHtml($_deliveryDate); ?>',
@@ -142,7 +145,7 @@
     };
 
     try {
-        deliveryOptions = new PostnlDeliveryOptions(params, options);
+        deliveryOptions = new PostnlDeliveryOptions(params, options, debug);
     } catch(e) {
         console.log(e);
     }
@@ -150,6 +153,7 @@
     if (typeof deliveryOptions != 'undefined') {
         try {
             deliveryOptions.showOptions();
+            window.deliveryOptions = deliveryOptions;
         } catch(e) {
             console.log(e);
             $('initial_loader').hide();
@@ -162,6 +166,12 @@
         $('postnl_delivery_options').show();
         $('postnl_pickup').hide();
     }
+
+    var changeAddressLink = $('change_address_link');
+    changeAddressLink.stopObserving('click');
+    changeAddressLink.observe('click', function() {
+        checkout.gotoSection('shipping');
+    });
 
     /**
      * Preload images.
@@ -185,7 +195,7 @@
             if (checkout.loadWaiting!=false) return;
             if (this.validate()) {
                 var continueWithSave = false;
-                if (typeof deliveryOptions != 'undefined') {
+                if (deliveryOptions) {
                     continueWithSave = deliveryOptions.saveSelectedOption();
                 } else {
                     continueWithSave = true;
@@ -209,5 +219,5 @@
             }
         }
     });
-//]]>
+    //]]>
 </script>

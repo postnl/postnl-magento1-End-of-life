@@ -19,7 +19,7 @@
 
 /* Additional Styling /* ==================================================================*/
 #postnl_add_moment { max-width:334px; border-bottom:1px solid #bbbbbc; margin:24px 0; }
-#carrier_postnl { background:url(../../../../images/TIG/PostNL/deliveryoptions/osc_bkg_postnl-logo.png) 100% 0 no-repeat; padding:6px 0 0; margin-top:-6px; max-width:334px !important; }
+#carrier_postnl.options-available { background:url(../../../../images/TIG/PostNL/deliveryoptions/osc_bkg_postnl-logo.png) 100% 0 no-repeat; padding:6px 0 0; margin-top:-6px; max-width:334px !important; }
 
 /* Add moment */
 #postnl_add_moment .add-moment { text-align:center; margin:4px 0; }

@@ -65,6 +65,11 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const XML_PATH_POSTCODE_CHECK_TIMEOUT     = 'postnl/cif_address/postcode_check_timeout';
 
     /**
+     * Xpath to OSC street fields sort order.
+     */
+    const XPATH_STREET_FIELD_SORT_ORDER = 'onestepcheckout/sortordering_fields/street';
+
+    /**
      * Log filename to log all cendris exceptions
      */
     const CENDRIS_EXCEPTION_LOG_FILE = 'TIG_PostNL_Cendris_Exception.log';
@@ -73,6 +78,29 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
      * Log filename to log cendris calls
      */
     const CENDRIS_DEBUG_LOG_FILE = 'TIG_PostNL_Cendris_Debug.log';
+
+    /**
+     * @var null|string|int
+     */
+    protected $_oscStreetFieldSortOrder = null;
+
+    /**
+     * Gets the current street field sort order for OSC.
+     *
+     * @return int|string
+     */
+    public function getOscStreetFieldSortOrder()
+    {
+        if ($this->_oscStreetFieldSortOrder !== null) {
+            return $this->_oscStreetFieldSortOrder;
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $streetFieldOrder = Mage::getStoreConfig(self::XPATH_STREET_FIELD_SORT_ORDER, $storeId);
+
+        $this->_oscStreetFieldSortOrder = $streetFieldOrder;
+        return $streetFieldOrder;
+    }
 
     /**
      * Checks whether the given store uses split address lines.

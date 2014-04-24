@@ -52,6 +52,8 @@
         </reference>
     </default>
 
+    <!-- SHIPPING STATUS -->
+
     <sales_order_shipment>
         <reference name="my.account.wrapper">
             <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
@@ -123,7 +125,7 @@
         </reference>
     </customer_address_form>
 
-    <!--  DELIVERY OPTIONS  -->
+    <!--  DELIVERY OPTIONS, POSTCODE CHECK AND MIJNPAKKET LOGIN  -->
 
     <checkout_onepage_index>
         <reference name="head">
@@ -166,6 +168,8 @@
         </reference>
     </checkout_onepage_index>
 
+    <!-- DELIVERY OPTIONS -->
+
     <checkout_onepage_shippingmethod>
         <reference name="root">
             <block type="postnl_deliveryoptions/checkout_deliveryOptions" name="postnl.delivery.options" template="TIG/PostNL/delivery_options/onepage/deliveryoptions.phtml">
@@ -174,6 +178,8 @@
             </block>
         </reference>
     </checkout_onepage_shippingmethod>
+
+    <!-- MIJNPAKKET ACCOUNTNOTIFICATION -->
 
     <checkout_onepage_success>
         <reference name="head">
@@ -186,6 +192,8 @@
             <block type="postnl_mijnpakket/orderSuccessJs" name="postnl_mijnpakket_order_success_js" template="TIG/PostNL/mijnpakket/order_success_js.phtml" output="toHtml"/>
         </reference>
     </checkout_onepage_success>
+
+    <!--  DELIVERY OPTIONS, POSTCODE CHECK AND MIJNPAKKET LOGIN  -->
 
     <onestepcheckout_index_index>
         <reference name="head">
@@ -228,6 +236,8 @@
             <block type="postnl_mijnpakket/js" name="postnl_mijnpakket_js" template="TIG/PostNL/mijnpakket/js.phtml"/>
         </reference>
     </onestepcheckout_index_index>
+
+    <!-- DELIVERY OPTIONS -->
 
     <onestepcheckout_ajax_save_billing>
         <reference name="choose-shipping-method">

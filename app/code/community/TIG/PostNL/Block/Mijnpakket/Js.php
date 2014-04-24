@@ -41,8 +41,13 @@
  * @method boolean                        hasBaseUrl()
  * @method TIG_PostNL_Block_Mijnpakket_Js setBaseUrl(string $value)
  */
-class TIG_PostNL_Block_Mijnpakket_Js extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Mijnpakket_Js extends TIG_PostNL_Block_Core_Template
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_mijnpakket_js';
+
     /**
      * @var string
      */

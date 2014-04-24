@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                     hasPublicWebshopId()
@@ -41,21 +41,26 @@
  * @method boolean                                     hasDoLoginCheck()
  * @method TIG_PostNL_Block_Checkout_Cart_CheckoutLink setDoLoginCheck(boolean $value)
  */
-class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends TIG_PostNL_Block_Core_Template
 {
     /**
-     * Base URLs of the checkout button
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_checkout_cart_checkoutlink';
+
+    /**
+     * Base URLs of the checkout button.
      */
     const CHECKOUT_BUTTON_TEST_BASE_URL = 'https://tppcb-sandbox.e-id.nl/Button/Checkout';
     const CHECKOUT_BUTTON_LIVE_BASE_URL = 'https://checkout.postnl.nl/Button/Checkout';
 
     /**
-     * Xpath to public webshop ID setting
+     * Xpath to public webshop ID setting.
      */
     const XPATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
 
     /**
-     * Xpath to the 'instruction_cms_page' setting
+     * Xpath to the 'instruction_cms_page' setting.
      */
     const XPATH_INSTRUCTION_CMS_PAGE = 'postnl/checkout/instruction_cms_page';
 
@@ -65,7 +70,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     const XPATH_SHOW_EXCLUSIVELY_FOR_MIJNPAKKET_USERS = 'postnl/checkout/show_exclusively_for_mijnpakket_users';
 
     /**
-     * Gets the checkout URL
+     * Gets the checkout URL.
      *
      * @return string
      */
@@ -96,7 +101,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     }
 
     /**
-     * Check if the button should be disabled
+     * Check if the button should be disabled.
      *
      * @return boolean
      */
@@ -110,7 +115,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     }
 
     /**
-     * Check if the button should be displayed
+     * Check if the button should be displayed.
      *
      * @return boolean
      */
@@ -148,7 +153,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     }
 
     /**
-     * Gets this webshop's public ID
+     * Gets this webshop's public ID.
      *
      * @return string
      */
@@ -165,7 +170,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     }
 
     /**
-     * Gets the checkout button src attribute
+     * Gets the checkout button src attribute.
      *
      * @param boolean $forceDisabled
      *
@@ -194,7 +199,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends Mage_Core_Block_Templa
     }
 
     /**
-     * Gets the URL of a CMS page containing instructions on how to use PostNL Checkout
+     * Gets the URL of a CMS page containing instructions on how to use PostNL Checkout.
      *
      * @return boolean|string
      */

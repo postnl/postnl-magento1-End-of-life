@@ -42,23 +42,21 @@
 class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
 {
     /**
-     * XML paths to parcelware references
+     * XML paths to Parcelware references
      */
     const XML_PATH_CONTRACT_REF_NR = 'postnl/parcelware_export/contract_ref_nr';
     const XML_PATH_CONTRACT_NAME   = 'postnl/parcelware_export/contract_name';
     const XML_PATH_SENDER_REF_NR   = 'postnl/parcelware_export/sender_ref_nr';
 
     /**
-     * Creates a parcelware export csv based for an array of PostNL shipments. This method basically consists of 3
+     * Creates a Parcelware export csv based for an array of PostNL shipments. This method basically consists of 3
      * parts:
      *  1. Fetch data from every shipment that we're going to put in the export file.
      *  2. Update the shipments.
      *  3. Actually create the CSV file and return an array containing data for whoever called this method (probably a
      *     controller).
      *
-     * @param $postnlShipments
-     *
-     * @internal param array $shipments An array of TIG_PostNL_Model_Core_Shipment objects
+     * @param array $postnlShipments An array of TIG_PostNL_Model_Core_Shipment objects
      *
      * @return array
      */
@@ -351,7 +349,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * Get parcelware reference data for this shipment
+     * Get Parcelware reference data for this shipment
      *
      * @return array
      */
@@ -544,7 +542,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * Gets CSV headers for the parcelware export file.
+     * Gets CSV headers for the Parcelware export file.
      *
      * @return array
      */

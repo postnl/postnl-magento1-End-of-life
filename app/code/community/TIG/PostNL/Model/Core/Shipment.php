@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license   http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * @package   TIG
  * @module    PostNL
@@ -1846,7 +1846,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
     /**
      * Manually confirms a shipment without communicating with PostNL. This should be used if you wish to update the
-     * confirmation status in Magento, while actually confirming the shipment through other means, such as parcelware.
+     * confirmation status in Magento, while actually confirming the shipment through other means, such as Parcelware.
      *
      * @return $this
      *
@@ -2268,7 +2268,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shippingAddress = $this->getShippingAddress();
         $recipient = array(
             'email' => $this->getShipment()->getOrder()->getCustomerEmail(),
-            'name'  => $shippingAddress->getFirstname() . ' ' . $shippingAddress->getLastname(),
+            'name'  => $shippingAddress->getName(),
         );
 
         $mailTemplate->setDesignConfig(

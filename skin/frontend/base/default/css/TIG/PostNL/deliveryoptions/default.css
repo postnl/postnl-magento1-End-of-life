@@ -62,6 +62,8 @@
 /* Location */
 .postnl-container .location { color:#fff; height:24px; margin:0 0 2px; }
 .postnl-container .location .bkg { height:24px; background-image:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_location.gif); }
+.postnl-container .location .show-map { color:#fff; }
+.postnl-container .location .show-map:hover { text-decoration:none; }
 .postnl-container .location .location-name { font-size:14px; line-height:24px; }
 .postnl-container .location .location-type { color:#eaeaeb; font-size:12px; line-height:25px; margin-left:6px; }
 .postnl-container .location .location-info { float:right; }
@@ -95,13 +97,17 @@
 .postnl-container .add-location a:hover { text-decoration:underline; }
 
 /* Tooltip */
-.postnl-container .tooltip { position:absolute; z-index:500; top:-18px; right:27px; width:264px; background:#f2f2f2 url(../../../../images/TIG/PostNL/deliveryoptions/bkg_tooltip.png) 100% 100% no-repeat; padding:12px 16px 16px; color:#333334;}
+.postnl-container .tooltip { display:none; position:absolute; z-index:500; top:-18px; right:27px; width:264px; background:#f2f2f2 url(../../../../images/TIG/PostNL/deliveryoptions/bkg_tooltip.png) 100% 100% no-repeat; padding:12px 16px 16px; color:#333334;}
 .postnl-container .tooltip { border-radius:3px; -webkit-border-radius:3px; -moz-border-radius:3px; }
 .postnl-container .tooltip-header strong { display:block; font-size:14px; line-height:18px !important; }
 .postnl-container .tooltip-divider { height:0; border:none; border-bottom:1px solid #bbbbbc; margin:12px -8px 7px; }
 
+.postnl-container .tooltip-container:hover .tooltip { display:block; }
+.postnl-container .tooltip-container:hover span { width: 31px; background-position: 5px -41px; }
+
 .postnl-container .tooltip-content .business-hours { line-height:17px; }
 .postnl-container .tooltip-content .business-hours tbody th { width:36px; }
+
 /* ======================================================================================= */
 
 /* Pop-up =================================================================== */
@@ -229,6 +235,7 @@ cufon[alt=" "] { display:none !important; width:0 !important; height:0 !importan
 .location-list .location-info:hover cufon,
 .location-option-checkbox:hover cufon,
 #add_location_link:hover cufon { border-bottom:1px solid #676767; }
+#change_address_link:hover cufon { border-bottom:1px solid #676767; }
 a cufon,
 .button cufon,
 .option .content cufon,

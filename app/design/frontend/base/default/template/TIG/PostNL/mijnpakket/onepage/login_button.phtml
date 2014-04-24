@@ -107,11 +107,13 @@
             pId              : '<?php echo $this->getPublicWebshopId(); ?>'
         });
 
-        var loginContainer      = $$('#checkout-step-login .col2-set')[1].down('.col-2');
+        var loginContainerArray = $$('#checkout-step-login .col2-set');
         var billingContainer    = $('checkout-step-billing');
         var mijnpakketContainer = $('postnl_mijnpakket');
 
-        if (loginContainer) {
+        if (loginContainerArray && loginContainerArray[1]) {
+            var loginContainer = loginContainerArray[1].down('.col-2');
+
             mijnpakketContainer.insert({
                 top: new Element('hr', {'class':'mijnpakket_seperator'})
             });

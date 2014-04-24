@@ -127,7 +127,10 @@
                 //<![CDATA[
                 var oscScrollbar = new Control.ScrollBar(
                     'osc_scrollbar_content',
-                    'osc_scrollbar_track'
+                    'osc_scrollbar_track',
+                    {
+                        fixed_scroll_distance : 50
+                    }
                 );
 
                 var recalculateOscScrollbar = function() {
@@ -144,6 +147,7 @@
 <?php endif; ?>
 <script type="text/javascript">
     //<![CDATA[
+    var showOptions = <?php echo $_showOptions ? 'true' : 'false'; ?>;
     var deliveryOptions;
     var searchField = $('search_field');
 
@@ -165,7 +169,7 @@
      */
     registerOscObservers();
 
-    <?php if ($_showOptions): ?>
+    if (showOptions) {
         try {
             var billingOrShipping = $('billing:use_for_shipping_yes').checked ? 'billing' : 'shipping';
 
@@ -194,7 +198,7 @@
         } catch(e) {
             console.error(e);
         }
-    <?php endif; ?>
+    }
 
     /**
      * Start the elivery options script.
@@ -206,14 +210,13 @@
     function startDeliveryOptions(postcode, housenumber, fullAddress) {
         var options;
         var params;
+        var debug = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
 
         params = {
             saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
             timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
             locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
             locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
-            saveCostsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/saveOptionCosts', array('_secure' => true)) ?>',
-            savePhoneNumberUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/savePhoneNumber', array('_secure' => true)) ?>',
             postcode           : postcode,
             housenumber        : housenumber,
             deliveryDate       : '<?php echo $_deliveryDate; ?>',
@@ -244,7 +247,8 @@
         };
 
         try {
-            deliveryOptions = new PostnlDeliveryOptions(params, options);
+            deliveryOptions = new PostnlDeliveryOptions(params, options, debug);
+            window.deliveryOptions = deliveryOptions;
         } catch(e) {
             console.log(e);
         }
@@ -252,8 +256,9 @@
         if (typeof deliveryOptions != 'undefined') {
             try {
                 deliveryOptions.showOptions();
+                $('carrier_postnl').addClassName('options-available');
             } catch(e) {
-                console.log(e);
+                console.error(e);
                 $('initial_loader').hide();
                 $('osc_scrollbar_container').show();
                 $('postnl_pickup').hide();
@@ -417,6 +422,8 @@
                     body.addClassName('noscroll');
                 }
                 postnlDeliveryOptionsDiv.show();
+
+                recalculateOscScrollbar();
             });
         }
 

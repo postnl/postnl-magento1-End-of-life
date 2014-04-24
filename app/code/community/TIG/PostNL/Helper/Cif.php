@@ -879,9 +879,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * can be enabled in Magento community in system > config > customer configuration. Or if you
      * use Enterprise, in customers > attributes > manage customer address attributes.
      *
-     * @param int                            $storeId
-     * @param Mage_Customer_Model_Address    $address
-     * @param boolean                        $allowFullStreet
+     * @param int                                  $storeId
+     * @param Mage_Customer_Model_Address_Abstract $address
+     * @param boolean                              $allowFullStreet
      *
      * @return array
      */
@@ -970,20 +970,24 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $splitHouseNumber = $addressHelper->useSplitHousenumber();
         if ($splitHouseNumber) {
             $housenumberExtensionField = $addressHelper->getHousenumberExtensionField();
-            $housenumberExtension = $address->getStreet($housenumberExtensionField);
+            $housenumberExtension      = $address->getStreet($housenumberExtensionField);
 
             /**
              * Make sure the housenumber is actually split.
              */
             if (!$housenumberExtension && !is_numeric($housenumber)) {
-                $housenumberParts = $this->_splitHousenumber($housenumber);
-                $housenumber = $housenumberParts['number'];
+                $housenumberParts     = $this->_splitHousenumber($housenumber);
+                $housenumber          = $housenumberParts['number'];
                 $housenumberExtension = $housenumberParts['extension'];
             }
         } else {
-            $housenumberParts = $this->_splitHousenumber($housenumber);
-            $housenumber = $housenumberParts['number'];
+            $housenumberParts     = $this->_splitHousenumber($housenumber);
+            $housenumber          = $housenumberParts['number'];
             $housenumberExtension = $housenumberParts['extension'];
+        }
+
+        if (empty($housenumber)) {
+            return false;
         }
 
         $streetData = array(
