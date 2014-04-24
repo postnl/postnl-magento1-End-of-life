@@ -762,15 +762,19 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Creates the CIF shipment object based on a PostNL shipment
      *
-     * @param TIG_PostNL_Model_Core_Shipment $shipment
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * @param string                         $barcode
+     * @param bool                           $mainBarcode
+     * @param bool                           $shipmentNumber
      *
      * @return array
      *
-     * @todo modify to support OVM and PostNL checkout shipments
+     * @todo     modify to support OVM and PostNL checkout shipments
      */
     protected function _getShipment($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false)
     {
         $shipment        = $postnlShipment->getShipment();
+        $order           = $shipment->getOrder();
         $shippingAddress = $shipment->getShippingAddress();
 
         $parcelCount = $postnlShipment->getParcelCount();
@@ -810,7 +814,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'ProductCodeDelivery'      => $postnlShipment->getProductCode(),
             'Reference'                => $shipment->getReference(),
             'Contacts'                 => array(
-                                           'Contact' => $this->_getContact($shippingAddress),
+                                           'Contact' => $this->_getContact($shippingAddress, $order),
                                        ),
             'Dimension'                => array(
                                            'Weight'  => round($shipmentWeight),
@@ -1090,16 +1094,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Creates the CIF contact object
      *
      * @param Mage_Sales_Model_Order_Address $address
+     * @param Mage_Sales_Model_Order         $order
      *
      * @return array
      *
      * @todo check if SMSNr is required for pakjegemak
      */
-    protected function _getContact($address)
+    protected function _getContact($address, Mage_Sales_Model_Order $order)
     {
         $contact = array(
             'ContactType' => '01', // Receiver
-            'Email'       => $address->getEmail(),
+            'Email'       => $order->getCustomerEmail(),
             'SMSNr'       => '', // never sure if clean 06 number - TODO: check needed for PakjeGemak?
             'TelNr'       => $address->getTelephone(),
         );
