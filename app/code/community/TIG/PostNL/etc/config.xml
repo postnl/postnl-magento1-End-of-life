@@ -208,13 +208,13 @@
 
     <admin>
         <routers>
-            <postnl>
+            <postnl_admin>
                 <use>admin</use>
                 <args>
                     <module>TIG_PostNL</module>
-                    <frontName>postnl</frontName>
+                    <frontName>postnl_admin</frontName>
                 </args>
-            </postnl>
+            </postnl_admin>
         </routers>
     </admin>
 
@@ -349,6 +349,15 @@
                 </TIG_PostNL>
             </modules>
         </translate>
+        <routers>
+            <postnl>
+                <use>standard</use>
+                <args>
+                    <module>TIG_PostNL</module>
+                    <frontName>postnl</frontName>
+                </args>
+            </postnl>
+        </routers>
     </frontend>
 
     <crontab>

@@ -770,7 +770,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 
         $parcelWareOptions = array(
             'label' => $helper->__('PostNL - Create Parcelware export'),
-            'url'   => $adminhtmlHelper->getUrl('postnl/adminhtml_shipment/massCreateParcelwareExport')
+            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massCreateParcelwareExport')
         );
 
         /**
