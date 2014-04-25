@@ -35,6 +35,11 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                             hasBillingAddressBlockClass()
+ * @method TIG_PostNL_Model_AddressValidation_Observer_Onepage setBillingAddressBlockClass(string $value)
+ * @method boolean                                             hasShippingAddressBlockClass()
+ * @method TIG_PostNL_Model_AddressValidation_Observer_Onepage setShippingAddressBlockClass(string $value)
  */
 class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
 {
@@ -57,7 +62,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
     public function getBillingAddressBlockClass()
     {
         if ($this->hasBillingAddressBlockClass()) {
-            return $this->getData('billing_address_block_class');
+            return $this->_getData('billing_address_block_class');
         }
 
         $blockClass = Mage::getConfig()->getBlockClassName(self::BILLING_ADDRESS_BLOCK_NAME);
@@ -74,7 +79,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
     public function getShippingAddressBlockClass()
     {
         if ($this->hasShippingAddressBlockClass()) {
-            return $this->getData('shipping_address_block_class');
+            return $this->_getData('shipping_address_block_class');
         }
 
         $blockClass = Mage::getConfig()->getBlockClassName(self::SHIPPING_ADDRESS_BLOCK_NAME);
@@ -107,7 +112,9 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
         /**
          * Checks if the current block is the one we want to edit.
          *
-         * Unfortunately there is no unique event for this block
+         * Unfortunately there is no unique event for this block.
+         *
+         * @var Mage_Checkout_Block_Onepage_Billing $block
          */
         $block = $observer->getBlock();
         $blockClass = $this->getBillingAddressBlockClass();
@@ -116,7 +123,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
             return $this;
         }
 
-        $block->setTemplate('TIG/PostNL/checkout/onepage/billing.phtml');
+        $block->setTemplate('TIG/PostNL/address_validation/checkout/onepage/billing.phtml');
 
         return $this;
     }
@@ -145,7 +152,9 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
         /**
          * Checks if the current block is the one we want to edit.
          *
-         * Unfortunately there is no unique event for this block
+         * Unfortunately there is no unique event for this block.
+         *
+         * @var Mage_Checkout_Block_Onepage_Shipping $block
          */
         $block = $observer->getBlock();
         $blockClass = $this->getShippingAddressBlockClass();
@@ -154,7 +163,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
             return $this;
         }
 
-        $block->setTemplate('TIG/PostNL/checkout/onepage/shipping.phtml');
+        $block->setTemplate('TIG/PostNL/address_validation/checkout/onepage/shipping.phtml');
 
         return $this;
     }

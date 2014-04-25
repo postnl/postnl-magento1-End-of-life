@@ -35,6 +35,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                                     hasAddressBlockClass()
+ * @method TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout setAddressBlockClass(string $value)
  */
 class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien_Object
 {
@@ -64,7 +67,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien
     public function getAddressBlockClass()
     {
         if ($this->hasAddressBlockClass()) {
-            return $this->getData('address_block_class');
+            return $this->_getData('address_block_class');
         }
 
         $blockClass = Mage::getConfig()->getBlockClassName(self::ADDRESS_BLOCK_NAME);
@@ -96,7 +99,9 @@ class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien
         /**
          * Checks if the current block is the one we want to edit.
          *
-         * Unfortunately there is no unique event for this block
+         * Unfortunately there is no unique event for this block.
+         *
+         * @var Idev_OneStepCheckout_Block_Fields $block
          */
         $block = $observer->getBlock();
         $blockClass = $this->getAddressBlockClass();
@@ -111,10 +116,10 @@ class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien
         $blockAlias = $block->getBlockAlias();
         switch ($blockAlias) {
             case self::BILLING_ADDRESS_BLOCK_ALIAS:
-                $block->setTemplate('TIG/PostNL/onestepcheckout/billing_fields.phtml');
+                $block->setTemplate('TIG/PostNL/address_validation/onestepcheckout/billing_fields.phtml');
                 break;
             case self::SHIPPING_ADDRESS_BLOCK_ALIAS:
-                $block->setTemplate('TIG/PostNL/onestepcheckout/shipping_fields.phtml');
+                $block->setTemplate('TIG/PostNL/address_validation/onestepcheckout/shipping_fields.phtml');
                 break;
             //no default
         }

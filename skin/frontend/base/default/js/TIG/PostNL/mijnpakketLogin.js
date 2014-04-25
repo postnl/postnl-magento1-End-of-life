@@ -269,9 +269,9 @@ MijnpakketLogin.prototype = {
             $('billing:use_for_shipping_yes').checked = true;
             if (this.isOsc) {
                 $('shipping_address').hide();
-                $('shipping_address_list').show();
+                $('shipping_address_list').hide();
             }
-        });
+        }.bind(this));
 
         return this;
     },
