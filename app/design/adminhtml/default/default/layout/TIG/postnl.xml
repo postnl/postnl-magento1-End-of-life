@@ -90,6 +90,14 @@
         </reference>
     </adminhtml_sales_order_view>
 
+    <adminhtml_sales_order_address>
+        <reference name="sales_order_address.form.container">
+            <action method="setTemplate">
+                <template>TIG/PostNL/sales/order/address/form/container.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_address>
+
     <adminhtml_sales_shipment_index>
         <reference name="content">
             <block type="adminhtml/abstract" name="postnl_customize_grid_link" template="TIG/PostNL/sales/shipment/customize_link.phtml"/>

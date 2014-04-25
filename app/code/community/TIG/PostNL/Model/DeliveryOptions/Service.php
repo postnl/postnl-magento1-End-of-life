@@ -253,6 +253,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                               ->setCountryId($address['countryCode'])
                               ->setPostcode($address['postcode'])
                               ->setCompany($address['name'])
+                              ->setFirstname('-')
+                              ->setLastname('-')
+                              ->setTelephone($address['telephone'])
                               ->setStreet($street);
 
             $quote->addAddress($pakjeGemakAddress)

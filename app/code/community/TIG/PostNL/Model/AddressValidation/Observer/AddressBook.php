@@ -35,6 +35,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                                 hasAddressBlockClass()
+ * @method TIG_PostNL_Model_AddressValidation_Observer_AddressBook setAddressBlockClass(string $value)
  */
 class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Object
 {
@@ -56,7 +59,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Obj
     public function getAddressBlockClass()
     {
         if ($this->hasAddressBlockClass()) {
-            return $this->getData('address_block_class');
+            return $this->_getData('address_block_class');
         }
 
         $blockClass = Mage::getConfig()->getBlockClassName(self::ADDRESS_COMMUNITY_BLOCK_NAME);
@@ -90,6 +93,8 @@ class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Obj
          * Checks if the current block is the one we want to edit.
          *
          * Unfortunately there is no unique event for this block.
+         *
+         * @var Mage_Customer_Block_Address_Edit $block
          */
         $block = $observer->getBlock();
         $blockClass = $this->getAddressBlockClass();
@@ -98,7 +103,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Obj
             return $this;
         }
 
-        $block->setTemplate('TIG/PostNL/customer/address/edit.phtml');
+        $block->setTemplate('TIG/PostNL/address_validation/customer/address/edit.phtml');
 
         return $this;
     }

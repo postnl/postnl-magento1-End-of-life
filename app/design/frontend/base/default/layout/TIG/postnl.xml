@@ -52,6 +52,14 @@
         </reference>
     </default>
 
+    <!-- PAKJE GEMAK ADDRESS -->
+
+    <sales_order_view>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/sales/order/pakje_gemak_address.phtml"/>
+        </reference>
+    </sales_order_view>
+
     <!-- SHIPPING STATUS -->
 
     <sales_order_shipment>
@@ -121,7 +129,7 @@
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
         </reference>
         <reference name="customer_address_edit">
-            <block type="core/template" name="postnl_postcodecheck" template="TIG/PostNL/customer/address/postcode_check.phtml"/>
+            <block type="core/template" name="postnl_postcodecheck" template="TIG/PostNL/address_validation/customer/address/postcode_check.phtml"/>
         </reference>
     </customer_address_form>
 
@@ -155,10 +163,10 @@
             <block type="postnl_deliveryoptions/theme" name="postnl_deliveryoptions_theme" template="TIG/PostNL/delivery_options/theme.phtml"/>
         </reference>
         <reference name="checkout.onepage.billing">
-            <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>
+            <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/checkout/onepage/postcode_check.phtml"/>
         </reference>
         <reference name="checkout.onepage.shipping">
-            <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/checkout/onepage/postcode_check.phtml"/>
+            <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/address_validation/checkout/onepage/postcode_check.phtml"/>
         </reference>
         <reference name="before_body_end">
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
@@ -218,11 +226,11 @@
         </reference>
 
         <reference name="onestepcheckout.billing.address">
-            <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/onestepcheckout/postcode_check.phtml"/>
+            <block type="core/template" name="postnl_billing_postcodecheck" template="TIG/PostNL/address_validation/onestepcheckout/postcode_check.phtml"/>
         </reference>
 
         <reference name="onestepcheckout.shipping.address">
-            <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/onestepcheckout/postcode_check.phtml"/>
+            <block type="core/template" name="postnl_shipping_postcodecheck" template="TIG/PostNL/address_validation/onestepcheckout/postcode_check.phtml"/>
         </reference>
 
         <reference name="choose-shipping-method">
