@@ -33,27 +33,29 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
 class TIG_PostNL_Model_System_Config_Source_Testlive
 {
     /**
-     * Source model for test / live setting
+     * Source model for test / live setting.
      *
      * @return array
      */
     public function toOptionArray()
     {
+        $helper = Mage::helper('postnl');
+
         $array = array(
              array(
                 'value' => '1',
-                'label' => Mage::helper('postnl')->__('Test')
+                'label' => $helper->__('Test')
              ),
              array(
                 'value' => '0',
-                'label' => Mage::helper('postnl')->__('Live')
+                'label' => $helper->__('Live')
              ),
         );
         return $array;

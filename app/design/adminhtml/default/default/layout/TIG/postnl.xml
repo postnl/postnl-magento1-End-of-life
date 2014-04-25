@@ -43,7 +43,7 @@
         <reference name="head">
             <action method="addItem">
                 <type>skin_css</type>
-                <file>css/TIG/PostNL/messages.css</file>
+                <file>css/TIG/PostNL/styles.css</file>
             </action>
         </reference>
         <reference name="notifications">
@@ -83,6 +83,20 @@
             <block type="adminhtml/abstract" name="postnl_filter_massaction" template="TIG/PostNL/sales/order/filter_massaction.phtml"/>
         </reference>
     </adminhtml_sales_order_index>
+
+    <adminhtml_sales_order_view>
+        <reference name="content">
+            <block type="adminhtml/abstract" name="postnl_pakjegemak_address" template="TIG/PostNL/sales/order/view/pakje_gemak_address.phtml"/>
+        </reference>
+    </adminhtml_sales_order_view>
+
+    <adminhtml_sales_order_address>
+        <reference name="sales_order_address.form.container">
+            <action method="setTemplate">
+                <template>TIG/PostNL/sales/order/address/form/container.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_address>
 
     <adminhtml_sales_shipment_index>
         <reference name="content">
@@ -124,6 +138,7 @@
         <reference name="content">
             <!-- Contains some javascript and html to add a shipping status bar -->
             <block type="postnl_adminhtml/sales_order_shipment_view_shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/view/shipping_status.phtml" before="-"/>
+            <block type="adminhtml/abstract" name="postnl_pakjegemak_address" template="TIG/PostNL/sales/order/shipment/view/pakje_gemak_address.phtml"/>
         </reference>
         <reference name="left">
             <!-- Tabs container -->

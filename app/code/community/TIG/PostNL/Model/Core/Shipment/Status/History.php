@@ -123,8 +123,6 @@ class TIG_PostNL_Model_Core_Shipment_Status_History extends Mage_Core_Model_Abst
      * @param int $shipmentId
      * @param     $status
      *
-     * @internal param \StdClass $code
-     *
      * @return boolean
      */
     public function statusHistoryIsNew($shipmentId, $status)

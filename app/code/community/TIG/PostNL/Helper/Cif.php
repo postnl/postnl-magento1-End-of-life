@@ -83,9 +83,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
 
     /**
-     * Regular expression used to split streetname from housenumber. This regex works well for dutch
-     * addresses, but may fail for international addresses. We strongly recommend using split address
-     * lines instead.
+     * Regular expression used to split streetname from housenumber. This regex works well for dutch addresses, but may
+     * fail for international addresses. We strongly recommend using split address lines instead.
      */
     const SPLIT_STREET_REGEX = '#\A(.*?)\s+(\d+[a-zA-Z]{0,1}\s{0,1}[-]{1}\s{0,1}\d*[a-zA-Z]{0,1}|\d+[a-zA-Z-]{0,1}\d*[a-zA-Z]{0,1})#';
 
@@ -707,7 +706,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $coreResource = Mage::getSingleton('core/resource');
         $readAdapter = $coreResource->getConnection('core_read');
 
-        $validator = Mage::getModel('Zend_Validate_Db_RecordExists',
+        $validator = new Zend_Validate_Db_RecordExists(
             array(
                 'table'   => $coreResource->getTableName('postnl_core/shipment'),
                 'field'   => 'shipment_id',
@@ -743,7 +742,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /**
          * Check if the barcode exists as a main barcode
          */
-        $validator = Mage::getModel('Zend_Validate_Db_RecordExists',
+        $validator = new Zend_Validate_Db_RecordExists(
             array(
                 'table'   => $coreResource->getTableName('postnl_core/shipment'),
                 'field'   => 'main_barcode',
@@ -760,7 +759,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /**
          * Check if the barcode exists as a secondary barcode
          */
-        $validator = Mage::getModel('Zend_Validate_Db_RecordExists',
+        $validator = new Zend_Validate_Db_RecordExists(
             array(
                 'table'   => $coreResource->getTableName('postnl_core/shipment_barcode'),
                 'field'   => 'barcode',
@@ -880,9 +879,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * can be enabled in Magento community in system > config > customer configuration. Or if you
      * use Enterprise, in customers > attributes > manage customer address attributes.
      *
-     * @param int                            $storeId
-     * @param Mage_Customer_Model_Address    $address
-     * @param boolean                        $allowFullStreet
+     * @param int                                  $storeId
+     * @param Mage_Customer_Model_Address_Abstract $address
+     * @param boolean                              $allowFullStreet
      *
      * @return array
      */
@@ -939,7 +938,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Retrieves streetname, housenumber and housenumber extension from the shipping address in the multiple streetlines configuration.
+     * Retrieves streetname, housenumber and housenumber extension from the shipping address in the multiple streetlines
+     * configuration.
      *
      * @param int                            $storeId
      * @param Mage_Sales_Model_Order_Address $address
@@ -970,20 +970,24 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $splitHouseNumber = $addressHelper->useSplitHousenumber();
         if ($splitHouseNumber) {
             $housenumberExtensionField = $addressHelper->getHousenumberExtensionField();
-            $housenumberExtension = $address->getStreet($housenumberExtensionField);
+            $housenumberExtension      = $address->getStreet($housenumberExtensionField);
 
             /**
              * Make sure the housenumber is actually split.
              */
             if (!$housenumberExtension && !is_numeric($housenumber)) {
-                $housenumberParts = $this->_splitHousenumber($housenumber);
-                $housenumber = $housenumberParts['number'];
+                $housenumberParts     = $this->_splitHousenumber($housenumber);
+                $housenumber          = $housenumberParts['number'];
                 $housenumberExtension = $housenumberParts['extension'];
             }
         } else {
-            $housenumberParts = $this->_splitHousenumber($housenumber);
-            $housenumber = $housenumberParts['number'];
+            $housenumberParts     = $this->_splitHousenumber($housenumber);
+            $housenumber          = $housenumberParts['number'];
             $housenumberExtension = $housenumberParts['extension'];
+        }
+
+        if (empty($housenumber)) {
+            return false;
         }
 
         $streetData = array(
@@ -1040,7 +1044,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Splits a supplier housenumber into a number and an extension
+     * Splits a supplier housenumber into a number and an extension.
      *
      * @param string $housenumber
      *
@@ -1110,9 +1114,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Logs a CIF exception in the database and/or a log file
-     *
-     * N.B.: if file logging is enabled, the log will be forced
+     * Logs a CIF exception in the database and/or a log file.
      *
      * @param Mage_Core_Exception | TIG_PostNL_Model_Core_Cif_Exception $exception
      *

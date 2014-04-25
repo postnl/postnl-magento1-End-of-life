@@ -15,6 +15,7 @@
 .postnl-container .location .location-name { font-weight:normal; font-size:13px; }
 .postnl-container .location .location-type { font-size:11px; color:#555; }
 .postnl-container .location .location-info span { background:url(../../../../images/TIG/PostNL/deliveryoptions/unbranded/bkg_more-info.png) -2px 5px no-repeat; }
+.postnl-container .location .tooltip-container:hover .location-info span,
 .postnl-container .location .location-info:hover span { position:relative; z-index:600; }
 
 .postnl-container .add-location { border:none; }

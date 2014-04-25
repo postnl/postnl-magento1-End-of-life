@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
@@ -98,8 +98,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     );
 
     /**
-     * Array containing conversions between PostNL CHeckout payment option fields and those used by Magento payment methods.
-     * This array should be extended as time goes on in order to support as many payment methods as possible.
+     * Array containing conversions between PostNL CHeckout payment option fields and those used by Magento payment
+     * methods. This array should be extended as time goes on in order to support as many payment methods as possible.
      *
      * @var array
      */
@@ -152,7 +152,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Returns a conversion array used to convert PostNL Checkout payment method fields to those used by Magento payment methods.
+     * Returns a conversion array used to convert PostNL Checkout payment method fields to those used by Magento payment
+     * methods.
      *
      * @return array
      */
@@ -165,8 +166,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         $conversionObject = new Varien_Object($conversionArray);
 
         /**
-         * You can observe this event in order to add (or modify) conversion options. This prevents you from having to overload
-         * this helper if you want to change this functionality.
+         * You can observe this event in order to add (or modify) conversion options. This prevents you from having to
+         * overload this helper if you want to change this functionality.
          */
         Mage::dispatchEvent(
             'postnl_checkout_option_conversion_before',
@@ -250,7 +251,9 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $errors = array(
                 array(
                     'code'    => 'POSTNL-0106',
-                    'message' => $this->__('No standard product options are enabled. At least 1 option must be active.'),
+                    'message' => $this->__(
+                        'No standard product options are enabled. At least 1 option must be active.'
+                    ),
                 )
             );
             Mage::register('postnl_enabled_checkout_errors', $errors);
@@ -270,7 +273,9 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 $errors = array(
                     array(
                         'code'    => 'POSTNL-0101',
-                        'message' => $this->__("The quote's total weight is below the miniumum required to use PostNL Checkout."),
+                        'message' => $this->__(
+                            "The quote's total weight is below the miniumum required to use PostNL Checkout."
+                        ),
                     )
                 );
                 Mage::register('postnl_enabled_checkout_errors', $errors);

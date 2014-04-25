@@ -41,11 +41,9 @@
 <?php $_activateUrl = $this->getUrl('postnl/adminhtml_extensionControl/activate', array('_secure' => true)); ?>
 <?php $_validateUrl = $this->getUrl('postnl/adminhtml_config/validateAccount', array('_secure' => true)); ?>
 <?php $_website = Mage::app()->getRequest()->getParam('website'); ?>
-<?php $_isTestMode = Mage::helper('postnl')->isTestMode(Mage_Core_Model_App::ADMIN_STORE_ID); ?>
 <script type="text/javascript">
     //<![CDATA[
     var postnlActivationUrl = '<?php echo $_activateUrl; ?>';
-    var isTestMode = <?php echo $_isTestMode ? 'true' : 'false'; ?>;
     function activatePostNL() {
         $('config_edit_form').action = postnlActivationUrl;
         configForm.submit();
@@ -53,14 +51,14 @@
 
     function validateAccountSettings() {
         var params = {
-            customerNumber : getConfigValue('postnl_cif_customer_number'),
-            customerCode   : getConfigValue('postnl_cif_customer_code'),
-            locationCode   : getConfigValue('postnl_cif_collection_location'),
-            website        : '<?php echo $_website; ?>',
-            isTestMode     : isTestMode
+            customerNumber  : getConfigValue('postnl_cif_customer_number'),
+            customerCode    : getConfigValue('postnl_cif_customer_code'),
+            locationCode    : getConfigValue('postnl_cif_collection_location'),
+            website         : '<?php echo $_website; ?>',
+            isTestMode      : getConfigValue('postnl_cif_mode') == '1' ? 'true' : 'false'
         };
 
-        if (isTestMode) {
+        if (params.isTestMode == 'true') {
             params['username'] = getConfigValue('postnl_cif_test_username');
             params['password'] = getConfigValue('postnl_cif_test_password');
         } else {

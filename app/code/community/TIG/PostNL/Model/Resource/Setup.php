@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
@@ -565,8 +565,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
          * @var Mage_Core_Model_Store $store
          */
         $stores = Mage::app()->getStores();
+        $scope  = 'store';
         foreach ($stores as $store) {
-            $scope   = 'website';
             $scopeId = $store->getId();
 
             $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
@@ -578,8 +578,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
          * @var Mage_Core_Model_Website $website
          */
         $websites = Mage::app()->getWebsites();
+        $scope    = 'website';
         foreach ($websites as $website) {
-            $scope   = 'website';
             $scopeId = $website->getId();
 
             $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
@@ -679,6 +679,19 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Core_Model_Resource_Setup
          * Save the supported product codes.
          */
         Mage::getConfig()->saveConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $newCodes, 'default', 0);
+
+        return $this;
+    }
+
+    /**
+     * Clears the config cache. This should be called after changes have been made to the shop's configuration.
+     *
+     * @return $this
+     */
+    public function clearConfigCache()
+    {
+        Mage::getConfig()->reinit();
+        Mage::app()->reinitStores();
 
         return $this;
     }

@@ -39,18 +39,43 @@
 class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
 {
     /**
+     * Xpath to 'mijnpakket_login_active' setting.
+     */
+    const XPATH_MIJNPAKKET_LOGIN_ACTIVE = 'postnl/delivery_options/mijnpakket_login_active';
+
+    /**
+     * Check whether MijnPakket login is active.
+     *
+     * @return bool
+     */
+    public function isMijnpakketLoginActive()
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $isActive = Mage::getStoreConfigFlag(self::XPATH_MIJNPAKKET_LOGIN_ACTIVE, $storeId);
+
+        return $isActive;
+    }
+
+    /**
+     * Checks whether MijnPakket login is currently available for use.
+     *
      * @return boolean
      */
     public function canLoginWithMijnpakket()
     {
         /**
-         * Mijnpakket login is always available if delivery options are available.
+         * MijnPakket login is only available if delivery options are enabled.
          */
-        if (Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
-            return true;
+        if (!Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
+            return false;
         }
 
-        return false;
+        if (!$this->isMijnpakketLoginActive()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

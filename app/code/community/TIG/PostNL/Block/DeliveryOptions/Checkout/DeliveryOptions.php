@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
- * @method string getMethodName()
+ * @method string                                                    getMethodName()
  * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setStreetnameField(int $value)
  * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setHousenumberField(int $value)
  * @method boolean                                                   hasTaxDisplayType()
@@ -44,6 +44,11 @@
  */
 class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_PostNL_Block_DeliveryOptions_Template
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_deliveryoptions_checkout_deliveryoptions';
+
     /**
      * Xpath to 'allow_streetview' setting.
      */
@@ -78,6 +83,8 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Gets the current quote.
+     *
      * @return Mage_Sales_Model_Quote
      */
     public function getQuote()
@@ -104,16 +111,68 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             return $shippingAddress;
         }
 
+        $shippingAddress = $this->_getShippingAddress();
+
+        if (!$shippingAddress) {
+            $shippingAddress = Mage::getModel('sales/quote_address');
+        }
+
+        $this->setShippingAddress($shippingAddress);
+        return $shippingAddress;
+    }
+
+    /**
+     * Gets a shipping address from the current quote or from the customer if the customer is logged in.
+     *
+     * @return Mage_Customer_Model_Address|Mage_Sales_Model_Quote_Address
+     */
+    protected function _getShippingAddress()
+    {
         $quote = $this->getQuote();
         $shippingAddress = $quote->getShippingAddress();
 
+        /**
+         * If we have billing data, the customer may still be entering their address, so we shouldn't do anything else
+         * for now.
+         */
+        if (Mage::app()->getRequest()->getPost('billing')) {
+            return $shippingAddress;
+        }
+
+        $customerHelper = Mage::helper('customer');
+
+        /**
+         * OneStepCheckout sometimes stores a partial shipping address in the quote. This hack is meant to detect this
+         * and retrieve the full address from the customer's account if available. This is only done if we have no
+         * billing data in the $_POST superglobal to prevent conflicts with customers still entering their address.
+         */
         if (
-            (!$shippingAddress->getPostcode() || $shippingAddress->getPostcode() == '-')
+            (
+                !$shippingAddress->getPostcode()
+                || $shippingAddress->getPostcode() == '-'
+                || !$shippingAddress->getStreetFull()
+            )
             && $shippingAddress->getId()
+            && $shippingAddress->getCustomerAddressId()
+            && $customerHelper->isLoggedIn()
         ) {
             $shippingAddress = $quote->getCustomer()->getAddressById($shippingAddress->getCustomerAddressId());
         }
-        $this->setShippingAddress($shippingAddress);
+
+        /**
+         * If we still don't have a full address, get the customer's default shipping address if available.
+         */
+        if (
+            (
+                !$shippingAddress->getPostcode()
+                || $shippingAddress->getPostcode() == '-'
+                || !$shippingAddress->getStreetFull()
+            )
+            && $customerHelper->isLoggedIn()
+            && $customerHelper->customerHasAddresses()
+        ) {
+            $shippingAddress = Mage::getSingleton('customer/session')->getCustomer()->getDefaultShippingAddress();
+        }
 
         return $shippingAddress;
     }
@@ -436,6 +495,34 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         }
 
         return false;
+    }
+
+    /**
+     * Checks if debug mode is allowed. Debug mode is enabled if the PostNl extension's debug mode is set to 'full'.
+     *
+     * @return bool
+     */
+    public function isDebugEnabled()
+    {
+        $helper = Mage::helper('postnl');
+        $debugMode = $helper->getDebugMode();
+
+        if ($debugMode > 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if delivery options are allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUseDeliveryOptions()
+    {
+        $helper = Mage::helper('postnl/deliveryOptions');
+        return $helper->canUseDeliveryOptions($this->getQuote());
     }
 
     /**

@@ -36,23 +36,25 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+abstract class TIG_PostNL_Block_Adminhtml_Template extends Mage_Adminhtml_Block_Abstract
+{
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_template';
 
-/**
- * @var TIG_PostNL_Model_Resource_Setup $installer
- */
-$installer = $this;
+    /**
+     * Renders a template block. Also throws 2 events based on the current event prefix.
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        Mage::dispatchEvent($this->_eventPrefix . '_to_html_before');
 
-$settingsToReset = array(
-    'cif_version_shippingstatus',
-    'cif_version_confirming',
-    'cif_version_labelling',
-);
+        $html = parent::_toHtml();
 
-/**
- * When upgrading from v1.1.x we need to reset the webservice versions used to default, add a new product option and
- * move a config setting. If you're installing the extension for the first time, all of this will be handled by the
- * default settings in config.xml.
- */
-$installer->resetWebserviceVersions($settingsToReset)
-          ->addSupportedProductCode('3533')
-          ->moveConfigSetting('postnl/cif_labels_and_confirming/mode', 'postnl/cif/mode', true);
+        Mage::dispatchEvent($this->_eventPrefix . '_to_html_after');
+        return $html;
+    }
+}

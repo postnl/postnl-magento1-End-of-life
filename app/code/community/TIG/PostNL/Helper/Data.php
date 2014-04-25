@@ -213,6 +213,56 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Gets a shipment's PakjeGemak address if available.
+     *
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     *
+     * @return bool|Mage_Sales_Model_Order_Address
+     */
+    public function getPakjeGemakAddressForShipment(Mage_Sales_Model_Order_Shipment $shipment)
+    {
+        $order = $shipment->getOrder();
+
+        return $this->getPakjeGemakAddressForOrder($order);
+    }
+
+    /**
+     * Gets an order's PakjeGemak address if available.
+     *
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return bool|Mage_Sales_Model_Order_Address
+     */
+    public function getPakjeGemakAddressForOrder(Mage_Sales_Model_Order $order)
+    {
+        /**
+         * Check if this order was placed using PostNL.
+         */
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $shippingMethod = $order->getShippingMethod();
+
+        /**
+         * If this shipment's order was not placed with PostNL, we need to ignore any PakjeGemak addresses that may have
+         * been saved.
+         */
+        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+            return false;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Order_Address $address
+         */
+        $addressCollection = $order->getAddressesCollection();
+        foreach ($addressCollection as $address) {
+            if ($address->getAddressType() == 'pakje_gemak') {
+                return $address;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Checks to see if the module may ship to the Netherlands using PostNL standard shipments.
      *
      * @param boolean|int $storeId

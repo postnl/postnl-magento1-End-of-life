@@ -454,13 +454,24 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function canUseDeliveryOptions($quote = false, $checkCountry = true)
     {
-        if (Mage::registry('can_use_delivery_options') !== null) {
-            return Mage::registry('can_use_delivery_options');
+        $registryKey = 'can_use_delivery_options';
+        if ($quote) {
+            $registryKey .= '_quote_id_' . $quote->getId();
         }
+
+        if ($checkCountry) {
+            $registryKey .= '_check_country';
+        }
+
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        Mage::unregister('postnl_enabled_delivery_options_errors');
 
         $deliveryOptionsEnabled = $this->isDeliveryOptionsEnabled();
         if (!$deliveryOptionsEnabled) {
-            Mage::register('can_use_delivery_options', false);
+            Mage::register($registryKey, false);
             return false;
         }
 
@@ -475,7 +486,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 )
             );
             Mage::register('postnl_enabled_delivery_options_errors', $errors);
-            Mage::register('can_use_delivery_options', false);
+            Mage::register($registryKey, false);
             return false;
         }
 
@@ -490,7 +501,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 )
             );
             Mage::register('postnl_enabled_delivery_options_errors', $errors);
-            Mage::register('can_use_delivery_options', false);
+            Mage::register($registryKey, false);
             return false;
         }
 
@@ -507,7 +518,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 )
             );
             Mage::register('postnl_enabled_delivery_options_errors', $errors);
-            Mage::register('can_use_delivery_options', false);
+            Mage::register($registryKey, false);
             return false;
         }
 
@@ -523,7 +534,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     )
                 );
                 Mage::register('postnl_enabled_delivery_options_errors', $errors);
-                Mage::register('can_use_delivery_options', false);
+                Mage::register($registryKey, false);
                 return false;
             }
         }
@@ -532,7 +543,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If we have no quote, we have no further checks to perform.
          */
         if (!$quote) {
-            Mage::register('can_use_delivery_options', true);
+            Mage::register($registryKey, true);
             return true;
         }
 
@@ -555,7 +566,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     )
                 );
                 Mage::register('postnl_enabled_delivery_options_errors', $errors);
-                Mage::register('can_use_delivery_options', false);
+                Mage::register($registryKey, false);
                 return false;
             }
         }
@@ -575,12 +586,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     )
                 );
                 Mage::register('postnl_enabled_delivery_options_errors', $errors);
-                Mage::register('can_use_delivery_options', false);
+                Mage::register($registryKey, false);
                 return false;
             }
         }
 
-        Mage::register('can_use_delivery_options', true);
+        Mage::register($registryKey, true);
         return true;
     }
 
@@ -618,6 +629,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     {
         if (is_null($storeId)) {
             $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (Mage::registry('postnl_enabled_delivery_options_errors')) {
+            return false;
         }
 
         $isPostnlEnabled = $this->isEnabled($storeId, false, $this->isTestMode());

@@ -86,12 +86,12 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
     }
 
     /**
-     * Add critical severity message
+     * Add critical severity message.
      *
-     * @param string $title
+     * @param string       $title
      * @param string|array $description
-     * @param string $url
-     * @param bool $isInternal
+     * @param string       $url
+     * @param bool         $isInternal
      *
      * @return Mage_AdminNotification_Model_Inbox
      */
@@ -106,12 +106,12 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
     }
 
     /**
-     * Add major severity message
+     * Add major severity message.
      *
-     * @param string $title
+     * @param string       $title
      * @param string|array $description
-     * @param string $url
-     * @param bool $isInternal
+     * @param string       $url
+     * @param bool         $isInternal
      *
      * @return Mage_AdminNotification_Model_Inbox
      */
@@ -126,12 +126,12 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
     }
 
     /**
-     * Add minor severity message
+     * Add minor severity message.
      *
-     * @param string $title
+     * @param string       $title
      * @param string|array $description
-     * @param string $url
-     * @param bool $isInternal
+     * @param string       $url
+     * @param bool         $isInternal
      *
      * @return Mage_AdminNotification_Model_Inbox
      */
@@ -146,12 +146,12 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
     }
 
     /**
-     * Add notice
+     * Add notice.
      *
-     * @param string $title
+     * @param string       $title
      * @param string|array $description
-     * @param string $url
-     * @param bool $isInternal
+     * @param string       $url
+     * @param bool         $isInternal
      *
      * @return Mage_AdminNotification_Model_Inbox
      */
@@ -166,7 +166,7 @@ class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
     }
 
     /**
-     * Checks parent class to see if the specified method exists
+     * Checks parent class to see if the specified method exists.
      *
      * @param object $object
      * @param string $method

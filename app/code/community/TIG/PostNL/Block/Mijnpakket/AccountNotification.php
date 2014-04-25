@@ -53,10 +53,15 @@
  * @method boolean                                         hasCreateAccountBaseUrl()
  * @method TIG_PostNL_Block_Mijnpakket_AccountNotification setCreateAccountBaseUrl(string $value)
  */
-class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_Core_Template
 {
     /**
-     * Base URL to create a new mijnpakket account.
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_mijnpakket_accountnotification';
+
+    /**
+     * Base URL to create a new MijnPakket account.
      */
     const CREATE_ACCOUNT_BASE_URL = 'https://mijnpakket.postnl.nl/Register/RegisterFromWebshop?';
 
@@ -203,7 +208,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Te
     }
 
     /**
-     * Gets the base create mijnpakket account URL.
+     * Gets the base create MijnPakket account URL.
      *
      * @return string
      */
@@ -220,7 +225,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Te
     }
 
     /**
-     * Form the create mijnpakket account url based on the hardcoded base URL and a dynamic set of parameters.
+     * Form the create MijnPakket account url based on the hardcoded base URL and a dynamic set of parameters.
      *
      * @return string
      */
@@ -230,7 +235,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Te
             return $this->_getData('create_account_url');
         }
 
-        $baseUrl     = $this->getCreateAccountBaseUrl();
+        $baseUrl = $this->getCreateAccountBaseUrl();
 
         /**
          * Add the optional params to the base url.
@@ -245,7 +250,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends Mage_Core_Block_Te
     }
 
     /**
-     * Gets all the URL parameters to create a mijnpakket account. While alle parameters are optional, the more we add,
+     * Gets all the URL parameters to create a MijnPakket account. While alle parameters are optional, the more we add,
      * the less the customer will have to add manually later on.
      *
      * @return array

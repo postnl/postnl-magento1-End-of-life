@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends Varien_Object
@@ -42,6 +42,38 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
      * The block class that we want to edit.
      */
     const BLOCK_NAME = 'checkout/onepage_shipping_method_available';
+
+    /**
+     * @var boolean|null
+     */
+    protected $_canUseDeliveryOptions = null;
+
+    /**
+     * @param boolean $canUseDeliveryOptions
+     */
+    public function setCanUseDeliveryOptions($canUseDeliveryOptions)
+    {
+        $this->_canUseDeliveryOptions = $canUseDeliveryOptions;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getCanUseDeliveryOptions()
+    {
+        if ($this->_canUseDeliveryOptions !== null) {
+            return $this->_canUseDeliveryOptions;
+        }
+
+        /**
+         * Check if delivery options are available for the current quote.
+         */
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $canUseDeliveryOptions = Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($quote, false);
+
+        $this->setCanUseDeliveryOptions($canUseDeliveryOptions);
+        return $this->_canUseDeliveryOptions;
+    }
 
     /**
      * Gets the classname for the block that we want to alter.
@@ -88,13 +120,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
             return $this;
         }
 
-        /**
-         * Check if delivery options are available for the current quote.
-         */
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $canUseDeliveryOptions = Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($quote);
-
-        if (!$canUseDeliveryOptions) {
+        if (!$this->getCanUseDeliveryOptions()) {
             return $this;
         }
 

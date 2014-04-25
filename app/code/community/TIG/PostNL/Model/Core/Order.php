@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Class TIG_PostNL_Model_Core_Order
@@ -129,10 +129,13 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
             return null;
         }
 
-        $order = Mage::getModel('sales/quote')->load($this->getQuoteId());
+        /**
+         * @var Mage_Sales_Model_Quote $quote
+         */
+        $quote = Mage::getModel('sales/quote')->load($this->getQuoteId());
 
-        $this->setQuote($order);
-        return $order;
+        $this->setQuote($quote);
+        return $quote;
     }
 
     /**
@@ -167,7 +170,7 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
      */
     public function setMobilePhoneNumber($phoneNumber, $skipValidation = false)
     {
-        if ($skipValidation) {
+        if ($skipValidation || empty($phoneNumber)) {
             $this->setData('mobile_phone_number', $phoneNumber);
             return $this;
         }

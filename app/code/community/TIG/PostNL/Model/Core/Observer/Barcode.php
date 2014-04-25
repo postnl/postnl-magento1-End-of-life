@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Observer_Barcode
@@ -64,6 +64,20 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         $shipment = $observer->getShipment();
 
         /**
+         * Check if this shipment was placed using PostNL.
+         */
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $shippingMethod = $shipment->getOrder()->getShippingMethod();
+
+        /**
+         * If this shipment's order was not placed with PostNL, remove any PakjeGemak addresses that may have been
+         * saved.
+         */
+        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+            return $this;
+        }
+
+        /**
          * Check if a postnl shipment exists for this shipment.
          */
         if (Mage::helper('postnl/cif')->postnlShipmentExists($shipment->getId())) {
@@ -82,9 +96,6 @@ class TIG_PostNL_Model_Core_Observer_Barcode
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
         $postnlOrder = Mage::getModel('postnl_core/order')->load($shipment->getOrderId(), 'order_id');
-        if (!$postnlOrder->getId()) {
-            $postnlOrder->load($shipment->getOrder()->getQuoteId(), 'quote_id');
-        }
 
         if ($postnlOrder->getId()) {
             if ($postnlOrder->getConfirmDate()) {

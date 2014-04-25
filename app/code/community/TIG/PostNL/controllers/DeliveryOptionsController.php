@@ -53,6 +53,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     const NAME_REGEX        = "#^[a-zA-Z0-9\s,'-]*$#";
 
     /**
+     * Regular expression to validate dutch phone number.
+     */
+    const PHONE_NUMBER_REGEX = '#^(((\+31|0|0031)){1}[1-9]{1}[0-9]{8})$#i';
+
+    /**
      * Regular expression to validate dutch mobile phone number.
      */
     const MOBILE_PHONE_NUMBER_REGEX = '#^(((\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$#i';
@@ -294,7 +299,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
 
         try {
             $data = $this->_getSaveSelectionPostData($params);
-
             $this->getService()->saveDeliveryOption($data);
         } catch (Exception $e) {
             Mage::helper('postnl/deliveryOptions')->logException($e);
@@ -802,11 +806,12 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             || !isset($address['HouseNr'])
             || !isset($address['Zipcode'])
             || !isset($address['Name'])
+            || !isset($address['PhoneNumber'])
         ) {
             throw new TIG_PostNL_Exception(
                 $this->__(
                      'Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country '
-                     . 'code, street, house number and zipcode.'
+                     . 'code, street, house number, phonenumber and zipcode.'
                 ),
                 'POSTNL-0141'
             );
@@ -818,6 +823,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $houseNumber = $address['HouseNr'];
         $postcode    = $address['Zipcode'];
         $name        = $address['Name'];
+        $phoneNumber = $address['PhoneNumber'];
 
         $countryCodes = Mage::getResourceModel('directory/country_collection')->getColumnValues('iso2_code');
 
@@ -827,6 +833,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $housenumberValidator = new Zend_Validate_Digits();
         $postcodeValidator    = new Zend_Validate_PostCode('nl_NL');
         $nameValidator        = new Zend_Validate_Regex(array('pattern' => self::NAME_REGEX));
+        $phoneNumberValidator = new Zend_Validate_Regex(array('pattern' => self::PHONE_NUMBER_REGEX));
 
         if (!$cityValidator->isValid($city)) {
             throw new TIG_PostNL_Exception(
@@ -888,6 +895,17 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             );
         }
 
+        $phoneNumber = str_replace(array('-', ' '), '', $phoneNumber);
+        if (!$phoneNumberValidator->isValid($phoneNumber)) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                     'Invalid phone number supplied: %s.',
+                     $phoneNumber
+                ),
+                'POSTNL-0154'
+            );
+        }
+
         $data = array(
             'city'        => $city,
             'countryCode' => $countryCode,
@@ -895,6 +913,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             'houseNumber' => $houseNumber,
             'postcode'    => $postcode,
             'name'        => $name,
+            'telephone'   => $phoneNumber,
         );
 
         if (!array_key_exists('HouseNrExt', $address)) {

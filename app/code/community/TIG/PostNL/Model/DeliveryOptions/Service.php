@@ -205,6 +205,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $postnlOrder->setQuoteId($quote->getId())
                     ->setIsActive(true)
                     ->setIsPakjeGemak(false)
+                    ->setIsPakketautomaat(false)
+                    ->setProductCode(false)
+                    ->setMobilePhoneNumber(false, true)
                     ->setType($data['type'])
                     ->setShipmentCosts($data['costs'])
                     ->setDeliveryDate($data['date'])
@@ -250,6 +253,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                               ->setCountryId($address['countryCode'])
                               ->setPostcode($address['postcode'])
                               ->setCompany($address['name'])
+                              ->setFirstname('-')
+                              ->setLastname('-')
+                              ->setTelephone($address['telephone'])
                               ->setStreet($street);
 
             $quote->addAddress($pakjeGemakAddress)

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_Action
@@ -665,6 +665,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * The label wills be base64 encoded strings. Convert these to a single pdf
              */
             $label = Mage::getModel('postnl_core/label');
+
+            if ($this->getRequest()->getPost('print_start_pos')) {
+                $label->setLabelCounter($this->getRequest()->getPost('print_start_pos'));
+            }
+
             $output = $label->createPdf($labels);
 
             $this->getResponse()
@@ -757,6 +762,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * The label wills be base64 encoded strings. Convert these to a single pdf
              */
             $label = Mage::getModel('postnl_core/label');
+
+            if ($this->getRequest()->getPost('print_start_pos')) {
+                $label->setLabelCounter($this->getRequest()->getPost('print_start_pos'));
+            }
+
             $output = $label->createPdf($labels);
 
             $this->getResponse()
@@ -858,7 +868,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     }
 
     /**
-     * Creates a parcelware export file based on the selected shipments
+     * Creates a Parcelware export file based on the selected shipments
      *
      * @return TIG_PostNL_Adminhtml_ShipmentController
      */

@@ -33,11 +33,21 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                               hasExtraCoverProductOptions()
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions setExtraCoverProductOptions(array $value)
+ * @method boolean                                               hasGlobalpackProductOption()
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions setGlobalpackProductOption(array $value)
  */
-class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends Mage_Adminhtml_Block_Abstract
+class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends TIG_PostNL_Block_Adminhtml_Template
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_sales_order_productoptions';
+
     /**
      * Get available product options
      *
@@ -45,8 +55,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends Mage_Adminht
      */
     public function getExtraCoverProductOptions()
     {
-        if ($this->getData('extra_cover_product_options')) {
-            return $this->getData('extra_cover_product_options');
+        if ($this->hasExtraCoverProductOptions()) {
+            return $this->_getData('extra_cover_product_options');
         }
 
         $productOptions = Mage::getModel('postnl_core/system_config_source_allProductOptions')
@@ -63,8 +73,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends Mage_Adminht
      */
     public function getGlobalPackProductOption()
     {
-        if ($this->getData('globalpack_product_option')) {
-            return $this->getData('globalpack_product_option');
+        if ($this->hasGlobalpackProductOption()) {
+            return $this->_getData('globalpack_product_option');
         }
 
         $globalPackProductOption = Mage::getModel('postnl_core/system_config_source_globalProductOptions')

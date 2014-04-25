@@ -91,8 +91,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     }
 
     /**
-     * Updates a quote with the given PostNL order data. Each part of the data is used to replace the data normally acquired
-     * during checkout.
+     * Updates a quote with the given PostNL order data. Each part of the data is used to replace the data normally
+     * acquired during checkout.
      *
      * @param StdClass $data
      * @param Mage_Sales_Model_Quote | null $quote
@@ -348,7 +348,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * Get the Magento payment method code associated with this method
          */
-        $methodCode = Mage::getStoreConfig(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method', $quote->getStoreId());
+        $methodCode = Mage::getStoreConfig(
+                          self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method',
+                          $quote->getStoreId()
+        );
         Mage::register('postnl_payment_data', array('method' => $methodCode));
 
         /**
@@ -384,7 +387,10 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         /**
          * Get the payment method code associated with the chosen payment method
          */
-        $methodCode = Mage::getStoreConfig(self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method', $quote->getStoreId());
+        $methodCode = Mage::getStoreConfig(
+                          self::XML_PATH_PAYMENT_METHODS . '/' . $methodName . '_method',
+                          $quote->getStoreId()
+        );
 
         /**
          * Extra checks used by Magento
@@ -418,8 +424,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $paymentData['method'] = $methodCode;
 
         /**
-         * If the chosen payment method has an optional field (like bank selection for iDEAL) we have to check system / config in
-         * order to map it to a form field the payment method would expect.
+         * If the chosen payment method has an optional field (like bank selection for iDEAL) we have to check
+         * system / config in order to map it to a form field the payment method would expect.
          */
         if ($optionValue) {
             $field = Mage::getStoreConfig(
@@ -428,7 +434,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             );
 
             /**
-             * If a field name is specified we add the option to the payment data as well as to the super global POST array
+             * If a field name is specified we add the option to the payment data as well as to the super global POST
+             * array.
              */
             if ($field) {
                 $paymentData[$field] = $optionValue;
@@ -734,7 +741,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     }
 
     /**
-     * Parses a PostNL Checkout address into a varien object that can be used by Magento
+     * Parses a PostNL Checkout address into a varien object that can be used by Magento.
      *
      * @param Mage_Sales_Model_Quote_Address $address
      * @param StdClass $addressData
@@ -811,7 +818,6 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      *
      * @param Mage_Sales_Model_Quote_Address $address
      * @param                                $serviceLocationData
-     * @internal param \StdClass $addressData
      *
      * @return Mage_Sales_Model_Quote_Address
      */
@@ -823,8 +829,8 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         $address = $this->_parseStreetData($address, $serviceLocationData);
 
         /**
-         * Remove any company data that may have been set, this could cause confusion when delivering the package to a service
-         * location with a different company name
+         * Remove any company data that may have been set, this could cause confusion when delivering the package to a
+         * service location with a different company name.
          */
         $address->setCompany(false);
 
@@ -848,7 +854,11 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             /**
              * If the store uses single line addresses, merge the street fields
              */
-            $streetData = $addressData->Straat . PHP_EOL . $addressData->Huisnummer . PHP_EOL . $addressData->HuisnummerExt;
+            $streetData = $addressData->Straat
+                        . PHP_EOL
+                        . $addressData->Huisnummer
+                        . PHP_EOL
+                        . $addressData->HuisnummerExt;
 
             $address->setStreet($streetData);
             return $address;
@@ -930,9 +940,9 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     }
 
     /**
-     * Removes all addresses associated with a quote. The quote's regular method to remove all addresses (removeAllAddresses())
-     * effectively resets the addresses rather than removing them (replaces each address by a default one of the same type). We
-     * specifically want to delete the optional PakjeGemak address as well.
+     * Removes all addresses associated with a quote. The quote's regular method to remove all addresses
+     * (removeAllAddresses()) effectively resets the addresses rather than removing them (replaces each address by a
+     * default one of the same type). We specifically want to delete the optional PakjeGemak address as well.
      *
      * @param Mage_Sales_Model_Quote &$quote
      *

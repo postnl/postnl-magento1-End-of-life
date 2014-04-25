@@ -49,8 +49,13 @@
  * @method boolean                                 hasDisabledButtonUrl()
  * @method TIG_PostNL_Block_Mijnpakket_LoginButton setDisabledButtonUrl(string $value)
  */
-class TIG_PostNL_Block_Mijnpakket_LoginButton extends Mage_Core_Block_Template
+class TIG_PostNL_Block_Mijnpakket_LoginButton extends TIG_PostNL_Block_Core_Template
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_mijnpakket_loginbutton';
+
     /**
      * The webshop's public webshop ID is used to secure communications with PostNL's servers.
      */
