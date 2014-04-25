@@ -230,7 +230,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             $storeId = $this->getStoreId();
         }
 
-        if (!$storeId) {
+        if (is_null($storeId)) {
             $storeId = Mage::app()->getStore()->getId();
         }
 
