@@ -57,10 +57,12 @@
 </div>
 <script type="text/javascript">
     //<![CDATA[
-    var pakjeGemakAddress = $('pakje_gemak_address');
-    var orderPage = $$('.order-items.order-details')[0];
-    orderPage.insert({
-        before : pakjeGemakAddress
-    });
+    document.observe('dom:loaded', function() {
+        var pakjeGemakAddress = $('pakje_gemak_address');
+        var orderPage = $$('.order-items.order-details')[0];
+        orderPage.insert({
+            before : pakjeGemakAddress
+        });
+    }
     //]]>
 </script>

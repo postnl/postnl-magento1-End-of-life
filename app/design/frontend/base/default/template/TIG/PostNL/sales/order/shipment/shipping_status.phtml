@@ -37,6 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
+<?php /** @var Mage_Sales_Model_Order_Shipment $_shipment */ ?>
 <?php foreach (Mage::registry('current_order')->getShipmentsCollection() as $_shipment): ?>
     <?php $_isConfirmed = $this->isConfirmed($_shipment); ?>
     <?php if(!$_isConfirmed): ?>
@@ -52,9 +53,11 @@
     <script type="text/javascript">
     //<![CDATA[
         document.observe('dom:loaded', function() {
-            status<?php echo $_shipment->getId(); ?> = $('postnl_status-<?php echo $_shipment->getId(); ?>');
-            if ($('my-tracking-table-<?php echo $_shipment->getId(); ?>')) {
-                $('my-tracking-table-<?php echo $_shipment->getId(); ?>').insert({
+            var status<?php echo $_shipment->getId(); ?> = $('postnl_status-<?php echo $_shipment->getId(); ?>');
+
+            var trackingTable = $('my-tracking-table-<?php echo $_shipment->getId(); ?>');
+            if (trackingTable) {
+                trackingTable.insert({
                     before: status<?php echo $_shipment->getId(); ?>
                 });
             } else {

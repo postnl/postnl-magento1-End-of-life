@@ -1714,6 +1714,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Helper_Cif $helper
          */
         $cif = Mage::getModel('postnl_core/cif');
+        $cif->setStoreId($this->getStoreId());
         $helper = $this->getHelper('cif');
         $barcodeType = $helper->getBarcodeTypeForShipment($this);
 
@@ -1813,6 +1814,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Model_Core_Cif $cif
          */
         $cif = Mage::getModel('postnl_core/cif');
+        $cif->setStoreId($this->getStoreId());
 
         /**
          * @var StdClass $result
@@ -1950,6 +1952,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var StdClass                  $result
          */
         $cif = Mage::getModel('postnl_core/cif');
+        $cif->setStoreId($this->getStoreId());
         $result = $cif->confirmShipment($this, $barcode, $mainBarcode, $barcodeNumber);
 
         $responseShipment = $result->ConfirmingResponseShipment;
@@ -2083,6 +2086,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Model_Core_Cif $cif
          */
         $cif = Mage::getModel('postnl_core/cif');
+        $cif->setStoreId($this->getStoreId());
         $result = $cif->getShipmentStatus($this);
 
         $currentPhase = $result->Status->CurrentPhaseCode;
@@ -2124,6 +2128,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var StdClass $result
          */
         $cif = Mage::getModel('postnl_core/cif');
+        $cif->setStoreId($this->getStoreId());
         $result = $cif->getCompleteShipmentStatus($this);
 
         /**
