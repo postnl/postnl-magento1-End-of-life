@@ -135,26 +135,22 @@
     <div class="order-items order-details">
         <h2 class="table-caption"><?php echo $this->__('Items Ordered'); ?></h2>
         <table class="data-table" id="order-summary-table">
-            <col>
-            <col width="1">
-            <col width="1">
-            <col width="1">
-            <col width="1">
-            <?php if ($this->helper('tax')->displayCartPriceInclTax() || $this->helper('tax')->displayCartBothPrices()): ?>
-                <col width="1">
-                <col width="1">
+            <?php if ($this->helper('tax')->displayCartBothPrices()): $colspan = $rowspan = 2; else: $colspan = $rowspan = 1; endif; ?>
+            <col />
+            <col width="1" />
+            <col width="1" />
+            <col width="1" />
+            <?php if ($this->helper('tax')->displayCartBothPrices()): ?>
+            <col width="1" />
+            <col width="1" />
             <?php endif; ?>
             <thead>
-                <th><?php echo $this->__('Product Name'); ?></th>
-                <th class="a-right"><?php echo $this->__('Price'); ?></th>
-                <?php if ($this->helper('tax')->displayCartPriceInclTax() || $this->helper('tax')->displayCartBothPrices()): ?>
-                    <th>&nbsp;</th>
-                <?php endif; ?>
-                <th class="a-center"><?php echo $this->__('Qty'); ?></th>
-                <?php if ($this->helper('tax')->displayCartPriceInclTax() || $this->helper('tax')->displayCartBothPrices()): ?>
-                    <th>&nbsp;</th>
-                <?php endif; ?>
-                <th class="a-right"><?php echo $this->__('Subtotal'); ?></th>
+                <tr>
+                    <th rowspan="<?php echo $rowspan ?>"><?php echo $this->__('Product Name') ?></th>
+                    <th colspan="<?php echo $colspan ?>" class="a-center"><?php echo $this->__('Price') ?></th>
+                    <th rowspan="<?php echo $rowspan ?>" class="a-center"><?php echo $this->__('Qty') ?></th>
+                    <th colspan="<?php echo $colspan ?>" class="a-center"><?php echo $this->__('Subtotal') ?></th>
+                </tr>
             </thead>
             <tbody>
                 <?php foreach ($_itemCollection as $_item): ?>

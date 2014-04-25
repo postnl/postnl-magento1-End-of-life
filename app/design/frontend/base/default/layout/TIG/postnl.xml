@@ -111,6 +111,9 @@
                 <type>skin_css</type>
                 <file>css/TIG/PostNL/cart.css</file>
             </action>
+            <action method="addJs">
+                <js>varien/weee.js</js>
+            </action>
         </reference>
         <reference name="root">
             <action method="setTemplate"><template>page/1column.phtml</template></action>
@@ -120,7 +123,7 @@
                 <action method="addItemRender"><type>default</type><block>checkout/cart_item_renderer</block><template>checkout/onepage/review/item.phtml</template></action>
                 <action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>checkout/onepage/review/item.phtml</template></action>
                 <action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>checkout/onepage/review/item.phtml</template></action>
-                <block type="postnl_checkout/summary_totals" name="totals" template="TIG/PostNL/checkout/summary/totals.phtml"/>
+                <block type="checkout/cart_totals" name="checkout.onepage.review.info.totals" as="totals" template="checkout/onepage/review/totals.phtml"/>
             </block>
         </reference>
     </postnl_checkout_summary>
