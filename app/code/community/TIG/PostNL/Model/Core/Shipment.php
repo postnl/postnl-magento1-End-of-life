@@ -139,7 +139,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const POSTNL_CARRIER_CODE = 'postnl';
 
     /**
-     * Possible confirm statusses.
+     * Possible confirm statuses.
      */
     const CONFIRM_STATUS_CONFIRMED       = 'confirmed';
     const CONFIRM_STATUS_UNCONFIRMED     = 'unconfirmed';
@@ -155,38 +155,38 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPPING_PHASE_NOT_APPLICABLE = '99';
 
     /**
-     * XML paths to default product options settings.
+     * Xpaths to default product options settings.
      */
-    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
-    const XML_PATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/cif_product_options/default_evening_product_option';
-    const XML_PATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION     = 'postnl/cif_product_options/default_pakjegemak_product_option';
-    const XML_PATH_DEFAULT_PGE_PRODUCT_OPTION            = 'postnl/cif_product_options/default_pge_product_option';
-    const XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
-    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
-    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
-    const XML_PATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/cif_product_options/use_alternative_default';
-    const XML_PATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/cif_product_options/alternative_default_max_amount';
-    const XML_PATH_ALTERNATIVE_DEFAULT_OPTION            = 'postnl/cif_product_options/alternative_default_option';
+    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
+    const XPATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/cif_product_options/default_evening_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION     = 'postnl/cif_product_options/default_pakjegemak_product_option';
+    const XPATH_DEFAULT_PGE_PRODUCT_OPTION            = 'postnl/cif_product_options/default_pge_product_option';
+    const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
+    const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
+    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
+    const XPATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/cif_product_options/use_alternative_default';
+    const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/cif_product_options/alternative_default_max_amount';
+    const XPATH_ALTERNATIVE_DEFAULT_OPTION            = 'postnl/cif_product_options/alternative_default_option';
 
     /**
-     * XML path to weight per parcel config setting.
+     * Xpath to weight per parcel config setting.
      */
-    const XML_PATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
+    const XPATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
 
     /**
-     * XML path to setting that determines whether or not to send track and trace emails.
+     * Xpath to setting that determines whether or not to send track and trace emails.
      */
-    const XML_PATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
+    const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
 
     /**
-     * XML path to track and trace email template setting.
+     * Xpath to track and trace email template setting.
      */
-    const XML_PATH_TRACK_AND_TRACE_EMAIL_TEMPLATE = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
+    const XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
 
     /**
-     * XML path to maximum allowed parcel count settings.
+     * Xpath to maximum allowed parcel count settings.
      */
-    const XML_PATH_MAX_PARCEL_COUNT = 'postnl/advanced/max_parcel_count';
+    const XPATH_MAX_PARCEL_COUNT = 'postnl/advanced/max_parcel_count';
 
     /**
      * Xpath to default GlobalPack shipment type.
@@ -419,7 +419,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @return array
      */
-    public function getlabelsToSave()
+    public function getLabelsToSave()
     {
         return $this->_labelsToSave;
     }
@@ -647,64 +647,37 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $storeId = $this->getStoreId();
 
+        $xpath = false;
         if ($this->isPgeShipment()) {
             /**
              * PakjeGemak Express default option
              */
-            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PGE_PRODUCT_OPTION, $storeId);
-            $this->_checkProductCodeAllowed($productCode);
-
-            return $productCode;
-        }
-
-        if ($this->isAvondshipment()) {
+            $xpath = self::XPATH_DEFAULT_PGE_PRODUCT_OPTION;
+        } elseif ($this->isAvondshipment()) {
             /**
              * Evening delivery default option
              */
-            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EVENING_PRODUCT_OPTION, $storeId);
-            $this->_checkProductCodeAllowed($productCode);
-
-            return $productCode;
-        }
-
-        if ($this->isPakjeGemakShipment()) {
+            $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
+        } elseif ($this->isPakjeGemakShipment()) {
             /**
              * PakjeGemak default option
              */
-            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION, $storeId);
-            $this->_checkProductCodeAllowed($productCode);
-
-            return $productCode;
-        }
-
-        if ($this->isPakketautomaatShipment()) {
+            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;
+        } elseif ($this->isPakketautomaatShipment()) {
             /**
              * PakjeGemak default option
              */
-            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION, $storeId);
-            $this->_checkProductCodeAllowed($productCode);
-
-            return $productCode;
-        }
-
-        if ($this->isEuShipment()) {
+            $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
+        } elseif ($this->isEuShipment()) {
             /**
              * EU default option
              */
-            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTION, $storeId);
-            $this->_checkProductCodeAllowed($productCode);
-
-            return $productCode;
-        }
-
-        if ($this->isGlobalShipment()) {
+            $xpath = self::XPATH_DEFAULT_EU_PRODUCT_OPTION;
+        } elseif ($this->isGlobalShipment()) {
             /**
              * Global default option
              */
-            $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION, $storeId);
-            $this->_checkProductCodeAllowed($productCode);
-
-            return $productCode;
+            $xpath = self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
         }
 
         /**
@@ -715,27 +688,28 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Dutch shipments may use an alternative default option when the shipment's base grandtotal exceeds a specified
          * amount.
          */
-        $useAlternativeDefault = Mage::getStoreConfig(self::XML_PATH_USE_ALTERNATIVE_DEFAULT, $storeId);
-        if ($useAlternativeDefault) {
+        $useAlternativeDefault = Mage::getStoreConfig(self::XPATH_USE_ALTERNATIVE_DEFAULT, $storeId);
+        if (!$xpath && $useAlternativeDefault) {
             /**
              * Alternative default option usage is enabled
              */
-            $maxShipmentAmount = Mage::getStoreConfig(self::XML_PATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT, $storeId);
+            $maxShipmentAmount = Mage::getStoreConfig(self::XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT, $storeId);
             if ($this->getShipmentBaseGrandTotal() > $maxShipmentAmount) {
                 /**
-                 * The shipment's base GT exceeds the specified amount; use the alternative default
+                 * The shipment's base grand total exceeds the specified amount: use the alternative default
                  */
-                $productCode = Mage::getStoreConfig(self::XML_PATH_ALTERNATIVE_DEFAULT_OPTION, $storeId);
-                $this->_checkProductCodeAllowed($productCode);
-
-                return $productCode;
+                $xpath = self::XPATH_ALTERNATIVE_DEFAULT_OPTION;
             }
+        }
+
+        if (!$xpath) {
+            $xpath = self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
         }
 
         /**
          * standard default option
          */
-        $productCode = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
+        $productCode = Mage::getStoreConfig($xpath, $storeId);
         $this->_checkProductCodeAllowed($productCode);
 
         return $productCode;
@@ -1012,7 +986,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function setParcelCount($count)
     {
-        $maxParcelCount = Mage::getStoreConfig(self::XML_PATH_MAX_PARCEL_COUNT, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $maxParcelCount = Mage::getStoreConfig(self::XPATH_MAX_PARCEL_COUNT, Mage_Core_Model_App::ADMIN_STORE_ID);
         if (!$maxParcelCount) {
             $this->setData('parcel_count', $count);
             return $this;
@@ -1556,7 +1530,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $storeId = $this->getStoreId();
-        $canSendTrackAndTrace = Mage::getStoreConfig(self::XML_PATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId);
+        $canSendTrackAndTrace = Mage::getStoreConfig(self::XPATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId);
         if (!$canSendTrackAndTrace) {
             return false;
         }
@@ -2263,7 +2237,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $storeId = $this->getStoreId();
 
-        $template = Mage::getStoreConfig(self::XML_PATH_TRACK_AND_TRACE_EMAIL_TEMPLATE, $storeId);
+        $template = Mage::getStoreConfig(self::XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE, $storeId);
 
         /**
          * @var Mage_Core_Model_Email_Template $mailTemplate
@@ -2419,7 +2393,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _addLabelToSave($label)
     {
-        $labelsToSave = $this->getlabelsToSave();
+        $labelsToSave = $this->getLabelsToSave();
 
         $labelsToSave[] = $label;
 
@@ -2714,7 +2688,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Helper_Cif $helper
          */
         $helper = $this->getHelper('cif');
-        $weightPerParcel = Mage::getStoreConfig(self::XML_PATH_WEIGHT_PER_PARCEL, $this->getStoreId());
+        $weightPerParcel = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $this->getStoreId());
         $weightPerParcel = $helper->standardizeWeight($weightPerParcel, $this->getStoreId());
 
         /**

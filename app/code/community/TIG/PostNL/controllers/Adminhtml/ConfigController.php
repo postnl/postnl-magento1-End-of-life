@@ -39,7 +39,7 @@
 class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Action
 {
     /**
-     * Base XML path of config settings taht will be checked
+     * Base XML path of config settings that will be checked
      */
     const XML_BASE_PATH = 'postnl/cif';
 
@@ -90,33 +90,33 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
         }
 
         /**
-         * If the password field has not been edited since the last time it was saved, it will contain 6 asteriscs for security
-         * reasons. In that case, we need to read and decrypt the password from the database.
-         */
-        if ($data['password'] == '******') {
-            $data['password'] = $this->_getPassword(false);
-        } elseif ($data['password'] == 'inherit') {
-            $data['password'] = $this->_getPassword(true);
-        }
-
-        /**
-         * Hash the password
-         */
-        $data['password'] = sha1($data['password']);
-
-        /**
-         * Load the CIF model and set to test mode to false
-         *
-         * @var TIG_PostNL_Model_Core_Cif $cif
-         */
-        $cif = Mage::getModel('postnl_core/cif')
-                   ->setTestMode($this->_isTestMode);
-
-        /**
          * Attempt to generate a barcode to test the account settings. This will result in an exception if the settings are
          * invalid.
          */
         try {
+            /**
+             * If the password field has not been edited since the last time it was saved, it will contain 6 asteriscs for security
+             * reasons. In that case, we need to read and decrypt the password from the database.
+             */
+            if ($data['password'] == '******') {
+                $data['password'] = $this->_getPassword(false);
+            } elseif ($data['password'] == 'inherit') {
+                $data['password'] = $this->_getPassword(true);
+            }
+
+            /**
+             * Hash the password
+             */
+            $data['password'] = sha1($data['password']);
+
+            /**
+             * Load the CIF model and set to test mode to false
+             *
+             * @var TIG_PostNL_Model_Core_Cif $cif
+             */
+            $cif = Mage::getModel('postnl_core/cif')
+                       ->setTestMode($this->_isTestMode);
+
             $response = $cif->generateBarcodePing($data);
         } catch (Exception $e) {
             $this->getResponse()
@@ -202,19 +202,15 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
             $xpath = self::XML_PATH_TEST_PASSWORD;
         }
 
-        try {
-            $websiteCode = $this->getRequest()->getParam('website');
-            if (!$inherit && !empty($websiteCode)) {
-                $website = Mage::getModel('core/website')->load($websiteCode, 'code');
-                $password = $website->getConfig($xpath);
-            } else {
-                $password = Mage::getStoreConfig($xpath, $storeId);
-            }
-
-            $password = Mage::helper('core')->decrypt($password);
-        } catch (Exception $e) {
-            return '';
+        $websiteCode = $this->getRequest()->getParam('website');
+        if (!$inherit && !empty($websiteCode)) {
+            $website = Mage::getModel('core/website')->load($websiteCode, 'code');
+            $password = $website->getConfig($xpath);
+        } else {
+            $password = Mage::getStoreConfig($xpath, $storeId);
         }
+
+        $password = Mage::helper('core')->decrypt($password);
 
         return trim($password);
     }
