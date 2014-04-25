@@ -358,6 +358,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $this->setStoreId(Mage_Core_Model_App::ADMIN_STORE_ID);
 
+        $this->setPassword($data['password']);
+        $this->setUsername($data['username']);
+
         $barcode = $this->_getBarcodeData('NL');
 
         $message  = $this->_getMessage('');
@@ -384,9 +387,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $response = $this->call(
             'Barcode',
             'GenerateBarcode',
-            $soapParams,
-            $data['username'],
-            $data['password']
+            $soapParams
         );
 
         if (!is_object($response)

@@ -328,7 +328,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $massActionData = array(
             'label'=> $helper->__('PostNL - Create Shipments'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massCreateShipments'),
+            'url'  => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massCreateShipments'),
         );
 
         $showOptions = Mage::getStoreConfig(self::XML_PATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
