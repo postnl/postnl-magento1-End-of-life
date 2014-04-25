@@ -219,7 +219,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     public function getPrintShippingLabelUrl($shipmentId)
     {
         $url = Mage::helper('adminhtml')->getUrl(
-            'postnl/adminhtml_shipment/printLabel',
+            'postnl_admin/adminhtml_shipment/printLabel',
             array('shipment_id' => $shipmentId)
         );
 
@@ -236,7 +236,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     public function getResetConfirmationUrl($shipmentId)
     {
         $url = Mage::helper('adminhtml')->getUrl(
-            'postnl/adminhtml_shipment/resetConfirmation',
+            'postnl_admin/adminhtml_shipment/resetConfirmation',
             array('shipment_id' => $shipmentId)
         );
 
@@ -253,7 +253,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     public function getRemoveLabelsUrl($shipmentId)
     {
         $url = Mage::helper('adminhtml')->getUrl(
-            'postnl/adminhtml_shipment/removeLabels',
+            'postnl_admin/adminhtml_shipment/removeLabels',
             array('shipment_id' => $shipmentId)
         );
 
@@ -270,7 +270,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     public function getResendTrackAndTraceUrl($shipmentId)
     {
         $url = Mage::helper('adminhtml')->getUrl(
-            'postnl/adminhtml_shipment/sendTrackAndTrace',
+            'postnl_admin/adminhtml_shipment/sendTrackAndTrace',
             array('shipment_id' => $shipmentId)
         );
 
@@ -287,7 +287,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     public function getConfirmUrl($shipmentId)
     {
         $url = Mage::helper('adminhtml')->getUrl(
-            'postnl/adminhtml_shipment/confirm',
+            'postnl_admin/adminhtml_shipment/confirm',
             array(
                 'shipment_id'    => $shipmentId,
                 'return_to_view' => true,

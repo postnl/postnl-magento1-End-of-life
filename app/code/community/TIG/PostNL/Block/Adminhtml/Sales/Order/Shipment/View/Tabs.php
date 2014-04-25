@@ -88,7 +88,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tabs extends Mage_Adm
             $this->addTab('shipment_status_history', array(
                 'label'     => Mage::helper('postnl')->__('Shipping event history'),
                 'url'       => $this->getUrl(
-                                   'postnl/adminhtml_shipment/statusHistory',
+                                   'postnl_admin/adminhtml_shipment/statusHistory',
                                    array(
                                        '_current' => true,
                                        'shipment_id' => $shipmentId
