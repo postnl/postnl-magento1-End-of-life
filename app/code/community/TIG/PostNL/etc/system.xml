@@ -2927,6 +2927,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_shippingstatus>
                         <cif_version_confirming translate="label" module="postnl">
                             <label>Confirming webservice version</label>
@@ -2935,6 +2936,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_confirming>
                         <cif_version_labelling translate="label" module="postnl">
                             <label>Labelling webservice version</label>
@@ -2943,6 +2945,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_labelling>
                         <cif_version_barcode translate="label" module="postnl">
                             <label>Barcode webservice version</label>
@@ -2951,6 +2954,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_barcode>
                         <cif_version_checkout translate="label" module="postnl">
                             <label>Checkout webservice version</label>
@@ -2959,6 +2963,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_checkout>
                         <cif_version_deliverydate translate="label" module="postnl">
                             <label>Delivery date webservice version</label>
@@ -2967,6 +2972,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_deliverydate>
                         <cif_version_timeframe translate="label" module="postnl">
                             <label>Timeframe webservice version</label>
@@ -2975,6 +2981,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_timeframe>
                         <cif_version_location translate="label" module="postnl">
                             <label>Location webservice version</label>
@@ -2983,6 +2990,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_location>
                     </fields>
                 </advanced>

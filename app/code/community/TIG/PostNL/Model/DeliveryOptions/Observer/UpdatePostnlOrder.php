@@ -82,7 +82,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $shippingCountry = $order->getShippingAddress()->getCountryId();
         if ($shippingCountry != 'NL') {
             $this->_removePakjeGemakAddress($order);
-            $postnlOrder->delete()->save();
+            $postnlOrder->delete();
             return $this;
         }
 
@@ -163,8 +163,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $addressCollection = $order->getAddressesCollection();
         foreach ($addressCollection as $address) {
             if ($address->getAddressType() == 'pakje_gemak') {
-                $address->delete()
-                        ->save();
+                $address->delete();
             }
         }
 

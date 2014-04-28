@@ -80,7 +80,8 @@
 
         mijnpakketLogin.setCheckout(checkout)
                        .setBilling(billing)
-                       .setShipping(shipping);
+                       .setShipping(shipping)
+                       .setFailureUrl('<?php echo $this->getUrl('checkout/cart'); ?>');
 
         <?php if ($_savedData): ?>
             var mijnpakketData = '<?php echo Mage::helper('core')->jsonEncode($_savedData); ?>';

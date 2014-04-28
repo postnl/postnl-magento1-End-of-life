@@ -745,7 +745,7 @@ TIG_PostNL::Confirmation Expired,Voormelding Verlopen
 "TIG_PostNL::Invalid arguments supplied. In order to save a selected option, a type, delivery date and optional extra costs are required.","Ongeldige parameters opgegeven. Om een geselecteerde bezorgoptie op te slaan zijn een type, een bezorgdatum en optioneel extra kosten verplicht."
 TIG_PostNL::Invalid type supplied: %s,Ongeldig type opgegeven: %s
 TIG_PostNL::Invalid extra costs supplied: %s Extra costs must be supplied as a float.,Ongeldige extra kosten opgegeven: %s Extra kosten moeten opgegegevn worden als een float waarde.
-"TIG_PostNL::Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode.","Ongeldig argument opgegeven. Een valide PakjeGemak adres moet minstens een plaatsnaam, een landcode, een straatnaam, een huisnummer en een postcode bevatten."
+"TIG_PostNL::Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number, phonenumber and zipcode.","Ongeldig argument opgegeven. Een valide PakjeGemak adres moet minstens een plaatsnaam, een landcode, een straatnaam, een huisnummer, een telefoonnummer en een postcode bevatten."
 TIG_PostNL::Invalid arguments supplied. The 'costs' parameter is required.,Ongeldige parameters opgegeven. De 'costs' parameter is verplicht.
 TIG_PostNL::Please enter a valid Dutch mobile phone number using only digits.,Vul s.v.p. een correct Nederlands mobiel telefoonnummer in met enkel cijfers.
 TIG_PostNL::Phone number for Package Dispenser service,Mobiel telefoonnummer voor pakketautomaat dienst
@@ -860,4 +860,5 @@ TIG_PostNL::Show on the map,Toon op de kaart
 TIG_PostNL::Magento Community Edition version,Magento Community editie versie
 TIG_PostNL::Magento Enterprise Edition version,Magento Enterprise editie versie
 TIG_PostNL::Idev's OneStepCheckout version,Idev's OneStepCheckout versie
-TIG_PostNL::choose a different shipping address,kies een ander verzendadres
+TIG_PostNL::choose a different shipping address,kies een ander bezorgadres
+TIG_PostNL::Magento & 3rd party version compatibility,Magento & 3rd party versie compatibiliteit
