@@ -2768,8 +2768,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Model_Core_Shipment_Label $label
          */
         foreach ($labels as $label) {
-            $label->delete()
-                  ->save();
+            $label->delete();
         }
 
         return $this;
@@ -2788,8 +2787,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Model_Core_Shipment_Barcode $barcode
          */
         foreach ($barcodes as $barcode) {
-            $barcode->delete()
-                    ->save();
+            $barcode->delete();
         }
 
         $this->setMainBarcode(false);
@@ -2811,8 +2809,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Model_Core_Shipment_Status_History $status
          */
         foreach ($statusHistoryCollection as $status) {
-            $status->delete()
-                   ->save();
+            $status->delete();
         }
 
         return $this;

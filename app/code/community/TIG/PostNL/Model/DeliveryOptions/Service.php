@@ -247,6 +247,11 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                 $street[] = $address['houseNumberExtension'];
             }
 
+            $phoneNumber = '-';
+            if (array_key_exists('telephone', $address)) {
+                $phoneNumber = $address['telephone'];
+            }
+
             $pakjeGemakAddress = Mage::getModel('sales/quote_address');
             $pakjeGemakAddress->setAddressType(self::ADDRESS_TYPE_PAKJEGEMAK)
                               ->setCity($address['city'])
@@ -255,7 +260,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
                               ->setCompany($address['name'])
                               ->setFirstname('-')
                               ->setLastname('-')
-                              ->setTelephone($address['telephone'])
+                              ->setTelephone($phoneNumber)
                               ->setStreet($street);
 
             $quote->addAddress($pakjeGemakAddress)

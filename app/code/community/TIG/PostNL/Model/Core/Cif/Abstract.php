@@ -38,7 +38,6 @@
  *
  * Base CIF model. Contains general code for communicating with the CIF API
  *
- * @method int     getStoreId()
  * @method boolean getTestMode()
  *
  * @method TIG_PostNL_Model_Core_Cif_Abstract setHelper(Mage_Core_Helper_Abstract $value)
@@ -46,6 +45,7 @@
  * @method TIG_PostNL_Model_Core_Cif_Abstract setTestMode(boolean $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setPassword(string $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setUsername(string $value)
+ * @method TIG_PostNL_Model_Core_Cif_Abstract setStoreId(int $value)
  *
  * @method boolean hasSoapClient()
  * @method boolean hasHelper()
@@ -69,7 +69,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const TEST_WSDL_BASE_URL = 'https://testservice.postnl.com/CIF_SB/';
 
     /**
-     * available wsdl filenames
+     * Available wsdl filenames.
      */
     const WSDL_BARCODE_NAME        = 'BarcodeWebService';
     const WSDL_CONFIRMING_NAME     = 'ConfirmingWebService';
@@ -81,7 +81,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const WSDL_LOCATION_NAME       = 'LocationWebService';
 
     /**
-     * header security namespace. Used for constructing the SOAP headers array
+     * Header security namespace. Used for constructing the SOAP headers array.
      */
     const HEADER_SECURITY_NAMESPACE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
 
@@ -135,6 +135,21 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     }
 
     /**
+     * @return int
+     */
+    public function getStoreId()
+    {
+        if ($this->hasStoreId()) {
+            return $this->_getData('store_id');
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+
+        $this->setStoreId($storeId);
+        return $storeId;
+    }
+
+    /**
      * @return TIG_PostNL_Helper_Cif
      */
     public function getHelper()
@@ -162,12 +177,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             return $this->_getData('username');
         }
 
-        if ($storeId === false && $this->hasStoreId()) {
+        if ($storeId === false) {
             $storeId = $this->getStoreId();
-        }
-
-        if (!$storeId) {
-            $storeId = Mage::app()->getStore()->getId();
         }
 
         if ($this->isTestMode()) {
@@ -197,12 +208,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             return $this->_getData('password');
         }
 
-        if ($storeId === false && $this->hasStoreId()) {
+        if ($storeId === false) {
             $storeId = $this->getStoreId();
-        }
-
-        if (!$storeId) {
-            $storeId = Mage::app()->getStore()->getId();
         }
 
         if ($this->isTestMode()) {
@@ -423,12 +430,6 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                     'POSTNL-0053'
                 );
         }
-
-        /**
-         * Wsdl version numbers are formatted using an underscore instead of a period. Since many people would use a
-         * period, we convert it to CIF specifications.
-         */
-        $wsdlversion = str_replace('.', '_', $wsdlversion);
 
         /**
          * Check if we need the live or the sandbox wsdl

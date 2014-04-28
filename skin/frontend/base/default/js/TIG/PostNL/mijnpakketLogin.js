@@ -50,6 +50,7 @@ MijnpakketLogin.prototype = {
     checkout         : null,
     billing          : null,
     shipping         : null,
+    failureUrl       : null,
 
     /**
      * @constructor
@@ -158,6 +159,17 @@ MijnpakketLogin.prototype = {
     {
         var mijnpakketData = mijnpakketDataJson.evalJSON(true);
         this.setMijnpakketData(mijnpakketData);
+
+        return this;
+    },
+
+    /**
+     * @param {string} url
+     *
+     * @returns {MijnpakketLogin}
+     */
+    setFailureUrl : function(url) {
+        this.failureUrl = url;
 
         return this;
     },
@@ -449,7 +461,9 @@ MijnpakketLogin.prototype = {
     },
 
     ajaxFailure : function() {
-        if (this.getCheckout()) {
+        if (this.failureUrl) {
+            window.location.href = this.failureUrl;
+        } else if (this.getCheckout() && this.getCheckout().failureUrl) {
             window.location.href = this.getCheckout().failureUrl;
         }
     },

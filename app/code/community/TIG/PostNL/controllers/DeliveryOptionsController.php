@@ -823,7 +823,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $houseNumber = $address['HouseNr'];
         $postcode    = $address['Zipcode'];
         $name        = $address['Name'];
-        $phoneNumber = $address['PhoneNumber'];
 
         $countryCodes = Mage::getResourceModel('directory/country_collection')->getColumnValues('iso2_code');
 
@@ -833,7 +832,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $housenumberValidator = new Zend_Validate_Digits();
         $postcodeValidator    = new Zend_Validate_PostCode('nl_NL');
         $nameValidator        = new Zend_Validate_Regex(array('pattern' => self::NAME_REGEX));
-        $phoneNumberValidator = new Zend_Validate_Regex(array('pattern' => self::PHONE_NUMBER_REGEX));
 
         if (!$cityValidator->isValid($city)) {
             throw new TIG_PostNL_Exception(
@@ -895,17 +893,6 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             );
         }
 
-        $phoneNumber = str_replace(array('-', ' '), '', $phoneNumber);
-        if (!$phoneNumberValidator->isValid($phoneNumber)) {
-            throw new TIG_PostNL_Exception(
-                $this->__(
-                     'Invalid phone number supplied: %s.',
-                     $phoneNumber
-                ),
-                'POSTNL-0154'
-            );
-        }
-
         $data = array(
             'city'        => $city,
             'countryCode' => $countryCode,
@@ -913,8 +900,25 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             'houseNumber' => $houseNumber,
             'postcode'    => $postcode,
             'name'        => $name,
-            'telephone'   => $phoneNumber,
         );
+
+        if (isset($address['PhoneNumber']) && !empty($address['PhoneNumber'])) {
+            $phoneNumber = $address['PhoneNumber'];
+            $phoneNumber = str_replace(array('-', ' '), '', $phoneNumber);
+            $phoneNumberValidator = new Zend_Validate_Regex(array('pattern' => self::PHONE_NUMBER_REGEX));
+
+            if (!$phoneNumberValidator->isValid($phoneNumber)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                         'Invalid phone number supplied: %s.',
+                             $phoneNumber
+                    ),
+                    'POSTNL-0154'
+                );
+            }
+
+            $data['telephone'] = $phoneNumber;
+        }
 
         if (!array_key_exists('HouseNrExt', $address)) {
             return $data;
