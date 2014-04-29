@@ -195,8 +195,7 @@ div.pac-container { z-index:5000; width:380px !important; }
 #postnl_add_phonenumber .text p { padding-bottom:20px; }
 
 #postnl_add_phonenumber .number-input { margin-top:14px; }
-#postnl_add_phonenumber .number-input .input-text { color:#b0b0b0; width:204px; height:26px; border:none; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_add-phonenumber_input.gif) !important; padding:0 6px; }
-#postnl_add_phonenumber .number-input .input-text:focus { color:#333334; }
+#postnl_add_phonenumber .number-input .input-text { color:#333334; width:204px; height:26px; border:none; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_add-phonenumber_input.gif) !important; padding:0 6px; }
 #postnl_add_phonenumber .number-input .input-text.validation-failed { color:#e52629 !important; background-position:0 -26px !important; border:none !important; }
 #postnl_add_phonenumber .number-input .validation-advice { display:none; }
 

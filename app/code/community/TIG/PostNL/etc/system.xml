@@ -705,7 +705,7 @@
                             <show_in_store>0</show_in_store>
                         </email_header>
                         <send_track_and_trace_email translate="label comment" module="postnl">
-                            <label>Send track &amp; trace email to customer</label>
+                            <label>Automatically send track &amp; trace email to customer</label>
                             <comment>If enabled, a track &amp; trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -725,9 +725,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <validate>validate-select</validate>
-                            <depends>
-                                <send_track_and_trace_email>1</send_track_and_trace_email>
-                            </depends>
                         </track_and_trace_email_template>
                     </fields>
                 </cif_labels_and_confirming>

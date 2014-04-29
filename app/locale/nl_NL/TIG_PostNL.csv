@@ -64,7 +64,7 @@ TIG_PostNL::Optional Shipment grid columns,Optionele kolommen voor verzendoverzi
 TIG_PostNL::Select which optional columns to show in the shipment grid.,Selecteer welke optionele kolommen in het verzendoverzicht getoond moeten worden
 TIG_PostNL::Select a default option for the shipment grid mass action,Selecteer een standaard waarde voor de massa actie voor de verzendingen
 TIG_PostNL::These fields are used to configure the track & trace email that may be automatically emailed to customers after a shipment has been confirmed.,Deze velden worden gebruikt om de track & trace e-mail te configureren. Deze e-mail wordt automatisch naar uw klanten verstuurd wanneer een zending wordt voorgemeld.
-TIG_PostNL::Send track & trace email to customer,Stuur de track & trace e-mail naar de klant
+TIG_PostNL::Automatically send track & trace email to customer,Stuur de track & trace e-mail automatisch naar de klant
 "TIG_PostNL::If enabled, a track & trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.","Indien geactiveerd, wordt er ongeveer 20 minuten na de zending voormelding een track & trace e-mail naar de klant gestuurd."
 TIG_PostNL::Track & trace email template,Track & trace e-mail sjabloon
 TIG_PostNL::Address Settings,Adres Instellingen
@@ -860,5 +860,6 @@ TIG_PostNL::Show on the map,Toon op de kaart
 TIG_PostNL::Magento Community Edition version,Magento Community editie versie
 TIG_PostNL::Magento Enterprise Edition version,Magento Enterprise editie versie
 TIG_PostNL::Idev's OneStepCheckout version,Idev's OneStepCheckout versie
-TIG_PostNL::choose a different shipping address,kies een ander bezorgadres
+TIG_PostNL::choose a different shipping address,kies een ander verzendadres
 TIG_PostNL::Magento & 3rd party version compatibility,Magento & 3rd party versie compatibiliteit
+TIG_PostNL::PostNL - Confirm Shipment,PostNL - Zending voormelden

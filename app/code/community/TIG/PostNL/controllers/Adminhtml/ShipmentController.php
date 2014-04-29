@@ -297,7 +297,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             }
 
             $postnlShipment = $this->_getPostnlShipment($shipmentId);
-            $postnlShipment->sendTrackAndTraceEmail(true);
+            $postnlShipment->sendTrackAndTraceEmail(true, true);
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
