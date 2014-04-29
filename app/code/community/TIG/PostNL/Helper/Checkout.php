@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
@@ -42,7 +42,6 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      * XML path to checkout on/off switch
      */
     const XML_PATH_CHECKOUT_ACTIVE = 'postnl/checkout/active';
-    const XML_PATH_USE_CHECKOUT    = 'postnl/cif/use_checkout';
 
     /**
      * XML path to all PostNL Checkout payment methods.
@@ -53,7 +52,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     /**
      * XML path to test / live mode setting
      */
-    const XML_PATH_TEST_MODE = 'postnl/checkout/mode';
+    const XML_PATH_TEST_MODE = 'postnl/cif/mode';
 
     /**
      * XML path for config options used to determine whether or not PostNL Checkout is available
@@ -99,8 +98,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     );
 
     /**
-     * Array containing conversions between PostNL CHeckout payment option fields and those used by Magento payment methods.
-     * This array should be extended as time goes on in order to support as many payment methods as possible.
+     * Array containing conversions between PostNL CHeckout payment option fields and those used by Magento payment
+     * methods. This array should be extended as time goes on in order to support as many payment methods as possible.
      *
      * @var array
      */
@@ -153,7 +152,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Returns a conversion array used to convert PostNL Checkout payment method fields to those used by Magento payment methods.
+     * Returns a conversion array used to convert PostNL Checkout payment method fields to those used by Magento payment
+     * methods.
      *
      * @return array
      */
@@ -166,8 +166,8 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         $conversionObject = new Varien_Object($conversionArray);
 
         /**
-         * You can observe this event in order to add (or modify) conversion options. This prevents you from having to overload
-         * this helper if you want to change this functionality.
+         * You can observe this event in order to add (or modify) conversion options. This prevents you from having to
+         * overload this helper if you want to change this functionality.
          */
         Mage::dispatchEvent(
             'postnl_checkout_option_conversion_before',
@@ -176,7 +176,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             )
         );
 
-        return $conversionObject->getConversionArray();;
+        return $conversionObject->getConversionArray();
     }
 
     /**
@@ -251,7 +251,9 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $errors = array(
                 array(
                     'code'    => 'POSTNL-0106',
-                    'message' => $this->__('No standard product options are enabled. At least 1 option must be active.'),
+                    'message' => $this->__(
+                        'No standard product options are enabled. At least 1 option must be active.'
+                    ),
                 )
             );
             Mage::register('postnl_enabled_checkout_errors', $errors);
@@ -271,7 +273,9 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 $errors = array(
                     array(
                         'code'    => 'POSTNL-0101',
-                        'message' => $this->__("The quote's total weight is below the miniumum required to use PostNL Checkout."),
+                        'message' => $this->__(
+                            "The quote's total weight is below the miniumum required to use PostNL Checkout."
+                        ),
                     )
                 );
                 Mage::register('postnl_enabled_checkout_errors', $errors);
@@ -344,6 +348,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         }
 
         $totalWeight = 0;
+        /** @var Mage_Sales_Model_Quote_Item $item */
         foreach ($quoteItems as $item) {
             $totalWeight += $item->getRowWeight();
         }
@@ -383,33 +388,6 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Check if the module is set to test mode
-     *
-     * @return boolean
-     */
-    public function isTestMode($storeId = false)
-    {
-        if (Mage::registry('postnl_checkout_test_mode') !== null) {
-            return Mage::registry('postnl_checkout_test_mode');
-        }
-
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
-
-        $testModeAllowed = $this->isTestModeAllowed();
-        if (!$testModeAllowed) {
-            Mage::register('postnl_checkout_test_mode', false);
-            return false;
-        }
-
-        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
-
-        Mage::register('postnl_checkout_test_mode', $testMode);
-        return $testMode;
-    }
-
-    /**
      * Checks if PostNL Checkout is active
      *
      * @param null|int $storeId
@@ -422,9 +400,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $useCheckout = Mage::getStoreConfigFlag(self::XML_PATH_USE_CHECKOUT, $storeId);
-
-        if (!$useCheckout) {
+        if (!parent::isActive()) {
             return false;
         }
 
@@ -493,7 +469,9 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         $errors = array();
 
         /**
-         * Get the system > config fields for this section
+         * Get the system > config fields for this section.
+         *
+         * @var Varien_Simplexml_Element $section
          */
         $configFields = Mage::getSingleton('adminhtml/config');
         $sections     = $configFields->getSections('postnl');
@@ -506,22 +484,29 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         foreach ($requiredFields as $requiredField) {
             $value = Mage::getStoreConfig($requiredField, $storeId);
 
-            if ($value === null || $value === '') {
-                $fieldParts = explode('/', $requiredField);
-                $field = $fieldParts[2];
-                $group = $fieldParts[1];
-
-                $label      = (string) $section->groups->$group->fields->$field->label;
-                $groupLabel = (string) $section->groups->$group->label;
-                $groupName = $section->groups->$group->getName();
-
-                $errors[] = array(
-                    'code'    => 'POSTNL-0034',
-                    'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
-                );
-
-                $this->saveConfigState(array('postnl_' . $groupName => 1));
+            if ($value !== null && $value !== '') {
+                continue;
             }
+
+            $fieldParts = explode('/', $requiredField);
+            $field = $fieldParts[2];
+            $group = $fieldParts[1];
+
+            /**
+             * @var Varien_Simplexml_Element $sectionGroup
+             */
+            $sectionGroup = $section->groups->$group;
+
+            $label      = (string) $sectionGroup->fields->$field->label;
+            $groupLabel = (string) $sectionGroup->label;
+            $groupName  = $sectionGroup->getName();
+
+            $errors[] = array(
+                'code'    => 'POSTNL-0034',
+                'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
+            );
+
+            $this->saveConfigState(array('postnl_' . $groupName => 1));
         }
 
         /**

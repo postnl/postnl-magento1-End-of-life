@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                                         hasPostnlHelper()
@@ -42,6 +42,11 @@
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
     extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_configcheck';
+
     /**
      * XML paths to use GlobalPack/Checkout settings
      */
@@ -178,12 +183,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
      */
     public function isCheckoutEnabled()
     {
-        $checkoutEnabled = Mage::getStoreConfigFlag(self::XML_PATH_USE_CHECKOUT, Mage_Core_Model_App::ADMIN_STORE_ID);
-        if (!$checkoutEnabled) {
+        $helper = Mage::helper('postnl/checkout');
+
+        if (!$helper->isCheckoutActive()) {
             return true;
         }
-
-        $helper = Mage::helper('postnl/checkout');
 
         return $helper->isCheckoutEnabled(false);
     }

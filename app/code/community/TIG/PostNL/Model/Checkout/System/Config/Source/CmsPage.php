@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -42,34 +42,34 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
      * @var array
      */
     protected $_options;
-    
+
     /**
      * Get the stored options array
-     * 
+     *
      * @return array
      */
     public function getOptions()
     {
         return $this->_options;
     }
-    
+
     /**
      * Store the options array
-     * 
+     *
      * @param array $options
-     * 
+     *
      * @return TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
      */
     public function setOptions($options)
     {
         $this->_options = $options;
-        
+
         return $this;
     }
-    
+
     /**
      * Checks if an option array has been stored
-     * 
+     *
      * @return boolean
      */
     public function hasOptions()
@@ -78,32 +78,32 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
         if (empty($options)) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     /**
      * Get an option array of all CMS pages available
-     * 
+     *
      * @return array
      */
     public function toOptionArray()
     {
         if ($this->hasOptions()) {
             return $this->getOptions();
-            
+
         }
-        
+
         $options = array(
             '' => Mage::helper('postnl')->__('-- none --'),
         );
-        
+
         $pageOptions = Mage::getResourceModel('cms/page_collection')->load()
                                                                     ->toOptionIdArray();
-                                                                    
+
         $options = array_merge($options, $pageOptions);
         $this->setOptions($options);
-        
+
         return $options;
     }
 }

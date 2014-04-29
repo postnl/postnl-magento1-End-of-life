@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the shipment view
@@ -41,12 +41,12 @@
 class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
 {
     /**
-     * The block we want to edit
+     * The block we want to edit.
      */
     const SHIPMENT_VIEW_BLOCK_NAME = 'adminhtml/sales_order_shipment_view';
 
     /**
-     * Observer that adds a print label button to the shipment view page
+     * Observer that adds a print label button to the shipment view page.
      *
      * @param Varien_Event_Observer $observer
      *
@@ -70,7 +70,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         /**
          * Checks if the current block is the one we want to edit.
          *
-         * Unfortunately there is no unique event for this block
+         * Unfortunately there is no unique event for this block.
          */
         $block = $observer->getBlock();
         $shipmentViewClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_VIEW_BLOCK_NAME);
@@ -91,15 +91,23 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             return $this;
         }
 
-        /**
-         * Add a button to print this shipment's shipping labels
-         */
-        $printShippingLabelUrl = $this->getPrintShippingLabelUrl($shipment->getId());
-        $block->addButton('print_shipping_label', array(
-            'label'   => $helper->__('PostNL - Print Shipping Label'),
-            'onclick' => "setLocation('{$printShippingLabelUrl}')",
-            'class'   => 'download',
-        ));
+        $this->addPostnlButtons($block, $shipment);
+
+        return $this;
+    }
+
+    /**
+     * Add new PostNL buttons to the page.
+     *
+     * @param Mage_Adminhtml_BLock_Sales_Order_Shipment_View $block
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     *
+     * @return $this
+     */
+    public function addPostnlButtons(Mage_Adminhtml_BLock_Sales_Order_Shipment_View $block,
+                                     Mage_Sales_Model_Order_Shipment $shipment)
+    {
+        $helper = Mage::helper('postnl');
 
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
@@ -107,9 +115,31 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
 
         /**
+         * Check which actions are allowed.
+         */
+        $confirmAllowed           = $helper->checkIsPostnlActionAllowed('confirm');
+        $printAllowed             = $helper->checkIsPostnlActionAllowed('print_label');
+        $deleteLabelsAllowed      = $helper->checkIsPostnlActionAllowed('delete_labels');
+        $resetConfirmAllowed      = $helper->checkIsPostnlActionAllowed(array('reset_confirmation', 'delete_labels'));
+        $sendTrackAndTraceAllowed = $helper->checkIsPostnlActionAllowed('send_track_and_trace');
+
+        /**
+         * Add a button to print this shipment's shipping labels
+         */
+        if ($printAllowed) {
+            $printShippingLabelUrl = $this->getPrintShippingLabelUrl($shipment->getId());
+
+            $block->addButton('print_shipping_label', array(
+                'label'   => $helper->__('PostNL - Print Shipping Label'),
+                'onclick' => "printLabel('{$printShippingLabelUrl}')",
+                'class'   => 'download',
+            ));
+        }
+
+        /**
          * Add a button to reset the shipment's confirmation status
          */
-        if ($postnlShipment->canResetConfirmation()) {
+        if ($postnlShipment->canResetConfirmation() && $resetConfirmAllowed) {
             $resetConfirmationUrl = $this->getResetConfirmationUrl($shipment->getId());
             $resetWarningMessage = $helper->__(
                 'Are you sure that you wish to reset the confirmation status of this shipment? You will need to '
@@ -120,10 +150,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             $block->addButton('reset_confirmation', array(
                 'label'   => $helper->__('PostNL - Change Confirmation'),
                 'onclick' => "deleteConfirm('"
-                                 . $resetWarningMessage
-                                 . "', '"
-                                 . $resetConfirmationUrl
-                                 . "')",
+                    . $resetWarningMessage
+                    . "', '"
+                    . $resetConfirmationUrl
+                    . "')",
                 'class'   => 'delete',
             ));
         }
@@ -131,20 +161,21 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         /**
          * Update the send tracking info button so that it sends our info, instead of the default
          */
-        if ($postnlShipment->isConfirmed()) {
+        if ($postnlShipment->isConfirmed() && $sendTrackAndTraceAllowed) {
             $resendTrackAndTraceUrl = $this->getResendTrackAndTraceUrl($shipment->getId());
+
             $block->updateButton('save', 'label', $helper->__('PostNL - Send Tracking Information'));
             $block->updateButton('save', 'onclick',
                 "deleteConfirm('"
-                    . $helper->__('Are you sure you want to send PostNL tracking information to the customer?')
-                    . "', '" . $resendTrackAndTraceUrl . "')"
+                . $helper->__('Are you sure you want to send PostNL tracking information to the customer?')
+                . "', '" . $resendTrackAndTraceUrl . "')"
             );
         }
 
         /**
          * Add a button to remove any stored shipping labels for this shipment.
          */
-        if ($postnlShipment->hasLabels() && !$postnlShipment->isConfirmed()) {
+        if ($postnlShipment->hasLabels() && !$postnlShipment->isConfirmed() && $deleteLabelsAllowed) {
             $removeLabelsUrl = $this->getRemoveLabelsUrl($shipment->getId());
             $removeLabelsWarningMessage = $helper->__(
                 "Are you sure that you wish to remove this shipment\'s shipping label? You will need to print a new "
@@ -162,6 +193,19 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             ));
         }
 
+        /**
+         * Add a button to confirm this shipment.
+         */
+        if (!$postnlShipment->isConfirmed() && $confirmAllowed) {
+            $confirmUrl = $this->getConfirmUrl($shipment->getId());
+
+            $block->addButton('confirm_shipment', array(
+                'label'   => $helper->__('PostNL - Confirm Shipment'),
+                'onclick' => "setLocation('{$confirmUrl}')",
+                'class'   => 'save',
+            ));
+        }
+
         return $this;
     }
 
@@ -175,7 +219,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     public function getPrintShippingLabelUrl($shipmentId)
     {
         $url = Mage::helper('adminhtml')->getUrl(
-            'postnl/adminhtml_shipment/printLabel',
+            'postnl_admin/adminhtml_shipment/printLabel',
             array('shipment_id' => $shipmentId)
         );
 
@@ -192,7 +236,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     public function getResetConfirmationUrl($shipmentId)
     {
         $url = Mage::helper('adminhtml')->getUrl(
-            'postnl/adminhtml_shipment/resetConfirmation',
+            'postnl_admin/adminhtml_shipment/resetConfirmation',
             array('shipment_id' => $shipmentId)
         );
 
@@ -209,7 +253,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     public function getRemoveLabelsUrl($shipmentId)
     {
         $url = Mage::helper('adminhtml')->getUrl(
-            'postnl/adminhtml_shipment/removeLabels',
+            'postnl_admin/adminhtml_shipment/removeLabels',
             array('shipment_id' => $shipmentId)
         );
 
@@ -226,8 +270,28 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     public function getResendTrackAndTraceUrl($shipmentId)
     {
         $url = Mage::helper('adminhtml')->getUrl(
-            'postnl/adminhtml_shipment/sendTrackAndTrace',
+            'postnl_admin/adminhtml_shipment/sendTrackAndTrace',
             array('shipment_id' => $shipmentId)
+        );
+
+        return $url;
+    }
+
+    /**
+     * Get adminhtml url for PostNL confirm shipment action
+     *
+     * @param int $shipmentId The ID of the current shipment
+     *
+     * @return string
+     */
+    public function getConfirmUrl($shipmentId)
+    {
+        $url = Mage::helper('adminhtml')->getUrl(
+            'postnl_admin/adminhtml_shipment/confirm',
+            array(
+                'shipment_id'    => $shipmentId,
+                'return_to_view' => true,
+            )
         );
 
         return $url;

@@ -1,0 +1,160 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php $_readOnly = ''; ?>
+<?php $_readOnlyClass = ''; ?>
+<?php if ($this->getAddress()->getCountryId() == 'NL'): ?>
+    <?php $_readOnly = 'readonly=""'; ?>
+    <?php $_readOnlyClass = 'postnl-readonly'; ?>
+<?php endif; ?>
+
+<?php $_addressType = $this->hasAddressType() ? $this->getAddressType() : 'billing'; ?>
+<?php $_streetValidationClass = $this->helper('customer/address')->getAttributeValidationClass('street'); ?>
+<?php $_streetValidationClassNotRequired = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
+
+<?php $_postnlHelper = Mage::helper('postnl/addressValidation'); ?>
+
+<?php $_timeoutDelay = $_postnlHelper->getPostcodeCheckTimeoutDelay(); ?>
+<?php $_maxAttempts  = $_postnlHelper->getPostcodeCheckMaxAttempts(); ?>
+<li>
+    <label for=":country_id" class="required"><em>*</em><?php echo $_postnlHelper->__('Country') ?></label>
+    <div class="input-box">
+        <?php echo $this->getCountryHtmlSelect() ?>
+    </div>
+</li>
+<li class="fields" id="ca_postnl_ce">
+    <div class="field field-postcode">
+        <label for="postcode" class="required"><em>*</em><?php echo $_postnlHelper->__('Zip/Postal Code') ?></label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $_postnlHelper->__('Zip/Postal Code') ?>" name="postcode" id="postcode" value="<?php echo $this->escapeHtml($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" />
+        </div>
+    </div>
+    <div class="field field-housenumber">
+        <label for="virtual_street2" class="required"><em>*</em><?php echo $_postnlHelper->__('Housenumber') ?></label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $_postnlHelper->__('Housenumber') ?>" name="virtual_street[]" id="virtual_street2" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(2)) ?>" class="input-text <?php echo $_streetValidationClass ?>" />
+        </div>
+    </div>
+    <div class="field field-extension">
+        <label for="virtual_street3" class="required"><?php echo $_postnlHelper->__('Extension') ?></label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $_postnlHelper->__('Extension') ?>" name="virtual_street[]" id="virtual_street3" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(3)) ?>" class="input-text <?php echo $_streetValidationClassNotRequired ?>" />
+        </div>
+    </div>
+    <div id="postnl_postcodecheck_spinner_" class="postnl-loading" style="display:none;">
+        <img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/opc-ajax-loader.gif'); ?>"/>
+    </div>
+    <div class="postnl validation-advice" style="display:none;" id="postnl_address_error_">
+        <?php echo $_postnlHelper->__('Your postcode/housenumber combination could not be found. Please enter your streetname and city manually.'); ?>
+    </div>
+    <div class="postnl validation-advice" style="display:none;" id="postnl_address_missing_">
+        <?php echo $_postnlHelper->__('Please enter a postcode and housenumber.'); ?>
+    </div>
+    <div class="postnl validation-advice" style="display:none;" id="postnl_address_invalid_">
+        <?php echo $_postnlHelper->__('Your postcode/housenumber combination could not be found. Please make sure you have entered a valid postcode and housenumber and try again.'); ?>
+    </div>
+</li>
+<li>
+    <label for="virtual_street1" class="required"><em>*</em><?php echo $_postnlHelper->__('Street name') ?></label>
+    <div class="input-box">
+        <input type="text" title="<?php echo $_postnlHelper->__('Street name') ?>" name="virtual_street[]" id="virtual_street1" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(1)) ?>" class="input-text <?php echo $_streetValidationClass ?> <?php echo $_readOnlyClass; ?>" <?php echo $_readOnly; ?>/>
+    </div>
+</li>
+<?php /* Only street lines 4+ will be used as expected. Street lines 1, 2 and 3 are used for the postcode check. */ ?>
+<?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
+    <li class="add-field">
+        <div class="input-box">
+            <input type="text" title="<?php echo $_postnlHelper->__('Street Address %s', $_i) ?>" name="virtual_street[]" id="virtual_street<?php echo $_i ?>" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet($_i)) ?>" class="input-text <?php echo $_streetValidationClassNotRequired ?>" />
+        </div>
+    </li>
+<?php endfor; ?>
+<li class="fields">
+    <div class="field">
+        <label for="city" class="required"><em>*</em><?php echo $_postnlHelper->__('City') ?></label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $_postnlHelper->__('City') ?>" name="city" id="city" value="<?php echo $this->escapeHtml($this->getAddress()->getCity()) ?>" class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('city') ?> <?php echo $_readOnlyClass; ?>" <?php echo $_readOnly; ?>/>
+        </div>
+    </div>
+</li>
+
+<!-- Hidden fields for all the street lines to force them in the proper order regardless of the order in which they are displayed. -->
+<div style="display:none;">
+    <input type="hidden" name="street[]" id="street1"/>
+    <input type="hidden" name="street[]" id="street2"/>
+    <input type="hidden" name="street[]" id="street3"/>
+    <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
+        <input type="hidden" name="street[]" id="street<?php echo $_i ?>"/>
+    <?php endfor; ?>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+        <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
+            $('virtual_street<?php echo $_i; ?>').observe('change', function(event) {
+                var element = Event.element(event);
+                var value = element.getValue();
+
+                $('street<?php echo $_i; ?>').setValue(value);
+            });
+            $('virtual_street<?php echo $_i; ?>').observe('change', function(event) {
+                var element = Event.element(event);
+                var value = element.getValue();
+
+                $('street<?php echo $_i; ?>').setValue(value);
+            });
+        <?php endfor; ?>
+
+        document.observe('dom:loaded', function() {
+            var postcodeCheck = new PostnlPostcodecheck(
+                '<?php echo $this->getUrl('postnl/addressValidation/postcodeCheck', array('_secure' => true)); ?>',
+                '',
+                'country',
+                'postcode',
+                'street1',
+                'street2',
+                'street3',
+                'city',
+                'virtual_'
+            );
+            postcodeCheck.errorMax = <?php echo $_maxAttempts; ?>;
+            postcodeCheck.timeoutDelay = '<?php echo $_timeoutDelay; ?>';
+            postcodeCheck.init();
+        });
+    //]]>
+</script>

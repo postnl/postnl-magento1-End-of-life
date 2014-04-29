@@ -1,0 +1,64 @@
+/* General =============================================================================== */
+.postnl-readonly { background:#dadada !important; }
+/* ======================================================================================= */
+
+/* Customer Account EE =================================================================== */
+#ca_postnl { padding-left:240px; }
+#ca_postnl .field { float:left; width:128px; clear:none !important; }
+#ca_postnl label { float:none; }
+#ca_postnl .input-text { width:117px; }
+#ca_postnl .validation-advice { width:128px; }
+#ca_postnl .field-postcode { width:129px; }
+#ca_postnl .field-postcode .input-text { width:118px; }
+#ca_postnl .postnl.validation-advice { width:380px; margin-bottom:9px; padding:0 !important; }
+#ca_postnl .postnl-loading { float:left; margin-top:18px; }
+
+/* Validation fix */
+#ca_postnl .field-postcode div.validation-passed,
+#ca_postnl .field-postcode div.validation-error,
+#ca_postnl .field-housenumber div.validation-error,
+#ca_postnl .field-extension div.validation-passed,
+#ca_postnl .field-extension div.validation-error { padding-right:0; background:none; }
+#ca_postnl .field-housenumber div.validation-passed { padding-right:148px; }
+/* ======================================================================================= */
+
+/* One Page Checkout EE ================================================================== */
+#opc_postnl { padding-left:240px; }
+#opc_postnl .field { float:left; width:128px; clear:none !important; }
+#opc_postnl label { float:none; }
+#opc_postnl .input-text { width:117px; }
+#opc_postnl .validation-advice { width:128px; }
+#opc_postnl .field-postcode { width:129px; }
+#opc_postnl .field-postcode .input-text { width:118px; }
+#opc_postnl .postnl.validation-advice { width:380px; margin-bottom:9px; padding:0 !important; }
+#opc_postnl .postnl-loading { float:left; margin-top:18px; }
+
+/* Validation fix */
+#opc_postnl .field-postcode div.validation-passed,
+#opc_postnl .field-postcode div.validation-error,
+#opc_postnl .field-housenumber div.validation-error,
+#opc_postnl .field-extension div.validation-passed,
+#opc_postnl .field-extension div.validation-error { padding-right:0; background:none; }
+#opc_postnl .field-housenumber div.validation-passed { padding-right:148px; }
+/* ======================================================================================= */
+
+/* One Step Checkout ===================================================================== */
+#osc_postnl { width:240px; position:relative; }
+#osc_postnl .input-box { float:left; padding:0; }
+#osc_postnl .input-box .input-text { margin:0; }
+#osc_postnl .input-postcode { width:94px; }
+#osc_postnl .input-postcode .input-text { width:78px; }
+#osc_postnl .input-housenumber { width:86px; }
+#osc_postnl .input-housenumber .input-text { width:70px; }
+#osc_postnl .input-extension { width:60px; }
+#osc_postnl .input-extension .input-text { width:54px; }
+#osc_postnl .postnl-loading { position:absolute; right:-26px; top:19px; background:#fff; }
+
+/* Validation fix */
+#osc_postnl .input-postcode.validation-error,
+#osc_postnl .input-postcode.validation-passed,
+#osc_postnl .input-housenumber.validation-error,
+#osc_postnl .input-extension.validation-error,
+#osc_postnl .input-extension.validation-passed { background:none; }
+#osc_postnl .input-housenumber.validation-passed { padding-right:86px; margin-right:-86px; background-position:100% 15px; }
+/* ======================================================================================= */

@@ -33,14 +33,27 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
-
-/**
+ *
  * Class containing all default methods used for CIF communication by this extension.
  *
- * If you wish to add new methods you can etxend this class or create a new class that extends TIG_PostNL_Model_Core_Cif_Abstract
+ * If you wish to add new methods you can etxend this class or create a new class that extends
+ * TIG_PostNL_Model_Core_Cif_Abstract.
+ *
+ * @method TIG_PostNL_Model_Core_Cif setStoreId(int $value)
+ * @method boolean                   hasHSTariffAttribute()
+ * @method string                    getHSTariffAttribute()
+ * @method TIG_PostNL_Model_Core_Cif setHSTariffAttribute(string $value)
+ * @method boolean                   hasCountryOfOriginAttribute()
+ * @method string                    getCountryOfOriginAttribute()
+ * @method TIG_PostNL_Model_Core_Cif setCountryOfOriginAttribute(string $value)
+ * @method boolean                   hasCustomsValueAttribute()
+ * @method string                    getCustomsValueAttribute()
+ * @method TIG_PostNL_Model_Core_Cif setCustomsValueAttribute(string $value)
+ * @method boolean                   hasCustomsDescriptionAttribute()
+ * @method string                    getCustomsDescriptionAttribute()
+ * @method TIG_PostNL_Model_Core_Cif setCustomsDescriptionAttribute(string $value)
  */
 class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 {
@@ -56,11 +69,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Constants containing XML paths to cif address configuration options
      */
-    const XML_PATH_SPLIT_STREET                = 'postnl/cif_address/split_street';
-    const XML_PATH_STREETNAME_FIELD            = 'postnl/cif_address/streetname_field';
-    const XML_PATH_HOUSENUMBER_FIELD           = 'postnl/cif_address/housenr_field';
-    const XML_PATH_SPLIT_HOUSENUMBER           = 'postnl/cif_address/split_housenr';
-    const XML_PATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
     const XML_PATH_AREA_FIELD                  = 'postnl/cif_address/area_field';
     const XML_PATH_BUILDING_NAME_FIELD         = 'postnl/cif_address/building_name_field';
     const XML_PATH_DEPARTMENT_FIELD            = 'postnl/cif_address/department_field';
@@ -119,18 +127,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * XML path to weight per parcel config setting
      */
     const XML_PATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
-
-    /**
-     * Regular expression used to split streetname from housenumber. This regex works well for dutch
-     * addresses, but may fail for international addresses. We strongly recommend using split address
-     * lines instead.
-     */
-    const SPLIT_STREET_REGEX = '#\A(.*?)\s+(\d+[a-zA-Z]{0,1}\s{0,1}[-]{1}\s{0,1}\d*[a-zA-Z]{0,1}|\d+[a-zA-Z-]{0,1}\d*[a-zA-Z]{0,1})#';
-
-    /**
-     * Regular expression used to split housenumber and housenumber extension
-     */
-    const SPLIT_HOUSENUMBER_REGEX = '#^([\d]+)(.*)#s';
 
     /**
      * array containing possible address types
@@ -210,17 +206,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     );
 
     /**
-     * Array of countires which may send their full street data in a single line,
-     * rather than having to split them into streetname, housenr and extension parts
-     *
-     * @var array
-     */
-    protected $_allowedFullStreetCountries = array(
-        'NL',
-        'BE'
-    );
-
-    /**
      * These shipment types require an invoice in the customs declaration. Other possible shipment types are:
      * - Gift
      * - Documents
@@ -231,6 +216,22 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         'Commercial Goods',
         'Commercial Sample',
         'Returned Goods',
+    );
+
+    /**
+     * These shipment types need specific product options.
+     *
+     * @var array
+     */
+    protected $_availableProductOptions = array(
+        'PGE' => array(
+            'Characteristic' => '002',
+            'Option'         => '118',
+        ),
+        'Avond' => array(
+            'Characteristic' => '006',
+            'Option'         => '118',
+        ),
     );
 
     /**
@@ -254,16 +255,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Get country IDs that allow fullstreet usage
-     *
-     * @return array
-     */
-    public function getAllowedFullStreetCountries()
-    {
-        return $this->_allowedFullStreetCountries;
-    }
-
-    /**
      * Get shipment types that require an invoice number
      *
      * @return array
@@ -274,18 +265,28 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
+     * Get an array of available product options per type.
+     *
+     * @return array
+     */
+    public function getAvailableProductOptions()
+    {
+        return $this->_availableProductOptions;
+    }
+
+    /**
      * Gets the current store id. If no store id is specified, return the default admin store id
      *
      * @return int
      */
     public function getStoreId()
     {
-        if ($this->getData('store_id')) {
+        if ($this->hasData('store_id')) {
             return $this->getData('store_id');
         }
 
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        $this->setStoreId($storeId);
+        $this->setData('store_id', $storeId);
 
         return $storeId;
     }
@@ -341,9 +342,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Requests a new barcode from CIF as a ping request. This can be used to validate account settings or to check if the CIF
-     * service is up and running. This is not meant to be used to generate an actual barcode for a shipment. Use the
-     * generateBarcode method for that.
+     * Requests a new barcode from CIF as a ping request. This can be used to validate account settings or to check if
+     * the CIF service is up and running. This is not meant to be used to generate an actual barcode for a shipment.
+     * Use the generateBarcode method for that.
      *
      * The generateBarcode CIF call was chosena s it is the simplest CIF function available.
      *
@@ -356,6 +357,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     public function generateBarcodePing($data)
     {
         $this->setStoreId(Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        $this->setPassword($data['password']);
+        $this->setUsername($data['username']);
 
         $barcode = $this->_getBarcodeData('NL');
 
@@ -383,9 +387,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $response = $this->call(
             'Barcode',
             'GenerateBarcode',
-            $soapParams,
-            $data['username'],
-            $data['password']
+            $soapParams
         );
 
         if (!is_object($response)
@@ -403,16 +405,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Retrieves the latest shipping status of a shipment from CIF
      *
-     * @param TIG_PostNL_Model_Core_Shipment $shipment
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return StdClass
      *
-     * @throws TIG_PostNL_Exception
      */
-    public function getShipmentStatus($postnlShipment)
+    public function getShipmentStatus(TIG_PostnL_Model_Core_Shipment $postnlShipment)
     {
-        $shipment = $postnlShipment->getShipment();
-
         $barcode  = $postnlShipment->getMainBarcode();
         $message  = $this->_getMessage($barcode);
         $customer = $this->_getCustomer();
@@ -449,7 +450,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $shipment = $shipment[0];
             }
 
-            if ($shipment->Barcode === $barcode) { // we need the original shipment, not a related shipment (such as a return shipment)
+            /**
+             *  We need the original shipment, not a related shipment (such as a return shipment).
+             */
+            if ($shipment->Barcode === $barcode) {
                 return $shipment;
             }
         }
@@ -458,7 +462,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * no shipment could be matched to the supplied barcode
          */
         throw new TIG_PostNL_Exception(
-            Mage::helper('postnl')->__( 'Unable to match barcode to shippingStatus response: %s', var_export($response, true)),
+            Mage::helper('postnl')->__(
+                'Unable to match barcode to shippingStatus response: %s',
+                var_export($response, true)
+            ),
             'POSTNL-0063'
         );
     }
@@ -466,16 +473,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Retrieves the latest shipping status of a shipment from CIF including full status history
      *
-     * @param TIG_PostNL_Model_Core_Shipment $shipment
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return StdClass
      *
-     * @throws TIG_PostNL_Exception
      */
-    public function getCompleteShipmentStatus($postnlShipment)
+    public function getCompleteShipmentStatus(TIG_PostnL_Model_Core_Shipment $postnlShipment)
     {
-        $shipment = $postnlShipment->getShipment();
-
         $barcode  = $postnlShipment->getMainBarcode();
         $message  = $this->_getMessage($barcode);
         $customer = $this->_getCustomer();
@@ -486,12 +492,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Shipment' => array(
                 'Barcode'   => $barcode,
             ),
-        );
-
-        $response = $this->call(
-            'ShippingStatus',
-            'CurrentStatus',
-            $soapParams
         );
 
         $response = $this->call(
@@ -512,7 +512,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         foreach($response->Shipments as $shipment) {
             $shipment = $shipment[0];
-            if ($shipment->Barcode === $barcode) { // we need the original shipment, not a related shipment (such as a return shipment)
+            /**
+             * we need the original shipment, not a related shipment (such as a return shipment).
+             */
+            if ($shipment->Barcode === $barcode) {
                 return $shipment;
             }
         }
@@ -521,7 +524,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * no shipment could be matched to the supplied barcode
          */
         throw new TIG_PostNL_Exception(
-            Mage::helper('postnl')->__( 'Unable to match barcode to shippingStatus response: %s', var_export($response, true)),
+            Mage::helper('postnl')->__(
+                                  'Unable to match barcode to shippingStatus response: %s',
+                                  var_export($response, true)
+            ),
             'POSTNL-0063'
         );
     }
@@ -529,14 +535,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Confirms the choen shipment without generating labels
      *
-     * @param Mage_Sales_Model_Order_Shipment $shipment
-     * @param string $barcode
-     *
-     * @return array
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * @param string                         $barcode
+     * @param bool                           $mainBarcode
+     * @param bool                           $shipmentNumber
      *
      * @throws TIG_PostNL_Exception
+     *
+     * @return array
      */
-    public function confirmShipment($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false)
+    public function confirmShipment(TIG_PostNL_Model_Core_Shipment $postnlShipment, $barcode, $mainBarcode = false,
+                                    $shipmentNumber = false)
     {
         $shipment = $postnlShipment->getShipment();
 
@@ -592,15 +601,24 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Generates shipping labels for the chosen shipment
      *
-     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param        TIG_PostnL_Model_Core_Shipment $postnlShipment
+     * @param        $barcode
+     * @param bool   $mainBarcode
+     * @param bool   $shipmentNumber
      * @param string $printerType The printertype used. Currently only 'GraphicFile|PDF' is fully supported
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return array
      *
-     * @throws TIG_PostNL_Exception
      */
-    public function generateLabels($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false, $printerType = 'GraphicFile|PDF')
-    {
+    public function generateLabels(
+        TIG_PostnL_Model_Core_Shipment $postnlShipment,
+        $barcode,
+        $mainBarcode = false,
+        $shipmentNumber = false,
+        $printerType = 'GraphicFile|PDF'
+    ) {
         $shipment = $postnlShipment->getShipment();
 
         $availablePrinterTypes = $this->_printerTypes;
@@ -651,15 +669,26 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Generates shipping labels for the chosen shipment without confirming it
      *
-     * @param Mage_Sales_Model_Order_Shipment $shipment
-     * @param string $printerType The printertype used. Currently only 'GraphicFile|PDF' is fully supported
+     * @param        TIG_PostnL_Model_Core_Shipment $postnlShipment
+     * @param        string                         $barcode
+     * @param        boolean|string                 $mainBarcode
+     * @param        bool|int                       $shipmentNumber
+     * @param        string                         $printerType The printertype used. Currently only
+     *                                                           'GraphicFile|PDF' is fully supported.
+     *
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return array
      *
-     * @throws TIG_PostNL_Exception
      */
-    public function generateLabelsWithoutConfirm($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false, $printerType = 'GraphicFile|PDF')
-    {
+    public function generateLabelsWithoutConfirm(
+        TIG_PostnL_Model_Core_Shipment $postnlShipment,
+        $barcode,
+        $mainBarcode = false,
+        $shipmentNumber = false,
+        $printerType = 'GraphicFile|PDF'
+    ) {
         $shipment = $postnlShipment->getShipment();
 
         $availablePrinterTypes = $this->_printerTypes;
@@ -699,7 +728,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             || !is_object($response->Labels)
         ) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid generateLabelsWithoutConfirm response: %s', var_export($response, true)),
+                Mage::helper('postnl')->__(
+                                      'Invalid generateLabelsWithoutConfirm response: %s',
+                                      var_export($response, true)
+                ),
                 'POSTNL-0058'
             );
         }
@@ -710,13 +742,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets the Message parameter
      *
+     * @param       $barcode
      * @param array $extra An array of additional parameters to add
      *
      * @return array
      */
     protected function _getMessage($barcode, $extra = array())
     {
-        $messageIdString = uniqid('postnl_')
+        $messageIdString = uniqid(
+                             'postnl_'
+                             . ip2long(Mage::helper('core/http')->getServerAddr())
+                         )
                          . $this->_getCustomerNumber()
                          . $barcode
                          . microtime();
@@ -736,7 +772,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets the customer parameter
      *
-     * @param Mage_Sales_Model_Order_Shipment | boolean $shipment
+     * @param Mage_Sales_Model_Order_Shipment|boolean $shipment
      *
      * @return array
      */
@@ -762,16 +798,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Creates the CIF shipment object based on a PostNL shipment
      *
-     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
-     * @param string                         $barcode
-     * @param bool                           $mainBarcode
-     * @param bool                           $shipmentNumber
+     * @param      TIG_PostnL_Model_Core_Shipment $postnlShipment
+     * @param      $barcode
+     * @param bool $mainBarcode
+     * @param bool $shipmentNumber
      *
      * @return array
-     *
-     * @todo     modify to support OVM and PostNL checkout shipments
      */
-    protected function _getShipment($postnlShipment, $barcode, $mainBarcode = false, $shipmentNumber = false)
+    protected function _getShipment(TIG_PostnL_Model_Core_Shipment $postnlShipment,
+                                    $barcode, $mainBarcode = false, $shipmentNumber = false)
     {
         $shipment        = $postnlShipment->getShipment();
         $order           = $shipment->getOrder();
@@ -785,8 +820,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * needs to be calculated
          */
         if ($shipmentNumber !== false) {
+            /**
+             * Get the parcel weight and then convert it to grams.
+             */
             $parcelWeight = Mage::getStoreConfig(self::XML_PATH_WEIGHT_PER_PARCEL, $postnlShipment->getStoreId());
-            $parcelWeight = Mage::helper('postnl/cif')->standardizeWeight($parcelWeight, $shipment->getStoreId(), true); //convert the parcelweight to grams
+            $parcelWeight = Mage::helper('postnl/cif')->standardizeWeight($parcelWeight, $shipment->getStoreId(), true);
 
             /**
              * All parcels except for the last one weigh a configured amount. The last parcel weighs the remainder
@@ -805,6 +843,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $shipmentWeight = 1;
         }
 
+        /**
+         * Get and format this shipment's delivery date if available.
+         */
+        $deliveryDate = $postnlShipment->getDeliveryDate();
+        if ($deliveryDate) {
+            $deliveryTime = strtotime($deliveryDate);
+            $deliveryDate = date('d-m-Y H:i:s', $deliveryTime);
+        }
+
         $shipmentData = array(
             'Barcode'                  => $barcode,
             'CollectionTimeStampEnd'   => '',
@@ -812,14 +859,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'DownPartnerBarcode'       => '',
             'DownPartnerID'            => '',
             'ProductCodeDelivery'      => $postnlShipment->getProductCode(),
-            'Reference'                => $shipment->getReference(),
             'Contacts'                 => array(
-                                           'Contact' => $this->_getContact($shippingAddress, $order),
+                                           'Contact' => $this->_getContact($shippingAddress, $postnlShipment, $order),
                                        ),
             'Dimension'                => array(
                                            'Weight'  => round($shipmentWeight),
                                        ),
             'Reference'                => $this->_getReference($shipment),
+            'DeliveryDate'             => $deliveryDate,
         );
 
         /**
@@ -840,23 +887,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Add address data
          */
-        $useSenderAddressAsReturn = Mage::getStoreConfig(self::XML_PATH_USE_SENDER_ADDRESS_AS_RETURN, $this->getStoreId());
-        $pakjeGemakAddress = $postnlShipment->getPakjeGemakAddress();
-
-        $addresses = array(
-            'Address' => array(
-                $this->_getAddress('Receiver', $shippingAddress)
-             ),
-        );
-
-        if (!$useSenderAddressAsReturn) {
-            $addresses['Address'][] = $this->_getAddress('Alternative');
-        }
-
-        if ($pakjeGemakAddress) {
-            $addresses['Address'][] =$this->_getAddress('Delivery', $pakjeGemakAddress);
-        }
-
+        $addresses = $this->_getShipmentAddresses($postnlShipment, $shippingAddress);
         $shipmentData['Addresses'] = $addresses;
 
         /**
@@ -876,15 +907,78 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $shipmentData['Customs'] = $this->_getCustoms($postnlShipment);
         }
 
+        $productOptions = $this->_getProductOptions($postnlShipment);
+        if ($productOptions) {
+            $shipmentData['ProductOptions'] = $productOptions;
+        }
+
         return $shipmentData;
+    }
+
+    /**
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     * @param Mage_Sales_Model_order_Address $shippingAddress
+     *
+     * @return array
+     */
+    protected function _getShipmentAddresses(TIG_PostnL_Model_Core_Shipment $postnlShipment, $shippingAddress)
+    {
+        $useSenderAddressAsReturn = Mage::getStoreConfig(
+                                        self::XML_PATH_USE_SENDER_ADDRESS_AS_RETURN,
+                                        $this->getStoreId()
+        );
+        $pakjeGemakAddress = $postnlShipment->getPakjeGemakAddress();
+
+        $addresses = array(
+            'Address' => array(
+                $this->_getAddress('Receiver', $shippingAddress)
+            ),
+        );
+
+        if (!$useSenderAddressAsReturn) {
+            $addresses['Address'][] = $this->_getAddress('Alternative');
+        }
+
+        if ($pakjeGemakAddress) {
+            $addresses['Address'][] =$this->_getAddress('Delivery', $pakjeGemakAddress);
+        }
+
+        return $addresses;
+    }
+
+    /**
+     * Gets product options based on a specified shipment.
+     *
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     *
+     * @return array|bool
+     */
+    protected function _getProductOptions(TIG_PostnL_Model_Core_Shipment $postnlShipment)
+    {
+        $postnlOrder = $postnlShipment->getPostnlOrder();
+        if (!$postnlOrder) {
+            return false;
+        }
+
+        $type = $postnlOrder->getType();
+        $availableProductOptions = $this->getAvailableProductOptions();
+        if (!array_key_exists($type, $availableProductOptions)) {
+            return false;
+        }
+
+        $productOptions = array(
+            'ProductOption' => $availableProductOptions[$type]
+        );
+        return $productOptions;
     }
 
     /**
      * Gets an array containing required address data
      *
-     * @param string $shippingAddress
-     * @param Mage_Sales_Model_Order_Address $address
+     * @param             $addressType
+     * @param bool|string $shippingAddress
      *
+     * @throws TIG_PostNL_Exception
      * @return array
      */
     protected function _getAddress($addressType, $shippingAddress= false)
@@ -924,7 +1018,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 /**
                  * Check if the return address is the same as the sender address. If so, no address is returned
                  */
-                $useSenderAddress = Mage::getStoreConfig(self::XML_PATH_USE_SENDER_ADDRESS_AS_RETURN, $this->getStoreId());
+                $useSenderAddress = Mage::getStoreConfig(
+                    self::XML_PATH_USE_SENDER_ADDRESS_AS_RETURN,
+                    $this->getStoreId()
+                );
                 if ($useSenderAddress) {
                     return false;
                 }
@@ -960,9 +1057,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
     /**
      * Forms an array of address data compatible with CIF
-     *
-     * @param Mage_Sales_Model_Order_Address $address
-     * @param array | boolean $streetData Optional parameter containing streetname, housenr, housenr extension and fullStreet values.
+
+     * @param Mage_Sales_Model_Order_Address|Varien_Object $address
+     * @param array|boolean                                $streetData Optional parameter containing streetname,
+     *                                                                 housenr, housenr extension and fullStreet values.
      *
      * @return array
      */
@@ -1007,6 +1105,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getBarcodeData($barcodeType)
     {
+        $barcodeType = strtoupper($barcodeType);
+
         switch ($barcodeType) {
             case 'NL':
                 $type  = '3S';
@@ -1057,13 +1157,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Generates the CIF amount object containing the shipment's insured amount (if any)
      *
-     * @param TIG_PostNL_Model_Core_Shipment $shipment
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
      *
      * @return array
-     *
-     * @todo implement COD
      */
-    protected function _getAmount($postnlShipment)
+    protected function _getAmount(TIG_PostnL_Model_Core_Shipment $postnlShipment)
     {
         $amount = array();
         if (!$postnlShipment->hasExtraCover() && !$postnlShipment->isCod()) {
@@ -1074,7 +1172,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $extraCover = number_format($postnlShipment->getExtraCoverAmount(), 2, '.', '');
             $amount[] = array(
                 'AccountName'       => '',
-                'AccountNr'         => '',
+                'BIC'               => '',
+                'IBAN'              => '',
                 'AmountType'        => '02', // 01 = COD, 02 = Insured
                 'Currency'          => 'EUR',
                 'Reference'         => '',
@@ -1084,7 +1183,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         if ($postnlShipment->isCod()) {
-            //TODO implement COD here
+            /** @todo implement COD here */
         }
 
         return $amount;
@@ -1094,18 +1193,20 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * Creates the CIF contact object
      *
      * @param Mage_Sales_Model_Order_Address $address
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      * @param Mage_Sales_Model_Order         $order
      *
      * @return array
-     *
-     * @todo check if SMSNr is required for pakjegemak
      */
-    protected function _getContact($address, Mage_Sales_Model_Order $order)
+    protected function _getContact($address, TIG_PostNL_Model_Core_Shipment $postnlShipment,
+                                   Mage_Sales_Model_Order $order)
     {
+        $smsNr = $this->_getMobilePhoneNumber($postnlShipment);
+
         $contact = array(
             'ContactType' => '01', // Receiver
             'Email'       => $order->getCustomerEmail(),
-            'SMSNr'       => '', // never sure if clean 06 number - TODO: check needed for PakjeGemak?
+            'SMSNr'       => $smsNr,
             'TelNr'       => $address->getTelephone(),
         );
 
@@ -1113,8 +1214,30 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
+     * Gets a mobile phone number for the current shipment.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     *
+     * @return string
+     */
+    protected function _getMobilePhoneNumber(TIG_PostNL_Model_Core_Shipment $postnlShipment)
+    {
+        $mobilePhoneNumber = '';
+
+        $postnlOrder = $postnlShipment->getPostnlOrder();
+        if ($postnlOrder && $postnlOrder->getMobilePhoneNumber()) {
+            $mobilePhoneNumber = $postnlOrder->getMobilePhoneNumber();
+        }
+
+        return $mobilePhoneNumber;
+    }
+
+    /**
      * Creates the CIF group object
      *
+     * @param int  $groupCount
+     * @param bool $mainBarcode
+     * @param bool $shipmentNumber
      * @return array
      */
     protected function _getGroup($groupCount = 1, $mainBarcode = false, $shipmentNumber = false)
@@ -1140,194 +1263,29 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Retrieves streetname, housenumber and housenumber extension from the shipping address.
-     * The shipping address may be in multiple streetlines configuration or single line
-     * configuration. In the case of multi-line, each part of the street data will be in a seperate
-     * field. In the single line configuration, each part will be in the same field and will have
-     * to be split using PREG.
+     * Retrieves streetname, housenumber and housenumber extension from the shipping address. The shipping address may
+     * be in multiple streetlines configuration or single line configuration. In the case of multi-line, each part of
+     * the street data will be in a seperate field. In the single line configuration, each part will be in the same
+     * field and will have to be split using PREG.
      *
-     * PREG cannot be relied on as it is impossible to create a regex that can filter all
-     * possible street syntaxes. Therefore we strongly recommend to use multiple street lines. This
-     * can be enabled in Magento community in system > config > customer configuration. Or if you
-     * use Enterprise, in customers > attributes > manage customer address attributes.
-     *
-     * @param Mage_Sales_Model_Order_Address $address
-     *
-     * @return array
-     */
-    protected function _getStreetData($address)
-    {
-        $storeId = $this->getStoreId();
-        $splitStreet = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_STREET, $storeId);
-
-        /**
-         * Website uses multi-line address mode
-         */
-        if ($splitStreet) {
-            $streetData = $this->_getMultiLineStreetData($address);
-
-            /**
-             * If $streetData is false it means a required field was missing. In this
-             * case the alternative methods are used to obtain the address data.
-             */
-            if ($streetData !== false) {
-                return $streetData;
-            }
-        }
-
-        /**
-         * Website uses single-line address mode
-         */
-        $allowedFullStreetCountries = $this->getAllowedFullStreetCountries();
-        $fullStreet = $address->getStreetFull();
-
-        /**
-         * Select countries don't have to split their street values into seperate part
-         */
-        if (in_array($address->getCountry(), $allowedFullStreetCountries)) {
-            $streetData = array(
-                'streetname'           => '',
-                'housenumber'          => '',
-                'housenumberExtension' => '',
-                'fullStreet'           => $fullStreet,
-            );
-            return $streetData;
-        }
-
-        /**
-         * All other countries must split them using PREG
-         */
-        $streetData = $this->_getSplitStreetData($fullStreet);
-
-        return $streetData;
-    }
-
-    /**
-     * Retrieves streetname, housenumber and housenumber extension from the shipping address in the multiple streetlines configuration.
+     * PREG cannot be relied on as it is impossible to create a regex that can filter all possible street syntaxes.
+     * Therefore we strongly recommend to use multiple street lines. This can be enabled in Magento community in
+     * system > config > customer configuration. Or if you use Enterprise, in customers > attributes > manage customer
+     * address attributes.
      *
      * @param Mage_Sales_Model_Order_Address $address
+     * @param boolean                        $allowFullStreet
      *
      * @return array
      */
-    protected function _getMultiLineStreetData($address)
+    protected function _getStreetData($address, $allowFullStreet = true)
     {
+        $helper = Mage::helper('postnl/cif');
         $storeId = $this->getStoreId();
-        $streetnameField = (int) Mage::getStoreConfig(self::XML_PATH_STREETNAME_FIELD, $storeId);
-        $housenumberField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_FIELD, $storeId);
 
-        $streetname = $address->getStreet($streetnameField);
-        $housenumber = $address->getStreet($housenumberField);
-
-        /**
-         * If street or housenr fields are empty, use alternative options to obtain the address data
-         */
-        if (is_null($streetname) || is_null($housenumber)) {
-            return false;
-        }
-
-        /**
-         * Split the housenumber into a number and an extension
-         */
-        $splitHouseNumber = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_HOUSENUMBER, $storeId);
-        if ($splitHouseNumber) {
-            $housenumberExtensionField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);
-            $housenumberExtension = $address->getStreet($housenumberExtensionField);
-        } else {
-            $housenumberParts = $this->_splitHousenumber($housenumber);
-            $housenumber = $housenumberParts['number'];
-            $housenumberExtension = $housenumberParts['extension'];
-        }
-
-        $streetData = array(
-            'streetname'           => $streetname,
-            'housenumber'          => $housenumber,
-            'housenumberExtension' => $housenumberExtension,
-            'fullStreet'           => '',
-        );
+        $streetData = $helper->getStreetData($storeId, $address, $allowFullStreet);
 
         return $streetData;
-    }
-
-    /**
-     * Splits street data into seperate parts for streetname, housenumber and extension.
-     *
-     * @param string $fullStreet The full streetname including all parts
-     *
-     * @return array
-     *
-     * @throws TIG_PostNL_Exception
-     */
-    protected function _getSplitStreetData($fullStreet)
-    {
-        $result = preg_match(self::SPLIT_STREET_REGEX, $fullStreet, $matches);
-        if (!$result || !is_array($matches)) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid full street supplied: %s', $fullStreet),
-                'POSTNL-0060'
-            );
-        }
-
-        $streetname = '';
-        $housenumber = '';
-        if (isset($matches[1])) {
-            $streetname = $matches[1];
-        }
-
-        if (isset($matches[2])) {
-            $housenumber = $matches[2];
-        }
-
-        $housenumberParts = $this->_splitHousenumber($housenumber);
-        $housenumber = $housenumberParts['number'];
-        $housenumberExtension = $housenumberParts['extension'];
-
-        $streetData = array(
-            'streetname'           => $streetname,
-            'housenumber'          => $housenumber,
-            'housenumberExtension' => $housenumberExtension,
-            'fullStreet'           => '',
-        );
-
-        return $streetData;
-    }
-
-    /**
-     * Splits a supplier housenumber into a number and an extension
-     *
-     * @param string $housenumber
-     *
-     * @return array
-     *
-     * @throws TIG_PostNL_Exception
-     */
-    protected function _splitHousenumber($housenumber)
-    {
-        $housenumber = trim($housenumber);
-
-        $result = preg_match(self::SPLIT_HOUSENUMBER_REGEX, $housenumber, $matches);
-        if (!$result || !is_array($matches)) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Invalid housnumber supplied: %s', $housenumber),
-                'POSTNL-0059'
-            );
-        }
-
-        $extension = '';
-        $number = '';
-        if (isset($matches[1])) {
-            $number = $matches[1];
-        }
-
-        if (isset($matches[2])) {
-            $extension = trim($matches[2]);
-        }
-
-        $housenumberParts = array(
-            'number' => $number,
-            'extension' => $extension,
-        );
-
-        return $housenumberParts;
     }
 
     /**
@@ -1340,10 +1298,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getCustoms($postnlShipment)
     {
         $shipment = $postnlShipment->getShipment();
-        $shipmentType = $postnlShipment->getShipmentType();
+        $shipmentType = $postnlShipment->getGlobalpackShipmentType();
 
         $customs = array(
-            'ShipmentType'           => $shipmentType, // Gift / Documents / Commercial Goods / Commercial Sample / Returned Goods
+            'ShipmentType'           => $shipmentType,
             'HandleAsNonDeliverable' => 'false',
             'Invoice'                => 'false',
             'Certificate'            => 'false',
@@ -1352,7 +1310,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
 
         /**
-         * Check if the shipment should be treated as abandoned when it can't be delivered or if it should be returned to the sender
+         * Check if the shipment should be treated as abandoned when it can't be delivered or if it should be returned
+         * to the sender.
          */
         if ($postnlShipment->getTreatAsAbandoned()) {
             $customs['HandleAsNonDeliverable'] = 'true';
@@ -1397,6 +1356,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $content = array();
         $items = $this->_sortCustomsItems($shipment->getAllItems());
 
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Item $item
+         */
         foreach ($items as $item) {
             /**
              * A maximum of 5 rows are allowed
@@ -1465,13 +1427,20 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Get the attribute and direction used for sorting
          */
-        $sortingAttribute = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_PRODUCT_SORTING_ATTRIBUTE, $this->getStoreId());
-        $sortingDirection = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_PRODUCT_SORTING_DIRECTION, $this->getStoreId());
+        $sortingAttribute = Mage::getStoreConfig(
+            self::XML_PATH_GLOBALPACK_PRODUCT_SORTING_ATTRIBUTE,
+            $this->getStoreId()
+        );
+        $sortingDirection = Mage::getStoreConfig(
+            self::XML_PATH_GLOBALPACK_PRODUCT_SORTING_DIRECTION,
+            $this->getStoreId()
+        );
 
         /**
          * Place the item's sorting value in a temporary array where the key is the item's ID
+         *
+         * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
-        $sortingValue = array();
         foreach ($items as $item) {
             $product = $item->getOrderItem()->getProduct();
             $sortingAttributeValue = $product->getDataUsingMethod($sortingAttribute);
@@ -1501,11 +1470,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get a shipment item's HS tariff
      *
-     * @param Mage_Sales_Model_Order_Shipment_item
+     * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
      *
      * @return string
      */
-    protected function _getHSTariff($shipmentItem)
+    protected function _getHSTariff(Mage_Sales_Model_Order_Shipment_Item $shipmentItem)
     {
         $storeId = $this->getStoreId();
 
@@ -1516,7 +1485,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             return '000000';
         }
 
-        if ($this->getHSTariffAttribute() !== null) {
+        if ($this->hasHSTariffAttribute()) {
             $hsTariffAttribute = $this->getHSTariffAttribute();
         } else {
             $hsTariffAttribute = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_HS_TARIFF_ATTRIBUTE, $storeId);
@@ -1537,17 +1506,22 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get a shipment item's country of origin
      *
-     * @param Mage_Sales_Model_Order_Shipment_item
+     * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return string
      */
     protected function _getCountryOfOrigin($shipmentItem)
     {
         $storeId = $this->getStoreId();
-        if ($this->getCountryOfOriginAttribute() !== null) {
+        if ($this->hasCountryOfOriginAttribute()) {
             $countryOfOriginAttribute = $this->getCountryOfOriginAttribute();
         } else {
-            $countryOfOriginAttribute = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_COUNTRY_OF_ORIGIN_ATTRIBUTE, $storeId);
+            $countryOfOriginAttribute = Mage::getStoreConfig(
+                self::XML_PATH_GLOBALPACK_COUNTRY_OF_ORIGIN_ATTRIBUTE,
+                $storeId
+            );
             $this->setCountryOfOriginAttribute($countryOfOriginAttribute);
         }
 
@@ -1557,7 +1531,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         if (empty($countryOfOrigin)) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Missing country of origin value for product #%s.', $shipmentItem->getProductId()),
+                Mage::helper('postnl')->__(
+                    'Missing country of origin value for product #%s.',
+                    $shipmentItem->getProductId()
+                ),
                 'POSTNL-0091'
             );
         }
@@ -1568,14 +1545,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get a shipment item's customs value
      *
-     * @param Mage_Sales_Model_Order_Shipment_item
+     * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return string
      */
     protected function _getCustomsValue($shipmentItem)
     {
         $storeId = $this->getStoreId();
-        if ($this->getCustomsValueAttribute() !== null) {
+        if ($this->hasCustomsValueAttribute()) {
             $customsValueAttribute = $this->getCustomsValueAttribute();
         } else {
             $customsValueAttribute = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_CUSTOMS_VALUE_ATTRIBUTE, $storeId);
@@ -1599,14 +1578,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get a shipment item's customs description
      *
-     * @param Mage_Sales_Model_Order_Shipment_item
+     * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return string
      */
     protected function _getCustomsDescription($shipmentItem)
     {
         $storeId = $this->getStoreId();
-        if ($this->getCustomsDescriptionAttribute() !== null) {
+        if ($this->hasCustomsDescriptionAttribute()) {
             $descriptionAttribute = $this->getCustomsDescriptionAttribute();
         } else {
             $descriptionAttribute = Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_DESCRIPTION_ATTRIBUTE, $storeId);
@@ -1619,7 +1600,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         if (empty($description)) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Missing customs description for product #%s.', $shipmentItem->getProductId()),
+                Mage::helper('postnl')->__(
+                    'Missing customs description for product #%s.',
+                    $shipmentItem->getProductId()
+                ),
                 'POSTNL-0093'
             );
         }
@@ -1717,7 +1701,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getCustomsCertificate()
     {
         $storeId = $this->getStoreId();
-        $customsCertificate = (string) Mage::getStoreConfig(self::XML_PATH_GLOBALPACK_CUSTOMS_CERTIFICATE_NUMBER, $storeId);
+        $customsCertificate = (string) Mage::getStoreConfig(
+            self::XML_PATH_GLOBALPACK_CUSTOMS_CERTIFICATE_NUMBER,
+            $storeId
+        );
 
         if (empty($customsCertificate)) {
             return false;
@@ -1728,6 +1715,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
     /**
      * Get the area field from an address if enabled
+     *
+     * @param Mage_Sales_Model_Order_Address $address
      *
      * @return string
      */
@@ -1744,6 +1733,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Attempt to get the area through the magic getter instead
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $area = $address->getArea();
 
         return $area;
@@ -1751,6 +1741,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
     /**
      * Get the area building name from an address if enabled
+     *
+     * @param Mage_Sales_Model_Order_Address $address
      *
      * @return string
      */
@@ -1767,6 +1759,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Attempt to get the building name through the magic getter instead
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $buildingName = $address->getBuildingName();
 
         return $buildingName;
@@ -1774,6 +1767,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
     /**
      * Get the department field from an address if enabled
+     *
+     * @param Mage_Sales_Model_Order_Address $address
      *
      * @return string
      */
@@ -1790,6 +1785,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Attempt to get department through the magic getter instead
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $department = $address->getDepartment();
 
         return $department;
@@ -1797,6 +1793,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
     /**
      * Get the doorcode field from an address if enabled
+     *
+     * @param Mage_Sales_Model_Order_Address $address
      *
      * @return string
      */
@@ -1813,6 +1811,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Attempt to get the doorcode through the magic getter instead
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $doorcode = $address->getDoorcode();
 
         return $doorcode;
@@ -1820,6 +1819,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
     /**
      * Get the floor field from an address if enabled
+     *
+     * @param Mage_Sales_Model_Order_Address $address
      *
      * @return string
      */
@@ -1836,6 +1837,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Attempt to get the floor through the magic getter instead
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $floor = $address->getFloor();
 
         return $floor;
@@ -1843,6 +1845,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
     /**
      * Get the remark field from an address if enabled
+     *
+     * @param Mage_Sales_Model_Order_Address $address
      *
      * @return string
      */
@@ -1859,6 +1863,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Attempt to get the remark through the magic getter instead
          */
+        /** @noinspection PhpUndefinedMethodInspection */
         $remark = $address->getRemark();
 
         return $remark;
@@ -1867,7 +1872,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Get a shipment's reference. By default this will be the shipment's increment ID
      *
-     * @param Mage_Sales_Model_Order_Shipment
+     * @param Mage_Sales_Model_Order_Shipment $shipment
      *
      * @return string
      *
@@ -1906,10 +1911,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
           * For custom references we need to replace several optional variables
           */
          if ($referenceType == 'custom') {
+             $store = Mage::getModel('core/store')->load($storeId);
+
              $reference = str_replace('{{var shipment_increment_id}}', $shipment->getIncrementId(), $reference);
              $reference = str_replace('{{var order_increment_id}}', $shipment->getOrder()->getIncrementId(), $reference);
 
-             $store = Mage::getModel('core/store')->load($storeId);
              $reference = str_replace('{{var store_frontend_name}}', $store->getFrontendName(), $reference);
          }
 
