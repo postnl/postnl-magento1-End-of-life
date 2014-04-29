@@ -49,6 +49,44 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     const XML_PATH_SENDER_REF_NR   = 'postnl/parcelware_export/sender_ref_nr';
 
     /**
+     * @var Mage_Core_Model_Resource_Transaction|void
+     */
+    protected $_transactionSave;
+
+    /**
+     * Gets the transaction save object.
+     *
+     * @return Mage_Core_Model_Resource_Transaction
+     */
+    public function getTransactionSave()
+    {
+        if ($this->_transactionSave) {
+            return $this->_transactionSave;
+        }
+
+        /**
+         * Prepare a transaction save object. We're going to edit all the postbl shipments that we're going to export,
+         * however we want all of them to be saved at the same time AFTER the export has been generated.
+         */
+        $transactionSave = Mage::getModel('core/resource_transaction');
+
+        $this->setTransactionSave($transactionSave);
+        return $transactionSave;
+    }
+
+    /**
+     * @param mixed $transactionSave
+     *
+     * @return TIG_PostNL_Model_Parcelware_Export
+     */
+    public function setTransactionSave($transactionSave)
+    {
+        $this->_transactionSave = $transactionSave;
+
+        return $this;
+    }
+
+    /**
      * Creates a Parcelware export csv based for an array of PostNL shipments. This method basically consists of 3
      * parts:
      *  1. Fetch data from every shipment that we're going to put in the export file.
@@ -65,16 +103,85 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $this->setIsGlobal(false);
         $this->setStoreId(Mage_Core_Model_App::ADMIN_STORE_ID);
 
+        /**
+         * Get the CSV headers. Basically these are the column names.
+         */
+        $csvHeaders = $this->_getCsvHeaders();
+
+        /**
+         * Get the CSV data.
+         */
+        $content = $this->getCsvData($postnlShipments);
+
+        /**
+         * Prepare to create a new export file.
+         */
+        $io = Mage::getModel('varien/io_file');
+
+        /**
+         * Some parameters for the file. Please note that the filename is purely temporary. The name of the file you'll
+         * end up downloading will be defined in the controller.
+         */
+        $path = Mage::getBaseDir('var') . DS . 'export' . DS;
+        $name = md5(microtime());
+        $file = $path . DS . $name . '.csv';
+
+        /**
+         * Open and lock the file.
+         */
+        $io->setAllowCreateFolders(true);
+        $io->open(array('path' => $path));
+        $io->streamOpen($file, 'w+');
+        $io->streamLock(true);
+
+        /**
+         * Write the CSV headers and then each row of data.
+         */
+        $io->streamWrite(implode(',', $csvHeaders));
+        foreach ($content as $item) {
+            /**
+             * Remove any comma's as these will break Parcelware's import.
+             */
+            foreach ($item as &$value) {
+                $value = str_replace(',', '', $value);
+            }
+
+            $io->streamWrite(PHP_EOL . implode(',', $item));
+        }
+
+        /**
+         * This is what the controller will need to offer the file as a download response.
+         */
+        $exportArray = array(
+            'type'  => 'filename',
+            'value' => $file,
+            'rm'    => true // can delete file after use
+        );
+
+        /**
+         * Remember those shipments we added to the transaction save object? Now we can finally save them all at once.
+         */
+        $this->getTransactionSave()->save();
+
+        return $exportArray;
+    }
+
+    /**
+     * Get the data for the CSV export from an array of PostNL shipments.
+     *
+     * @param array $postnlShipments
+     *
+     * @return array
+     */
+    public function getCsvData($postnlShipments)
+    {
         $helper = Mage::helper('postnl/parcelware');
         $autoConfirmEnabled = $helper->isAutoConfirmEnabled();
 
-        /**
-         * Prepare a transaction save object. We're going to edit all the postbl shipments that we're going to export,
-         * however we want all of them to be saved at the same time AFTER the export has been generated.
-         */
-        $transactionSave = Mage::getModel('core/resource_transaction');
+        $transactionSave = $this->getTransactionSave();
 
         $content = array();
+
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
          */
@@ -123,55 +230,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             $content[] = $shipmentData;
         }
 
-        /**
-         * Get the CSV headers. Basically these are the column names.
-         */
-        $csvHeaders = $this->_getCsvHeaders();
-
-        /**
-         * Prepare to create a new export file.
-         */
-        $io = Mage::getModel('varien/io_file');
-
-        /**
-         * Some parameters for the file. Please note that the filename is purely temporary. The name of the file you'll
-         * end up downloading will be defined in the controller.
-         */
-        $path = Mage::getBaseDir('var') . DS . 'export' . DS;
-        $name = md5(microtime());
-        $file = $path . DS . $name . '.csv';
-
-        /**
-         * Open and lock the file.
-         */
-        $io->setAllowCreateFolders(true);
-        $io->open(array('path' => $path));
-        $io->streamOpen($file, 'w+');
-        $io->streamLock(true);
-
-        /**
-         * Write the CSV headers and then each row of data.
-         */
-        $io->streamWriteCsv($csvHeaders, ',', '"');
-        foreach ($content as $item) {
-            $io->streamWriteCsv($item, ',', '"');
-        }
-
-        /**
-         * This is what the controller will need to offer the file as a download response.
-         */
-        $exportArray = array(
-            'type'  => 'filename',
-            'value' => $file,
-            'rm'    => true // can delete file after use
-        );
-
-        /**
-         * Remember those shipments we added to the transaction save object? Now we can finally save them all at once.
-         */
-        $transactionSave->save();
-
-        return $exportArray;
+        return $content;
     }
 
     /**

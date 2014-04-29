@@ -145,8 +145,13 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
 
         $startDate = $data['deliveryDate'];
 
+        /**
+         * To calculate the end date we need to number of days we want to display minus 1.
+         */
         $storeId = Mage::app()->getStore()->getId();
         $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
+        $maximumNumberOfDeliveryDays--;
+
         $endDate = date('d-m-Y', strtotime("+{$maximumNumberOfDeliveryDays} days", strtotime($startDate)));
 
         $soapParams = array(

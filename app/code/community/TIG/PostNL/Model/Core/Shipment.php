@@ -379,7 +379,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @return TIG_PostNL_Helper_Data|TIG_PostNL_Helper_Cif|TIG_PostNL_Helper_Carrier|TIG_PostNL_Helper_Checkout
      *         |TIG_PostNL_Helper_AddressValidation|TIG_PostNL_Helper_DeliveryOptions|TIG_PostNL_Helper_Parcelware
-     *         |TIG_PostNL_Helper_Webservices
+     *         |TIG_PostNL_Helper_Webservices|TIG_PostNL_Helper_Mijnpakket
      */
     public function getHelper($type = 'data')
     {
@@ -463,7 +463,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         /**
          * If the 'labels_printed' flag is false, yet there are labels present something has gone wrong.
-         * Delete the labels so the module will generate new ones.
+         * Delete the labels so the extension will generate new ones.
          */
         if (!$this->getLabelsPrinted() && $labelCollection->getSize() > 0) {
             $this->deleteLabels();
@@ -1516,10 +1516,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Checks if the current shipment can send a track & trace email to the customer.
      *
      * @param boolean $ignoreAlreadySent Flag to ignore the 'already sent' check
+     * @param boolean $ignoreConfig      Flag to ignore the 'send_track_and_trace_email' config setting.
      *
      * @return boolean
      */
-    public function canSendTrackAndTraceEmail($ignoreAlreadySent = false)
+    public function canSendTrackAndTraceEmail($ignoreAlreadySent = false, $ignoreConfig = false)
     {
         if ($this->isLocked()) {
             return false;
@@ -1529,10 +1530,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        $storeId = $this->getStoreId();
-        $canSendTrackAndTrace = Mage::getStoreConfig(self::XPATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId);
-        if (!$canSendTrackAndTrace) {
-            return false;
+        if ($ignoreConfig !== true) {
+            $storeId = $this->getStoreId();
+            $canSendTrackAndTrace = Mage::getStoreConfig(self::XPATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId);
+            if (!$canSendTrackAndTrace) {
+                return false;
+            }
         }
 
         return true;
@@ -2220,15 +2223,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Send a track & trace email to the customer containing a link to the 'mijnpakket' environment where they
      * can track their shipment.
      *
-     * @param boolean $ignoreAlreadySent Flag to ignore the 'already sent' check
+     * @param boolean $ignoreAlreadySent Flag to ignore the 'already sent' check.
+     * @param boolean $ignoreConfig      Flag to ignore the configuration settings related to track&trace e-mails.
      *
      * @throws TIG_PostNL_Exception
      *
      * @return $this
      */
-    public function sendTrackAndTraceEmail($ignoreAlreadySent = false)
+    public function sendTrackAndTraceEmail($ignoreAlreadySent = false, $ignoreConfig = false)
     {
-        if (!$this->canSendTrackAndTraceEmail($ignoreAlreadySent)) {
+        if (!$this->canSendTrackAndTraceEmail($ignoreAlreadySent, $ignoreConfig)) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('The sendTrackAndTraceEmail action is currently unavailable.'),
                 'POSTNL-0076'
@@ -2295,6 +2299,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 'POSTNL-0077'
             );
         }
+
+        /**
+         * Set the 'email sent' flag to true for this shipment.
+         */
+        $this->getShipment()
+             ->setEmailSent(true)
+             ->save();
 
         return $this;
     }

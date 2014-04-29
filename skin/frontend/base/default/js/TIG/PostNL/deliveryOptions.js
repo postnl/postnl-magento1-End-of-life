@@ -1386,14 +1386,24 @@ PostnlDeliveryOptions.prototype = {
             return this;
         }
 
-        var extraCostsExcl = this.getExtraCosts(false);
+        var extraCostsExcl   = this.getExtraCosts(false);
+        var defaultCostsExcl = parseFloat(shippingMethodLabel.readAttribute('data-price-excl'));
 
-        var defaultCostsExcl = parseFloat(shippingMethodLabel.readAttribute('data-price'));
+        var defaultCurrencyExcl = (defaultCostsExcl).formatMoney(2, ',', '.');
+        var currencyExcl        = (extraCostsExcl).formatMoney(2, ',', '.');
 
-        var newCostsExcl = defaultCostsExcl + extraCostsExcl;
+        var updateText   = this.getOptions().currencySymbol
+            + ' '
+            + defaultCurrencyExcl;
 
-        var currencyExcl = (newCostsExcl).formatMoney(2, '.', ',');
-        priceContainerExcl.update(this.getOptions().currencySymbol + ' ' + currencyExcl);
+        if (extraCostsExcl) {
+            updateText += ' + '
+                + this.getOptions().currencySymbol
+                + ' '
+                + currencyExcl;
+        }
+
+        priceContainerExcl.update(updateText);
 
         return this;
     },
@@ -1411,17 +1421,22 @@ PostnlDeliveryOptions.prototype = {
             return this;
         }
 
-        var extraCostsIncl = this.getExtraCosts(true);
-
+        var extraCostsIncl   = this.getExtraCosts(true);
         var defaultCostsIncl = parseFloat(shippingMethodLabel.readAttribute('data-price-incl'));
 
-        var newCostsIncl = defaultCostsIncl + extraCostsIncl;
-
-        var currencyIncl = (newCostsIncl).formatMoney(2, '.', ',');
+        var defaultCurrencyIncl = (defaultCostsIncl).formatMoney(2, ',', '.');
+        var currencyIncl        = (extraCostsIncl).formatMoney(2, ',', '.');
 
         var updateText   = this.getOptions().currencySymbol
                          + ' '
-                         + currencyIncl;
+                         + defaultCurrencyIncl;
+
+        if (extraCostsIncl) {
+            updateText += ' + '
+                       + this.getOptions().currencySymbol
+                       + ' '
+                       + currencyIncl;
+        }
 
         priceContainerIncl.update(updateText);
 
@@ -1445,6 +1460,7 @@ PostnlDeliveryOptions.prototype = {
         }
 
         phoneWindow.show();
+        $('add_phone_input').focus();
 
         if (typeof validateShippingMethod != 'undefined') {
             validateShippingMethod();
@@ -3130,7 +3146,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             var elements = customLocation.getElements();
             if (elements.PA) {
                 deliveryOptions.selectLocation(elements.PA);
-            } else if (elements.PGE) {
+            } else if (elements.PGE && this.getFilterEarly()) {
                 deliveryOptions.selectLocation(elements.PGE);
             } else {
                 deliveryOptions.selectLocation(elements.PG);

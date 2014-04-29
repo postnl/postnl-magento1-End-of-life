@@ -56,19 +56,19 @@
 
     <sales_order_view>
         <reference name="content">
-            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/sales/order/pakje_gemak_address.phtml"/>
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
         </reference>
     </sales_order_view>
 
     <sales_order_invoice>
         <reference name="content">
-            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/sales/order/pakje_gemak_address.phtml"/>
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
         </reference>
     </sales_order_invoice>
 
     <sales_order_creditmemo>
         <reference name="content">
-            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/sales/order/pakje_gemak_address.phtml"/>
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
         </reference>
     </sales_order_creditmemo>
 
@@ -76,10 +76,10 @@
 
     <sales_order_shipment>
         <reference name="my.account.wrapper">
-            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/shipping_status.phtml" after="-"/>
+            <block type="postnl_core/shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/core/sales/order/shipment/shipping_status.phtml" after="-"/>
         </reference>
         <reference name="content">
-            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/sales/order/pakje_gemak_address.phtml"/>
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
         </reference>
     </sales_order_shipment>
 

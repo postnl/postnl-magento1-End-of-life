@@ -53,7 +53,7 @@ class TIG_PostNL_Block_Core_JsTranslate extends TIG_PostNL_Block_Core_Template
      *
      * @var string app/design/frontend/base/default/template/TIG/PostNL/page/html/js_translate.phtml
      */
-    protected $_template = 'TIG/PostNL/page/html/js_translate.phtml';
+    protected $_template = 'TIG/PostNL/core/page/html/js_translate.phtml';
 
     /**
      * Array of JS translations
