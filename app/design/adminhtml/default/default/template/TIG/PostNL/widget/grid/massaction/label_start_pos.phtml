@@ -46,7 +46,7 @@
 <div class="entry-edit">
     <span class="field-row">
         <label for="<?php echo $this->getName(); ?>"><a href="#" onclick="choose_print_startpos_<?php echo $this->getName(); ?>()"><?php echo $this->getLabel(); ?></a></label>
-        <input type="hidden" id="<?php echo $this->getName(); ?>" name="<?php echo $this->getName(); ?>" class="required-entry absolute-advice"/>
+        <input type="hidden" id="<?php echo $this->getName(); ?>" name="<?php echo $this->getName(); ?>" class="required-entry absolute-advice" value="1"/>
     </span>
     <div class="postnl-tooltip">
         <div><?php echo $this->__('When printing multiple labels simultaneously you may choose where the printer will start printing. All fields marked orange will be used. The printer will start at position 1 on all pages after the first.'); ?></div>

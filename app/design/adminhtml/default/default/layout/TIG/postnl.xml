@@ -90,6 +90,14 @@
         </reference>
     </adminhtml_sales_order_view>
 
+    <adminhtml_sales_order_address>
+        <reference name="sales_order_address.form.container">
+            <action method="setTemplate">
+                <template>TIG/PostNL/sales/order/address/form/container.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_address>
+
     <adminhtml_sales_shipment_index>
         <reference name="content">
             <block type="adminhtml/abstract" name="postnl_customize_grid_link" template="TIG/PostNL/sales/shipment/customize_link.phtml"/>
@@ -156,14 +164,14 @@
         </reference>
     </adminhtml_sales_order_shipment_view>
 
-    <postnl_adminhtml_shipment_statushistory>
+    <postnl_admin_adminhtml_shipment_statushistory>
         <block type="core/text_list" name="root" output="toHtml">
             <block type="postnl_adminhtml/sales_order_shipment_view_tab_statusHistory" name="sales_order_shipment_status_history" template="TIG/PostNL/sales/order/shipment/view/tab/status_history.phtml"/>
         </block>
-    </postnl_adminhtml_shipment_statushistory>
+    </postnl_admin_adminhtml_shipment_statushistory>
 
-    <postnl_adminhtml_shipment_statushistorygrid>
+    <postnl_admin_adminhtml_shipment_statushistorygrid>
         <update handle="formkey"/>
         <block type="postnl_adminhtml/sales_order_shipment_view_tab_statusHistory" name="sales_order_shipment_status_history" output="toHtml"/>
-    </postnl_adminhtml_shipment_statushistorygrid>
+    </postnl_admin_adminhtml_shipment_statushistorygrid>
 </layout>

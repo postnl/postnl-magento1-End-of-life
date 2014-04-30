@@ -50,6 +50,7 @@ MijnpakketLogin.prototype = {
     checkout         : null,
     billing          : null,
     shipping         : null,
+    failureUrl       : null,
 
     /**
      * @constructor
@@ -163,6 +164,17 @@ MijnpakketLogin.prototype = {
     },
 
     /**
+     * @param {string} url
+     *
+     * @returns {MijnpakketLogin}
+     */
+    setFailureUrl : function(url) {
+        this.failureUrl = url;
+
+        return this;
+    },
+
+    /**
      * @param {string}  elementId
      * @param {boolean} debug
      *
@@ -269,9 +281,9 @@ MijnpakketLogin.prototype = {
             $('billing:use_for_shipping_yes').checked = true;
             if (this.isOsc) {
                 $('shipping_address').hide();
-                $('shipping_address_list').show();
+                $('shipping_address_list').hide();
             }
-        });
+        }.bind(this));
 
         return this;
     },
@@ -449,7 +461,9 @@ MijnpakketLogin.prototype = {
     },
 
     ajaxFailure : function() {
-        if (this.getCheckout()) {
+        if (this.failureUrl) {
+            window.location.href = this.failureUrl;
+        } else if (this.getCheckout() && this.getCheckout().failureUrl) {
             window.location.href = this.getCheckout().failureUrl;
         }
     },

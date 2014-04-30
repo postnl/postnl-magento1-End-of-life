@@ -705,7 +705,7 @@
                             <show_in_store>0</show_in_store>
                         </email_header>
                         <send_track_and_trace_email translate="label comment" module="postnl">
-                            <label>Send track &amp; trace email to customer</label>
+                            <label>Automatically send track &amp; trace email to customer</label>
                             <comment>If enabled, a track &amp; trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -725,9 +725,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <validate>validate-select</validate>
-                            <depends>
-                                <send_track_and_trace_email>1</send_track_and_trace_email>
-                            </depends>
                         </track_and_trace_email_template>
                     </fields>
                 </cif_labels_and_confirming>
@@ -2927,6 +2924,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_shippingstatus>
                         <cif_version_confirming translate="label" module="postnl">
                             <label>Confirming webservice version</label>
@@ -2935,6 +2933,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_confirming>
                         <cif_version_labelling translate="label" module="postnl">
                             <label>Labelling webservice version</label>
@@ -2943,6 +2942,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_labelling>
                         <cif_version_barcode translate="label" module="postnl">
                             <label>Barcode webservice version</label>
@@ -2951,6 +2951,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_barcode>
                         <cif_version_checkout translate="label" module="postnl">
                             <label>Checkout webservice version</label>
@@ -2959,6 +2960,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_checkout>
                         <cif_version_deliverydate translate="label" module="postnl">
                             <label>Delivery date webservice version</label>
@@ -2967,6 +2969,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_deliverydate>
                         <cif_version_timeframe translate="label" module="postnl">
                             <label>Timeframe webservice version</label>
@@ -2975,6 +2978,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_timeframe>
                         <cif_version_location translate="label" module="postnl">
                             <label>Location webservice version</label>
@@ -2983,6 +2987,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
+                            <validate>postnl-validate-webservice-version</validate>
                         </cif_version_location>
                     </fields>
                 </advanced>

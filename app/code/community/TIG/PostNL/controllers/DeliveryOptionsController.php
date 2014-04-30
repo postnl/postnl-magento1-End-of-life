@@ -53,6 +53,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     const NAME_REGEX        = "#^[a-zA-Z0-9\s,'-]*$#";
 
     /**
+     * Regular expression to validate dutch phone number.
+     */
+    const PHONE_NUMBER_REGEX = '#^(((\+31|0|0031)){1}[1-9]{1}[0-9]{8})$#i';
+
+    /**
      * Regular expression to validate dutch mobile phone number.
      */
     const MOBILE_PHONE_NUMBER_REGEX = '#^(((\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$#i';
@@ -801,11 +806,12 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             || !isset($address['HouseNr'])
             || !isset($address['Zipcode'])
             || !isset($address['Name'])
+            || !isset($address['PhoneNumber'])
         ) {
             throw new TIG_PostNL_Exception(
                 $this->__(
                      'Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country '
-                     . 'code, street, house number and zipcode.'
+                     . 'code, street, house number, phonenumber and zipcode.'
                 ),
                 'POSTNL-0141'
             );
@@ -895,6 +901,24 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             'postcode'    => $postcode,
             'name'        => $name,
         );
+
+        if (isset($address['PhoneNumber']) && !empty($address['PhoneNumber'])) {
+            $phoneNumber = $address['PhoneNumber'];
+            $phoneNumber = str_replace(array('-', ' '), '', $phoneNumber);
+            $phoneNumberValidator = new Zend_Validate_Regex(array('pattern' => self::PHONE_NUMBER_REGEX));
+
+            if (!$phoneNumberValidator->isValid($phoneNumber)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                         'Invalid phone number supplied: %s.',
+                             $phoneNumber
+                    ),
+                    'POSTNL-0154'
+                );
+            }
+
+            $data['telephone'] = $phoneNumber;
+        }
 
         if (!array_key_exists('HouseNrExt', $address)) {
             return $data;

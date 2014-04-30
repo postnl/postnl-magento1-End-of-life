@@ -149,19 +149,19 @@
     /**
      * Validate the phone number as it's being typed.
      */
-    addPhoneInput.stopObserving('keyup', validateShippingMethod);
+    addPhoneInput.stopObserving('keyup');
     addPhoneInput.observe('keyup', validateShippingMethod);
 
     /**
      * Save the supplied mobile phone number and continue to the next checkout step.
      */
-    addPhoneSave.stopObserving('keyup', savePhoneNumber);
+    addPhoneSave.stopObserving('click');
     addPhoneSave.observe('click', savePhoneNumber);
 
     /**
      * Close the add phone pop-up.
      */
-    addPhoneClose.stopObserving('keyup', closeAddPhoneWindow);
+    addPhoneClose.stopObserving('click');
     addPhoneClose.observe('click', closeAddPhoneWindow);
     //]]>
 </script>

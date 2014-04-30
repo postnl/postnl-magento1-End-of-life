@@ -36,13 +36,33 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Checkout_Summary_Totals extends Mage_Checkout_Block_Cart_Totals
-{
-    /**
-     * @return Mage_Sales_Model_Quote
-     */
-    public function getQuote()
-    {
-        return $this->_getData('quote');
-    }
-}
+?>
+<?php $_helper = Mage::helper('postnl'); ?>
+<?php $_order = Mage::registry('current_order'); ?>
+<?php $_pakjeGemakAddress = $_helper->getPakjeGemakAddressForOrder($_order); ?>
+<?php if (!$_pakjeGemakAddress): ?>
+    <?php return ''; ?>
+<?php endif; ?>
+<div class="col2-set order-info-box" id="pakje_gemak_address">
+    <div class="col-1">
+        <div class="box">
+            <div class="box-title">
+                <h2><?php echo $_helper->__('Post Office Address') ?></h2>
+            </div>
+            <div class="box-content">
+                <address><?php echo $_pakjeGemakAddress->format('html') ?></address>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    //<![CDATA[
+    document.observe('dom:loaded', function() {
+        var pakjeGemakAddress = $('pakje_gemak_address');
+        var orderPage = $$('.order-items.order-details')[0];
+        orderPage.insert({
+            before : pakjeGemakAddress
+        });
+    });
+    //]]>
+</script>

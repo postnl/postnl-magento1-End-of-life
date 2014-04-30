@@ -38,17 +38,21 @@
  *
  * Base CIF model. Contains general code for communicating with the CIF API
  *
- * @method int     getStoreId()
  * @method boolean getTestMode()
  *
  * @method TIG_PostNL_Model_Core_Cif_Abstract setHelper(Mage_Core_Helper_Abstract $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setSoapClient(Zend_Soap_Client $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setTestMode(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cif_Abstract setPassword(string $value)
+ * @method TIG_PostNL_Model_Core_Cif_Abstract setUsername(string $value)
+ * @method TIG_PostNL_Model_Core_Cif_Abstract setStoreId(int $value)
  *
  * @method boolean hasSoapClient()
  * @method boolean hasHelper()
  * @method boolean hasStoreId()
  * @method boolean hasTestMode()
+ * @method boolean hasPassword()
+ * @method boolean hasUsername()
  *
  * @method TIG_PostNL_Model_Core_Cif_Abstract unsTestMode()
  */
@@ -65,7 +69,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const TEST_WSDL_BASE_URL = 'https://testservice.postnl.com/CIF_SB/';
 
     /**
-     * available wsdl filenames
+     * Available wsdl filenames.
      */
     const WSDL_BARCODE_NAME        = 'BarcodeWebService';
     const WSDL_CONFIRMING_NAME     = 'ConfirmingWebService';
@@ -77,7 +81,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const WSDL_LOCATION_NAME       = 'LocationWebService';
 
     /**
-     * header security namespace. Used for constructing the SOAP headers array
+     * Header security namespace. Used for constructing the SOAP headers array.
      */
     const HEADER_SECURITY_NAMESPACE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
 
@@ -131,6 +135,21 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     }
 
     /**
+     * @return int
+     */
+    public function getStoreId()
+    {
+        if ($this->hasStoreId()) {
+            return $this->_getData('store_id');
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+
+        $this->setStoreId($storeId);
+        return $storeId;
+    }
+
+    /**
      * @return TIG_PostNL_Helper_Cif
      */
     public function getHelper()
@@ -154,12 +173,12 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      */
     public function getUsername($storeId = false)
     {
-        if ($storeId === false && $this->hasStoreId()) {
-            $storeId = $this->getStoreId();
+        if ($this->hasUsername()) {
+            return $this->_getData('username');
         }
 
-        if (!$storeId) {
-            $storeId = Mage::app()->getStore()->getId();
+        if ($storeId === false) {
+            $storeId = $this->getStoreId();
         }
 
         if ($this->isTestMode()) {
@@ -185,12 +204,12 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      */
     public function getPassword($storeId = false)
     {
-        if ($storeId === false && $this->hasStoreId()) {
-            $storeId = $this->getStoreId();
+        if ($this->hasPassword()) {
+            return $this->_getData('password');
         }
 
-        if (!$storeId) {
-            $storeId = Mage::app()->getStore()->getId();
+        if ($storeId === false) {
+            $storeId = $this->getStoreId();
         }
 
         if ($this->isTestMode()) {
@@ -230,7 +249,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             $storeId = $this->getStoreId();
         }
 
-        if (!$storeId) {
+        if (is_null($storeId)) {
             $storeId = Mage::app()->getStore()->getId();
         }
 
@@ -293,26 +312,15 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      * @param string         $wsdlType   Which wsdl to use
      * @param callable       $method     The method that will be called
      * @param array          $soapParams An array of parameters to be sent
-     * @param boolean|string $username
-     * @param boolean|string $password
      *
      * @return object|boolean
      *
      * @throws TIG_PostNL_Exception
      */
-    public function call($wsdlType, $method, $soapParams = array(), $username = false, $password = false)
+    public function call($wsdlType, $method, $soapParams = array())
     {
         $client = null;
         try {
-            if ((!$username && !$this->getUsername())
-                || (!$password && !$this->getPassword())
-            ) {
-                throw new TIG_PostNL_Exception(
-                    Mage::helper('postnl')->__('No username or password set.'),
-                    'POSTNL-0052'
-                );
-            }
-
             /**
              * @var Zend_Soap_Client $client
              */
@@ -328,7 +336,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             /**
              * Add SOAP header
              */
-            $header = $this->_getSoapHeader($username, $password);
+            $header = $this->_getSoapHeader();
             $client->addSoapInputHeader($header, true); //permanent header
 
             /**
@@ -424,12 +432,6 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         /**
-         * Wsdl version numbers are formatted using an underscore instead of a period. Since many people would use a
-         * period, we convert it to CIF specifications.
-         */
-        $wsdlversion = str_replace('.', '_', $wsdlversion);
-
-        /**
          * Check if we need the live or the sandbox wsdl
          */
         if ($this->isTestMode()) {
@@ -450,19 +452,14 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     }
 
     /**
-     * Builds soap headers array for CIF authentication
-     *
-     * @param boolean|string $username
-     * @param boolean|string $password
+     * Builds soap headers array for CIF authentication.
      *
      * @return SOAPHeader
      */
-    protected function _getSoapHeader($username = false, $password = false)
+    protected function _getSoapHeader()
     {
-        if ($username === false || $password === false) {
-            $username = $this->getUserName();
-            $password = $this->getPassWord();
-        }
+        $username = $this->getUserName();
+        $password = $this->getPassWord();
 
         $namespace = self::HEADER_SECURITY_NAMESPACE;
         $node1     = new SoapVar($username, XSD_STRING, null, null, 'Username', $namespace);

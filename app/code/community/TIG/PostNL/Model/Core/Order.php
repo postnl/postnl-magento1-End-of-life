@@ -129,10 +129,13 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
             return null;
         }
 
-        $order = Mage::getModel('sales/quote')->load($this->getQuoteId());
+        /**
+         * @var Mage_Sales_Model_Quote $quote
+         */
+        $quote = Mage::getModel('sales/quote')->load($this->getQuoteId());
 
-        $this->setQuote($order);
-        return $order;
+        $this->setQuote($quote);
+        return $quote;
     }
 
     /**

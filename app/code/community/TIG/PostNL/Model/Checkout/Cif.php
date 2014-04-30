@@ -61,7 +61,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
     /**
      * XML path to available payment methods.
-     * N.B. missing last part os it will return an array of settings
+     * N.B. missing last part so it will return an array of settings.
      */
     const XML_PATH_CHECKOUT_PAYMENT_METHODS = 'postnl/checkout_payment_methods';
 
@@ -82,6 +82,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     public function isTestMode($storeId = false)
     {
+        if ($storeId === false) {
+            $storeId = $this->getStoreId();
+        }
+
         $testMode = Mage::helper('postnl/checkout')->isTestMode($storeId);
 
         return $testMode;
@@ -94,7 +98,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     public function getStoreId()
     {
-        if ($this->getData('store_id')) {
+        if ($this->hasStoreId()) {
             return $this->getData('store_id');
         }
 
@@ -326,6 +330,8 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     public function updateOrder($postnlOrder, $cancel = false)
     {
+        $this->setStoreId($postnlOrder->getOrder()->getStoreId());
+
         $order   = $this->_getUpdateOrder($postnlOrder, $cancel);
         $webshop = $this->_getWebshop();
 
@@ -741,7 +747,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets an URL linking to the webshop's service info
      *
-     * @return boolean | array
+     * @return boolean|array
      */
     protected function _getService()
     {
@@ -762,7 +768,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Gets the order token used to identify a PostNL order
      *
-     * @param Mage_Sales_Model_Quote | TIG_PostNL_Model_Core_Order $object
+     * @param Mage_Sales_Model_Quote|TIG_PostNL_Model_Core_Order $object
      *
      * @return array
      *

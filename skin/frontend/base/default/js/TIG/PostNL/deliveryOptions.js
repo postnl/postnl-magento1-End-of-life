@@ -1276,9 +1276,10 @@ PostnlDeliveryOptions.prototype = {
         };
 
         if (selectedType == 'PG' || selectedType == 'PGE' || selectedType == 'PA') {
-            var address = selectedOption.getAddress();
-            address['Name'] = selectedOption.getName();
-            params['address'] = Object.toJSON(address);
+            var address            = selectedOption.getAddress();
+            address['Name']        = selectedOption.getName();
+            address['PhoneNumber'] = selectedOption.getPhoneNumber();
+            params['address']      = Object.toJSON(address);
         }
 
         if (selectedType == 'PA') {
@@ -1385,14 +1386,24 @@ PostnlDeliveryOptions.prototype = {
             return this;
         }
 
-        var extraCostsExcl = this.getExtraCosts(false);
+        var extraCostsExcl   = this.getExtraCosts(false);
+        var defaultCostsExcl = parseFloat(shippingMethodLabel.readAttribute('data-price-excl'));
 
-        var defaultCostsExcl = parseFloat(shippingMethodLabel.readAttribute('data-price'));
+        var defaultCurrencyExcl = (defaultCostsExcl).formatMoney(2, ',', '.');
+        var currencyExcl        = (extraCostsExcl).formatMoney(2, ',', '.');
 
-        var newCostsExcl = defaultCostsExcl + extraCostsExcl;
+        var updateText   = this.getOptions().currencySymbol
+            + ' '
+            + defaultCurrencyExcl;
 
-        var currencyExcl = (newCostsExcl).formatMoney(2, '.', ',');
-        priceContainerExcl.update(this.getOptions().currencySymbol + ' ' + currencyExcl);
+        if (extraCostsExcl) {
+            updateText += ' + '
+                + this.getOptions().currencySymbol
+                + ' '
+                + currencyExcl;
+        }
+
+        priceContainerExcl.update(updateText);
 
         return this;
     },
@@ -1410,17 +1421,22 @@ PostnlDeliveryOptions.prototype = {
             return this;
         }
 
-        var extraCostsIncl = this.getExtraCosts(true);
-
+        var extraCostsIncl   = this.getExtraCosts(true);
         var defaultCostsIncl = parseFloat(shippingMethodLabel.readAttribute('data-price-incl'));
 
-        var newCostsIncl = defaultCostsIncl + extraCostsIncl;
-
-        var currencyIncl = (newCostsIncl).formatMoney(2, '.', ',');
+        var defaultCurrencyIncl = (defaultCostsIncl).formatMoney(2, ',', '.');
+        var currencyIncl        = (extraCostsIncl).formatMoney(2, ',', '.');
 
         var updateText   = this.getOptions().currencySymbol
                          + ' '
-                         + currencyIncl;
+                         + defaultCurrencyIncl;
+
+        if (extraCostsIncl) {
+            updateText += ' + '
+                       + this.getOptions().currencySymbol
+                       + ' '
+                       + currencyIncl;
+        }
 
         priceContainerIncl.update(updateText);
 
@@ -1444,6 +1460,7 @@ PostnlDeliveryOptions.prototype = {
         }
 
         phoneWindow.show();
+        $('add_phone_input').focus();
 
         if (typeof validateShippingMethod != 'undefined') {
             validateShippingMethod();
@@ -2848,6 +2865,14 @@ PostnlDeliveryOptions.Map = new Class.create({
             && this.getSelectedMarker().location.getMapElement().identify()
                 == marker.location.getMapElement().identify()
         ) {
+            if (panTo) {
+                this.panToMarker(marker);
+            }
+
+            if (scrollTo) {
+                this.scrollToMarker(marker);
+            }
+
             return this;
         }
 
@@ -2904,15 +2929,45 @@ PostnlDeliveryOptions.Map = new Class.create({
          * Pan the map to the marker's position if required.
          */
         if (panTo) {
-            this.getMap().panTo(marker.getPosition());
-
-            var streetView = this.getMap().getStreetView();
-            if (streetView.getVisible()) {
-                streetView.setPosition(marker.getPosition());
-            }
+            this.panToMarker(marker);
         }
 
         this.enableSaveButton();
+
+        return this;
+    },
+
+    /**
+     * Pans the map to a specified marker's position.
+     *
+     * @param {*} marker
+     * @returns {PostnlDeliveryOptions.Map}
+     */
+    panToMarker : function(marker) {
+        this.getMap().panTo(marker.getPosition());
+
+        var streetView = this.getMap().getStreetView();
+        if (streetView.getVisible()) {
+            streetView.setPosition(marker.getPosition());
+        }
+
+        return this;
+    },
+
+    /**
+     * @param marker
+     * @returns {PostnlDeliveryOptions.Map}
+     */
+    scrollToMarker : function(marker) {
+        element = marker.location.getMapElement();
+
+        if (!element) {
+            return this;
+        }
+
+        this.getScrollbar().scrollTo(
+            element.offsetTop - $('scrollbar_content').offsetTop - 36, true
+        );
 
         return this;
     },
@@ -3091,7 +3146,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             var elements = customLocation.getElements();
             if (elements.PA) {
                 deliveryOptions.selectLocation(elements.PA);
-            } else if (elements.PGE) {
+            } else if (elements.PGE && this.getFilterEarly()) {
                 deliveryOptions.selectLocation(elements.PGE);
             } else {
                 deliveryOptions.selectLocation(elements.PG);
@@ -3373,6 +3428,7 @@ PostnlDeliveryOptions.Location = new Class.create({
     latitude          : null,
     longitude         : null,
     name              : null,
+    phoneNumber       : null,
     openingHours      : null,
     locationCode      : null,
     date              : null,
@@ -3458,6 +3514,10 @@ PostnlDeliveryOptions.Location = new Class.create({
 
     getName : function() {
         return this.name;
+    },
+
+    getPhoneNumber : function() {
+        return this.phoneNumber;
     },
 
     getOpeningHours : function() {
@@ -3551,6 +3611,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.latitude          = location.Latitude;
         this.longitude         = location.Longitude;
         this.name              = location.Name;
+        this.phoneNumber       = location.PhoneNumber;
         this.openingHours      = location.OpeningHours;
         this.locationCode      = location.LocationCode.replace(/\s+/g, ''); //remove whitespace from the location code
         this.date              = deliveryOptions.getDeliveryDate();
@@ -3667,8 +3728,9 @@ PostnlDeliveryOptions.Location = new Class.create({
             event.stop();
 
             this.getMap().openAddLocationWindow();
-            if (this.getMarker()) {
-                this.getMap().selectMarker(this.getMarker(), false, true);
+
+            if (this.getMarker() !== false) {
+                this.getMap().selectMarker(this.getMarker(), true, true);
             }
         }.bind(this));
 

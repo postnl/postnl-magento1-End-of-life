@@ -208,13 +208,13 @@
 
     <admin>
         <routers>
-            <postnl>
+            <postnl_admin>
                 <use>admin</use>
                 <args>
                     <module>TIG_PostNL</module>
-                    <frontName>postnl</frontName>
+                    <frontName>postnl_admin</frontName>
                 </args>
-            </postnl>
+            </postnl_admin>
         </routers>
     </admin>
 
@@ -349,6 +349,15 @@
                 </TIG_PostNL>
             </modules>
         </translate>
+        <routers>
+            <postnl>
+                <use>standard</use>
+                <args>
+                    <module>TIG_PostNL</module>
+                    <frontName>postnl</frontName>
+                </args>
+            </postnl>
+        </routers>
     </frontend>
 
     <crontab>
@@ -683,7 +692,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>beta</postnl>
+            <postnl>stable</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->
@@ -1411,7 +1420,7 @@
                 <type>error</type>
             </POSTNL-0140>
             <POSTNL-0141>
-                <message>Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode.</message>
+                <message>Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number, phonenumber and zipcode.</message>
                 <url>http://kb.totalinternetgroup.nl/topic/53037577</url>
                 <type>error</type>
             </POSTNL-0141>
@@ -1460,9 +1469,11 @@
                 <url>http://kb.totalinternetgroup.nl/topic/53040387</url>
                 <type>error</type>
             </POSTNL-0150>
-
-            <!-- Note: error 0151 is missing. It may be added later. -->
-
+            <POSTNL-0151>
+                <message>Invalid phone number supplied: %s.</message>
+                <url></url>
+                <type>error</type>
+            </POSTNL-0151>
             <POSTNL-0152>
                 <message>Invalid arguments supplied. The 'costs' parameter requires an amount incl. and excl. VAT.</message>
                 <url>http://kb.totalinternetgroup.nl/topic/53557046</url>
