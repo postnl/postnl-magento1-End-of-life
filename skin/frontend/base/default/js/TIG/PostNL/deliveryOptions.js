@@ -1399,7 +1399,7 @@ PostnlDeliveryOptions.prototype = {
         }
 
         var extraCostsExcl   = this.getExtraCosts(false);
-        var defaultCostsExcl = parseFloat(shippingMethodLabel.readAttribute('data-price-excl'));
+        var defaultCostsExcl = parseFloat(shippingMethodLabel.readAttribute('data-price'));
 
         var defaultCurrencyExcl = (defaultCostsExcl).formatMoney(2, ',', '.');
         var currencyExcl        = (extraCostsExcl).formatMoney(2, ',', '.');
