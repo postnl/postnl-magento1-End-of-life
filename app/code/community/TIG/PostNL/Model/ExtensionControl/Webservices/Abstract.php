@@ -105,8 +105,8 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
             );
 
             /**
-             * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without using the
-             * wsdl cache.
+             * try to create a new Zend_Soap_Client instance based on the supplied wsdl. If it fails, try again without
+             * using the wsdl cache.
              */
             try {
                 $client  = new Zend_Soap_Client(
@@ -126,20 +126,15 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
             }
 
             /**
-             * Call the SOAP method
+             * Call the SOAP method.
              */
-            $response = $client->__call(
-                $method,
-                array(
-                    $method => $soapParams,
-                )
-            );
+            $response = $client->$method($soapParams);
 
             Mage::helper('postnl/webservices')->logWebserviceCall($client);
             return $response;
         } catch(SoapFault $e) {
             /**
-             * Only Soap exceptions are caught. Other exceptions must be caught by the caller
+             * Only Soap exceptions are caught. Other exceptions must be caught by the caller.
              */
             Mage::helper('postnl/webservices')->logWebserviceException($e);
 

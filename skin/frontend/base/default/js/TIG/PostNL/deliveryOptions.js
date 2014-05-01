@@ -584,7 +584,11 @@ PostnlDeliveryOptions.prototype = {
         }
 
         if (this.timeframeRequest !== false) {
-            this.timeframeRequest.transport.abort();
+            try {
+                this.timeframeRequest.transport.abort();
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         if (!postcode) {
@@ -772,7 +776,11 @@ PostnlDeliveryOptions.prototype = {
         }
 
         if (this.locationsRequest !== false) {
-            this.locationsRequest.transport.abort();
+            try {
+                this.locationsRequest.transport.abort();
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         this.locationsRequest = new Ajax.PostnlRequest(this.getLocationsUrl(),{
@@ -1291,7 +1299,11 @@ PostnlDeliveryOptions.prototype = {
         }
 
         if (this.saveOptionCostsRequest) {
-            this.saveOptionCostsRequest.transport.abort();
+            try {
+                this.saveOptionCostsRequest.transport.abort();
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         this.saveOptionCostsRequest = new Ajax.PostnlRequest(this.getSaveUrl(), {
@@ -2297,6 +2309,7 @@ PostnlDeliveryOptions.Map = new Class.create({
              */
             if (result.formatted_address === 'Nederland'
                 || result.formatted_address === '8362 Nederland'
+                || result.formatted_address === 'The Netherlands'
             ) {
                 return false;
             }
@@ -2461,11 +2474,19 @@ PostnlDeliveryOptions.Map = new Class.create({
          * Abort any in-progress requests.
          */
         if (this.getNearestLocationsRequestObject()) {
-            this.getNearestLocationsRequestObject().transport.abort();
+            try {
+                this.getNearestLocationsRequestObject().transport.abort();
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         if (this.getLocationsInAreaRequestObject()) {
-            this.getLocationsInAreaRequestObject().transport.abort();
+            try {
+                this.getLocationsInAreaRequestObject().transport.abort();
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         /**
@@ -2541,11 +2562,19 @@ PostnlDeliveryOptions.Map = new Class.create({
          * Abort any in-progress requests.
          */
         if (this.getLocationsInAreaRequestObject()) {
-            this.getLocationsInAreaRequestObject().transport.abort();
+            try {
+                this.getLocationsInAreaRequestObject().transport.abort();
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         if (this.getNearestLocationsRequestObject()) {
-            this.getNearestLocationsRequestObject().transport.abort();
+            try {
+                this.getNearestLocationsRequestObject().transport.abort();
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         var locationsInAreaRequestObject = new Ajax.PostnlRequest(this.deliveryOptions.getLocationsInAreaUrl(), {
@@ -2705,7 +2734,7 @@ PostnlDeliveryOptions.Map = new Class.create({
              * Register some observers for the marker. These will allow the marker to be selected and will change it's
              * icon on hover.
              */
-            google.maps.event.addListener(marker, "click", this.selectMarker.bind(this, marker, true, true));
+            google.maps.event.addListener(marker, "click", this.markerOnClick.bind(this, marker));
             google.maps.event.addListener(marker, "mouseover", this.markerOnMouseOver.bind(this, marker));
             google.maps.event.addListener(marker, "mousedown", this.markerOnMouseDown.bind(this));
             google.maps.event.addListener(marker, "mouseup", this.markerOnMouseUp.bind(this));
@@ -2855,7 +2884,6 @@ PostnlDeliveryOptions.Map = new Class.create({
      * @returns {PostnlDeliveryOptions.Map}
      */
     selectMarker : function(marker, scrollTo, panTo) {
-
         /**
          * If the marker is already selected, we don't have to do anything.
          */
@@ -3005,6 +3033,21 @@ PostnlDeliveryOptions.Map = new Class.create({
     },
 
     /**
+     * @param {*} marker
+     *
+     * @returns {PostnlDeliveryOptions.Map}
+     */
+    markerOnClick : function(marker) {
+        if (this.getIsInfoWindowOpen()) {
+            return this;
+        }
+
+        this.selectMarker(marker, true, true);
+
+        return this;
+    },
+
+    /**
      * Update the marker's icon on mouseover.
      *
      * @param {*} marker
@@ -3015,7 +3058,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         /**
          * Don't do anything if the map is currently being dragged.
          */
-        if (this.getIsBeingDragged()) {
+        if (this.getIsBeingDragged() || this.getIsInfoWindowOpen()) {
             return this;
         }
 
@@ -3064,7 +3107,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         /**
          * Don't do anything if the map is currently being dragged.
          */
-        if (this.getIsBeingDragged()) {
+        if (this.getIsBeingDragged() || this.getIsInfoWindowOpen()) {
             return this;
         }
 
@@ -3236,8 +3279,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         this.setIsInfoWindowOpen(true);
 
         var locationInfoWindow = $('location-info-window');
-        var map = this.getMap();
-        var mapOptions = this.getMapOptions();
+        var map                = this.getMap();
+        var mapOptions         = this.getMapOptions();
 
         mapOptions.draggable              = false;
         mapOptions.scrollwheel            = false;
@@ -4162,23 +4205,31 @@ PostnlDeliveryOptions.Location = new Class.create({
          */
         element.observe('click', function(event) {
             var map = this.getMap();
-            if (map.getIsInfoWindowOpen()) {
-                return this;
-            }
 
             event.stop();
 
             if (Event.element(event).hasClassName('location-info')) {
-                return this;
+                return false;
             }
 
             if (!this.getMarker()) {
                 return false;
             }
 
+            if (map.getSelectedMarker() == this.getMarker()) {
+                return false;
+            }
+
             this.setOldCenter(this.getMarker().getPosition());
 
-            map.selectMarker(this.getMarker(), false, true, event);
+            map.selectMarker(this.getMarker(), false, true);
+
+            if (map.getIsInfoWindowOpen()) {
+                map.openLocationInfoWindow(
+                    this.getMapTooltipHtml(),
+                    this.getLocationCode()
+                );
+            }
             return true;
         }.bind(this));
 

@@ -76,6 +76,34 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Source_DeliveryDaysNumber
                 'value' => 7,
                 'label' => '7 ' . $helper->__('days'),
             ),
+            array(
+                'value' => 8,
+                'label' => '8 ' . $helper->__('days'),
+            ),
+            array(
+                'value' => 9,
+                'label' => '9 ' . $helper->__('days'),
+            ),
+            array(
+                'value' => 10,
+                'label' => '10 ' . $helper->__('days'),
+            ),
+            array(
+                'value' => 11,
+                'label' => '11 ' . $helper->__('days'),
+            ),
+            array(
+                'value' => 12,
+                'label' => '12 ' . $helper->__('days'),
+            ),
+            array(
+                'value' => 13,
+                'label' => '13 ' . $helper->__('days'),
+            ),
+            array(
+                'value' => 14,
+                'label' => '14 ' . $helper->__('days'),
+            ),
         );
 
         return $options;
