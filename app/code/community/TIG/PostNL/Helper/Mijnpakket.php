@@ -44,6 +44,11 @@ class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
     const XPATH_MIJNPAKKET_LOGIN_ACTIVE = 'postnl/delivery_options/mijnpakket_login_active';
 
     /**
+     * Log filename to log all non-specific PostNL debug messages.
+     */
+    const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_MijnPakket_Debug.log';
+
+    /**
      * Check whether MijnPakket login is active.
      *
      * @return bool

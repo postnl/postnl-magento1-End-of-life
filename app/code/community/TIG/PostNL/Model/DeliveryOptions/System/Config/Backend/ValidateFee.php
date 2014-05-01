@@ -77,7 +77,7 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Backend_ValidateFee extends
          * @var Mage_Customer_Model_Address $mockShippingAddress
          */
         $mockShippingAddress = Mage::getModel('customer/address');
-        $mockShippingAddress->setCountryCode('NL')
+        $mockShippingAddress->setCountryId('NL')
                             ->setPostcode('1000AA');
 
         $this->setMockShippingAddress($mockShippingAddress);

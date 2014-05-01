@@ -182,6 +182,63 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
+     * Gets the shipping duration for the specified quote.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return int
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function getShippingDuration(Mage_Sales_Model_Quote $quote)
+    {
+        $storeId = $quote->getStoreId();
+
+        /**
+         * Get the default config duration.
+         */
+        $configDuration = (int) Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
+        $durationArray  = array($configDuration);
+
+        /**
+         * Loop through all products in the quote.
+         *
+         * @var Mage_Sales_Model_Quote_Item $item
+         */
+        foreach ($quote->getAllVisibleItems() as $item) {
+            $product = Mage::getModel('catalog/product')->load($item->getProductId());
+
+            /**
+             * If the product has a specific shipping duration, add it to the array of durations.
+             */
+            if ($product->hasPostnlShippingDuration() && $product->getPostnlShippingDuration() !== '') {
+                $durationArray[] = (int) $product->getPostnlShippingDuration();
+            }
+        }
+
+        /**
+         * Sort the array and get it's last item. This will be the highest value.
+         */
+        natsort($durationArray);
+        $shippingDuration = end($durationArray);
+
+        /**
+         * Make sure the value is between 1 and 14 days.
+         */
+        if ($shippingDuration > 14 || $shippingDuration < 1) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__(
+                    'Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.',
+                    $shippingDuration
+                ),
+                'POSTNL-0127'
+            );
+        }
+
+        return $shippingDuration;
+    }
+
+    /**
      * Convert a value to a formatted price.
      *
      * @param float   $price
@@ -197,7 +254,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $quote = $this->getQuote();
         $store = $quote->getStore();
 
-        $shippingPrice = Mage::helper('tax')->getShippingPrice($price, $includingTax, $quote->getShippingAddress());
+        $shippingPrice  = Mage::helper('tax')->getShippingPrice($price, $includingTax, $quote->getShippingAddress());
         $convertedPrice = $store->convertPrice($shippingPrice, $formatted, false);
 
         return $convertedPrice;
