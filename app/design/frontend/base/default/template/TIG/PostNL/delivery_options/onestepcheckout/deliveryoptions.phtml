@@ -147,6 +147,8 @@
 <?php endif; ?>
 <script type="text/javascript">
     //<![CDATA[
+    var saveBillingRequest = false;
+
     var showOptions = <?php echo $_showOptions ? 'true' : 'false'; ?>;
     var deliveryOptions;
     var searchField = $('search_field');
@@ -482,6 +484,11 @@
          */
         document.stopObserving('postnl:postcodeCheckSuccess');
         document.observe('postnl:postcodeCheckSuccess', function() {
+            if (saveBillingRequest) {
+                saveBillingRequest.transport.abort();
+                saveBillingRequest = false;
+            }
+
             if (deliveryOptions && deliveryOptions.timeframeRequest) {
                 deliveryOptions.timeframeRequest.transport.abort();
             }
@@ -527,7 +534,6 @@
      * Rewrite base OSC function. This allows us to cancel in-progress save billing requests if another request is
      * fired before the previous one has finished. This prevents all sorts of problems.
      */
-    var saveBillingRequest = false;
     get_save_billing_function = function(url, set_methods_url, update_payments, triggered)
     {
         if(typeof update_payments == 'undefined')    {

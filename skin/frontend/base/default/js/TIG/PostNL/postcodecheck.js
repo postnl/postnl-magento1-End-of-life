@@ -42,7 +42,8 @@ PostnlPostcodecheck = new Class.create({
 
     inProgressRequest: false,
 
-    initialize: function(postcodecheckUrl, addressType, countryField, postcodeField, streetnameField, housenumberField, housenumberExtensionField, cityField, virtualPrefix) {
+    initialize: function(postcodecheckUrl, addressType, countryField, postcodeField, streetnameField, housenumberField,
+                         housenumberExtensionField, cityField, virtualPrefix) {
         this.postcodecheckUrl          = postcodecheckUrl;
         this.addressType               = addressType;
         this.countryField              = countryField;
@@ -55,14 +56,12 @@ PostnlPostcodecheck = new Class.create({
     },
 
     init: function() {
-        var postcodecheckUrl          = this.postcodecheckUrl;
         var addressType               = this.addressType;
         var countryField              = this.countryField;
         var postcodeField             = this.postcodeField;
         var streetnameField           = this.streetnameField;
         var housenumberField          = this.housenumberField;
         var housenumberExtensionField = this.housenumberExtensionField;
-        var cityField                 = this.cityField;
         var virtualPrefix             = this.virtualPrefix;
 
         if (!$(streetnameField).getValue() && $(virtualPrefix + streetnameField).getValue()) {
@@ -96,7 +95,7 @@ PostnlPostcodecheck = new Class.create({
         }
 
         var postcodeCheck = this;
-        $(countryField).observe('change', function(event) {
+        $(countryField).observe('change', function() {
             countryId = this.getValue();
 
             $('postnl_address_error_' + addressType).hide();
@@ -113,20 +112,20 @@ PostnlPostcodecheck = new Class.create({
             }
         });
 
-        $(postcodeField).observe('change', function(event) {
+        $(postcodeField).observe('change', function() {
             var postcode = this.getValue();
             var housenumber = $(virtualPrefix + housenumberField).getValue();
 
             postcodeCheck.checkPostcode(postcode, housenumber);
         });
 
-        $(virtualPrefix + streetnameField).observe('change', function(event) {
+        $(virtualPrefix + streetnameField).observe('change', function() {
             var value = this.getValue();
 
             $(streetnameField).setValue(value);
         });
 
-        $(virtualPrefix + housenumberField).observe('change', function(event) {
+        $(virtualPrefix + housenumberField).observe('change', function() {
             var value = this.getValue();
 
             $(housenumberField).setValue(value);
@@ -137,7 +136,7 @@ PostnlPostcodecheck = new Class.create({
             postcodeCheck.checkPostcode(postcode, housenumber);
         });
 
-        $(virtualPrefix + housenumberExtensionField).observe('change', function(event) {
+        $(virtualPrefix + housenumberExtensionField).observe('change', function() {
             var value = this.getValue();
 
             $(housenumberExtensionField).setValue(value);
@@ -221,6 +220,8 @@ PostnlPostcodecheck = new Class.create({
                 document.fire('postnl:postcodeCheckStart');
             },
             onSuccess: function(response) {
+                var spinner = $('postnl_postcodecheck_spinner_' + addressType);
+
                 if (response.responseText == 'error') {
                     $('postnl_address_error_' + addressType).show();
                     postcodeCheck.changePostcodeCheckDisabledFields(false);
@@ -230,7 +231,7 @@ PostnlPostcodecheck = new Class.create({
                     $(postcodeCheck.cityField).setValue('');
 
                     postcodeCheck.inProgressRequest = false;
-                    $('postnl_postcodecheck_spinner_' + addressType).hide();
+                    spinner.hide();
 
                     return;
                 }
@@ -239,7 +240,7 @@ PostnlPostcodecheck = new Class.create({
                     $('postnl_address_missing_' + addressType).show();
 
                     postcodeCheck.inProgressRequest = false;
-                    $('postnl_postcodecheck_spinner_' + addressType).hide();
+                    spinner.hide();
 
                     return;
                 }
@@ -273,15 +274,13 @@ PostnlPostcodecheck = new Class.create({
                 $(postcodeCheck.cityField).setValue(data['city']);
 
                 postcodeCheck.inProgressRequest = false;
-                $('postnl_postcodecheck_spinner_' + addressType).hide();
+                spinner.hide();
 
                 document.fire('postnl:postcodeCheckSuccess');
-
-                return;
             },
-            onFailure: function(response) {
+            onFailure: function() {
                 if (postcodeCheck.inProgressAborted) {
-                    return false;
+                    return;
                 }
 
                 $('postnl_address_error_' + addressType).show();
@@ -293,23 +292,19 @@ PostnlPostcodecheck = new Class.create({
 
                 postcodeCheck.inProgressRequest = false;
                 $('postnl_postcodecheck_spinner_' + addressType).hide();
-
-                return;
             },
-            onTimeout: function(response) {
+            onTimeout: function() {
                 $('postnl_address_error_' + addressType).show();
                 postcodeCheck.changePostcodeCheckDisabledFields(false);
 
                 postcodeCheck.inProgressRequest = false;
                 $('postnl_postcodecheck_spinner_' + addressType).hide();
-
-                return;
             },
             timeoutDelay: postcodeCheck.timeoutDelay
         });
         this.inProgressRequest = request;
 
-        return;
+        return true;
     },
 
     changePostcodeCheckDisabledFields: function(countryId) {
@@ -319,7 +314,7 @@ PostnlPostcodecheck = new Class.create({
          * Only the billing and shipping address types are currently supported
          */
         if (addressType && (addressType != 'billing' && addressType != 'shipping')) {
-            return false;
+            return;
         }
 
         var streetLine = $(this.virtualPrefix + this.streetnameField);
@@ -362,7 +357,5 @@ PostnlPostcodecheck = new Class.create({
         if ($(this.virtualPrefix + this.housenumberField).hasClassName('postnl-validate-housenumber')) {
             $(this.virtualPrefix + this.housenumberField).removeClassName('postnl-validate-housenumber')
         }
-
-        return;
     }
 });

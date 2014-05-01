@@ -132,12 +132,6 @@
 
             $('<?php echo $_addressType; ?>:street<?php echo $_i; ?>').setValue(value);
         });
-        $('virtual:<?php echo $_addressType; ?>:street<?php echo $_i; ?>').observe('change', function(event) {
-            var element = Event.element(event);
-            var value = element.getValue();
-
-            $('<?php echo $_addressType; ?>:street<?php echo $_i; ?>').setValue(value);
-        });
     <?php endfor; ?>
 
     document.observe('dom:loaded', function() {
@@ -152,9 +146,45 @@
             '<?php echo $_addressType; ?>:city',
             'virtual:'
         );
+        window.postcodeCheck<?php echo $_addressType; ?> = postcodeCheck<?php echo $_addressType; ?>;
+
         postcodeCheck<?php echo $_addressType; ?>.errorMax = <?php echo $_maxAttempts; ?>;
         postcodeCheck<?php echo $_addressType; ?>.timeoutDelay = '<?php echo $_timeoutDelay; ?>';
         postcodeCheck<?php echo $_addressType; ?>.init();
+
+        <?php if ($_addressType == 'shipping'): ?>
+            $('billing:country_id').observe('change', function() {
+                postcodeCheck<?php echo $_addressType; ?>.changePostcodeCheckDisabledFields($('billing:country_id').getValue());
+            });
+
+            /**
+             * Extend the shipping object as the default is unable to handle the 'virtual:' field ID prefix.
+             */
+            Object.extend(shipping, {
+                syncWithBilling : function() {
+                    $('billing-address-select') && this.newAddress(!$('billing-address-select').value);
+                    $('shipping:same_as_billing').checked = true;
+                    if (!$('billing-address-select') || !$('billing-address-select').value) {
+                        arrElements = Form.getElements(this.form);
+                        for (var elemIndex in arrElements) {
+                            if (arrElements[elemIndex].id) {
+                                var sourceField = $(arrElements[elemIndex].id.replace(/shipping:/, 'billing:'));
+                                if (sourceField){
+                                    arrElements[elemIndex].value = sourceField.value;
+                                }
+                            }
+                        }
+                        //$('shipping:country_id').value = $('billing:country_id').value;
+                        shippingRegionUpdater.update();
+                        $('shipping:region_id').value = $('billing:region_id').value;
+                        $('shipping:region').value = $('billing:region').value;
+                        //shippingForm.elementChildLoad($('shipping:country_id'), this.setRegionValue.bind(this));
+                    } else {
+                        $('shipping-address-select').value = $('billing-address-select').value;
+                    }
+                }
+            });
+        <?php endif; ?>
     });
 //]]>
 </script>
