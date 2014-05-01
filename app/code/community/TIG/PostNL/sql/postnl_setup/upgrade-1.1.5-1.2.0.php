@@ -218,4 +218,39 @@ $table->addColumn('pk', Varien_Db_Ddl_Table::TYPE_INTEGER, null,
 
 $installer->getConnection()->createTable($table);
 
+/***********************************************************************************************************************
+ * PRODUCT ATTRIBUTES
+ **********************************************************************************************************************/
+
+$installer->addAttribute('catalog_product', 'postnl_shipping_duration', array(
+    'backend'                    => '',
+    'group'                      => 'General',
+    'sort_order'                 => 100,
+    'frontend'                   => '',
+    'class'                      => '',
+    'default'                    => '',
+    'label'                      => 'PostNL Shipping Duration',
+    'input'                      => 'select',
+    'type'                       => 'int',
+    'source'                     => 'postnl_deliveryoptions/product_attribute_source_shippingDuration',
+    'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+    'visible'                    => true,
+    'required'                   => false,
+    'searchable'                 => false,
+    'filterable'                 => false,
+    'filterable_in_search'       => false,
+    'unique'                     => false,
+    'comparable'                 => false,
+    'visible_on_front'           => false,
+    'visible_in_advanced_search' => false,
+    'is_html_allowed_on_front'   => false,
+    'used_in_product_listing'    => false,
+    'user_defined'               => false,
+    'apply_to'                   => 'simple',
+    'is_configurable'            => false,
+    'used_for_sort_by'           => false,
+    'position'                   => 0,
+    'used_for_promo_rules'       => false,
+));
+
 $installer->endSetup();

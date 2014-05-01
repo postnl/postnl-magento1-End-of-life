@@ -204,10 +204,11 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
             return $deliveryDate;
         }
 
+        $quote    = $this->getQuote();
         $postcode = $this->getPostcode();
 
         try {
-            $deliveryDate = $this->_getDeliveryDate($postcode);
+            $deliveryDate = $this->_getDeliveryDate($postcode, $quote);
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
 
@@ -528,13 +529,14 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     /**
      * get the first possible delivery date from PostNL.
      *
-     * @param string $postcode
+     * @param string                 $postcode
+     * @param Mage_Sales_Model_Quote $quote
      *
      * @throws TIG_PostNL_Exception
      *
      * @return string
      */
-    protected function _getDeliveryDate($postcode) {
+    protected function _getDeliveryDate($postcode, Mage_Sales_Model_Quote $quote) {
         $postcode = str_replace(' ', '', strtoupper($postcode));
 
         $validator = new Zend_Validate_PostCode('nl_NL');
@@ -551,7 +553,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
 
         $cif = Mage::getModel('postnl_deliveryoptions/cif');
         $response = $cif->setStoreId(Mage::app()->getStore()->getId())
-                        ->getDeliveryDate($postcode);
+                        ->getDeliveryDate($postcode, $quote);
 
         return $response;
     }

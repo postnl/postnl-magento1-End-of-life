@@ -33,6 +33,8 @@
 #create_mijnpakket_account { background:url(../../../images/TIG/PostNL/mijnpakket/logo.png) 0 1em no-repeat; }
 #create_mijnpakket_account a { color:#f05a22; }
 
+ul.mijnpakket-usp { list-style:disc inside; }
+
 #mijnpakket_app { background:url(../../../images/TIG/PostNL/mijnpakket/app_logo.png) 0 1em no-repeat; }
 #mijnpakket_app li a { display:block; width:134px; height:45px; background-image:url(../../../images/TIG/PostNL/mijnpakket/app_buttons.png); text-indent:-999em; float:left; margin:1em 1em 0 0; }
 #mijnpakket_app #apple_store a { background-position:0 0; }
