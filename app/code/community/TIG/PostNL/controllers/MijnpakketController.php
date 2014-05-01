@@ -301,7 +301,7 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
     protected function _expireAjax()
     {
         $onepage = $this->getOnepage();
-        $quote = $onepage->getQuote();
+        $quote   = $onepage->getQuote();
 
         if (!$quote->hasItems()
             || $quote->getHasError()
