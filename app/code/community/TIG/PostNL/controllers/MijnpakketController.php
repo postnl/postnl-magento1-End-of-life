@@ -301,12 +301,36 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
     protected function _expireAjax()
     {
         $onepage = $this->getOnepage();
-        $quote = $onepage->getQuote();
+        $quote   = $onepage->getQuote();
 
-        if (!$quote->hasItems()
-            || $quote->getHasError()
-            || $quote->getIsMultiShipping()
-        ) {
+        $helper = Mage::helper('postnl/mijnpakket');
+
+        if (!$quote->hasItems()) {
+            $helper->log(
+                $helper->__('The customer was redirected to the cart because the quote was empty.')
+            );
+
+            $this->_ajaxRedirectResponse();
+            return true;
+        }
+
+        if ($quote->getHasError()) {
+            $helper->log(
+               $helper->__(
+                   'The customer was redirected to the cart because the quote had the following error(s): %s.',
+                   implode(PHP_EOL, $quote->getErrors())
+               )
+            );
+
+            $this->_ajaxRedirectResponse();
+            return true;
+        }
+
+        if ($quote->getIsMultiShipping()) {
+            $helper->log(
+                $helper->__('The customer was redirected to the cart because the quote is multishipping.')
+            );
+
             $this->_ajaxRedirectResponse();
             return true;
         }

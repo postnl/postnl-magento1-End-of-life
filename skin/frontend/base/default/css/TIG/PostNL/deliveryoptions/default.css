@@ -233,7 +233,7 @@ cufon { overflow:hidden !important; cursor:text; }
 cufon canvas { user-select:all; -moz-user-select:all; -webkit-user-select:all; }
 cufon[alt=" "] { display:none !important; width:0 !important; height:0 !important; }
 .location-list .location-info:hover cufon,
-.location-option-checkbox:hover cufon,
+.location-option-checkbox:hover cufon { border-bottom:2px solid #676767; padding-bottom:2px; }
 #add_location_link:hover cufon { border-bottom:1px solid #676767; padding-bottom:2px; }
 #change_address_link:hover cufon { border-bottom:1px solid #676767; }
 a cufon,

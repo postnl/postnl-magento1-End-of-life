@@ -460,7 +460,7 @@ MijnpakketLogin.prototype = {
         return this;
     },
 
-    ajaxFailure : function() {
+    ajaxFailure : function(response) {
         if (this.failureUrl) {
             window.location.href = this.failureUrl;
         } else if (this.getCheckout() && this.getCheckout().failureUrl) {

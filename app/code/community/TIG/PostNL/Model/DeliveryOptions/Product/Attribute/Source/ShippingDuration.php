@@ -36,18 +36,27 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_DeliveryOptions_System_Config_Source_DeliveryDaysNumber
+class TIG_PostNL_Model_DeliveryOptions_Product_Attribute_Source_ShippingDuration
+    extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {
     /**
-     * Gets an option array for a maximum of 30 days.
+     * Retrieve all attribute options
      *
      * @return array
      */
-    public function toOptionArray()
+    public function getAllOptions()
     {
+        if ($this->_options) {
+            return $this->_options;
+        }
+
         $helper = Mage::helper('postnl');
 
         $options = array(
+            array(
+                'label' => $helper->__('Use config'),
+                'value' => ''
+            ),
             array(
                 'value' => 1,
                 'label' => '1 ' . $helper->__('day'),
@@ -106,6 +115,7 @@ class TIG_PostNL_Model_DeliveryOptions_System_Config_Source_DeliveryDaysNumber
             ),
         );
 
+        $this->_options = $options;
         return $options;
     }
 }
