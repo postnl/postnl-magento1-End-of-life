@@ -105,6 +105,8 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
      */
     public function getProfileAccessAction()
     {
+        $helper = Mage::helper('postnl/mijnpakket');
+
         /**
          * This action may only be called using AJAX requests.
          */

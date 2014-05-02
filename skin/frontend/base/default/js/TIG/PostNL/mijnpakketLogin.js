@@ -323,6 +323,19 @@ MijnpakketLogin.prototype = {
     },
 
     /**
+     * Hides the MijnPakket login buttons.
+     *
+     * @returns {MijnpakketLogin}
+     */
+    hideButton : function() {
+        $('postnl_mijnpakket_login').hide();
+        $('postnl_mijnpakket_login_btn').hide();
+        $('postnl_mijnpakket_login_btn_disabled').hide();
+
+        return this;
+    },
+
+    /**
      * @param {{}} data
      *
      * @returns {MijnpakketLogin}
@@ -426,8 +439,8 @@ MijnpakketLogin.prototype = {
 
         if (!this.isOsc && $('checkout-step-login')) {
             this.showDummyButton();
-        } else {
-            this.showDisabledButton();
+        } else if (this.isOsc) {
+            this.hideButton();
         }
 
         this.updateMijnpakketLoginMessage();
