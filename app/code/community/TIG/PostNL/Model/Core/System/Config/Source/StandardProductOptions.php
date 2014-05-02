@@ -141,24 +141,24 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      *
      * @return array
      */
-    public function getAvondOptions($asFlatArray = true)
+    public function getAvondOptions($asFlatArray = false)
     {
         $options = $this->toOptionArray();
 
-        $pgeOptions = array();
+        $avondOptions = array();
         foreach ($options as $option) {
             if (!isset($option['isAvond']) || !$option['isAvond']) {
                 continue;
             }
 
-            if (!$asFlatArray) {
-                $pgeOptions[] = $option;
+            if ($asFlatArray) {
+                $avondOptions[] = $option;
             }
 
-            $pgeOptions[$option['value']] = $option['label'];
+            $avondOptions[$option['value']] = $option['label'];
         }
 
-        return $pgeOptions;
+        return $avondOptions;
     }
 
     /**
@@ -179,7 +179,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
         if (!$isAvond) {
             $options = $this->toOptionArray();
         } else {
-            $options = $this->getAvondOptions(false);
+            $options = $this->getAvondOptions(true);
         }
 
         /**
@@ -197,6 +197,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
          * Check each standard option to see if it's supprted
          */
         foreach ($options as $option) {
+            if (!is_array($option) || !array_key_exists('value', $option)) {
+                continue;
+            }
+
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
             }

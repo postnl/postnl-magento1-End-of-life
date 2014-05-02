@@ -93,6 +93,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_GlobalProductOptions
          * Check each standard option to see if it's supprted
          */
         foreach ($options as $option) {
+            if (!array_key_exists('value', $option)) {
+                continue;
+            }
+
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
             }
