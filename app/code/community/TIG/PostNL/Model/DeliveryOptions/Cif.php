@@ -76,13 +76,14 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     /**
      * Gets the delivery date based on the shop's cut-off time.
      *
-     * @param string $postcode
+     * @param string                 $postcode
+     * @param Mage_Sales_Model_Quote $quote
      *
      * @return string
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getDeliveryDate($postcode)
+    public function getDeliveryDate($postcode, Mage_Sales_Model_Quote $quote)
     {
         if (empty($postcode)) {
             throw new TIG_PostNL_Exception(
@@ -91,11 +92,13 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             );
         }
 
+        $shippingDuration = Mage::helper('postnl/deliveryoptions')->getShippingDuration($quote);
+
         $soapParams = array(
             'GetDeliveryDate' => array(
                 'Postalcode'                 => $postcode,
                 'ShippingDate'               => date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp()),
-                'ShippingDuration'           => $this->_getShippingDuration(),
+                'ShippingDuration'           => $shippingDuration,
                 'CutOffTime'                 => $this->_getCutOffTime(),
                 'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
                 'CutOffTimeForSundaySorting' => $this->_getSundaySortingCutOffTime(),
@@ -278,31 +281,6 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         }
 
         return $response->GetLocationsResult->ResponseLocation;
-    }
-
-    /**
-     * Gets the shipping duration for the specified storeview.
-     *
-     * @return int
-     *
-     * @throws TIG_PostNL_Exception
-     */
-    protected function _getShippingDuration()
-    {
-        $storeId = $this->getStoreId();
-
-        $shippingDuration = (int) Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
-        if ($shippingDuration > 14 || $shippingDuration < 1) {
-            throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__(
-                    'Invalid shipping duration: %s. Shipping duration must be between 1 and 14 days.',
-                    $shippingDuration
-                ),
-                'POSTNL-0127'
-            );
-        }
-
-        return $shippingDuration;
     }
 
     /**

@@ -248,6 +248,23 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Wrapper for the getAttributeValidationClass method to prevent errors in Magento 1.6.
+     *
+     * @param $attribute
+     *
+     * @return string
+     */
+    public function getAttributeValidationClass($attribute)
+    {
+        $addressHelper = Mage::helper('customer/address');
+        if (is_callable(array($addressHelper, 'getAttributeValidationClass'))) {
+            return $addressHelper->getAttributeValidationClass($attribute);
+        }
+
+        return '';
+    }
+
+    /**
      * Check if the Postcode Check is active.
      *
      * @param int|null $storeId

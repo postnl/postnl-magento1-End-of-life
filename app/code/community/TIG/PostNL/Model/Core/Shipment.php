@@ -1688,7 +1688,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         /**
          * @var TIG_PostNL_Model_Core_Cif $cif
-         * @var TIG_PostNL_Helper_Cif $helper
+         * @var TIG_PostNL_Helper_Cif     $helper
          */
         $cif = Mage::getModel('postnl_core/cif');
         $cif->setStoreId($this->getStoreId());
@@ -1802,7 +1802,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $result = $cif->generateLabels($this, $barcode, $mainBarcode, $barcodeNumber);
         }
 
-        if (!isset($result->Labels) || !isset($result->Labels->Label)) {
+        if (!isset($result->Labels, $result->Labels->Label)) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'The confirmAndPrintLabel action returned an invalid response: %s',
@@ -1814,7 +1814,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $labels = $result->Labels->Label;
 
         /**
-         * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated
+         * If this is an EU shipment and a non-combi label was returned, the product code needs to be updated.
          */
         if ($this->isEuShipment() && !$this->_isCombiLabel()) {
             $this->setProductCode($result->ProductCodeDelivery);

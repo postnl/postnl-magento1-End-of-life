@@ -244,6 +244,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getShipmentData($postnlShipment, $parcelCount = false, $count = false)
     {
+        $helper = Mage::helper('postnl/parcelware');
+
         /**
          * @var Mage_Sales_Model_Order_Shipment
          */
@@ -283,9 +285,17 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
          * If this is part of a multi-colli shipment, we need to get slightly different parameters.
          */
         if ($parcelCount) {
+            $barcode = $postnlShipment->getBarcode($count);
+            if ($count > 0) {
+                $barcodeComponents = $helper->splitBarcode($barcode, $shipment->getStoreId());
+                $barcodeNumber     = $barcodeComponents['number'];
+            } else {
+                $barcodeNumber = $barcode;
+            }
+
             $shipmentData = array(
                 'ProductCodeDelivery' => $this->_getParcelwareProductCode($postnlShipment),
-                'Barcode'             => $postnlShipment->getBarcode($count),
+                'Barcode'             => $barcodeNumber,
                 'MainBarcode'         => $postnlShipment->getMainBarcode(),
                 'GroupSequence'       => $count + 1,
                 'GroupCount'          => $parcelCount,

@@ -481,9 +481,9 @@
                 <live_username/>
                 <live_password/>
                 <test_username>Dem0#Magnt01</test_username> <!-- Demo username -->
-                <test_password/> <!-- The demo password will be generated on install -->
+                <test_password/> <!-- The demo password will be generated on install as it needs to be encrypted -->
         		<collection_location>103861</collection_location> <!-- Demo collection location -->
-                <webshop_id/> <!-- The demo webshop ID will be generated on install -->
+                <webshop_id/> <!-- The demo webshop ID will be generated on install as it needs to be encrypted -->
                 <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
         		<use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
         		<global_barcode_type>CD</global_barcode_type> <!-- Demo barcode type -->
@@ -518,7 +518,7 @@
         		<split_street>1</split_street> <!-- split street -->
         		<streetname_field>1</streetname_field> <!-- first address line -->
         		<housenr_field>2</housenr_field> <!-- second address line -->
-        		<split_housenr>0</split_housenr> <!-- do not split housenr and extension -->
+        		<split_housenr>0</split_housenr> <!-- do not split housenumber and houndenumber extension -->
         		<housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
         	    <area_field/>
         	    <building_name_field/>
@@ -590,10 +590,10 @@
                 <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
         	    <sunday_cutoff_time/>
         	    <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
-        	    <enable_evening_timeframes>0</enable_evening_timeframes> <!-- Evening timeframes are disabled -->
+        	    <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
         	    <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
         	    <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
-        	    <enable_pakjegemak_express>0</enable_pakjegemak_express> <!-- PakjeGemak express locations are not allowed -->
+        	    <enable_pakjegemak_express>1</enable_pakjegemak_express> <!-- PakjeGemak express locations are allowed -->
         	    <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
         	    <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
                 <allow_streetview>1</allow_streetview> <!-- Google streetview is allowed. -->
@@ -692,7 +692,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>stable</postnl>
+            <postnl>beta</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->
@@ -705,14 +705,14 @@
                     <use_cufon>1</use_cufon>
                 </default>
                 <!-- An unbranded, white, gray and blue theme -->
-                <unbranded translate="label" module="postnl">
-                    <label>Unbranded theme</label>
+                <neutral translate="label" module="postnl">
+                    <label>Neutral theme</label>
                     <use_cufon>0</use_cufon>
                     <files>
-                        <onepage>css/TIG/PostNL/deliveryoptions/unbranded.css</onepage>
-                        <onestepcheckout>css/TIG/PostNL/deliveryoptions/onestepcheckout_unbranded.css</onestepcheckout>
+                        <onepage>css/TIG/PostNL/deliveryoptions/neutral.css</onepage>
+                        <onestepcheckout>css/TIG/PostNL/deliveryoptions/onestepcheckout_neutral.css</onestepcheckout>
                     </files>
-                </unbranded>
+                </neutral>
             </themes>
         </delivery_options>
 

@@ -49,6 +49,11 @@ class TIG_PostNL_Helper_Parcelware extends TIG_PostNL_Helper_Data
     const XML_PATH_ACTIVE = 'postnl/parcelware_export/active';
 
     /**
+     * XML path to the customer code setting.
+     */
+    const XML_PATH_CUSTOMER_CODE = 'postnl/cif/customer_code';
+
+    /**
      * AutoConfirmEnabled flag
      *
      * @var boolean|null $_autoConfirmEnabled
@@ -77,6 +82,35 @@ class TIG_PostNL_Helper_Parcelware extends TIG_PostNL_Helper_Data
         $this->_autoConfirmEnabled = $autoConfirmEnabled;
 
         return $this;
+    }
+
+    /**
+     * Splits a barcode into its component parts.
+     *
+     * @param string   $barcode
+     * @param int|bool $storeId
+     *
+     * @return array
+     */
+    public function splitBarcode($barcode, $storeId = false)
+    {
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $type = substr($barcode, 0, 2);
+
+        $customerCode = (string) Mage::getStoreConfig(self::XML_PATH_CUSTOMER_CODE, $storeId);
+
+        $number = substr($barcode, 2  + strlen($customerCode));
+
+        $barcodeComponents = array(
+            'type'   => $type,
+            'range'  => $customerCode,
+            'number' => $number,
+        );
+
+        return $barcodeComponents;
     }
 
     /**

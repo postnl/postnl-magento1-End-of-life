@@ -655,7 +655,7 @@ TIG_PostNL::Delivery,Bezorgen
 TIG_PostNL::or Pickup,of Ophalen
 TIG_PostNL::More Info,Meer informatie
 TIG_PostNL::choose a different pickup location,kies een ander ophaalpunt
-TIG_PostNL::Select pickup location,Ophaallocatie kiezen
+TIG_PostNL::Select pickup location,Postkantoor kiezen
 TIG_PostNL::Search,Zoeken
 TIG_PostNL::early pickup,extra vroeg ophalen
 TIG_PostNL::opened in the evening,'s avonds open
@@ -828,9 +828,7 @@ TIG_PostNL::User manual,Gebruikershandleiding
 TIG_PostNL::Delivery options theme,Bezorgopties thema
 "TIG_PostNL::You can view an example of the different themes <a href=""http://servicedesk.totalinternetgroup.nl"" target=""_blank"" title=""PostNL delivery option themes"">here</a>.","U kunt een voorbeeld van de verschillende thema's <a href=""http://servicedesk.totalinternetgroup.nl"" target=""_blank"" title=""PostNL bezorgopties thema's"">hier</a> bekijken."
 TIG_PostNL::Default PostNL theme,Standaard PostNL thema
-TIG_PostNL::Unbranded theme,Unbranded thema
-TIG_PostNL::Following your shipment becomes even easier by using your own MijnPakket account. With a MijnPakket account you have the ability to track your shipment online or by using the MijnPakket app from the moment your place your order to the moment it is delivered. You can also change the destinationof your order after it's been shipped if it turns out you will not be home to accept it. You can also use your MijnPakket account to login quickly at hundreds of webshops without having to enter your personal data. So create a MijnPakket account now at %shttps://mijnpakket.postnl.nl%s!,"Uw zending volgen wordt nog makkelijker via uw eigen MijnPakket account. Met een MijnPakket account heeft u de mogelijkheid om online of via de MijnPakket app uw zending te volgen van bestelling tot bezorging. Ook kunt u met uw account het pakket onderweg nog een andere bestemming geven als u bijvoorbeeld onverhoopt niet thuis bent. Daarnaast biedt het account bij honderden webwinkels de mogelijkheid om snel in te loggen, zonder dat u al uw persoonlijke gegevens hoeft in te voeren. Maak dus snel uw eigen account aan op %shttps://mijnpakket.postnl.nl/%s!"
-TIG_PostNL::Did you know that you can also track your shipments using your MijnPakket account and the PostNL MijnPakket app? The MijnPakket app is available for iOS and Android and deliveres all the easy-to-use features of MijnPakket straight to your cellphone! Using this app you can view your shipment's status and change the intended delivery address. Useful for when you are not at home! Download the app today!,Wist u dat u met uw MijnPakket account uw zending ook kunt volgen via onze MijnPakket app? De MijnPakket app is beschikbaar voor iOS en Android en geeft u het gemak van MijnPakket in uw broekzak! Via de app ziet u wat de status is van uw zending en heeft u ook de mogelijkheid om de bezorging te wijzigen. Handig voor als u niet thuis bent! Download de App vandaag dus nog!
+TIG_PostNL::Neutral theme,Neutraal thema
 "TIG_PostNL::You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order.",U kunt er voor kiezen om een melding te tonen aan klanten over MijnPakket nadat zij hun bestelling hebben geplaatst. Deze melding zal klanten informeren over de voordelen van MijnPakket. Klanten kunnen hun MijnPakket account gebruiken om hun bestelling in uw webshop sneller af te ronden. Dit zorgt voor een lager afhaakpercentage en een hogere klanttevredenheid rondom de afhandeling van bestellingen.
 TIG_PostNL::Show MijnPakket notification on the order success page,Toon MijnPakket melding op de bestelling success pagina
 TIG_PostNL::This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.,"Indien deze instelling aan staat, zal er een melding worden getoond aan klanten nadat zij een bestelling hebben geplaatst. Deze melding zal klanten informeren over de voordelen van een MijnPakket account of over de MijnPakket app."
@@ -863,3 +861,11 @@ TIG_PostNL::Idev's OneStepCheckout version,Idev's OneStepCheckout versie
 TIG_PostNL::choose a different shipping address,kies een ander verzendadres
 TIG_PostNL::Magento & 3rd party version compatibility,Magento & 3rd party versie compatibiliteit
 TIG_PostNL::PostNL - Confirm Shipment,PostNL - Zending voormelden
+TIG_PostNL::Always stay informed? Click %shere%s to create a MijnPakket account based on your order details.,Altijd op de hoogte? Klik %shier%s om direct een mijnpakket account aan te maken op basis van uw bestelling.
+TIG_PostNL::Track your shipment's current status and whereabouts,Volg de actuele status van uw pakket
+TIG_PostNL::Change the delivery time and place if you are not at home,Wijzig de bezorgplaats- en tijd als u er niet bent
+TIG_PostNL::All your shipments available in a single overview,Al uw pakketten in een duidelijk overzicht bij elkaar
+TIG_PostNL::Always stay informed? Download the MijnPakket app.,Altijd op de hoogte? Download nu de mijnpakket app.
+TIG_PostNL::The customer was redirected to the cart because the quote was empty.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote leeg was."
+TIG_PostNL::The customer was redirected to the cart because the quote had the following error(s): %s.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote de volgende errors bevat: %s."
+TIG_PostNL::The customer was redirected to the cart because the quote is multishipping.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote voor multishipping bestemd is."
