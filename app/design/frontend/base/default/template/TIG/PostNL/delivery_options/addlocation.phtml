@@ -51,9 +51,15 @@
                     <ul class="location-options">
                         <li <?php if (!$_canUsePakjeGemakExpress): ?>style="display:none;"<?php endif; ?>>
                             <a id="early-filter" class="location-option-checkbox"><?php echo $_helper->__('early pickup');?></a>
+                            <div id="early_filter_tooltip" class="postnl-tooltip">
+                                <div>Als u een MijnPakket account heeft, kunt u met deze knop hierop inloggen. Wanneer u dit doet, zal de webshop uw voorkeursadres standaard gebruiken als uw factuur- en verzendadres. Uiteraard kunt u dit aanpassen als het een ander adres moet zijn.</div>
+                            </div>
                         </li>
                         <li>
                             <a id="evening-filter" class="location-option-checkbox"><?php echo $_helper->__('opened in the evening');?></a>
+                            <div id="evening_filter_tooltip" class="postnl-tooltip">
+                                <div>Als u een MijnPakket account heeft, kunt u met deze knop hierop inloggen. Wanneer u dit doet, zal de webshop uw voorkeursadres standaard gebruiken als uw factuur- en verzendadres. Uiteraard kunt u dit aanpassen als het een ander adres moet zijn.</div>
+                            </div>
                         </li>
                     </ul>
                     <em id="search_error_message" class="no-results" style="display:none;"><?php echo $_helper->__('The address you searched for was not found. Please try again.'); ?></em>
