@@ -109,7 +109,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
      *
      * @return array
      */
-    public function getPgeOptions($asFlatArray = true)
+    public function getPgeOptions($asFlatArray = false)
     {
         $options = $this->toOptionArray();
 
@@ -119,7 +119,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
                 continue;
             }
 
-            if (!$asFlatArray) {
+            if ($asFlatArray) {
                 $pgeOptions[] = $option;
             }
 
@@ -147,7 +147,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
         if (!$isPge) {
             $options = $this->toOptionArray();
         } else {
-            $options = $this->getPgeOptions(false);
+            $options = $this->getPgeOptions(true);
         }
 
         /**
@@ -165,6 +165,10 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
          * Check each standard option to see if it's supprted
          */
         foreach ($options as $option) {
+            if (!is_array($option) || !array_key_exists('value', $option)) {
+                continue;
+            }
+
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
             }

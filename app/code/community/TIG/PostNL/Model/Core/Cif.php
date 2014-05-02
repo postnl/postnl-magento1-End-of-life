@@ -225,12 +225,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected $_availableProductOptions = array(
         'PGE' => array(
-            'Characteristic' => '002',
-            'Option'         => '118',
+            'Characteristic' => '118',
+            'Option'         => '002',
         ),
         'Avond' => array(
-            'Characteristic' => '006',
-            'Option'         => '118',
+            'Characteristic' => '118',
+            'Option'         => '006',
         ),
     );
 
