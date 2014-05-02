@@ -105,10 +105,15 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
      */
     public function getProfileAccessAction()
     {
+        $helper = Mage::helper('postnl/mijnpakket');
+
         /**
          * This action may only be called using AJAX requests.
          */
         if (!$this->getRequest()->isAjax()) {
+            $helper->log(
+                $helper->__('Not allowed: ' . var_export($this->getRequest()->isAjax(), true))
+            );
             $this->getResponse()
                  ->setBody('not_allowed');
 
@@ -119,6 +124,9 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
          * If the session is expired, return a 403 HTTP status code.
          */
         if ($this->_expireAjax()) {
+            $helper->log(
+                $helper->__('Ajax expired.')
+            );
             return $this;
         }
 
@@ -134,6 +142,9 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
             $result = $this->_formResultArray($profileData);
         } catch (Exception $e) {
             Mage::helper('postnl/mijnpakket')->logException($e);
+            $helper->log(
+                $helper->__('Exception: ' . $e->getMessage())
+            );
 
             $this->getResponse()
                  ->setBody('error');
@@ -142,11 +153,17 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
         }
 
         if ($result === false) {
+            $helper->log(
+                $helper->__('Result empty: ' . var_export($result, true))
+            );
             $this->getResponse()
                  ->setBody('error');
 
             return $this;
         }
+        $helper->log(
+            $helper->__('Result : ' . var_export($result, true))
+        );
 
         /**
          * Return the result as JSON.
@@ -208,6 +225,12 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
      */
     protected function _formResultArray($billingData)
     {
+        $helper = Mage::helper('postnl/mijnpakket');
+        $helper->log(
+            'MijnPakket data received: '
+            . var_export($billingData, true)
+        );
+
         /**
          * Save the address data and get the result.
          */
@@ -217,6 +240,11 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
          * If we encountered an error, throw the error as an exception.
          */
         if (isset($result['error'])) {
+            $helper->log(
+                'Error received while saving billing data: '
+                . var_export($result, true)
+            );
+
             if (isset($result['message'][0])) {
                 $message = $result['message'][0];
             } else {

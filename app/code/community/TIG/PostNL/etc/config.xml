@@ -514,7 +514,7 @@
         	    <postcode_check_in_checkout>1</postcode_check_in_checkout> <!-- Use postcode check on the checkout page -->
         	    <postcode_check_in_addressbook>1</postcode_check_in_addressbook> <!-- Use postcode check in the customer's addressbook -->
         		<postcode_check_max_attempts>1</postcode_check_max_attempts> <!-- Allow 1 attempt before disabling postcode check and allowing users to enter their addess manually -->
-        		<postcode_check_timeout>3</postcode_check_timeout> <!-- Postcode check will timeout after 3 seconds -->
+        		<postcode_check_timeout>5</postcode_check_timeout> <!-- Postcode check will timeout after 5 seconds -->
         		<split_street>1</split_street> <!-- split street -->
         		<streetname_field>1</streetname_field> <!-- first address line -->
         		<housenr_field>2</housenr_field> <!-- second address line -->
@@ -707,7 +707,7 @@
                 <!-- An unbranded, white, gray and blue theme -->
                 <neutral translate="label" module="postnl">
                     <label>Neutral theme</label>
-                    <use_cufon>0</use_cufon>
+                    <use_cufon>1</use_cufon>
                     <files>
                         <onepage>css/TIG/PostNL/deliveryoptions/neutral.css</onepage>
                         <onestepcheckout>css/TIG/PostNL/deliveryoptions/onestepcheckout_neutral.css</onestepcheckout>
@@ -1481,37 +1481,37 @@
             </POSTNL-0152>
             <POSTNL-0153>
                 <message>Invalid fee amount entered: %s incl. VAT. Please enter a value between 0.00 and 2.00 EUR incl. VAT.</message>
-                <url></url>
+                <url>http://kb.totalinternetgroup.nl/topic/58943736</url>
                 <type>error</type>
             </POSTNL-0153>
             <POSTNL-0154>
                 <message>Invalid name supplied: %s.</message>
-                <url></url>
+                <url>http://kb.totalinternetgroup.nl/topic/57784943</url>
                 <type>error</type>
             </POSTNL-0154>
             <POSTNL-0155>
                 <message>The current user is not allowed to perform this action.</message>
-                <url></url>
+                <url>http://kb.totalinternetgroup.nl/topic/58415077</url>
                 <type>error</type>
             </POSTNL-0155>
             <POSTNL-0156>
                 <message>The PostNL extension v%s has been successfully installed.</message>
-                <url></url>
+                <url>http://kb.totalinternetgroup.nl/topic/58945996</url>
                 <type>notice</type>
             </POSTNL-0156>
             <POSTNL-0157>
                 <message>Invalid token specified: %s</message>
-                <url></url>
+                <url>http://kb.totalinternetgroup.nl/topic/58416207</url>
                 <type>error</type>
             </POSTNL-0157>
             <POSTNL-0158>
                 <message>Invalid GetProfileAccessToken response: %s</message>
-                <url></url>
+                <url>http://kb.totalinternetgroup.nl/topic/58948686</url>
                 <type>error</type>
             </POSTNL-0158>
             <POSTNL-0159>
                 <message>You have chosen a default shipping option that is not supported. Please only select default options that you have selected in the 'Select supported option' field.</message>
-                <url></url>
+                <url>http://kb.totalinternetgroup.nl/topic/57789373</url>
                 <type>warning</type>
             </POSTNL-0159>
 
