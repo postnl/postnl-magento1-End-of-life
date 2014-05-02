@@ -286,33 +286,35 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
          */
         if ($parcelCount) {
             $barcode = $postnlShipment->getBarcode($count);
-            if ($count > 0) {
-                $barcodeComponents = $helper->splitBarcode($barcode, $shipment->getStoreId());
-                $barcodeNumber     = $barcodeComponents['number'];
-            } else {
-                $barcodeNumber = $barcode;
-            }
 
             $shipmentData = array(
                 'ProductCodeDelivery' => $this->_getParcelwareProductCode($postnlShipment),
-                'Barcode'             => $barcodeNumber,
-                'MainBarcode'         => $postnlShipment->getMainBarcode(),
                 'GroupSequence'       => $count + 1,
                 'GroupCount'          => $parcelCount,
                 'ConfirmDate'         => $confirmDate,
                 'DeliveryDate'        => $deliveryDate,
             );
         } else {
+            $barcode = $postnlShipment->getMainBarcode();
+
             $shipmentData = array(
                 'ProductCodeDelivery' => $this->_getParcelwareProductCode($postnlShipment),
-                'Barcode'             => $postnlShipment->getMainBarcode(),
-                'MainBarcode'         => $postnlShipment->getMainBarcode(),
                 'GroupSequence'       => 1,
                 'GroupCount'          => 1,
                 'ConfirmDate'         => $confirmDate,
                 'DeliveryDate'        => $deliveryDate,
             );
         }
+
+        $mainBarcode           = $postnlShipment->getMainBarcode();
+        $mainBarcodeComponents = $helper->splitBarcode($mainBarcode, $shipment->getStoreId());
+        $mainBarcodeNumber     = $mainBarcodeComponents['number'];
+
+        $barcodeComponents = $helper->splitBarcode($barcode, $shipment->getStoreId());
+        $barcodeNumber     = $barcodeComponents['number'];
+
+        $shipmentData['Barcode']     = $barcodeNumber;
+        $shipmentData['MainBarcode'] = $mainBarcodeNumber;
 
         /**
          * If this is an international (GlobalPack) shipment, we need some additional information regarding the contents
@@ -637,12 +639,12 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             'PG_City',
             'PG_Countrycode',
             'ProductCodeDelivery',
-            'Barcode',
-            'MainBarcode',
             'GroupSequence',
             'GroupCount',
             'ConfirmDate',
             'DeliveryDate',
+            'Barcode',
+            'MainBarcode',
             'ContractReference',
             'ContractName',
             'SenderReference',

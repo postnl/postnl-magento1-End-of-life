@@ -486,12 +486,12 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         /**
          * @var Varien_Simplexml_Element $files
          */
-        $useCufon = $theme->use_cufon;
+        $useCufon = (string) $theme->use_cufon;
         if (!$useCufon) {
             return false;
         }
 
-        if ($useCufon == 1) {
+        if ($useCufon === '1' || strcasecmp($useCufon, 'true') === 0) {
             return true;
         }
 
