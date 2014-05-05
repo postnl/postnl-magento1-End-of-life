@@ -81,7 +81,7 @@
                     </label>
 
                     <?php if ($_isPostnl): ?>
-                        <div class="postnl-container">
+                        <div class="postnl-container" id="postnl_container" style="display:none;">
                             <?php echo $this->getChild('postnl.osc.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
                         </div>
                     <?php endif; ?>
@@ -125,7 +125,7 @@
                                 </label>
 
                                 <?php if ($_isPostnl): ?>
-                                    <div class="postnl-container">
+                                    <div class="postnl-container" id="postnl_container" style="display:none;">
                                         <?php echo $this->getChild('postnl.osc.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
                                     </div>
                                 <?php endif; ?>

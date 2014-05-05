@@ -156,7 +156,7 @@ TIG_PostNL::Contact URL,Contact URL
 TIG_PostNL::URL of a page where customers can find contact information for your webshop. Leave empty to disable this feature.,Pagina van een website waar klanten contactinformatie van uw webshop kunnen vinden. Laat leeg om niet te gebruiken
 TIG_PostNL::Service URL,Service URL
 TIG_PostNL::URL of a page where customers can find information regarding the webshop's customer service department. Leave empty to disable this feature.,Pagina van een website waar klanten informatie over de serviceafdeling van uw webshop kunnen vinden. Laat leeg om niet te gebruiken.
-TIG_PostNL::PostNL Checkout Payment Settings,PostNL Checkout betalingsinstellingen
+TIG_PostNL::PostNL Checkout Payment Settings,PostNL Checkout Betalingsinstellingen
 TIG_PostNL::PostNL Checkout is disabled. please enable PostNL Checkout in order to configure these settings.,PostNL Checkout is niet geactiveerd. Activeer PostNL Checkout om deze instellingen te configureren.
 TIG_PostNL::Use iDEAL,Gebruik iDeal
 TIG_PostNL::iDEAL payment method,iDeal betaalmethode
@@ -869,3 +869,4 @@ TIG_PostNL::Always stay informed? Download the MijnPakket app.,Altijd op de hoog
 TIG_PostNL::The customer was redirected to the cart because the quote was empty.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote leeg was."
 TIG_PostNL::The customer was redirected to the cart because the quote had the following error(s): %s.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote de volgende errors bevat: %s."
 TIG_PostNL::The customer was redirected to the cart because the quote is multishipping.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote voor multishipping bestemd is."
+TIG_PostNL::more delivery times and pick-up locations,meer bezorgtijden en ophaalpunten
