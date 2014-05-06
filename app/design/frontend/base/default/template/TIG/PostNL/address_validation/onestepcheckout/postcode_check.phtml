@@ -45,7 +45,7 @@
 <?php endif; ?>
 
 <?php $_addressType = $this->hasAddressType() ? $this->getAddressType() : 'billing'; ?>
-<?php $_streetValidationClass = $this->helper('customer/address')->getAttributeValidationClass('street'); ?>
+<?php $_streetValidationClass = $this->helper('postnl/addressValidation')->getAttributeValidationClass('street'); ?>
 <?php $_streetValidationClassNotRequired = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
 
 <?php $_dataHelper = Mage::helper('onestepcheckout'); ?>

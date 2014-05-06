@@ -112,4 +112,7 @@
     <show_on_map translate="message" module="postnl">
         <message>Show on the map</message>
     </show_on_map>
+    <open_24_7 translate="message" module="postnl">
+        <message>Open 24/7</message>
+    </open_24_7>
 </jstranslator>
