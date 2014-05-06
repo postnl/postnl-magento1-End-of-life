@@ -3365,7 +3365,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         locations.each(function(location) {
             if (filterEarly) {
                 var type = location.getType();
-                if (type.indexOf('PGE') < 0) {
+                if (type.indexOf('PGE') < 0 && type.indexOf('PA') < 0) {
                     location.getMapElement().hide();
                     location.getMarker().setVisible(false);
 
@@ -4045,6 +4045,8 @@ PostnlDeliveryOptions.Location = new Class.create({
      * @returns {string}
      */
     getOpeningHoursHtml : function() {
+        var html;
+
         /**
          * Add the opening hours for every day of the week.
          */
@@ -4054,7 +4056,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         /**
          * Monday
          */
-        var html = '<tr>';
+        html = '<tr>';
         html += '<th>' + Translator.translate('Mo') + '</th>';
         if (openingHours.Monday && openingHours.Monday.string && openingHours.Monday.string.join() != '') {
             html += '<td>' + (openingHours.Monday.string.join('<br />')).replace('-', ' - ') + '</td>';

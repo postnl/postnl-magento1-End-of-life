@@ -98,8 +98,11 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
             '' => Mage::helper('postnl')->__('-- none --'),
         );
 
-        $pageOptions = Mage::getResourceModel('cms/page_collection')->load()
-                                                                    ->toOptionIdArray();
+        /**
+         * @var Mage_Cms_Model_Resource_Page_Collection $pageCollection
+         */
+        $pageCollection = Mage::getResourceModel('cms/page_collection')->load();
+        $pageOptions = $pageCollection->toOptionIdArray();
 
         $options = array_merge($options, $pageOptions);
         $this->setOptions($options);

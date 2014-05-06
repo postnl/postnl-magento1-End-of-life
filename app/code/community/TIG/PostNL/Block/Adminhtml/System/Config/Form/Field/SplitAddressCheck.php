@@ -40,24 +40,25 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck
     extends TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_TextBox_Abstract
 {
     /**
+     * Xpaths to split street configuration options.
+     */
+    const XPATH_SPLIT_STREET       = 'postnl/cif_address/split_street';
+    const XPATH_USE_POSTCODE_CHECK = 'postnl/cif_address/use_postcode_check';
+
+    /**
      * @var string
      */
     protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_splitaddresscheck';
 
     /**
-     * XML path to split street configuration option
-     */
-    const XML_PATH_SPLIT_STREET = 'postnl/cif_address/split_street';
-
-    /**
-     * Template file used
+     * Template file used.
      *
      * @var string
      */
     protected $_template = 'TIG/PostNL/system/config/form/field/split_address_check.phtml';
 
     /**
-     * Get if the split_street field is enabled
+     * Get if the split_street field or the postcode check is enabled.
      *
      * @return boolean
      */
@@ -69,14 +70,21 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck
          * Check if the split_street field is enabled based on the current scope
          */
         if ($request->getParam('store')) {
-            $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, $request->getparam('store'));
+            $usePostcodeCheck = Mage::getStoreConfigFlag(self::XPATH_USE_POSTCODE_CHECK, $request->getparam('store'));
+            $splitStreet      = Mage::getStoreConfigFlag(self::XPATH_SPLIT_STREET, $request->getparam('store'));
         } elseif ($request->getParam('website')) {
             $website = Mage::getModel('core/website')->load($request->getparam('website'), 'code');
-            $splitStreet = (bool) $website->getConfig(self::XML_PATH_SPLIT_STREET, $website->getId());
+            $usePostcodeCheck = (bool) $website->getConfig(self::XPATH_USE_POSTCODE_CHECK, $website->getId());
+            $splitStreet      = (bool) $website->getConfig(self::XPATH_SPLIT_STREET, $website->getId());
         } else {
-            $splitStreet = (bool) Mage::getStoreConfig(self::XML_PATH_SPLIT_STREET, Mage_Core_Model_App::ADMIN_STORE_ID);
+            $usePostcodeCheck = Mage::getStoreConfigFlag(self::XPATH_USE_POSTCODE_CHECK, Mage_Core_Model_App::ADMIN_STORE_ID);
+            $splitStreet      = Mage::getStoreConfigFlag(self::XPATH_SPLIT_STREET, Mage_Core_Model_App::ADMIN_STORE_ID);
         }
 
-        return $splitStreet;
+        if ($usePostcodeCheck || $splitStreet) {
+            return true;
+        }
+
+        return false;
     }
 }
