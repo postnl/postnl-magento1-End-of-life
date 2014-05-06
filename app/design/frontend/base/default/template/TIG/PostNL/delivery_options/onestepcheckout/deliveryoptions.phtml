@@ -257,7 +257,7 @@
             deliveryOptions = new PostnlDeliveryOptions(params, options, debug);
             window.deliveryOptions = deliveryOptions;
         } catch(e) {
-            console.log(e);
+            console.error(e);
         }
 
         if (typeof deliveryOptions != 'undefined') {

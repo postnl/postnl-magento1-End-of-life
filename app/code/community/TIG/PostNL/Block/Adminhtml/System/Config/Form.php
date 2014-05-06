@@ -42,7 +42,7 @@
 class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block_System_Config_Form
 {
     /**
-     * For Magento versions below these versions we need to execute some special backwards compatgibility code.
+     * For Magento versions below these versions we need to execute some special backwards compatibility code.
      */
     const MINIMUM_VERSION_COMPATIBILITY            = '1.7.0.0';
     const MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY = '1.12.0.0';
