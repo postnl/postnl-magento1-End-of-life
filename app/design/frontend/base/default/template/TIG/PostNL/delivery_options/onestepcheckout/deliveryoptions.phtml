@@ -48,110 +48,98 @@
 <?php $_deliveryDate  = $this->getDeliveryDate(); ?>
 <?php $_streetData    = $this->getStreetData(); ?>
 <?php $_housenumber   = $_streetData['housenumber']; ?>
-
-<?php $_showOptions = true; ?>
-<?php if (!$_postcode || !$_postcode == '-' || !$_housenumber): ?>
-    <?php $_showOptions = false; ?>
-<?php endif; ?>
-
-<?php if ($_showOptions): ?>
-    <div id="osc_initial_loader"><?php echo $this->__('Loading...'); ?></div>
-    <div id="postnl_add_moment" style="display:none;">
-        <ul class="option-list">
-            <li class="location">
+<div id="osc_initial_loader"><?php echo $this->__('Loading...'); ?></div>
+<div id="postnl_add_moment" style="display:none;">
+    <ul class="option-list">
+        <li class="location">
+            <div class="bkg">
                 <div class="bkg">
-                    <div class="bkg">
-                        <div class="content">
-                            <strong class="location-name overflow-protect"><?php echo $_address->getStreetFull(); ?></strong>
-                        </div>
+                    <div class="content">
+                        <strong class="location-name overflow-protect"><?php echo $_address->getStreetFull(); ?></strong>
                     </div>
-                </div>
-            </li>
-        </ul>
-        <ul class="option-list">
-            <li class="add-moment">
-                <a id="add_moment_link" href="#" ><?php echo $this->__('more delivery times and pick-up locations'); ?></a>
-            </li>
-        </ul>
-        
-        
-    </div>
-    <div id="postnl_delivery_options" style="display:none;">
-        <div class="popup-overlay">
-            <div class="popup-window">
-                <div class="popup-header title">
-                    <h2><?php echo $this->__('Delivery Options'); ?></h2>
-                    <a title="<?php echo $this->__('Close'); ?>" id="close_options_popup" class="btn-close"><?php echo $this->__('Close'); ?></a>
-                </div>
-                <div id="initial_loader"><?php echo $this->__('Loading...'); ?></div>
-                <div id="osc_scrollbar_container" style="display:none;">
-                    <div id="osc_scrollbar_track">
-                        <div id="osc_scrollbar_handle"></div>
-                    </div>
-                    <div id="osc_scrollbar_content" class="popup-content col2-set">
-                        <div id="postnl_delivery" class="col-1">
-                            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
-                            <ul class="option-list" id="timeframes">
-                                <li class="location">
-                                    <div class="bkg">
-                                        <div class="bkg">
-                                            <div class="content">
-                                                <strong class="location-name"><?php echo $_address->getStreetFull(); ?></strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div id="postnl_pickup" class="col-2">
-                            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
-                            <ul class="option-list" id="pgelocation"></ul>
-                            <ul class="option-list" id="pglocation"></ul>
-                            <ul class="option-list" id="palocation"></ul>
-                            <ul class="option-list" id="customlocation"></ul>
-                            <ul class="option-list" id="add_location">
-                                <li class="add-location">
-                                    <a id="add_location_link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="button-set">
-                    <button type="button" class="button btn-save next" id="close_options_popup_btn">
-                        <span>
-                            <span><?php echo $this->__('Save'); ?></span>
-                        </span>
-                    </button>
                 </div>
             </div>
-            <script type="text/javascript">
-                //<![CDATA[
-                var oscScrollbar = new Control.ScrollBar(
-                    'osc_scrollbar_content',
-                    'osc_scrollbar_track',
-                    {
-                        fixed_scroll_distance : 50
-                    }
-                );
-
-                var recalculateOscScrollbar = function() {
-                    oscScrollbar.recalculateLayout();
-                };
-                document.stopObserving('postnl:domModified', recalculateOscScrollbar);
-                document.observe('postnl:domModified', recalculateOscScrollbar);
-                //]]>
-            </script>
+        </li>
+    </ul>
+    <ul class="option-list">
+        <li class="add-moment">
+            <a id="add_moment_link" href="#" ><?php echo $this->__('more delivery times and pick-up locations'); ?></a>
+        </li>
+    </ul>
+</div>
+<div id="postnl_delivery_options" style="display:none;">
+    <div class="popup-overlay">
+        <div class="popup-window">
+            <div class="popup-header title">
+                <h2><?php echo $this->__('Delivery Options'); ?></h2>
+                <a title="<?php echo $this->__('Close'); ?>" id="close_options_popup" class="btn-close"><?php echo $this->__('Close'); ?></a>
+            </div>
+            <div id="initial_loader"><?php echo $this->__('Loading...'); ?></div>
+            <div id="osc_scrollbar_container" style="display:none;">
+                <div id="osc_scrollbar_track">
+                    <div id="osc_scrollbar_handle"></div>
+                </div>
+                <div id="osc_scrollbar_content" class="popup-content col2-set">
+                    <div id="postnl_delivery" class="col-1">
+                        <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+                        <ul class="option-list" id="timeframes">
+                            <li class="location">
+                                <div class="bkg">
+                                    <div class="bkg">
+                                        <div class="content">
+                                            <strong class="location-name"><?php echo $_address->getStreetFull(); ?></strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="postnl_pickup" class="col-2">
+                        <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+                        <ul class="option-list" id="pgelocation"></ul>
+                        <ul class="option-list" id="pglocation"></ul>
+                        <ul class="option-list" id="palocation"></ul>
+                        <ul class="option-list" id="customlocation"></ul>
+                        <ul class="option-list" id="add_location">
+                            <li class="add-location">
+                                <a id="add_location_link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="button-set">
+                <button type="button" class="button btn-save next" id="close_options_popup_btn">
+                    <span>
+                        <span><?php echo $this->__('Save'); ?></span>
+                    </span>
+                </button>
+            </div>
         </div>
+        <script type="text/javascript">
+            //<![CDATA[
+            var oscScrollbar = new Control.ScrollBar(
+                'osc_scrollbar_content',
+                'osc_scrollbar_track',
+                {
+                    fixed_scroll_distance : 50
+                }
+            );
+
+            var recalculateOscScrollbar = function() {
+                oscScrollbar.recalculateLayout();
+            };
+            document.stopObserving('postnl:domModified', recalculateOscScrollbar);
+            document.observe('postnl:domModified', recalculateOscScrollbar);
+            //]]>
+        </script>
     </div>
-    <?php echo $this->getChildHtml('postnl.osc.add.location') ?>
-    <?php echo $this->getChildHtml('postnl.add.phonenumber') ?>
-<?php endif; ?>
+</div>
+<?php echo $this->getChildHtml('postnl.osc.add.location') ?>
+<?php echo $this->getChildHtml('postnl.add.phonenumber') ?>
 <script type="text/javascript">
     //<![CDATA[
-    var saveBillingRequest = false;
-
-    var showOptions = <?php echo $_showOptions ? 'true' : 'false'; ?>;
+    window.saveBillingRequest = false;
     var deliveryOptions;
     var searchField = $('search_field');
 
@@ -173,39 +161,54 @@
      */
     registerOscObservers();
 
-    if (showOptions) {
-        try {
-            var billingOrShipping = $('billing:use_for_shipping_yes').checked ? 'billing' : 'shipping';
+    try {
+        initDeliveryOptions();
+    } catch(e) {
+        console.error(e);
+    }
 
-            postcode = getPostnlPostcode(billingOrShipping);
-            housenumber = getPostnlHousenumber(billingOrShipping);
-
-
-            /**
-             * Preload an array of images.
-             */
-            preloadImages(images);
-
-            /**
-             * Start the delivery options script.
-             */
-            startDeliveryOptions(postcode, housenumber, fullAddress);
-
-            /**
-             * Hack to prevent OSC from spamming a set_methods_seperate AJAX call every time the address search field is
-             * clicked.
-             */
-            searchField.stopObserving('click');
-            searchField.observe('click', function() {
-                searchField.stopObserving('click');
-            });
-        } catch(e) {
-            console.error(e);
+    function initDeliveryOptions() {
+        var billingOrShipping;
+        if ($('billing:use_for_shipping_yes').checked) {
+            billingOrShipping = 'billing';
+        } else {
+            billingOrShipping = 'shipping';
         }
+
+        postcode    = getPostnlPostcode(billingOrShipping);
+        housenumber = getPostnlHousenumber(billingOrShipping);
+
+        /**
+         * If we don't have a postcode or house number, we cant retrieve the available time frames and locations.
+         */
+        if (!postcode || !housenumber) {
+            return;
+        }
+
+        $('postnl_container').show();
+
+        /**
+         * Pre-load an array of images.
+         */
+        preloadImages(images);
+
+        /**
+         * Start the delivery options script.
+         */
+        startDeliveryOptions(postcode, housenumber, fullAddress);
+
+        /**
+         * Hack to prevent OSC from spamming a set_methods_seperate AJAX call every time the address search field is
+         * clicked.
+         */
+        searchField.stopObserving('click');
+        searchField.observe('click', function() {
+            searchField.stopObserving('click');
+        });
     }
 
     /**
-     * Start the elivery options script.
+     * Start the delivery options script.
      *
      * @param {string} postcode
      * @param {int}    housenumber
@@ -350,7 +353,7 @@
         }
 
         /**
-         * If we don't have a housenumber and no preset address is chosen, get the housenumber from the housenumber
+         * If we don't have a house number and no preset address is chosen, get the house number from the house number
          * address field.
          */
         if (!housenumber
@@ -486,9 +489,9 @@
          */
         document.stopObserving('postnl:postcodeCheckSuccess');
         document.observe('postnl:postcodeCheckSuccess', function() {
-            if (saveBillingRequest) {
-                saveBillingRequest.transport.abort();
-                saveBillingRequest = false;
+            if (window.saveBillingRequest) {
+                window.saveBillingRequest.transport.abort();
+                window.saveBillingRequest = false;
             }
 
             if (deliveryOptions && deliveryOptions.timeframeRequest) {
@@ -522,7 +525,6 @@
             $$('div.onestepcheckout-summary')[0].update('<div class="loading-ajax">&nbsp;</div>');
         });
 
-
         /**
          * Reload shipping costs after a delivery option has been saved.
          */
@@ -551,8 +553,8 @@
         }
 
         return function()    {
-            if (saveBillingRequest) {
-                saveBillingRequest.transport.abort();
+            if (window.saveBillingRequest) {
+                window.saveBillingRequest.transport.abort();
             }
 
             var form = $('onestepcheckout-form');
@@ -623,7 +625,7 @@
             var totals = get_totals_element();
             totals.update('<div class="loading-ajax">&nbsp;</div>');
 
-            saveBillingRequest = new Ajax.Request(url, {
+            window.saveBillingRequest = new Ajax.Request(url, {
                 method: 'post',
                 onSuccess: function(transport)    {
                     if(transport.status == 200)    {
@@ -645,7 +647,7 @@
                     }
                 },
                 onComplete: function(transport){
-                    saveBillingRequest = false;
+                    window.saveBillingRequest = false;
                     if(transport.status == 200)    {
                         if(shipment_methods_found)  {
                             $$('dl.shipment-methods input').invoke('observe', 'click', get_separate_save_methods_function(set_methods_url, update_payments));

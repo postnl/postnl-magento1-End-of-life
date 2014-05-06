@@ -64,7 +64,7 @@ TIG_PostNL::Optional Shipment grid columns,Optional Shipment grid columns
 TIG_PostNL::Select which optional columns to show in the shipment grid.,Select which optional columns to show in the shipment grid.
 TIG_PostNL::Select a default option for the shipment grid mass action,Select a default option for the shipment grid mass action
 TIG_PostNL::These fields are used to configure the track & trace email that may be automatically emailed to customers after a shipment has been confirmed.,These fields are used to configure the track & trace email that may be automatically emailed to customers after a shipment has been confirmed.
-TIG_PostNL::Send track & trace email to customer,Send track & trace email to customer
+TIG_PostNL::Automatically send track & trace email to customer,Automatically send track & trace email to customer
 "TIG_PostNL::If enabled, a track & trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.","If enabled, a track & trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed."
 TIG_PostNL::Track & trace email template,Track & trace email template
 TIG_PostNL::Address Settings,Address Settings
@@ -740,7 +740,7 @@ TIG_PostNL::Confirmation Expired,Confirmation Expired
 "TIG_PostNL::Invalid arguments supplied. In order to save a selected option, a type, delivery date and optional extra costs are required.","Invalid arguments supplied. In order to save a selected option, a type, delivery date and optional extra costs are required."
 TIG_PostNL::Invalid type supplied: %s,Invalid type supplied: %s
 TIG_PostNL::Invalid extra costs supplied: %s Extra costs must be supplied as a float.,Invalid extra costs supplied: %s Extra costs must be supplied as a float.
-"TIG_PostNL::Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode.","Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number and zipcode."
+"TIG_PostNL::Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number, phonenumber and zipcode.","Invalid argument supplied. A valid PakjeGemak address must contain at least a city, country code, street, house number, phonenumber and zipcode."
 TIG_PostNL::Invalid arguments supplied. The 'costs' parameter is required.,Invalid arguments supplied. The 'costs' parameter is required.
 TIG_PostNL::Please enter a valid Dutch mobile phone number using only digits.,Please enter a valid Dutch mobile phone number using only digits.
 TIG_PostNL::Phone number for Package Dispenser service,Phone number for Package Dispenser service
@@ -823,9 +823,7 @@ TIG_PostNL::User manual,User manual
 TIG_PostNL::Delivery options theme,Delivery options theme
 "TIG_PostNL::You can view an example of the different themes <a href=""http://servicedesk.totalinternetgroup.nl"" target=""_blank"" title=""PostNL delivery option themes"">here</a>.","You can view an example of the different themes <a href=""http://servicedesk.totalinternetgroup.nl"" target=""_blank"" title=""PostNL delivery option themes"">here</a>."
 TIG_PostNL::Default PostNL theme,Default PostNL theme
-TIG_PostNL::Unbranded theme,Unbranded theme
-TIG_PostNL::Following your shipment becomes even easier by using your own MijnPakket account. With a MijnPakket account you have the ability to track your shipment online or by using the MijnPakket app from the moment your place your order to the moment it is delivered. You can also change the destinationof your order after it's been shipped if it turns out you will not be home to accept it. You can also use your MijnPakket account to login quickly at hundreds of webshops without having to enter your personal data. So create a MijnPakket account now at %shttps://mijnpakket.postnl.nl%s!,Following your shipment becomes even easier by using your own MijnPakket account. With a MijnPakket account you have the ability to track your shipment online or by using the MijnPakket app from the moment your place your order to the moment it is delivered. You can also change the destinationof your order after it's been shipped if it turns out you will not be home to accept it. You can also use your MijnPakket account to login quickly at hundreds of webshops without having to enter your personal data. So create a MijnPakket account now at %shttps://mijnpakket.postnl.nl%s!
-TIG_PostNL::Did you know that you can also track your shipments using your MijnPakket account and the PostNL MijnPakket app? The MijnPakket app is available for iOS and Android and deliveres all the easy-to-use features of MijnPakket straight to your cellphone! Using this app you can view your shipment's status and change the intended delivery address. Useful for when you are not at home! Download the app today!,Did you know that you can also track your shipments using your MijnPakket account and the PostNL MijnPakket app? The MijnPakket app is available for iOS and Android and deliveres all the easy-to-use features of MijnPakket straight to your cellphone! Using this app you can view your shipment's status and change the intended delivery address. Useful for when you are not at home! Download the app today!
+TIG_PostNL::Neutral theme,Neutral theme
 "TIG_PostNL::You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order.","You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order."
 TIG_PostNL::Show MijnPakket notification on the order success page,Show MijnPakket notification on the order success page
 TIG_PostNL::This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.,This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.
@@ -856,3 +854,16 @@ TIG_PostNL::Magento Community Edition version,Magento Community Edition version
 TIG_PostNL::Magento Enterprise Edition version,Magento Enterprise Edition version
 TIG_PostNL::Idev's OneStepCheckout version,Idev's OneStepCheckout version
 TIG_PostNL::choose a different shipping address,choose a different shipping address
+TIG_PostNL::Magento & 3rd party version compatibility,Magento & 3rd party version compatibility
+TIG_PostNL::PostNL - Confirm Shipment,PostNL - Confirm Shipment
+TIG_PostNL::Always stay informed? Click %shere%s to create a MijnPakket account based on your order details.,Always stay informed? Click %shere%s to create a MijnPakket account based on your order details.
+TIG_PostNL::Track your shipment's current status and whereabouts,Track your shipment's current status and whereabouts
+TIG_PostNL::Change the delivery time and place if you are not at home,Change the delivery time and place if you are not at home
+TIG_PostNL::All your shipments available in a single overview,All your shipments available in a single overview
+TIG_PostNL::Always stay informed? Download the MijnPakket app.,Always stay informed? Download the MijnPakket app.
+TIG_PostNL::The customer was redirected to the cart because the quote was empty.,The customer was redirected to the cart because the quote was empty.
+TIG_PostNL::The customer was redirected to the cart because the quote had the following error(s): %s.,The customer was redirected to the cart because the quote had the following error(s): %s.
+TIG_PostNL::The customer was redirected to the cart because the quote is multishipping.,The customer was redirected to the cart because the quote is multishipping.
+TIG_PostNL::more delivery times and pick-up locations,more delivery times and pick-up locations
+TIG_PostNL::Select this checkbox to only show post office locations that are open as early as 8:30 A.M.,Select this checkbox to only show post office locations that are open as early as 8:30 A.M.
+TIG_PostNL::Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.,Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.
