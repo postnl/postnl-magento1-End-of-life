@@ -71,7 +71,7 @@
             <span class="required">*</span>
         </label>
         <br />
-        <input type="text" title="<?php echo $_postnlHelper->__('Zip/Postal Code') ?>" name="<?php echo $_addressType; ?>[postcode]" id="<?php echo $_addressType; ?>:postcode" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" />
+        <input type="text" title="<?php echo $_postnlHelper->__('Zip/Postal Code') ?>" name="<?php echo $_addressType; ?>[postcode]" id="<?php echo $_addressType; ?>:postcode" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getPostcode()) ?>" class="input-text validate-zip-international <?php echo $this->helper('postnl/addressValidation')->getAttributeValidationClass('postcode') ?>" />
     </div>
     <div class="input-box input-housenumber">
         <label for="<?php echo $_addressType; ?>:street2">
@@ -117,7 +117,7 @@
             <span class="required">*</span>
         </label>
         <br />
-        <input type="text" title="<?php echo $_postnlHelper->__('City') ?>" name="<?php echo $_addressType; ?>[city]" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getCity()) ?>" class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('city') ?> <?php echo $_readOnlyClass; ?>" id="<?php echo $_addressType; ?>:city" <?php echo $_readOnly; ?>/>
+        <input type="text" title="<?php echo $_postnlHelper->__('City') ?>" name="<?php echo $_addressType; ?>[city]" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getCity()) ?>" class="input-text <?php echo $this->helper('postnl/addressValidation')->getAttributeValidationClass('city') ?> <?php echo $_readOnlyClass; ?>" id="<?php echo $_addressType; ?>:city" <?php echo $_readOnly; ?>/>
     </div>
 </li>
 
