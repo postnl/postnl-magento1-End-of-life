@@ -52,13 +52,13 @@
                         <li <?php if (!$_canUsePakjeGemakExpress): ?>style="display:none;"<?php endif; ?>>
                             <a id="early-filter" class="location-option-checkbox"><?php echo $_helper->__('early pickup');?></a>
                             <div id="early_filter_tooltip" class="postnl-tooltip">
-                                <div>Als u een MijnPakket account heeft, kunt u met deze knop hierop inloggen. Wanneer u dit doet, zal de webshop uw voorkeursadres standaard gebruiken als uw factuur- en verzendadres. Uiteraard kunt u dit aanpassen als het een ander adres moet zijn.</div>
+                                <div><?php echo $_helper->__('Select this checkbox to only show post office locations that are open as early as 8:30 A.M.'); ?></div>
                             </div>
                         </li>
                         <li>
                             <a id="evening-filter" class="location-option-checkbox"><?php echo $_helper->__('opened in the evening');?></a>
                             <div id="evening_filter_tooltip" class="postnl-tooltip">
-                                <div>Als u een MijnPakket account heeft, kunt u met deze knop hierop inloggen. Wanneer u dit doet, zal de webshop uw voorkeursadres standaard gebruiken als uw factuur- en verzendadres. Uiteraard kunt u dit aanpassen als het een ander adres moet zijn.</div>
+                                <div><?php echo $_helper->__('Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.'); ?></div>
                             </div>
                         </li>
                     </ul>
@@ -87,9 +87,7 @@
                 <div class="button-set">
                     <button type="button" class="button btn-save next disabled" disabled="disabled" id="location_save">
                         <span>
-                            <span>
-                                <?php echo $_helper->__('Save'); ?>
-                            </span>
+                            <span><?php echo $_helper->__('Save'); ?></span>
                         </span>
                     </button>
                 </div>
