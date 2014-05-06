@@ -489,9 +489,9 @@
          */
         document.stopObserving('postnl:postcodeCheckSuccess');
         document.observe('postnl:postcodeCheckSuccess', function() {
-            if (saveBillingRequest) {
-                saveBillingRequest.transport.abort();
-                saveBillingRequest = false;
+            if (window.saveBillingRequest) {
+                window.saveBillingRequest.transport.abort();
+                window.saveBillingRequest = false;
             }
 
             if (deliveryOptions && deliveryOptions.timeframeRequest) {
@@ -553,7 +553,6 @@
         }
 
         return function()    {
-            console.log(window.saveBillingRequest);
             if (window.saveBillingRequest) {
                 window.saveBillingRequest.transport.abort();
             }
@@ -626,7 +625,7 @@
             var totals = get_totals_element();
             totals.update('<div class="loading-ajax">&nbsp;</div>');
 
-            saveBillingRequest = new Ajax.Request(url, {
+            window.saveBillingRequest = new Ajax.Request(url, {
                 method: 'post',
                 onSuccess: function(transport)    {
                     if(transport.status == 200)    {
@@ -648,7 +647,7 @@
                     }
                 },
                 onComplete: function(transport){
-                    saveBillingRequest = false;
+                    window.saveBillingRequest = false;
                     if(transport.status == 200)    {
                         if(shipment_methods_found)  {
                             $$('dl.shipment-methods input').invoke('observe', 'click', get_separate_save_methods_function(set_methods_url, update_payments));

@@ -450,8 +450,8 @@ PostnlDeliveryOptions.prototype = {
                     }
                 }
 
-                this.unSelectLocation();
-                this.unSelectTimeframe();
+                this.unSelectOptions();
+                this.updateShippingPrice();
             }.bind(this, element));
         }.bind(this));
 
@@ -548,7 +548,6 @@ PostnlDeliveryOptions.prototype = {
     showOptions : function() {
         this.isActive = true;
 
-        document.fire('postnl:loadingStart');
         if (this.debug) {
             console.info('Delivery options starting...');
         }
@@ -1113,6 +1112,9 @@ PostnlDeliveryOptions.prototype = {
         return this;
     },
 
+    /**
+     * @returns {PostnlDeliveryOptions}
+     */
     unSelectLocation : function() {
         var locations = this.locations;
 
@@ -1137,6 +1139,17 @@ PostnlDeliveryOptions.prototype = {
     },
 
     /**
+     * @returns {PostnlDeliveryOptions}
+     */
+    unSelectOptions : function() {
+        this.unSelectLocation();
+        this.unSelectTimeframe();
+        this.setSelectedType(null);
+
+        return this;
+    },
+
+    /**
      * Hides the initial AJAX spinner and shows the delivery options.
      *
      * @returns {PostnlDeliveryOptions}
@@ -1155,13 +1168,11 @@ PostnlDeliveryOptions.prototype = {
 
         document.fire('postnl:loadingFinished');
 
-        document.fire('postnl:domModified');
-
         return this;
     },
 
     /**
-     * Select the PostNL shiopping method radio button.
+     * Select the PostNL shipping method radio button.
      *
      * @returns {PostnlDeliveryOptions}
      */
@@ -1404,7 +1415,7 @@ PostnlDeliveryOptions.prototype = {
         var defaultCurrencyExcl = (defaultCostsExcl).formatMoney(2, ',', '.');
         var currencyExcl        = (extraCostsExcl).formatMoney(2, ',', '.');
 
-        var updateText   = this.getOptions().currencySymbol
+        var updateText = this.getOptions().currencySymbol
             + ' '
             + defaultCurrencyExcl;
 

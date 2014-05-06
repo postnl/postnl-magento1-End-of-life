@@ -49,9 +49,9 @@ TIG_PostNL::Label size,Label formaat
 TIG_PostNL::This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4. Single Dutch or EPS labels are always printed in A6.,Deze instelling geldt alleen voor meerdere Nederlandse en EPS labels. GlobalPack labels wordt altijd in A4 geprint. Enkele Nederlandse of EPS labels worden altijd in A6 geprint.
 TIG_PostNL::Maximum weight per parcel,Maximum gewicht per pakje
 "TIG_PostNL::Determine the maximum weight of each parcel. If a shipment's total weight exceeds this, the shipment will be spread out over multiple parcels.","Bepaal het maximale gewicht per pakje. Als het totaalgewicht teveel is, wordt de zending gesplitst in meerdere pakketjes."
-TIG_PostNL::Weight unit,Gewicht eenheid
+TIG_PostNL::Weight unit,Gewichtseenheid
 TIG_PostNL::Select the unit in which you've entered products' weight,Selecteer de eenheid welke u ingevoerd hebt bij het productgewicht
-TIG_PostNL::Shipment reference type,Verzend referentie type
+TIG_PostNL::Shipment reference type,Verzending referentietype
 TIG_PostNL::Select what to use as a shipment's reference. This will be printed on the shipping label,Selecteer wat de referentie van de verzending is. Dit wordt op het label geprint.
 TIG_PostNL::Custom reference value,Alternatieve referentie waarde.
 "TIG_PostNL::You can use the following variables: {{var shipment_increment_id}}, {{var order_increment_id}} and {{var store_frontend_name}}. The resulting text may not exceed 28 characters.","U kunt de volgende variabelen gebruiken: {{var shipment_increment_id}}, {{var order_increment_id}} en {{var store_frontend_name}}. De uiteindelijke tekst mag niet meer zijn dan 28 karakters."
@@ -127,7 +127,7 @@ TIG_PostNL::Product sorting attribute,Product sortering attribuut
 TIG_PostNL::Global shipping labels can only contain 5 products. This attribute will determine how these are sorted so that only the top 5 will be printed.,Global shipping labels kunnen maximaal 5 producten bevatten.Dit atribuut bepaalt hoe deze zijn gesorteerd zodat alleen de eerste 5 worden geprint.
 TIG_PostNL::Product sorting direction,Product sortering richting
 TIG_PostNL::PostNL Checkout Settings,PostNL Checkout Instellingen
-TIG_PostNL::Enable PostNL Checkout,Activeer PostNL checkout
+TIG_PostNL::Enable PostNL Checkout,Activeer PostNL Checkout
 TIG_PostNL::Mode,Modus
 TIG_PostNL::Here you can customize when and how the PostNL Checkout button is displayed.,Hier kunt u configureren wanneer en hoe de PostNL Checkout knop wordt getoond.
 TIG_PostNL::Enable PostNL Checkout for orders under 2 kg,Activeer PostNL Checkout voor orders onder de 2 kg
@@ -146,7 +146,7 @@ TIG_PostNL::Whether or not the customer's date of birth will be returned by Post
 TIG_PostNL::Allow post office locations,Sta postkantoor locaties toe
 TIG_PostNL::Whether or not the customer may choose a retail location as their delivery address.,Mag de klant wel of niet een winkellokatie kiezen als verzendadres
 TIG_PostNL::Allow foreign addresses,Sta buitenlande adressen toe
-TIG_PostNL::Whether or not the customer may choose a foreign address as their shipping address.,Mag de klant wel of geen buitenalndse adressen kiezen
+TIG_PostNL::Whether or not the customer may choose a foreign address as their shipping address.,Mag de klant wel of geen buitenlandse adressen kiezen
 TIG_PostNL::Allow price overview,Sta prijsoverzicht toe
 TIG_PostNL::Whether or not the user will see a price overview in PostNL Checkout,Of de klant wel of niet een prijsoverzicht in PostNL Checkout ziet
 TIG_PostNL::Agree conditions,Algemene voorwaarden
@@ -190,18 +190,18 @@ TIG_PostNL::Debug mode,Debug modus
 TIG_PostNL::Allow infinite label printing,Sta oneindig labels printen toe
 TIG_PostNL::By default a maximum of 200 labels can be printed at once. Enable this to remove this limitation. Beware: enabling this may lead to server instability.,"Standaard kunt u maximaal 200 labels in een keer printen. Activeer dit om deze limiet te verwijderen. Let op, dit kan leiden tot een onstabiele server."
 TIG_PostNL::Maximum number of parcels per shipment,Maximaal aantal pakketten per zending
-TIG_PostNL::Maximum temporary file storage time,Maximum tijdelijke opslag tijd van tijdelijke verzendlabel bestanden.
+TIG_PostNL::Maximum temporary file storage time,Maximum tijdelijke opslag tijd van tijdelijke verzendlabel bestanden
 "TIG_PostNL::In seconds. After this time, temporary files will be deleted. Only increase this if you use custom functionality to create a very large amount of labels at once.",In seconden. Daarna zullen de tijdelijke bestanden worden verwijderd. Verhoog dit aantal alleen als u handmatig een erg groot aantal labels aanmaakt.
 TIG_PostNL::Number of days before a confirmation expires,Aantal dagen voordat een voormelding verloopt
 TIG_PostNL::If a confirmed shipment has not been shipped after this amount of days it's confirmation will expire.,"Als een voorgemeldde zending niet wordt verstuurd na dit aantal dagen, verloopt de voormelding."
 TIG_PostNL::Send extension usage statistics to PostNL,Stuur de gebruikerstatistieken van de extensie naar PostNL
 TIG_PostNL::PostNL may periodically send important updates regarding new versions of the PostNL extension or important security updates in the same manner as Magento. Disable this setting to no longer ecieve these notifications.,PostNL stuurt periodiek belangrijke updates m.b.t. nieuwe versies van de PostNL extensie of belangrijke beveiligings updates op dezelfde wijze als Magento. Zet deze instelling uit om deze updates niet langer te ontvangen
 TIG_PostNL::The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the extension altogether.,"De volgende velden bepalen de CIF versie die gebruikt wordt door de extensie voor de individuele CIF onderdelen. Indien u deze instellingen wijzigt, kan dit tot onverwachtte resultaten lijden. Het kan er zelfs voor zorgen dat de algehele extensie niet langer functioneert."
-TIG_PostNL::ShippingStatus Webservice version,Verzendstatus webservice versie
-TIG_PostNL::Confirming Webservice version,Voormeld webservice versie
-TIG_PostNL::Labelling Webservice version,Labelling webservice versie
-TIG_PostNL::Barcode Webservice version,Barcode webservice versie
-TIG_PostNL::Checkout Webservice version,Checkout webservice versie
+TIG_PostNL::ShippingStatus webservice version,Verzendstatus webservice versie
+TIG_PostNL::Confirming webservice version,Voormeld webservice versie
+TIG_PostNL::Labelling webservice version,Labelling webservice versie
+TIG_PostNL::Barcode webservice version,Barcode webservice versie
+TIG_PostNL::Checkout webservice version,Checkout webservice versie
 TIG_PostNL::PostNL Track & Trace Email,PostNL Track & Trace e-mail
 TIG_PostNL::Unable to set Payment Method.,Kan de betaalmethode niet instellen.
 "TIG_PostNL::An error occurred while processing your order. Please try again. if this problem persists, please contact the webshop owner.","Een fout is opgetreden tijdens het verwerken van uw bestelling. Probeert u het a.u.b. opnieuw. Mocht dit probleem zich blijven voordoen, neem dan contact op met de webshop eigenaar."
@@ -548,7 +548,7 @@ TIG_PostNL::Use Klarna,Gebruik Klarna
 TIG_PostNL::Klarna payment method,Klarna betaalmethode
 TIG_PostNL::Ping status request resulting in an error.,Ping status verzoek heeft geresulteerd in een fout.
 TIG_PostNL::Ping status response indicated PostNL Checkout is currently not available.,Ping status verzoek geeft aan dat PostNL Checkout momenteel niet beschikbaar is.
-"TIG_PostNL::In order to continuously improve the PostNL extension, the extension sends usage statistics to a secure PostNL server.","Om de extensie continu te verbeteren, verstuurd de extensie enkele gebruiks statistieken naar een beveiligde PostNL server."
+"TIG_PostNL::In order to continuously improve the PostNL extension, the extension sends usage statistics to a secure PostNL server.","Om de extensie continu te verbeteren, verstuurd de extensie enkele gebruiksstatistieken naar een beveiligde PostNL server."
 TIG_PostNL::Receive notifications from PostNL regarding updates and promotions,Ontvang noticaties van PostNL m.b.t. updates en promoties
 "TIG_PostNL::Leave empty to allow an infinite amount of parcels per shipment.<br/>If this value is empty or exceeds 200, you need to set 'Allow infinite label printing' to yes in order to be able to print the shipment's labels.","Laat leeg om een oneindig aantal doosjes per zending toe te staan.<br/>Indien dit veld leeg is of een waarde groter dan 200 bevat, moet 'Sta oneindig labels printen toe' op ja staan. Anders zal het niet mogelijk zijn om van sommige zendingen de labels te printen."
 TIG_PostNL::Allow test mode,Test modus toestaan
@@ -671,7 +671,7 @@ TIG_PostNL::Or pick your own delivery moment,Of kies zelf uw bezorgmoment
 TIG_PostNL::Connection timeout duration,Connectie time-out duur
 "TIG_PostNL::If the postcode check takes more than this nuber of seconds, the user will be prompted to enter their address manually instead.","Indien de postcode check langer duurt dan dit aantal seconde, zal de klant gevraagd worden om handmatig een adres in te vullen."
 "TIG_PostNL::If this nuber is set too high, customers may have to wait for a long time before being able to proceed with their order. This could happen in case there is a connection problem to the postcode check servers. Leave this field empty to disable the timeout functionality.","Indien dit veld een te hoge waarde bevat, kan het voorkomen dat klanten lang moeten wachten voordat ze kunnen afrekenen. Dit kan voorkomen als er connectie problemen zijn met de postcode check servers. Laat dit veld leeg om de time-out functionaliteit uit te schakelen."
-TIG_PostNL::Show PostNL Checkout exclusively to MijnPakket users,Toon PostNL Checkout exclusief an Mijnpakket gebruikers
+TIG_PostNL::Show PostNL Checkout exclusively to MijnPakket users,Toon PostNL Checkout exclusief aan Mijnpakket gebruikers
 "TIG_PostNL::If enabled, PostNL Checkout will only be available to users who already have a Mijnpakket account.","Indien deze optie op ja staat, zal PostNL Checkout enkel getoond worden aan gebruikers die een Mijnpakket account hebben."
 TIG_PostNL::This option is only available if delivery options are enabled.,Deze optie is enkel beschikbaar indien bezorgopties geactiveerd zijn.
 TIG_PostNL::PostNL Delivery Options & MijnPakket login,PostNL Bezorgopties & MijnPakket login
@@ -826,7 +826,7 @@ TIG_PostNL::This may take a minute. The page will refresh once this is done.,Dit
 TIG_PostNL::View the user manual.,Bekijk de geberuikershandleiding.
 TIG_PostNL::User manual,Gebruikershandleiding
 TIG_PostNL::Delivery options theme,Bezorgopties thema
-"TIG_PostNL::You can view an example of the different themes <a href=""http://servicedesk.totalinternetgroup.nl"" target=""_blank"" title=""PostNL delivery option themes"">here</a>.","U kunt een voorbeeld van de verschillende thema's <a href=""http://servicedesk.totalinternetgroup.nl"" target=""_blank"" title=""PostNL bezorgopties thema's"">hier</a> bekijken."
+"TIG_PostNL::You can view an example of the different themes <a href=""http://kb.totalinternetgroup.nl/topic/58787233"" target=""_blank"" title=""PostNL delivery option themes"">here</a>.","U kunt een voorbeeld van de verschillende thema's <a href=""http://kb.totalinternetgroup.nl/topic/58787233"" target=""_blank"" title=""PostNL bezorgopties thema's"">hier</a> bekijken."
 TIG_PostNL::Default PostNL theme,Standaard PostNL thema
 TIG_PostNL::Neutral theme,Neutraal thema
 "TIG_PostNL::You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order.",U kunt er voor kiezen om een melding te tonen aan klanten over MijnPakket nadat zij hun bestelling hebben geplaatst. Deze melding zal klanten informeren over de voordelen van MijnPakket. Klanten kunnen hun MijnPakket account gebruiken om hun bestelling in uw webshop sneller af te ronden. Dit zorgt voor een lager afhaakpercentage en een hogere klanttevredenheid rondom de afhandeling van bestellingen.
@@ -870,3 +870,5 @@ TIG_PostNL::The customer was redirected to the cart because the quote was empty.
 TIG_PostNL::The customer was redirected to the cart because the quote had the following error(s): %s.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote de volgende errors bevat: %s."
 TIG_PostNL::The customer was redirected to the cart because the quote is multishipping.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote voor multishipping bestemd is."
 TIG_PostNL::more delivery times and pick-up locations,meer bezorgtijden en ophaalpunten
+TIG_PostNL::Select this checkbox to only show post office locations that are open as early as 8:30 A.M.,Activeer deze filter om enkel postkantoor locaties te tonen die 's ochtends vanaf 8:30 uur geopend zijn.
+TIG_PostNL::Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.,Activeer deze filter om enkel postkantoor locaties te tonen die 's avonds na 19:00 uur geopend zijn op de eerstvolgende bezorgdag.
