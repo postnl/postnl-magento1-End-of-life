@@ -35,6 +35,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                 hasIsOldMagento()
+ * @method TIG_PostNL_Block_Adminhtml_WindowsTheme setIsOldMagento()
  */
 class TIG_PostNL_Block_Adminhtml_WindowsTheme extends TIG_PostNL_Block_Adminhtml_Template
 {
@@ -56,6 +59,10 @@ class TIG_PostNL_Block_Adminhtml_WindowsTheme extends TIG_PostNL_Block_Adminhtml
      */
     public function getIsOldMagento()
     {
+        if ($this->hasIsOldMagento()) {
+            return $this->_getData('is_old_magento');
+        }
+
         $version = Mage::getVersion();
         $isEnterprise = Mage::helper('postnl')->isEnterprise();
 
@@ -72,6 +79,8 @@ class TIG_PostNL_Block_Adminhtml_WindowsTheme extends TIG_PostNL_Block_Adminhtml
          * Check if the current version is below the minimum version requirement.
          */
         $isOldVersion = version_compare($version, $minimumVersion, '<');
+
+        $this->setIsOldMagento($isOldVersion);
         return $isOldVersion;
     }
 }

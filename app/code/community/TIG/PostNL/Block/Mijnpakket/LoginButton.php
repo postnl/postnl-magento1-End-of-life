@@ -128,7 +128,7 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends TIG_PostNL_Block_Core_Temp
     }
 
     /**
-     * Get saved mijnpakkt data if available.
+     * Get saved MijnPakket data if available.
      *
      * @return array|null
      */
@@ -200,7 +200,7 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends TIG_PostNL_Block_Core_Temp
     }
 
     /**
-     * Check if the current customer may login using Mijnpakket.
+     * Check if the current customer may login using MijnPakket.
      *
      * @return string
      */
