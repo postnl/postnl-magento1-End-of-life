@@ -450,8 +450,8 @@ PostnlDeliveryOptions.prototype = {
                     }
                 }
 
-                this.unSelectLocation();
-                this.unSelectTimeframe();
+                this.unSelectOptions();
+                this.updateShippingPrice();
             }.bind(this, element));
         }.bind(this));
 
@@ -548,7 +548,6 @@ PostnlDeliveryOptions.prototype = {
     showOptions : function() {
         this.isActive = true;
 
-        document.fire('postnl:loadingStart');
         if (this.debug) {
             console.info('Delivery options starting...');
         }
@@ -1113,6 +1112,9 @@ PostnlDeliveryOptions.prototype = {
         return this;
     },
 
+    /**
+     * @returns {PostnlDeliveryOptions}
+     */
     unSelectLocation : function() {
         var locations = this.locations;
 
@@ -1137,6 +1139,17 @@ PostnlDeliveryOptions.prototype = {
     },
 
     /**
+     * @returns {PostnlDeliveryOptions}
+     */
+    unSelectOptions : function() {
+        this.unSelectLocation();
+        this.unSelectTimeframe();
+        this.setSelectedType(null);
+
+        return this;
+    },
+
+    /**
      * Hides the initial AJAX spinner and shows the delivery options.
      *
      * @returns {PostnlDeliveryOptions}
@@ -1155,13 +1168,11 @@ PostnlDeliveryOptions.prototype = {
 
         document.fire('postnl:loadingFinished');
 
-        document.fire('postnl:domModified');
-
         return this;
     },
 
     /**
-     * Select the PostNL shiopping method radio button.
+     * Select the PostNL shipping method radio button.
      *
      * @returns {PostnlDeliveryOptions}
      */
@@ -1404,7 +1415,7 @@ PostnlDeliveryOptions.prototype = {
         var defaultCurrencyExcl = (defaultCostsExcl).formatMoney(2, ',', '.');
         var currencyExcl        = (extraCostsExcl).formatMoney(2, ',', '.');
 
-        var updateText   = this.getOptions().currencySymbol
+        var updateText = this.getOptions().currencySymbol
             + ' '
             + defaultCurrencyExcl;
 
@@ -3354,7 +3365,7 @@ PostnlDeliveryOptions.Map = new Class.create({
         locations.each(function(location) {
             if (filterEarly) {
                 var type = location.getType();
-                if (type.indexOf('PGE') < 0) {
+                if (type.indexOf('PGE') < 0 && type.indexOf('PA') < 0) {
                     location.getMapElement().hide();
                     location.getMarker().setVisible(false);
 
@@ -4034,6 +4045,8 @@ PostnlDeliveryOptions.Location = new Class.create({
      * @returns {string}
      */
     getOpeningHoursHtml : function() {
+        var html;
+
         /**
          * Add the opening hours for every day of the week.
          */
@@ -4043,7 +4056,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         /**
          * Monday
          */
-        var html = '<tr>';
+        html = '<tr>';
         html += '<th>' + Translator.translate('Mo') + '</th>';
         if (openingHours.Monday && openingHours.Monday.string && openingHours.Monday.string.join() != '') {
             html += '<td>' + (openingHours.Monday.string.join('<br />')).replace('-', ' - ') + '</td>';

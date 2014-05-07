@@ -53,7 +53,7 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_ActivePaymentMethods
         foreach ($paymentMethods as $code => $model) {
             $title = Mage::getStoreConfig('payment/' . $code . '/title', $storeId);
             if (empty($title)) {
-                continue;
+                $title = $code;
             }
 
             $options[$code] = array(

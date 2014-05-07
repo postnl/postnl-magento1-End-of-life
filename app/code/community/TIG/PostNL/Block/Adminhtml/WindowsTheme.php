@@ -36,35 +36,51 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
- * @method boolean                             hasApiKey()
- * @method TIG_PostNL_Block_DeliveryOptions_Js setApiKey()
+ * @method boolean                                 hasIsOldMagento()
+ * @method TIG_PostNL_Block_Adminhtml_WindowsTheme setIsOldMagento()
  */
-class TIG_PostNL_Block_DeliveryOptions_Js extends TIG_PostNL_Block_DeliveryOptions_Template
+class TIG_PostNL_Block_Adminhtml_WindowsTheme extends TIG_PostNL_Block_Adminhtml_Template
 {
     /**
-     * @var string
+     * For Magento versions below these versions we need to execute some special backwards compatibility code.
      */
-    protected $_eventPrefix = 'postnl_deliveryoptions_js';
+    const MINIMUM_VERSION_COMPATIBILITY            = '1.7.0.0';
+    const MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY = '1.12.0.0';
 
     /**
      * @var string
      */
-    protected $_template = 'TIG/PostNL/delivery_options/js.phtml';
+    protected $_eventPrefix = 'postnl_adminhtml_windowstheme';
 
     /**
-     * Get the configured Google maps API key.
+     * Checks whether the current version of Magento is an old version (C.E. 1.6 or E.E. 1.11).
      *
-     * @return string
+     * @return boolean
      */
-    public function getApiKey()
+    public function getIsOldMagento()
     {
-        if ($this->hasApiKey()) {
-            return $this->_getData('api_key');
+        if ($this->hasIsOldMagento()) {
+            return $this->_getData('is_old_magento');
         }
 
-        $apiKey = Mage::getStoreConfig('postnl/google_maps/api_key', Mage::app()->getStore()->getId());
+        $version = Mage::getVersion();
+        $isEnterprise = Mage::helper('postnl')->isEnterprise();
 
-        $this->setApiKey($apiKey);
-        return $apiKey;
+        /**
+         * Get the minimum version requirement for the current Magento edition.
+         */
+        if($isEnterprise) {
+            $minimumVersion = self::MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY;
+        } else {
+            $minimumVersion = self::MINIMUM_VERSION_COMPATIBILITY;
+        }
+
+        /**
+         * Check if the current version is below the minimum version requirement.
+         */
+        $isOldVersion = version_compare($version, $minimumVersion, '<');
+
+        $this->setIsOldMagento($isOldVersion);
+        return $isOldVersion;
     }
 }

@@ -336,6 +336,15 @@ MijnpakketLogin.prototype = {
     },
 
     /**
+     * @returns {MijnpakketLogin}
+     */
+    hideTooltip : function() {
+        $('postnl_mijnpakket_tooltip').hide();
+
+        return this;
+    },
+
+    /**
      * @param {{}} data
      *
      * @returns {MijnpakketLogin}
@@ -436,6 +445,8 @@ MijnpakketLogin.prototype = {
         if (!this.isOsc && this.getBilling()) {
             this.getBilling().onSave(response);
         }
+
+        this.hideTooltip();
 
         if (!this.isOsc && $('checkout-step-login')) {
             this.showDummyButton();
