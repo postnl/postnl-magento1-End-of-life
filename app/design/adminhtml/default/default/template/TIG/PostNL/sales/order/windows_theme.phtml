@@ -41,7 +41,7 @@
 ?>
 <?php $_isOldMagento = $this->getIsOldMagento(); ?>
 <?php if ($_isOldMagento): ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS, true); ?>/prototype/windows/themes/magento.css" media="all">
+    <link rel="stylesheet" type="text/css" href="<?php echo Mage::getBaseUrl('js'); ?>prototype/windows/themes/magento.css" media="all"/>
 <?php else: ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/prototype/windows/themes/magento.css'); ?>" media="all">
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/prototype/windows/themes/magento.css'); ?>" media="all"/>
 <?php endif; ?>
