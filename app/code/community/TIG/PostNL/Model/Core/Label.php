@@ -33,8 +33,10 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method TIG_PostNL_Model_Core_Label setLabelSize(string $value)
  */
 class TIG_PostNL_Model_Core_Label extends Varien_Object
 {
@@ -63,6 +65,33 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * @var null | int
      */
     protected $_labelCounter = null;
+
+    /**
+     * Flag if the current label is the first of a set of labels.
+     *
+     * @var bool
+     */
+    protected $_isFirstLabel = false;
+
+    /**
+     * @param boolean $isFirstLabel
+     *
+     * @return TIG_PostNL_Model_Core_Label
+     */
+    public function setIsFirstLabel($isFirstLabel)
+    {
+        $this->_isFirstLabel = $isFirstLabel;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getIsFirstLabel()
+    {
+        return $this->_isFirstLabel;
+    }
 
     /**
      * Get the array of saved temporary labels
@@ -125,7 +154,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
         $labelSize = Mage::getStoreConfig(self::XML_PATH_LABEL_SIZE, Mage_Core_Model_App::ADMIN_STORE_ID);
 
-        $this->setLabelSeize($labelSize);
+        $this->setLabelSize($labelSize);
         return $labelSize;
     }
 
@@ -229,12 +258,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         $this->_destroyTempLabels();
 
         /**
-         * Output the label as a download response
+         * Get the final label.
          */
-        $pdf->Output('PostNL Shipping Labels.pdf', 'D');
+        $label = $pdf->Output('PostNL Shipping Labels.pdf', 'I');
 
         Varien_Profiler::stop('tig::postnl::core::label_createpdf');
-        return $this;
+
+        return $label;
     }
 
     /**
@@ -268,6 +298,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             );
         }
 
+        $this->setIsFirstLabel(true);
         $labels = $this->_sortLabels($labels);
         foreach ($labels as $label) {
             $pdf = $this->_addPdfTemplate($pdf, $label);
@@ -279,9 +310,10 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     /**
      * Adds a lebl to the pdf by storing it in a temporary pdf file and then adding it to the master pdf object
      *
-     * @param TIG_PostNL_Fpdi $pdf
-     * @param string $label
-     * @param int $labelCounter A counter used to determine the position of the next label to be added.
+     * @param TIG_PostNL_Fpdi                      $pdf
+     * @param TIG_PostNL_Model_Core_Shipment_Label $label
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return TIG_PostNL_Fpdi $pdf
      */
@@ -293,6 +325,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         $tempFilename = $this->_saveTempLabel($label->getLabel());
 
         switch ($label->getLabelType()) {
+            /** @noinspection PhpMissingBreakStatementInspection */
             case 'Label-combi':
                 $this->_convertTempLabelToCombi($tempFilename); //NO BREAK
             case 'Label':
@@ -304,34 +337,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 ) {
                     $pdf->addOrientedPage('L', 'A4');
                     $this->resetLabelCounter();
-                }
-
-                /**
-                 * If the configured label size is A6, add a new page every label
-                 */
-                if($this->getLabelSize() == 'A6') {
-                    $this->setLabelCounter(3); //used to calculate the top left position
-                    $pdf->addOrientedPage('L', 'A6');
-                }
-
-                /**
-                 * Calculate the position of the next label to be printed
-                 */
-                $position = $this->_getPosition($this->getLabelCounter());
-                $position['w'] = $this->pix2pt(538);
-
-                $this->increaseLabelCounter();
-                break;
-
-
-                /**
-                 * If the configured label size is A4, add a new page every 4 labels and reset the counter
-                 */
-                if ($this->getLabelSize() == 'A4'
-                    && (!$this->getLabelCounter() || $this->getLabelCounter() > 4)
-                ) {
+                } elseif ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
                     $pdf->addOrientedPage('L', 'A4');
-                    $this->resetLabelCounter();
+                    $this->setIsFirstLabel(false);
                 }
 
                 /**
@@ -426,6 +434,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      *
      * @param string $label
      *
+     * @throws TIG_PostNL_Exception
+     *
      * @return string
      */
     protected function _saveTempLabel($label)
@@ -489,8 +499,12 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     protected function _sortLabels($labels)
     {
         $generalLabels = array();
-        $globalLabels = array();
-        $codCards = array();
+        $globalLabels  = array();
+        $codCards      = array();
+
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment_Label $label
+         */
         foreach ($labels as $label) {
             /**
              * Seperate general labels from the rest
@@ -591,11 +605,12 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * third: bottom left
      * fourth: bottom right
      *
-     * @param int $counter
+     * @param bool|int $counter
+     *
+     * @throws TIG_PostNL_Exception
      *
      * @return array
      *
-     * @throws TIG_PostNL_Exception
      */
     protected function _getPosition($counter = false)
     {
@@ -631,7 +646,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     /**
      * Converts pixels to points. 3.8 pixels is 1 pt in pdfs
      *
-     * @param float $input
+     * @param int $pixels
      *
      * @return int
      */

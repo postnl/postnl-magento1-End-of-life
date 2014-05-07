@@ -33,68 +33,68 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 {
     /**
-     * Log filename to log all non-specific PostNL exceptions
+     * Log filename to log all non-specific PostNL exceptions.
      */
     const POSTNL_EXCEPTION_LOG_FILE = 'TIG_PostNL_Exception.log';
 
     /**
-     * Log filename to log all non-specific PostNL debug messages
+     * Log filename to log all non-specific PostNL debug messages.
      */
     const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_Debug.log';
 
     /**
-     * Directory inside var/log where PostNL log files will be logged
+     * Directory inside var/log where PostNL log files will be logged.
      */
     const POSTNL_LOG_DIRECTORY = 'TIG_PostNL';
 
     /**
-     * Log filename to log all cron log messages
+     * Log filename to log all cron log messages.
      */
     const POSTNL_CRON_DEBUG_LOG_FILE = 'TIG_PostNL_Cron_Debug.log';
 
     /**
-     * XML path to postnl general active/inactive setting
+     * XML path to postnl general active/inactive setting.
      */
     const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
 
     /**
-     * XML path to postnl carier active/inactive setting
+     * XML path to postnl carier active/inactive setting.
      */
     const XML_PATH_CARRIER_ACTIVE = 'carriers/postnl/active';
 
     /**
-     * XML path to test/live mode config option
+     * XML path to test/live mode config option.
      */
-    const XML_PATH_TEST_MODE = 'postnl/cif_labels_and_confirming/mode';
+    const XML_PATH_TEST_MODE = 'postnl/cif/mode';
 
     /**
-     * XML path to the test mode allowed config option
+     * XML path to the test mode allowed config option.
      */
     const XML_PATH_TEST_MODE_ALLOWED = 'postnl/advanced/allow_test_mode';
 
     /**
-     * XML path to debug mode config option
+     * XML path to debug mode config option.
      */
     const XML_PATH_DEBUG_MODE = 'postnl/advanced/debug_mode';
 
     /**
-     * XML path to 'is_activated' flag
+     * XML path to 'is_activated' flag.
      */
     const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
 
     /**
-     * XML path to 'show_error_details_in_frontend' flag
+     * XML path to 'show_error_details_in_frontend' flag.
      */
     const XML_PATH_SHOW_ERROR_DETAILS_IN_FRONTEND = 'postnl/advanced/show_error_details_in_frontend';
 
     /**
-     * XML path to use_globalpack settings
+     * XML path to use_globalpack settings.
      */
     const XML_PATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
 
@@ -104,7 +104,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_ALLOW_EPS_BE_ONLY_OPTION = 'postnl/cif_product_options/allow_eps_be_only_options';
 
     /**
-     * Required configuration fields
+     * Required configuration fields.
      *
      * @var array
      */
@@ -122,7 +122,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
-     * Required configuration fields for live mode
+     * Required configuration fields for live mode.
      *
      * @var array
      */
@@ -132,7 +132,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
-     * Required configuration fields for test mode
+     * Required configuration fields for test mode.
      *
      * @var array
      */
@@ -142,7 +142,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
-     * Required configuration fields when using global shipments
+     * Required configuration fields when using global shipments.
      *
      * @var array
      */
@@ -156,7 +156,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
-     * Get required fields array
+     * Get required fields array.
      *
      * @return array
      */
@@ -166,7 +166,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get required fields for live mode array
+     * Get required fields for live mode array.
      *
      * @return array
      */
@@ -176,7 +176,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get required fields for test mode array
+     * Get required fields for test mode array.
      *
      * @return array
      */
@@ -186,7 +186,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get required fields for global shipments array
+     * Get required fields for global shipments array.
      *
      * @return array
      */
@@ -196,7 +196,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get debug mode config setting
+     * Get debug mode config setting.
      *
      * @return int
      */
@@ -213,7 +213,57 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Checks to see if the module may ship to the Netherlands using PostNL standard shipments
+     * Gets a shipment's PakjeGemak address if available.
+     *
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     *
+     * @return bool|Mage_Sales_Model_Order_Address
+     */
+    public function getPakjeGemakAddressForShipment(Mage_Sales_Model_Order_Shipment $shipment)
+    {
+        $order = $shipment->getOrder();
+
+        return $this->getPakjeGemakAddressForOrder($order);
+    }
+
+    /**
+     * Gets an order's PakjeGemak address if available.
+     *
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return bool|Mage_Sales_Model_Order_Address
+     */
+    public function getPakjeGemakAddressForOrder(Mage_Sales_Model_Order $order)
+    {
+        /**
+         * Check if this order was placed using PostNL.
+         */
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $shippingMethod = $order->getShippingMethod();
+
+        /**
+         * If this shipment's order was not placed with PostNL, we need to ignore any PakjeGemak addresses that may have
+         * been saved.
+         */
+        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+            return false;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Order_Address $address
+         */
+        $addressCollection = $order->getAddressesCollection();
+        foreach ($addressCollection as $address) {
+            if ($address->getAddressType() == 'pakje_gemak') {
+                return $address;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks to see if the module may ship to the Netherlands using PostNL standard shipments.
      *
      * @param boolean|int $storeId
      *
@@ -235,7 +285,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Checks to see if the module may ship using PakjeGemak
+     * Checks to see if the module may ship using PakjeGemak.
      *
      * @param boolean|int $storeId
      *
@@ -336,6 +386,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function saveConfigState($configState = array())
     {
+        /**
+         * @var Mage_Admin_Model_User $adminUser
+         */
         $adminUser = Mage::getSingleton('admin/session')->getUser();
         if (!$adminUser) {
             return false;
@@ -362,6 +415,87 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                   ->saveExtra($extra);
 
         return true;
+    }
+
+    /**
+     * Checks if the current admin user is allowed for the specified actions.
+     *
+     * @param array|string $actions
+     * @param boolean      $throwException
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @return bool
+     */
+    public function checkIsPostnlActionAllowed($actions = array(), $throwException = false)
+    {
+        if (!is_array($actions)) {
+            $actions = array($actions);
+        }
+
+        foreach ($actions as $action) {
+            if ($this->_isActionAllowed($action)) {
+                continue;
+            }
+
+            if ($throwException) {
+                throw new TIG_PostNL_Exception(
+                    $this->__('The current user is not allowed to perform this action.'),
+                    'POSTNL-0155'
+                );
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if a specified action is allowed for the current admin user.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function _isActionAllowed($action)
+    {
+        switch ($action) {
+            case 'create_shipment':
+                $aclPath = 'sales/order/actions/ship';
+                break;
+            case 'confirm':
+                $aclPath = 'postnl/shipment/actions/confirm';
+                break;
+            case 'print_label':
+                $aclPath = 'postnl/shipment/actions/print_label';
+                break;
+            case 'view_complete_status':
+                $aclPath = 'postnl/shipment/complete_status';
+                break;
+            case 'reset_confirmation':
+                $aclPath = 'postnl/shipment/actions/reset_confirmation';
+                break;
+            case 'delete_labels':
+                $aclPath = 'postnl/shipment/actions/delete_labels';
+                break;
+            case 'create_parcelware_export':
+                $aclPath = 'postnl/shipment/actions/create_parcelware_export';
+                break;
+            case 'send_track_and_trace':
+                $aclPath = 'postnl/shipment/actions/send_track_and_trace';
+                break;
+            default:
+                $aclPath = false;
+                break;
+        }
+
+        if (!$aclPath) {
+            return false;
+        }
+
+        $isAllowed = Mage::getSingleton('admin/session')->isAllowed($aclPath);
+        return $isAllowed;
     }
 
     /**
@@ -403,7 +537,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Checks if test mode is currently allowed
      *
-     * @deprecated v1.1.4 Will now always return true.
+     * @deprecated 1.2.0 Test mode is now always allowed, regardless of configuration. This method should therefore not
+     *                   be used anymore and may be removed in the future.
      *
      * @return boolean
      */
@@ -415,8 +550,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Alias for isEnabled()
      *
-     * @param int | bool $storeId
-     * @param boolean $checkGlobal
+     * @param int|boolean  $storeId
+     * @param boolean      $checkGlobal
      * @param null|boolean $forceTestMode
      *
      * @return boolean
@@ -480,6 +615,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
+         * Make sure that the required PHP extensions are loaded.
+         */
+        $phpExtensionsLoaded = $this->areRequiredPHPExtensionsLoaded($registryKey);
+        if ($phpExtensionsLoaded === false) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
          * Check if the module's required configuration options have been filled
          */
         $isConfigured = $this->isConfigured($storeId, $checkGlobal, $forceTestMode);
@@ -504,8 +648,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             );
 
             $errorMessage = $this->__(
-                'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under %sSystem > Config > Shipping Methods%s.',
-                '<a href="' . $shippingMethodSectionurl . '" target="_blank" title="' . $this->__('Shipping Methods') . '">',
+                'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under '
+                    . '%sSystem > Config > Shipping Methods%s.',
+                '<a href="'
+                    . $shippingMethodSectionurl
+                    . '" target="_blank" title="'
+                    . $this->__('Shipping Methods')
+                    . '">',
                 '</a>'
             );
 
@@ -541,6 +690,58 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Check if the required SOAP, OpenSSL and MCrypt PHP extensions are loaded.
+     *
+     * @param string $registryKey
+     *
+     * @return bool
+     */
+    public function areRequiredPHPExtensionsLoaded($registryKey)
+    {
+        $errors = array();
+        if (!extension_loaded('soap')) {
+            $errors[] = array(
+                'code'    => 'POSTNL-0134',
+                'message' => $this->__(
+                    'The SOAP extension is not installed. PostNL requires the SOAP extension to communicate with '
+                    . 'PostNL.'
+                ),
+            );
+        }
+
+        if (!extension_loaded('openssl')) {
+            $errors[] = array(
+                'code'    => 'POSTNL-0135',
+                'message' => $this->__(
+                    'The OpenSSL extension is not installed. The PostNL extension requires the OpenSSL extension to '
+                    . 'secure the communications with the PostNL servers.'
+                ),
+            );
+        }
+
+        if (!extension_loaded('mcrypt')) {
+            $errors[] = array(
+                'code'    => 'POSTNL-0137',
+                'message' => $this->__(
+                    'The MCrypt extension is not installed. The PostNL extension requires the MCrypt extension to '
+                    . 'secure the communications with the PostNL servers.'
+                ),
+            );
+        }
+
+        /**
+         * Register any errors that may have ocurred and return false.
+         */
+        if (!empty($errors)) {
+            Mage::register($registryKey . '_errors', $errors);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Check if the modules has been confgured.
      * The required fields will only be checked to see if they're not empty. The values entered will not be validated
      *
@@ -549,8 +750,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @param null|boolean $forceTestMode
      *
      * @return boolean
-     *
-     * @todo properly implement global check
      */
     public function isConfigured($storeId = false, $checkGlobal = false, $forceTestMode = null)
     {
@@ -613,8 +812,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Check if each required field is filled. If not add the field's label to an array of missing fields so we can later
-         * inform the merchant which fields exactly are missing.
+         * Check if each required field is filled. If not add the field's label to an array of missing fields so we can
+         * later inform the merchant which fields exactly are missing.
+         *
+         * @var Varien_Simplexml_Element $section
          */
         $configFields = Mage::getSingleton('adminhtml/config');
         $sections     = $configFields->getSections('postnl');
@@ -622,22 +823,29 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         foreach ($requiredFields as $requiredField) {
             $value = Mage::getStoreConfig($requiredField, $storeId);
 
-            if ($value === null || $value === '') {
-                $fieldParts = explode('/', $requiredField);
-                $field = $fieldParts[2];
-                $group = $fieldParts[1];
-
-                $label = (string) $section->groups->$group->fields->$field->label;
-                $groupLabel = (string) $section->groups->$group->label;
-                $groupName = $section->groups->$group->getName();
-
-                $errors[] = array(
-                    'code'    => 'POSTNL-0034',
-                    'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
-                );
-
-                $this->saveConfigState(array('postnl_' . $groupName => 1));
+            if ($value !== null && $value !== '') {
+                continue;
             }
+
+            $fieldParts = explode('/', $requiredField);
+            $field = $fieldParts[2];
+            $group = $fieldParts[1];
+
+            /**
+             * @var Varien_Simplexml_Element $sectionGroup
+             */
+            $sectionGroup = $section->groups->$group;
+
+            $label      = (string) $sectionGroup->fields->$field->label;
+            $groupLabel = (string) $sectionGroup->label;
+            $groupName  = $sectionGroup->getName();
+
+            $errors[] = array(
+                'code'    => 'POSTNL-0034',
+                'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
+            );
+
+            $this->saveConfigState(array('postnl_' . $groupName => 1));
         }
 
         /**
@@ -689,17 +897,21 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Based on Mage_Core_Model_Config::getModuleDir()
      *
      * @param string $dir The directory in question
-     * @param string $module The module for which the directory is needed
+     * @param string $moduleName
      *
      * @return string
      *
-     * @see Mage_Core_Model_Config::getModuleDir()
+     * @see      Mage_Core_Model_Config::getModuleDir()
      */
     public function getModuleDir($dir, $moduleName = 'TIG_PostNL')
     {
         $config = Mage::app()->getConfig();
 
-        $codePool = (string)$config->getModuleConfig($moduleName)->codePool;
+        /**
+         * @var Varien_Simplexml_Element $moduleConfig
+         */
+        $moduleConfig = $config->getModuleConfig($moduleName);
+        $codePool = (string) $moduleConfig->codePool;
         $path = $config->getOptions()->getCodeDir()
               . DS
               . $codePool
@@ -735,13 +947,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Logs a debug message. Based on Mage::log
+     * Logs a debug message. Based on Mage::log.
      *
-     * @param string $message
-     * @param int | null $level
-     * @param string | null $file
-     * @param boolean $forced
-     * @param boolean $isError
+     * @param string      $message
+     * @param int|null    $level
+     * @param string|null $file
+     * @param boolean     $forced
+     * @param boolean     $isError
      *
      * @return TIG_PostNL_Helper_Data
      *
@@ -774,7 +986,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Logs a cron debug messageto a seperate file in order to differentiate it from other debug messages
      *
      * @param string $message
-     * @param int | int $level
+     * @param int    $level
      *
      * @return TIG_PostNL_Helper_Data
      *
@@ -818,7 +1030,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Checks if the current edition of Magento is enterprise. Uses Mage::getEdition if available or version_compare if it is not
+     * Checks if the current edition of Magento is enterprise. Uses Mage::getEdition if available. If not, look for the
+     * Enterprise_Enterprise extension. Finally, check the version number.
      *
      * @return boolean
      *
@@ -827,7 +1040,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function isEnterprise()
     {
         /**
-         * Use Mage::getEdition, which is available since CE 1.7 and EE 1.12
+         * Use Mage::getEdition, which is available since CE 1.7 and EE 1.12.
          */
         if (method_exists('Mage', 'getEdition')) {
             $edition = Mage::getEdition();
@@ -840,7 +1053,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             }
 
             /**
-             * If the edition is not community or enterprise, it is not supported
+             * If the edition is not community or enterprise, it is not supported.
              */
             throw new TIG_PostNL_Exception(
                 $this->__('Invalid Magento edition detected: %s', $edition),
@@ -849,10 +1062,17 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Do a version check instead
+         * Check if the Enterprise_Enterprise extension is installed.
+         */
+        if (Mage::getConfig()->getNode('modules')->Enterprise_Enterprise) {
+            return true;
+        }
+
+        /**
+         * Do a version check instead.
          */
         $version = Mage::getVersion();
-        if (version_compare($version, '1.9.0.0', '>=')) { //1.9.0.0 was the first Magento Enterprise version
+        if (version_compare($version, '1.9.0.0', '>=')) {
             return true;
         }
 
@@ -871,7 +1091,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Fallback check in case the previous check returns a false positive
+         * Fallback check in case the previous check returns a false negative.
          */
         if (Mage::getDesign()->getArea() == 'adminhtml') {
             return true;
@@ -898,8 +1118,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Gets the knowledge base URL for a specified error code. First we check to see if we have an entry in config.xml for this
-     * error code and if so, if it has an associated URL.
+     * Gets the knowledge base URL for a specified error code. First we check to see if we have an entry in config.xml
+     * for this error code and if so, if it has an associated URL.
      *
      * @param string $errorCode The error code (for example: POSTNL-0001)
      *
@@ -916,8 +1136,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Adds an error message to the specified session based on an exception. The exception should contain a valid error code
-     * in order to properly process the error. Exceptions without a (valid) error code will behave like a regular
+     * Adds an error message to the specified session based on an exception. The exception should contain a valid error
+     * code in order to properly process the error. Exceptions without a (valid) error code will behave like a regular
      * $session->addError() call.
      *
      * @param string|Mage_Core_Model_Session_Abstract $session The session to which the messages will be added.
@@ -977,8 +1197,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * Add a message to the specified session. Message can be an error, a success message, an info message or a warning.
-     * If a valid error code is supplied, the message will be prepended with the error code and a link to a knowledgebase article
-     * will be appended.
+     * If a valid error code is supplied, the message will be prepended with the error code and a link to a
+     * knowledgebase article will be appended.
      *
      * If no $code is specified, $messageType and $message will be required
      *
@@ -996,9 +1216,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function addSessionMessage($session, $code = null, $messageType = null, $message = null)
     {
-        /************************************************************************************************************************
+        /***************************************************************************************************************
          * Check that the required arguments are available and valid
-         ***********************************************************************************************************************/
+         **************************************************************************************************************/
 
         /**
          * If $code is null or 0, $messageType and $message are required
@@ -1015,8 +1235,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * If the session is a string, treat it as a class name and instantiate it
          */
-        if (is_string($session)) {
+        if (is_string($session) && strpos($session, '/') !== false) {
             $session = Mage::getSingleton($session);
+        } elseif (is_string($session)) {
+            $session = Mage::getSingleton($session . '/session');
         }
 
         /**
@@ -1032,9 +1254,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             );
         }
 
-        /************************************************************************************************************************
+        /***************************************************************************************************************
          * Get the actual error from config.xml if it's available
-         ***********************************************************************************************************************/
+         **************************************************************************************************************/
 
         $error = false;
         $link = false;
@@ -1049,10 +1271,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             }
         }
 
-        /************************************************************************************************************************
-         * Check that the required 'message' and 'messageType' components are available. If they are not yet available, we'll try
-         * to read them from the error itself.
-         ***********************************************************************************************************************/
+        /***************************************************************************************************************
+         * Check that the required 'message' and 'messageType' components are available. If they are not yet available,
+         * we'll try to read them from the error itself.
+         **************************************************************************************************************/
 
         /**
          * If the specified error was found and no message was supplied, get the error's default message
@@ -1089,10 +1311,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             );
         }
 
-        /************************************************************************************************************************
-         * Build the actual message we're going to add. The message will consist of the error code, followed by the actual
-         * message and finally a link to the knowledge base. Only the message part is required.
-         ***********************************************************************************************************************/
+        /***************************************************************************************************************
+         * Build the actual message we're going to add. The message will consist of the error code, followed by the
+         * actual message and finally a link to the knowledge base. Only the message part is required.
+         **************************************************************************************************************/
 
         /**
          * Flag that determines whether the error code and knowledgebase link will be included in the error message
@@ -1114,22 +1336,22 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Add the actual message. This is the only required part. The code and link are optional
          */
-        $errorMessage .= $this->__($message);
+        $errorMessage .= $this->escapeHtml($this->__($message));
 
         /**
          * Add the link to the knowledgebase if we have one
          */
         if ($canShowErrorDetails && $link) {
             $errorMessage .= ' <a href="'
-                           . $link
+                           . $this->escapeHtml($link)
                            . '" target="_blank" class="postnl-message">'
                            . $this->__('Click here for more information from the TiG knowledgebase.')
                            . '</a>';
         }
 
-        /************************************************************************************************************************
+        /***************************************************************************************************************
          * Finally, let's add the error to the session
-         ***********************************************************************************************************************/
+         **************************************************************************************************************/
 
         /**
          * The method we'll use to add the message to the session has to be built first
@@ -1155,7 +1377,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Checks to see if we can show error details (error code and knowledgebase link) in the frontend when an error occurs.
+     * Checks to see if we can show error details (error code and knowledgebase link) in the frontend when an error
+     * occurs.
      *
      * @return boolean
      */

@@ -1,0 +1,223 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php
+/**
+ * @var TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions $this
+ */
+?>
+<?php $_address                 = $this->getShippingAddress(); ?>
+<?php $_postcode                = $this->getPostcode(); ?>
+<?php $_deliveryDate            = $this->getDeliveryDate(); ?>
+<?php $_streetData              = $this->getStreetData(); ?>
+<?php $_housenumber             = $_streetData['housenumber']; ?>
+
+<?php $_canUsePakjeGemak        = $this->canUsePakjeGemak(); ?>
+<?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
+<?php $_canUsePakketAutomaat    = $this->canUsePakketAutomaat(); ?>
+
+<?php $_canAddLocation = true; ?>
+<?php if (!$_canUsePakjeGemak && !$_canUsePakjeGemakExpress && !$_canUsePakketAutomaat): ?>
+    <?php $_canAddLocation = false; ?>
+<?php endif; ?>
+<div id="initial_loader"><?php echo $this->__('Loading...'); ?></div>
+<div id="postnl_delivery_options" style="display:none;">
+    <div class="title">
+        <h2><?php echo $this->__('Delivery Options'); ?></h2>
+    </div>
+    <div class="col2-set">
+        <div id="postnl_delivery" class="col-1">
+            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+            <ul class="option-list" id="timeframes">
+                <li class="location">
+                    <div class="bkg">
+                        <div class="bkg">
+                            <div class="content">
+                                <strong class="location-name overflow-protect"><?php echo $this->escapeHtml($_address->getStreetFull()); ?></strong>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <ul class="option-list" id="change_address">
+                <li class="add-location">
+                    <a id="change_address_link" href="#" ><?php echo $this->__('choose a different shipping address'); ?></a>
+                </li>
+            </ul>
+        </div>
+        <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
+            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+            <ul class="option-list" id="pgelocation"></ul>
+            <ul class="option-list" id="pglocation"></ul>
+            <ul class="option-list" id="palocation"></ul>
+            <ul class="option-list" id="customlocation"></ul>
+            <ul class="option-list" id="add_location">
+                <li class="add-location">
+                    <a id="add_location_link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <?php echo $this->getChildHtml('postnl.add.location') ?>
+    <?php echo $this->getChildHtml('postnl.add.phonenumber') ?>
+</div>
+<script type="text/javascript">
+    //<![CDATA[
+    /**
+     * Preload an array of images.
+     */
+    var baseUrl = '<?php echo $this->getSkinUrl('images/TIG/PostNL/deliveryoptions/locations'); ?>';
+    var images = [
+        'albertheijn', 'bruna', 'c1000', 'coop', 'default', 'emte', 'jumbo', 'plus', 'primera', 'readshop', 'spar',
+        'staples', 'gamma', 'karwei'
+    ];
+    preloadImages(images);
+
+    var options;
+    var params;
+    var debug = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
+
+    params = {
+        saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
+        timeframesUrl      : '<?php echo $this->getUrl('postnl/deliveryOptions/getDeliveryTimeframes', array('_secure' => true)) ?>',
+        locationsUrl       : '<?php echo $this->getUrl('postnl/deliveryOptions/getNearestLocations', array('_secure' => true)) ?>',
+        locationsInAreaUrl : '<?php echo $this->getUrl('postnl/deliveryOptions/getLocationsInArea', array('_secure' => true)) ?>',
+        postcode           : '<?php echo $this->escapeHtml($_postcode); ?>',
+        housenumber        : '<?php echo $this->escapeHtml($_housenumber); ?>',
+        deliveryDate       : '<?php echo $this->escapeHtml($_deliveryDate); ?>',
+        imageBaseUrl       : baseUrl,
+        fullAddress        : "<?php echo $this->escapeHtml(implode(' ', $_address->getStreet()) . ', ' . $_address->getCity() . ', ' . $_address->getPostcode() . ', ' . $_address->getCountry()); ?>"
+    };
+
+    options = {
+        taxDisplayType         : <?php echo $this->getTaxDisplayType() ?>,
+        eveningFeeIncl         : <?php echo $this->getFee('evening', true); ?>,
+        eveningFeeExcl         : <?php echo $this->getFee('evening', false); ?>,
+        expressFeeIncl         : <?php echo $this->getFee('express', true); ?>,
+        expressFeeExcl         : <?php echo $this->getFee('express', false); ?>,
+        eveningFeeText         : '<?php echo $this->getFeeText('evening', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
+        expressFeeText         : '<?php echo $this->getFeeText('express', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
+        allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
+        allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
+        allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
+        allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
+        allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
+        allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
+        disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
+        shippingMethodName     : '<?php echo $this->getMethodName()          ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
+        currencySymbol         : '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(); ?>'
+    };
+
+    try {
+        deliveryOptions = new PostnlDeliveryOptions(params, options, debug);
+    } catch(e) {
+        console.log(e);
+    }
+
+    if (typeof deliveryOptions != 'undefined') {
+        try {
+            deliveryOptions.showOptions();
+            window.deliveryOptions = deliveryOptions;
+        } catch(e) {
+            console.log(e);
+            $('initial_loader').hide();
+            $('postnl_delivery_options').show();
+            $('postnl_pickup').hide();
+            deliveryOptions.showDefaultTimeframe();
+        }
+    } else {
+        $('initial_loader').hide();
+        $('postnl_delivery_options').show();
+        $('postnl_pickup').hide();
+    }
+
+    var changeAddressLink = $('change_address_link');
+    changeAddressLink.stopObserving('click');
+    changeAddressLink.observe('click', function() {
+        checkout.gotoSection('shipping');
+    });
+
+    /**
+     * Preload images.
+     *
+     * @param {Array} images
+     */
+    function preloadImages(images) {
+        var loadedImages = [];
+
+        for (var i = 0, o = images.length; i < images.length; i++, o++) {
+            loadedImages[i] = new Image();
+            loadedImages[i].src = baseUrl + '/drp_' + images[i] + '.png';
+
+            loadedImages[o] = new Image();
+            loadedImages[o].src = baseUrl + '/crc_' + images[i] + '.png';
+        }
+    }
+
+    Object.extend(shippingMethod, {
+        save: function(){
+            if (checkout.loadWaiting!=false) return;
+            if (this.validate()) {
+                var continueWithSave = false;
+                if (deliveryOptions) {
+                    continueWithSave = deliveryOptions.saveSelectedOption();
+                } else {
+                    continueWithSave = true;
+                }
+
+                if (!continueWithSave) {
+                    return;
+                }
+
+                checkout.setLoadWaiting('shipping-method');
+                var request = new Ajax.Request(
+                    this.saveUrl,
+                    {
+                        method:'post',
+                        onComplete: this.onComplete,
+                        onSuccess: this.onSave,
+                        onFailure: checkout.ajaxFailure.bind(checkout),
+                        parameters: Form.serialize(this.form)
+                    }
+                );
+            }
+        }
+    });
+    //]]>
+</script>

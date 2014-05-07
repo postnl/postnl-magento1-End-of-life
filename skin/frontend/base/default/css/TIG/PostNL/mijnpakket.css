@@ -1,0 +1,42 @@
+/* MijnPakket Login ====================================================================== */
+#postnl_mijnpakket h3,
+#postnl_mijnpakket h4 { display:inline-block; margin-bottom:.6em; }
+#postnl_mijnpakket p { margin-bottom:1em; }
+#postnl_mijnpakket hr.mijnpakket_seperator { display:block; border:none; height:1px; background:#cfcfcf; margin:1em 0; }
+
+#postnl_mijnpakket_login_btn span { display:inline-block; cursor:pointer; }
+
+#mijnpakket_data_loaded { background:url(../../../images/TIG/PostNL/mijnpakket/logo_small.png) 15px 10px no-repeat; padding:10px 20px 10px 60px; margin-bottom:1em; border:1px solid #f2f2f2; }
+
+#login-buttons-container { opacity:1 !important; }
+
+#postnl_login_spinner { top: 500px; }
+
+/* Tooltip (Default Magento) */
+.postnl-tooltip { display:inline-block; width:15px; height:15px; position:relative; z-index:1; background:url(../../../images/TIG/PostNL/icon-tooltip.png) no-repeat 0 0; margin-left:2px; cursor:help; vertical-align:sub; }
+.postnl-tooltip:hover { z-index:100; }
+.postnl-tooltip > span { display:none; }
+.postnl-tooltip:hover > div:hover,
+.postnl-tooltip > div { width:301px; background:#f6f6f6 url(../../../images/TIG/PostNL/bkg_tooltip.png) repeat-y 100%; opacity:0; position:absolute; z-index:999; left:-296px; bottom:28px; padding:0 12px; color:#464d50; line-height:1.5; visibility:hidden; }
+.postnl-tooltip > div:before { position:absolute; top:-5px; left:0; content:''; width:325px; height:5px; overflow:hidden; background:url(../../../images/TIG/PostNL/bkg_tooltip.png) no-repeat 0 0; }
+.postnl-tooltip > div:after { position:absolute; bottom:-14px; left:-1px; content:''; width:325px; height:14px; overflow:hidden; background:url(../../../images/TIG/PostNL/bkg_tooltip.png) no-repeat -325px 0; }
+.postnl-tooltip:hover > div { opacity:1; width:301px; visibility:visible; bottom:30px; }
+
+/* OneStepCheckout */
+#onestepcheckout-form div.checkoutcontainer { overflow:visible !important; }
+#onestepcheckout-form hr.mijnpakket_seperator { width:95%; }
+/* ======================================================================================= */
+
+/* Checkout Success ====================================================================== */
+#postnl_notifications > div { padding-top:1em; margin-top:3em; border-top:1px solid #cfcfcf; padding-left:80px; min-height:60px; }
+
+#create_mijnpakket_account { background:url(../../../images/TIG/PostNL/mijnpakket/logo.png) 0 1em no-repeat; }
+#create_mijnpakket_account a { color:#f05a22; }
+
+ul.mijnpakket-usp { list-style:disc inside; }
+
+#mijnpakket_app { background:url(../../../images/TIG/PostNL/mijnpakket/app_logo.png) 0 1em no-repeat; }
+#mijnpakket_app li a { display:block; width:134px; height:45px; background-image:url(../../../images/TIG/PostNL/mijnpakket/app_buttons.png); text-indent:-999em; float:left; margin:1em 1em 0 0; }
+#mijnpakket_app #apple_store a { background-position:0 0; }
+#mijnpakket_app #google_play a { background-position:0 100%; }
+/* ======================================================================================= */

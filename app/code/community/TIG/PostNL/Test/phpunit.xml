@@ -1,0 +1,21 @@
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.0/phpunit.xsd"
+         bootstrap="bootstrap.php"
+         colors="true">
+
+    <testsuites>
+        <testsuite>
+            <directory>.</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>../../PostNL/Block</directory>
+            <directory>../../PostNL/controllers</directory>
+            <directory>../../PostNL/Helper</directory>
+            <directory>../../PostNL/Model</directory>
+            <file>../../PostNL/Exception.php</file>
+        </whitelist>
+    </filter>
+</phpunit>
