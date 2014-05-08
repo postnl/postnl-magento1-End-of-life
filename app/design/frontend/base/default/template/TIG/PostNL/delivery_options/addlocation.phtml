@@ -1,0 +1,97 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php $_helper = Mage::helper('postnl'); ?>
+<?php $_address = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress(); ?>
+<?php $_canUsePakjeGemakExpress = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemakExpress(); ?>
+<div id="postnl_add_location" style="display:none;">
+    <div class="popup-overlay">
+        <div class="popup-window">
+            <div class="popup-header">
+                <h2><?php echo $_helper->__('Select pickup location'); ?></h2>
+                <div class="search-location">
+                    <input type="text" class="input-text" name="test" value="<?php echo $_address->getPostcode(); ?>" id="search_field" placeholder="<?php echo $_helper->__('Search by zipcode, address or city'); ?>"/>
+                    <button type="button" class="button btn-search" id="search_button"><span><span><?php echo $_helper->__('Search'); ?></span></span></button>
+                    <ul class="location-options">
+                        <li <?php if (!$_canUsePakjeGemakExpress): ?>style="display:none;"<?php endif; ?>>
+                            <a id="early-filter" class="location-option-checkbox"><?php echo $_helper->__('early pickup');?></a>
+                            <div id="early_filter_tooltip" class="postnl-tooltip">
+                                <div><?php echo $_helper->__('Select this checkbox to only show post office locations that are open as early as 8:30 A.M.'); ?></div>
+                            </div>
+                        </li>
+                        <li>
+                            <a id="evening-filter" class="location-option-checkbox"><?php echo $_helper->__('opened in the evening');?></a>
+                            <div id="evening_filter_tooltip" class="postnl-tooltip">
+                                <div><?php echo $_helper->__('Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.'); ?></div>
+                            </div>
+                        </li>
+                    </ul>
+                    <em id="search_error_message" class="no-results" style="display:none;"><?php echo $_helper->__('The address you searched for was not found. Please try again.'); ?></em>
+                </div>
+                <a title="<?php echo $_helper->__('Close'); ?>" id="close_popup" class="btn-close"><?php echo $_helper->__('Close'); ?></a>
+            </div>
+            <div class="popup-map" id="map-div"></div>
+
+            <div class="popup-content">
+                <h2><?php echo $_helper->__('Pickup locations found'); ?><span id="locations_loader" style="display:none;"><?php echo $_helper->__('Loading...'); ?></span></h2>
+
+                <div id="scrollbar_container">
+                    <div id="scrollbar_track">
+                        <div id="scrollbar_handle"></div>
+                    </div>
+                    <ul id="scrollbar_content" class="location-list">
+                        <li id="no_locations_error" class="location-error-msg" style="display:none;"><?php echo $_helper->__('We could not find any locations matching your filters. Please unselect any filters or try again at a different location.'); ?></li>
+                    </ul>
+                </div>
+                <div class="location-details" id="location-info-window" style="display:none;">
+                    <a id="location-details-close" title="<?php echo $_helper->__('Close'); ?>" class="btn-close">
+                        <?php echo Mage::helper('postnl')->__('Close'); ?>
+                    </a>
+                </div>
+                <div class="button-set">
+                    <button type="button" class="button btn-save next disabled" disabled="disabled" id="location_save">
+                        <span>
+                            <span><?php echo $_helper->__('Save'); ?></span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

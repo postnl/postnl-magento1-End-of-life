@@ -1,0 +1,38 @@
+a.postnl-message {color:#EA7601 !important; text-decoration:underline;}
+
+/* Messages */
+.module-message { padding:9px 9px 2px 30px; margin-bottom:20px; border:1px solid #ccc; color:#2f2f2f !important; font-weight:normal !important; }
+.module-message li { margin-bottom:4px; }
+.module-message.success { background:#edf7eb url(../../../images/TIG/PostNL/glyph_success.gif) 9px 9px no-repeat; border-color:#22731f; }
+.module-message.info { background:#e6eef8 url(../../../images/TIG/PostNL/glyph_info.gif) 9px 9px no-repeat; border-color:#264697; }
+.module-message.warning { background:#fff7bd url(../../../images/TIG/PostNL/glyph_warning.gif) 9px 9px no-repeat; border-color:#c68c05; }
+.module-message.error { background:#fdece4 url(../../../images/TIG/PostNL/glyph_error.gif) 9px 9px no-repeat; border-color:#c63625; }
+.module-message ul.postnl-errors {list-style:disc inside; }
+
+/* Waiting notification */
+.waiting-notification { width:100%; height:999em; position:absolute; top:83px; left:0; background:rgba(255, 255, 255, .7); }
+.waiting-notification .content { text-align:center; background:#fef4eb; border:4px solid #f5bf8c; height:136px; width:436px; position:fixed; left:50%; top:50%; margin:-68px 0 0 -218px; z-index:100; }
+.waiting-notification .content img { margin:20px 0 15px; }
+
+/* General */
+body.no-scroll { overflow:hidden !important; }
+.three-column { width:32%; }
+.box-middle  { float:left; margin-left:2%; }
+
+/* Label printing position-picker */
+.startpos-picker { width:100%; height:999em; position:absolute; top:83px; left:0; background:rgba(255, 255, 255, .7); }
+.startpos-picker .content { text-align:center; background:#fef4eb; border:4px solid #f5bf8c; height:370px; width:285px; position:fixed; left:43%; top:30%; z-index:100; }
+.startpos-picker .content p { text-align:left; }
+.startpos-picker .content table { width:210px; height:297px; border-spacing:0; margin:0 auto; }
+.startpos-picker .content table td { border:2px solid #ccc; background:#fff; font-size:18px; cursor:pointer; }
+.startpos-picker .content table td.active { background:#f5bf8c; }
+
+/* Tooltip (Default Magento) */
+.postnl-tooltip { display:inline-block; width:15px; height:15px; position:relative; z-index:1; background:url(../../../images/TIG/PostNL/icon-tooltip.png) no-repeat 0 0; margin:3px 5px 0 0; cursor:help; vertical-align:sub; }
+.postnl-tooltip:hover { z-index:100; }
+.postnl-tooltip > span { display:none; }
+.postnl-tooltip:hover > div:hover,
+.postnl-tooltip > div { width:301px; background:#f6f6f6 url(../../../images/TIG/PostNL/bkg_tooltip.png) repeat-y 100%; opacity:0; position:absolute; z-index:999; left:-296px; bottom:28px; padding:0 12px; color:#464d50; visibility:hidden; }
+.postnl-tooltip > div:before { position:absolute; top:-5px; left:0; content:''; width:325px; height:5px; overflow:hidden; background:url(../../../images/TIG/PostNL/bkg_tooltip.png) no-repeat 0 0; }
+.postnl-tooltip > div:after { position:absolute; bottom:-14px; left:-1px; content:''; width:325px; height:14px; overflow:hidden; background:url(../../../images/TIG/PostNL/bkg_tooltip.png) no-repeat -325px 0; }
+.postnl-tooltip:hover > div { opacity:1; width:301px; visibility:visible; bottom:30px;}

@@ -1,0 +1,97 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php $_createAccountUrl       = $this->getCreateAccountUrl(); ?>
+<?php $_createAccountLinkTitle = $this->__('Create a new MijnPakket account.'); ?>
+<?php $_createAccountLink      = "<a href='{$_createAccountUrl}' title='{$_createAccountLinkTitle}' target='_blank'>"; ?>
+<?php $_appLinkTitle           = $this->__('Download the PostNL MijnPakket app'); ?>
+<div id="postnl_notifications">
+    <div id="create_mijnpakket_account" style="display:none;">
+        <h4><?php echo $this->__('Always stay informed? Click %shere%s to create a MijnPakket account based on your order details.', $_createAccountLink, '</a>'); ?></h4>
+        <ul class="mijnpakket-usp">
+            <li><?php echo $this->__("Track your shipment's current status and whereabouts"); ?></li>
+            <li><?php echo $this->__('Change the delivery time and place if you are not at home'); ?></li>
+            <li><?php echo $this->__('All your shipments available in a single overview'); ?></li>
+        </ul>
+    </div>
+    <div id="mijnpakket_app" style="display:none;">
+        <h4><?php echo $this->__('Always stay informed? Download the MijnPakket app.'); ?></h4>
+        <ul class="mijnpakket-usp">
+            <li><?php echo $this->__("Track your shipment's current status and whereabouts"); ?></li>
+            <li><?php echo $this->__('Change the delivery time and place if you are not at home'); ?></li>
+            <li><?php echo $this->__('All your shipments available in a single overview'); ?></li>
+        </ul>
+        <ul class="app-links">
+            <li id="apple_store"><a href="https://itunes.apple.com/nl/app/track-trace/id513218878" title="<?php echo $_appLinkTitle; ?>" target="_blank">https://itunes.apple.com/nl/app/track-trace/id513218878</a></li>
+            <li id="google_play"><a href="https://play.google.com/store/apps/details?id=nl.tpp.mobile.android" title="<?php echo $_appLinkTitle; ?>" target="_blank">https://play.google.com/store/apps/details?id=nl.tpp.mobile.android</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="postnl_placeholder" style="display:none;"></div>
+<script type="text/javascript">
+    //<![CDATA[
+    var checkout                 = null;
+    var canShowCreateAccountLink = <?php echo $this->getCanShowCreateAccountLink() ? 'true' : 'false'; ?>;
+    var canShowAppLink           = <?php echo $this->getCanShowAppLink()           ? 'true' : 'false'; ?>;
+
+    document.observe('dom:loaded', function() {
+        if (!canShowAppLink && !canShowCreateAccountLink) {
+            return;
+        }
+
+        var updateLoggedIn = function(data) {
+            if (canShowAppLink && data.Ok) {
+                $('mijnpakket_app').show();
+            } else if (canShowCreateAccountLink && !data.Ok) {
+                $('create_mijnpakket_account').show();
+            }
+        };
+
+        checkout = PostNL.Checkout.init({
+            userLoggedin     : updateLoggedIn,
+            detectPopupState : function() {},
+            elementId        : 'postnl_placeholder',
+            pId              : '<?php echo $this->getPublicWebshopId(); ?>'
+        });
+
+        checkout.checkLogin();
+    });
+    //]]>
+</script>

@@ -33,15 +33,15 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > order grid
  *
- * @method TIG_PostNL_Model_Adminhtml_Observer_OrderGrid setCollection(Varien_Data_Collection $value)
- * @method Varien_Data_Collection                        getCollection()
- * @method TIG_PostNL_Model_Adminhtml_Observer_OrderGrid setBlock(Mage_Core_Block_Abstract $value)
- * @method Mage_Core_Block_Abstract                      getBlock()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_OrderGrid   setCollection(TIG_PostNL_Model_Resource_Order_Grid_Collection $value)
+ * @method TIG_PostNL_Model_Resource_Order_Grid_Collection getCollection()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_OrderGrid   setBlock(Mage_Adminhtml_Block_Sales_Order_Grid $value)
+ * @method Mage_Adminhtml_Block_Sales_Order_Grid           getBlock()
  */
 class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 {
@@ -177,10 +177,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * Join tig_postnl_order table
          */
         $select->joinLeft(
-            array('postnl_order' => $resource->getTableName('postnl_checkout/order')),
+            array('postnl_order' => $resource->getTableName('postnl_core/order')),
             '`main_table`.`entity_id`=`postnl_order`.`order_id`',
             array(
-                'is_pakje_gemak' => 'postnl_order.is_pakje_gemak',
+                'is_pakje_gemak'       => 'postnl_order.is_pakje_gemak',
+                'is_pakketautomaat'    => 'postnl_order.is_pakketautomaat',
+                'delivery_option_type' => 'postnl_order.type',
             )
         );
 
@@ -264,14 +266,17 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'index'                     => 'country_id',
             'type'                      => 'options',
             'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_shipmentType',
-            'width'                     => '0px',
+            'width'                     => '110px',
             'filter_condition_callback' => array($this, '_filterShipmentType'),
             'sortable'                  => false,
             'options'                   => array(
-                'nl'          => $helper->__('Domestic'),
-                'pakje_gemak' => $helper->__('Post Office'),
-                'eu'          => $helper->__('EPS'),
-                'global'      => $helper->__('GlobalPack'),
+                'nl'                  => $helper->__('Domestic'),
+                'pakje_gemak'         => $helper->__('Post Office'),
+                'eu'                  => $helper->__('EPS'),
+                'global'              => $helper->__('GlobalPack'),
+                'pakketautomaat'      => $helper->__('Parcel Dispenser'),
+                'avond'               => $helper->__('Evening Delivery'),
+                'pakje_gemak_express' => $helper->__('Early Pickup'),
             ),
         );
 
@@ -309,12 +314,21 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _addMassaction($block)
     {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Make sure the admin is allowed ship orders.
+         */
+        if (!$helper->checkIsPostnlActionAllowed('create_shipment')) {
+            return $this;
+        }
+
         /**
          * Build an array of options for the massaction item
          */
         $massActionData = array(
-            'label'=> Mage::helper('postnl')->__('PostNL - Create Shipments'),
-            'url'  => Mage::helper('adminhtml')->getUrl('postnl/adminhtml_shipment/massCreateShipments'),
+            'label'=> $helper->__('PostNL - Create Shipments'),
+            'url'  => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massCreateShipments'),
         );
 
         $showOptions = Mage::getStoreConfig(self::XML_PATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
@@ -328,9 +342,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'name'   => 'product_options',
                     'type'   => 'select',
                     'class'  => 'required-entry',
-                    'label'  => Mage::helper('postnl')->__('Product options'),
+                    'label'  => $helper->__('Product options'),
                     'values' => Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                                    ->getAvailableOptions(true, true),
+                                    ->getAvailableOptions(true, true, false, false, false, true, true),
                 ),
             );
         }
@@ -350,7 +364,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Applies sorting and filtering to the collection
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
      *
      * @return $this
      */
@@ -418,19 +432,77 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $collection->addFieldToFilter('order.shipping_method', array('in' => $postnlShippingMethods));
 
         /**
-         * If the filter condition is PakjeGemak, filter out all non-PakjeGemak orders
+         * If the filter condition is PakjeGemak Express, filter out all non-PakjeGemak Express orders
          */
-        if ($filterCond == 'pakje_gemak') {
-            $collection->addFieldToFilter('is_pakje_gemak', array('eq' => 1));
+        if ($filterCond == 'pakje_gemak_express') {
+            $collection->addFieldToFilter('postnl_order.type', array('eq' => 'PGE'));
 
             return $this;
         }
 
         /**
-         * If the filter condition is NL, filter out all orders not being shipped to the Netherlands
+         * If the filter condition is evening delivery, filter out all other orders
+         */
+        if ($filterCond == 'avond') {
+            $collection->addFieldToFilter('postnl_order.type', array('eq' => 'Avond'));
+
+            return $this;
+        }
+
+        /**
+         * If the filter condition is PakjeGemak, filter out all non-PakjeGemak orders
+         */
+        if ($filterCond == 'pakje_gemak') {
+            $collection->addFieldToFilter('is_pakje_gemak', array('eq' => 1));
+            $collection->addFieldToFilter('postnl_order.type', array(array('eq' => 'PG'), array('null' => true)));
+
+            return $this;
+        }
+
+        /**
+         * If the filter condition is Pakket Automaat, filter out all non-Pakket Automaat orders
+         */
+        if ($filterCond == 'pakketautomaat') {
+            $collection->addFieldToFilter('is_pakketautomaat', array('eq' => 1));
+            $collection->addFieldToFilter(
+                'postnl_order.type',
+                array(
+                    array('eq'   => 'PA'),
+                    array('null' => true)
+                )
+            );
+
+            return $this;
+        }
+
+        /**
+         * If the filter condition is NL, filter out all orders not being shipped to the Netherlands. PakjeGemak,
+         * PakjeGmak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
+         * need to explicitely filter those as well.
          */
         if ($filterCond == 'nl') {
             $collection->addFieldToFilter('country_id', $cond);
+            $collection->addFieldToFilter(
+                       'postnl_order.type',
+                       array(
+                           array('eq'   => 'Overdag'),
+                           array('null' => true)
+                       )
+            );
+            $collection->addFieldToFilter(
+                       'is_pakje_gemak',
+                       array(
+                           array('eq'   => 0),
+                           array('null' => true)
+                       )
+            );
+            $collection->addFieldToFilter(
+                       'is_pakketautomaat',
+                       array(
+                           array('eq'   => 0),
+                           array('null' => true)
+                       )
+            );
 
             return $this;
         }
@@ -480,7 +552,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 
         $cond = $column->getFilter()->getCondition();
         if ($field && isset($cond)) {
-            $this->getCollection()->addFieldToFilter($field , $cond);
+            /**
+             * @var TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
+             */
+            $collection = $this->getCollection();
+            $collection->addFieldToFilter($field , $cond);
         }
 
         return $this;

@@ -1,0 +1,166 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * Observer to edit the sales > shipments grid
+ *
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setCollection(Varien_Data_Collection $value)
+ * @method Varien_Data_Collection                           getCollection()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setBlock(Mage_Core_Block_Abstract $value)
+ */
+?>
+<div class="entry-edit">
+    <span class="field-row">
+        <label for="<?php echo $this->getName(); ?>"><a href="#" onclick="choose_print_startpos_<?php echo $this->getName(); ?>()"><?php echo $this->getLabel(); ?></a></label>
+        <input type="hidden" id="<?php echo $this->getName(); ?>" name="<?php echo $this->getName(); ?>" class="required-entry absolute-advice" value="1"/>
+    </span>
+    <div class="postnl-tooltip">
+        <div><?php echo $this->__('When printing multiple labels simultaneously you may choose where the printer will start printing. All fields marked orange will be used. The printer will start at position 1 on all pages after the first.'); ?></div>
+    </div>
+</div>
+<div id="position_picker_<?php echo $this->getName(); ?>" class="startpos-picker" style="display:none;">
+    <div class="content">
+        <p><?php echo $this->__('Click on the field where you would like the printer to start. All orange coloured fields will be used as long as you have selected sufficient shipments to fill these fields.'); ?></p>
+        <table>
+            <tbody>
+                <tr>
+                    <td id="pos1">1</td>
+                    <td id="pos2">2</td>
+                </tr>
+                <tr>
+                    <td id="pos3">3</td>
+                    <td id="pos4">4</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    //<![CDATA[
+    var choose_print_startpos_<?php echo $this->getName(); ?> = function() {
+        var posPicker = $('position_picker_<?php echo $this->getName(); ?>');
+        posPicker.show();
+
+        posPicker.stopObserving();
+        posPicker.observe('click', function(event) {
+            var element = Event.element(event);
+            if (element.hasClassName('startpos-picker')) {
+                element.hide();
+            }
+        });
+
+        var pos1 = $('pos1');
+        var pos2 = $('pos2');
+        var pos3 = $('pos3');
+        var pos4 = $('pos4');
+
+        pos1.stopObserving();
+        pos2.stopObserving();
+        pos3.stopObserving();
+        pos4.stopObserving();
+
+        pos1.observe('click', function() {
+            $('<?php echo $this->getName(); ?>').setValue(1);
+            $('position_picker_<?php echo $this->getName(); ?>').hide();
+        });
+
+        pos2.observe('click', function() {
+            $('<?php echo $this->getName(); ?>').setValue(2);
+            $('position_picker_<?php echo $this->getName(); ?>').hide();
+        });
+
+        pos3.observe('click', function() {
+            $('<?php echo $this->getName(); ?>').setValue(3);
+            $('position_picker_<?php echo $this->getName(); ?>').hide();
+        });
+
+        pos4.observe('click', function() {
+            $('<?php echo $this->getName(); ?>').setValue(4);
+            $('position_picker_<?php echo $this->getName(); ?>').hide();
+        });
+
+        pos1.observe('mouseover', function() {
+            unMarkBoxes(0);
+            markBoxes(1);
+        });
+        pos2.observe('mouseover', function() {
+            unMarkBoxes(0);
+            markBoxes(2);
+        });
+        pos3.observe('mouseover', function() {
+            unMarkBoxes(0);
+            markBoxes(3);
+        });
+        pos4.observe('mouseover', function() {
+            unMarkBoxes(0);
+            markBoxes(4);
+        });
+
+        var markBoxes = function(boxNumber) {
+            if (boxNumber <= 4) {
+                pos4.addClassName('active');
+            }
+            if (boxNumber <= 3) {
+                pos3.addClassName('active');
+            }
+            if (boxNumber <= 2) {
+                pos2.addClassName('active');
+            }
+            if (boxNumber <= 1) {
+                pos1.addClassName('active');
+            }
+        };
+
+        var unMarkBoxes = function(boxNumber) {
+            if (boxNumber <= 4) {
+                pos4.removeClassName('active');
+            }
+            if (boxNumber <= 3) {
+                pos3.removeClassName('active');
+            }
+            if (boxNumber <= 2) {
+                pos2.removeClassName('active');
+            }
+            if (boxNumber <= 1) {
+                pos1.removeClassName('active');
+            }
+        };
+
+        markBoxes($('<?php echo $this->getName(); ?>').getValue());
+    };
+    //]]>
+</script>
