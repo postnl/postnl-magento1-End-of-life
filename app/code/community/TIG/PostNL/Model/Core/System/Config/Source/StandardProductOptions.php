@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
@@ -42,12 +42,12 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      * XML path to supported options configuration setting
      */
     const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
-    
+
     /**
      * Returns an option array for all possible PostNL product options
-     * 
+     *
      * @return array
-     * 
+     *
      * @todo implement COD
      */
     public function toOptionArray()
@@ -60,113 +60,172 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
             ),
             /**
              * These are not currently implemented
-             * 
-             * TODO implement these options
+             *
+             * @todo implement these options
              */
             /*array(
-                'value' => '3086',
-                'label' => $helper->__('COD'),
+                'value'   => '3086',
+                'label'   => $helper->__('COD'),
+                'isAvond' => true,
             ),
             array(
-                'value' => '3091',
-                'label' => $helper->__('COD + Extra cover'),
+                'value'   => '3091',
+                'label'   => $helper->__('COD + Extra cover'),
+                'isAvond' => true,
             ),
             array(
-                'value' => '3093',
-                'label' => $helper->__('COD + Return when not home'),
+                'value'   => '3093',
+                'label'   => $helper->__('COD + Return when not home'),
+                'isAvond' => true,
             ),
             array(
-                'value' => '3097',
-                'label' => $helper->__('COD + Extra cover + Return when not home'),
+                'value'   => '3097',
+                'label'   => $helper->__('COD + Extra cover + Return when not home'),
+                'isAvond' => true,
             ),*/
             array(
                 'value'        => '3087',
                 'label'        => $helper->__('Extra Cover'),
                 'isExtraCover' => true,
+                'isAvond'      => true,
             ),
             array(
                 'value'        => '3094',
                 'label'        => $helper->__('Extra cover + Return when not home'),
                 'isExtraCover' => true,
+                'isAvond'      => true,
             ),
             array(
                 'value' => '3189',
                 'label' => $helper->__('Signature on delivery'),
             ),
             array(
-                'value' => '3089',
-                'label' => $helper->__('Signature on delivery + Delivery to stated address only'),
+                'value'   => '3089',
+                'label'   => $helper->__('Signature on delivery + Delivery to stated address only'),
+                'isAvond' => true,
             ),
             array(
                 'value' => '3389',
                 'label' => $helper->__('Signature on delivery + Return when not home'),
             ),
             array(
-                'value' => '3096',
-                'label' => $helper->__('Signature on delivery + Deliver to stated address only + Return when not home'),
+                'value'   => '3096',
+                'label'   => $helper->__(
+                                 'Signature on delivery + Deliver to stated address only + Return when not home'
+                             ),
+                'isAvond' => true,
             ),
             array(
                 'value' => '3090',
                 'label' => $helper->__('Delivery to neighbour + Return when not home'),
             ),
             array(
-                'value' => '3385',
-                'label' => $helper->__('Deliver to stated address only'),
+                'value'   => '3385',
+                'label'   => $helper->__('Deliver to stated address only'),
+                'isAvond' => true,
             ),
             array(
-                'value' => '3390',
-                'label' => $helper->__('Deliver to stated address only + Return when not home'),
+                'value'   => '3390',
+                'label'   => $helper->__('Deliver to stated address only + Return when not home'),
+                'isAvond' => true,
             ),
         );
-        
+
         return $availableOptions;
     }
-    
+
     /**
-     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
-     * 
-     * @param boolean|int $storeId
-     * @param boolean $codesOnly
-     * 
+     * Gets an array of possible evening delivery product options.
+     *
+     * @param boolean $asFlatArray
+     *
      * @return array
      */
-    public function getAvailableOptions($storeId = false, $codesOnly = false)
+    public function getAvondOptions($asFlatArray = false)
+    {
+        $options = $this->toOptionArray();
+
+        $avondOptions = array();
+        foreach ($options as $option) {
+            if (!isset($option['isAvond']) || !$option['isAvond']) {
+                continue;
+            }
+
+            if ($asFlatArray) {
+                $avondOptions[] = $option;
+            }
+
+            $avondOptions[$option['value']] = $option['label'];
+        }
+
+        return $avondOptions;
+    }
+
+    /**
+     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
+     *
+     * @param boolean|int $storeId
+     * @param boolean     $codesOnly
+     * @param boolean     $isAvond
+     *
+     * @return array
+     */
+    public function getAvailableOptions($storeId = false, $codesOnly = false, $isAvond = false)
     {
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
-        
-        $helper = Mage::helper('postnl');
-        $options = $this->toOptionArray();
-        
+
+        if (!$isAvond) {
+            $options = $this->toOptionArray();
+        } else {
+            $options = $this->getAvondOptions(true);
+        }
+
         /**
          * Get a list of all possible options
          */
         $availableOptions = array();
-        
+
         /**
          * Get the list of supported product options from the shop's configuration
          */
         $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
         $supportedOptionsArray = explode(',', $supportedOptions);
-        
+
         /**
          * Check each standard option to see if it's supprted
          */
-        $availableStandardOptions = array();
         foreach ($options as $option) {
+            if (!is_array($option) || !array_key_exists('value', $option)) {
+                continue;
+            }
+
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
             }
-            
+
             if ($codesOnly === true) {
                 $availableOptions[] = $option['value'];
                 continue;
             }
-            
+
             $availableOptions[] = $option;
         }
-        
+
         return $availableOptions;
+    }
+
+    /**
+     * Alias for getAvailableOptions() with $isAvond === true.
+     *
+     * @param bool $storeId
+     * @param bool $codesOnly
+     *
+     * @return array
+     */
+    public function getAvailableAvondOptions($storeId = false, $codesOnly = false)
+    {
+        return $this->getAvailableOptions($storeId, $codesOnly, true);
     }
 }

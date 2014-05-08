@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+-->
+<jstranslator>
+    <!-- deliveryOptions.js -->
+    <more_info translate="message" module="postnl">
+        <message>More Info</message>
+    </more_info>
+    <from translate="message" module="postnl">
+        <message>from</message>
+    </from>
+    <early_delivery translate="message" module="postnl">
+        <message>early delivery</message>
+    </early_delivery>
+    <available translate="message" module="postnl">
+        <message>available</message>
+    </available>
+    <evening translate="message" module="postnl">
+        <message>evening</message>
+    </evening>
+    <post_office translate="message" module="postnl">
+        <message>Post Office</message>
+    </post_office>
+    <package_dispenser translate="message" module="postnl">
+        <message>Package Dispenser</message>
+    </package_dispenser>
+    <monday_short translate="message" module="postnl">
+        <message>Mo</message>
+    </monday_short>
+    <tuesday_short translate="message" module="postnl">
+        <message>Tu</message>
+    </tuesday_short>
+    <wednesday_short translate="message" module="postnl">
+        <message>We</message>
+    </wednesday_short>
+    <thursday_short translate="message" module="postnl">
+        <message>Th</message>
+    </thursday_short>
+    <friday_short translate="message" module="postnl">
+        <message>Fr</message>
+    </friday_short>
+    <saturday_short translate="message" module="postnl">
+        <message>Sa</message>
+    </saturday_short>
+    <sunday_short translate="message" module="postnl">
+        <message>Su</message>
+    </sunday_short>
+    <in_city translate="message" module="postnl">
+        <message>in</message>
+    </in_city>
+    <business_hours translate="message" module="postnl">
+        <message>Business Hours</message>
+    </business_hours>
+    <business_hours_lowercase translate="message" module="postnl">
+        <message>business hours</message>
+    </business_hours_lowercase>
+    <closed translate="message" module="postnl">
+        <message>Closed</message>
+    </closed>
+    <early_pickup_available translate="message" module="postnl">
+        <message>Early pickup available</message>
+    </early_pickup_available>
+    <evening_pickup_available translate="message" module="postnl">
+        <message>Evening pickup available</message>
+    </evening_pickup_available>
+    <postnl_checkout_error translate="message" module="postnl">
+        <message>An error occurred. Please use our regular checkout instead.</message>
+    </postnl_checkout_error>
+    <mijnpakket_data_loaded_message translate="message" module="postnl">
+        <message>Your preferred address has been loaded from your MijnPakket account and set as your billing and shipping address. You may now choose a shipping method and complete your order.</message>
+    </mijnpakket_data_loaded_message>
+    <mijnpakket_login_unavailable translate="message" module="postnl">
+        <message>Unfortunately MijnPakket login is currently not available. Please use a different checkout method.</message>
+    </mijnpakket_login_unavailable>
+    <show_on_map translate="message" module="postnl">
+        <message>Show on the map</message>
+    </show_on_map>
+    <open_24_7 translate="message" module="postnl">
+        <message>Open 24/7</message>
+    </open_24_7>
+</jstranslator>

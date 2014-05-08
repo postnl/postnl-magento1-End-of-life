@@ -1,0 +1,36 @@
+/* General =============================================================================== */
+.postnl-readonly { background:#dadada !important; }
+/* ======================================================================================= */
+
+/* One Page Checkout CE ================================================================== */
+#opc_postnl_ce .field { float:left; width:180px; }
+#opc_postnl_ce .input-box { width:170px; }
+#opc_postnl_ce .input-text { width:164px; }
+#opc_postnl_ce .field-postcode { width:185px;  }
+#opc_postnl_ce .field-postcode .input-text { width:169px;  }
+#opc_postnl_ce .postnl.validation-advice { width:518px; float:left; margin-top:2px; }
+#opc_postnl_ce .postnl-loading { float:left; margin-top:20px; }
+/* ======================================================================================= */
+
+/* Customer Account CE =================================================================== */
+#ca_postnl_ce .field { float:left; width:180px; }
+#ca_postnl_ce .input-box { width:170px; }
+#ca_postnl_ce .input-text { width:164px; }
+#ca_postnl_ce .field-postcode { width:185px;  }
+#ca_postnl_ce .field-postcode .input-text { width:169px;  }
+#ca_postnl_ce .postnl.validation-advice { width:518px; float:left; margin-top:2px; }
+#ca_postnl_ce .postnl-loading { float:left; margin-top:20px; }
+/* ======================================================================================= */
+
+/* One Step Checkout ===================================================================== */
+#osc_postnl { width:240px; position:relative; }
+#osc_postnl .input-box { float:left; padding:0; }
+#osc_postnl .input-box .input-text { margin:0; }
+#osc_postnl .input-postcode { width:80px; }
+#osc_postnl .input-postcode .input-text { width:64px; }
+#osc_postnl .input-housenumber { width:100px; }
+#osc_postnl .input-housenumber .input-text { width:84px; }
+#osc_postnl .input-extension { width:60px; }
+#osc_postnl .input-extension .input-text { width:54px; }
+#osc_postnl .postnl-loading { position:absolute; right:-26px; top:24px; }
+/* ======================================================================================= */

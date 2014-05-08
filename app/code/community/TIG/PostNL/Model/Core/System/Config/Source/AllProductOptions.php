@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
@@ -46,11 +46,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     /**
      * Returns an option array for all possible PostNL product options
      *
+     * @param boolean $markDefault Flag that determines whether default options will be marked as such.
+     *
      * @return array
      *
      * @todo implement COD
      */
-    public function toOptionArray()
+    public function toOptionArray($markDefault = true)
     {
         $helper = Mage::helper('postnl');
         $availableOptions = array(
@@ -67,58 +69,71 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                      * @todo implement these options
                      */
                     /*'3086' => array(
-                        'value' => '3086',
-                        'label' => $helper->__('COD'),
+                        'value'   => '3086',
+                        'label'   => $helper->__('COD'),
+                        'isAvond' => true,
                     ),
                     '3091' => array(
-                        'value' => '3091',
-                        'label' => $helper->__('COD + Extra cover'),
+                        'value'   => '3091',
+                        'label'   => $helper->__('COD + Extra cover'),
+                        'isAvond' => true,
                     ),
                     '3093' => array(
-                        'value' => '3093',
-                        'label' => $helper->__('COD + Return when not home'),
+                        'value'   => '3093',
+                        'label'   => $helper->__('COD + Return when not home'),
+                        'isAvond' => true,
                     ),
                     '3097' => array(
-                        'value' => '3097',
-                        'label' => $helper->__('COD + Extra cover + Return when not home'),
+                        'value'   => '3097',
+                        'label'   => $helper->__('COD + Extra cover + Return when not home'),
+                        'isAvond' => true,
                     ),*/
                     '3087' => array(
                         'value'        => '3087',
                         'label'        => $helper->__('Extra Cover'),
                         'isExtraCover' => true,
+                        'isAvond'      => true,
                     ),
                     '3094' => array(
                         'value'        => '3094',
                         'label'        => $helper->__('Extra cover + Return when not home'),
                         'isExtraCover' => true,
+                        'isAvond'      => true,
                     ),
                     '3189' => array(
                         'value' => '3189',
                         'label' => $helper->__('Signature on delivery'),
                     ),
                     '3089' => array(
-                        'value' => '3089',
-                        'label' => $helper->__('Signature on delivery + Delivery to stated address only'),
+                        'value'   => '3089',
+                        'label'   => $helper->__('Signature on delivery + Delivery to stated address only'),
+                        'isAvond' => true,
                     ),
                     '3389' => array(
                         'value' => '3389',
                         'label' => $helper->__('Signature on delivery + Return when not home'),
                     ),
                     '3096' => array(
-                        'value' => '3096',
-                        'label' => $helper->__('Signature on delivery + Deliver to stated address only + Return when not home'),
+                        'value'   => '3096',
+                        'label'   => $helper->__(
+                                       'Signature on delivery + Deliver to stated address only + Return when not home'
+                                    ),
+                        'isAvond' => true,
                     ),
                     '3090' => array(
-                        'value' => '3090',
-                        'label' => $helper->__('Delivery to neighbour + Return when not home'),
+                        'value'   => '3090',
+                        'label'   => $helper->__('Delivery to neighbour + Return when not home'),
+                        'isAvond' => true,
                     ),
                     '3385' => array(
-                        'value' => '3385',
-                        'label' => $helper->__('Deliver to stated address only'),
+                        'value'   => '3385',
+                        'label'   => $helper->__('Deliver to stated address only'),
+                        'isAvond' => true,
                     ),
                     '3390' => array(
-                        'value' => '3390',
-                        'label' => $helper->__('Deliver to stated address only + Return when not home'),
+                        'value'   => '3390',
+                        'label'   => $helper->__('Deliver to stated address only + Return when not home'),
+                        'isAvond' => true,
                     ),
                 ),
             ),
@@ -132,19 +147,22 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                      */
                     /*'3535' => array(
                         'value' => '3535',
-                        'label' => $helper->__('Post Office + COD')
+                        'label' => $helper->__('Post Office + COD'),
                     ),
                     '3545' => array(
                         'value' => '3545',
-                        'label' => $helper->__('Post Office + COD + Notification')
+                        'label' => $helper->__('Post Office + COD + Notification'),
+                        'isPge' => true,
                     ),
                     '3536' => array(
                         'value' => '3536',
-                        'label' => $helper->__('Post Office + COD + Extra Cover')
+                        'label' => $helper->__('Post Office + COD + Extra Cover'),
+                        'isPge' => true,
                     ),
                     '3546' => array(
                         'value' => '3546',
-                        'label' => $helper->__('Post Office + COD + Extra Cover + Notification')
+                        'label' => $helper->__('Post Office + COD + Extra Cover + Notification'),
+                        'isPge' => true,
                     ),*/
                     '3534' => array(
                         'value'        => '3534',
@@ -155,14 +173,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'value'        => '3544',
                         'label'        => $helper->__('Post Office + Extra Cover + Notification'),
                         'isExtraCover' => true,
+                        'isPge'        => true,
                     ),
                     '3533' => array(
                         'value' => '3533',
-                        'label' => $helper->__('Post Office + Signature on Delivery')
+                        'label' => $helper->__('Post Office + Signature on Delivery'),
                     ),
                     '3543' => array(
                         'value' => '3543',
-                        'label' => $helper->__('Post Office + Signature on Delivery + Notification')
+                        'label' => $helper->__('Post Office + Signature on Delivery + Notification'),
+                        'isPge' => true,
                     ),
                 ),
             ),
@@ -178,8 +198,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                      *
                      * @deprecated v1.1.2
                      */
-                    /*
-                    '4955' => array(
+                    /*'4955' => array(
                         'value' => '4955',
                         'label' => $helper->__('EU Pack Standard (Belgium only, no signature)'),
                         'isBelgiumOnly' => true,
@@ -206,6 +225,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'value'        => '4945',
                         'label'        => $helper->__('GlobalPack'),
                         'isExtraCover' => true,
+                        'extraCover'   => 200,
+                    ),
+                ),
+            ),
+            'pakketautomaat' => array(
+                'label' => $helper->__('Parcel Dispenser options'),
+                'value' => array(
+                    '3553' => array(
+                        'value'        => '3553',
+                        'label'        => $helper->__('Parcel Dispenser'),
                     ),
                 ),
             ),
@@ -219,23 +248,32 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             );
         }
 
-        $this->_markDefault($availableOptions);
-
         return $availableOptions;
     }
 
     /**
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
-     * @param boolean     $withDefault Determines whether or not a 'default' option is prepended to the array
+     * @param boolean     $withDefault        Determines whether or not a 'default' option is prepended to the array
      * @param bool        $withExtraCover
      * @param boolean|int $storeId
-     * @param boolean     $codesOnly
+     * @param boolean     $codesOnly          Flag that dtermines whether to only return the product codes and not the
+     *                                        labels
+     * @param boolean     $flat               FLag that dtermines whether to return a flat 'code => label' array
+     * @param boolean     $markDefault        Flag that determines whether default options will be marked as such.
+     * @param boolean     $addDeliveryOptions If set to true, additional options will be added for evening delivery and
+     *                                        early pickup shipment types.
      *
      * @return array
      */
-    public function getAvailableOptions($withDefault = false, $withExtraCover = true, $storeId = false, $codesOnly = false)
-    {
+    public function getAvailableOptions($withDefault = false,
+        $withExtraCover     = true,
+        $storeId            = false,
+        $codesOnly          = false,
+        $flat               = false,
+        $markDefault        = true,
+        $addDeliveryOptions = false
+    ) {
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
@@ -243,7 +281,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         $helper = Mage::helper('postnl');
         $canUseEpsBEOnly = $helper->canUseEpsBEOnlyOption();
 
-        $options = $this->toOptionArray();
+        $options = $this->toOptionArray($markDefault);
 
         /**
          * Get a list of all possible options
@@ -270,9 +308,18 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         }
 
         /**
+         * Initialize empty arrays for each supported shipment type. These will be filled with available options.
+         */
+        $availableStandardOptions   = array();
+        $availableAvondOptions      = array();
+        $availablePakjeGemakOptions = array();
+        $availablePgeOptions        = array();
+        $availableEuOptions         = array();
+        $availableGlobalOptions     = array();
+
+        /**
          * Check each standard option to see if it's supprted
          */
-        $availableStandardOptions = array();
         foreach ($options['standard_options']['value'] as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
@@ -287,13 +334,21 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
 
+            if ($flat === true) {
+                $availableOptions[$option['value']] = $option['label'];
+                continue;
+            }
+
+            if (isset($option['isAvond']) && $option['isAvond']) {
+                $availableAvondOptions[] = $option;
+            }
+
             $availableStandardOptions[] = $option;
         }
 
         /**
          * Check each pakje gemak option to see if it's supprted
          */
-        $availablePakjeGemakOptions = array();
         foreach ($options['pakjegemak_options']['value'] as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
@@ -308,13 +363,21 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
 
+            if ($flat === true) {
+                $availableOptions[$option['value']] = $option['label'];
+                continue;
+            }
+
+            if (isset($option['isPge']) && $option['isPge']) {
+                $availablePgeOptions[] = $option;
+            }
+
             $availablePakjeGemakOptions[] = $option;
         }
 
         /**
          * Check each eu option to see if it's supprted
          */
-        $availableEuOptions = array();
         foreach ($options['eu_options']['value'] as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
                 continue;
@@ -329,13 +392,17 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 continue;
             }
 
+            if ($flat === true) {
+                $availableOptions[$option['value']] = $option['label'];
+                continue;
+            }
+
             $availableEuOptions[] = $option;
         }
 
         /**
-         * Check each eu option to see if it's supprted
+         * Check each global option to see if it's supprted
          */
-        $availableGlobalOptions = array();
         if ($helper->isGlobalAllowed()) {
             foreach ($options['global_options']['value'] as $option) {
                 if (!in_array($option['value'], $supportedOptionsArray)) {
@@ -351,7 +418,40 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     continue;
                 }
 
+                if ($flat === true) {
+                    $availableOptions[$option['value']] = $option['label'];
+                    continue;
+                }
+
                 $availableGlobalOptions[] = $option;
+            }
+        }
+
+        /**
+         * Check each pakketautomaat option to see if it's supprted
+         */
+        $availablePakketautomaatOptions = array();
+        if ($helper->isGlobalAllowed()) {
+            foreach ($options['pakketautomaat']['value'] as $option) {
+                if (!in_array($option['value'], $supportedOptionsArray)) {
+                    continue;
+                }
+
+                if (isset($option['isExtraCover']) && $withExtraCover !== true) {
+                    continue;
+                }
+
+                if ($codesOnly === true) {
+                    $availableOptions[] = $option['value'];
+                    continue;
+                }
+
+                if ($flat === true) {
+                    $availableOptions[$option['value']] = $option['label'];
+                    continue;
+                }
+
+                $availablePakketautomaatOptions[] = $option;
             }
         }
 
@@ -359,7 +459,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
          * If we only need the codes, we can return the $availableOptions array. Otherwise, we need to order and merge the
          * other arrays
          */
-        if ($codesOnly === true) {
+        if ($codesOnly === true || $flat === true) {
             return $availableOptions;
         }
 
@@ -394,11 +494,32 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             );
         }
 
+        if (!empty($availablePakketautomaatOptions)) {
+            $availableOptions['pakketautomaat_option'] = array(
+                'label' => $helper->__('Parcel Dispenser options'),
+                'value' => $availablePakketautomaatOptions,
+            );
+        }
+
+        if ($addDeliveryOptions) {
+            $availableOptions['avond_options'] = array(
+                'label' => $helper->__('Evening Delivery options'),
+                'value' => $availableAvondOptions,
+            );
+
+            $availableOptions['pge_options'] = array(
+                'label' => $helper->__('Early Pickup options'),
+                'value' => $availablePgeOptions,
+            );
+        }
+
         return $availableOptions;
     }
 
     /**
      * Get the list of available product options that have extra cover
+     *
+     * @param bool $valuesOnly
      *
      * @return array
      */
@@ -465,32 +586,25 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         /**
          * Mark each default option as default if it is present in the available options array
          */
-        if (isset($options['standard_options'])
-            && isset($options['standard_options']['value'])
-            && isset($options['standard_options']['value'][$defaultOptions['dutch']])
-        ) {
-            $options['standard_options']['value'][$defaultOptions['dutch']]['label'] .= ' ' . $helper->__('(default)');
+        $defaultText = ' ' . $helper->__('(default)');
+        if (isset($options['standard_options']['value'][$defaultOptions['dutch']])) {
+            $options['standard_options']['value'][$defaultOptions['dutch']]['label'] .= $defaultText;
         }
 
-        if (isset($options['pakjegemak_options'])
-            && isset($options['pakjegemak_options']['value'])
-            && isset($options['pakjegemak_options']['value'][$defaultOptions['eu']])
-        ) {
-            $options['pakjegemak_options']['value'][$defaultOptions['pakjegemak']]['label'] .= ' ' . $helper->__('(default)');
+        if (isset($options['pakjegemak_options']['value'][$defaultOptions['eu']])) {
+            $options['pakjegemak_options']['value'][$defaultOptions['pakjegemak']]['label'] .= $defaultText;
         }
 
-        if (isset($options['eu_options'])
-            && isset($options['eu_options']['value'])
-            && isset($options['eu_options']['value'][$defaultOptions['eu']])
-        ) {
-            $options['eu_options']['value'][$defaultOptions['eu']]['label'] .= ' ' . $helper->__('(default)');
+        if (isset($options['eu_options']['value'][$defaultOptions['eu']])) {
+            $options['eu_options']['value'][$defaultOptions['eu']]['label'] .= $defaultText;
         }
 
-        if (isset($options['global_options'])
-            && isset($options['global_options']['value'])
-            && isset($options['global_options']['value'][$defaultOptions['global']])
-        ) {
-            $options['global_options']['value'][$defaultOptions['global']]['label'] .= ' ' . $helper->__('(default)');
+        if (isset($options['global_options']['value'][$defaultOptions['global']])) {
+            $options['global_options']['value'][$defaultOptions['global']]['label'] .= $defaultText;
+        }
+
+        if (isset($options['pakketautomaat_options']['value'][$defaultOptions['pakketautomaat']])) {
+            $options['pakketautomaat_options']['value'][$defaultOptions['pakketautomaat']]['label'] .= $defaultText;
         }
 
         return $options;
