@@ -195,8 +195,6 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                     ),
                     /**
                      * This option has been removed since v1.1.4.
-                     *
-                     * @deprecated v1.1.2
                      */
                     /*'4955' => array(
                         'value' => '4955',
@@ -204,9 +202,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'isBelgiumOnly' => true,
                     ),*/
                     /**
-                     * These are not currently implemented
-                     *
-                     * @todo implement these options
+                     * These are not currently implemented.
                      */
                     /*'4950' => array(
                         'value' => '4950',
