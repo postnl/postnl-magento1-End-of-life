@@ -37,69 +37,78 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
+    extends TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstract
 {
     /**
-     * XML path to supported options configuration setting
+     * @var array
      */
-    const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+    protected $_options = array(
+        array(
+            'value'        => '3534',
+            'label'        => 'Post Office + Extra Cover',
+            'isExtraCover' => true,
+            'isPge'        => false,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3544',
+            'label'        => 'Post Office + Extra Cover + Notification',
+            'isExtraCover' => true,
+            'isPge'        => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3533',
+            'label'        => 'Post Office + Signature on Delivery',
+            'isExtraCover' => false,
+            'isPge'        => false,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3543',
+            'label'        => 'Post Office + Signature on Delivery + Notification',
+            'isExtraCover' => false,
+            'isPge'        => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3535',
+            'label'        => 'Post Office + COD',
+            'isExtraCover' => false,
+            'isPge'        => false,
+            'isCod'        => true,
+        ),
+        array(
+            'value'        => '3545',
+            'label'        => 'Post Office + COD + Notification',
+            'isExtraCover' => false,
+            'isPge'        => true,
+            'isCod'        => true,
+        ),
+        array(
+            'value'        => '3536',
+            'label'        => 'Post Office + COD + Extra Cover',
+            'isExtraCover' => false,
+            'isPge'        => false,
+            'isCod'        => true,
+        ),
+        array(
+            'value'        => '3546',
+            'label'        => 'Post Office + COD + Extra Cover + Notification',
+            'isExtraCover' => false,
+            'isPge'        => true,
+            'isCod'        => true,
+        ),
+    );
 
     /**
-     * Returns an option array for all possible PostNL product options
+     * Returns an option array for all possible PostNL product options.
      *
      * @return array
-     *
-     * @todo implement COD
      */
     public function toOptionArray()
     {
-        $helper = Mage::helper('postnl');
-        $availableOptions = array(
-            /**
-             * These are not currently implemented
-             *
-             * @todo implement these options
-             */
-            /*array(
-                'value' => '3535',
-                'label' => $helper->__('Post Office + COD'),
-            ),
-            array(
-                'value' => '3545',
-                'label' => $helper->__('Post Office + COD + Notification'),
-                'isPge' => true,
-            ),
-            array(
-                'value' => '3536',
-                'label' => $helper->__('Post Office + COD + Extra Cover'),
-            ),
-            array(
-                'value' => '3546',
-                'label' => $helper->__('Post Office + COD + Extra Cover + Notification'),
-                'isPge' => true,
-            ),*/
-            array(
-                'value'        => '3534',
-                'label'        => $helper->__('Post Office + Extra Cover'),
-                'isExtraCover' => true,
-            ),
-            array(
-                'value'        => '3544',
-                'label'        => $helper->__('Post Office + Extra Cover + Notification'),
-                'isExtraCover' => true,
-                'isPge'        => true,
-            ),
-            array(
-                'value' => '3533',
-                'label' => $helper->__('Post Office + Signature on Delivery')
-            ),
-            array(
-                'value' => '3543',
-                'label' => $helper->__('Post Office + Signature on Delivery + Notification'),
-                'isPge' => true,
-            ),
-        );
-
-        return $availableOptions;
+        return $this->getOptions(array('isCod' => false));
     }
 
     /**
@@ -111,22 +120,19 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
      */
     public function getPgeOptions($asFlatArray = false)
     {
-        $options = $this->toOptionArray();
+        return $this->getOptions(array('isCod' => false, 'isPge' => true), $asFlatArray);
+    }
 
-        $pgeOptions = array();
-        foreach ($options as $option) {
-            if (!isset($option['isPge']) || !$option['isPge']) {
-                continue;
-            }
-
-            if ($asFlatArray) {
-                $pgeOptions[] = $option;
-            }
-
-            $pgeOptions[$option['value']] = $option['label'];
-        }
-
-        return $pgeOptions;
+    /**
+     * Gets an array of possible PGE COD product options.
+     *
+     * @param boolean $asFlatArray
+     *
+     * @return array
+     */
+    public function getPgeCodOptions($asFlatArray = false)
+    {
+        return $this->getOptions(array('isCod' => true, 'isPge' => true), $asFlatArray);
     }
 
     /**
@@ -135,20 +141,25 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
      * @param boolean|int $storeId
      * @param boolean     $codesOnly
      * @param boolean     $isPge
+     * @param boolean     $cod
      *
      * @return array
      */
-    public function getAvailableOptions($storeId = false, $codesOnly = false, $isPge = false)
+    public function getAvailableOptions($storeId = false, $codesOnly = false, $isPge = false, $cod = false)
     {
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
 
-        if (!$isPge) {
-            $options = $this->toOptionArray();
-        } else {
-            $options = $this->getPgeOptions(true);
+        $flags = array();
+        if ($isPge) {
+            $flags['isPge'] = true;
         }
+        if ($cod) {
+            $flags['isCod'] = true;
+        }
+
+        $options = $this->getOptions($flags);
 
         /**
          * Get a list of all possible options
@@ -162,7 +173,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
         $supportedOptionsArray = explode(',', $supportedOptions);
 
         /**
-         * Check each standard option to see if it's supprted
+         * Check each standard option to see if it's supported
          */
         foreach ($options as $option) {
             if (!is_array($option) || !array_key_exists('value', $option)) {
@@ -185,7 +196,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
     }
 
     /**
-     * Alias for getAvailableOptions() with $isPge === true.
+     * Alias for getAvailableOptions() with $isPge = true.
      *
      * @param bool $storeId
      * @param bool $codesOnly
@@ -195,5 +206,18 @@ class TIG_PostNL_Model_Core_System_Config_Source_PakjeGemakProductOptions
     public function getAvailablePgeOptions($storeId = false, $codesOnly = false)
     {
         return $this->getAvailableOptions($storeId, $codesOnly, true);
+    }
+
+    /**
+     * Alias for getAvailableOptions() with $isPge = true and $cod = true.
+     *
+     * @param bool $storeId
+     * @param bool $codesOnly
+     *
+     * @return array
+     */
+    public function getAvailablePgeCodOptions($storeId = false, $codesOnly = false)
+    {
+        return $this->getAvailableOptions($storeId, $codesOnly, true, true);
     }
 }

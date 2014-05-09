@@ -108,6 +108,9 @@
             <postnl_mijnpakket>
                 <class>TIG_PostNL_Model_Mijnpakket</class>
             </postnl_mijnpakket>
+            <postnl_payment>
+                <class>TIG_PostNL_Model_Payment</class>
+            </postnl_payment>
 
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
@@ -445,6 +448,14 @@
     <!-- Default configuration values. You can edit most of these in system/config -->
     <!-- If a setting is specified here it does not guarantee it's availability in system/config. It does mean you can override it by creating an entry in the core_config_data table -->
     <default>
+        <payment>
+            <postnl_cod>
+                <title>PostNL COD</title>
+                <model>postnl_payment/cod</model>
+                <sort_order>0</sort_order>
+                <active>1</active>
+            </postnl_cod>
+        </payment>
         <carriers>
             <postnl>
                 <active>0</active> <!-- disabled -->

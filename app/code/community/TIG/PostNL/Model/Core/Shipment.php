@@ -839,8 +839,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * would all also be considered Dutch shipments.
          */
 
+        if ($this->isPgeShipment() && $this->isCod()) {
+            $allowedProductCodes = $cifHelper->getPgeCodProductCodes();
+            return $allowedProductCodes;
+        }
+
         if ($this->isPgeShipment()) {
             $allowedProductCodes = $cifHelper->getPgeProductCodes();
+            return $allowedProductCodes;
+        }
+
+        if ($this->isAvondShipment() && $this->isCod()) {
+            $allowedProductCodes = $cifHelper->getAvondCodProductCodes();
             return $allowedProductCodes;
         }
 
@@ -1365,14 +1375,25 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Checks if this shipment is a COD shipment
+     * Checks if this shipment is a COD shipment.
      *
      * @return boolean
-     *
-     * @todo implement this method
      */
     public function isCod()
     {
+        $codPaymentMethods = Mage::helper('postnl/payment')->getCodPaymentMethods();
+
+        /**
+         * @var Mage_Sales_Model_Order_Payment $payment
+         */
+        $payment = Mage::getModel('sales/order_payment')
+                        ->load($this->getShipment()->getOrderId(), 'parent_id');
+        $paymentMethod = $payment->getMethod();
+
+        if (in_array($paymentMethod, $codPaymentMethods)) {
+            return true;
+        }
+
         return false;
     }
 
