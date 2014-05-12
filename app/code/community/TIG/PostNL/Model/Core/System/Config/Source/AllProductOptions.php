@@ -37,6 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
+    extends TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstract
 {
     /**
      * XML path to supported options configuration setting
@@ -44,13 +45,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
 
     /**
-     * Returns an option array for all possible PostNL product options
+     * Returns an option array for all possible PostNL product options.
      *
      * @param boolean $markDefault Flag that determines whether default options will be marked as such.
      *
      * @return array
-     *
-     * @todo implement COD
      */
     public function toOptionArray($markDefault = true)
     {
@@ -63,31 +62,32 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                         'value' => '3085',
                         'label' => $helper->__('Standard shipment'),
                     ),
-                    /**
-                     * These are not currently implemented
-                     *
-                     * @todo implement these options
-                     */
-                    /*'3086' => array(
+                    '3086' => array(
                         'value'   => '3086',
                         'label'   => $helper->__('COD'),
                         'isAvond' => true,
+                        'isCod'   => true,
                     ),
                     '3091' => array(
                         'value'   => '3091',
                         'label'   => $helper->__('COD + Extra cover'),
                         'isAvond' => true,
+                        'isCod'   => true,
                     ),
                     '3093' => array(
-                        'value'   => '3093',
-                        'label'   => $helper->__('COD + Return when not home'),
-                        'isAvond' => true,
+                        'value'        => '3093',
+                        'label'        => $helper->__('COD + Return when not home'),
+                        'isExtraCover' => true,
+                        'isAvond'      => true,
+                        'isCod'        => true,
                     ),
                     '3097' => array(
-                        'value'   => '3097',
-                        'label'   => $helper->__('COD + Extra cover + Return when not home'),
-                        'isAvond' => true,
-                    ),*/
+                        'value'        => '3097',
+                        'label'        => $helper->__('COD + Extra cover + Return when not home'),
+                        'isExtraCover' => true,
+                        'isAvond'      => true,
+                        'isCod'        => true,
+                    ),
                     '3087' => array(
                         'value'        => '3087',
                         'label'        => $helper->__('Extra Cover'),
@@ -140,30 +140,31 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'pakjegemak_options' => array(
                 'label' => $helper->__('Post Office options'),
                 'value' => array(
-                    /**
-                     * These are not currently implemented
-                     *
-                     * @todo implement these options
-                     */
-                    /*'3535' => array(
+                    '3535' => array(
                         'value' => '3535',
                         'label' => $helper->__('Post Office + COD'),
+                        'isCod'   => true,
                     ),
                     '3545' => array(
                         'value' => '3545',
                         'label' => $helper->__('Post Office + COD + Notification'),
                         'isPge' => true,
+                        'isCod'   => true,
                     ),
                     '3536' => array(
-                        'value' => '3536',
-                        'label' => $helper->__('Post Office + COD + Extra Cover'),
-                        'isPge' => true,
+                        'value'        => '3536',
+                        'label'        => $helper->__('Post Office + COD + Extra Cover'),
+                        'isPge'        => true,
+                        'isCod'        => true,
+                        'isExtraCover' => true,
                     ),
                     '3546' => array(
-                        'value' => '3546',
-                        'label' => $helper->__('Post Office + COD + Extra Cover + Notification'),
-                        'isPge' => true,
-                    ),*/
+                        'value'        => '3546',
+                        'label'        => $helper->__('Post Office + COD + Extra Cover + Notification'),
+                        'isPge'        => true,
+                        'isCod'        => true,
+                        'isExtraCover' => true,
+                    ),
                     '3534' => array(
                         'value'        => '3534',
                         'label'        => $helper->__('Post Office + Extra Cover'),
@@ -306,12 +307,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         /**
          * Initialize empty arrays for each supported shipment type. These will be filled with available options.
          */
-        $availableStandardOptions   = array();
-        $availableAvondOptions      = array();
-        $availablePakjeGemakOptions = array();
-        $availablePgeOptions        = array();
-        $availableEuOptions         = array();
-        $availableGlobalOptions     = array();
+        $availableStandardOptions      = array();
+        $availableStandardCodOptions   = array();
+        $availableAvondOptions         = array();
+        $availableAvondCodOptions      = array();
+        $availablePakjeGemakOptions    = array();
+        $availablePakjeGemakCodOptions = array();
+        $availablePgeOptions           = array();
+        $availablePgeCodOptions        = array();
+        $availableEuOptions            = array();
+        $availableGlobalOptions        = array();
 
         /**
          * Check each standard option to see if it's supprted
@@ -336,14 +341,23 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             }
 
             if (isset($option['isAvond']) && $option['isAvond']) {
-                $availableAvondOptions[] = $option;
+                if (isset($option['isCod']) && $option['isCod']) {
+                    $availableAvondCodOptions[] = $option;
+                } else {
+                    $availableAvondOptions[] = $option;
+                }
+            }
+
+            if (isset($option['isCod']) && $option['isCod']) {
+                $availableStandardCodOptions[] = $option;
+                continue;
             }
 
             $availableStandardOptions[] = $option;
         }
 
         /**
-         * Check each pakje gemak option to see if it's supprted
+         * Check each pakje gemak option to see if it's supported.
          */
         foreach ($options['pakjegemak_options']['value'] as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
@@ -365,14 +379,23 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             }
 
             if (isset($option['isPge']) && $option['isPge']) {
-                $availablePgeOptions[] = $option;
+                if (isset($option['isCod']) && $option['isCod']) {
+                    $availablePgeCodOptions[] = $option;
+                } else {
+                    $availablePgeOptions[] = $option;
+                }
+            }
+
+            if (isset($option['isCod']) && $option['isCod']) {
+                $availablePakjeGemakCodOptions[] = $option;
+                continue;
             }
 
             $availablePakjeGemakOptions[] = $option;
         }
 
         /**
-         * Check each eu option to see if it's supprted
+         * Check each eu option to see if it's supported
          */
         foreach ($options['eu_options']['value'] as $option) {
             if (!in_array($option['value'], $supportedOptionsArray)) {
@@ -452,8 +475,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         }
 
         /**
-         * If we only need the codes, we can return the $availableOptions array. Otherwise, we need to order and merge the
-         * other arrays
+         * If we only need the codes, we can return the $availableOptions array. Otherwise, we need to order and merge
+         * the other arrays.
          */
         if ($codesOnly === true || $flat === true) {
             return $availableOptions;
@@ -469,10 +492,24 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             );
         }
 
+        if (!empty($availableStandardCodOptions)) {
+            $availableOptions['standard_cod_options'] = array(
+                'label' => $helper->__('Standard COD options'),
+                'value' => $availableStandardCodOptions,
+            );
+        }
+
         if (!empty($availablePakjeGemakOptions)) {
             $availableOptions['pakjegemak_options'] = array(
                 'label' => $helper->__('Post Office options'),
                 'value' => $availablePakjeGemakOptions,
+            );
+        }
+
+        if (!empty($availablePakjeGemakCodOptions)) {
+            $availableOptions['pakjegemak_cod_options'] = array(
+                'label' => $helper->__('Post Office COD options'),
+                'value' => $availablePakjeGemakCodOptions,
             );
         }
 
@@ -503,9 +540,19 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
                 'value' => $availableAvondOptions,
             );
 
+            $availableOptions['avond_cod_options'] = array(
+                'label' => $helper->__('Evening Delivery COD options'),
+                'value' => $availableAvondCodOptions,
+            );
+
             $availableOptions['pge_options'] = array(
                 'label' => $helper->__('Early Pickup options'),
                 'value' => $availablePgeOptions,
+            );
+
+            $availableOptions['pge_cod_options'] = array(
+                'label' => $helper->__('Early Pickup COD options'),
+                'value' => $availablePgeCodOptions,
             );
         }
 

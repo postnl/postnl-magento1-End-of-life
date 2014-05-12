@@ -839,18 +839,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * would all also be considered Dutch shipments.
          */
 
-        if ($this->isPgeShipment() && $this->isCod()) {
-            $allowedProductCodes = $cifHelper->getPgeCodProductCodes();
-            return $allowedProductCodes;
+        if ($this->isCod()) {
+            if ($this->isPgeShipment()) {
+                $allowedProductCodes = $cifHelper->getPgeCodProductCodes();
+                return $allowedProductCodes;
+            }
+
+            if ($this->isAvondShipment()) {
+                $allowedProductCodes = $cifHelper->getAvondCodProductCodes();
+                return $allowedProductCodes;
+            }
+
+            if ($this->isPakjeGemakShipment()) {
+                $allowedProductCodes = $cifHelper->getPakjeGemakCodProductCodes();
+                return $allowedProductCodes;
+            }
+
+            if ($this->isDutchShipment()) {
+                $allowedProductCodes = $cifHelper->getStandardCodProductCodes();
+                return $allowedProductCodes;
+            }
         }
 
         if ($this->isPgeShipment()) {
             $allowedProductCodes = $cifHelper->getPgeProductCodes();
-            return $allowedProductCodes;
-        }
-
-        if ($this->isAvondShipment() && $this->isCod()) {
-            $allowedProductCodes = $cifHelper->getAvondCodProductCodes();
             return $allowedProductCodes;
         }
 
@@ -2588,6 +2600,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $cifHelper = $this->getHelper('cif');
         $allowedProductCodes = $this->getAllowedProductCodes();
+        echo '<pre>';var_dump($allowedProductCodes);exit;
 
         /**
          * Check if the product code is allowed

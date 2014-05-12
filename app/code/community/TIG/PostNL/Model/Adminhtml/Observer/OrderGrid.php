@@ -158,8 +158,19 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             array('order' => $resource->getTableName('sales/order')),
             '`main_table`.`entity_id`=`order`.`entity_id`',
             array(
-                'shipping_method'      => 'order.shipping_method',
+                'shipping_method' => 'order.shipping_method',
             )
+        );
+
+        /**
+         * Join sales_flat_order_payment table
+         */
+        $select->joinLeft(
+               array('payment' => $resource->getTableName('sales/order_payment')),
+               '`main_table`.`entity_id`=`payment`.`parent_id`',
+               array(
+                   'payment_method' => 'payment.method',
+               )
         );
 
         /**
@@ -266,7 +277,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'index'                     => 'country_id',
             'type'                      => 'options',
             'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_shipmentType',
-            'width'                     => '110px',
+            'width'                     => '140px',
             'filter_condition_callback' => array($this, '_filterShipmentType'),
             'sortable'                  => false,
             'options'                   => array(

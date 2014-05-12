@@ -238,6 +238,19 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
     }
 
     /**
+     * Alias for getAvailableOptions() with $cod = true.
+     *
+     * @param bool $storeId
+     * @param bool $codesOnly
+     *
+     * @return array
+     */
+    public function getAvailableCodOptions($storeId = false, $codesOnly = false)
+    {
+        return $this->getAvailableOptions($storeId, $codesOnly, false, true);
+    }
+
+    /**
      * Alias for getAvailableOptions() with $isAvond === true.
      *
      * @param bool $storeId
