@@ -46,6 +46,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
     const IS_PAKJE_GEMAK_COLUMN       = 'is_pakje_gemak';
     const IS_PAKKETAUTOMAAT_COLUMN    = 'is_pakketautomaat';
     const DELIVERY_OPTION_TYPE_COLUMN = 'delivery_option_type';
+    const PAYMENT_METHOD_COLUMN       = 'payment_method';
 
     /**
      * Renders the column value as a shipment type value (Domestic, EPS or GlobalPack)
@@ -62,7 +63,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         $column = $this->getColumn();
 
         /**
-         * The shipment was not shipped using PostNL
+         * The shipment was not shipped using PostNL.
          */
         $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
@@ -78,14 +79,22 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
             return '';
         }
 
+        $isCod = $this->_isCod($row);
+
         $helper = Mage::helper('postnl/cif');
 
         $optionType = $row->getData(self::DELIVERY_OPTION_TYPE_COLUMN);
         if ($optionType == 'Avond') {
             $label   = $helper->__('Domestic');
             $comment = $helper->__('Evening Delivery');
+            $type    = 'avond';
 
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>avond</div><b>{$label}"
+            if ($isCod) {
+                $comment .= ' + ' . $helper->__('COD');
+                $type .= '_cod';
+            }
+
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>{$type}</div><b>{$label}"
                 . "</b><br /><em>{$comment}</em>";
 
             return $renderedValue;
@@ -94,8 +103,17 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         if ($optionType == 'PGE') {
             $label   = $helper->__('Post Office');
             $comment = $helper->__('Early Pickup');
+            $type    = 'pakje_gemak_express';
 
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak_express"
+            if ($isCod) {
+                $type .= '_cod';
+            }
+
+            if ($isCod) {
+                $comment .= ' + ' . $helper->__('COD');
+            }
+
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>{$type}"
                 . "</div><b>{$label}</b><br /><em>{$comment}</em>";
 
             return $renderedValue;
@@ -112,9 +130,18 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
 
         if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
             $label = $helper->__('Post Office');
+            $type  = 'pakje_gemak';
 
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak</div><b>"
+            if ($isCod) {
+                $type .= '_cod';
+            }
+
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>{$type}</div><b>"
                 . "{$label}</b>";
+
+            if ($isCod) {
+                $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
+            }
 
             return $renderedValue;
         }
@@ -124,9 +151,18 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
          */
         if ($value == 'NL') {
             $label = $helper->__('Domestic');
+            $type  = 'standard';
 
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>standard</div><b>"
+            if ($isCod) {
+                $type .= '_cod';
+            }
+
+            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>{$type}</div><b>"
                 . "{$label}</b>";
+
+            if ($isCod) {
+                $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
+            }
 
             return $renderedValue;
         }
@@ -153,6 +189,26 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
             . "</b>";
 
         return $renderedValue;
+    }
+
+    /**
+     * Checks if a specified order is placed using a PostNL COD payment method.
+     *
+     * @param Varien_Object $row
+     *
+     * @return bool
+     */
+    protected function _isCod($row)
+    {
+        $isCod = false;
+        $paymentMethod = $row->getData(self::PAYMENT_METHOD_COLUMN);
+
+        $codPaymentMethods = Mage::helper('postnl/payment')->getCodPaymentMethods();
+        if (in_array($paymentMethod, $codPaymentMethods)) {
+            $isCod = true;
+        }
+
+        return $isCod;
     }
 
     /**

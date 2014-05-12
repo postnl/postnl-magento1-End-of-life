@@ -234,6 +234,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Get an array of standard COD product codes
+     *
+     * @param bool $storeId
+     *
+     * @return array
+     */
+    public function getStandardCodProductCodes($storeId = false)
+    {
+        $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
+        return $standardProductCodes->getAvailableCodOptions($storeId, true);
+    }
+
+    /**
      * Get an array of evening delivery product codes.
      *
      * @param bool $storeId
@@ -247,7 +260,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Get an array of evening delivery product codes.
+     * Get an array of evening delivery COD product codes.
      *
      * @param bool $storeId
      *
@@ -260,7 +273,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Get an array of pakjegemak product codes
+     * Get an array of PakjeGemak product codes
      *
      * @param bool $storeId
      *
@@ -270,6 +283,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
         return $pakjeGemakProductCodes->getAvailableOptions($storeId, true);
+    }
+
+    /**
+     * Get an array of PakjeGemak COD product codes
+     *
+     * @param bool $storeId
+     *
+     * @return array
+     */
+    public function getPakjeGemakCodProductCodes($storeId = false)
+    {
+        $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
+        return $pakjeGemakProductCodes->getAvailableCodOptions($storeId, true);
     }
 
     /**
@@ -286,7 +312,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Get an array of PakjeGemak Express product codes.
+     * Get an array of PakjeGemak Express COD product codes.
      *
      * @param bool $storeId
      *
