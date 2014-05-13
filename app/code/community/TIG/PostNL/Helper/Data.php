@@ -265,18 +265,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Checks to see if the module may ship to the Netherlands using PostNL standard shipments.
      *
-     * @param boolean|int $storeId
-     *
      * @return boolean
      */
-    public function canUseStandard($storeId = false)
+    public function canUseStandard()
     {
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
-
         $standardProductOptions = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
-                                      ->getAvailableOptions($storeId);
+                                      ->getAvailableOptions();
         if (empty($standardProductOptions)) {
             return false;
         }
@@ -287,18 +281,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Checks to see if the module may ship using PakjeGemak.
      *
-     * @param boolean|int $storeId
-     *
      * @return boolean
      */
-    public function canUsePakjeGemak($storeId = false)
+    public function canUsePakjeGemak()
     {
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
-
         $pakjeGemakProductoptions = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions')
-                                        ->getAvailableOptions($storeId);
+                                        ->getAvailableOptions();
 
         if (empty($pakjeGemakProductoptions)) {
             return false;
@@ -310,18 +298,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Checks to see if the module may ship to EU countries using EPS
      *
-     * @param boolean|int $storeId
-     *
      * @return boolean
      */
-    public function canUseEps($storeId = false)
+    public function canUseEps()
     {
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
-
         $euProductOptions = Mage::getModel('postnl_core/system_config_source_euProductOptions')
-                                ->getAvailableOptions($storeId);
+                                ->getAvailableOptions();
 
         if (empty($euProductOptions)) {
             return false;
@@ -333,22 +315,16 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Checks to see if the module may ship to countries outside the EU using GlobalPack
      *
-     * @param boolean|int $storeId
-     *
      * @return boolean
      */
-    public function canUseGlobalPack($storeId = false)
+    public function canUseGlobalPack()
     {
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
-
         if (!$this->isGlobalAllowed()) {
             return false;
         }
 
         $globalProductOptions = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
-                                    ->getAvailableOptions($storeId);
+                                    ->getAvailableOptions();
 
         if (empty($globalProductOptions)) {
             return false;

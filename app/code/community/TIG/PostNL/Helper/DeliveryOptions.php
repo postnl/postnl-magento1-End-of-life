@@ -424,7 +424,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         $pakketautomaatOptions = Mage::getModel('postnl_core/system_config_source_pakketautomaatProductOptions')
-                                     ->getAvailableOptions($storeId);
+                                     ->getAvailableOptions();
 
         if (empty($pakketautomaatOptions)) {
             return false;

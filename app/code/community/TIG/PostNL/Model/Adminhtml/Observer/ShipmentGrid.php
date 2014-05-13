@@ -319,7 +319,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'renderer'         => 'postnl_adminhtml/widget_grid_column_renderer_shippingDescription',
                     'column_css_class' => 'nobr',
                     'options'          => Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                                              ->getAvailableOptions(false, true, false, false, true, false),
+                                              ->getAvailableOptions(true),
                 ),
                 $after
             );
@@ -365,7 +365,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'type'             => 'options',
                     'column_css_class' => 'nobr',
                     'options'          => Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                                              ->getAvailableOptions(false, true, false, false, true, false),
+                                              ->getAvailableOptions(true),
                 ),
                 $after
             );
