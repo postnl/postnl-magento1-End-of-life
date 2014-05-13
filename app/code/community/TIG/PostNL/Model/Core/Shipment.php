@@ -827,10 +827,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Gets allowed product codes for the current shipment.
      *
      * @return array
+     */
+    public function getAllowedProductCodes()
+    {
+        $allowedProductOptions = $this->getAllowedProductOptions();
+
+        $productCodes = array_keys($allowedProductOptions);
+        return $productCodes;
+    }
+
+    /**
+     * Gets allowed product options for the current shipment.
+     *
+     * @return array
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getAllowedProductCodes()
+    public function getAllowedProductOptions()
     {
         $cifHelper = $this->getHelper('cif');
 
@@ -2600,7 +2613,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $cifHelper = $this->getHelper('cif');
         $allowedProductCodes = $this->getAllowedProductCodes();
-        echo '<pre>';var_dump($allowedProductCodes);exit;
 
         /**
          * Check if the product code is allowed

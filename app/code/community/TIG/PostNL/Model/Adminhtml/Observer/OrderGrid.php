@@ -335,7 +335,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         /**
-         * Build an array of options for the massaction item
+         * Build an array of options for the massaction item.
          */
         $massActionData = array(
             'label'=> $helper->__('PostNL - Create Shipments'),
@@ -346,7 +346,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 
         if ($showOptions) {
             /**
-             * Add another dropdown containing the possible product options
+             * Add another dropdown containing the possible product options.
              */
             $massActionData['additional'] = array(
                 'product_options' => array(
@@ -354,14 +354,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'type'   => 'select',
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
-                    'values' => Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                                    ->getAvailableOptions(true, true, false, false, false, true, true),
+                    'values' => Mage::getModel('postnl_core/system_config_source_allProductOptions')->toOptionArray(),
                 ),
             );
         }
 
         /**
-         * Add the massaction
+         * Add the massaction.
          */
         $block->getMassactionBlock()
               ->addItem(

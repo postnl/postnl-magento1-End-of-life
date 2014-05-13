@@ -39,9 +39,9 @@
 abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstract
 {
     /**
-     * XML path to supported options configuration setting
+     * Xpath to supported options configuration setting
      */
-    const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
 
     /**
      * @var array
@@ -49,14 +49,20 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     protected $_options = array();
 
     /**
+     * @var array
+     */
+    protected $_groups = array();
+
+    /**
      * Gets all possible product options matching an array of flags.
      *
      * @param array   $flags
      * @param boolean $asFlatArray
+     * @param boolean $checkAvailable
      *
      * @return array
      */
-    public function getOptions($flags = array(), $asFlatArray = false)
+    public function getOptions($flags = array(), $asFlatArray = false, $checkAvailable = false)
     {
         $options = $this->_options;
         if (!empty($flags)) {
@@ -65,6 +71,10 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
                     unset($options[$key]);
                 }
             }
+        }
+
+        if ($checkAvailable) {
+            $this->_filterAvailable($options);
         }
 
         $this->_translateOptions($options);
@@ -77,6 +87,50 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     }
 
     /**
+     * Gets product options grouped by their 'group' key.
+     *
+     * @param array   $flags
+     * @param boolean $filterAvailable
+     *
+     * @return array
+     */
+    public function getGroupedOptions($flags = array(), $filterAvailable = false)
+    {
+        $options = $this->getOptions($flags, false, $filterAvailable);
+
+        if (empty($this->_groups)) {
+            return $options;
+        }
+
+        $groupedOptions = $this->_groupOptions($options);
+
+        return $groupedOptions;
+    }
+
+
+    /**
+     * Returns an option array for all possible PostNL product options
+     *
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        return $this->getOptions();
+    }
+
+    /**
+     * Get a list of available options. This is a filtered/modified version of the array supplied by getOptions();
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableOptions($flat = false)
+    {
+        return $this->getOptions(array(), $flat, true);
+    }
+
+    /**
      * Checks if an option array item is valid for a given array of flags.
      *
      * @param array $option
@@ -86,13 +140,54 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
      */
     protected function _optionMatchesFlags($option, $flags)
     {
-        foreach ($option as $key => $value) {
-            if (array_key_exists($key, $flags) && $value !== $flags[$key]) {
+        foreach($flags as $key => $value) {
+            if (!array_key_exists($key, $option)) {
+                return false;
+            }
+
+            if ($option[$key] !== $value) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * Groups an array of options based on the 'group' key.
+     *
+     * @param $options
+     *
+     * @return array
+     */
+    protected function _groupOptions($options)
+    {
+        $helper = Mage::helper('postnl');
+        $groups = $this->_groups;
+
+        $sortedOptions = array();
+        foreach ($options as $key => $option) {
+            if (!array_key_exists('group', $option)) {
+                continue;
+            }
+
+            $group = $option['group'];
+            $sortedOptions[$group][$key] = $option;
+        }
+
+        $groupedOptions = array();
+        foreach ($groups as $group => $label) {
+            if (!array_key_exists($group, $sortedOptions)) {
+                continue;
+            }
+
+            $groupedOptions[$group] = array(
+                'label' => $helper->__($label),
+                'value' => $sortedOptions[$group],
+            );
+        }
+
+        return $groupedOptions;
     }
 
     /**
@@ -113,19 +208,54 @@ abstract class TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstrac
     }
 
     /**
+     * Filters the options based on options that are available.
+     *
+     * @param array $options
+     *
+     * @return array
+     */
+    protected function _filterAvailable(&$options)
+    {
+        $helper = Mage::helper('postnl');
+        $canUseEpsBEOnly = $helper->canUseEpsBEOnlyOption();
+
+        $storeId = Mage::app()->getStore()->getId();
+
+        /**
+         * Get the list of supported product options from the shop's configuration
+         */
+        $supportedOptions = Mage::getStoreConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
+        $supportedOptionsArray = explode(',', $supportedOptions);
+        if ($canUseEpsBEOnly) {
+            $supportedOptionsArray[] = '4955';
+        }
+
+        foreach ($options as $key => $option) {
+            $code = $option['value'];
+            if (!in_array($code, $supportedOptionsArray)) {
+                unset($options[$key]);
+            }
+        }
+
+        return $options;
+    }
+
+    /**
      * Flattens an option array.
      *
      * @param array $options
      *
      * @return array
      */
-    protected function _flattenOptionArray($options)
+    protected function _flattenOptionArray(&$options)
     {
         $flatArray = array();
         foreach ($options as $option) {
             $flatArray[$option['value']] = $option['label'];
         }
 
-        return $flatArray;
+        $options = $flatArray;
+
+        return $options;
     }
 }

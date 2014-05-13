@@ -180,99 +180,48 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
     /**
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
-     * @param boolean|int $storeId
-     * @param boolean     $codesOnly
-     * @param boolean     $isAvond
-     * @param boolean     $cod
+     * @param boolean $flat
      *
      * @return array
      */
-    public function getAvailableOptions($storeId = false, $codesOnly = false, $isAvond = false, $cod = false)
+    public function getAvailableOptions($flat = false)
     {
-        if ($storeId === false) {
-            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        }
-
-        $flags = array();
-        if ($isAvond) {
-            $flags['isAvond'] = true;
-        }
-        if ($cod) {
-            $flags['isCod'] = true;
-        }
-
-        $options = $this->getOptions($flags);
-
-        /**
-         * Get a list of all possible options
-         */
-        $availableOptions = array();
-
-        /**
-         * Get the list of supported product options from the shop's configuration
-         */
-        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
-        $supportedOptionsArray = explode(',', $supportedOptions);
-
-        /**
-         * Check each standard option to see if it's supprted
-         */
-        foreach ($options as $option) {
-            if (!is_array($option) || !array_key_exists('value', $option)) {
-                continue;
-            }
-
-            if (!in_array($option['value'], $supportedOptionsArray)) {
-                continue;
-            }
-
-            if ($codesOnly === true) {
-                $availableOptions[] = $option['value'];
-                continue;
-            }
-
-            $availableOptions[] = $option;
-        }
-
-        return $availableOptions;
+        return $this->getOptions(array('isCod' => false), $flat, true);
     }
 
     /**
      * Alias for getAvailableOptions() with $cod = true.
      *
-     * @param bool $storeId
-     * @param bool $codesOnly
+     * @param boolean $flat
      *
      * @return array
      */
-    public function getAvailableCodOptions($storeId = false, $codesOnly = false)
+    public function getAvailableCodOptions($flat = false)
     {
-        return $this->getAvailableOptions($storeId, $codesOnly, false, true);
+        return $this->getOptions(array('isCod' => true), $flat, true);
     }
 
     /**
-     * Alias for getAvailableOptions() with $isAvond === true.
+     * Get available avond options.
      *
-     * @param bool $storeId
-     * @param bool $codesOnly
+     * @param boolean $flat
      *
      * @return array
      */
-    public function getAvailableAvondOptions($storeId = false, $codesOnly = false)
+    public function getAvailableAvondOptions($flat = false)
     {
-        return $this->getAvailableOptions($storeId, $codesOnly, true);
+        return $this->getOptions(array('isAvond' => true, 'isCod' => false), $flat, true);
     }
 
     /**
-     * Alias for getAvailableOptions() with $isAvond = true and $cod = true.
+     * Get available avond options that are also COD.
      *
-     * @param bool $storeId
-     * @param bool $codesOnly
+     * @param boolean $flat
      *
      * @return array
      */
-    public function getAvailableAvondCodOptions($storeId = false, $codesOnly = false)
+    public function getAvailableAvondCodOptions($flat = false)
     {
-        return $this->getAvailableOptions($storeId, $codesOnly, true, true);
+        return $this->getOptions(array('isAvond' => true, 'isCod' => true), $flat, true);
     }
 }

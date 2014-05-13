@@ -221,148 +221,126 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Get an array of standard product codes
-     *
-     * @param bool $storeId
+     * Get an array of standard product codes.
      *
      * @return array
      */
-    public function getStandardProductCodes($storeId = false)
+    public function getStandardProductCodes()
     {
         $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $standardProductCodes->getAvailableOptions($storeId, true);
+        return $standardProductCodes->getAvailableOptions(true);
     }
 
     /**
-     * Get an array of standard COD product codes
-     *
-     * @param bool $storeId
+     * Get an array of standard COD product codes.
      *
      * @return array
      */
-    public function getStandardCodProductCodes($storeId = false)
+    public function getStandardCodProductCodes()
     {
         $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $standardProductCodes->getAvailableCodOptions($storeId, true);
+        return $standardProductCodes->getAvailableCodOptions(true);
     }
 
     /**
      * Get an array of evening delivery product codes.
      *
-     * @param bool $storeId
-     *
      * @return array
      */
-    public function getAvondProductCodes($storeId = false)
+    public function getAvondProductCodes()
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $pakjeGemakProductCodes->getAvailableAvondOptions($storeId, true);
+        return $pakjeGemakProductCodes->getAvailableAvondOptions(true);
     }
 
     /**
      * Get an array of evening delivery COD product codes.
      *
-     * @param bool $storeId
-     *
      * @return array
      */
-    public function getAvondCodProductCodes($storeId = false)
+    public function getAvondCodProductCodes()
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $pakjeGemakProductCodes->getAvailableAvondCodOptions($storeId, true);
+        return $pakjeGemakProductCodes->getAvailableAvondCodOptions(true);
     }
 
     /**
-     * Get an array of PakjeGemak product codes
-     *
-     * @param bool $storeId
+     * Get an array of PakjeGemak product codes.
      *
      * @return array
      */
-    public function getPakjeGemakProductCodes($storeId = false)
+    public function getPakjeGemakProductCodes()
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
-        return $pakjeGemakProductCodes->getAvailableOptions($storeId, true);
+        return $pakjeGemakProductCodes->getAvailableOptions(true);
     }
 
     /**
-     * Get an array of PakjeGemak COD product codes
-     *
-     * @param bool $storeId
+     * Get an array of PakjeGemak COD product codes.
      *
      * @return array
      */
-    public function getPakjeGemakCodProductCodes($storeId = false)
+    public function getPakjeGemakCodProductCodes()
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
-        return $pakjeGemakProductCodes->getAvailableCodOptions($storeId, true);
+        return $pakjeGemakProductCodes->getAvailableCodOptions(true);
     }
 
     /**
      * Get an array of PakjeGemak Express product codes.
      *
-     * @param bool $storeId
-     *
      * @return array
      */
-    public function getPgeProductCodes($storeId = false)
+    public function getPgeProductCodes()
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
-        return $pakjeGemakProductCodes->getAvailablePgeOptions($storeId, true);
+        return $pakjeGemakProductCodes->getAvailablePgeOptions(true);
     }
 
     /**
      * Get an array of PakjeGemak Express COD product codes.
      *
-     * @param bool $storeId
-     *
      * @return array
      */
-    public function getPgeCodProductCodes($storeId = false)
+    public function getPgeCodProductCodes()
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
-        return $pakjeGemakProductCodes->getAvailablePgeCodOptions($storeId, true);
+        return $pakjeGemakProductCodes->getAvailablePgeCodOptions(true);
     }
 
     /**
-     * Get an array of pakketautomaat product codes
-     *
-     * @param bool $storeId
+     * Get an array of pakketautomaat product codes.
      *
      * @return array
      */
-    public function getPakketautomaatProductCodes($storeId = false)
+    public function getPakketautomaatProductCodes()
     {
         $pakketautomaatProductCodes = Mage::getSingleton(
             'postnl_core/system_config_source_pakketautomaatProductOptions'
         );
-        return $pakketautomaatProductCodes->getAvailableOptions($storeId, true);
+        return $pakketautomaatProductCodes->getAvailableOptions(true);
     }
 
     /**
-     * Get an array of eu product codes
-     *
-     * @param bool $storeId
+     * Get an array of eu product codes.
      *
      * @return array
      */
-    public function getEuProductCodes($storeId = false)
+    public function getEuProductCodes()
     {
         $euProductCodes = Mage::getSingleton('postnl_core/system_config_source_euProductOptions');
-        return $euProductCodes->getAvailableOptions($storeId, true);
+        return $euProductCodes->getAvailableOptions(true);
     }
 
     /**
-     * Get an array of global product codes
-     *
-     * @param bool $storeId
+     * Get an array of global product codes.
      *
      * @return array
      */
-    public function getGlobalProductCodes($storeId = false)
+    public function getGlobalProductCodes()
     {
         $globalProductCodes = Mage::getSingleton('postnl_core/system_config_source_globalProductOptions');
-        return $globalProductCodes->getAvailableOptions($storeId, true);
+        return $globalProductCodes->getAvailableOptions(true);
     }
 
     /**
