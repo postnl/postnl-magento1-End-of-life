@@ -263,6 +263,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     }
 
     /**
+     * Manually sends a track & trace email to the customer.
+     *
      * @return $this
      */
     public function sendTrackAndTraceAction()

@@ -94,8 +94,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
                 $type .= '_cod';
             }
 
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>{$type}</div><b>{$label}"
-                . "</b><br /><em>{$comment}</em>";
+            $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>" .
+                "<br /><em>{$comment}</em>";
 
             return $renderedValue;
         }
@@ -103,7 +103,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         if ($optionType == 'PGE') {
             $label   = $helper->__('Post Office');
             $comment = $helper->__('Early Pickup');
-            $type    = 'pakje_gemak_express';
+            $type    = 'pge';
 
             if ($isCod) {
                 $type .= '_cod';
@@ -113,8 +113,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
                 $comment .= ' + ' . $helper->__('COD');
             }
 
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>{$type}"
-                . "</div><b>{$label}</b><br /><em>{$comment}</em>";
+            $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>" .
+                "<br /><em>{$comment}</em>";
 
             return $renderedValue;
         }
@@ -122,8 +122,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         if ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             $label = $helper->__('Parcel Dispenser');
 
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakketautomaat</div><b>"
-                . "{$label}</b>";
+            $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='pakketautomaat'>{$label}</b>";
 
             return $renderedValue;
         }
@@ -136,8 +135,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
                 $type .= '_cod';
             }
 
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>{$type}</div><b>"
-                . "{$label}</b>";
+            $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
 
             if ($isCod) {
                 $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
@@ -157,8 +155,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
                 $type .= '_cod';
             }
 
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>{$type}</div><b>"
-                . "{$label}</b>";
+            $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";
 
             if ($isCod) {
                 $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
@@ -174,8 +171,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         if (in_array($value, $euCountries)) {
             $label = $helper->__('EPS');
 
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>eps</div><b>{$label}"
-                . "</b>";
+            $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='eu'>{$label}</b>";
 
             return $renderedValue;
         }
@@ -185,8 +181,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
          */
         $label = $helper->__('GlobalPack');
 
-        $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>global_pack</div><b>{$label}"
-            . "</b>";
+        $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='global'>{$label}</b>";
 
         return $renderedValue;
     }
