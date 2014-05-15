@@ -74,9 +74,16 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     protected $_isFirstLabel = false;
 
     /**
+     * Flag if the current label is the first CODCard label processed.
+     *
+     * @var bool
+     */
+    protected $_isFirstCodCardLabel = false;
+
+    /**
      * @param boolean $isFirstLabel
      *
-     * @return TIG_PostNL_Model_Core_Label
+     * @return $this
      */
     public function setIsFirstLabel($isFirstLabel)
     {
@@ -94,6 +101,26 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
+     * @param boolean $isFirstCodCardLabel
+     *
+     * @return $this
+     */
+    public function setIsFirstCodCardLabel($isFirstCodCardLabel)
+    {
+        $this->_isFirstCodCardLabel = $isFirstCodCardLabel;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getIsFirstCodCardLabel()
+    {
+        return $this->_isFirstCodCardLabel;
+    }
+
+    /**
      * Get the array of saved temporary labels
      *
      * @return array
@@ -108,7 +135,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      *
      * @param array $tempFilesSaved
      *
-     * @return TIG_PostNL_Model_Core_Label
+     * @return $this
      */
     public function setTempFilesSaved($tempFilesSaved)
     {
@@ -132,7 +159,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      *
      * @param int $counter
      *
-     * @return TIG_PostNL_Model_Core_Label
+     * @return $this
      */
     public function setLabelCounter($counter)
     {
@@ -161,7 +188,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     /**
      * Reset the counter to 0
      *
-     * @return TIG_PostNL_Model_Core_Label
+     * @return $this
      */
     public function resetLabelCounter()
     {
@@ -175,7 +202,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      *
      * @param int $increase
      *
-     * @return TIG_PostNL_Model_Core_Label
+     * @return $this
      */
     public function increaseLabelCounter($increase = 1)
     {
@@ -192,7 +219,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      *
      * @param string $tempFile
      *
-     * @return TIG_PostNL_Model_Core_Label
+     * @return $this
      */
     public function addTempFileSaved($tempFile)
     {
@@ -210,7 +237,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      *
      * @param mixed $labels May be an array of labels or a single label string
      *
-     * @return TIG_PostNL_Model_Core_Label
+     * @return $this
      *
      * @see TIG_PostNL_Fpdf
      * @see TIG_PostNL_Fpdi
@@ -299,6 +326,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         }
 
         $this->setIsFirstLabel(true);
+        $this->setIsFirstCodCardLabel(true);
         $labels = $this->_sortLabels($labels);
         foreach ($labels as $label) {
             $pdf = $this->_addPdfTemplate($pdf, $label);
@@ -330,7 +358,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $this->_convertTempLabelToCombi($tempFilename); //NO BREAK
             case 'Label':
                 /**
-                 * If the configured label size is A4, add a new page every 4 labels and reset the counter
+                 * If the configured label size is A4, add a new page every 4 labels and reset the counter.
                  */
                 if ($this->getLabelSize() == 'A4'
                     && (!$this->getLabelCounter() || $this->getLabelCounter() > 4)
@@ -343,15 +371,15 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 }
 
                 /**
-                 * If the configured label size is A6, add a new page every label
+                 * If the configured label size is A6, add a new page every label.
                  */
                 if($this->getLabelSize() == 'A6') {
-                    $this->setLabelCounter(3); //used to calculate the top left position
+                    $this->setLabelCounter(3); //used to calculate the top left position.
                     $pdf->addOrientedPage('L', 'A6');
                 }
 
                 /**
-                 * Calculate the position of the next label to be printed
+                 * Calculate the position of the next label to be printed.
                  */
                 $position = $this->_getPosition($this->getLabelCounter());
                 $position['w'] = $this->pix2pt(538);
@@ -361,12 +389,12 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             case 'CN23':
             case 'CommercialInvoice':
                 /**
-                 * International shipping labels are larger and need to be printed on seperate pages
+                 * International shipping labels are larger and need to be printed on separate pages.
                  */
                 $pdf->addOrientedPage('P', 'A4');
 
                 /**
-                 * Calculate the position of the next label to be printed
+                 * Calculate the position of the next label to be printed.
                  */
                 $position = array(
                     'x' => $this->pix2pt(15),
@@ -375,13 +403,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 );
 
                 /**
-                 * increase the label counter to above 4. This will prompt the creation of a new page
+                 * increase the label counter to above 4. This will prompt the creation of a new page.
                  */
                 $this->setLabelCounter(5);
                 break;
             case 'CP71':
                 /**
-                 * Calculate the position of the next label to be printed
+                 * Calculate the position of the next label to be printed.
                  */
                 $position = array(
                     'x' => $this->pix2pt(15),
@@ -390,29 +418,28 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 );
 
                 /**
-                 * increase the label counter to above 4. This will prompt the creation of a new page
+                 * increase the label counter to above 4. This will prompt the creation of a new page.
                  */
                 $this->setLabelCounter(5);
                 break;
             case 'CODcard':
-                /**
-                 * COD cards are larger and need to be printed on seperate pages
-                 */
-                $pdf->addOrientedPage('P', 'A4');
+                if ($this->getIsFirstCodCardLabel()) {
+                    $this->setIsFirstCodCardLabel(false);
+
+                    $pdf->addOrientedPage('P', 'A4');
+                    $this->resetLabelCounter();
+                } elseif (!$this->getLabelCounter() || $this->getLabelCounter() > 3) {
+                    $pdf->addOrientedPage('P', 'A4');
+                    $this->resetLabelCounter();
+                }
 
                 /**
-                 * Calculate the position of the next label to be printed
+                 * Calculate the position of the next label to be printed.
                  */
-                $position = array(
-                    'x' => $this->pix2pt(15),
-                    'y' => $this->pix2pt(17),
-                    'w' => $this->pix2pt(776)
-                );
+                $position = $this->_getCodCardPosition($this->getLabelCounter());
+                $position['w'] = $this->pix2pt(538);
 
-                /**
-                 * increase the label counter to above 4. This will prompt the creation of a new page
-                 */
-                $this->setLabelCounter(5);
+                $this->increaseLabelCounter();
                 break;
             default:
                 throw new TIG_PostNL_Exception(
@@ -441,7 +468,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     protected function _saveTempLabel($label)
     {
         /**
-         * construct the path to the temporary file
+         * construct the path to the temporary file.
          */
         $tempFilePath = Mage::getConfig()->getVarDir('TIG' . DS . 'PostNL' . DS . 'temp_label')
                       . DS
@@ -459,12 +486,12 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         }
 
         /**
-         * Add the base64 decoded label to the file
+         * Add the base64 decoded label to the file.
          */
         file_put_contents($tempFilePath, base64_decode($label));
 
         /**
-         * Save the name of the temp file so itcan be destroyed later
+         * Save the name of the temp file so it can be destroyed later.
          */
         $this->addTempFileSaved($tempFilePath);
 
@@ -474,7 +501,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     /**
      * Destroy all temporary pdf files
      *
-     * @return TIG_PostNL_Model_Core_Label
+     * @return $this
      */
     protected function _destroyTempLabels()
     {
@@ -487,14 +514,12 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
-     * Sorts labels by label type. First all labels of the 'Label' type. Then all other labels in the
-     * order of 'CN23' > 'CP71' > 'CommercialInvoice' grouped by shipments
+     * Sorts labels by label type. First all labels of the 'Label' and 'Label-combi' type. Then all other labels in the
+     * order of 'CODcard' > 'CN23' > 'CP71' > 'CommercialInvoice' grouped by shipments
      *
      * @param array $labels
      *
      * @return array
-     *
-     * @todo expand with cod labels
      */
     protected function _sortLabels($labels)
     {
@@ -507,7 +532,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         foreach ($labels as $label) {
             /**
-             * Seperate general labels from the rest
+             * Separate general labels from the rest.
              */
             if ($label->getLabelType() == 'Label' || $label->getLabelType() == 'Label-combi') {
                 $generalLabels[] = $label;
@@ -515,7 +540,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             }
 
             /**
-             * Seperate COD cards
+             * Separate COD cards.
              */
             if ($label->getLabelType() == 'CODcard') {
                 $codCards[] = $label;
@@ -523,7 +548,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             }
 
             /**
-             * Group other labels by shipment id (parent_id attribute)
+             * Group other labels by shipment id (parent_id attribute).
              */
             if (isset($globalLabels[$label->getParentId()])) {
                 $globalLabels[$label->getParentId()][$label->getLabelType()] = $label;
@@ -533,7 +558,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         }
 
         /**
-         * Sort all non-standard labels
+         * Sort all non-standard labels.
          */
         $sortedGlobalLabels = array();
         foreach ($globalLabels as $shipmentLabels) {
@@ -562,7 +587,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      *
      * @param string $tempFilename The location of the regular temp label
      *
-     * @return TIG_PostNL_Model_Core_Label
+     * @return $this
      */
     protected function _convertTempLabelToCombi($tempFilename)
     {
@@ -632,6 +657,48 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 break;
             case 4:
                 $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(414));
+                break;
+            default:
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('Invalid counter: %s', $counter),
+                    'POSTNL-0067'
+                );
+        }
+
+        return $position;
+    }
+
+    /**
+     * Calculates the position of the requested CODCard label using a counter system.
+     * The labels will be positioned accordingly:
+     * first: top
+     * second: middle
+     * third: bottom
+     *
+     * @param bool|int $counter
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @return array
+     *
+     */
+    protected function _getCodCardPosition($counter = false)
+    {
+        if ($counter === false) {
+            $position = array('x' => 0, 'y' => 0);
+
+            return $position;
+        }
+
+        switch($counter) {
+            case 1:
+                $position = array('x' => $this->pix2pt(15), 'y' => $this->pix2pt(15));
+                break;
+            case 2:
+                $position = array('x' => $this->pix2pt(15), 'y' => $this->pix2pt(296));
+                break;
+            case 3:
+                $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(576));
                 break;
             default:
                 throw new TIG_PostNL_Exception(

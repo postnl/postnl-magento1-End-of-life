@@ -76,7 +76,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
      * We have split the initialization of fieldsets and fields. This way Magento will first initialize all fieldsets and then
      * init all fields. So when field_a is initialized, fieldset_b is already available and the dependency will work.
      *
-     * @return TIG_PostNL_Block_Adminhtml_System_Config_Form
+     * @return $this
      */
     public function initForm()
     {

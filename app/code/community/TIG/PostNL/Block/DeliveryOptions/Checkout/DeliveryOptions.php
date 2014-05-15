@@ -73,7 +73,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      *
      * @param Mage_Sales_Model_Quote_Address|null $shippingAddress
      *
-     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions
+     * @return $this
      */
     public function setShippingAddress($shippingAddress)
     {
@@ -225,7 +225,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      *
      * @param string $deliveryDate
      *
-     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions
+     * @return $this
      */
     public function setDeliveryDate($deliveryDate)
     {

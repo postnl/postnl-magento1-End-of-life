@@ -150,7 +150,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
      *
      * @param Zend_Soap_Client $client
      *
-     * @return TIG_PostNL_Helper_Webservices
+     * @return $this
      *
      * @see Mage::log()
      */
@@ -181,7 +181,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
      *
      * @param Mage_Core_Exception|TIG_PostNL_Exception|SoapFault $exception
      *
-     * @return TIG_PostNL_Helper_Webservices
+     * @return $this
      *
      * @see Mage::logException()
      */

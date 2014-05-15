@@ -215,6 +215,17 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         );
 
         /**
+         * Join sales_flat_order_payment table
+         */
+        $select->joinLeft(
+            array('payment' => $resource->getTableName('sales/order_payment')),
+            '`main_table`.`order_id`=`payment`.`parent_id`',
+            array(
+                'payment_method' => 'payment.method',
+            )
+        );
+
+        /**
          * Join tig_postnl_shipment table
          */
         $select->joinLeft(
@@ -715,14 +726,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
         switch ($row->getData($column->getIndex())) {
-            case null: //rows with no value (non-PostNL shipments) or unconfirmed shipments
+            case null: //rows with no value (non-PostNL shipments) or unconfirmed shipments.
                 $class = '';
                 break;
-            case $postnlShipmentClass::SHIPPING_PHASE_SORTING:      //no break;
-            case $postnlShipmentClass::SHIPPING_PHASE_DISTRIBUTION: //no break;
             case $postnlShipmentClass::SHIPPING_PHASE_DELIVERED:
                 $class = 'grid-severity-notice';
                 break;
+            case $postnlShipmentClass::SHIPPING_PHASE_SORTING:      //no break;
+            case $postnlShipmentClass::SHIPPING_PHASE_DISTRIBUTION: //no break;
             case $postnlShipmentClass::SHIPPING_PHASE_COLLECTION:
                 $class = 'grid-severity-minor';
                 break;

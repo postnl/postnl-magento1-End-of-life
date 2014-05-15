@@ -931,7 +931,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @param boolean     $forced
      * @param boolean     $isError
      *
-     * @return TIG_PostNL_Helper_Data
+     * @return $this
      *
      * @see Mage::log
      */
@@ -959,12 +959,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Logs a cron debug messageto a seperate file in order to differentiate it from other debug messages
+     * Logs a cron debug message to a separate file in order to differentiate it from other debug messages.
      *
      * @param string $message
      * @param int    $level
      *
-     * @return TIG_PostNL_Helper_Data
+     * @return $this
      *
      * @see Mage::log
      */
@@ -982,7 +982,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @param string|Exception $exception
      *
-     * @return TIG_PostNL_Helper_Data
+     * @return $this
      *
      * @see Mage::logException
      */
@@ -1077,9 +1077,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Creates a seperate dir to log PostNL log files. Does nothing if the dir already exists
+     * Creates a separate dir to log PostNL log files. Does nothing if the dir already exists.
      *
-     * @return TIG_PostNL_Exception
+     * @return $this
      */
     public function createLogDir()
     {
@@ -1119,7 +1119,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @param string|Mage_Core_Model_Session_Abstract $session The session to which the messages will be added.
      * @param Exception $exception
      *
-     * @return TIG_PostNL_Helper_Data
+     * @return $this
      *
      * @see TIG_PostNL_Helper_Data::addSessionMessage()
      */
@@ -1183,7 +1183,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @param string|null $messageType
      * @param string|null $message
      *
-     * @return TIG_PostNL_Helper_Data
+     * @return $this
      *
      * @see Mage_Core_Model_Session_Abstract::addMessage()
      *

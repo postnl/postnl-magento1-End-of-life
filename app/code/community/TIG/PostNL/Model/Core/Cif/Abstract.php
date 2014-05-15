@@ -479,7 +479,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      *
      * @param Zend_Soap_Client $client
      *
-     * @return TIG_PostNL_Model_Core_Cif_Abstract
+     * @return $this
      */
     protected function _processWarnings($client)
     {

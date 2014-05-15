@@ -58,7 +58,7 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
      *
      * @param array $options
      *
-     * @return TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
+     * @return $this
      */
     public function setOptions($options)
     {
