@@ -897,7 +897,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if (($shipmentNumber === false || $shipmentNumber == 1)
             && ($postnlShipment->hasExtraCover() || $postnlShipment->isCod())
         ) {
-            $shipmentData['Amounts'] = $this->_getAmount($postnlShipment);
+            $shipmentData['Amounts'] = $this->_getAmount($postnlShipment, $shipment);
         }
 
         /**
@@ -1157,11 +1157,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Generates the CIF amount object containing the shipment's insured amount (if any)
      *
-     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     * @param TIG_PostnL_Model_Core_Shipment          $postnlShipment
+     * @param Mage_Sales_Model_Order_Shipment|boolean $shipment
      *
      * @return array
      */
-    protected function _getAmount(TIG_PostnL_Model_Core_Shipment $postnlShipment)
+    protected function _getAmount(TIG_PostnL_Model_Core_Shipment $postnlShipment, $shipment = false)
     {
         $amount = array();
         if (!$postnlShipment->hasExtraCover() && !$postnlShipment->isCod()) {
@@ -1183,14 +1184,18 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         if ($postnlShipment->isCod()) {
+            if (!$shipment) {
+                $shipment = $postnlShipment->getShipment();
+            }
+
             $value = number_format($postnlShipment->getShipmentBaseGrandTotal(), 2, '.', '');
             $amount[] = array(
                 'AccountName'       => 'J.P.Fritzsche',
-                'BIC'               => '',
+                'BIC'               => 'RABONL2U',
                 'IBAN'              => 'NL07RABO0326947159',
                 'AmountType'        => '01', // 01 = COD, 02 = Insured
-                'Currency'          => $postnlShipment->getShipment()->getOrder()->getBaseCurrencyCode(),
-                'Reference'         => $this->_getReference($postnlShipment->getShipment()),
+                'Currency'          => $shipment->getOrder()->getBaseCurrencyCode(),
+                'Reference'         => $this->_getReference($shipment),
                 'TransactionNumber' => '',
                 'Value'             => $value,
             );

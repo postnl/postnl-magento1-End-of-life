@@ -207,6 +207,11 @@
                 </postnl_cif_labels_and_confirming_track_and_trace_email_template>
             </email>
         </template>
+        <payment>
+            <groups>
+                <postnl>PostNL Payment Methods</postnl>
+            </groups>
+        </payment>
 	</global>
 
     <admin>
@@ -450,10 +455,17 @@
     <default>
         <payment>
             <postnl_cod>
-                <title>PostNL COD</title>
-                <model>postnl_payment/cod</model>
-                <sort_order>0</sort_order>
-                <active>1</active>
+                <active>0</active> <!-- Disabled -->
+                <title>PostNL Cash on Delivery</title> <!-- PostNL Cash on Delivery -->
+                <order_status>pending</order_status> <!-- Pending status -->
+                <allowspecific>1</allowspecific> <!-- Allow only specific countries -->
+                <specificcountry>NL</specificcountry> <!-- Allow only NL -->
+                <instructions/>
+                <min_order_total/>
+                <max_order_total/>
+                <sort_order>1000</sort_order> <!-- 1000 -->
+                <model>postnl_payment/cod</model> <!-- TIG_PostNL_Model_Payment_Cod -->
+                <group>postnl</group> <!-- PostNL Payment Methods -->
             </postnl_cod>
         </payment>
         <carriers>

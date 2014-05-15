@@ -46,6 +46,24 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     protected $_code = 'postnl_cod';
 
     /**
+     * Cash On Delivery payment block paths
+     *
+     * @var string
+     */
+    protected $_formBlockType = 'payment/form_cashondelivery';
+    protected $_infoBlockType = 'payment/info';
+
+    /**
+     * Get instructions text from config
+     *
+     * @return string
+     */
+    public function getInstructions()
+    {
+        return trim($this->getConfigData('instructions'));
+    }
+
+    /**
      * Checks whether PostNL COD is available.
      *
      * @param Mage_Sales_Model_Quote|null $quote
