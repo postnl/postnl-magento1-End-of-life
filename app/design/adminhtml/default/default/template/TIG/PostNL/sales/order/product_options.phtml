@@ -61,7 +61,12 @@
                     massActionSelect = $('sales_order_grid_massaction-select');
                     selectedMassAction = massActionSelect[massActionSelect.selectedIndex];
                     if (selectedMassAction.value == 'create_shipments') {
-                        productOptionSelect = $('product_options')
+                        var filteredTypes = window.filteredTypes;
+                        if (filteredTypes.length !== 1) {
+                            return;
+                        }
+
+                        var productOptionSelect = $('postnl_' + filteredTypes[0] + '_options');
                         if (!productOptionSelect) {
                             extraCoverDialog.open();
                             return;

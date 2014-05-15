@@ -333,14 +333,16 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
      */
     public function _checkVersionCompatibility()
     {
+        if (Mage::registry('postnl_version_compatibility_checked')) {
+            return $this;
+        }
+
         $helper = Mage::helper('postnl');
         if ($helper->isEnterprise()) {
             $edition = 'enterprise';
         } else {
             $edition = 'community';
         }
-
-        $inbox = Mage::getModel('postnl/inbox');
 
         $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/' . $edition);
         if ($supportedVersions === false) {
@@ -350,6 +352,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                          . 'behaviour.'
                      );
 
+            $inbox = Mage::getModel('postnl/inbox');
             $inbox->addCritical(
                       $message,
                       $message,
@@ -358,6 +361,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                   )
                   ->save();
 
+            Mage::register('postnl_version_compatibility_checked', true);
             return $this;
         }
 
@@ -374,6 +378,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                          . 'behaviour.'
                      );
 
+            $inbox = Mage::getModel('postnl/inbox');
             $inbox->addCritical(
                       $message,
                       $message,
@@ -382,9 +387,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                   )
                   ->save();
 
+            Mage::register('postnl_version_compatibility_checked', true);
             return $this;
         }
 
+        Mage::register('postnl_version_compatibility_checked', true);
         return $this;
     }
 

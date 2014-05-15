@@ -2584,6 +2584,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         if (Mage::registry('postnl_product_option')) {
             $productCode = Mage::registry('postnl_product_option');
+
+            if (is_array($productCode)) {
+                $productCode = $this->_extractProductcodeForType($productCode);
+            }
             $this->_checkProductCodeAllowed($productCode);
 
             return $productCode;
@@ -2595,6 +2599,77 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $productCode = $this->getDefaultProductCode();
 
         return $productCode;
+    }
+
+    /**
+     * Extracts a chosen product code from an array of product codes indexed by shipment type.
+     *
+     * @param array $codes
+     *
+     * @return string
+     *
+     * @todo standardize shipment type names (the keys)
+     */
+    protected function _extractProductcodeForType($codes)
+    {
+        if ($this->isCod()) {
+            if ($this->isPgeShipment()) {
+                $code = $codes['pge_cod_options'];
+                return $code;
+            }
+
+            if ($this->isAvondShipment()) {
+                $code = $codes['avond_cod_options'];
+                return $code;
+            }
+
+            if ($this->isPakjeGemakShipment()) {
+                $code = $codes['pakjegemak_cod_options'];
+                return $code;
+            }
+
+            if ($this->isDutchShipment()) {
+                $code = $codes['standard_cod_options'];
+                return $code;
+            }
+        }
+
+        if ($this->isPgeShipment()) {
+            $code = $codes['pge_options'];
+            return $code;
+        }
+
+        if ($this->isAvondShipment()) {
+            $code = $codes['avond_options'];
+            return $code;
+        }
+
+        if ($this->isPakjeGemakShipment()) {
+            $code = $codes['pakjegemak_options'];
+            return $code;
+        }
+
+        if ($this->isPakketautomaatShipment()) {
+            $code = $codes['pakketautomaat_options'];
+            return $code;
+        }
+
+        if ($this->isDutchShipment()) {
+            $code = $codes['standard_options'];
+            return $code;
+        }
+
+        if ($this->isEuShipment()) {
+            $code = $codes['eu_options'];
+            return $code;
+        }
+
+        if ($this->isGlobalShipment() && $this->getHelper('data')->isGlobalAllowed()) {
+            $code = $codes['global_options'];
+            return $code;
+        }
+
+        return $this->getDefaultProductCode();
     }
 
     /**
