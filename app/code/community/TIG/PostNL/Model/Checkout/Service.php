@@ -97,7 +97,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * @param StdClass $data
      * @param Mage_Sales_Model_Quote | null $quote
      *
-     * @return TIG_PostNL_Model_Checkout_Service
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -202,7 +202,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      *                            for the chosen payment method.
      * @param Mage_Sales_Model_Quote|null $quote
      *
-     * @return TIG_PostNL_Model_Checkout_Service
+     * @return $this
      */
     public function updateQuotePayment($data, $isOrderdetails = true, $methodOnly = false, $quote = null)
     {
@@ -299,7 +299,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * @param boolean $methodOnly
      * @param Mage_Sales_Model_Quote $quote
      *
-     * @return TIG_PostNL_Model_Checkout_Service
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -341,7 +341,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * @param string $methodName
      * @param Mage_Sales_Model_Quote $quote
      *
-     * @return TIG_PostNL_Exception
+     * @return $this
      */
     protected function _processPaymentMethod($methodName, $quote)
     {
@@ -373,7 +373,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * @param string $methodName
      * @param Mage_Sales_Model_Quote $quote
      *
-     * @return TIG_PostNL_Exception
+     * @return $this
      */
     protected function _processPaymentData($postnlPaymentData, $methodName, $quote)
     {
@@ -481,7 +481,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * @param StdClass $data
      * @param Mage_Sales_Model_Quote | null $quote
      *
-     * @return TIG_PostNL_Model_Checkout_Service
+     * @return $this
      */
     public function updateQuoteCustomer($data, $quote = null)
     {
@@ -549,7 +549,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * @param      $data
      * @param null $quote
      *
-     * @return TIG_PostNL_Model_Checkout_Service
+     * @return $this
      */
     public function updatePostnlOrder($data, $quote = null)
     {
@@ -717,7 +717,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      *
      * @param Mage_Sales_Model_Quote
      *
-     * @return TIG_PostNL_Model_Checkout_Service
+     * @return $this
      */
     public function confirmPostnlOrder($quote = null)
     {
@@ -905,7 +905,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      * @param StdClass $data
      * @param Mage_Sales_Model_Quote $quote
      *
-     * @return TIG_PostNL_Model_Checkout_Service
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -946,7 +946,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
      *
      * @param Mage_Sales_Model_Quote &$quote
      *
-     * @return TIG_PostNL_Model_Checkout_Service
+     * @return $this
      */
     protected function _removeAllQuoteAddresses(&$quote)
     {

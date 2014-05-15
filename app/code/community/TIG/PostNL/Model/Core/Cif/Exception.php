@@ -73,7 +73,7 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
      *
      * @param $xml
      *
-     * @return TIG_PostNL_Model_Core_Cif_Exception
+     * @return $this
      */
     public function setRequestXml($xml)
     {
@@ -86,7 +86,7 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
      * Set $_responseXml to specified value
      *
      * @param $xml
-     * @return TIG_PostNL_Model_Core_Cif_Exception
+     * @return $this
      */
     public function setResponseXml($xml)
     {
@@ -100,7 +100,7 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
      *
      * @param array $errorNumbers
      *
-     * @return TIG_PostNL_Model_Core_Cif_Exception
+     * @return $this
      */
     public function setErrorNumbers($errorNumbers)
     {
@@ -144,7 +144,7 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
      *
      * @param int $errorNumber
      *
-     * @return TIG_PostNL_Model_Core_Cif_Exception
+     * @return $this
      */
     public function addErrorNumber($errorNumber)
     {

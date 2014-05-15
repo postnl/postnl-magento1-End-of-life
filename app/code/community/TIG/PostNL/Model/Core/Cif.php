@@ -1183,6 +1183,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         if ($postnlShipment->isCod()) {
+            $value = number_format($postnlShipment->getShipmentBaseGrandTotal(), 2, '.', '');
+            $amount[] = array(
+                'AccountName'       => 'J.P.Fritzsche',
+                'BIC'               => '',
+                'IBAN'              => 'NL07RABO0326947159',
+                'AmountType'        => '01', // 01 = COD, 02 = Insured
+                'Currency'          => $postnlShipment->getShipment()->getOrder()->getBaseCurrencyCode(),
+                'Reference'         => $this->_getReference($postnlShipment->getShipment()),
+                'TransactionNumber' => '',
+                'Value'             => $value,
+            );
             /** @todo implement COD here */
         }
 

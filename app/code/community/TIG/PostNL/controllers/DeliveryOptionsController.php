@@ -97,7 +97,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * @param array $validTypes
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function setValidTypes($validTypes)
     {
@@ -129,7 +129,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * @param boolean $canUse
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function setCanUseDeliveryOptions($canUse)
     {
@@ -168,7 +168,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * @param TIG_PostNL_Model_DeliveryOptions_Service $service
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function setService(TIG_PostNL_Model_DeliveryOptions_Service $service)
     {
@@ -180,7 +180,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Save Extra costs associated with a selected option.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function saveOptionCostsAction()
     {
@@ -229,7 +229,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Saves a mobile phonenumber for parceldispenser orders.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function savePhoneNumberAction()
     {
@@ -274,7 +274,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Saves the selected shipment option.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function saveSelectedOptionAction()
     {
@@ -322,7 +322,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Get possible evening delivery time frames based on an earliest possible delivery date.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function getDeliveryTimeframesAction()
     {
@@ -393,7 +393,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Get the nearest post office locations based on either a postcode or a longitude and latitude.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function getNearestLocationsAction()
     {
@@ -473,7 +473,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Get all locations in a given area.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function getLocationsInAreaAction()
     {

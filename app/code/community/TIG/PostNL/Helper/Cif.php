@@ -1118,7 +1118,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @param Zend_Soap_Client $client
      *
-     * @return TIG_PostNL_Helper_Cif
+     * @return $this
      *
      * @see Mage::log()
      *
@@ -1148,7 +1148,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @param Mage_Core_Exception | TIG_PostNL_Model_Core_Cif_Exception $exception
      *
-     * @return TIG_PostNL_Helper_Cif
+     * @return $this
      *
      * @see Mage::logException()
      */

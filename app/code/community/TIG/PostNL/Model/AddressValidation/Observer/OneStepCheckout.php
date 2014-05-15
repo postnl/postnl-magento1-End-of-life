@@ -81,7 +81,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout
+     * @return $this
      *
      * @event core_block_abstract_to_html_before
      *

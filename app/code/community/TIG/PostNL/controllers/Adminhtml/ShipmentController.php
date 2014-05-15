@@ -41,7 +41,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     /**
      * Print a shipping label for a single shipment
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      */
     public function printLabelAction()
     {
@@ -130,7 +130,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     /**
      * Confirm a PosTNL shipment without printing a label
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      */
     public function confirmAction()
     {
@@ -212,7 +212,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     /**
      * Loads the status history tab on the shipment view page
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      */
     public function statusHistoryAction()
     {
@@ -493,7 +493,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     /**
      * Refreshes the status history grid after a filter or sorting request
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      */
     public function statusHistoryGridAction()
     {
@@ -509,7 +509,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      * Creates shipments for a supplied array of orders. This action is triggered by a massaction in the sales > order
      * grid.
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      */
     public function massCreateShipmentsAction()
     {
@@ -616,7 +616,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      * Please note that if you use a different label than the default 'GraphicFile|PDF' you must overload the
      * 'postnl_core/label' model.
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      */
     public function massPrintLabelsAndConfirmAction()
     {
@@ -719,7 +719,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      * Please note that if you use a different label than the default 'GraphicFile|PDF' you must overload the
      * 'postnl_core/label' model.
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      */
     public function massPrintLabelsAction()
     {
@@ -817,7 +817,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      * Please note that if you use a different label than the default 'GraphicFile|PDF' you must overload the
      * 'postnl_core/label' model.
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      */
     public function massConfirmAction()
     {
@@ -885,7 +885,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     /**
      * Creates a Parcelware export file based on the selected shipments
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      */
     public function massCreateParcelwareExportAction()
     {
@@ -954,7 +954,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      *
      * @throws TIG_PostNL_Exception
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      */
     protected function _createShipment($orderId)
     {
@@ -1107,7 +1107,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      *
      * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -1255,7 +1255,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      * Checks if any warnings were received while processing the action in CIF. If any warnings are found they are
      * added to the adminhtml session as a notice.
      *
-     * @return TIG_PostNL_Adminhtml_ShipmentController
+     * @return $this
      */
     protected function _checkForWarnings()
     {

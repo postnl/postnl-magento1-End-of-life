@@ -46,7 +46,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
     /**
      * @param TIG_PostNL_Model_AddressValidation_Cendris $cendrisModel
      *
-     * @return TIG_PostNL_AddressValidationController
+     * @return $this
      */
     public function setCendrisModel($cendrisModel)
     {
@@ -75,7 +75,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
     /**
      * Validates and enriches a postcode/housenumber combination. This will result in the address's city and streetname if valid.
      *
-     * @return TIG_PostNL_AddressValidationController
+     * @return $this
      */
     public function postcodeCheckAction()
     {

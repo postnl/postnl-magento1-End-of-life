@@ -75,7 +75,7 @@ class TIG_PostNL_Helper_Parcelware extends TIG_PostNL_Helper_Data
      *
      * @param boolean $autoConfirmEnabled
      *
-     * @return TIG_PostNL_Helper_Parcelware
+     * @return $this
      */
     public function setAutoConfirmEnabled($autoConfirmEnabled)
     {

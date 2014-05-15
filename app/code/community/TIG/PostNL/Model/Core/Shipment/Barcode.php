@@ -66,7 +66,7 @@ class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
      * @param $parentId
      * @param $barcodeNumber
      *
-     * @return TIG_PostNL_Model_Core_Shipment_Barcode
+     * @return $this
      */
     public function loadByParentAndBarcodeNumber($parentId, $barcodeNumber)
     {

@@ -73,7 +73,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Obj
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_AddressValidation_Observer_AddressBook
+     * @return $this
      *
      * @event core_block_abstract_to_html_before
      *

@@ -67,7 +67,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     /**
      * Activate the extension by registering it with the extension control service
      *
-     * @return TIG_PostNL_Adminhtml_ExtensionControlController
+     * @return $this
      */
     public function activateAction()
     {
@@ -87,9 +87,9 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     }
 
     /**
-     * Registers a new webshop
+     * Registers a new webshop.
      *
-     * @return TIG_PostNL_Adminhtml_ExtensionControlController
+     * @return $this
      */
     protected function _registerWebshop()
     {
@@ -119,8 +119,8 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             $webservice->activateWebshop($email);
         } catch (SoapFault $e) {
             /**
-             * If the webshop is already registered (email, hostname combo exists), continue the activation by sendinging a
-             * signle update statistics request.
+             * If the webshop is already registered (email, hostname combo exists), continue the activation by sending a
+             * single update statistics request.
              */
             if (isset($e->faultcode) && $e->faultcode == self::SHOP_ALREADY_REGISTERED_FAULTCODE) {
                 Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 1);
@@ -144,7 +144,9 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__(
-                'Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress you specified. Please read this email carefully as it contains instructions on how to finish the extension activation procedure.'
+                'Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress ' .
+                'you specified. Please read this email carefully as it contains instructions on how to finish the ' .
+                'extension activation procedure.'
             )
         );
 
@@ -152,17 +154,17 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     }
 
     /**
-     * Activates the webshop by attempting a single updateStatistics call
+     * Activates the webshop by attempting a single updateStatistics call.
      *
-     * @return TIG_PostNL_Adminhtml_ExtensionControlController
+     * @return $this
      */
     protected function _updateStatistics()
     {
         $groups = $this->getRequest()->getParam('groups');
 
         /**
-         * If either the unique key or the private key were just entered without saving the config first, we need to encrypt and
-         * save them.
+         * If either the unique key or the private key were just entered without saving the config first, we need to
+         * encrypt and save them.
          */
         $configChanged = false;
         if (isset($groups['general']['fields'])) {
@@ -193,7 +195,10 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
                      * Encrypt and save the unique key
                      */
                     $encryptedUniqueKey = Mage::helper('postnl/webservices')->encryptValue($uniqueKey);
-                    Mage::getModel('core/config')->saveConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, $encryptedUniqueKey);
+                    Mage::getModel('core/config')->saveConfig(
+                        self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY,
+                        $encryptedUniqueKey
+                    );
 
                     $configChanged = true;
                 }
@@ -209,7 +214,10 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
                      * Encrypt and save the private key
                      */
                     $encryptedPrivateKey = Mage::helper('postnl/webservices')->encryptValue($privateKey);
-                    Mage::getModel('core/config')->saveConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, $encryptedPrivateKey);
+                    Mage::getModel('core/config')->saveConfig(
+                        self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY,
+                        $encryptedPrivateKey
+                    );
 
                     $configChanged = true;
                 }
@@ -268,10 +276,10 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     }
 
     /**
-     * Deactivates the module so it can be reactivated under a different name. It will reactivate itself automatically if not
-     * settings are altered.
+     * Deactivates the module so it can be reactivated under a different name. It will reactivate itself automatically
+     * if not settings are altered.
      *
-     * @return TIG_PostNL_Adminhtml_ExtensionControlController
+     * @return $this
      */
     public function showActivationFieldsAction()
     {

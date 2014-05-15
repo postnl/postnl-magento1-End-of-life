@@ -50,7 +50,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
+     * @return $this
      *
      * @event adminhtml_block_html_before
      *
