@@ -178,6 +178,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     );
 
     /**
+     * Array of possible shipping phase codes.
+     *
+     * @var array
+     */
+    protected $_shippingPhaseCodes = array(
+        '1'  => 'reported',
+        '2'  => 'sorted',
+        '3'  => 'distribution',
+        '4'  => 'delivered',
+        '99' => 'not_found',
+    );
+
+    /**
      * Array of countires which may send their full street data in a single line,
      * rather than having to split them into streetname, housenr and extension parts
      *
@@ -384,7 +397,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Get an array of possible shipping phases
+     * Get an array of possible shipping phases.
      *
      * @return array
      */
@@ -396,6 +409,16 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         }
 
         return $shippingPhases;
+    }
+
+    /**
+     * Get an array of possible shipping phase codes.
+     *
+     * @return array
+     */
+    public function getShippingPhaseCodes()
+    {
+        return $this->_shippingPhaseCodes;
     }
 
     /**

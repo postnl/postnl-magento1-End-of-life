@@ -338,7 +338,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
-     * Adds a lebl to the pdf by storing it in a temporary pdf file and then adding it to the master pdf object
+     * Adds a label to the pdf by storing it in a temporary pdf file and then adding it to the master pdf object.
      *
      * @param TIG_PostNL_Fpdi                      $pdf
      * @param TIG_PostNL_Model_Core_Shipment_Label $label
@@ -365,9 +365,12 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                  */
                 if ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
                     $pdf->addOrientedPage('L', 'A4');
-                    $this->setIsFirstLabel(false);
+                    $this->setIsFirstLabel(false)
+                         ->resetLabelCounter();
                 } elseif ($this->getLabelSize() == 'A4'
-                    && (!$this->getLabelCounter() || $this->getLabelCounter() > 4)
+                    && (
+                        !$this->getLabelCounter() || $this->getLabelCounter() > 4
+                    )
                 ) {
                     $pdf->addOrientedPage('L', 'A4');
                     $this->resetLabelCounter();

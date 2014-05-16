@@ -364,9 +364,9 @@ TIG_PostNL::PostNL requires the cron to be active in order to function.,PostNL h
 TIG_PostNL::Checkout Summary,Checkout Overzicht
 TIG_PostNL::Billing Address,Betaaladres
 TIG_PostNL::Shipping Address,Verzendadres
-TIG_PostNL::Collection Address,Afhaal Locatie
+TIG_PostNL::Collection Address,Afhaallocatie
 TIG_PostNL::Payment Method,Betaalmethode
-TIG_PostNL::Shipping Method,Verzend methode
+TIG_PostNL::Shipping Method,Verzendmethode
 TIG_PostNL::Items Ordered,Artikelen besteld
 TIG_PostNL::Product Name,Product naam
 TIG_PostNL::Price,Prijs
@@ -881,3 +881,17 @@ TIG_PostNL::Post Office + COD,Postkantoor + Rembours
 TIG_PostNL::Post Office + COD + Notification,Postkantoor + Rembours + Notificatie
 TIG_PostNL::Post Office + COD + Extra Cover,Postkantoor + Rembours + Verhoogd aansprakelijk
 TIG_PostNL::Post Office + COD + Extra Cover + Notification,Postkantoor + Rembours + Verhoogd aansprakelijk + Notificatie
+TIG_PostNL::This order has been automatically invoiced by the PostNL COD payment method.,Deze bestelling is automatisch gefactureerd door de PostNL rembours betaalmethode.
+TIG_PostNL::Cannot create an invoice without products.,Een factuur kan niet aangemaakt worden zonder producten.
+TIG_PostNL::Order item #%s could not be invoiced.,Bestelling item #%s kon niet gefactureerd worden.
+TIG_PostNL::Unable to create an invoice for this shipment due to the order missing.,"Er kan geen factuur aangemaakt worden voor deze zending, omdat de bestelling mist."
+TIG_PostNL::Unable to create an invoice for this shipment because the order cannot be invoiced.,"Er kan geen factuur aangemaakt worden voor deze zending, omdat de bestelling niet gefactureerd kan worden."
+TIG_PostNL::An error occurred while creating an invoice for this shipment.,Er is een fout opgestreden tijdens het aanmaken van een factuur voor deze zending.
+TIG_PostNL::COD Settings,Rembours Instellingen
+TIG_PostNL::Here you can configure the way PostNL COD works. Please note that this requires the PostNL COD payment method to be active.,Hier kunt u instellen hoe PostNL rembours werkt. N.B.: PostNL rembours vereist dat de PostNL rembours betaalmethode geactiveerd is.
+TIG_PostNL::Bankaccount name,Bankrekening naam
+TIG_PostNL::Bankaccount IBAN,Bankrekening IBAN
+TIG_PostNL::Bankaccount BIC,Bankrekening BIC
+TIG_PostNL::Automatically create an invoice,Automatisch factureren
+"TIG_PostNL::If enabled, this will allow the PostNL COD payment method to automatically create an invoice once a shipment has been delivered.","Indien deze optie aan staat, zullen bestellingen die geplaatst zijn met de PostNL rembours betaalmethode automatisch gefactureerd worden nadat een bijbehorende zending bezorgd is."
+TIG_PostNL::Please enter your bankaccount credentials. COD payments will be transfered to this account.,Vul s.v.p. uw bankrekeninggegevens in. Rembours betalingen zullen op deze rekening gestort worden.

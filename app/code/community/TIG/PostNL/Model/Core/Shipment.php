@@ -56,6 +56,9 @@
  *  - postnl_shipment_updateshippingstatus_after
  *  - postnl_shipment_updatecompleteshippingstatus_before
  *  - postnl_shipment_updatecompleteshippingstatus_after
+ *  - postnl_shipment_updateshippingphase_before
+ *  - postnl_shipment_updateshippingphase_after
+ *  - postnl_shipment_setshippingphase_*
  *  - postnl_shipment_savelabels_before
  *  - postnl_shipment_savelabels_after
  *  - postnl_shipment_saveadditionaloptions_after
@@ -84,7 +87,6 @@
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
- * @method TIG_PostNL_Model_Core_Shipment setShippingPhase(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTrackAndTraceEmailSent(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsParcelwareExported(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setEntityId(int $value)
@@ -1146,6 +1148,29 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    /**
+     * Sets the current shipment's phase. Triggers an event if the phase is valid.
+     *
+     * @param mixed $phase
+     *
+     * @return $this
+     */
+    public function setShippingPhase($phase)
+    {
+        $this->setData('shipping_phase', $phase);
+
+        if (is_numeric($phase) /*&& $phase != $this->getShippingPhase()*/) {
+            $phases = $this->getHelper('cif')->getShippingPhaseCodes();
+
+            if (array_key_exists($phase, $phases)) {
+                $phaseName = $phases[$phase];
+                Mage::dispatchEvent('postnl_shipment_setshippingphase_' . $phaseName, array('shipment' => $this));
+            }
+        }
+
+        return $this;
+    }
+
     /*******************************************************************************************************************
      * HAS- METHODS
      ******************************************************************************************************************/
@@ -2144,7 +2169,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this;
         }
 
+        Mage::dispatchEvent(
+            'postnl_shipment_updateshippingphase_before',
+            array('shipment' => $this, 'phase' => $currentPhase)
+        );
         $this->setShippingPhase($currentPhase);
+        Mage::dispatchEvent(
+            'postnl_shipment_updateshippingphase_after',
+            array('shipment' => $this, 'phase' => $currentPhase)
+        );
 
         Mage::dispatchEvent('postnl_shipment_updateshippingstatus_after', array('shipment' => $this));
 
@@ -2184,7 +2217,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Update the shipment's shipping phase
          */
         $currentPhase = $result->Status->CurrentPhaseCode;
+        Mage::dispatchEvent(
+            'postnl_shipment_updateshippingphase_before',
+            array('shipment' => $this, 'phase' => $currentPhase)
+        );
         $this->setShippingPhase($currentPhase);
+        Mage::dispatchEvent(
+            'postnl_shipment_updateshippingphase_after',
+            array('shipment' => $this, 'phase' => $currentPhase)
+        );
 
         if (!isset($result->Events->CompleteStatusResponseEvent)) {
             $this->unlock();

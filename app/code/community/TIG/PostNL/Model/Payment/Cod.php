@@ -39,6 +39,11 @@
 class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
 {
     /**
+     * Xpath to PostNL COD settings. N.B. the last part is missing.
+     */
+    const XPATH_COD_SETTINGS = 'postnl/cod';
+
+    /**
      * This payment method's unique code.
      *
      * @var string
@@ -72,18 +77,34 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
      */
     public function isAvailable($quote = null)
     {
+        $helper = Mage::helper('postnl/payment');
+
         if (is_null($quote)) {
+            $helper->log(
+                $helper->__('PostNL COD is not available, because the quote is empty.')
+            );
             return false;
         }
 
         if ($quote->isVirtual()) {
+            $helper->log(
+                $helper->__('PostNL COD is not available, because the order is virtual.')
+            );
             return false;
         }
 
-        if (!$this->getConfigData('account_name', $quote->getStoreId())
-            || !$this->getConfigData('account_iban', $quote->getStoreId())
-            || !$this->getConfigData('account_bic', $quote->getStoreId())
+        $codSettings = Mage::getStoreConfig(self::XPATH_COD_SETTINGS, Mage::app()->getStore()->getId());
+
+        if (!isset($codSettings['account_name'])
+            || !$codSettings['account_name']
+            || !isset($codSettings['iban'])
+            || !$codSettings['iban']
+            || !isset($codSettings['bic'])
+            || !$codSettings['bic']
         ) {
+            $helper->log(
+                $helper->__('PostNL COD is not available, because required fields are missing.')
+            );
             return false;
         }
 
@@ -92,10 +113,20 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
 
             if (!in_array($shippingMethod, $postnlShippingMethods)) {
+                $helper->log(
+                    $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
+                );
                 return false;
             }
         }
 
-        return parent::isAvailable($quote);
+        $parentIsAvailable = parent::isAvailable($quote);
+        if (!$parentIsAvailable) {
+            $helper->log(
+                $helper->__("PostNL COD is not available, because the abstract isAvailable() check returned 'false'")
+            );
+        }
+
+        return $parentIsAvailable;
     }
 }

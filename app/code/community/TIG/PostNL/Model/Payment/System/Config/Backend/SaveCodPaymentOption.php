@@ -33,35 +33,13 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @category    TIG
- * @package     TIG_PostNL
- * @copyright   Copyright (c) ${YEAR} Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- * @link        http://store.totalinternetgroup.nl/tig/postnl.html
  */
-class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
+class TIG_PostNL_Model_Payment_System_Config_Backend_SaveCodPaymentOption extends Mage_Core_Model_Config_Data
 {
-    /**
-     * Debug log file for PostNL payments.
-     */
-    const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_Payment_Debug.log';
-
-    /**
-     * An array of PostNL COD payment methods.
-     *
-     * @var array
-     */
-    protected $_codPaymentMethods = array(
-        'postnl_cod',
-    );
-
-    /**
-     * Gets an array of PostNL COD payment methods.
-     *
-     * @return array
-     */
-    public function getCodPaymentMethods()
+    protected function _afterSave()
     {
-        return $this->_codPaymentMethods;
+        echo 'test';exit;
     }
 }
