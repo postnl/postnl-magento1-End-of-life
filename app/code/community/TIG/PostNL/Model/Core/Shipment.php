@@ -158,9 +158,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Xpaths to default product options settings.
      */
     const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
+    const XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION   = 'postnl/cif_product_options/default_cod_product_option';
     const XPATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/cif_product_options/default_evening_product_option';
+    const XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION    = 'postnl/cif_product_options/default_evening_cod_product_option';
     const XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION     = 'postnl/cif_product_options/default_pakjegemak_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakjegemak_cod_product_option';
     const XPATH_DEFAULT_PGE_PRODUCT_OPTION            = 'postnl/cif_product_options/default_pge_product_option';
+    const XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION        = 'postnl/cif_product_options/default_pge_cod_product_option';
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
     const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
@@ -648,16 +652,31 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $storeId = $this->getStoreId();
 
         $xpath = false;
-        if ($this->isPgeShipment()) {
+        if ($this->isPgeShipment() && $this->isCod()) {
+            /**
+             * PakjeGemak Express COD default option
+             */
+            $xpath = self::XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION;
+        } elseif ($this->isPgeShipment()) {
             /**
              * PakjeGemak Express default option
              */
             $xpath = self::XPATH_DEFAULT_PGE_PRODUCT_OPTION;
+        } elseif ($this->isAvondshipment() && $this->isCod()) {
+            /**
+             * Evening delivery COD default option
+             */
+            $xpath = self::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION;
         } elseif ($this->isAvondshipment()) {
             /**
              * Evening delivery default option
              */
             $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
+        } elseif ($this->isPakjeGemakShipment() && $this->isCod()) {
+            /**
+             * PakjeGemak COD default option
+             */
+            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION;
         } elseif ($this->isPakjeGemakShipment()) {
             /**
              * PakjeGemak default option
@@ -678,6 +697,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
              * Global default option
              */
             $xpath = self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
+        } elseif ($this->isDutchShipment() && $this->isCod()) {
+            /**
+             * Dutch COD default option
+             */
+            $xpath = self::XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION;
         }
 
         /**
@@ -839,11 +863,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets allowed product options for the current shipment.
      *
+     * @param boolean $flat
+     *
      * @return array
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getAllowedProductOptions()
+    public function getAllowedProductOptions($flat = true)
     {
         $cifHelper = $this->getHelper('cif');
 
@@ -854,58 +880,58 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         if ($this->isCod()) {
             if ($this->isPgeShipment()) {
-                $allowedProductCodes = $cifHelper->getPgeCodProductCodes();
+                $allowedProductCodes = $cifHelper->getPgeCodProductCodes($flat);
                 return $allowedProductCodes;
             }
 
             if ($this->isAvondShipment()) {
-                $allowedProductCodes = $cifHelper->getAvondCodProductCodes();
+                $allowedProductCodes = $cifHelper->getAvondCodProductCodes($flat);
                 return $allowedProductCodes;
             }
 
             if ($this->isPakjeGemakShipment()) {
-                $allowedProductCodes = $cifHelper->getPakjeGemakCodProductCodes();
+                $allowedProductCodes = $cifHelper->getPakjeGemakCodProductCodes($flat);
                 return $allowedProductCodes;
             }
 
             if ($this->isDutchShipment()) {
-                $allowedProductCodes = $cifHelper->getStandardCodProductCodes();
+                $allowedProductCodes = $cifHelper->getStandardCodProductCodes($flat);
                 return $allowedProductCodes;
             }
         }
 
         if ($this->isPgeShipment()) {
-            $allowedProductCodes = $cifHelper->getPgeProductCodes();
+            $allowedProductCodes = $cifHelper->getPgeProductCodes($flat);
             return $allowedProductCodes;
         }
 
         if ($this->isAvondShipment()) {
-            $allowedProductCodes = $cifHelper->getAvondProductCodes();
+            $allowedProductCodes = $cifHelper->getAvondProductCodes($flat);
             return $allowedProductCodes;
         }
 
         if ($this->isPakjeGemakShipment()) {
-            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes();
+            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes($flat);
             return $allowedProductCodes;
         }
 
         if ($this->isPakketautomaatShipment()) {
-            $allowedProductCodes = $cifHelper->getPakketautomaatProductCodes();
+            $allowedProductCodes = $cifHelper->getPakketautomaatProductCodes($flat);
             return $allowedProductCodes;
         }
 
         if ($this->isDutchShipment()) {
-            $allowedProductCodes = $cifHelper->getStandardProductCodes();
+            $allowedProductCodes = $cifHelper->getStandardProductCodes($flat);
             return $allowedProductCodes;
         }
 
         if ($this->isEuShipment()) {
-            $allowedProductCodes = $cifHelper->getEuProductCodes();
+            $allowedProductCodes = $cifHelper->getEuProductCodes($flat);
             return $allowedProductCodes;
         }
 
         if ($this->isGlobalShipment() && $cifHelper->isGlobalAllowed()) {
-            $allowedProductCodes = $cifHelper->getGlobalProductCodes();
+            $allowedProductCodes = $cifHelper->getGlobalProductCodes($flat);
             return $allowedProductCodes;
         }
 

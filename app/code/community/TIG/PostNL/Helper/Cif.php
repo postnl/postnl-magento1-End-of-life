@@ -223,67 +223,79 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Get an array of standard product codes.
      *
+     * @param boolean $flat
+     *
      * @return array
      */
-    public function getStandardProductCodes()
+    public function getStandardProductCodes($flat = true)
     {
         $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $standardProductCodes->getAvailableOptions(true);
+        return $standardProductCodes->getAvailableOptions($flat);
     }
 
     /**
      * Get an array of standard COD product codes.
      *
+     * @param boolean $flat
+     *
      * @return array
      */
-    public function getStandardCodProductCodes()
+    public function getStandardCodProductCodes($flat = true)
     {
         $standardProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $standardProductCodes->getAvailableCodOptions(true);
+        return $standardProductCodes->getAvailableCodOptions($flat);
     }
 
     /**
      * Get an array of evening delivery product codes.
      *
+     * @param boolean $flat
+     *
      * @return array
      */
-    public function getAvondProductCodes()
+    public function getAvondProductCodes($flat = true)
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $pakjeGemakProductCodes->getAvailableAvondOptions(true);
+        return $pakjeGemakProductCodes->getAvailableAvondOptions($flat);
     }
 
     /**
      * Get an array of evening delivery COD product codes.
      *
+     * @param boolean $flat
+     *
      * @return array
      */
-    public function getAvondCodProductCodes()
+    public function getAvondCodProductCodes($flat = true)
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_standardProductOptions');
-        return $pakjeGemakProductCodes->getAvailableAvondCodOptions(true);
+        return $pakjeGemakProductCodes->getAvailableAvondCodOptions($flat);
     }
 
     /**
      * Get an array of PakjeGemak product codes.
      *
+     * @param boolean $flat
+     *
      * @return array
      */
-    public function getPakjeGemakProductCodes()
+    public function getPakjeGemakProductCodes($flat = true)
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
-        return $pakjeGemakProductCodes->getAvailableOptions(true);
+        return $pakjeGemakProductCodes->getAvailableOptions($flat);
     }
 
     /**
      * Get an array of PakjeGemak COD product codes.
      *
+     * @param boolean $flat
+     *
      * @return array
      */
-    public function getPakjeGemakCodProductCodes()
+    public function getPakjeGemakCodProductCodes($flat = true)
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
-        return $pakjeGemakProductCodes->getAvailableCodOptions(true);
+        return $pakjeGemakProductCodes->getAvailableCodOptions($flat);
     }
 
     /**
@@ -291,56 +303,64 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      *
      * @return array
      */
-    public function getPgeProductCodes()
+    public function getPgeProductCodes($flat = true)
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
-        return $pakjeGemakProductCodes->getAvailablePgeOptions(true);
+        return $pakjeGemakProductCodes->getAvailablePgeOptions($flat);
     }
 
     /**
      * Get an array of PakjeGemak Express COD product codes.
      *
+     * @param boolean $flat
+     *
      * @return array
      */
-    public function getPgeCodProductCodes()
+    public function getPgeCodProductCodes($flat = true)
     {
         $pakjeGemakProductCodes = Mage::getSingleton('postnl_core/system_config_source_pakjeGemakProductOptions');
-        return $pakjeGemakProductCodes->getAvailablePgeCodOptions(true);
+        return $pakjeGemakProductCodes->getAvailablePgeCodOptions($flat);
     }
 
     /**
      * Get an array of pakketautomaat product codes.
      *
+     * @param boolean $flat
+     *
      * @return array
      */
-    public function getPakketautomaatProductCodes()
+    public function getPakketautomaatProductCodes($flat = true)
     {
         $pakketautomaatProductCodes = Mage::getSingleton(
             'postnl_core/system_config_source_pakketautomaatProductOptions'
         );
-        return $pakketautomaatProductCodes->getAvailableOptions(true);
+        return $pakketautomaatProductCodes->getAvailableOptions($flat);
     }
 
     /**
      * Get an array of eu product codes.
      *
+     * @param boolean $flat
+     *
      * @return array
      */
-    public function getEuProductCodes()
+    public function getEuProductCodes($flat = true)
     {
         $euProductCodes = Mage::getSingleton('postnl_core/system_config_source_euProductOptions');
-        return $euProductCodes->getAvailableOptions(true);
+        return $euProductCodes->getAvailableOptions($flat);
     }
 
     /**
      * Get an array of global product codes.
      *
+     * @param boolean $flat
+     *
      * @return array
      */
-    public function getGlobalProductCodes()
+    public function getGlobalProductCodes($flat = true)
     {
         $globalProductCodes = Mage::getSingleton('postnl_core/system_config_source_globalProductOptions');
-        return $globalProductCodes->getAvailableOptions(true);
+        return $globalProductCodes->getAvailableOptions($flat);
     }
 
     /**
@@ -450,63 +470,20 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Get a list of available product options for a specified shipment
      *
-     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
      *
      * @return array | null
      */
     public function getProductOptionsForShipment($shipment)
     {
-        /**
-         * PakjeGemak product options
-         */
-        if ($this->isPakjeGemakShipment($shipment)) {
-            $options = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions')
-                           ->getAvailableOptions();
-
-            return $options;
+        if ($shipment instanceof Mage_Sales_Model_Order_Shipment) {
+            $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+            $tempPostnlShipment->setShipment($shipment);
+        } else {
+            $tempPostnlShipment = $shipment;
         }
 
-        /**
-         * Pakketautomaat product options
-         */
-        if ($this->isPakketautomaatShipment($shipment)) {
-            $options = Mage::getModel('postnl_core/system_config_source_pakketautomaatProductOptions')
-                           ->getAvailableOptions();
-
-            return $options;
-        }
-
-        /**
-         * Dutch product options
-         */
-        if ($this->isDutchShipment($shipment)) {
-            $options = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
-                           ->getAvailableOptions();
-
-            return $options;
-        }
-
-        /**
-         * EU product options
-         */
-        if ($this->isEuShipment($shipment)) {
-            $options = Mage::getModel('postnl_core/system_config_source_euProductOptions')
-                           ->getAvailableOptions();
-
-            return $options;
-        }
-
-        /**
-         * Global product options
-         */
-        if ($this->isGlobalShipment($shipment)) {
-            $options = Mage::getModel('postnl_core/system_config_source_globalProductOptions')
-                           ->getAvailableOptions();
-
-            return $options;
-        }
-
-        return null;
+        return $tempPostnlShipment->getAllowedProductOptions(false);
     }
 
     /**
@@ -695,27 +672,31 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $postnlShipment->setShipment($shipment);
 
         /**
-         * Only NL shipments support multi-colli shipments
+         * Only NL shipments support multi-colli shipments.
          */
         if (!$postnlShipment->isDutchShipment()) {
             return 1;
         }
 
         /**
-         * get this shipment's total weight
+         * Get this shipment's total weight.
          */
         $weight = $postnlShipment->getTotalWeight(true);
 
         /**
-         * get the weight per parcel
+         * Get the weight per parcel.
          */
         $weightPerParcel = Mage::getStoreConfig(self::XML_PATH_WEIGHT_PER_PARCEL, $shipment->getStoreId());
         $weightPerParcel = $this->standardizeWeight($weightPerParcel, $shipment->getStoreId());
 
         /**
-         * calculate the number of parcels needed to ship the total weight of this shipment
+         * Calculate the number of parcels needed to ship the total weight of this shipment.
          */
         $parcelCount = ceil($weight / $weightPerParcel);
+
+        if ($parcelCount < 1) {
+            $parcelCount = 1;
+        }
 
         return $parcelCount;
     }

@@ -891,8 +891,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $shipmentData['Addresses'] = $addresses;
 
         /**
-         * Add extra cover data and COD data
-         * In the case of a multi-collo shipment this is only added to the first parcel
+         * Add extra cover data and COD data.
+         * In the case of a multi-collo shipment this is only added to the first parcel.
          */
         if (($shipmentNumber === false || $shipmentNumber == 1)
             && ($postnlShipment->hasExtraCover() || $postnlShipment->isCod())
@@ -901,7 +901,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         /**
-         * Add customs data
+         * Add customs data.
          */
         if ($postnlShipment->isGlobalShipment()) {
             $shipmentData['Customs'] = $this->_getCustoms($postnlShipment);
@@ -924,8 +924,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getShipmentAddresses(TIG_PostnL_Model_Core_Shipment $postnlShipment, $shippingAddress)
     {
         $useSenderAddressAsReturn = Mage::getStoreConfig(
-                                        self::XML_PATH_USE_SENDER_ADDRESS_AS_RETURN,
-                                        $this->getStoreId()
+            self::XML_PATH_USE_SENDER_ADDRESS_AS_RETURN,
+            $this->getStoreId()
         );
         $pakjeGemakAddress = $postnlShipment->getPakjeGemakAddress();
 
@@ -1155,7 +1155,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Generates the CIF amount object containing the shipment's insured amount (if any)
+     * Generates the CIF amount object containing the shipment's insured amount (if any).
      *
      * @param TIG_PostnL_Model_Core_Shipment          $postnlShipment
      * @param Mage_Sales_Model_Order_Shipment|boolean $shipment
@@ -1199,7 +1199,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 'TransactionNumber' => '',
                 'Value'             => $value,
             );
-            /** @todo implement COD here */
         }
 
         return $amount;

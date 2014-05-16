@@ -36,66 +36,25 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
+class TIG_PostNL_Block_Payment_Form_Cod extends Mage_Payment_Block_Form_Cashondelivery
 {
     /**
-     * This payment method's unique code.
-     *
      * @var string
      */
-    protected $_code = 'postnl_cod';
+    protected $_eventPrefix = 'postnl_payment_form_cod';
 
     /**
-     * Cash On Delivery payment block paths
-     *
-     * @var string
-     */
-    protected $_formBlockType = 'postnl_payment/form_cod';
-    protected $_infoBlockType = 'postnl_payment/info';
-
-    /**
-     * Get instructions text from config
+     * Renders a template block. Also throws 2 events based on the current event prefix.
      *
      * @return string
      */
-    public function getInstructions()
+    protected function _toHtml()
     {
-        return trim($this->getConfigData('instructions'));
-    }
+        Mage::dispatchEvent($this->_eventPrefix . '_to_html_before');
 
-    /**
-     * Checks whether PostNL COD is available.
-     *
-     * @param Mage_Sales_Model_Quote|null $quote
-     *
-     * @return bool
-     */
-    public function isAvailable($quote = null)
-    {
-        if (is_null($quote)) {
-            return false;
-        }
+        $html = parent::_toHtml();
 
-        if ($quote->isVirtual()) {
-            return false;
-        }
-
-        if (!$this->getConfigData('account_name', $quote->getStoreId())
-            || !$this->getConfigData('account_iban', $quote->getStoreId())
-            || !$this->getConfigData('account_bic', $quote->getStoreId())
-        ) {
-            return false;
-        }
-
-        if (!(bool) $this->getConfigData('allow_for_non_postnl', $quote->getStoreId())) {
-            $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
-            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-
-            if (!in_array($shippingMethod, $postnlShippingMethods)) {
-                return false;
-            }
-        }
-
-        return parent::isAvailable($quote);
+        Mage::dispatchEvent($this->_eventPrefix . '_to_html_after');
+        return $html;
     }
 }

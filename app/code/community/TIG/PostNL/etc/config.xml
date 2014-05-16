@@ -66,6 +66,9 @@
             <postnl_mijnpakket>
                 <class>TIG_PostNL_Block_Mijnpakket</class>
             </postnl_mijnpakket>
+            <postnl_payment>
+                <class>TIG_PostNL_Block_Payment</class>
+            </postnl_payment>
 		</blocks>
 		<helpers>
 			<postnl>
@@ -463,6 +466,7 @@
                 <instructions/>
                 <min_order_total/>
                 <max_order_total/>
+                <allow_for_non_postnl>0</allow_for_non_postnl> <!-- Only show this payment method if the order is being shipped using PostNL -->
                 <sort_order>1000</sort_order> <!-- 1000 -->
                 <model>postnl_payment/cod</model> <!-- TIG_PostNL_Model_Payment_Cod -->
                 <group>postnl</group> <!-- PostNL Payment Methods -->
@@ -588,7 +592,11 @@
         		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
-        	</cif_product_options>
+        	    <default_cod_product_option>3086</default_cod_product_option>
+                <default_evening_cod_product_option>3086</default_evening_cod_product_option>
+                <default_pakjegemak_cod_product_option>3535</default_pakjegemak_cod_product_option>
+                <default_pge_cod_product_option>3545</default_pge_cod_product_option>
+            </cif_product_options>
         	<cif_globalpack_settings>
         	    <customs_license_number/>
         	    <customs_certificate_number/>
