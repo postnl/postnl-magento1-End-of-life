@@ -39,6 +39,11 @@
 class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
 {
     /**
+     * Xpath to PostNL COD settings. N.B. the last part is missing.
+     */
+    const XPATH_COD_SETTINGS = 'postnl/cod';
+
+    /**
      * This payment method's unique code.
      *
      * @var string
@@ -50,8 +55,8 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
      *
      * @var string
      */
-    protected $_formBlockType = 'payment/form_cashondelivery';
-    protected $_infoBlockType = 'payment/info';
+    protected $_formBlockType = 'postnl_payment/form_cod';
+    protected $_infoBlockType = 'postnl_payment/info';
 
     /**
      * Get instructions text from config
@@ -72,21 +77,56 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
      */
     public function isAvailable($quote = null)
     {
+        $helper = Mage::helper('postnl/payment');
+
         if (is_null($quote)) {
+            $helper->log(
+                $helper->__('PostNL COD is not available, because the quote is empty.')
+            );
             return false;
         }
 
         if ($quote->isVirtual()) {
+            $helper->log(
+                $helper->__('PostNL COD is not available, because the order is virtual.')
+            );
             return false;
         }
 
-        $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $codSettings = Mage::getStoreConfig(self::XPATH_COD_SETTINGS, Mage::app()->getStore()->getId());
 
-        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+        if (!isset($codSettings['account_name'])
+            || !$codSettings['account_name']
+            || !isset($codSettings['iban'])
+            || !$codSettings['iban']
+            || !isset($codSettings['bic'])
+            || !$codSettings['bic']
+        ) {
+            $helper->log(
+                $helper->__('PostNL COD is not available, because required fields are missing.')
+            );
             return false;
         }
 
-        return parent::isAvailable($quote);
+        if (!(bool) $this->getConfigData('allow_for_non_postnl', $quote->getStoreId())) {
+            $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+
+            if (!in_array($shippingMethod, $postnlShippingMethods)) {
+                $helper->log(
+                    $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
+                );
+                return false;
+            }
+        }
+
+        $parentIsAvailable = parent::isAvailable($quote);
+        if (!$parentIsAvailable) {
+            $helper->log(
+                $helper->__("PostNL COD is not available, because the abstract isAvailable() check returned 'false'")
+            );
+        }
+
+        return $parentIsAvailable;
     }
 }

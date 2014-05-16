@@ -233,17 +233,19 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
     /**
      * Creates a pdf containing shipping labels using FPDF and FPDI libraries.
-     * Four labels will be printed on each page in a vertical position. All labels will be rotated 90 degrees counter-clockwise
+     * Four labels will be printed on each page in a vertical position. All labels will be rotated 90 degrees
+     * counter-clockwise.
      *
-     * @param mixed $labels May be an array of labels or a single label string
+     * @param array|TIG_PostNL_Model_Core_Shipment_Label $labels May be an array of labels or a single
+     *                                                           TIG_PostNL_Model_Core_Shipment_Label label.
      *
      * @return $this
      *
      * @see TIG_PostNL_Fpdf
      * @see TIG_PostNL_Fpdi
      *
-     * @link http://www.fpdf.org/ Fpdf library documentation
-     * @link http://www.setasign.de/products/pdf-php-solutions/fpdi/ Fpdi library
+     * @link http://www.fpdf.org/                                    Fpdf library documentation.
+     * @link http://www.setasign.de/products/pdf-php-solutions/fpdi/ Fpdi library documentation.
      */
     public function createPdf($labels)
     {
@@ -336,7 +338,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
-     * Adds a lebl to the pdf by storing it in a temporary pdf file and then adding it to the master pdf object
+     * Adds a label to the pdf by storing it in a temporary pdf file and then adding it to the master pdf object.
      *
      * @param TIG_PostNL_Fpdi                      $pdf
      * @param TIG_PostNL_Model_Core_Shipment_Label $label
@@ -348,9 +350,10 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     protected function _addPdfTemplate($pdf, $label)
     {
         /**
-         * Fpdi requires labels to be provided as files. Therefore the label will be saved as a temporary file in var/TIG/PostNL/temp_labels/
+         * Fpdi requires labels to be provided as files. Therefore the label will be saved as a temporary file in
+         * var/TIG/PostNL/temp_labels/.
          */
-        $tempFilename = $this->_saveTempLabel($label->getLabel());
+        $tempFilename = $this->_saveTempLabel($label);
 
         switch ($label->getLabelType()) {
             /** @noinspection PhpMissingBreakStatementInspection */
@@ -360,14 +363,17 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 /**
                  * If the configured label size is A4, add a new page every 4 labels and reset the counter.
                  */
-                if ($this->getLabelSize() == 'A4'
-                    && (!$this->getLabelCounter() || $this->getLabelCounter() > 4)
+                if ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
+                    $pdf->addOrientedPage('L', 'A4');
+                    $this->setIsFirstLabel(false)
+                         ->resetLabelCounter();
+                } elseif ($this->getLabelSize() == 'A4'
+                    && (
+                        !$this->getLabelCounter() || $this->getLabelCounter() > 4
+                    )
                 ) {
                     $pdf->addOrientedPage('L', 'A4');
                     $this->resetLabelCounter();
-                } elseif ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
-                    $pdf->addOrientedPage('L', 'A4');
-                    $this->setIsFirstLabel(false);
                 }
 
                 /**
@@ -449,7 +455,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         }
 
         /**
-         * Add the next label to the pdf
+         * Add the next label to the pdf.
          */
         $pdf->insertTemplate($tempFilename, $position['x'], $position['y'], $position['w']);
 
@@ -459,20 +465,20 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     /**
      * Save a label to a temporary pdf file. Temporary pdf files are stored in var/TIG/PostNL/temp_label/
      *
-     * @param string $label
+     * @param TIG_PostNL_Model_Core_Shipment_Label $label
      *
      * @throws TIG_PostNL_Exception
      *
      * @return string
      */
-    protected function _saveTempLabel($label)
+    protected function _saveTempLabel(TIG_PostNL_Model_Core_Shipment_Label $label)
     {
         /**
          * construct the path to the temporary file.
          */
         $tempFilePath = Mage::getConfig()->getVarDir('TIG' . DS . 'PostNL' . DS . 'temp_label')
                       . DS
-                      . md5($label)
+                      . md5($label->getLabel() . $label->getId())
                       . '-'
                       . time()
                       . '-'
@@ -488,7 +494,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         /**
          * Add the base64 decoded label to the file.
          */
-        file_put_contents($tempFilePath, base64_decode($label));
+        file_put_contents($tempFilePath, base64_decode($label->getLabel()));
 
         /**
          * Save the name of the temp file so it can be destroyed later.

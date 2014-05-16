@@ -43,7 +43,7 @@
 <?php $_productOptions       = $this->getProductOptions(); ?>
 <?php $_defaultProductOption = $this->getDefaultProductOption(); ?>
 <?php $_isBelgium            = $this->isBelgium(); ?>
-<?php $_isGlobalPackShipment = (int) Mage::helper('postnl/cif')->isGlobalShipment($_shipment); ?>
+<?php $_isGlobalPackShipment = (bool) Mage::helper('postnl/cif')->isGlobalShipment($_shipment); ?>
 <?php $_isDutchShipment      = (bool) Mage::helper('postnl/cif')->isDutchShipment($_shipment); ?>
 <?php $_parcelCount          = $this->getParcelCount(); ?>
 
@@ -103,6 +103,6 @@
 <script type ="text/javascript">
 //<![CDATA[
     var extraCoverValue = '<?php echo $_shipment->getOrder()->getBaseGrandTotal(); ?>';
-    var isGlobalPackShipment = <?php echo $_isGlobalPackShipment; ?>
+    var isGlobalPackShipment = <?php echo $_isGlobalPackShipment ? 'true' : 'false'; ?>;
 //]]>
 </script>
