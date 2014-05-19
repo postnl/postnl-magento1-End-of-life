@@ -702,4 +702,24 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
 
         return $this;
     }
+
+    /**
+     * Sets the shipment type of every PostNL shipment.
+     *
+     * @return $this
+     */
+    public function setShipmentType()
+    {
+        $transactionSave = Mage::getResourceModel('core/transaction');
+
+        $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        foreach ($postnlShipmentCollection as $shipment) {
+            $shipment->getShipmentType();
+            $transactionSave->addObject($shipment);
+        }
+
+        $transactionSave->save();
+
+        return $this;
+    }
 }

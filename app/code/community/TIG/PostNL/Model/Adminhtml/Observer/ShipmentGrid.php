@@ -203,29 +203,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         );
 
         /**
-         * join sales_flat_order_address table
-         */
-        $select->joinLeft(
-            array('shipping_address' => $resource->getTableName('sales/order_address')),
-            "`main_table`.`order_id`=`shipping_address`.`parent_id` AND `shipping_address`.`address_type`='shipping'",
-            array(
-                'postcode'   => 'shipping_address.postcode',
-                'country_id' => 'shipping_address.country_id',
-            )
-        );
-
-        /**
-         * Join sales_flat_order_payment table
-         */
-        $select->joinLeft(
-            array('payment' => $resource->getTableName('sales/order_payment')),
-            '`main_table`.`order_id`=`payment`.`parent_id`',
-            array(
-                'payment_method' => 'payment.method',
-            )
-        );
-
-        /**
          * Join tig_postnl_shipment table
          */
         $select->joinLeft(
@@ -241,6 +218,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'is_parcelware_exported' => 'postnl_shipment.is_parcelware_exported',
                 'product_code'           => 'postnl_shipment.product_code',
                 'extra_cover_amount'     => 'postnl_shipment.extra_cover_amount',
+                'shipment_type'          => 'postnl_shipment.shipment_type',
             )
         );
 
@@ -251,10 +229,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             array('postnl_order' => $resource->getTableName('postnl_core/order')),
             '`main_table`.`order_id`=`postnl_order`.`order_id`',
             array(
-                'is_pakje_gemak'       => 'postnl_order.is_pakje_gemak',
                 'delivery_date'        => 'postnl_order.delivery_date',
-                'is_pakketautomaat'    => 'postnl_order.is_pakketautomaat',
-                'delivery_option_type' => 'postnl_order.type',
             )
         );
 
@@ -344,11 +319,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 array(
                     'header'                    => $helper->__('Shipment type'),
                     'align'                     => 'left',
-                    'index'                     => 'country_id',
+                    'index'                     => 'shipment_type',
                     'type'                      => 'options',
                     'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_shipmentType',
                     'width'                     => '75px',
-                    'filter_condition_callback' => array($this, '_filterShipmentType'),
                     'sortable'                  => false,
                     'options'                   => array(
                         'nl'                  => $helper->__('Domestic'),
@@ -924,122 +898,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $column->getFilter()->setValue($value);
             $this->_addColumnFilterToCollection($column);
         }
-
-        return $this;
-    }
-
-    /**
-     * Filters the collection by the 'shipment_type' column. Th column has 3 options: domestic, EPS and GlobalPack.
-     *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
-     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
-     *
-     * @return $this
-     */
-    protected function _filterShipmentType($collection, $column)
-    {
-        $cond = $column->getFilter()->getCondition();
-        $filterCond = $cond['eq'];
-
-        /**
-         * First filter out all non-postnl orders
-         */
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-        $collection->addFieldToFilter('order.shipping_method', array('in' => $postnlShippingMethods));
-
-        /**
-         * If the filter condition is PakjeGemak Express, filter out all non-PakjeGemak Express orders
-         */
-        if ($filterCond == 'pakje_gemak_express') {
-            $collection->addFieldToFilter('postnl_order.type', array('eq' => 'PGE'));
-
-            return $this;
-        }
-
-        /**
-         * If the filter condition is evening delivery, filter out all other orders
-         */
-        if ($filterCond == 'avond') {
-            $collection->addFieldToFilter('postnl_order.type', array('eq' => 'Avond'));
-
-            return $this;
-        }
-
-        /**
-         * If the filter condition is PakjeGemak, filter out all non-PakjeGemak orders
-         */
-        if ($filterCond == 'pakje_gemak') {
-            $collection->addFieldToFilter('is_pakje_gemak', array('eq' => 1));
-            $collection->addFieldToFilter('postnl_order.type', array(array('eq' => 'PG'), array('null' => true)));
-
-            return $this;
-        }
-
-        /**
-         * If the filter condition is Pakket Automaat, filter out all non-Pakket Automaat orders
-         */
-        if ($filterCond == 'pakketautomaat') {
-            $collection->addFieldToFilter('is_pakketautomaat', array('eq' => 1));
-            $collection->addFieldToFilter(
-                       'postnl_order.type',
-                       array(
-                           array('eq'   => 'PA'),
-                           array('null' => true)
-                       )
-            );
-
-            return $this;
-        }
-
-        /**
-         * If the filter condition is NL, filter out all orders not being shipped to the Netherlands. PakjeGemak,
-         * PakjeGmak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
-         * need to explicitely filter those as well.
-         */
-        if ($filterCond == 'nl') {
-            $collection->addFieldToFilter('country_id', $cond);
-            $collection->addFieldToFilter(
-                       'postnl_order.type',
-                       array(
-                           array('eq'   => 'Overdag'),
-                           array('null' => true)
-                       )
-            );
-            $collection->addFieldToFilter(
-                       'is_pakje_gemak',
-                       array(
-                           array('eq'   => 0),
-                           array('null' => true)
-                       )
-            );
-            $collection->addFieldToFilter(
-                       'is_pakketautomaat',
-                       array(
-                           array('eq'   => 0),
-                           array('null' => true)
-                       )
-            );
-
-            return $this;
-        }
-
-        /**
-         * If the filter condition is EU, filter out all orders not being shipped to the EU and those being shipped to
-         * the Netherlands
-         */
-        $euCountries = Mage::helper('postnl/cif')->getEuCountries();
-        if ($filterCond == 'eu') {
-            $collection->addFieldToFilter('country_id', array('neq' => 'NL'));
-            $collection->addFieldToFilter('country_id', array('in', $euCountries));
-
-            return $this;
-        }
-
-        /**
-         * Lastly, filter out all orders who are being shipped to the Netherlands or other EU countries
-         */
-        $collection->addFieldToFilter('country_id', array('neq' => 'NL'));
-        $collection->addFieldToFilter('country_id', array('nin' => $euCountries));
 
         return $this;
     }

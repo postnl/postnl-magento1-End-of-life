@@ -110,6 +110,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setLabelCollection(TIG_PostNL_Model_Core_Resource_Shipment_LabeL_Collection $value)
  * @method TIG_PostNL_Model_Core_Shipment setDeliveryDate(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsPakketautomaat(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setShipmentType(string $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -125,6 +126,7 @@
  * @method bool                           hasLabelCollection()
  * @method bool                           hasIsPakketautomaat()
  * @method bool                           hasDeliveryDate()
+ * @method bool                           hasShipmentType()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -458,6 +460,86 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Get the current shipment's type.
+     *
+     * @return string
+     */
+    public function getShipmentType()
+    {
+        if ($this->hasShipmentType()) {
+            return $this->_getData('shipment_type');
+        }
+
+        $shipmentType = $this->_getShipmentType();
+
+        $this->setShipmentType($shipmentType);
+        return $shipmentType;
+    }
+
+    /**
+     * Determines the current shipment's shipment type based on several attributes, including shipping destination and
+     * payment method.
+     *
+     * @return string
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getShipmentType()
+    {
+
+        if ($this->isCod()) {
+            if ($this->isPgeShipment()) {
+                return 'pge_cod';
+            }
+
+            if ($this->isAvondShipment()) {
+                return 'avond_cod';
+            }
+
+            if ($this->isPakjeGemakShipment()) {
+                return 'pg_cod';
+            }
+
+            if ($this->isDutchShipment()) {
+                return 'domestic_cod';
+            }
+        }
+
+        if ($this->isPgeShipment()) {
+            return 'pge';
+        }
+
+        if ($this->isAvondShipment()) {
+            return 'avond';
+        }
+
+        if ($this->isPakjeGemakShipment()) {
+            return 'pg';
+        }
+
+        if ($this->isPakketautomaatShipment()) {
+            return 'pa';
+        }
+
+        if ($this->isDutchShipment()) {
+            return 'domestic';
+        }
+
+        if ($this->isEuShipment()) {
+            return 'eps';
+        }
+
+        if ($this->isGlobalShipment() && $this->getHelper('cif')->isGlobalAllowed()) {
+            return 'globalpack';
+        }
+
+        throw new TIG_PostNL_Exception(
+            $this->getHelper()->__('No valid shipment type found for shipment #%s.', $this->getId()),
+            'POSTNL-0165'
+        );
+    }
+
+    /**
      * gets all shipping labels associated with this shipment
      *
      * @return array Array of TIG_PostNL_Model_Core_Shipment_Label objects
@@ -653,57 +735,38 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $storeId = $this->getStoreId();
 
+        $shipmentType = $this->getShipmentType();
         $xpath = false;
-        if ($this->isPgeShipment() && $this->isCod()) {
-            /**
-             * PakjeGemak Express COD default option
-             */
-            $xpath = self::XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION;
-        } elseif ($this->isPgeShipment()) {
-            /**
-             * PakjeGemak Express default option
-             */
-            $xpath = self::XPATH_DEFAULT_PGE_PRODUCT_OPTION;
-        } elseif ($this->isAvondshipment() && $this->isCod()) {
-            /**
-             * Evening delivery COD default option
-             */
-            $xpath = self::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION;
-        } elseif ($this->isAvondshipment()) {
-            /**
-             * Evening delivery default option
-             */
-            $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
-        } elseif ($this->isPakjeGemakShipment() && $this->isCod()) {
-            /**
-             * PakjeGemak COD default option
-             */
-            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION;
-        } elseif ($this->isPakjeGemakShipment()) {
-            /**
-             * PakjeGemak default option
-             */
-            $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;
-        } elseif ($this->isPakketautomaatShipment()) {
-            /**
-             * PakjeGemak default option
-             */
-            $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
-        } elseif ($this->isEuShipment()) {
-            /**
-             * EU default option
-             */
-            $xpath = self::XPATH_DEFAULT_EU_PRODUCT_OPTION;
-        } elseif ($this->isGlobalShipment()) {
-            /**
-             * Global default option
-             */
-            $xpath = self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
-        } elseif ($this->isDutchShipment() && $this->isCod()) {
-            /**
-             * Dutch COD default option
-             */
-            $xpath = self::XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION;
+        switch ($shipmentType) {
+            case 'avond':
+                $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
+                break;
+            case 'avond_cod':
+                $xpath = self::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION;
+                break;
+            case 'pg':
+                $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;
+                break;
+            case 'pg_cod':
+                $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION;
+                break;
+            case 'pge':
+                $xpath = self::XPATH_DEFAULT_PGE_PRODUCT_OPTION;
+                break;
+            case 'pge_cod':
+                $xpath = self::XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION;
+                break;
+            case 'pa': //NO BREAK
+            case 'pa_cod':
+                $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
+                break;
+            case 'eps':
+                $xpath = self::XPATH_DEFAULT_EU_PRODUCT_OPTION;
+                break;
+            case 'globalpack':
+                $xpath = self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
+                break;
+            //no default
         }
 
         /**
@@ -875,72 +938,48 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $cifHelper = $this->getHelper('cif');
 
-        /**
-         * Please note the order of these checks as PakjeGemak, PakjeGemak Express, avond and pakketautomaat shipment
-         * would all also be considered Dutch shipments.
-         */
-
-        if ($this->isCod()) {
-            if ($this->isPgeShipment()) {
-                $allowedProductCodes = $cifHelper->getPgeCodProductCodes($flat);
-                return $allowedProductCodes;
-            }
-
-            if ($this->isAvondShipment()) {
-                $allowedProductCodes = $cifHelper->getAvondCodProductCodes($flat);
-                return $allowedProductCodes;
-            }
-
-            if ($this->isPakjeGemakShipment()) {
-                $allowedProductCodes = $cifHelper->getPakjeGemakCodProductCodes($flat);
-                return $allowedProductCodes;
-            }
-
-            if ($this->isDutchShipment()) {
+        $shipmentType = $this->getShipmentType();
+        switch ($shipmentType) {
+            case 'domestic':
+                $allowedProductCodes = $cifHelper->getStandardProductCodes($flat);
+                break;
+            case 'domestic_cod':
                 $allowedProductCodes = $cifHelper->getStandardCodProductCodes($flat);
-                return $allowedProductCodes;
-            }
+                break;
+            case 'avond':
+                $allowedProductCodes = $cifHelper->getAvondProductCodes($flat);
+                break;
+            case 'avond_cod':
+                $allowedProductCodes = $cifHelper->getAvondCodProductCodes($flat);
+                break;
+            case 'pg':
+                $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes($flat);
+                break;
+            case 'pg_cod':
+                $allowedProductCodes = $cifHelper->getPakjeGemakCodProductCodes($flat);
+                break;
+            case 'pge':
+                $allowedProductCodes = $cifHelper->getPgeProductCodes($flat);
+                break;
+            case 'pge_cod':
+                $allowedProductCodes = $cifHelper->getPgeCodProductCodes($flat);
+                break;
+            case 'pa': //NO BREAK
+            case 'pa_cod':
+                $allowedProductCodes = $cifHelper->getPakketautomaatProductCodes($flat);
+                break;
+            case 'eps':
+                $allowedProductCodes = $cifHelper->getEuProductCodes($flat);
+                break;
+            case 'globalpack':
+                $allowedProductCodes = $cifHelper->getGlobalProductCodes($flat);
+                break;
+            default:
+                $allowedProductCodes = array();
+                break;
         }
 
-        if ($this->isPgeShipment()) {
-            $allowedProductCodes = $cifHelper->getPgeProductCodes($flat);
-            return $allowedProductCodes;
-        }
-
-        if ($this->isAvondShipment()) {
-            $allowedProductCodes = $cifHelper->getAvondProductCodes($flat);
-            return $allowedProductCodes;
-        }
-
-        if ($this->isPakjeGemakShipment()) {
-            $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes($flat);
-            return $allowedProductCodes;
-        }
-
-        if ($this->isPakketautomaatShipment()) {
-            $allowedProductCodes = $cifHelper->getPakketautomaatProductCodes($flat);
-            return $allowedProductCodes;
-        }
-
-        if ($this->isDutchShipment()) {
-            $allowedProductCodes = $cifHelper->getStandardProductCodes($flat);
-            return $allowedProductCodes;
-        }
-
-        if ($this->isEuShipment()) {
-            $allowedProductCodes = $cifHelper->getEuProductCodes($flat);
-            return $allowedProductCodes;
-        }
-
-        if ($this->isGlobalShipment() && $cifHelper->isGlobalAllowed()) {
-            $allowedProductCodes = $cifHelper->getGlobalProductCodes($flat);
-            return $allowedProductCodes;
-        }
-
-        /**
-         * If no matches were found, return an empty array.
-         */
-        return array();
+        return $allowedProductCodes;
     }
 
     /**
@@ -2674,66 +2713,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * @param array $codes
      *
      * @return string
-     *
-     * @todo standardize shipment type names (the keys)
      */
     protected function _extractProductcodeForType($codes)
     {
-        if ($this->isCod()) {
-            if ($this->isPgeShipment()) {
-                $code = $codes['pge_cod_options'];
-                return $code;
-            }
-
-            if ($this->isAvondShipment()) {
-                $code = $codes['avond_cod_options'];
-                return $code;
-            }
-
-            if ($this->isPakjeGemakShipment()) {
-                $code = $codes['pakjegemak_cod_options'];
-                return $code;
-            }
-
-            if ($this->isDutchShipment()) {
-                $code = $codes['standard_cod_options'];
-                return $code;
-            }
-        }
-
-        if ($this->isPgeShipment()) {
-            $code = $codes['pge_options'];
-            return $code;
-        }
-
-        if ($this->isAvondShipment()) {
-            $code = $codes['avond_options'];
-            return $code;
-        }
-
-        if ($this->isPakjeGemakShipment()) {
-            $code = $codes['pakjegemak_options'];
-            return $code;
-        }
-
-        if ($this->isPakketautomaatShipment()) {
-            $code = $codes['pakketautomaat_options'];
-            return $code;
-        }
-
-        if ($this->isDutchShipment()) {
-            $code = $codes['standard_options'];
-            return $code;
-        }
-
-        if ($this->isEuShipment()) {
-            $code = $codes['eu_options'];
-            return $code;
-        }
-
-        if ($this->isGlobalShipment() && $this->getHelper('data')->isGlobalAllowed()) {
-            $code = $codes['global_options'];
-            return $code;
+        $shipmentType = $this->getShipmentType();
+        if (array_key_exists($shipmentType, $codes)) {
+            return $codes[$shipmentType];
         }
 
         return $this->getDefaultProductCode();
@@ -2933,7 +2918,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Delete alle tracks for this shipment.
+     * Delete all tracks for this shipment.
      *
      * @return $this
      */
