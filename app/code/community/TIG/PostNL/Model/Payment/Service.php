@@ -44,6 +44,8 @@ class TIG_PostNL_Model_Payment_Service
      * @param Mage_Sales_Model_Order_Shipment $shipment
      *
      * @return $this
+     *
+     * @throws TIG_PostNL_Exception
      */
     public function registerInvoiceFromShipment(Mage_Sales_Model_Order_Shipment $shipment)
     {

@@ -895,3 +895,18 @@ TIG_PostNL::Bankaccount BIC,Bankrekening BIC
 TIG_PostNL::Automatically create an invoice,Automatisch factureren
 "TIG_PostNL::If enabled, this will allow the PostNL COD payment method to automatically create an invoice once a shipment has been delivered.","Indien deze optie aan staat, zullen bestellingen die geplaatst zijn met de PostNL rembours betaalmethode automatisch gefactureerd worden nadat een bijbehorende zending bezorgd is."
 TIG_PostNL::Please enter your bankaccount credentials. COD payments will be transfered to this account.,Vul s.v.p. uw bankrekeninggegevens in. Rembours betalingen zullen op deze rekening gestort worden.
+TIG_PostNL::PostNL Cash on Delivery,PostNL rembours
+TIG_PostNL::Enable or disable the PostNL Cash on Delivery payment method.,Activeer de PostNL rembours betaalmethode.
+TIG_PostNL::Title,Titel
+TIG_PostNL::New order status,Nieuwe bestelling status
+TIG_PostNL::Newly placed orders will have this status.,Nieuwe bestellingen zullen deze status krijgen.
+TIG_PostNL::Instructions,Instructies
+TIG_PostNL::This text will be shown to customers when they choose this payment method.,Deze tekst zal aan klanten getoond worden wanneer zij voor deze betaalmethode kiezen.
+TIG_PostNL::Html tags are allowed in this field.,Html is toegstaan in dit veld.
+TIG_PostNL::Payment from applicable countries,Betalingen toestaan van geslecteerde landen
+TIG_PostNL::Payment from specific countries,Betaling toestaan van geslecteerde landen
+TIG_PostNL::Minimum order total,Minimaal bestellingbedrag
+TIG_PostNL::Maximum order total,Maximaal bestellingbedrag
+TIG_PostNL::Allow for non-PostNL orders,Toestaan voor niet-PostNL bestellingen
+TIG_PostNL::Sort order,Sorteervolgorde
+TIG_PostNL::Set this option to 'yes' to allow orders placed using a different shipping method than PostNL to use this payment method.,Zet deze optie op 'ja' om deze betaalmethode ook aan te bieden voor bestellingen die geen gebruik maken van de PostNL verzendmethode.
