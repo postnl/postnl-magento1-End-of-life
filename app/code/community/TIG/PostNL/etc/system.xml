@@ -52,7 +52,7 @@
                     <fields>
                         <active translate="label comment" module="postnl">
                             <label>Enabled</label>
-                            <comment>Enable or disable the PostNL Cash on Delivery payment method</comment>
+                            <comment>Enable or disable the PostNL Cash on Delivery payment method.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>10</sort_order>
@@ -72,7 +72,7 @@
                             </depends>
                         </title>
                         <order_status translate="label comment" module="postnl">
-                            <label>New Order Status</label>
+                            <label>New order status</label>
                             <comment>Newly placed orders will have this status.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_order_status_new</source_model>
@@ -98,7 +98,7 @@
                             </depends>
                         </instructions>
                         <allowspecific translate="label" module="postnl">
-                            <label>Payment from Applicable Countries</label>
+                            <label>Payment from applicable countries</label>
                             <frontend_type>allowspecific</frontend_type>
                             <sort_order>50</sort_order>
                             <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
@@ -110,7 +110,7 @@
                             </depends>
                         </allowspecific>
                         <specificcountry translate="label" module="postnl">
-                            <label>Payment from Specific Countries</label>
+                            <label>Payment from specific countries</label>
                             <frontend_type>multiselect</frontend_type>
                             <sort_order>60</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
@@ -123,7 +123,7 @@
                             </depends>
                         </specificcountry>
                         <min_order_total translate="label" module="postnl">
-                            <label>Minimum Order Total</label>
+                            <label>Minimum order total</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
@@ -134,7 +134,7 @@
                             </depends>
                         </min_order_total>
                         <max_order_total translate="label" module="postnl">
-                            <label>Maximum Order Total</label>
+                            <label>Maximum order total</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
@@ -158,7 +158,7 @@
                             </depends>
                         </allow_for_non_postnl>
                         <sort_order translate="label" module="postnl">
-                            <label>Sort Order</label>
+                            <label>Sort order</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>

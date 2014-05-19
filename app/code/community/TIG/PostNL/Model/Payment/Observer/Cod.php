@@ -58,16 +58,15 @@ class TIG_PostNL_Model_Payment_Observer_Cod
         /**
          * Auto invoicing is only allowed if the shipment has been delivered.
          */
-        if ($shipment->getShippingPhase() !== $shipment::SHIPPING_PHASE_DELIVERED) {
+        if ($shipment->getShippingPhase() != $shipment::SHIPPING_PHASE_DELIVERED) {
             return $this;
         }
 
         /**
-         * Get the order and check if we can invoice it. Since we will be invoicing the entire order, no other invoices
-         * may be present.
+         * Get the order and check if we can invoice it.
          */
         $order = $shipment->getShipment()->getOrder();
-        if (!$order->canInvoice() || $order->hasInvoices()) {
+        if (!$order->canInvoice()) {
             return $this;
         }
 
