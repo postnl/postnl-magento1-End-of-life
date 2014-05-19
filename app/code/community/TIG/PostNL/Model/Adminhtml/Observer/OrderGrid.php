@@ -276,7 +276,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'align'                     => 'left',
             'index'                     => 'country_id',
             'type'                      => 'options',
-            'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_shipmentType',
+            'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_rawShipmentType',
             'width'                     => '140px',
             'filter_condition_callback' => array($this, '_filterShipmentType'),
             'sortable'                  => false,
@@ -358,8 +358,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'value'   => 1,
                     'checked' => 'checked',
                 ),
-                'postnl_standard_options' => array(
-                    'name'   => 'product_options[standard_options]',
+                'postnl_domestic_options' => array(
+                    'name'   => 'product_options[domestic_options]',
                     'type'   => 'select',
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
@@ -386,8 +386,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                         true
                     ),
                 ),
-                'postnl_pakjegemak_options' => array(
-                    'name'   => 'product_options[pakjegemak_options]',
+                'postnl_pg_options' => array(
+                    'name'   => 'product_options[pg_options]',
                     'type'   => 'select',
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
@@ -415,8 +415,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                         true
                     ),
                 ),
-                'postnl_eu_options' => array(
-                    'name'   => 'product_options[eu_options]',
+                'postnl_eps_options' => array(
+                    'name'   => 'product_options[eps_options]',
                     'type'   => 'select',
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
@@ -428,8 +428,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                         true
                     ),
                 ),
-                'postnl_global_options' => array(
-                    'name'   => 'product_options[global_options]',
+                'postnl_globalpack_options' => array(
+                    'name'   => 'product_options[globalpack_options]',
                     'type'   => 'select',
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
@@ -441,8 +441,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                         true
                     ),
                 ),
-                'postnl_standard_cod_options' => array(
-                    'name'   => 'product_options[standard_cod_options]',
+                'postnl_domestic_cod_options' => array(
+                    'name'   => 'product_options[domestic_cod_options]',
                     'type'   => 'select',
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
@@ -470,8 +470,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                         true
                     ),
                 ),
-                'postnl_pakjegemak_cod_options' => array(
-                    'name'   => 'product_options[pakjegemak_cod_options]',
+                'postnl_pg_cod_options' => array(
+                    'name'   => 'product_options[pg_cod_options]',
                     'type'   => 'select',
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
@@ -499,8 +499,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                         true
                     ),
                 ),
-                'postnl_pakketautomaat_options' => array(
-                    'name'   => 'product_options[pakketautomaat_options]',
+                'postnl_pa_options' => array(
+                    'name'   => 'product_options[pa_options]',
                     'type'   => 'select',
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
@@ -559,7 +559,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Adds new filters to the collection if these filters are based on columns added by this observer
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
      * @param array $filter Array of filters to be added
      *
      * @return $this
@@ -581,7 +581,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Filters the collection by the 'shipment_type' column. Th column has 3 options: domestic, EPS and GlobalPack.
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
      * @return $this
@@ -731,7 +731,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Sorts the collection by a specified column in a specified direction
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
+     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
      * @param string $sort The column that the collection is sorted by
      * @param string $dir The direction that is used to sort the collection
      *
