@@ -28,6 +28,7 @@
 /* ======================================================================================= */
 
 /* Checkout Success ====================================================================== */
+#postnl_notifications { text-align:left; }
 #postnl_notifications > div { padding-top:1em; margin-top:3em; border-top:1px solid #cfcfcf; padding-left:80px; min-height:60px; }
 
 #create_mijnpakket_account { background:url(../../../images/TIG/PostNL/mijnpakket/logo.png) 0 1em no-repeat; }
