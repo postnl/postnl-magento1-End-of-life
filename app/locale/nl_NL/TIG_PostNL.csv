@@ -93,7 +93,7 @@ TIG_PostNL::City,Plaats
 TIG_PostNL::Region,Provincie
 TIG_PostNL::Return Address,Retouradres
 TIG_PostNL::Use the sender address as the return adress,Gebruik afzenderadres als retouradres
-TIG_PostNL::Product Options,Product opties
+TIG_PostNL::Product Options,Productopties
 TIG_PostNL::Select supported option,Selecteer de beschikbare opties
 TIG_PostNL::Only the selected options will be available.,Alleen de geselecteerde opties zijn beschikbaar
 TIG_PostNL::Default shipping option,Standaard verzendoptie
@@ -261,7 +261,7 @@ TIG_PostNL::PostNL - Print shipping labels,PostNL - Print verzendlabels
 TIG_PostNL::PostNL - Confirm shipments,PostNL - Zending voormelden
 TIG_PostNL::Shipment type,Verzendtype
 TIG_PostNL::PostNL - Create Shipments,PostNL - Maak zendingen aan
-TIG_PostNL::Product options,Product opties
+TIG_PostNL::Product options,Productopties
 TIG_PostNL::Shipping Method,Verzendmethode
 TIG_PostNL::Shipment Type,Verzendtype
 TIG_PostNL::Labels Printed,Labels geprint
@@ -299,8 +299,8 @@ TIG_PostNL::carat,Karat
 TIG_PostNL::Mite,Mite
 TIG_PostNL::Grain,Grain
 TIG_PostNL::Street line,Straat regel
-TIG_PostNL::Extra Cover,Extra dekking
-TIG_PostNL::Extra cover + Return when not home,Extra dekking + Retour indien niet thuis
+TIG_PostNL::Extra Cover,Verhoogd aansprakelijk
+TIG_PostNL::Extra cover + Return when not home,Verhoogd aansprakelijk + Retour indien niet thuis
 TIG_PostNL::Signature on delivery,Handtekening bij ontvangst
 TIG_PostNL::Signature on delivery + Delivery to stated address only,Handtekening bij ontvangst + Lever alleen aan opgegeven adres
 TIG_PostNL::Signature on delivery + Return when not home,Handtekening bij ontvangst + Retour indien niet thuis
@@ -324,8 +324,8 @@ TIG_PostNL::Errors only,Alleen fouten
 TIG_PostNL::Full,Volledig
 TIG_PostNL::Domestic options,Binnenlandse opties
 TIG_PostNL::Standard shipment,Standaard verzending
-TIG_PostNL::Post Office + Extra Cover,Postkantoor + extra verzekerd
-TIG_PostNL::Post Office + Extra Cover + Notification,Postkantoor + extra verzekerd + notificatie
+TIG_PostNL::Post Office + Extra Cover,Postkantoor + verhoogd aansprakelijk
+TIG_PostNL::Post Office + Extra Cover + Notification,Postkantoor + verhoogd aansprakelijk + notificatie
 TIG_PostNL::Post Office + Signature on Delivery,Postkantoor + handtekening bij ontvangst
 TIG_PostNL::Post Office + Signature on Delivery + Notification,Postkantoor + handtekening bij ontvangst + notificatie
 TIG_PostNL::EU options,EU opties
@@ -400,7 +400,7 @@ TIG_PostNL::Invalid rate type requested: %s,Ongeldige tarief optie gevraagd: %s
 "TIG_PostNL::These settings are intended for advanced users only! If you're not 100% sure what you're doing, please do not touch these settings.","Deze instellingen zijn enkel bedoeld voor geavanceerde gebruikers! Indien u niet geheel zeker bent van wat u doet, pas deze instellingen dan niet aan."
 TIG_PostNL::This is where you specify which payment options will be presented to your customers in PostNL Checkout. At least one of these must be activated for PostNL Checkout to work.,Hier kunt u aangeven welke betaalmethodes in PostNL Checkout aan uw klanten getoond worden. Tenminste één betaalmethode dient actief te zijn.
 TIG_PostNL::Here you can specify the way GlobalPack shipments are handled. This is very important if you want to ship products to outside the EU. Otherwise you can safely ignore these settings.,"Hier kunt u bepalen hoe GlobalPack (internationale) zendingen afgehandeld worden. Dit is uiterst belangrijk indien u van plan bent producten buiten de EU te verzenden. Indien u enkel binnen de EU verstuurt, kunt u deze instellingen negeren."
-TIG_PostNL::Here you can specify which PostNL product options you have a contract for. Also you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments. Please note that if you select a product option which is not covered by your PostNL contract it will result in an error.,Hier kunt u aangeven welke PostNL product opties u afneemt. Ook kunt u hier aangeven welke product opties de PostNL extensie gebruikt. Deze instellingen kunt u ten alle tijden overschrijven door handmatig een zending aan te maken voor een bestelling. Houd er rekening mee dat wanneer u gebruik maakt van een product optie die u niet afneemt bij PostNL dit zal resulteren in een foutmelding.
+TIG_PostNL::Here you can specify which PostNL product options you have a contract for. Also you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments. Please note that if you select a product option which is not covered by your PostNL contract it will result in an error.,Hier kunt u aangeven welke PostNL productopties u afneemt. Ook kunt u hier aangeven welke productopties de PostNL extensie gebruikt. Deze instellingen kunt u ten alle tijden overschrijven door handmatig een zending aan te maken voor een bestelling. Houd er rekening mee dat wanneer u gebruik maakt van een product optie die u niet afneemt bij PostNL dit zal resulteren in een foutmelding.
 "TIG_PostNL::You may specify a separate return address for shipments that could not be delivered. If you do not wish to specify a separate return address, your sender address will be used.","U kunt een alternatief retouradres opgeven voor zendingen die niet afgeleverd konden worden. Indien u hier geen gebruik van wenst te maken, zal uw afzenderadres gebruikt worden."
 TIG_PostNL::This is where you enter your address. This is required for the extension to work.,Hier dient u uw adres in te vullen. Dit is noodzakelijk voor de werking van de extensie.
 TIG_PostNL::Invalid UpdateOrder response received!,Ongeldig UpdateOrder antwoord ontvangen!
@@ -478,7 +478,7 @@ TIG_PostNL::Enter a sender and return address,Vul een afzender- en retouradres i
 "TIG_PostNL::Configure your address settings, your confirming & label printing preferences and your preferred product options","Configureer nu uw adres instellingen, uw voormelden en labels printen voorkeuren, en uw product optie voorkeuren."
 "TIG_PostNL::Go to the 'Address Settings' tab and configure this section based on which fields you use in your checkout process. If this does not precisely match your checkout process, orders may not be shipped to the correct address.",Ga nu naar het 'Adres Instellingen' tabje en configureer deze velden op basis van welke velden u gebruikt in uw afrekenproces. Indien deze configuratie niet exact overeenkomt met de velden die u gebruikt in uw afrekenproces kan het voorkomen dat bestellingen naar het verkeerde adres verstuurd worden.
 TIG_PostNL::Go to the 'Confirming & Label Printing Settings' tab and change your preferences. You may want to tweak these and then test them repeatedly before deciding on a final configuration.,Ga naar het 'Voormelden & Labels Printen Instellingen' tabje en pas uw voorkeuren aan. Het is verstandig om met deze instellingen te experimenteren en telkens te testen voordat u uw definitieve voorkeuren vastlegt.
-"TIG_PostNL::Go to the 'Product Options' tab and select your supported and preferred product options. If you have questions regarding each product option and which would be most suitable to you, please contact PostNL.","Ga naar het 'Product Opties' tabje en selecteer welke PostNL producten u ondersteunt en welke u als standaard wilt aanhouden. Indien u vragen heeft met betrekking tot de mogelijke product opties of als u niet zeker bent welke product opties het beste bij u passen, neem dan contact op met PostNL."
+"TIG_PostNL::Go to the 'Product Options' tab and select your supported and preferred product options. If you have questions regarding each product option and which would be most suitable to you, please contact PostNL.","Ga naar het 'Productopties' tabje en selecteer welke PostNL producten u ondersteunt en welke u als standaard wilt aanhouden. Indien u vragen heeft met betrekking tot de mogelijke productopties of als u niet zeker bent welke productopties het beste bij u passen, neem dan contact op met PostNL."
 TIG_PostNL::Configure your GlobalPack settings,Configureer uw GlobalPack instellingen
 "TIG_PostNL::If you wish to send orders to outside the EU, you need to configure your GlobalPack settings.",Indien u bestellingen wilt versturen naar buiten de EU moet u uw GlobalPack instellingen configureren.
 TIG_PostNL::Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.,Ga naar het 'Account Instellingen' tabje en vul de 'Globaal barcode type' en 'Globaal barcode bereik' velden in.
@@ -508,7 +508,7 @@ TIG_PostNL::Full changelog,Volledig changelog
 TIG_PostNL::PostNL Checkout has been disabled,PostNL Checkout is uitgeschakeld
 TIG_PostNL::The quote is virtual.,De winkelwagen bevat enkel virtuele producten
 TIG_PostNL::The quote's grand total is below the minimum amount required.,Het totaalbedrag van de winkelwagen is beneden het minimum.
-TIG_PostNL::No standard product options are enabled. At least 1 option must be active.,Er zijn geen standaard product opties beschikbaar. Minstens 1 optie moet beschikbaar zijn
+TIG_PostNL::No standard product options are enabled. At least 1 option must be active.,Er zijn geen standaard productopties beschikbaar. Minstens 1 optie moet beschikbaar zijn
 TIG_PostNL::You have not yet enabled the PostNL extension.,De PostNL extensie is nog niet actief.
 TIG_PostNL::Tomorrow,Morgen
 TIG_PostNL::%s days from now,Over %s dagen
@@ -871,5 +871,5 @@ TIG_PostNL::The customer was redirected to the cart because the quote was empty.
 TIG_PostNL::The customer was redirected to the cart because the quote had the following error(s): %s.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote de volgende errors bevat: %s."
 TIG_PostNL::The customer was redirected to the cart because the quote is multishipping.,"De klant is doorgestuurd naar de winkelwagen, omdat de quote voor multishipping bestemd is."
 TIG_PostNL::more delivery times and pick-up locations,meer bezorgtijden en ophaalpunten
-TIG_PostNL::Select this checkbox to only show post office locations that are open as early as 8:30 A.M.,Activeer deze filter om enkel postkantoor locaties te tonen die 's ochtends vanaf 8:30 uur geopend zijn.
+TIG_PostNL::Select this checkbox to only show post office locations that are open as early as 8:30 A.M.,Activeer deze filter om enkel de ophaalpunten te tonen die extra vroeg ophalen (vanaf 8.30 uur) bieden.
 TIG_PostNL::Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.,Activeer deze filter om enkel postkantoor locaties te tonen die 's avonds na 19:00 uur geopend zijn op de eerstvolgende bezorgdag.
