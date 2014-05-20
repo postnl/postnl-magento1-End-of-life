@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_RawShipmentType
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderType
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
 {
     /**

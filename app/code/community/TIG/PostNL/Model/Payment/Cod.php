@@ -93,6 +93,31 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             return false;
         }
 
+        if (!(bool) $this->getConfigData('allow_for_non_postnl', $quote->getStoreId())) {
+            $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+
+            if (!in_array($shippingMethod, $postnlShippingMethods)) {
+                $helper->log(
+                       $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
+                );
+                return false;
+            }
+        }
+
+        $quoteId = $quote->getId();
+
+        /**
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($quoteId, 'quote_id');
+        if ($postnlOrder->getId() && $postnlOrder->getType() == 'PA') {
+            $helper->log(
+                $helper->__('PostNL COD is not available, because the chosen delivery option is PA.')
+            );
+            return false;
+        }
+
         $codSettings = Mage::getStoreConfig(self::XPATH_COD_SETTINGS, Mage::app()->getStore()->getId());
 
         if (!isset($codSettings['account_name'])
@@ -106,18 +131,6 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
                 $helper->__('PostNL COD is not available, because required fields are missing.')
             );
             return false;
-        }
-
-        if (!(bool) $this->getConfigData('allow_for_non_postnl', $quote->getStoreId())) {
-            $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
-            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-
-            if (!in_array($shippingMethod, $postnlShippingMethods)) {
-                $helper->log(
-                    $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
-                );
-                return false;
-            }
         }
 
         $parentIsAvailable = parent::isAvailable($quote);
