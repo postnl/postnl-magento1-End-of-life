@@ -72,7 +72,7 @@
         </div>
     </div>
     <div class="field field-extension">
-        <label for="<?php echo $_addressType; ?>:street3" class="required"><?php echo $_postnlHelper->__('Extension') ?></label>
+        <label for="<?php echo $_addressType; ?>:street3"><?php echo $_postnlHelper->__('Extension') ?></label>
         <div class="input-box">
             <input type="text" title="<?php echo $_postnlHelper->__('Extension') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street3" value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(3)) ?>" class="input-text <?php echo $_streetValidationClassNotRequired ?>" />
         </div>
