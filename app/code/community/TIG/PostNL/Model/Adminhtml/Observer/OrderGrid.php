@@ -108,7 +108,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         /**
-         * @var Mage_Adminhtml_Block_Sales_Order_Grid $block
+         * @var Mage_Adminhtml_Block_Sales_Order_Grid      $block
          * @var Mage_Sales_Model_Resource_Order_Collection $currentCollection
          */
         $currentCollection = $block->getCollection();
@@ -276,7 +276,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'align'                     => 'left',
             'index'                     => 'country_id',
             'type'                      => 'options',
-            'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_rawShipmentType',
+            'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_orderType',
             'width'                     => '140px',
             'filter_condition_callback' => array($this, '_filterShipmentType'),
             'sortable'                  => false,
@@ -560,7 +560,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      * Adds new filters to the collection if these filters are based on columns added by this observer
      *
      * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
-     * @param array $filter Array of filters to be added
+     * @param array                                           $filter     Array of filters to be added
      *
      * @return $this
      */
@@ -582,7 +582,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      * Filters the collection by the 'shipment_type' column. Th column has 3 options: domestic, EPS and GlobalPack.
      *
      * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
-     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column         $column
      *
      * @return $this
      */

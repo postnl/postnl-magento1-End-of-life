@@ -756,8 +756,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             case 'pge_cod':
                 $xpath = self::XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION;
                 break;
-            case 'pa': //NO BREAK
-            case 'pa_cod':
+            case 'pa':
                 $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
                 break;
             case 'eps':
@@ -964,8 +963,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             case 'pge_cod':
                 $allowedProductCodes = $cifHelper->getPgeCodProductCodes($flat);
                 break;
-            case 'pa': //NO BREAK
-            case 'pa_cod':
+            case 'pa':
                 $allowedProductCodes = $cifHelper->getPakketautomaatProductCodes($flat);
                 break;
             case 'eps':
