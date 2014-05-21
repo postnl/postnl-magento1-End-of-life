@@ -1,0 +1,94 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+    <span id="postnl_checkout_seperator" style="display:none;"><?php echo $this->__('or'); ?></span>
+</li>
+<li>
+    <?php $_src = $this->getSrc(); ?>
+    <?php if (!$this->isDisabled()): ?>
+        <img id="waiting_for_ping_spinner" src="<?php echo $this->getSkinUrl('images/ajax-loader.gif'); ?>" style="display:none;"/>
+    <?php endif; ?>
+    <div id="postnl_checkout" <?php if (!$this->isDisabled()): ?>style="display:none;"<?php endif; ?>>
+        <a id="postnl_checkout_link" href="#" onclick="<?php if (!$this->isDisabled()): ?>postnlcheckoutWidget.startCheckout();<?php else: ?>return false;<?php endif; ?>" title="<?php echo $this->__('PostNL Checkout') ?>" <?php if ($this->isDisabled()): ?>disabled='disabled'<?php endif; ?>>
+            <img src="<?php echo $_src; ?>"/>
+        </a>
+        <?php $_instructionUrl = $this->getInstructionUrl(); ?>
+        <?php if (!$this->isDisabled() && $_instructionUrl): ?>
+            <p>
+                <a href="<?php echo $_instructionUrl; ?>" title="<?php echo $this->__('How does it work?'); ?>" target="_blank"><?php echo $this->__('How does it work?'); ?></a>
+            </p>
+        <?php endif; ?>
+    </div>
+    <?php if (!$this->isDisabled()): ?>
+        <?php $_disabledSrc = $this->getSrc(true); ?>
+        <div id="postnl_checkout_link_disabled" style="display:none;">
+            <img src="<?php echo $_disabledSrc; ?>"/>
+        </div>
+        <div id="postnl_placeholder" style="display:none;"></div>
+        <script type="text/javascript">
+            //<![CDATA[
+            var doLoginCheck = <?php echo $this->getDoLoginCheck() ? 'true' : 'false'; ?>;
+            var checkout = null;
+            document.observe('dom:loaded', function() {
+                if (!doLoginCheck) {
+                    window.startPostnlCheckoutPing();
+
+                    return;
+                }
+
+                var updateLoggedIn = function(data) {
+                    if (!data.Ok) {
+                        return;
+                    }
+
+                    window.startPostnlCheckoutPing();
+                };
+
+                checkout = PostNL.Checkout.init({
+                    userLoggedin     : updateLoggedIn,
+                    detectPopupState : function() {},
+                    elementId        : 'postnl_placeholder',
+                    pId              : '<?php echo $this->getPublicWebshopId(); ?>'
+                });
+
+                checkout.checkLogin();
+            });
+            //]]>
+        </script>
+    <?php endif; ?>
