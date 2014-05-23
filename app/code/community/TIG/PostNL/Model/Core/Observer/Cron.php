@@ -285,8 +285,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $counter = 1000;
         foreach ($postnlShipmentCollection as $postnlShipment) {
             /**
-             * Process a maximum of 1000 shipments (to prevent Cif from being overburdoned).
-             * Only successfull requests count towards this number
+             * Process a maximum of 1000 shipments (to prevent Cif from being overburdened).
+             * Only successful requests count towards this number
              */
             if ($counter < 1) {
                 break;

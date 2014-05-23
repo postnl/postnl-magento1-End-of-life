@@ -541,8 +541,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         /**
          * Check if any options were selected. If not, the default will be used
          */
-        $chosenOptions = $this->getRequest()->getParam('product_options');
-        if ($chosenOptions && $chosenOptions != 'default') {
+        $chosenOptions = $this->getRequest()->getParams();
+
+        if ($chosenOptions
+            && (!isset($chosenOptions['use_default']) || $chosenOptions['use_default'] != '1')
+        ) {
             Mage::register('postnl_product_option', $chosenOptions);
         }
 

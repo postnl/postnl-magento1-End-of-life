@@ -77,20 +77,30 @@
         useDefault.stopObserving('click');
         useDefault.observe('click', function() {
             if (filteredTypes.length > 1) {
-                useDefault.checked = 'checked';
-                useDefault.disabled = true;
-
+                useDefault.up().hide();
                 filterMassAction(false);
             } else if (filteredTypes.length == 1) {
-                useDefault.disabled = false;
-
+                useDefault.up().show();
                 filterMassAction(filteredTypes[0]);
             } else {
+                useDefault.up().hide();
                 filterMassAction(false);
             }
         });
 
-        filterMassAction(false);
+        if (filteredTypes.length > 1) {
+            useDefault.up().hide();
+            useDefault.checked = 'checked';
+
+            filterMassAction(false);
+        } else if (filteredTypes.length == 1) {
+            useDefault.up().show();
+
+            filterMassAction(filteredTypes[0]);
+        } else {
+            useDefault.up().hide();
+            filterMassAction(false);
+        }
     };
 
     observeMassactionCheckbox = function(element) {
@@ -113,15 +123,14 @@
             }
         });
 
+        console.log(filteredTypes.length);
         if (filteredTypes.length > 1) {
-            useDefault.up().show();
+            useDefault.up().hide();
             useDefault.checked = 'checked';
-            useDefault.disabled = true;
 
             filterMassAction(false);
         } else if (filteredTypes.length == 1) {
             useDefault.up().show();
-            useDefault.disabled = false;
 
             filterMassAction(filteredTypes[0]);
         } else {
