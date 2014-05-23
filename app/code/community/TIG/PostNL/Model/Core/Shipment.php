@@ -486,7 +486,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _getShipmentType()
     {
-
         if ($this->isCod()) {
             if ($this->isPgeShipment()) {
                 return 'pge_cod';
@@ -738,6 +737,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shipmentType = $this->getShipmentType();
         $xpath = false;
         switch ($shipmentType) {
+            case 'domestic_cod':
+                $xpath = self::XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION;
+                break;
             case 'avond':
                 $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
                 break;

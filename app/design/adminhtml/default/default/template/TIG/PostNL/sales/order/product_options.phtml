@@ -62,20 +62,18 @@
                     selectedMassAction = massActionSelect[massActionSelect.selectedIndex];
                     if (selectedMassAction.value == 'create_shipments') {
                         var filteredTypes = window.filteredTypes;
-                        if (filteredTypes.length !== 1) {
-                            return;
-                        }
+                        if (filteredTypes.length === 1) {
+                            var productOptionSelect = $('postnl_' + filteredTypes[0] + '_options');
+                            if (!productOptionSelect) {
+                                extraCoverDialog.open();
+                                return;
+                            }
+                            selectedProductOption = productOptionSelect[productOptionSelect.selectedIndex];
 
-                        var productOptionSelect = $('postnl_' + filteredTypes[0] + '_options');
-                        if (!productOptionSelect) {
-                            extraCoverDialog.open();
-                            return;
-                        }
-                        selectedProductOption = productOptionSelect[productOptionSelect.selectedIndex];
-
-                        if (productOptions.indexOf(selectedProductOption.value) > -1) {
-                            extraCoverDialog.open();
-                            return;
+                            if (productOptions.indexOf(selectedProductOption.value) > -1) {
+                                extraCoverDialog.open();
+                                return;
+                            }
                         }
                     }
                 }

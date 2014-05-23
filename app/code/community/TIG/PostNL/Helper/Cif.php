@@ -1136,9 +1136,12 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         $requestXml = $this->formatXml($client->getLastRequest());
         $responseXML = $this->formatXml($client->getLastResponse());
 
-        $logMessage = "Request sent:\n"
+        $logMessage = "<<< REQUEST SENT >>>"
+                    . PHP_EOL
                     . $requestXml
-                    . "\nResponse received:\n"
+                    . PHP_EOL
+                    . "<<< RESPONSE RECEIVED >>>"
+                    . PHP_EOL
                     . $responseXML;
 
         $file = self::POSTNL_LOG_DIRECTORY . DS . self::CIF_DEBUG_LOG_FILE;
@@ -1162,24 +1165,26 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             return $this;
         }
 
+        $logMessage = PHP_EOL . $exception->__toString();
+
         if ($exception instanceof TIG_PostNL_Model_Core_Cif_Exception) {
             $requestXml = $this->formatXml($exception->getRequestXml());
             $responseXML = $this->formatXml($exception->getResponseXml());
 
-            $logMessage = '';
-
             $errorNumbers = $exception->getErrorNumbers();
             if (!empty($errorNumbers)) {
                 $errorNumbers = implode(', ', $errorNumbers);
-                $logMessage .= "Error numbers received: {$errorNumbers}\n";
+                $logMessage .= PHP_EOL . PHP_EOL . "Error numbers received: {$errorNumbers}\n";
             }
 
-            $logMessage .= "<<< REQUEST SENT >>>\n"
-                        . $requestXml
-                        . "\n<<< RESPONSE RECEIVED >>>\n"
-                        . $responseXML;
-        } else {
-            $logMessage = "\n" . $exception->__toString();
+            $logMessage .= PHP_EOL
+                         . "<<< REQUEST SENT >>>"
+                         . PHP_EOL
+                         . $requestXml
+                         . PHP_EOL
+                         . "<<< RESPONSE RECEIVED >>>"
+                         . PHP_EOL
+                         . $responseXML;
         }
 
         $file = self::POSTNL_LOG_DIRECTORY . DS . self::CIF_EXCEPTION_LOG_FILE;
