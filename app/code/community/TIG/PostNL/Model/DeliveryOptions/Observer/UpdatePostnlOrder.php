@@ -145,6 +145,15 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $order->addAddress($orderAddress)
               ->save();
 
+        /**
+         * This is required for some PSP extensions which will not save the PakjeGemak address otherwise. We are still
+         * investigating why exactly this is required. The entire address collection is supposed to be saved when the
+         * order is saved...
+         *
+         * @since v1.2.1
+         */
+        $orderAddress->save();
+
         return $this;
     }
 
