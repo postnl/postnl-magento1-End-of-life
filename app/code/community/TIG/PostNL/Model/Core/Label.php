@@ -100,19 +100,19 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      */
     public function getTempFilesSaved()
     {
-        return $this->_tempFilesUsed;
+        return $this->_tempFilesSaved;
     }
 
     /**
      * Set the array of saved temporary labels
      *
-     * @param array $tempFilesUsed
+     * @param array $tempFilesSaved
      *
      * @return TIG_PostNL_Model_Core_Label
      */
-    public function setTempFilesSaved($tempFilesUsed)
+    public function setTempFilesSaved($tempFilesSaved)
     {
-        $this->_tempFilesUsed = $tempFilesUsed;
+        $this->_tempFilesSaved = $tempFilesSaved;
 
         return $this;
     }
