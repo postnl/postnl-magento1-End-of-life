@@ -1,0 +1,29 @@
+/* Postcode Check */
+#ca_postnl_ce,
+#opc_postnl_ce { margin-top:10px; width:385px; position:relative; }
+
+#ca_postnl_ce .field,
+#opc_postnl_ce .field { width:126px; }
+
+#ca_postnl_ce .input-box,
+#opc_postnl_ce .input-box { width:113px; }
+
+#ca_postnl_ce:after,
+#opc_postnl_ce:after { content:"."; display:block; height:0; font-size:0; line-height:0; overflow:hidden; clear:both; }
+
+#ca_postnl_ce .postnl-loading,
+#opc_postnl_ce .postnl-loading { float:none; margin:0; position:absolute; right:-12px; top:26px; }
+
+#ca_postnl_ce .postnl-loading img,
+#opc_postnl_ce .postnl-loading img { width:24px; }
+
+/* MijnPakket Cart */
+img#waiting_for_ping_spinner { width:24px; margin-right:1px; vertical-align:initial !important; }
+
+/* Tooltip */
+.postnl-tooltip:hover > div {
+    font-size:12px;
+    -webkit-box-sizing:content-box;
+       -moz-box-sizing:content-box;
+            box-sizing:content-box;
+}

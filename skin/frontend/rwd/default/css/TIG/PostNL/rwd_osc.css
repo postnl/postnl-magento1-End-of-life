@@ -1,0 +1,62 @@
+/* Tooltip */
+.postnl-tooltip:hover > div {
+    font-size:12px;
+    -webkit-box-sizing:content-box;
+       -moz-box-sizing:content-box;
+            box-sizing:content-box;
+}
+
+/* Redundant Asterisks */
+label.required:after, 
+span.required:after { content:initial !important; }
+span.required { color:red; font-size:12px; font-family:"Helvetica Neue", Verdana, Arial, sans-serif; }
+
+/* Postcode Check */
+div.checkoutcontainer div.input-address .input-text.postnl-readonly { margin-bottom:0 !important; }
+#mijnpakket_text { width:95%; }
+
+@media screen and (max-width:460px) {
+    #osc_postnl { width:100% !important; }
+    #osc_postnl .input-postcode,
+    #osc_postnl .input-housenumber,
+    #osc_postnl .input-extension { width:100% !important; float:none; padding-top:8px !important; }
+    #osc_postnl .input-postcode { padding-top:0 !important; }
+    #osc_postnl .input-text { width:100% !important; }
+}
+
+@media screen and (min-width:460px) and (max-width:580px) {
+    #osc_postnl { width:90% !important; }
+    #osc_postnl .input-postcode,
+    #osc_postnl .input-housenumber,
+    #osc_postnl .input-extension { width:98% !important; float:none; padding-top:8px !important; }
+    #osc_postnl .input-postcode { padding-top:0 !important; }
+    #osc_postnl .input-text { width:100% !important; }
+}
+
+@media screen and (min-width: 581px) and (max-width: 953px) {
+    #osc_postnl { width:100% !important; }
+    #osc_postnl .input-postcode,
+    #osc_postnl .input-housenumber,
+    #osc_postnl .input-extension { width:49% !important; }
+    #osc_postnl .input-extension { float:none; padding-top:8px !important; }
+    #osc_postnl .input-text { width:80% !important; }
+}
+
+@media screen and (min-width: 954px) and (max-width:1280px) {
+    #osc_postnl { width:83% !important; }
+    #osc_postnl .input-postcode,
+    #osc_postnl .input-housenumber,
+    #osc_postnl .input-extension { width:100% !important; float:none; padding-top:8px !important; }
+    #osc_postnl .input-postcode { padding-top:0 !important; }
+    #osc_postnl .input-text { width:100% !important; }
+}
+
+@media screen and (min-width:1280px) {
+    #osc_postnl { width:83% !important; }
+    #osc_postnl .input-postcode,
+    #osc_postnl .input-housenumber,
+    #osc_postnl .input-extension { width:30% !important; }
+    #osc_postnl .input-text { width:100% !important; }
+    #osc_postnl .input-postcode,
+    #osc_postnl .input-housenumber { margin-right:5%; }
+}

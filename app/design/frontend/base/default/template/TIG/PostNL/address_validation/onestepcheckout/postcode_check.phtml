@@ -107,6 +107,7 @@
             <?php echo $_postnlHelper->__('Street name') ?>
             <span class="required">*</span>
         </label>
+        <br />
         <input type="text" title="<?php echo $_postnlHelper->__('Street name') ?>" name="virtual_<?php echo $_addressType; ?>[street][]" id="virtual:<?php echo $_addressType; ?>:street1" value="<?php echo $_dataHelper->clearDash($this->getAddress()->getStreet(1)) ?>" class="input-text <?php echo $_streetValidationClass ?> <?php echo $_readOnlyClass; ?> onestepcheckout-address-line" <?php echo $_readOnly; ?>/>
     </div>
 </li>

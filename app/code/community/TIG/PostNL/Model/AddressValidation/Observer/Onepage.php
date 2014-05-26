@@ -123,6 +123,10 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
             return $this;
         }
 
+        if (!$block->getChild('postnl_billing_postcodecheck')) {
+            return $this;
+        }
+
         $block->setTemplate('TIG/PostNL/address_validation/checkout/onepage/billing.phtml');
 
         return $this;
@@ -160,6 +164,10 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
         $blockClass = $this->getShippingAddressBlockClass();
 
         if (get_class($block) !== $blockClass) {
+            return $this;
+        }
+
+        if (!$block->getChild('postnl_shipping_postcodecheck')) {
             return $this;
         }
 
