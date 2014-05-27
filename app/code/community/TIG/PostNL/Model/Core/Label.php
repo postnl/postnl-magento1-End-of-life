@@ -320,7 +320,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     protected function _addPdfTemplate($pdf, $label)
     {
         /**
-         * Fpdi requires labels to be provided as files. Therefore the label will be saved as a temporary file in var/TIG/PostNL/temp_labels/
+         * Fpdi requires labels to be provided as files. Therefore the label will be saved as a temporary file in
+         * var/TIG/PostNL/temp_labels/
          */
         $tempFilename = $this->_saveTempLabel($label->getLabel());
 
@@ -484,7 +485,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         file_put_contents($tempFilePath, base64_decode($label));
 
         /**
-         * Save the name of the temp file so itcan be destroyed later
+         * Save the name of the temp file so it can be destroyed later
          */
         $this->addTempFileSaved($tempFilePath);
 
