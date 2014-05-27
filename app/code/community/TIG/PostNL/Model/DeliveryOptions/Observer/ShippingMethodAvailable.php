@@ -109,7 +109,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
         /**
          * Checks if the current block is the one we want to edit.
          *
-         * Unfortunately there is no unique event for this block
+         * Unfortunately there is no unique event for this block.
          *
          * @var Mage_Core_Block_Abstract $block
          */

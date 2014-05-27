@@ -100,19 +100,19 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      */
     public function getTempFilesSaved()
     {
-        return $this->_tempFilesUsed;
+        return $this->_tempFilesSaved;
     }
 
     /**
      * Set the array of saved temporary labels
      *
-     * @param array $tempFilesUsed
+     * @param array $tempFilesSaved
      *
      * @return TIG_PostNL_Model_Core_Label
      */
-    public function setTempFilesSaved($tempFilesUsed)
+    public function setTempFilesSaved($tempFilesSaved)
     {
-        $this->_tempFilesUsed = $tempFilesUsed;
+        $this->_tempFilesSaved = $tempFilesSaved;
 
         return $this;
     }
@@ -320,36 +320,60 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     protected function _addPdfTemplate($pdf, $label)
     {
         /**
-         * Fpdi requires labels to be provided as files. Therefore the label will be saved as a temporary file in var/TIG/PostNL/temp_labels/
+         * Fpdi requires labels to be provided as files. Therefore the label will be saved as a temporary file in
+         * var/TIG/PostNL/temp_labels/
          */
         $tempFilename = $this->_saveTempLabel($label->getLabel());
 
-        switch ($label->getLabelType()) {
-            /** @noinspection PhpMissingBreakStatementInspection */
+        $rotate = false;
+
+        /**
+         * First we need to add pages to the pdf for certain label types under certain conditions.
+         */
+        $labelType = $label->getLabelType();
+        if ($labelType == 'Label' || $labelType == 'Label-combi') {
+            if ($this->getLabelSize() == 'A4'
+                && (!$this->getLabelCounter() || $this->getLabelCounter() > 4)
+            ) {
+                $pdf->addOrientedPage('L', 'A4');
+                $this->resetLabelCounter();
+            } elseif ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
+                $pdf->addOrientedPage('L', 'A4');
+                $this->setIsFirstLabel(false);
+            }
+
+            /**
+             * If the configured label size is A6, add a new page every label
+             */
+            if($this->getLabelSize() == 'A6') {
+                $this->setLabelCounter(3); //used to calculate the top left position
+                $pdf->addOrientedPage('L', 'A6');
+            }
+        } else if ($labelType == 'CN23'
+            || $labelType == 'CommercialInvoice'
+            || $labelType == 'CODcard'
+        ) {
+            $pdf->addOrientedPage('P', 'A4');
+        }
+
+        switch ($labelType) {
             case 'Label-combi':
-                $this->_convertTempLabelToCombi($tempFilename); //NO BREAK
+                /**
+                 * Rotate the pdf to accommodate the rotated combi-label.
+                 */
+                $pdf->Rotate('-90');
+
+                /**
+                 * Calculate the position of the next label to be printed
+                 */
+                $position = $this->_getRotatedPosition($this->getLabelCounter());
+                $position['w'] = $this->pix2pt(400);
+
+                $this->increaseLabelCounter();
+
+                $rotate = true;
+                break;
             case 'Label':
-                /**
-                 * If the configured label size is A4, add a new page every 4 labels and reset the counter
-                 */
-                if ($this->getLabelSize() == 'A4'
-                    && (!$this->getLabelCounter() || $this->getLabelCounter() > 4)
-                ) {
-                    $pdf->addOrientedPage('L', 'A4');
-                    $this->resetLabelCounter();
-                } elseif ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
-                    $pdf->addOrientedPage('L', 'A4');
-                    $this->setIsFirstLabel(false);
-                }
-
-                /**
-                 * If the configured label size is A6, add a new page every label
-                 */
-                if($this->getLabelSize() == 'A6') {
-                    $this->setLabelCounter(3); //used to calculate the top left position
-                    $pdf->addOrientedPage('L', 'A6');
-                }
-
                 /**
                  * Calculate the position of the next label to be printed
                  */
@@ -360,11 +384,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 break;
             case 'CN23':
             case 'CommercialInvoice':
-                /**
-                 * International shipping labels are larger and need to be printed on seperate pages
-                 */
-                $pdf->addOrientedPage('P', 'A4');
-
                 /**
                  * Calculate the position of the next label to be printed
                  */
@@ -396,11 +415,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 break;
             case 'CODcard':
                 /**
-                 * COD cards are larger and need to be printed on seperate pages
-                 */
-                $pdf->addOrientedPage('P', 'A4');
-
-                /**
                  * Calculate the position of the next label to be printed
                  */
                 $position = array(
@@ -425,6 +439,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * Add the next label to the pdf
          */
         $pdf->insertTemplate($tempFilename, $position['x'], $position['y'], $position['w']);
+
+        /**
+         * If a rotated pdf was added, rotate the main pdf back to it's previous orientation.
+         */
+        if ($rotate) {
+            $pdf->Rotate('0');
+        }
 
         return $pdf;
     }
@@ -464,7 +485,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         file_put_contents($tempFilePath, base64_decode($label));
 
         /**
-         * Save the name of the temp file so itcan be destroyed later
+         * Save the name of the temp file so it can be destroyed later
          */
         $this->addTempFileSaved($tempFilePath);
 
@@ -507,7 +528,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         foreach ($labels as $label) {
             /**
-             * Seperate general labels from the rest
+             * Separate general labels from the rest
              */
             if ($label->getLabelType() == 'Label' || $label->getLabelType() == 'Label-combi') {
                 $generalLabels[] = $label;
@@ -515,7 +536,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             }
 
             /**
-             * Seperate COD cards
+             * Separate COD cards
              */
             if ($label->getLabelType() == 'CODcard') {
                 $codCards[] = $label;
@@ -558,46 +579,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
-     * Convert a regular label to a rotated combi-label
-     *
-     * @param string $tempFilename The location of the regular temp label
-     *
-     * @return TIG_PostNL_Model_Core_Label
-     */
-    protected function _convertTempLabelToCombi($tempFilename)
-    {
-        /**
-         * Calculate the position of the next label to be printed
-         */
-        $position = array(
-            'x' => $this->pix2pt(0),
-            'y' => $this->pix2pt(-483),
-            'w' => $this->pix2pt(400)
-        );
-
-        /**
-         * Create a new temporary FPDI object
-         */
-        $tempPdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
-        $tempPdf->open();
-        $tempPdf->addOrientedPage('L', 'A6');
-
-        /**
-         * Rotate the pdf, add the template and rotate it back
-         */
-        $tempPdf->Rotate('-90');
-        $tempPdf->insertTemplate($tempFilename, $position['x'], $position['y'], $position['w']);
-        $tempPdf->Rotate('0');
-
-        /**
-         * Overwrite the default temp file with the new one
-         */
-        $tempPdf->Output($tempFilename, 'F');
-
-        return $this;
-    }
-
-    /**
      * Calculates the position of the requested label using a counter system.
      * The labels will be positioned accordingly:
      * first: top left
@@ -610,7 +591,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      * @throws TIG_PostNL_Exception
      *
      * @return array
-     *
      */
     protected function _getPosition($counter = false)
     {
@@ -644,7 +624,53 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
-     * Converts pixels to points. 3.8 pixels is 1 pt in pdfs
+     * Calculates the position of the requested label using a counter system. This method is for labels which are
+     * rotated by 90 degrees. Currently this is only used for EPS combi-labels.
+     * The labels will be positioned accordingly:
+     * first: top left
+     * second: top right
+     * third: bottom left
+     * fourth: bottom right
+     *
+     * @param bool|int $counter
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @return array
+     */
+    protected function _getRotatedPosition($counter = false)
+    {
+        if ($counter === false) {
+            $position = array('x' => 0, 'y' => 0);
+
+            return $position;
+        }
+
+        switch($counter) {
+            case 1:
+                $position = array('x' => $this->pix2pt(2), 'y' => $this->pix2pt(-1055));
+                break;
+            case 2:
+                $position = array('x' => $this->pix2pt(400), 'y' => $this->pix2pt(-1055));
+                break;
+            case 3:
+                $position = array('x' => $this->pix2pt(2),  'y' => $this->pix2pt(-483));
+                break;
+            case 4:
+                $position = array('x' => $this->pix2pt(400),  'y' => $this->pix2pt(-483));
+                break;
+            default:
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('Invalid counter: %s', $counter),
+                    'POSTNL-0067'
+                );
+        }
+
+        return $position;
+    }
+
+    /**
+     * Converts pixels to points. 3.8 pixels is 1 pt in pdfs.
      *
      * @param int $pixels
      *

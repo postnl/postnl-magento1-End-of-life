@@ -405,11 +405,13 @@
             'virtual:billing:street' + streetnameField,
             'billing:street' + streetnameField,
             'virtual:shipping:street' + streetnameField,
-            'shipping:street' + streetnameField
+            'shipping:street' + streetnameField,
+            'billing:postcode',
+            'shipping:postcode'
         ];
 
         if (streetnameField != housenumberField) {
-            fieldsToObserve.concat([
+            fieldsToObserve = fieldsToObserve.concat([
                 'virtual:billing:street' + housenumberField,
                 'billing:street' + housenumberField,
                 'virtual:shipping:street' + housenumberField,

@@ -110,6 +110,10 @@ class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien
             return $this;
         }
 
+        if (!$block->getChild('postnl_billing_postcodecheck') && !$block->getChild('postnl_shipping_postcodecheck')) {
+            return $this;
+        }
+
         /**
          * Get the blocks alias and alter it's template based on this
          */
