@@ -1336,14 +1336,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Add the actual message. This is the only required part. The code and link are optional
          */
-        $errorMessage .= $this->escapeHtml($this->__($message));
+        $errorMessage .= $this->__($message);
 
         /**
          * Add the link to the knowledgebase if we have one
          */
         if ($canShowErrorDetails && $link) {
             $errorMessage .= ' <a href="'
-                           . $this->escapeHtml($link)
+                           . $link
                            . '" target="_blank" class="postnl-message">'
                            . $this->__('Click here for more information from the TiG knowledgebase.')
                            . '</a>';
