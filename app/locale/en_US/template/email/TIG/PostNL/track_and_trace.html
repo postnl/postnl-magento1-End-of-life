@@ -15,17 +15,17 @@
     <tr>
         <td align="center" valign="top" style="padding:20px 0 20px 0">
             <!-- [ header starts here] -->
-            <table bgcolor="FFFFFF" cellspacing="0" cellpadding="10" border="0" width="470">
+            <table bgcolor="#FFFFFF" cellspacing="0" cellpadding="10" border="0" width="470">
                 <tr>
                     <td valign="top">
-                        <a href="{{store url=""}}" style="color:#1E7EC8;"><img src="{{var logo_url}}" alt="{{var logo_alt}}" border="0"/></a>
-                        <img src="{{var logo_url}}" alt="{{var logo_alt}}" border="0" style="float:right"/>
+                        <a href='{{store url=""}}' style="color:#1E7EC8;"><img src="{{var logo_url}}" alt="{{var logo_alt}}" border="0"/></a>
+                        <img src='{{skin url="images/TIG/PostNL/postnl_email_logo.png" _area="frontend"}}' alt="PostNL" border="0" style="float:right"/>
                     </td>
                 </tr>
                 <!-- [ middle starts here] -->
                 <tr>
                     <td valign="top">
-                        <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Dear Sir, Madam {{htmlescape var=$customer.name}},</h1>
+                        <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Dear Sir, Madam {{htmlescape var=$customer.name}},</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0 0 8px 0;">Your order at {{var store.getFrontendName()}}, with barcode {{var barcode}} will be delivered by PostNL.</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">To track the progress of your shipment click <a href="{{var barcode_url}}" target="_blank">here</a>.<p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">Kind Regards,</p>

@@ -118,7 +118,7 @@ class TIG_PostNL_Model_ExtensionControl_Observer_Cron
          */
         if ($feedXml && $feedXml->channel && $feedXml->channel->item) {
             $items = (array) $feedXml->channel;
-            $items = array_reverse($items['item']);
+            $items = array_reverse((array) $items['item']);
 
             foreach ($items as $item) {
                 $severity = (int) $item->severity;

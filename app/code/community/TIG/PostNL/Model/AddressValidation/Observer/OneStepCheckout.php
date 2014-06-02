@@ -90,13 +90,6 @@ class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien
     public function addressPostcodeCheck(Varien_Event_Observer $observer)
     {
         /**
-         * Check if the extension is active
-         */
-        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
-            return $this;
-        }
-
-        /**
          * Checks if the current block is the one we want to edit.
          *
          * Unfortunately there is no unique event for this block.
@@ -111,6 +104,13 @@ class TIG_PostNL_Model_AddressValidation_Observer_OneStepCheckout extends Varien
         }
 
         if (!$block->getChild('postnl_billing_postcodecheck') && !$block->getChild('postnl_shipping_postcodecheck')) {
+            return $this;
+        }
+
+        /**
+         * Check if the extension is active
+         */
+        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
             return $this;
         }
 

@@ -83,10 +83,6 @@ class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
      */
     public function addAccountNotification(Varien_Event_Observer $observer)
     {
-        if (!Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions()) {
-            return $this;
-        }
-
         /**
          * Checks if the current block is the one we want to edit.
          *
@@ -98,6 +94,10 @@ class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
         $blockClass = $this->getSucessBlockClass();
 
         if (!$block || !is_object($block) || get_class($block) != $blockClass) {
+            return $this;
+        }
+
+        if (!Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions()) {
             return $this;
         }
 
