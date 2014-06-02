@@ -234,23 +234,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         $pdf->SetAuthor('PostNL');
         $pdf->SetCreator('PostNL');
 
-        if (is_array($labels) && count($labels) > 1) {
-            /**
-             * Create a pdf containing multiple labels
-             */
-            $pdf = $this->_createMultiLabelPdf($pdf, $labels);
-        } else {
-            /**
-             * Create a pdf containing a single label
-             * If $labels is an array, get the current element. There should be only 1.
-             */
-            if (is_array($labels)) {
-                $labels = current($labels);
-            }
-
-            $this->setLabelSize('A6'); //single Dutch labels always use A6
-            $pdf = $this->_addPdfTemplate($pdf, $labels);
+        if (!is_array($labels)) {
+            $labels = array($labels);
         }
+        /**
+         * Create a pdf containing multiple labels
+         */
+        $pdf = $this->_createMultiLabelPdf($pdf, $labels);
 
         /**
          * Destroy the temporary labels as they are no longer needed

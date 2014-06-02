@@ -873,3 +873,8 @@ TIG_PostNL::The customer was redirected to the cart because the quote is multish
 TIG_PostNL::more delivery times and pick-up locations,meer bezorgtijden en ophaalpunten
 TIG_PostNL::Select this checkbox to only show post office locations that are open as early as 8:30 A.M.,Activeer deze filter om enkel de ophaalpunten te tonen die extra vroeg ophalen (vanaf 8.30 uur) bieden.
 TIG_PostNL::Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.,Activeer deze filter om enkel postkantoor locaties te tonen die 's avonds na 19:00 uur geopend zijn op de eerstvolgende bezorgdag.
+TIG_PostNL::Send a copy of the track & trace email,Verstuur een kopie van de track & trace e-mail
+"TIG_PostNL::If enabled, you may enter seperate email addresses to which the track & trace email will be sent in addition to the customer.","Indien u deze optie aan zet, zal er een kopie van de track & trace e-mail worden verstuurd naar de opgegeven e-mail adressen."
+TIG_PostNL::Send track & trace email copy to,Verstuur track & trace e-mail kopie naar
+TIG_PostNL::You can enter multiple email addresses seperated by commas.,U kunt meerdere e-mailaddressen invullen gescheiden door komma's
+TIG_PostNL::Track & trace email copy method,Track & trace e-mail kopie method
