@@ -538,7 +538,10 @@
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
                 <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
-        	</cif_labels_and_confirming>
+        	    <send_copy>0</send_copy> <!-- Do not send a copy of the track & trace email -->
+                <copy_to/>
+                <copy_method>bcc</copy_method> <!-- Use the bcc method for sending the track & trace email copy -->
+            </cif_labels_and_confirming>
         	<parcelware_export>
         	    <active>0</active> <!-- Inactive -->
         	    <auto_confirm>0</auto_confirm> <!-- Do not auto confirm -->

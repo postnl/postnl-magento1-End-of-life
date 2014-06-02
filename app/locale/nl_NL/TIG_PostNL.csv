@@ -910,3 +910,8 @@ TIG_PostNL::Maximum order total,Maximaal bestellingbedrag
 TIG_PostNL::Allow for non-PostNL orders,Toestaan voor niet-PostNL bestellingen
 TIG_PostNL::Sort order,Sorteervolgorde
 TIG_PostNL::Set this option to 'yes' to allow orders placed using a different shipping method than PostNL to use this payment method.,Zet deze optie op 'ja' om deze betaalmethode ook aan te bieden voor bestellingen die geen gebruik maken van de PostNL verzendmethode.
+TIG_PostNL::Send a copy of the track & trace email,Verstuur een kopie van de track & trace e-mail
+"TIG_PostNL::If enabled, you may enter seperate email addresses to which the track & trace email will be sent in addition to the customer.","Indien u deze optie aan zet, zal er een kopie van de track & trace e-mail worden verstuurd naar de opgegeven e-mail adressen."
+TIG_PostNL::Send track & trace email copy to,Verstuur track & trace e-mail kopie naar
+TIG_PostNL::You can enter multiple email addresses seperated by commas.,U kunt meerdere e-mailaddressen invullen gescheiden door komma's
+TIG_PostNL::Track & trace email copy method,Track & trace e-mail kopie method

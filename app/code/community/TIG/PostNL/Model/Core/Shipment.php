@@ -187,9 +187,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
 
     /**
-     * Xpath to track and trace email template setting.
+     * Xpath to track and trace email settings.
      */
     const XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
+    const XPATH_EMAIL_COPY                     = 'postnl/cif_labels_and_confirming/send_copy';
+    const XPATH_EMAIL_COPY_TO                  = 'postnl/cif_labels_and_confirming/copy_to';
+    const XPATH_EMAIL_COPY_METHOD              = 'postnl/cif_labels_and_confirming/copy_method';
 
     /**
      * Xpath to maximum allowed parcel count settings.
@@ -2395,29 +2398,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $template = Mage::getStoreConfig(self::XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE, $storeId);
 
-        /**
-         * @var Mage_Core_Model_Email_Template $mailTemplate
-         */
-        $mailTemplate = Mage::getModel('core/email_template');
-
-        $shippingAddress = $this->getShippingAddress();
-        $recipient = array(
-            'email' => $this->getShipment()->getOrder()->getCustomerEmail(),
-            'name'  => $shippingAddress->getName(),
-        );
-
-        $mailTemplate->setDesignConfig(
-            array(
-                'area'  => 'frontend',
-                'store' => $storeId
-            )
-        );
 
         /**
          * @var Mage_Sales_Model_Order $order
          */
-        $shipment = $this->getShipment();
-        $order = $shipment->getOrder();
+        $shippingAddress = $this->getShippingAddress();
+        $shipment        = $this->getShipment();
+        $order           = $shipment->getOrder();
+
         /** @noinspection PhpUndefinedMethodInspection */
         $templateVariables = array(
             'postnlshipment' => $this,
@@ -2429,22 +2417,43 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             'quote'          => $order->getQuote(),
         );
 
-        /**
-         * @var $orderModel Mage_Sales_Model_Order
-         */
-        /** @noinspection PhpParamsInspection */
-        $orderModel = Mage::getConfig()->getModelClassName('sales/order');
-        $success = $mailTemplate->sendTransactional(
-            $template,
-            Mage::getStoreConfig($orderModel::XML_PATH_EMAIL_IDENTITY, $storeId),
-            $recipient['email'],
-            $recipient['name'],
-            $templateVariables
-        );
+        // Get the destination email addresses to send copies to
+        $copy       = Mage::getStoreConfigFlag(self::XPATH_EMAIL_COPY, $storeId);
+        $copyTo     = explode(',', Mage::getStoreConfig(self::XPATH_EMAIL_COPY_TO, $storeId));
+        $copyMethod = Mage::getStoreConfig(self::XPATH_EMAIL_COPY_METHOD, $storeId);
 
-        if ($success === false) {
+        try {
+            $mailer = Mage::getModel('core/email_template_mailer');
+            $emailInfo = Mage::getModel('core/email_info');
+            $emailInfo->addTo($this->getShipment()->getOrder()->getCustomerEmail(), $shippingAddress->getName());
+
+            if ($copy && !empty($copyTo) && $copyMethod == 'bcc') {
+                foreach ($copyTo as $email) {
+                    $emailInfo->addBcc($email);
+                }
+            }
+
+            $mailer->addEmailInfo($emailInfo);
+
+            if ($copy && !empty($copyTo) && $copyMethod == 'copy') {
+                foreach ($copyTo as $email) {
+                    $emailInfo = Mage::getModel('core/email_info');
+                    $emailInfo->addTo($email);
+                    $mailer->addEmailInfo($emailInfo);
+                }
+            }
+
+            // Set all required params and send emails.
+            $mailer->setSender(Mage::getStoreConfig($order::XML_PATH_EMAIL_IDENTITY, $storeId));
+            $mailer->setStoreId($storeId);
+            $mailer->setTemplateId($template);
+            $mailer->setTemplateParams($templateVariables);
+            $mailer->send();
+        } catch (Exception $e) {
+            $helper = Mage::helper('postnl');
+            $helper->logException($e);
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__(
+                $helper->__(
                     'Unable to send track and trace email for shipment #',
                     $this->getShipmentId()
                 ),
@@ -2455,9 +2464,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Set the 'email sent' flag to true for this shipment.
          */
-        $this->getShipment()
-             ->setEmailSent(true)
-             ->save();
+        if (!$this->getShipment()->getEmailSent()) {
+            $this->getShipment()
+                 ->setEmailSent(true)
+                 ->save();
+        }
 
         return $this;
     }

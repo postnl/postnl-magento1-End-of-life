@@ -221,7 +221,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $massactionColumn
          */
         $massactionColumn = $block->getColumn('massaction');
-        if ($incrementIdColumn) {
+        if ($massactionColumn) {
             $massactionColumn->setFilterIndex('main_table.entity_id');
         }
 
@@ -229,7 +229,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $statusColumn
          */
         $statusColumn = $block->getColumn('status');
-        if ($incrementIdColumn) {
+        if ($statusColumn) {
             $statusColumn->setFilterIndex('main_table.status');
         }
 
@@ -237,7 +237,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $createdAtColumn
          */
         $createdAtColumn = $block->getColumn('created_at');
-        if ($incrementIdColumn) {
+        if ($createdAtColumn) {
             $createdAtColumn->setFilterIndex('main_table.created_at');
         }
 
@@ -245,7 +245,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $baseGrandTotalColumn
          */
         $baseGrandTotalColumn = $block->getColumn('base_grand_total');
-        if ($incrementIdColumn) {
+        if ($baseGrandTotalColumn) {
             $baseGrandTotalColumn->setFilterIndex('main_table.base_grand_total');
         }
 
@@ -253,8 +253,16 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $grandTotalColumn
          */
         $grandTotalColumn = $block->getColumn('grand_total');
-        if ($incrementIdColumn) {
+        if ($grandTotalColumn) {
             $grandTotalColumn->setFilterIndex('main_table.grand_total');
+        }
+
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $storeIdColumn
+         */
+        $storeIdColumn = $block->getColumn('store_id');
+        if ($storeIdColumn) {
+            $storeIdColumn->setFilterIndex('main_table.store_id');
         }
 
         return $this;

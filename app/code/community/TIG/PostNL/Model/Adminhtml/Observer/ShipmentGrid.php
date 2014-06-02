@@ -348,6 +348,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'align'            => 'left',
                     'index'            => 'product_code',
                     'type'             => 'options',
+                    'filter_index'     => 'postnl_shipment.product_code',
                     'column_css_class' => 'nobr',
                     'options'          => Mage::getModel('postnl_core/system_config_source_allProductOptions')
                                               ->getAvailableOptions(true),
