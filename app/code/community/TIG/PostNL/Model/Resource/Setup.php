@@ -73,7 +73,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
 
     /**
-     * callAfterApplyAllUpdates flag. Causes applyAFterUpdates() to be called.
+     * callAfterApplyAllUpdates flag. Causes applyAfterUpdates() to be called.
      *
      * @var boolean
      */
@@ -389,7 +389,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     }
 
     /**
-     * Makes sure the PostNL support tab is expanded the first time an adin visits the PostNL system/config/edit page.
+     * Makes sure the PostNL support tab is expanded the first time an admin visits the PostNL system/config/edit page.
      *
      * @return $this
      */

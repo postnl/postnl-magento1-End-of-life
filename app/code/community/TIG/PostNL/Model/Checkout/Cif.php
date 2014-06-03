@@ -319,7 +319,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Updates an order with CIF once a shipment has been confirmed in order to link the shipment to the PostNL CHeckout order
+     * Updates an order with CIF once a shipment has been confirmed in order to link the shipment to the PostNL Checkout order
      *
      * @param TIG_PostNL_Model_Core_Order $postnlOrder
      * @param boolean $cancel
@@ -692,7 +692,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Builds the Restrictions soap object based on cofig settings
+     * Builds the Restrictions soap object based on config settings
      *
      * @return array
      */

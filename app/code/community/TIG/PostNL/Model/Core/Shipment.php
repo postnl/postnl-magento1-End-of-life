@@ -618,7 +618,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Gets the shipment's shipment type for intrnational shipments. If no shipment type is defined, use the default
+     * Gets the shipment's shipment type for international shipments. If no shipment type is defined, use the default
      * value. This in turn defaults to 'Commercial Goods' if none is specified.
      *
      * @return string|null
@@ -1468,7 +1468,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Checks if the current shipment is eligible for a shipping status update.
      * Unconfirmed shipments, shipments whose labels are not yet printed or shipments that are already delivered are
-     * inelligible.
+     * ineligible.
      *
      * @return boolean
      */
@@ -1890,7 +1890,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * onfirm each parcel in the shipment seperately
+         * Confirm each parcel in the shipment separately
          */
         for ($i = 0; $i < $parcelCount; $i++) {
             $this->_confirm($i);
@@ -1950,7 +1950,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         /**
          * If the ConfirmingResponseShipment is an array, it may indicate multiple shipments were confirmed. We need to
-         * check the first shipment's barcode to see if it matches the main bartcode.
+         * check the first shipment's barcode to see if it matches the main barcode.
          */
         if (is_array($responseShipment)) {
             $mainResponseShipment = reset($responseShipment);
@@ -2527,7 +2527,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         ksort($sortedHistory);
 
         /**
-         * Return only the values (the statusses) of the array
+         * Return only the values (the statuses) of the array
          */
         return array_values($sortedHistory);
     }
@@ -2748,7 +2748,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         if ($deleteTracks) {
-            $this->deleteShipmentTracks() //delete ale addociated tracks
+            $this->deleteShipmentTracks() //delete ale associated tracks
                  ->setTrackAndTraceEmailSent(false); //make sure that a new T&T e-mail is sent
         }
 
@@ -2756,7 +2756,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Delete alle tracks for this shipment.
+     * Delete all tracks for this shipment.
      *
      * @return $this
      */
@@ -2869,7 +2869,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Set confrirmed at.
+         * Set confirmed at.
          */
         if ($this->getConfirmedStatus() == self::CONFIRM_STATUS_CONFIRMED
             && $this->getConfirmedAt() === null
