@@ -59,8 +59,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
      * By default the PostNL module creates temporary label files in order to merge them into
      * a single shipping label. These files are then destroyed. However, sometimes these files
      * may survive the script if the script has encountered an error. This method will make
-     * sure these files will not survive indefinitiely, which may lead to the file system
-     * being overburdoned or the server running out of harddrive space.
+     * sure these files will not survive indefinitely, which may lead to the file system
+     * being overburdened or the server running out of harddrive space.
      *
      * @return TIG_PostNL_Model_Core_Observer_Cron
      *
@@ -100,7 +100,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         }
 
         /**
-         * Get the temporary label filename constant. This is used to construct the fgilename together with
+         * Get the temporary label filename constant. This is used to construct the filename together with
          * an md5 hash of the content and a timestamp.
          *
          * @var $labelModel TIG_PostNL_Model_Core_Label
@@ -402,7 +402,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     }
 
     /**
-     * Parses an TIG_PostNL_Model_Core_Cif_Exception exception in order to process cpecific error codes
+     * Parses an TIG_PostNL_Model_Core_Cif_Exception exception in order to process specific error codes
      *
      * @param TIG_PostNL_Model_Core_Cif_Exception $e
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment

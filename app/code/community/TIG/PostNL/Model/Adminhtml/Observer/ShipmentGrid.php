@@ -522,8 +522,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 ),
                 $after
             );
-
-            $after = 'shipping_phase';
         }
 
         $actionColumn = $block->getColumn('action');
@@ -983,8 +981,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 
         /**
          * If the filter condition is NL, filter out all orders not being shipped to the Netherlands. PakjeGemak,
-         * PakjeGmak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
-         * need to explicitely filter those as well.
+         * PakjeGemak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
+         * need to explicitly filter those as well.
          */
         if ($filterCond == 'nl') {
             $collection->addFieldToFilter('country_id', $cond);

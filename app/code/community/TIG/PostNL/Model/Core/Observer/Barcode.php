@@ -121,9 +121,9 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         $postnlShipment->save();
 
         /**
-         * Barcode generation needs to be tried seperately. This functionality may throw a valid exception
+         * Barcode generation needs to be tried separately. This functionality may throw a valid exception
          * in which case it needs to be tried again later without preventing the shipment from being
-         * created. This may happen when CIF is overburdoned.
+         * created. This may happen when CIF is overburdened.
          */
         try {
             $postnlShipment->saveAdditionalShippingOptions()
