@@ -64,7 +64,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
 
     /**
-     * XML path to postnl carier active/inactive setting.
+     * XML path to postnl carrier active/inactive setting.
      */
     const XML_PATH_CARRIER_ACTIVE = 'carriers/postnl/active';
 
@@ -706,7 +706,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Register any errors that may have ocurred and return false.
+         * Register any errors that may have occurred and return false.
          */
         if (!empty($errors)) {
             Mage::register($registryKey . '_errors', $errors);
@@ -1218,7 +1218,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * If the session could not be loaded or is not of the corect type, throw an exception
+         * If the session could not be loaded or is not of the correct type, throw an exception
          */
         if (!$session
             || !is_object($session)

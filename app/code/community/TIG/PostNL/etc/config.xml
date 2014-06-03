@@ -664,36 +664,38 @@
                 <use_dob>0</use_dob> <!-- Do not use the date of birth field -->
         	    <allow_retail_location>1</allow_retail_location> <!-- Customers may have their goods delivered at a retail location -->
         	    <allow_foreign_address>1</allow_foreign_address> <!-- Customers may have their goods shipped to a foreign address -->
-        	    <allow_price_overview>1</allow_price_overview> <!-- Customer's will see a price overview -->
+        	    <allow_price_overview>1</allow_price_overview> <!-- Customers will see a price overview -->
         	    <agree_conditions>1</agree_conditions> <!-- Customers must first agree to the webshop's terms and conditions -->
                 <contact_url/>
         	    <service_url/>
         	</checkout>
         	<checkout_payment_methods>
-        	    <ideal/>
+        	    <ideal>0</ideal> <!-- Do not use iDEAL -->
         	    <ideal_method/>
         	    <ideal_option_field/>
-        	    <creditcard/>
+        	    <creditcard>0</creditcard> <!-- Do not use creditcard -->
                 <creditcard_method/>
                 <creditcard_option_field/>
-                <checkpay/>
+                <checkpay>0</checkpay> <!-- Do not use Checkpay -->
                 <checkpay_method/>
-                <paypal/>
+                <paypal>0</paypal> <!-- Do not use PayPal -->
                 <paypal_method/>
-                <directdebit/>
+                <directdebit>0</directdebit> <!-- Do not use directdebit -->
                 <directdebit_method/>
-                <acceptgiro/>
+                <acceptgiro>0</acceptgiro> <!-- Do not use acceptgiro -->
                 <acceptgiro_method/>
-                <vooraf_betalen/>
+                <vooraf_betalen>0</vooraf_betalen> <!-- Do not use vooraf betalen -->
                 <vooraf_betalen_method/>
-                <termijnen/>
+                <termijnen>0</termijnen> <!-- Do not use termijnen -->
                 <termijnen_method/>
-                <giftcard/>
+                <giftcard>0</giftcard> <!-- Do not use giftcards -->
                 <giftcard_method/>
-                <rabobank_internetkassa/>
+                <rabobank_internetkassa>0</rabobank_internetkassa> <!-- Do not use Rabobank Internetkassa -->
                 <rabobank_internetkassa_method/>
-                <afterpay/>
+                <afterpay>0</afterpay> <!-- Do not use AfterPay -->
                 <afterpay_method/>
+                <klarna>0</klarna> <!-- Do not use Klarna -->
+                <klarna_method/>
         	</checkout_payment_methods>
         	<advanced>
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->

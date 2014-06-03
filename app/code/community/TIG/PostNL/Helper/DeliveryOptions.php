@@ -307,7 +307,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Check if an array of business hours contains a timespan that is condiered to be in the evening.
+     * Check if an array of business hours contains a timespan that is considered to be in the evening.
      *
      * @param array $businessHours
      *

@@ -46,37 +46,37 @@
 class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 {
     /**
-     * The block we want to edit
+     * The block we want to edit.
      */
     const ORDER_GRID_BLOCK_NAME = 'adminhtml/sales_order_grid';
 
     /**
-     * variable name for order grid filter
+     * variable name for order grid filter.
      */
     const ORDER_GRID_FILTER_VAR_NAME = 'sales_order_gridfilter';
 
     /**
-     * variable name for order grid sorting
+     * variable name for order grid sorting.
      */
     const ORDER_GRID_SORT_VAR_NAME = 'sales_order_gridsort';
 
     /**
-     * variable name for order grid sorting direction
+     * variable name for order grid sorting direction.
      */
     const ORDER_GRID_DIR_VAR_NAME = 'sales_order_griddir';
 
     /**
-     * XML path to show_grid_options setting
+     * XML path to show_grid_options setting.
      */
     const XML_PATH_SHOW_OPTIONS = 'postnl/cif_labels_and_confirming/show_grid_options';
 
     /**
-     * XML path to show shipment type column setting
+     * XML path to show shipment type column setting.
      */
     const XML_PATH_SHOW_SHIPMENT_TYPE_COLUMN = 'postnl/cif_labels_and_confirming/show_shipment_type_column';
 
     /**
-     * Edits the sales order grid by adding a mass action to create shipments for selected orders
+     * Edits the sales order grid by adding a mass action to create shipments for selected orders.
      *
      * @param Varien_Event_Observer $observer
      *
@@ -134,7 +134,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $this->_applySortAndFilter($collection);
         $this->_addMassaction($block);
 
-        $block->setCollection($this->getCollection());
+        $block->setCollection($collection);
         return $this;
     }
 
@@ -651,8 +651,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 
         /**
          * If the filter condition is NL, filter out all orders not being shipped to the Netherlands. PakjeGemak,
-         * PakjeGmak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
-         * need to explicitely filter those as well.
+         * PakjeeGmak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
+         * need to explicitly filter those as well.
          */
         if ($filterCond == 'nl') {
             $collection->addFieldToFilter('country_id', $cond);

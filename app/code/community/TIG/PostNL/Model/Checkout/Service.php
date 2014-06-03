@@ -355,7 +355,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
         Mage::register('postnl_payment_data', array('method' => $methodCode));
 
         /**
-         * Remove any current payment associtaed with the quote and get a new one
+         * Remove any current payment associated with the quote and get a new one
          */
         $payment = $quote->removePayment()
                          ->getPayment();
@@ -813,7 +813,7 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     }
 
     /**
-     * Add optional service location data to the shipping address. This ovverrides the previously set address data.
+     * Add optional service location data to the shipping address. This overrides the previously set address data.
      * nto a varien object that can be used by Magento
      *
      * @param Mage_Sales_Model_Quote_Address $address

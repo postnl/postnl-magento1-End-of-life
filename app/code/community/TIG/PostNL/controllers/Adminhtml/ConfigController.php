@@ -95,7 +95,7 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
          */
         try {
             /**
-             * If the password field has not been edited since the last time it was saved, it will contain 6 asteriscs for security
+             * If the password field has not been edited since the last time it was saved, it will contain 6 asterisks for security
              * reasons. In that case, we need to read and decrypt the password from the database.
              */
             if ($data['password'] == '******') {

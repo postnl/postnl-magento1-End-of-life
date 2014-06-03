@@ -507,8 +507,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 ),
                 $after
             );
-
-            $after = 'shipping_phase';
         }
 
         $actionColumn = $block->getColumn('action');

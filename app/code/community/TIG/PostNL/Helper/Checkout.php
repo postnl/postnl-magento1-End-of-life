@@ -98,7 +98,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     );
 
     /**
-     * Array containing conversions between PostNL CHeckout payment option fields and those used by Magento payment
+     * Array containing conversions between PostNL Checkout payment option fields and those used by Magento payment
      * methods. This array should be extended as time goes on in order to support as many payment methods as possible.
      *
      * @var array

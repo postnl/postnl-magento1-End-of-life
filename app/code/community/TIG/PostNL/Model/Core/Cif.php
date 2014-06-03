@@ -38,7 +38,7 @@
  *
  * Class containing all default methods used for CIF communication by this extension.
  *
- * If you wish to add new methods you can etxend this class or create a new class that extends
+ * If you wish to add new methods you can extend this class or create a new class that extends
  * TIG_PostNL_Model_Core_Cif_Abstract.
  *
  * @method TIG_PostNL_Model_Core_Cif setStoreId(int $value)
