@@ -181,9 +181,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
      */
     public function getCheckoutConfigErrors()
     {
-        $configErrors = Mage::registry('postnl_is_configured_checkout_errors');
+        $configErrors = Mage::registry('postnl_checkout_is_configured_errors');
         if (is_null($configErrors)) {
-            $configErrors = Mage::registry('postnl_enabled_checkout_errors');
+            $configErrors = Mage::registry('postnl_checkout_is_enabled_errors');
         }
 
         return $configErrors;

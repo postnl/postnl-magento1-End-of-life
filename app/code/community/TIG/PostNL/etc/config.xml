@@ -275,11 +275,32 @@
                 <observers>
                     <!-- Admin logging -->
                     <postnl_enterprise_logging>
+                        <type>model</type>
                         <class>postnl/admin_logging_observer</class>
                         <method>controllerPostdispatch</method>
                     </postnl_enterprise_logging>
                 </observers>
             </controller_action_postdispatch_postnl>
+            <admin_system_config_changed_section_postnl>
+                <observers>
+                    <!-- Clean PostNL config cache -->
+                    <postnl_clean_cache>
+                        <type>model</type>
+                        <class>postnl_core/observer_cache</class>
+                        <method>cleanCache</method>
+                    </postnl_clean_cache>
+                </observers>
+            </admin_system_config_changed_section_postnl>
+            <admin_system_config_changed_section_carrier>
+                <observers>
+                    <!-- Clean PostNL config cache -->
+                    <postnl_clean_cache>
+                        <type>model</type>
+                        <class>postnl_core/observer_cache</class>
+                        <method>cleanCache</method>
+                    </postnl_clean_cache>
+                </observers>
+            </admin_system_config_changed_section_carrier>
 		</events>
 		<layout>
             <updates>

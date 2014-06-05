@@ -328,7 +328,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         if ($cache) {
-            $cache->setPostnlCoreCanUseStandard(false)
+            $cache->setPostnlCoreCanUseStandard(true)
                   ->saveCache();
         }
 
@@ -660,16 +660,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Alias for isEnabled()
      *
      * @param int|boolean  $storeId
-     * @param boolean      $checkGlobal
      * @param null|boolean $forceTestMode
      *
      * @return boolean
      *
      * @see TIG_PostNL_Helper_Data::isEnabled()
      */
-    public function isActive($storeId = false, $checkGlobal = false, $forceTestMode = null)
+    public function isActive($storeId = false, $forceTestMode = null)
     {
-        return $this->isEnabled($storeId, $checkGlobal, $forceTestMode);
+        return $this->isEnabled($storeId, $forceTestMode);
     }
 
     /**
@@ -683,12 +682,37 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isEnabled($storeId = false, $forceTestMode = null, $ignoreCache = false)
     {
-        $cache = $this->getCache();
+        if ($ignoreCache) {
+            $cache = false;
+        } else {
+            $cache = $this->getCache();
+        }
 
-        if (!$ignoreCache && $cache && $cache->hasPostnlCoreIsEnabled()) {
+        if ($cache && $cache->hasPostnlCoreIsEnabled()) {
             return $cache->getPostnlCoreIsEnabled();
         }
 
+        $isEnabled = $this->_isEnabled($storeId, $forceTestMode, $ignoreCache);
+
+        if ($cache) {
+            $cache->setPostnlCoreIsEnabled($isEnabled)
+                  ->saveCache();
+        }
+
+        return $isEnabled;
+    }
+
+    /**
+     * Run various checks to make sure the PostNL extension is enabled and fully configured.
+     *
+     * @param int|boolean  $storeId
+     * @param null|boolean $forceTestMode
+     * @param boolean      $ignoreCache
+     *
+     * @return bool
+     */
+    protected function _isEnabled($storeId, $forceTestMode, $ignoreCache)
+    {
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
@@ -708,11 +732,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             );
 
             Mage::register('postnl_core_is_enabled_errors', $errors);
-
-            if (!$ignoreCache && $cache) {
-                $cache->setPostnlCoreIsEnabled(false)
-                      ->saveCache();
-            }
             return false;
         }
 
@@ -721,10 +740,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          */
         $phpExtensionsLoaded = $this->areRequiredPHPExtensionsLoaded();
         if ($phpExtensionsLoaded === false) {
-            if (!$ignoreCache && $cache) {
-                $cache->setPostnlCoreIsEnabled(false)
-                      ->saveCache();
-            }
             return false;
         }
 
@@ -733,10 +748,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          */
         $isConfigured = $this->isConfigured($storeId, $forceTestMode, $ignoreCache);
         if ($isConfigured === false) {
-            if (!$ignoreCache && $cache) {
-                $cache->setPostnlCoreIsEnabled(false)
-                      ->saveCache();
-            }
             return false;
         }
 
@@ -745,24 +756,31 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          */
         $postnlShippingMethodEnabled = Mage::getStoreConfigFlag(self::XML_PATH_CARRIER_ACTIVE, $storeId);
         if ($postnlShippingMethodEnabled === false) {
-            $shippingMethodSectionurl = Mage::helper("adminhtml")->getUrl(
-                'adminhtml/system_config/edit',
-                array(
-                    '_secure' => true,
-                    'section' => 'carriers',
-                )
-            );
+            if ($this->isAdmin() || $this->isLoggingEnabled()) {
+                $shippingMethodSectionurl = Mage::helper("adminhtml")->getUrl(
+                    'adminhtml/system_config/edit',
+                    array(
+                        '_secure' => true,
+                        'section' => 'carriers',
+                    )
+                );
 
-            $errorMessage = $this->__(
-                'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under '
+                $errorMessage = $this->__(
+                    'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under '
                     . '%sSystem > Config > Shipping Methods%s.',
-                '<a href="'
+                    '<a href="'
                     . $shippingMethodSectionurl
                     . '" target="_blank" title="'
                     . $this->__('Shipping Methods')
                     . '">',
-                '</a>'
-            );
+                    '</a>'
+                );
+            } else {
+                $errorMessage = $this->__(
+                    'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under '
+                    . 'System > Config > Shipping Methods.'
+                );
+            }
 
             $errors = array(
                 array(
@@ -772,11 +790,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             );
 
             Mage::register('postnl_core_is_enabled_errors', $errors);
-
-            if (!$ignoreCache && $cache) {
-                $cache->setPostnlCoreIsEnabled(false)
-                      ->saveCache();
-            }
             return false;
         }
 
@@ -793,17 +806,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             );
 
             Mage::register('postnl_core_is_enabled_errors', $errors);
-
-            if (!$ignoreCache && $cache) {
-                $cache->setPostnlCoreIsEnabled(false)
-                      ->saveCache();
-            }
             return false;
-        }
-
-        if (!$ignoreCache && $cache) {
-            $cache->setPostnlCoreIsEnabled(true)
-                  ->saveCache();
         }
 
         return true;
@@ -860,7 +863,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * Check if the modules has been configured.
-     * The required fields will only be checked to see if they're not empty. The values entered will not be validated
+     * The required fields will only be checked to see if they're not empty. The values entered will not be validated.
      *
      * @param int|boolean  $storeId
      * @param null|boolean $forceTestMode
@@ -870,12 +873,36 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isConfigured($storeId = false, $forceTestMode = null, $ignoreCache = false)
     {
-        $cache = $this->getCache();
+        if ($ignoreCache) {
+            $cache = false;
+        } else {
+            $cache = $this->getCache();
+        }
 
-        if (!$ignoreCache && $cache && $cache->hasPostnlCoreIsConfigured()) {
+        if ($cache && $cache->hasPostnlCoreIsConfigured()) {
             return $cache->getPostnlCoreIsConfigured();
         }
 
+        $isConfigured = $this->_isConfigured($storeId, $forceTestMode);
+
+        if ($cache) {
+            $cache->setPostnlCoreIsConfigured($isConfigured)
+                  ->saveCache();
+        }
+
+        return $isConfigured;
+    }
+
+    /**
+     * Checks if the PostNL extension is fully configured.
+     *
+     * @param int|boolean  $storeId
+     * @param null|boolean $forceTestMode
+     *
+     * @return bool
+     */
+    protected function _isConfigured($storeId, $forceTestMode)
+    {
         if ($forceTestMode === null) {
             $testMode = $this->isTestMode();
         } else {
@@ -925,17 +952,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          */
         if (!empty($errors)) {
             Mage::register('postnl_core_is_configured_errors', $errors);
-
-            if (!$ignoreCache && $cache) {
-                $cache->setPostnlCoreIsConfigured(false)
-                      ->saveCache();
-            }
             return false;
-        }
-
-        if (!$ignoreCache && $cache) {
-            $cache->setPostnlCoreIsConfigured(true)
-                  ->saveCache();
         }
 
         return true;
@@ -951,9 +968,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isGlobalConfigured($storeId = false, $ignoreCache = false)
     {
-        $cache = $this->getCache();
+        if ($ignoreCache) {
+            $cache = false;
+        } else {
+            $cache = $this->getCache();
+        }
 
-        if (!$ignoreCache && $cache && $cache->hasPostnlCoreIsGlobalConfigured()) {
+        if ($cache && $cache->hasPostnlCoreIsGlobalConfigured()) {
             return $cache->getPostnlCoreIsGlobalConfigured();
         }
 
@@ -970,14 +991,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         if (!empty($errors)) {
             Mage::register('postnl_core_is_global_configured_errors', $errors);
 
-            if (!$ignoreCache && $cache) {
+            if ($cache) {
                 $cache->setPostnlCoreIsConfigured(false)
                       ->saveCache();
             }
             return false;
         }
 
-        if (!$ignoreCache && $cache) {
+        if ($cache) {
             $cache->setPostnlCoreIsGlobalConfigured(true)
                   ->saveCache();
         }
@@ -1037,7 +1058,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                     'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
                 );
 
-                $this->saveConfigState(array('postnl_' . $groupName => 1));
+                if ($this->isAdmin()) {
+                    $this->saveConfigState(array('postnl_' . $groupName => 1));
+                }
             } else {
                 $errors[] = array(
                     'code'    => 'POSTNL-0160',

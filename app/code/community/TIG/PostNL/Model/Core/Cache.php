@@ -44,6 +44,8 @@
  * @method boolean                     getPostnlCoreCanUseEps()
  * @method boolean                     getPostnlCoreCanUseGlobalPack()
  * @method boolean                     getPostnlCoreCanUseEpsBeOnlyOption()
+ * @method boolean                     getPostnlCheckoutIsEnabled()
+ * @method boolean                     getPostnlCheckoutIsConfigured()
  *
  * @method boolean                     hasPostnlCoreIsEnabled()
  * @method boolean                     hasPostnlCoreIsConfigured()
@@ -53,6 +55,8 @@
  * @method boolean                     hasPostnlCoreCanUseEps()
  * @method boolean                     hasPostnlCoreCanUseGlobalPack()
  * @method boolean                     hasPostnlCoreCanUseEpsBeOnlyOption()
+ * @method boolean                     hasPostnlCheckoutIsEnabled()
+ * @method boolean                     hasPostnlCheckoutIsConfigured()
  *
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsEnabled(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsConfigured(boolean $value)
@@ -62,6 +66,8 @@
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseEps(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseGlobalPack(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseEpsBeOnlyOption(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlCheckoutIsEnabled(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlCheckoutIsConfigured(boolean $value)
  */
 class TIG_PostNL_Model_Core_Cache extends Varien_Object
 {
@@ -101,6 +107,7 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
         if ($this->canUseCache()) {
             $data = $this->loadCache();
             $this->setData($data);
+            Mage::helper('postnl')->log($this->debug(), null, 'cache.log', true);
         }
 
         return $this;
@@ -151,6 +158,7 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
 
         $data = Mage::app()->loadCache($this->_getCacheId());
         $data = unserialize($data);
+
         return $data;
     }
 
@@ -177,6 +185,32 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
     public function canUseCache()
     {
         return Mage::app()->useCache('postnl_config');
+    }
+
+    /**
+     * Alias for cleanCache().
+     *
+     * @return $this
+     */
+    public function clean()
+    {
+        return $this->cleanCache();
+    }
+
+    /**
+     * Cleans this cache.
+     *
+     * @return $this
+     */
+    public function cleanCache()
+    {
+        if ($this->canUseCache()) {
+            Mage::app()->cleanCache(self::CACHE_TAG);
+
+            $this->unsetData();
+        }
+
+        return $this;
     }
 
     /**

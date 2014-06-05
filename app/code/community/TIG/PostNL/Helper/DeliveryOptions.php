@@ -692,7 +692,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             Mage::unregister('postnl_enabled_delivery_options_errors');
         }
 
-        $isPostnlEnabled = $this->isEnabled($storeId, false, $this->isTestMode());
+        $isPostnlEnabled = $this->isEnabled($storeId);
         if ($isPostnlEnabled === false) {
             $errors = array(
                 array(
