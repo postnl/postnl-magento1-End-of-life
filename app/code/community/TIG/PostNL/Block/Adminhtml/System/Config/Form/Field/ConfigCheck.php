@@ -48,20 +48,20 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
     protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_configcheck';
 
     /**
-     * XML paths to use GlobalPack/Checkout settings
+     * XML paths to use GlobalPack/Checkout settings.
      */
     const XML_PATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
     const XML_PATH_USE_CHECKOUT   = 'postnl/cif/use_checkout';
 
     /**
-     * Template file used by this element
+     * Template file used by this element.
      *
      * @var string
      */
     protected $_template = 'TIG/PostNL/system/config/form/field/config_check.phtml';
 
     /**
-     * Get the postnl helper
+     * Get the postnl helper.
      *
      * @return TIG_PostNL_Helper_Data
      */
@@ -78,7 +78,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
     }
 
     /**
-     * Check if live mode is enabled
+     * Check if live mode is enabled.
      *
      * @return boolean
      */
@@ -86,26 +86,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
     {
         $helper = $this->getPostnlHelper();
 
-        return $helper->isEnabled(false, false, false);
+        return $helper->isEnabled(false, false, true);
     }
 
     /**
-     * gets config errors from the registry
-     *
-     * @return array|null
-     */
-    public function getLiveConfigErrors()
-    {
-        $configErrors = Mage::registry('postnl_is_configured_errors');
-        if (is_null($configErrors)) {
-            $configErrors = Mage::registry('postnl_enabled_errors');
-        }
-
-        return $configErrors;
-    }
-
-    /**
-     * Check if test mode is enabled
+     * Check if test mode is enabled.
      *
      * @return boolean
      */
@@ -113,19 +98,19 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
     {
         $helper = $this->getPostnlHelper();
 
-        return $helper->isEnabled(false, false, true);
+        return $helper->isEnabled(false, true, true);
     }
 
     /**
-     * gets config errors from the registry
+     * Gets config errors from the registry.
      *
      * @return array|null
      */
-    public function getTestConfigErrors()
+    public function getConfigErrors()
     {
-        $configErrors = Mage::registry('postnl_is_configured_test_errors');
+        $configErrors = Mage::registry('postnl_core_is_configured_errors');
         if (is_null($configErrors)) {
-            $configErrors = Mage::registry('postnl_enabled_test_errors');
+            $configErrors = Mage::registry('postnl_core_is_enabled_errors');
         }
 
         return $configErrors;
@@ -149,7 +134,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
      *
      * @return boolean
      */
-    public function isGlobalEnabled()
+    public function isGlobalConfigured()
     {
         $globalEnabled = Mage::getStoreConfigFlag(self::XML_PATH_USE_GLOBALPACK, Mage_Core_Model_App::ADMIN_STORE_ID);
         if (!$globalEnabled) {
@@ -158,7 +143,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
 
         $helper = $this->getPostnlHelper();
 
-        return $helper->isEnabled(false, true, $this->isTestModeActive());
+        return $helper->isGlobalConfigured(false, true);
     }
 
     /**
@@ -168,10 +153,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
      */
     public function getGlobalConfigErrors()
     {
-        $configErrors = Mage::registry('postnl_is_configured_global_errors');
-        if (is_null($configErrors)) {
-            $configErrors = Mage::registry('postnl_enabled_global_errors');
-        }
+        $configErrors = Mage::registry('postnl_core_is_global_configured_errors');
 
         return $configErrors;
     }
@@ -199,9 +181,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
      */
     public function getCheckoutConfigErrors()
     {
-        $configErrors = Mage::registry('postnl_is_configured_checkout_errors');
+        $configErrors = Mage::registry('postnl_checkout_is_configured_errors');
         if (is_null($configErrors)) {
-            $configErrors = Mage::registry('postnl_enabled_checkout_errors');
+            $configErrors = Mage::registry('postnl_checkout_is_enabled_errors');
         }
 
         return $configErrors;
