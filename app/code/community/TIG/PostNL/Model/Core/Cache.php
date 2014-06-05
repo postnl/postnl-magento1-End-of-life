@@ -107,7 +107,6 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
         if ($this->canUseCache()) {
             $data = $this->loadCache();
             $this->setData($data);
-            Mage::helper('postnl')->log($this->debug(), null, 'cache.log', true);
         }
 
         return $this;
