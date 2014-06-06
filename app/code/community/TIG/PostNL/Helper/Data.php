@@ -756,7 +756,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          */
         $postnlShippingMethodEnabled = Mage::getStoreConfigFlag(self::XML_PATH_CARRIER_ACTIVE, $storeId);
         if ($postnlShippingMethodEnabled === false) {
-            if ($this->isAdmin() || $this->isLoggingEnabled()) {
+            if ($this->isSystemConfig() || $this->isLoggingEnabled()) {
                 $shippingMethodSectionurl = Mage::helper("adminhtml")->getUrl(
                     'adminhtml/system_config/edit',
                     array(
@@ -1020,7 +1020,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Check if each required field is filled.
          */
-        if ($this->isAdmin() || $this->isLoggingEnabled()) {
+        if ($this->isSystemConfig() || $this->isLoggingEnabled()) {
             /**
              * If not, add the field's label to an array of missing fields so we can later inform the merchant which
              * fields exactly are missing.
@@ -1058,7 +1058,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                     'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
                 );
 
-                if ($this->isAdmin()) {
+                if ($this->isSystemConfig()) {
                     $this->saveConfigState(array('postnl_' . $groupName => 1));
                 }
             } else {
@@ -1312,7 +1312,26 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Creates a separate dir to log PostNL log files. Does nothing if the dir already exists
+     * Checks if the current page is the system/config page in the backend.
+     *
+     * @return bool
+     */
+    public function isSystemConfig()
+    {
+        if (!$this->isAdmin()) {
+            return false;
+        }
+
+        $request = Mage::app()->getRequest();
+        if ($request->getControllerName() == 'system_config' && $request->getActionName() == 'edit') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Creates a separate dir to log PostNL log files. Does nothing if the dir already exists.
      *
      * @return TIG_PostNL_Exception
      */

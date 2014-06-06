@@ -107,7 +107,7 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
 
         $helper = Mage::helper('postnl/deliveryOptions');
 
-        if (!$helper->canUseDeliveryOptions($quote, false)) {
+        if (!$helper->canUseDeliveryOptions($quote)) {
             return '';
         }
 

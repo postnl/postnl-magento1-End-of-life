@@ -36,17 +36,6 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
- * @method boolean                     getPostnlCoreIsEnabled()
- * @method boolean                     getPostnlCoreIsConfigured()
- * @method boolean                     getPostnlCoreIsGlobalConfigured()
- * @method boolean                     getPostnlCoreCanUseStandard()
- * @method boolean                     getPostnlCoreCanUsePakjeGemak()
- * @method boolean                     getPostnlCoreCanUseEps()
- * @method boolean                     getPostnlCoreCanUseGlobalPack()
- * @method boolean                     getPostnlCoreCanUseEpsBeOnlyOption()
- * @method boolean                     getPostnlCheckoutIsEnabled()
- * @method boolean                     getPostnlCheckoutIsConfigured()
- *
  * @method boolean                     hasPostnlCoreIsEnabled()
  * @method boolean                     hasPostnlCoreIsConfigured()
  * @method boolean                     hasPostnlCoreIsGlobalConfigured()
@@ -57,6 +46,33 @@
  * @method boolean                     hasPostnlCoreCanUseEpsBeOnlyOption()
  * @method boolean                     hasPostnlCheckoutIsEnabled()
  * @method boolean                     hasPostnlCheckoutIsConfigured()
+ * @method boolean                     hasPostnlDeliveryOptionsIsEnabled()
+ * @method boolean                     hasPostnlDeliveryOptionsCanUsePakjeGemak()
+ * @method boolean                     hasPostnlDeliveryOptionsCanUsePakjeGemakExpress()
+ * @method boolean                     hasPostnlDeliveryOptionsCanUsePakketAutomaat()
+ * @method boolean                     hasPostnlDeliveryOptionsCanUseTimeframes()
+ * @method boolean                     hasPostnlDeliveryOptionsCanUseEveningTimeframes()
+ * @method boolean                     hasPostnlDeliveryOptionsCanUseSundaySorting()
+ * @method boolean                     hasPostnlMijnpakketIsActive()
+ *
+ * @method boolean                     getPostnlCoreIsEnabled()
+ * @method boolean                     getPostnlCoreIsConfigured()
+ * @method boolean                     getPostnlCoreIsGlobalConfigured()
+ * @method boolean                     getPostnlCoreCanUseStandard()
+ * @method boolean                     getPostnlCoreCanUsePakjeGemak()
+ * @method boolean                     getPostnlCoreCanUseEps()
+ * @method boolean                     getPostnlCoreCanUseGlobalPack()
+ * @method boolean                     getPostnlCoreCanUseEpsBeOnlyOption()
+ * @method boolean                     getPostnlCheckoutIsEnabled()
+ * @method boolean                     getPostnlCheckoutIsConfigured()
+ * @method boolean                     getPostnlDeliveryOptionsIsEnabled()
+ * @method boolean                     getPostnlDeliveryOptionsCanUsePakjeGemak()
+ * @method boolean                     getPostnlDeliveryOptionsCanUsePakjeGemakExpress()
+ * @method boolean                     getPostnlDeliveryOptionsCanUsePakketAutomaat()
+ * @method boolean                     getPostnlDeliveryOptionsCanUseTimeframes()
+ * @method boolean                     getPostnlDeliveryOptionsCanUseEveningTimeframes()
+ * @method boolean                     getPostnlDeliveryOptionsCanUseSundaySorting()
+ * @method boolean                     getPostnlMijnpakketIsActive()
  *
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsEnabled(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsConfigured(boolean $value)
@@ -68,6 +84,14 @@
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseEpsBeOnlyOption(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCheckoutIsEnabled(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCheckoutIsConfigured(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsIsEnabled(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUsePakjeGemak(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUsePakjeGemakExpress(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUsePakketAutomaat(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseTimeframes(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseEveningTimeframes(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseSundaySorting(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlMijnpakketIsActive(boolean $value)
  */
 class TIG_PostNL_Model_Core_Cache extends Varien_Object
 {
@@ -84,34 +108,11 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
     protected $_cacheId = null;
 
     /**
-     * Constructor method. Initializes the cache if the cache has not yet been loaded.
+     * Flag whether or not the cache may be used.
      *
-     * @return $this
+     * @var null|boolean
      */
-    protected function _construct()
-    {
-        if (!$this->hasData()) {
-            $this->init();
-        }
-
-        return $this;
-    }
-
-    /**
-     * Initialize the cache.
-     *
-     * @return $this
-     */
-    public function init()
-    {
-        if ($this->canUseCache()) {
-            $data = $this->loadCache();
-            $this->setData($data);
-            Mage::helper('postnl')->log($this->debug(), null, 'cache.log', true);
-        }
-
-        return $this;
-    }
+    protected $_canUseCache = null;
 
     /**
      * @param string $cacheId
@@ -143,6 +144,67 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
         }
 
         return true;
+    }
+
+    /**
+     * @param bool|null $canUseCache
+     *
+     * @return $this
+     */
+    public function setCanUseCache($canUseCache)
+    {
+        $this->_canUseCache = $canUseCache;
+
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getCanUseCache()
+    {
+        return $this->_canUseCache;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasCanUseCache()
+    {
+        if ($this->_canUseCache === null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Constructor method. Initializes the cache if the cache has not yet been loaded.
+     *
+     * @return $this
+     */
+    protected function _construct()
+    {
+        if (!$this->hasData()) {
+            $this->init();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Initialize the cache.
+     *
+     * @return $this
+     */
+    public function init()
+    {
+        if ($this->canUseCache()) {
+            $data = $this->loadCache();
+            $this->setData($data);
+        }
+
+        return $this;
     }
 
     /**
@@ -184,7 +246,14 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
      */
     public function canUseCache()
     {
-        return Mage::app()->useCache('postnl_config');
+        if ($this->hasCanUseCache()) {
+            return $this->getCanUseCache();
+        }
+
+        $canUseCache = Mage::app()->useCache('postnl_config');
+
+        $this->setCanUseCache($canUseCache);
+        return $canUseCache;
     }
 
     /**
