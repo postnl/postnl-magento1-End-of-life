@@ -397,9 +397,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function canUsePakjeGemak()
     {
-        $storeId = Mage::app()->getStore()->getId();
-
-        $canUsePakjeGemak = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemak($storeId);
+        $canUsePakjeGemak = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemak();
         return $canUsePakjeGemak;
     }
 
@@ -410,9 +408,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function canUsePakjeGemakExpress()
     {
-        $storeId = Mage::app()->getStore()->getId();
-
-        $canUsePakjeGemakExpress = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemakExpress($storeId);
+        $canUsePakjeGemakExpress = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemakExpress();
         return $canUsePakjeGemakExpress;
     }
 
@@ -423,9 +419,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function canUsePakketAutomaat()
     {
-        $storeId = Mage::app()->getStore()->getId();
-
-        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUsePakketAutomaat($storeId);
+        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUsePakketAutomaat();
         return $canUsePakketAutomaat;
     }
 
@@ -436,10 +430,8 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function canUseTimeframes()
     {
-        $storeId = Mage::app()->getStore()->getId();
-
-        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUseTimeframes($storeId);
-        return $canUsePakketAutomaat;
+        $canUseTimeframes = Mage::helper('postnl/deliveryOptions')->canUseTimeframes();
+        return $canUseTimeframes;
     }
 
     /**
@@ -449,10 +441,8 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function canUseEveningTimeframes()
     {
-        $storeId = Mage::app()->getStore()->getId();
-
-        $canUsePakketAutomaat = Mage::helper('postnl/deliveryOptions')->canUseEveningTimeframes($storeId);
-        return $canUsePakketAutomaat;
+        $canUseEveningTimeframes = Mage::helper('postnl/deliveryOptions')->canUseEveningTimeframes();
+        return $canUseEveningTimeframes;
     }
 
     /**
@@ -523,7 +513,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     public function canUseDeliveryOptions()
     {
         $helper = Mage::helper('postnl/deliveryOptions');
-        return $helper->canUseDeliveryOptions($this->getQuote());
+
+        $quote = $this->getQuote();
+        if ($helper->canUseDeliveryOptions($quote) && $helper->canUseDeliveryOptionsForCountry($quote)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -877,4 +877,5 @@ TIG_PostNL::Send a copy of the track & trace email,Verstuur een kopie van de tra
 "TIG_PostNL::If enabled, you may enter seperate email addresses to which the track & trace email will be sent in addition to the customer.","Indien u deze optie aan zet, zal er een kopie van de track & trace e-mail worden verstuurd naar de opgegeven e-mail adressen."
 TIG_PostNL::Send track & trace email copy to,Verstuur track & trace e-mail kopie naar
 TIG_PostNL::You can enter multiple email addresses seperated by commas.,U kunt meerdere e-mailaddressen invullen gescheiden door komma's
-TIG_PostNL::Track & trace email copy method,Track & trace e-mail kopie method
+TIG_PostNL::Track & trace email copy method,Track & trace e-mail kopie methode
+PostNL configuration.,PostNL configuratie.

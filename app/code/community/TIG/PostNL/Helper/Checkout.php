@@ -312,8 +312,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 $result = $cif->ping();
             } catch (Exception $e) {
                 $this->logException($e);
-                Mage::register('can_use_postnl_checkout', false);
-                return false;
+                $result = false;
             }
 
             if ($result !== 'OK') {
