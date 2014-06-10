@@ -90,13 +90,13 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
         }
 
         /**
-         * Attempt to generate a barcode to test the account settings. This will result in an exception if the settings are
-         * invalid.
+         * Attempt to generate a barcode to test the account settings. This will result in an exception if the settings
+         * are invalid.
          */
         try {
             /**
-             * If the password field has not been edited since the last time it was saved, it will contain 6 asteriscs for security
-             * reasons. In that case, we need to read and decrypt the password from the database.
+             * If the password field has not been edited since the last time it was saved, it will contain 6 asterisks
+             * for security reasons. In that case, we need to read and decrypt the password from the database.
              */
             if ($data['password'] == '******') {
                 $data['password'] = $this->_getPassword(false);
@@ -142,7 +142,8 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
     }
 
     /**
-     * Checks each field to see if it has used the 'use default checkbox'. If so, get the default value from the database.
+     * Checks each field to see if it has used the 'use default checkbox'. If so, get the default value from the
+     * database.
      *
      * @param array $data
      *

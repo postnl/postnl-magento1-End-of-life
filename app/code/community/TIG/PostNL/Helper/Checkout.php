@@ -98,7 +98,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     );
 
     /**
-     * Array containing conversions between PostNL CHeckout payment option fields and those used by Magento payment
+     * Array containing conversions between PostNL Checkout payment option fields and those used by Magento payment
      * methods. This array should be extended as time goes on in order to support as many payment methods as possible.
      *
      * @var array
@@ -224,7 +224,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                     'message' => $this->__('The quote is virtual.'),
                 )
             );
-            Mage::register('postnl_enabled_checkout_errors', $errors);
+            Mage::register('postnl_checkout_is_enabled_errors', $errors);
             Mage::register('can_use_postnl_checkout', false);
             return false;
         }
@@ -239,7 +239,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                     'message' => $this->__("The quote's grand total is below the minimum amount required."),
                 )
             );
-            Mage::register('postnl_enabled_checkout_errors', $errors);
+            Mage::register('postnl_checkout_is_enabled_errors', $errors);
             Mage::register('can_use_postnl_checkout', false);
             return false;
         }
@@ -256,7 +256,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                     ),
                 )
             );
-            Mage::register('postnl_enabled_checkout_errors', $errors);
+            Mage::register('postnl_checkout_is_enabled_errors', $errors);
             Mage::register('can_use_postnl_checkout', false);
             return false;
         }
@@ -278,7 +278,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                         ),
                     )
                 );
-                Mage::register('postnl_enabled_checkout_errors', $errors);
+                Mage::register('postnl_checkout_is_enabled_errors', $errors);
                 Mage::register('can_use_postnl_checkout', false);
                 return false;
             }
@@ -297,7 +297,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                         'message' => $this->__('One or more items in the cart are out of stock.'),
                     )
                 );
-                Mage::register('postnl_enabled_checkout_errors', $errors);
+                Mage::register('postnl_checkout_is_enabled_errors', $errors);
                 Mage::register('can_use_postnl_checkout', false);
                 return false;
             }
@@ -312,8 +312,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                 $result = $cif->ping();
             } catch (Exception $e) {
                 $this->logException($e);
-                Mage::register('can_use_postnl_checkout', false);
-                return false;
+                $result = false;
             }
 
             if ($result !== 'OK') {
@@ -400,10 +399,6 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        if (!parent::isActive()) {
-            return false;
-        }
-
         $isActive = Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ACTIVE, $storeId);
         return $isActive;
     }
@@ -417,11 +412,37 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      */
     public function isCheckoutEnabled($storeId = null)
     {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCheckoutIsEnabled()) {
+            return $cache->getPostnlCheckoutIsEnabled();
+        }
+
+        $isEnabled = $this->_isCheckoutEnabled($storeId);
+
+        if ($cache) {
+            $cache->setPostnlCheckoutIsEnabled($isEnabled)
+                  ->saveCache();
+        }
+
+        return $isEnabled;
+    }
+
+    /**
+     * Checks if PostNl Checkout is enabled by running various checks including a check to see if the required
+     * configuration fields are filled.
+     *
+     * @param int|null $storeId
+     *
+     * @return bool
+     */
+    protected function _isCheckoutEnabled($storeId)
+    {
         if (is_null($storeId)) {
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $isPostnlEnabled = $this->isEnabled($storeId, false, $this->isTestMode());
+        $isPostnlEnabled = $this->isEnabled($storeId);
         if ($isPostnlEnabled === false) {
             $errors = array(
                 array(
@@ -429,7 +450,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                     'message' => $this->__('You have not yet enabled the PostNL extension.'),
                 )
             );
-            Mage::register('postnl_enabled_checkout_errors', $errors);
+            Mage::register('postnl_checkout_is_enabled_errors', $errors);
             return false;
         }
 
@@ -441,7 +462,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
                     'message' => $this->__('You have not yet enabled PostNL Checkout.'),
                 )
             );
-            Mage::register('postnl_enabled_checkout_errors', $errors);
+            Mage::register('postnl_checkout_is_enabled_errors', $errors);
             return false;
         }
 
@@ -462,58 +483,47 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      */
     public function isCheckoutConfigured($storeId = null)
     {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCheckoutIsConfigured()) {
+            return $cache->getPostnlCheckoutIsConfigured();
+        }
+
+        $isConfigured = $this->_isCheckoutConfigured($storeId);
+
+        if ($cache) {
+            $cache->setPostnlCheckoutIsConfigured($isConfigured)
+                  ->saveCache();
+        }
+
+        return $isConfigured;
+    }
+
+    /**
+     * Checks if all required fields are configured. If not, returns an array of errors.
+     *
+     * @param int $storeId
+     *
+     * @return array
+     */
+    protected function _isCheckoutConfigured($storeId)
+    {
         if (is_null($storeId)) {
             $storeId = Mage::app()->getStore()->getId();
         }
-
-        $errors = array();
-
-        /**
-         * Get the system > config fields for this section.
-         *
-         * @var Varien_Simplexml_Element $section
-         */
-        $configFields = Mage::getSingleton('adminhtml/config');
-        $sections     = $configFields->getSections('postnl');
-        $section      = $sections->postnl;
 
         /**
          * First check if all required configuration settings are entered
          */
         $requiredFields = $this->getCheckoutRequiredFields();
-        foreach ($requiredFields as $requiredField) {
-            $value = Mage::getStoreConfig($requiredField, $storeId);
 
-            if ($value !== null && $value !== '') {
-                continue;
-            }
-
-            $fieldParts = explode('/', $requiredField);
-            $field = $fieldParts[2];
-            $group = $fieldParts[1];
-
-            /**
-             * @var Varien_Simplexml_Element $sectionGroup
-             */
-            $sectionGroup = $section->groups->$group;
-
-            $label      = (string) $sectionGroup->fields->$field->label;
-            $groupLabel = (string) $sectionGroup->label;
-            $groupName  = $sectionGroup->getName();
-
-            $errors[] = array(
-                'code'    => 'POSTNL-0034',
-                'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
-            );
-
-            $this->saveConfigState(array('postnl_' . $groupName => 1));
-        }
+        $errors = $this->_getFieldsConfiguredErrors($requiredFields, $storeId);
 
         /**
          * If any errors were detected, add them to the registry and return false
          */
         if (!empty($errors)) {
-            Mage::register('postnl_is_configured_checkout_errors', $errors);
+            Mage::register('postnl_checkout_is_configured_errors', $errors);
             return false;
         }
 
@@ -540,10 +550,12 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             )
         );
 
-        $this->saveConfigState(array('postnl_checkout_payment_methods' => 1));
+        if ($this->isAdmin()) {
+            $this->saveConfigState(array('postnl_checkout_payment_methods' => 1));
+        }
 
         Mage::register(
-            'postnl_is_configured_checkout_errors',
+            'postnl_checkout_is_configured_errors',
             $errors
         );
         return false;

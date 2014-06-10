@@ -234,23 +234,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         $pdf->SetAuthor('PostNL');
         $pdf->SetCreator('PostNL');
 
-        if (is_array($labels) && count($labels) > 1) {
-            /**
-             * Create a pdf containing multiple labels
-             */
-            $pdf = $this->_createMultiLabelPdf($pdf, $labels);
-        } else {
-            /**
-             * Create a pdf containing a single label
-             * If $labels is an array, get the current element. There should be only 1.
-             */
-            if (is_array($labels)) {
-                $labels = current($labels);
-            }
-
-            $this->setLabelSize('A6'); //single Dutch labels always use A6
-            $pdf = $this->_addPdfTemplate($pdf, $labels);
+        if (!is_array($labels)) {
+            $labels = array($labels);
         }
+        /**
+         * Create a pdf containing multiple labels
+         */
+        $pdf = $this->_createMultiLabelPdf($pdf, $labels);
 
         /**
          * Destroy the temporary labels as they are no longer needed
@@ -308,7 +298,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
-     * Adds a lebl to the pdf by storing it in a temporary pdf file and then adding it to the master pdf object
+     * Adds a label to the pdf by storing it in a temporary pdf file and then adding it to the master pdf object
      *
      * @param TIG_PostNL_Fpdi                      $pdf
      * @param TIG_PostNL_Model_Core_Shipment_Label $label
@@ -320,7 +310,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     protected function _addPdfTemplate($pdf, $label)
     {
         /**
-         * Fpdi requires labels to be provided as files. Therefore the label will be saved as a temporary file in var/TIG/PostNL/temp_labels/
+         * Fpdi requires labels to be provided as files. Therefore the label will be saved as a temporary file in
+         * var/TIG/PostNL/temp_labels/
          */
         $tempFilename = $this->_saveTempLabel($label->getLabel());
 
@@ -484,7 +475,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         file_put_contents($tempFilePath, base64_decode($label));
 
         /**
-         * Save the name of the temp file so itcan be destroyed later
+         * Save the name of the temp file so it can be destroyed later
          */
         $this->addTempFileSaved($tempFilePath);
 

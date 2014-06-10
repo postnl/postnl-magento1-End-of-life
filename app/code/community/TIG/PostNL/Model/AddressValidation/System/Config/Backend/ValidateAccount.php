@@ -193,7 +193,7 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
      * Gets a config value. First we try to get the value from the fields we are currently trying to save. if the path
      * is not among the fields we're saving, get it from the database for the current scope.
      *
-     * @param string $path An xpath to the setting we're trying to retreive
+     * @param string $path An xpath to the setting we're trying to retrieve
      *
      * @return string|null
      *

@@ -64,7 +64,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
 
     /**
-     * XML path to postnl carier active/inactive setting.
+     * XML path to postnl carrier active/inactive setting.
      */
     const XML_PATH_CARRIER_ACTIVE = 'carriers/postnl/active';
 
@@ -156,6 +156,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
+     * @var null|TIG_PostNL_Model_Core_Cache
+     */
+    protected $_cache = null;
+
+    /**
      * Get required fields array.
      *
      * @return array
@@ -193,6 +198,36 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function getGlobalShipmentsRequiredFields()
     {
         return $this->_globalShipmentRequiredFields;
+    }
+
+    /**
+     * @param null|TIG_PostNL_Model_Core_Cache $cache
+     *
+     * @return TIG_PostNL_Helper_Data
+     */
+    public function setCache($cache)
+    {
+        $this->_cache = $cache;
+
+        return $this;
+    }
+
+    /**
+     * @return null|TIG_PostNL_Model_Core_Cache
+     */
+    public function getCache()
+    {
+        if ($this->_cache !== null) {
+            return $this->_cache;
+        }
+
+        $cache = Mage::getSingleton('postnl_core/cache');
+        if (!$cache->canUseCache()) {
+            $cache = false;
+        }
+
+        $this->setCache($cache);
+        return $cache;
     }
 
     /**
@@ -271,6 +306,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function canUseStandard($storeId = false)
     {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCoreCanUseStandard()) {
+            return $cache->getPostnlCoreCanUseStandard();
+        }
+
         if ($storeId === false) {
             $storeId = Mage::app()->getStore()->getId();
         }
@@ -278,7 +319,17 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $standardProductOptions = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
                                       ->getAvailableOptions($storeId);
         if (empty($standardProductOptions)) {
+            if ($cache) {
+                $cache->setPostnlCoreCanUseStandard(false)
+                      ->saveCache();
+            }
+
             return false;
+        }
+
+        if ($cache) {
+            $cache->setPostnlCoreCanUseStandard(true)
+                  ->saveCache();
         }
 
         return true;
@@ -293,6 +344,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function canUsePakjeGemak($storeId = false)
     {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCoreCanUsePakjeGemak()) {
+            return $cache->getPostnlCoreCanUsePakjeGemak();
+        }
+
         if ($storeId === false) {
             $storeId = Mage::app()->getStore()->getId();
         }
@@ -301,9 +358,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                                         ->getAvailableOptions($storeId);
 
         if (empty($pakjeGemakProductoptions)) {
+            if ($cache) {
+                $cache->setPostnlCoreCanUsePakjeGemak(false)
+                      ->saveCache();
+            }
+
             return false;
         }
 
+        if ($cache) {
+            $cache->setPostnlCoreCanUsePakjeGemak(true)
+                  ->saveCache();
+        }
         return true;
     }
 
@@ -316,6 +382,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function canUseEps($storeId = false)
     {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCoreCanUseEps()) {
+            return $cache->getPostnlCoreCanUseEps();
+        }
+
         if ($storeId === false) {
             $storeId = Mage::app()->getStore()->getId();
         }
@@ -324,9 +396,17 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                                 ->getAvailableOptions($storeId);
 
         if (empty($euProductOptions)) {
+            if ($cache) {
+                $cache->setPostnlCoreCanUseEps(false)
+                      ->saveCache();
+            }
             return false;
         }
 
+        if ($cache) {
+            $cache->setPostnlCoreCanUseEps(true)
+                  ->saveCache();
+        }
         return true;
     }
 
@@ -339,11 +419,21 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function canUseGlobalPack($storeId = false)
     {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCoreCanUseGlobalPack()) {
+            return $cache->getPostnlCoreCanUseGlobalPack();
+        }
+
         if ($storeId === false) {
             $storeId = Mage::app()->getStore()->getId();
         }
 
         if (!$this->isGlobalAllowed()) {
+            if ($cache) {
+                $cache->setPostnlCoreCanUseGlobalPack(false)
+                      ->saveCache();
+            }
             return false;
         }
 
@@ -351,9 +441,17 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                                     ->getAvailableOptions($storeId);
 
         if (empty($globalProductOptions)) {
+            if ($cache) {
+                $cache->setPostnlCoreCanUseGlobalPack(false)
+                      ->saveCache();
+            }
             return false;
         }
 
+        if ($cache) {
+            $cache->setPostnlCoreCanUseGlobalPack(true)
+                  ->saveCache();
+        }
         return true;
     }
 
@@ -366,11 +464,22 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function canUseEpsBEOnlyOption($storeId = false)
     {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCoreCanUseEpsBeOnlyOption()) {
+            return $cache->getPostnlCoreCanUseEpsBeOnlyOption();
+        }
+
         if ($storeId === false) {
             $storeId = Mage::app()->getStore()->getId();
         }
 
         $epsBeOnlyOptionAllowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_EPS_BE_ONLY_OPTION, $storeId);
+
+        if ($cache) {
+            $cache->setPostnlCoreCanUseEpsBeOnlyOption($epsBeOnlyOptionAllowed)
+                  ->saveCache();
+        }
 
         return $epsBeOnlyOptionAllowed;
     }
@@ -551,58 +660,70 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Alias for isEnabled()
      *
      * @param int|boolean  $storeId
-     * @param boolean      $checkGlobal
      * @param null|boolean $forceTestMode
      *
      * @return boolean
      *
      * @see TIG_PostNL_Helper_Data::isEnabled()
      */
-    public function isActive($storeId = false, $checkGlobal = false, $forceTestMode = null)
+    public function isActive($storeId = false, $forceTestMode = null)
     {
-        return $this->isEnabled($storeId, $checkGlobal, $forceTestMode);
+        return $this->isEnabled($storeId, $forceTestMode);
     }
 
     /**
      * Determines if the extension is active
      *
-     * @param int | bool $storeId
-     * @param boolean $checkGlobal
+     * @param int|boolean  $storeId
      * @param null|boolean $forceTestMode
+     * @param boolean      $ignoreCache
      *
      * @return boolean
      */
-    public function isEnabled($storeId = false, $checkGlobal = false, $forceTestMode = null)
+    public function isEnabled($storeId = false, $forceTestMode = null, $ignoreCache = false)
     {
-        if ($forceTestMode === null) {
-            $testMode = $this->isTestMode();
+        if ($ignoreCache) {
+            $cache = false;
         } else {
-            $testMode = $forceTestMode;
+            $cache = $this->getCache();
         }
 
-        $registryKey = 'postnl_enabled';
-        if ($checkGlobal) {
-            $registryKey .= '_global';
-        }
-        if ($testMode) {
-            $registryKey .= '_test';
+        if ($cache && $cache->hasPostnlCoreIsEnabled()) {
+            return $cache->getPostnlCoreIsEnabled();
         }
 
-        if (Mage::registry($registryKey) !== null) {
-            return Mage::registry($registryKey);
+        $isEnabled = $this->_isEnabled($storeId, $forceTestMode, $ignoreCache);
+
+        if ($cache) {
+            $cache->setPostnlCoreIsEnabled($isEnabled)
+                  ->saveCache();
         }
 
+        return $isEnabled;
+    }
+
+    /**
+     * Run various checks to make sure the PostNL extension is enabled and fully configured.
+     *
+     * @param int|boolean  $storeId
+     * @param null|boolean $forceTestMode
+     * @param boolean      $ignoreCache
+     *
+     * @return bool
+     */
+    protected function _isEnabled($storeId, $forceTestMode, $ignoreCache)
+    {
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
+
+        Mage::unregister('postnl_core_is_enabled_errors');
 
         /**
          * Check if the module has been enabled
          */
         $enabled = Mage::getStoreConfigFlag(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
         if ($enabled === false) {
-            Mage::register($registryKey, false);
-
             $errors = array(
                 array(
                     'code'    => 'POSTNL-0030',
@@ -610,25 +731,23 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 )
             );
 
-            Mage::register($registryKey . '_errors', $errors);
+            Mage::register('postnl_core_is_enabled_errors', $errors);
             return false;
         }
 
         /**
          * Make sure that the required PHP extensions are loaded.
          */
-        $phpExtensionsLoaded = $this->areRequiredPHPExtensionsLoaded($registryKey);
+        $phpExtensionsLoaded = $this->areRequiredPHPExtensionsLoaded();
         if ($phpExtensionsLoaded === false) {
-            Mage::register($registryKey, false);
             return false;
         }
 
         /**
          * Check if the module's required configuration options have been filled
          */
-        $isConfigured = $this->isConfigured($storeId, $checkGlobal, $forceTestMode);
+        $isConfigured = $this->isConfigured($storeId, $forceTestMode, $ignoreCache);
         if ($isConfigured === false) {
-            Mage::register($registryKey, false);
             return false;
         }
 
@@ -637,26 +756,31 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          */
         $postnlShippingMethodEnabled = Mage::getStoreConfigFlag(self::XML_PATH_CARRIER_ACTIVE, $storeId);
         if ($postnlShippingMethodEnabled === false) {
-            Mage::register($registryKey, false);
+            if ($this->isSystemConfig() || $this->isLoggingEnabled()) {
+                $shippingMethodSectionurl = Mage::helper("adminhtml")->getUrl(
+                    'adminhtml/system_config/edit',
+                    array(
+                        '_secure' => true,
+                        'section' => 'carriers',
+                    )
+                );
 
-            $shippingMethodSectionurl = Mage::helper("adminhtml")->getUrl(
-                'adminhtml/system_config/edit',
-                array(
-                    '_secure' => true,
-                    'section' => 'carriers',
-                )
-            );
-
-            $errorMessage = $this->__(
-                'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under '
+                $errorMessage = $this->__(
+                    'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under '
                     . '%sSystem > Config > Shipping Methods%s.',
-                '<a href="'
+                    '<a href="'
                     . $shippingMethodSectionurl
                     . '" target="_blank" title="'
                     . $this->__('Shipping Methods')
                     . '">',
-                '</a>'
-            );
+                    '</a>'
+                );
+            } else {
+                $errorMessage = $this->__(
+                    'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under '
+                    . 'System > Config > Shipping Methods.'
+                );
+            }
 
             $errors = array(
                 array(
@@ -664,7 +788,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                     'message' => $errorMessage,
                 )
             );
-            Mage::register($registryKey . '_errors', $errors);
+
+            Mage::register('postnl_core_is_enabled_errors', $errors);
             return false;
         }
 
@@ -673,30 +798,26 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          */
         $baseCurrencyCode = Mage::getModel('core/store')->load($storeId)->getBaseCurrencyCode();
         if ($baseCurrencyCode != 'EUR') {
-            Mage::register($registryKey, false);
-
             $errors = array(
                 array(
                     'code'    => 'POSTNL-0032',
                     'message' => $this->__("The shop's base currency code must be set to EUR for PostNL to function."),
                 )
             );
-            Mage::register($registryKey . '_errors', $errors);
+
+            Mage::register('postnl_core_is_enabled_errors', $errors);
             return false;
         }
 
-        Mage::register($registryKey, true);
         return true;
     }
 
     /**
      * Check if the required SOAP, OpenSSL and MCrypt PHP extensions are loaded.
      *
-     * @param string $registryKey
-     *
      * @return bool
      */
-    public function areRequiredPHPExtensionsLoaded($registryKey)
+    public function areRequiredPHPExtensionsLoaded()
     {
         $errors = array();
         if (!extension_loaded('soap')) {
@@ -730,11 +851,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Register any errors that may have ocurred and return false.
+         * Register any errors that may have occurred and return false.
          */
         if (!empty($errors)) {
-            Mage::register($registryKey . '_errors', $errors);
-
+            Mage::register('postnl_core_is_enabled_errors', $errors);
             return false;
         }
 
@@ -742,16 +862,46 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Check if the modules has been confgured.
-     * The required fields will only be checked to see if they're not empty. The values entered will not be validated
+     * Check if the modules has been configured.
+     * The required fields will only be checked to see if they're not empty. The values entered will not be validated.
      *
-     * @param int | boolean $storeId
-     * @param boolean $checkGlobal
+     * @param int|boolean  $storeId
      * @param null|boolean $forceTestMode
+     * @param boolean      $ignoreCache
      *
      * @return boolean
      */
-    public function isConfigured($storeId = false, $checkGlobal = false, $forceTestMode = null)
+    public function isConfigured($storeId = false, $forceTestMode = null, $ignoreCache = false)
+    {
+        if ($ignoreCache) {
+            $cache = false;
+        } else {
+            $cache = $this->getCache();
+        }
+
+        if ($cache && $cache->hasPostnlCoreIsConfigured()) {
+            return $cache->getPostnlCoreIsConfigured();
+        }
+
+        $isConfigured = $this->_isConfigured($storeId, $forceTestMode);
+
+        if ($cache) {
+            $cache->setPostnlCoreIsConfigured($isConfigured)
+                  ->saveCache();
+        }
+
+        return $isConfigured;
+    }
+
+    /**
+     * Checks if the PostNL extension is fully configured.
+     *
+     * @param int|boolean  $storeId
+     * @param null|boolean $forceTestMode
+     *
+     * @return bool
+     */
+    protected function _isConfigured($storeId, $forceTestMode)
     {
         if ($forceTestMode === null) {
             $testMode = $this->isTestMode();
@@ -759,19 +909,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $testMode = $forceTestMode;
         }
 
-        $registryKey = 'postnl_is_configured';
-        if ($checkGlobal) {
-            $registryKey .= '_global';
-        }
-        if ($testMode) {
-            $registryKey .= '_test';
-        }
-
-        if (Mage::registry($registryKey) !== null) {
-            return Mage::registry($registryKey);
-        }
-
         $errors = array();
+
+        Mage::unregister('postnl_core_is_configured_errors');
 
         /**
          * Check if the module has been activated
@@ -803,23 +943,95 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         $requiredFields = array_merge($modeFields, $baseFields);
 
-        /**
-         * If this check pertains to a global shipment, get the global shipments required fields as well
-         */
-        if ($checkGlobal !== false) {
-            $globalFields = $this->getGlobalShipmentsRequiredFields();
-            $requiredFields = array_merge($requiredFields, $globalFields);
-        }
+        $fieldErrors = $this->_getFieldsConfiguredErrors($requiredFields, $storeId);
+
+        $errors = array_merge($errors, $fieldErrors);
 
         /**
-         * Check if each required field is filled. If not add the field's label to an array of missing fields so we can
-         * later inform the merchant which fields exactly are missing.
-         *
-         * @var Varien_Simplexml_Element $section
+         * If any errors were detected, add them to the registry and return false
          */
-        $configFields = Mage::getSingleton('adminhtml/config');
-        $sections     = $configFields->getSections('postnl');
-        $section      = $sections->postnl;
+        if (!empty($errors)) {
+            Mage::register('postnl_core_is_configured_errors', $errors);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if configuration fields that are required for GlobalPack shipments are configured.
+     *
+     * @param boolean $storeId
+     * @param boolean $ignoreCache
+     *
+     * @return boolean
+     */
+    public function isGlobalConfigured($storeId = false, $ignoreCache = false)
+    {
+        if ($ignoreCache) {
+            $cache = false;
+        } else {
+            $cache = $this->getCache();
+        }
+
+        if ($cache && $cache->hasPostnlCoreIsGlobalConfigured()) {
+            return $cache->getPostnlCoreIsGlobalConfigured();
+        }
+
+        Mage::unregister('postnl_core_is_global_configured_errors');
+
+        if ($storeId === false) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $fields = $this->getGlobalShipmentsRequiredFields();
+
+        $errors = $this->_getFieldsConfiguredErrors($fields, $storeId);
+
+        if (!empty($errors)) {
+            Mage::register('postnl_core_is_global_configured_errors', $errors);
+
+            if ($cache) {
+                $cache->setPostnlCoreIsConfigured(false)
+                      ->saveCache();
+            }
+            return false;
+        }
+
+        if ($cache) {
+            $cache->setPostnlCoreIsGlobalConfigured(true)
+                  ->saveCache();
+        }
+        return true;
+    }
+
+    /**
+     * Checks if a specified array of fields are configured. If not, returns an array of errors.
+     *
+     * @param array $requiredFields
+     * @param int   $storeId
+     *
+     * @return array
+     */
+    protected function _getFieldsConfiguredErrors($requiredFields, $storeId)
+    {
+        $errors = array();
+
+        /**
+         * Check if each required field is filled.
+         */
+        if ($this->isSystemConfig() || $this->isLoggingEnabled()) {
+            /**
+             * If not, add the field's label to an array of missing fields so we can later inform the merchant which
+             * fields exactly are missing.
+             *
+             * @var Varien_Simplexml_Element $section
+             */
+            $configFields = Mage::getSingleton('adminhtml/config');
+            $sections     = $configFields->getSections('postnl');
+            $section      = $sections->postnl;
+        }
+
         foreach ($requiredFields as $requiredField) {
             $value = Mage::getStoreConfig($requiredField, $storeId);
 
@@ -827,38 +1039,37 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 continue;
             }
 
-            $fieldParts = explode('/', $requiredField);
-            $field = $fieldParts[2];
-            $group = $fieldParts[1];
+            if (isset($section)) {
+                $fieldParts = explode('/', $requiredField);
+                $field = $fieldParts[2];
+                $group = $fieldParts[1];
 
-            /**
-             * @var Varien_Simplexml_Element $sectionGroup
-             */
-            $sectionGroup = $section->groups->$group;
+                /**
+                 * @var Varien_Simplexml_Element $sectionGroup
+                 */
+                $sectionGroup = $section->groups->$group;
 
-            $label      = (string) $sectionGroup->fields->$field->label;
-            $groupLabel = (string) $sectionGroup->label;
-            $groupName  = $sectionGroup->getName();
+                $label      = (string) $sectionGroup->fields->$field->label;
+                $groupLabel = (string) $sectionGroup->label;
+                $groupName  = $sectionGroup->getName();
 
-            $errors[] = array(
-                'code'    => 'POSTNL-0034',
-                'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
-            );
+                $errors[] = array(
+                    'code'    => 'POSTNL-0034',
+                    'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
+                );
 
-            $this->saveConfigState(array('postnl_' . $groupName => 1));
+                if ($this->isSystemConfig()) {
+                    $this->saveConfigState(array('postnl_' . $groupName => 1));
+                }
+            } else {
+                $errors[] = array(
+                    'code'    => 'POSTNL-0160',
+                    'message' => $this->__('A required configuration value is missing: %s', $requiredField),
+                );
+            }
         }
 
-        /**
-         * If any errors were detected, add them to the registry and return false
-         */
-        if (!empty($errors)) {
-            Mage::register($registryKey, false);
-            Mage::register($registryKey . '_errors', $errors);
-            return false;
-        }
-
-        Mage::register($registryKey, true);
-        return true;
+        return $errors;
     }
 
     /**
@@ -983,7 +1194,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Logs a cron debug messageto a seperate file in order to differentiate it from other debug messages
+     * Logs a cron debug message to a separate file in order to differentiate it from other debug messages
      *
      * @param string $message
      * @param int    $level
@@ -1101,7 +1312,26 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Creates a seperate dir to log PostNL log files. Does nothing if the dir already exists
+     * Checks if the current page is the system/config page in the backend.
+     *
+     * @return bool
+     */
+    public function isSystemConfig()
+    {
+        if (!$this->isAdmin()) {
+            return false;
+        }
+
+        $request = Mage::app()->getRequest();
+        if ($request->getControllerName() == 'system_config' && $request->getActionName() == 'edit') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Creates a separate dir to log PostNL log files. Does nothing if the dir already exists.
      *
      * @return TIG_PostNL_Exception
      */
@@ -1242,7 +1472,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * If the session could not be loaded or is not of the corect type, throw an exception
+         * If the session could not be loaded or is not of the correct type, throw an exception
          */
         if (!$session
             || !is_object($session)

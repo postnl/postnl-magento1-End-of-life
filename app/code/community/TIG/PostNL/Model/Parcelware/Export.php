@@ -65,7 +65,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         }
 
         /**
-         * Prepare a transaction save object. We're going to edit all the postbl shipments that we're going to export,
+         * Prepare a transaction save object. We're going to edit all the postnl shipments that we're going to export,
          * however we want all of them to be saved at the same time AFTER the export has been generated.
          */
         $transactionSave = Mage::getModel('core/resource_transaction');
@@ -205,8 +205,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             $transactionSave->addObject($postnlShipment);
 
             /**
-             * If this is a multi-colli shipment we need to treat each parcel as a seperate shipment and therefore, as a
-             * seperate row in the csv export file.
+             * If this is a multi-colli shipment we need to treat each parcel as a separate shipment and therefore, as a
+             * separate row in the csv export file.
              */
             $parcelCount = $postnlShipment->getParcelCount();
             if ($parcelCount > 1) {

@@ -36,7 +36,6 @@
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-
 class TIG_PostNL_Model_Core_System_Config_Source_StreetField
 {
     /**
@@ -92,7 +91,17 @@ class TIG_PostNL_Model_Core_System_Config_Source_StreetField
             $website = Mage::getModel('core/website')->load($request->getParam('website'), 'code');
             $lineCount = $website->getConfig(self::XML_PATH_COMMUNITY_STREET_LINES, $website->getId());
         } else {
-            $lineCount = Mage::getStoreConfig(self::XML_PATH_COMMUNITY_STREET_LINES, Mage_Core_Model_App::ADMIN_STORE_ID);
+            $lineCount = Mage::getStoreConfig(
+                self::XML_PATH_COMMUNITY_STREET_LINES,
+                Mage_Core_Model_App::ADMIN_STORE_ID
+            );
+        }
+
+        /**
+         * It's possible to leave the streetfield empty in community. In that case, the default value of 2 will be used.
+         */
+        if (!$lineCount) {
+            $lineCount = 2;
         }
 
         /**

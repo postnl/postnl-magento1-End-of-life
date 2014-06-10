@@ -91,7 +91,11 @@
                    <?php endif ?>
 
                    <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
-                   <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote())
+                   <?php $_canUseDeliveryOptions = false; ?>
+                   <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote()) && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
+                       <?php $_canUseDeliveryOptions = true; ?>
+                   <?php endif; ?>
+                   <?php if ($_canUseDeliveryOptions
                        && in_array($_rate->getCode(), $_postnlShippingMethods)
                        && $this->getChild('postnl.delivery.options')
                    ): ?>

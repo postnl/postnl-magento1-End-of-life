@@ -46,37 +46,37 @@
 class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 {
     /**
-     * The block we want to edit
+     * The block we want to edit.
      */
     const ORDER_GRID_BLOCK_NAME = 'adminhtml/sales_order_grid';
 
     /**
-     * variable name for order grid filter
+     * variable name for order grid filter.
      */
     const ORDER_GRID_FILTER_VAR_NAME = 'sales_order_gridfilter';
 
     /**
-     * variable name for order grid sorting
+     * variable name for order grid sorting.
      */
     const ORDER_GRID_SORT_VAR_NAME = 'sales_order_gridsort';
 
     /**
-     * variable name for order grid sorting direction
+     * variable name for order grid sorting direction.
      */
     const ORDER_GRID_DIR_VAR_NAME = 'sales_order_griddir';
 
     /**
-     * XML path to show_grid_options setting
+     * XML path to show_grid_options setting.
      */
     const XML_PATH_SHOW_OPTIONS = 'postnl/cif_labels_and_confirming/show_grid_options';
 
     /**
-     * XML path to show shipment type column setting
+     * XML path to show shipment type column setting.
      */
     const XML_PATH_SHOW_SHIPMENT_TYPE_COLUMN = 'postnl/cif_labels_and_confirming/show_shipment_type_column';
 
     /**
-     * Edits the sales order grid by adding a mass action to create shipments for selected orders
+     * Edits the sales order grid by adding a mass action to create shipments for selected orders.
      *
      * @param Varien_Event_Observer $observer
      *
@@ -89,13 +89,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     public function modifyGrid(Varien_Event_Observer $observer)
     {
         /**
-         * check if the extension is active
-         */
-        if (!Mage::helper('postnl')->isEnabled()) {
-            return $this;
-        }
-
-        /**
          * Checks if the current block is the one we want to edit.
          *
          * Unfortunately there is no unique event for this block.
@@ -104,6 +97,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $orderGridClass = Mage::getConfig()->getBlockClassName(self::ORDER_GRID_BLOCK_NAME);
 
         if (!($block instanceof $orderGridClass)) {
+            return $this;
+        }
+
+        /**
+         * check if the extension is active
+         */
+        if (!Mage::helper('postnl')->isEnabled()) {
             return $this;
         }
 
@@ -134,7 +134,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $this->_applySortAndFilter($collection);
         $this->_addMassaction($block);
 
-        $block->setCollection($this->getCollection());
+        $block->setCollection($collection);
         return $this;
     }
 
@@ -210,7 +210,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $massactionColumn
          */
         $massactionColumn = $block->getColumn('massaction');
-        if ($incrementIdColumn) {
+        if ($massactionColumn) {
             $massactionColumn->setFilterIndex('main_table.entity_id');
         }
 
@@ -218,7 +218,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $statusColumn
          */
         $statusColumn = $block->getColumn('status');
-        if ($incrementIdColumn) {
+        if ($statusColumn) {
             $statusColumn->setFilterIndex('main_table.status');
         }
 
@@ -226,7 +226,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $createdAtColumn
          */
         $createdAtColumn = $block->getColumn('created_at');
-        if ($incrementIdColumn) {
+        if ($createdAtColumn) {
             $createdAtColumn->setFilterIndex('main_table.created_at');
         }
 
@@ -234,7 +234,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $baseGrandTotalColumn
          */
         $baseGrandTotalColumn = $block->getColumn('base_grand_total');
-        if ($incrementIdColumn) {
+        if ($baseGrandTotalColumn) {
             $baseGrandTotalColumn->setFilterIndex('main_table.base_grand_total');
         }
 
@@ -242,8 +242,16 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * @var Mage_Adminhtml_Block_Widget_Grid_Column $grandTotalColumn
          */
         $grandTotalColumn = $block->getColumn('grand_total');
-        if ($incrementIdColumn) {
+        if ($grandTotalColumn) {
             $grandTotalColumn->setFilterIndex('main_table.grand_total');
+        }
+
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Grid_Column $storeIdColumn
+         */
+        $storeIdColumn = $block->getColumn('store_id');
+        if ($storeIdColumn) {
+            $storeIdColumn->setFilterIndex('main_table.store_id');
         }
 
         return $this;
@@ -477,8 +485,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 
         /**
          * If the filter condition is NL, filter out all orders not being shipped to the Netherlands. PakjeGemak,
-         * PakjeGmak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
-         * need to explicitely filter those as well.
+         * PakjeeGmak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
+         * need to explicitly filter those as well.
          */
         if ($filterCond == 'nl') {
             $collection->addFieldToFilter('country_id', $cond);

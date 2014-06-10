@@ -55,9 +55,20 @@ class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
      */
     public function isMijnpakketLoginActive()
     {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlMijnpakketIsActive()) {
+            return $cache->getPostnlMijnpakketIsActive();
+        }
+
         $storeId = Mage::app()->getStore()->getId();
 
         $isActive = Mage::getStoreConfigFlag(self::XPATH_MIJNPAKKET_LOGIN_ACTIVE, $storeId);
+
+        if ($cache) {
+            $cache->setPostnlMijnpakketIsActive($isActive)
+                  ->saveCache();
+        }
 
         return $isActive;
     }

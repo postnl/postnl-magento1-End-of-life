@@ -163,7 +163,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         }
 
         /**
-         * Get the diutch track & trace URL for dutch shipments or for the admin
+         * Get the dutch track & trace URL for dutch shipments or for the admin
          */
         if ($forceNl
             || (!empty($countryCode)

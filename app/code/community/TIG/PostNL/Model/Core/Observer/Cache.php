@@ -35,86 +35,14 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @method boolean hasIsOsc()
  */
-class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOptions_Template
+class TIG_PostNL_Model_Core_Observer_Cache
 {
-    /**
-     * @var string
-     */
-    protected $_eventPrefix = 'postnl_deliveryoptions_theme';
-
-    /**
-     * @var string
-     */
-    protected $_template = 'TIG/PostNL/delivery_options/theme.phtml';
-
-    /**
-     * Gets whether the current checkout page is OneStepCheckout.
-     *
-     * @return boolean|mixed
-     */
-    public function getIsOsc()
+    public function cleanCache()
     {
-        if (!$this->hasIsOsc()) {
-            return false;
-        }
+        $cache = Mage::getSingleton('postnl_core/cache');
+        $cache->cleanCache();
 
-        return $this->_getData('is_osc');
-    }
-
-    /**
-     * Gets a css file path for the current theme.
-     *
-     * @return string
-     */
-    public function getThemeCssFile()
-    {
-        /**
-         * @var Varien_Simplexml_Element $theme
-         */
-        $theme = $this->getCurrentTheme();
-        if (!$theme) {
-            return '';
-        }
-
-        /**
-         * @var Varien_Simplexml_Element $files
-         */
-        $files = $theme->files;
-        if (!$files) {
-            return '';
-        }
-
-        if ($this->getIsOsc()) {
-            $file = (string) $files->onestepcheckout;
-        } else {
-            $file = (string) $files->onepage;
-        }
-
-        return $file;
-    }
-
-    /**
-     * Check if PostNL delivery options are available for the current quote.
-     *
-     * @return string
-     */
-    protected function _toHtml()
-    {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
-
-        $helper = Mage::helper('postnl/deliveryOptions');
-
-        if (!$helper->canUseDeliveryOptions($quote)) {
-            return '';
-        }
-
-        if (!$this->getThemeCssFile()) {
-            return '';
-        }
-
-        return parent::_toHtml();
+        return $this;
     }
 }

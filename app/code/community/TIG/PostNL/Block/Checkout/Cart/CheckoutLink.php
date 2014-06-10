@@ -130,9 +130,9 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends TIG_PostNL_Block_Core_
          * If Checkout is not available, log the reason why for debugging purposes
          */
         if (!$canUseCheckout && Mage::registry('postnl_checkout_logged') === null) {
-            $configErrors = Mage::registry('postnl_is_configured_checkout_errors');
+            $configErrors = Mage::registry('postnl_checkout_is_configured_errors');
             if (is_null($configErrors)) {
-                $configErrors = Mage::registry('postnl_enabled_checkout_errors');
+                $configErrors = Mage::registry('postnl_checkout_is_enabled_errors');
             }
 
             if (is_null($configErrors)) {
@@ -226,7 +226,7 @@ class TIG_PostNL_Block_Checkout_Cart_CheckoutLink extends TIG_PostNL_Block_Core_
             /**
              * If Checkout is not available, log the reason why for debugging purposes
              */
-            $configErrors = Mage::registry('postnl_enabled_checkout_errors');
+            $configErrors = Mage::registry('postnl_checkout_is_enabled_errors');
 
             if (is_null($configErrors)) {
                 return '';

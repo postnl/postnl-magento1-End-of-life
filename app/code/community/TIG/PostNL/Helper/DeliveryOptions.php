@@ -70,7 +70,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_SHIPPING_DURATION = 'postnl/delivery_options/shipping_duration';
 
     /**
-     * The time (as H * 100 + i) we consider to be the start of the evening.
+     * The time we consider to be the start of the evening.
      */
     const EVENING_TIME = 1900;
 
@@ -307,7 +307,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Check if an array of business hours contains a timespan that is condiered to be in the evening.
+     * Check if an array of business hours contains a timespan that is considered to be in the evening.
      *
      * @param array $businessHours
      *
@@ -353,38 +353,76 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Checks if PakjeGemak is available.
      *
-     * @param int|boolean $storeId
+     * @param boolean $storeId
      *
      * @return boolean
      */
     public function canUsePakjeGemak($storeId = false)
     {
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakjeGemak()) {
+            return $cache->getPostnlDeliveryOptionsCanUsePakjeGemak();
         }
+
+        $allowed = $this->_canUsePakjeGemak();
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUsePakjeGemak($allowed)
+                  ->saveCache();
+        }
+        return $allowed;
+    }
+
+    /**
+     * Checks if PakjeGemak is available.
+     *
+     * @return boolean
+     */
+    protected function _canUsePakjeGemak()
+    {
+        $storeId = Mage::app()->getStore()->getId();
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK, $storeId);
         if (!$enabled) {
             return false;
         }
 
-        $canUsePakjeGemak = parent::canUsePakjeGemak($storeId);
+        $allowed = parent::canUsePakjeGemak($storeId);
 
-        return $canUsePakjeGemak;
+        return $allowed;
     }
 
     /**
      * Checks if PakjeGemak Express is available.
      *
-     * @param int|boolean $storeId
+     * @return boolean
+     */
+    public function canUsePakjeGemakExpress()
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakjeGemakExpress()) {
+            return $cache->getPostnlDeliveryOptionsCanUsePakjeGemakExpress();
+        }
+
+        $allowed = $this->_canUsePakjeGemakExpress();
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUsePakjeGemakExpress($allowed)
+                  ->saveCache();
+        }
+        return $allowed;
+    }
+
+    /**
+     * Checks if PakjeGemak Express is available.
      *
      * @return boolean
      */
-    public function canUsePakjeGemakExpress($storeId = false)
+    protected function _canUsePakjeGemakExpress()
     {
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
+        $storeId = Mage::app()->getStore()->getId();
 
         if (!$this->canUsePakjeGemak($storeId)) {
             return false;
@@ -398,25 +436,44 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $pgeOptions = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions')
                           ->getAvailablePgeOptions($storeId);
 
-        if (empty($pgeOptions)) {
-            return false;
+        $allowed = false;
+        if (!empty($pgeOptions)) {
+            $allowed = true;
         }
 
-        return true;
+        return $allowed;
     }
 
     /**
      * Checks if 'pakket automaat' is available.
      *
-     * @param int|boolean $storeId
+     * @return boolean
+     */
+    public function canUsePakketAutomaat()
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakketAutomaat()) {
+            return $cache->getPostnlDeliveryOptionsCanUsePakketAutomaat();
+        }
+
+        $allowed = $this->_canUsePakketAutomaat();
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUsePakketAutomaat($allowed)
+                  ->saveCache();
+        }
+        return $allowed;
+    }
+
+    /**
+     * Checks if 'pakket automaat' is available.
      *
      * @return boolean
      */
-    public function canUsePakketAutomaat($storeId = false)
+    protected function _canUsePakketAutomaat()
     {
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
+        $storeId = Mage::app()->getStore()->getId();
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS, $storeId);
         if (!$enabled) {
@@ -426,45 +483,70 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $pakketautomaatOptions = Mage::getModel('postnl_core/system_config_source_pakketautomaatProductOptions')
                                      ->getAvailableOptions($storeId);
 
-        if (empty($pakketautomaatOptions)) {
-            return false;
+        $allowed = false;
+        if (!empty($pakketautomaatOptions)) {
+            $allowed = true;
         }
 
-        return true;
+        return $allowed;
     }
 
     /**
      * Checks if timeframes are available.
      *
-     * @param int|boolean $storeId
-     *
      * @return boolean
      */
-    public function canUseTimeframes($storeId = false)
+    public function canUseTimeframes()
     {
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseTimeframes()) {
+            return $cache->getPostnlDeliveryOptionsCanUseTimeframes();
         }
 
-        $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_TIMEFRAMES, $storeId);
+        $storeId = Mage::app()->getStore()->getId();
 
-        return $enabled;
+        $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_TIMEFRAMES, $storeId);
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUseTimeframes($allowed)
+                  ->saveCache();
+        }
+        return $allowed;
     }
 
     /**
      * Checks if evening timeframes are available.
      *
-     * @param int|boolean $storeId
+     * @return boolean
+     */
+    public function canUseEveningTimeframes()
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseEveningTimeframes()) {
+            return $cache->getPostnlDeliveryOptionsCanUseEveningTimeframes();
+        }
+
+        $allowed = $this->_canUseEveningTimeframes();
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUseEveningTimeframes($allowed)
+                  ->saveCache();
+        }
+        return $allowed;
+    }
+
+    /**
+     * Checks if evening timeframes are available.
      *
      * @return boolean
      */
-    public function canUseEveningTimeframes($storeId = false)
+    protected function _canUseEveningTimeframes()
     {
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
+        $storeId = Mage::app()->getStore()->getId();
 
-        if (!$this->canUseTimeframes($storeId)) {
+        if (!$this->canUseTimeframes()) {
             return false;
         }
 
@@ -476,27 +558,35 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $eveningOptions = Mage::getModel('postnl_core/system_config_source_standardProductOptions')
                               ->getAvailableAvondOptions($storeId);
 
-        if (empty($eveningOptions)) {
-            return false;
+        $allowed = false;
+        if (!empty($eveningOptions)) {
+            $allowed = true;
         }
 
-        return true;
+        return $allowed;
     }
 
     /**
      * Checks if sunday sorting is allowed.
      *
-     * @param bool $storeId
-     *
      * @return bool
      */
-    public function canUseSundaySorting($storeId = false)
+    public function canUseSundaySorting()
     {
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseSundaySorting()) {
+            return $cache->getPostnlDeliveryOptionsCanUseSundaySorting();
         }
 
+        $storeId = Mage::app()->getStore()->getId();
+
         $allowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsCanUseSundaySorting($allowed)
+                  ->saveCache();
+        }
 
         return $allowed;
     }
@@ -505,26 +595,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * Check if PostNL delivery options may be used based on a quote.
      *
      * @param Mage_Sales_Model_Quote|boolean $quote
-     * @param boolean $checkCountry
      *
      * @return boolean
      */
-    public function canUseDeliveryOptions($quote = false, $checkCountry = true)
+    public function canUseDeliveryOptions($quote = false)
     {
         $registryKey = 'can_use_delivery_options';
-        if ($quote) {
+        if ($quote && $quote->getId()) {
             $registryKey .= '_quote_id_' . $quote->getId();
-        }
-
-        if ($checkCountry) {
-            $registryKey .= '_check_country';
         }
 
         if (Mage::registry($registryKey) !== null) {
             return Mage::registry($registryKey);
         }
 
-        Mage::unregister('postnl_enabled_delivery_options_errors');
+        Mage::unregister('postnl_delivery_options_can_use_delivery_options_errors');
 
         $deliveryOptionsEnabled = $this->isDeliveryOptionsEnabled();
         if (!$deliveryOptionsEnabled) {
@@ -542,7 +627,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     'message' => $this->__('The quote is virtual.'),
                 )
             );
-            Mage::register('postnl_enabled_delivery_options_errors', $errors);
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
             Mage::register($registryKey, false);
             return false;
         }
@@ -557,7 +642,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     'message' => $this->__("The quote's grand total is below the minimum amount required."),
                 )
             );
-            Mage::register('postnl_enabled_delivery_options_errors', $errors);
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
             Mage::register($registryKey, false);
             return false;
         }
@@ -574,26 +659,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     ),
                 )
             );
-            Mage::register('postnl_enabled_delivery_options_errors', $errors);
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
             Mage::register($registryKey, false);
             return false;
-        }
-
-        if ($quote && $checkCountry) {
-            $shippingAddress = $quote->getShippingAddress();
-            if ($shippingAddress->getCountry() != 'NL') {
-                $errors = array(
-                    array(
-                        'code'    => 'POSTNL-0132',
-                        'message' => $this->__(
-                            'PostNL delivery options are only available for Dutch shipping addresses.'
-                        ),
-                    )
-                );
-                Mage::register('postnl_enabled_delivery_options_errors', $errors);
-                Mage::register($registryKey, false);
-                return false;
-            }
         }
 
         /**
@@ -622,7 +690,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                         ),
                     )
                 );
-                Mage::register('postnl_enabled_delivery_options_errors', $errors);
+                Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
                 Mage::register($registryKey, false);
                 return false;
             }
@@ -642,13 +710,34 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                         'message' => $this->__('One or more items in the cart are out of stock.'),
                     )
                 );
-                Mage::register('postnl_enabled_delivery_options_errors', $errors);
+                Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
                 Mage::register($registryKey, false);
                 return false;
             }
         }
 
         Mage::register($registryKey, true);
+        return true;
+    }
+
+    /**
+     * Checks if the delivery options may be used for the currently chosen shipping destination.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return boolean
+     */
+    public function canUseDeliveryOptionsForCountry(Mage_Sales_Model_Quote $quote)
+    {
+        $shippingAddress = $quote->getShippingAddress();
+        if (!$shippingAddress) {
+            return false;
+        }
+
+        if ($shippingAddress->getCountry() != 'NL') {
+            return false;
+        }
+
         return true;
     }
 
@@ -684,15 +773,38 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function isDeliveryOptionsEnabled($storeId = null)
     {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsIsEnabled()) {
+            return $cache->getPostnlDeliveryOptionsIsEnabled();
+        }
+
+        $isEnabled = $this->_isDeliveryOptionsEnabled($storeId);
+
+        if ($cache) {
+            $cache->setPostnlDeliveryOptionsIsEnabled($isEnabled)
+                  ->saveCache();
+        }
+
+        return $isEnabled;
+    }
+
+    /**
+     * Checks if PostNL delivery options are enabled.
+     *
+     * @param null|int $storeId
+     *
+     * @return bool
+     */
+    protected function _isDeliveryOptionsEnabled($storeId = null)
+    {
         if (is_null($storeId)) {
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        if (Mage::registry('postnl_enabled_delivery_options_errors')) {
-            Mage::unregister('postnl_enabled_delivery_options_errors');
-        }
+        Mage::unregister('postnl_delivery_options_is_enabled_errors');
 
-        $isPostnlEnabled = $this->isEnabled($storeId, false, $this->isTestMode());
+        $isPostnlEnabled = $this->isEnabled($storeId);
         if ($isPostnlEnabled === false) {
             $errors = array(
                 array(
@@ -700,7 +812,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     'message' => $this->__('You have not yet enabled the PostNL extension.'),
                 )
             );
-            Mage::register('postnl_enabled_delivery_options_errors', $errors);
+            Mage::register('postnl_delivery_options_is_enabled_errors', $errors);
             return false;
         }
 
@@ -712,7 +824,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     'message' => $this->__('You have not yet enabled PostNL delivery options.'),
                 )
             );
-            Mage::register('postnl_enabled_delivery_options_errors', $errors);
+            Mage::register('postnl_delivery_options_is_enabled_errors', $errors);
             return false;
         }
 

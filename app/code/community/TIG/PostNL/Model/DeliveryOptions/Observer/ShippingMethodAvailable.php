@@ -69,7 +69,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
          * Check if delivery options are available for the current quote.
          */
         $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $canUseDeliveryOptions = Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($quote, false);
+        $canUseDeliveryOptions = Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($quote);
 
         $this->setCanUseDeliveryOptions($canUseDeliveryOptions);
         return $this->_canUseDeliveryOptions;

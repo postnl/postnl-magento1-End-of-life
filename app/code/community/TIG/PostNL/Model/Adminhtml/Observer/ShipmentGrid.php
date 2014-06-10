@@ -130,13 +130,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     public function modifyGrid(Varien_Event_Observer $observer)
     {
         /**
-         * check if the extension is active
-         */
-        if (!Mage::helper('postnl')->isEnabled()) {
-            return $this;
-        }
-
-        /**
          * Checks if the current block is the one we want to edit.
          *
          * Unfortunately there is no unique event for this block
@@ -145,6 +138,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $shipmentGridClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_GRID_BLOCK_NAME);
 
         if (!($block instanceof $shipmentGridClass)) {
+            return $this;
+        }
+
+        /**
+         * check if the extension is active
+         */
+        if (!Mage::helper('postnl')->isEnabled()) {
             return $this;
         }
 
@@ -363,6 +363,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'align'            => 'left',
                     'index'            => 'product_code',
                     'type'             => 'options',
+                    'filter_index'     => 'postnl_shipment.product_code',
                     'column_css_class' => 'nobr',
                     'options'          => Mage::getModel('postnl_core/system_config_source_allProductOptions')
                                               ->getAvailableOptions(false, true, false, false, true, false),
@@ -521,8 +522,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 ),
                 $after
             );
-
-            $after = 'shipping_phase';
         }
 
         $actionColumn = $block->getColumn('action');
@@ -982,8 +981,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 
         /**
          * If the filter condition is NL, filter out all orders not being shipped to the Netherlands. PakjeGemak,
-         * PakjeGmak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
-         * need to explicitely filter those as well.
+         * PakjeGemak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
+         * need to explicitly filter those as well.
          */
         if ($filterCond == 'nl') {
             $collection->addFieldToFilter('country_id', $cond);
