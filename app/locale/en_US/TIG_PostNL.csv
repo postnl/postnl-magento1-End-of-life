@@ -46,7 +46,7 @@ TIG_PostNL::Contact Email,Contact Email
 TIG_PostNL::Confirming & Label Printing Settings,Confirming & Label Printing Settings
 TIG_PostNL::Mode,Mode
 TIG_PostNL::Label size,Label size
-TIG_PostNL::This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4. Single Dutch or EPS labels are always printed in A6.,This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4. Single Dutch or EPS labels are always printed in A6.
+TIG_PostNL::This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4.,This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4.
 TIG_PostNL::Maximum weight per parcel,Maximum weight per parcel
 "TIG_PostNL::Determine the maximum weight of each parcel. If a shipment's total weight exceeds this, the shipment will be spread out over multiple parcels.","Determine the maximum weight of each parcel. If a shipment's total weight exceeds this, the shipment will be spread out over multiple parcels."
 TIG_PostNL::Weight unit,Weight unit
@@ -873,3 +873,4 @@ TIG_PostNL::Send a copy of the track & trace email,Send a copy of the track & tr
 TIG_PostNL::Send track & trace email copy to,Send track & trace email copy to
 TIG_PostNL::You can enter multiple email addresses seperated by commas.,You can enter multiple email addresses seperated by commas.
 TIG_PostNL::Track & trace email copy method,Track & trace email copy method
+PostNL configuration.,PostNL configuration.
