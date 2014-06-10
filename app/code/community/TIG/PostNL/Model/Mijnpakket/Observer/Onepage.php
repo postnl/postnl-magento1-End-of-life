@@ -49,6 +49,11 @@ class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
     const SUCCESS_BLOCK_NAME = 'checkout/onepage_success';
 
     /**
+     * Xpath to the MijnPakket notification setting.
+     */
+    const XPATH_MIJNPAKKET_NOTIFICATION = 'postnl/delivery_options/mijnpakket_notification';
+
+    /**
      * The new template.
      */
     const ACCOUNT_NOTIFICATION_TEMPLATE = 'TIG/PostNL/mijnpakket/onepage/success.phtml';
@@ -98,6 +103,13 @@ class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
         }
 
         if (!Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions()) {
+            return $this;
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $canShowNotification = Mage::getStoreConfigFlag(self::XPATH_MIJNPAKKET_NOTIFICATION, $storeId);
+
+        if (!$canShowNotification) {
             return $this;
         }
 
