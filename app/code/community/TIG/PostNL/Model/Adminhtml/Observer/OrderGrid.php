@@ -89,13 +89,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     public function modifyGrid(Varien_Event_Observer $observer)
     {
         /**
-         * check if the extension is active
-         */
-        if (!Mage::helper('postnl')->isEnabled()) {
-            return $this;
-        }
-
-        /**
          * Checks if the current block is the one we want to edit.
          *
          * Unfortunately there is no unique event for this block.
@@ -108,7 +101,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         /**
-         * @var Mage_Adminhtml_Block_Sales_Order_Grid      $block
+         * check if the extension is active
+         */
+        if (!Mage::helper('postnl')->isEnabled()) {
+            return $this;
+        }
+
+        /**
+         * @var Mage_Adminhtml_Block_Sales_Order_Grid $block
          * @var Mage_Sales_Model_Resource_Order_Collection $currentCollection
          */
         $currentCollection = $block->getCollection();

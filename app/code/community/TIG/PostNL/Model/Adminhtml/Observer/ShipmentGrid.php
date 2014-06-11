@@ -130,13 +130,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     public function modifyGrid(Varien_Event_Observer $observer)
     {
         /**
-         * check if the extension is active
-         */
-        if (!Mage::helper('postnl')->isEnabled()) {
-            return $this;
-        }
-
-        /**
          * Checks if the current block is the one we want to edit.
          *
          * Unfortunately there is no unique event for this block
@@ -145,6 +138,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $shipmentGridClass = Mage::getConfig()->getBlockClassName(self::SHIPMENT_GRID_BLOCK_NAME);
 
         if (!($block instanceof $shipmentGridClass)) {
+            return $this;
+        }
+
+        /**
+         * check if the extension is active
+         */
+        if (!Mage::helper('postnl')->isEnabled()) {
             return $this;
         }
 

@@ -48,15 +48,21 @@
 <?php if (!($_shippingRateGroups = $this->getShippingRates())): ?>
     <strong><?php echo $this->__('Sorry, no quotes are available for this order at this time.') ?></strong>
 <?php else: ?>
+    <?php $_canUseDeliveryOptions = false; ?>
+    <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
+
+    <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote())
+        && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
+        <?php $_canUseDeliveryOptions = true; ?>
+    <?php endif; ?>
     <?php if (count($_shippingRateGroups)=='1' && Mage::getStoreConfig('onestepcheckout/general/hide_shipping_method')):?>
         <dl class="shipment-methods" style="display: none">
+
             <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
             <dd><?php echo $this->getCarrierName($code) ?></dd>
                 <?php foreach ($_rates as $_rate): ?>
-
                     <?php $_isPostnl = false; ?>
-                    <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
-                    <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote())
+                    <?php if ($_canUseDeliveryOptions
                         && in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
                         <?php $_isPostnl = true; ?>
                     <?php endif; ?>
@@ -95,10 +101,8 @@
             <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
                 <dd><?php echo $this->getCarrierName($code) ?></dd>
                     <?php foreach ($_rates as $_rate): ?>
-
                         <?php $_isPostnl = false; ?>
-                        <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
-                        <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote())
+                        <?php if ($_canUseDeliveryOptions
                             && in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
                             <?php $_isPostnl = true; ?>
                         <?php endif; ?>

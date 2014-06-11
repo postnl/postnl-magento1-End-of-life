@@ -35,36 +35,14 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @method boolean                        hasIsTestMode()
- * @method TIG_PostNL_Block_Mijnpakket_Js setIsTestMode(boolean $value)
- * @method boolean                        hasBaseUrl()
- * @method TIG_PostNL_Block_Mijnpakket_Js setBaseUrl(string $value)
  */
-class TIG_PostNL_Block_Mijnpakket_OrderSuccessJs extends TIG_PostNL_Block_Checkout_Cart_Js
+class TIG_PostNL_Model_Core_Observer_Cache
 {
-    /**
-     * @var string
-     */
-    protected $_eventPrefix = 'postnl_mijnpakket_ordersuccessjs';
-
-    /**
-     * @var string
-     */
-    protected $_template = 'TIG/PostNL/mijnpakket/order_success_js.phtml';
-
-    /**
-     * Check if the MijnPakket notification may be shown.
-     *
-     * @return string
-     */
-    protected function _tohtml()
+    public function cleanCache()
     {
-        $helper = Mage::helper('postnl/mijnpakket');
-        if (!$helper->canShowMijnpakketNotification()) {
-            return '';
-        }
+        $cache = Mage::getSingleton('postnl_core/cache');
+        $cache->cleanCache();
 
-        return TIG_PostNL_Block_Core_Template::_toHtml();
+        return $this;
     }
 }

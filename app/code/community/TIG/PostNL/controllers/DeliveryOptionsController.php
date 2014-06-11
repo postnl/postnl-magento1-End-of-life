@@ -557,7 +557,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $helper = Mage::helper('postnl/deliveryOptions');
 
         $quote = Mage::getSingleton('checkout/session')->getQuote();
-        $canUseDeliveryOptions = $helper->canUseDeliveryOptions($quote);
+
+        $canUseDeliveryOptions = false;
+        if ($helper->canUseDeliveryOptions($quote) && $helper->canUseDeliveryOptionsForCountry($quote)) {
+            $canUseDeliveryOptions = true;
+        }
 
         $this->setCanUseDeliveryOptions($canUseDeliveryOptions);
         return $canUseDeliveryOptions;

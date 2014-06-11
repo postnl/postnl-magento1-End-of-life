@@ -296,7 +296,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $isPostnlEnabled = $this->isEnabled($storeId, false);
+        $isPostnlEnabled = $this->isEnabled($storeId);
         if (!$isPostnlEnabled) {
             return false;
         }

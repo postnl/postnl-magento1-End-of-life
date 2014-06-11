@@ -45,18 +45,18 @@
 		</TIG_PostNL>
 	</modules>
 
-	<global>
-		<blocks>
-        	<!-- Block definitions per submodule -->
-			<postnl>
-				<class>TIG_PostNL_Block</class>
-			</postnl>
-			<postnl_core>
-				<class>TIG_PostNL_Block_Core</class>
-			</postnl_core>
-			<postnl_adminhtml>
-				<class>TIG_PostNL_Block_Adminhtml</class>
-			</postnl_adminhtml>
+    <global>
+        <blocks>
+            <!-- Block definitions per submodule -->
+            <postnl>
+                <class>TIG_PostNL_Block</class>
+            </postnl>
+            <postnl_core>
+                <class>TIG_PostNL_Block_Core</class>
+            </postnl_core>
+            <postnl_adminhtml>
+                <class>TIG_PostNL_Block_Adminhtml</class>
+            </postnl_adminhtml>
             <postnl_checkout>
                 <class>TIG_PostNL_Block_Checkout</class>
             </postnl_checkout>
@@ -76,7 +76,7 @@
 			</postnl>
 		</helpers>
         <models>
-        	<!-- Model definitions per submodule -->
+            <!-- Model definitions per submodule -->
             <postnl>
                 <class>TIG_PostNL_Model</class>
                 <resourceModel>postnl_resource</resourceModel>
@@ -90,7 +90,7 @@
                 <resourceModel>postnl_carrier_resource</resourceModel>
             </postnl_carrier>
             <postnl_adminhtml>
-            	<class>TIG_PostNL_Model_Adminhtml</class>
+                <class>TIG_PostNL_Model_Adminhtml</class>
             </postnl_adminhtml>
             <postnl_extensioncontrol>
                 <class>TIG_PostNL_Model_ExtensionControl</class>
@@ -160,36 +160,36 @@
             </postnl_setup>
             <postnl_write>
                 <connection>
-                	<use>core_write</use>
+                    <use>core_write</use>
                 </connection>
             </postnl_write>
             <postnl_read>
                 <connection>
-               		<use>core_read</use>
-            	</connection>
+                    <use>core_read</use>
+                </connection>
             </postnl_read>
         </resources>
         <events>
-        	<sales_order_shipment_save_after>
-        		<observers>
-        			<!-- Creates a postnl shipment entity and generates a barcode through CIF-->
-        			<postnl_shipment_generate_barcode>
-					    <type>model</type>
-					    <class>postnl_core/observer_barcode</class>
-					    <method>generateBarcode</method>
-        			</postnl_shipment_generate_barcode>
-        		</observers>
-        	</sales_order_shipment_save_after>
-        	<order_cancel_after>
-        	    <observers>
-        	        <!-- Checks if this order has a PostNL Checkout order and if so, cancels it -->
-        	        <postnl_cancel_checkout_order>
-        	            <type>model</type>
+            <sales_order_shipment_save_after>
+                <observers>
+                    <!-- Creates a postnl shipment entity and generates a barcode through CIF-->
+                    <postnl_shipment_generate_barcode>
+                        <type>model</type>
+                        <class>postnl_core/observer_barcode</class>
+                        <method>generateBarcode</method>
+                    </postnl_shipment_generate_barcode>
+                </observers>
+            </sales_order_shipment_save_after>
+            <order_cancel_after>
+                <observers>
+                    <!-- Checks if this order has a PostNL Checkout order and if so, cancels it -->
+                    <postnl_cancel_checkout_order>
+                        <type>model</type>
                         <class>postnl_checkout/observer_order</class>
                         <method>cancelOrder</method>
-        	        </postnl_cancel_checkout_order>
-        	    </observers>
-        	</order_cancel_after>
+                    </postnl_cancel_checkout_order>
+                </observers>
+            </order_cancel_after>
             <sales_order_place_after>
                 <observers>
                     <!-- Update an associated PostNL order. -->
@@ -225,7 +225,26 @@
                 <postnl>PostNL Payment Methods</postnl>
             </groups>
         </payment>
-	</global>
+        <cache>
+            <types>
+                <postnl_config translate="label,description" module="postnl">
+                    <label>PostNL</label>
+                    <description>PostNL configuration.</description>
+                    <tags>POSTNL_CONFIG</tags>
+                </postnl_config>
+            </types>
+        </cache>
+        <sales>
+            <quote>
+                <item>
+                    <product_attributes>
+                        <postnl_shipping_duration/>
+                        <postnl_allow_delivery_options/>
+                    </product_attributes>
+                </item>
+            </quote>
+        </sales>
+    </global>
 
     <admin>
         <routers>
@@ -287,11 +306,32 @@
                 <observers>
                     <!-- Admin logging -->
                     <postnl_enterprise_logging>
+                        <type>model</type>
                         <class>postnl/admin_logging_observer</class>
                         <method>controllerPostdispatch</method>
                     </postnl_enterprise_logging>
                 </observers>
             </controller_action_postdispatch_postnl>
+            <admin_system_config_changed_section_postnl>
+                <observers>
+                    <!-- Clean PostNL config cache -->
+                    <postnl_clean_cache>
+                        <type>model</type>
+                        <class>postnl_core/observer_cache</class>
+                        <method>cleanCache</method>
+                    </postnl_clean_cache>
+                </observers>
+            </admin_system_config_changed_section_postnl>
+            <admin_system_config_changed_section_carrier>
+                <observers>
+                    <!-- Clean PostNL config cache -->
+                    <postnl_clean_cache>
+                        <type>model</type>
+                        <class>postnl_core/observer_cache</class>
+                        <method>cleanCache</method>
+                    </postnl_clean_cache>
+                </observers>
+            </admin_system_config_changed_section_carrier>
 		</events>
 		<layout>
             <updates>
@@ -345,12 +385,6 @@
                         <class>postnl_deliveryoptions/observer_shippingMethodAvailable</class>
                         <method>addDeliveryOptions</method>
                     </checkout_deliveryoptions>
-                    <!-- Adds Mijnpakket login functionality to onepage checkout. -->
-                    <checkout_onepage_mijnpakket_success>
-                        <type>singleton</type>
-                        <class>postnl_mijnpakket/observer_onepage</class>
-                        <method>addAccountNotification</method>
-                    </checkout_onepage_mijnpakket_success>
                 </observers>
             </core_block_abstract_to_html_before>
         </events>
@@ -1567,35 +1601,51 @@
                 <type>warning</type>
             </POSTNL-0159>
             <POSTNL-0160>
-                <message>Cannot create an invoice without products.</message>
+                <message>A required configuration value is missing: %s.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0160>
             <POSTNL-0161>
-                <message>Order item #%s could not be invoiced.</message>
+                <message>Delivery options are not allowed for product #%s.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0161>
             <POSTNL-0162>
-                <message>Unable to create an invoice for this shipment due to the order missing.</message>
+                <message>Cannot create an invoice without products.</message>
+                <message>A required configuration value is missing: %s.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0162>
             <POSTNL-0163>
-                <message>Unable to create an invoice for this shipment because the order cannot be invoiced.</message>
+                <message>Order item #%s could not be invoiced.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0163>
             <POSTNL-0164>
-                <message>An error occurred while creating an invoice for this shipment.</message>
+                <message>Unable to create an invoice for this shipment due to the order missing.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0164>
             <POSTNL-0165>
-                <message>No valid shipment type found for shipment #%s</message>
+                <message>Unable to create an invoice for this shipment because the order cannot be invoiced.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0165>
+            <POSTNL-0166>
+                <message>An error occurred while creating an invoice for this shipment.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0166>
+            <POSTNL-0167>
+                <message>No valid shipment type found for shipment #%s</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0167>
+            <POSTNL-0168>
+                <message>Order item #%s could not be invoiced.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0168>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>

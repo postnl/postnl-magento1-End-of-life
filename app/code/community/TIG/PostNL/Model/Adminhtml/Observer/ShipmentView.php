@@ -58,15 +58,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      */
     public function addPrintLabelButton(Varien_Event_Observer $observer)
     {
-        $helper = Mage::helper('postnl');
-
-        /**
-         * check if the extension is active
-         */
-        if (!$helper->isEnabled()) {
-            return $this;
-        }
-
         /**
          * Checks if the current block is the one we want to edit.
          *
@@ -79,6 +70,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          * @var Mage_Adminhtml_BLock_Sales_Order_Shipment_View $block
          */
         if (!($block instanceof $shipmentViewClass)) {
+            return $this;
+        }
+
+        $helper = Mage::helper('postnl');
+
+        /**
+         * check if the extension is active
+         */
+        if (!$helper->isEnabled()) {
             return $this;
         }
 

@@ -39,26 +39,15 @@
  * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck $this
  */
 ?>
-<?php $_liveEnabled     = $this->isLiveEnabled(); ?>
-<?php $_testEnabled     = $this->isTestEnabled(); ?>
-<?php $_isTestMode      = $this->isTestModeActive(); ?>
-<?php $_globalEnabled   = $this->isGlobalEnabled(); ?>
-<?php $_checkoutEnabled = $this->isCheckoutEnabled(); ?>
-<?php $_helper          = Mage::helper('postnl'); ?>
+<?php $_enabled          = true; ?>
+<?php $_isTestMode       = $this->isTestModeActive(); ?>
+<?php $_globalConfigured = $this->isGlobalConfigured(); ?>
+<?php $_checkoutEnabled  = $this->isCheckoutEnabled(); ?>
+<?php $_helper           = Mage::helper('postnl'); ?>
 
-<?php if ($_testEnabled && $_isTestMode): ?>
-    <div class="module-message warning">
-        <h4>[POSTNL-0098] <?php echo $this->__('The PostNL Extension is currently configured in test mode.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0098'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
-        <p><?php echo $this->__('You may test the extension, however you cannot send any shipments in this mode. Any shipments that you confirm or whose labels you print while in this mode will be registered as test shipments and may not be physically shipped. If you attempt to do so, you may incur fines from PostNL. To use the extension in live mode you first need to enter your PostNL account credentials and set the extension to live mode. You can then send shipments using the PostNL extension.'); ?></p>
-        <p><?php echo $this->__("You can enter your live username and password in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode."); ?></p>
-    </div>
-<?php endif; ?>
-
-<?php if ((!$_liveEnabled && !$_isTestMode) || (!$_testEnabled && $_isTestMode)): ?>
-    <?php $_errorArray = $this->getLiveConfigErrors(); ?>
-    <?php if ($_isTestMode): ?>
-        <?php $_errorArray = $this->getTestConfigErrors(); ?>
-    <?php endif; ?>
+<?php if ((!$_isTestMode && !$this->isLiveEnabled()) || ($_isTestMode && !$this->isTestEnabled())): ?>
+    <?php $_enabled = false; ?>
+    <?php $_errorArray = $this->getConfigErrors(); ?>
     <div class="module-message error">
         <h4>[POSTNL-0002] <?php echo $this->__('You have not yet fully configured the extension. You must complete this process before you can use it.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0002'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
         <?php if ($_errorArray): ?>
@@ -79,7 +68,7 @@
     </div>
 <?php endif; ?>
 
-<?php if (!$_globalEnabled && (($_liveEnabled && !$_isTestMode) || ($_testEnabled && $_isTestMode))): ?>
+<?php if (!$_globalConfigured && $_enabled): ?>
     <?php $_globalConfigErrors = $this->getGlobalConfigErrors(); ?>
     <div class="module-message warning">
         <h4>[POSTNL-0003] <?php echo $this->__('You have not yet configured the extension to use GlobalPack shipments. Please complete this process  if you wish to ship parcels to outside the EU.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0003'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
@@ -101,7 +90,7 @@
     </div>
 <?php endif; ?>
 
-<?php if (!$_checkoutEnabled && (($_liveEnabled && !$_isTestMode) || ($_testEnabled && $_isTestMode))): ?>
+<?php if (!$_checkoutEnabled && $_enabled): ?>
     <?php $_checkoutConfigErrors = $this->getCheckoutConfigErrors(); ?>
     <div class="module-message warning">
         <h4>[POSTNL-0004] <?php echo $this->__('You have not yet configured PostNL Checkout. Please complete this process if you wish to use PostNL Checkout.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0004'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
@@ -120,5 +109,13 @@
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
+    </div>
+<?php endif; ?>
+
+<?php if ($_enabled && $_isTestMode): ?>
+    <div class="module-message warning">
+        <h4>[POSTNL-0098] <?php echo $this->__('The PostNL Extension is currently configured in test mode.')?> <a href="<?php echo $_helper->getErrorUrl('POSTNL-0098'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a></h4>
+        <p><?php echo $this->__('You may test the extension, however you cannot send any shipments in this mode. Any shipments that you confirm or whose labels you print while in this mode will be registered as test shipments and may not be physically shipped. If you attempt to do so, you may incur fines from PostNL. To use the extension in live mode you first need to enter your PostNL account credentials and set the extension to live mode. You can then send shipments using the PostNL extension.'); ?></p>
+        <p><?php echo $this->__("You can enter your live username and password in the 'Account Settings' tab. Don't forget to also update your customer number, customer code and BLS (location) code. You can then set the extension to live mode."); ?></p>
     </div>
 <?php endif; ?>
