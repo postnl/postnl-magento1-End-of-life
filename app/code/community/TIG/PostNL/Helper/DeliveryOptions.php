@@ -67,7 +67,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Xpath for shipping duration setting.
      */
-    const XPATH_SHIPPING_DURATION = 'postnl/delivery_options/shipping_duration';
+    const XPATH_SHIPPING_DURATION  = 'postnl/delivery_options/shipping_duration';
+    const XPATH_CUTOFF_TIME        = 'postnl/delivery_options/cutoff_time';
+    const XPATH_SUNDAY_CUTOFF_TIME = 'postnl/delivery_options/sunday_cutoff_time';
 
     /**
      * The time we consider to be the start of the evening.
@@ -156,10 +158,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @param null|string $orderDate
      * @param null|int    $storeId
+     * @param boolean     $asDays
      *
-     * @return bool|string
+     * @return bool|string|int
      */
-    public function getShippingDate($orderDate = null, $storeId = null)
+    public function getShippingDate($orderDate = null, $storeId = null, $asDays = false)
     {
         if ($orderDate === null) {
             $orderDate = date('Y-m-d');
@@ -169,12 +172,45 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        /**
+         * Get the base shipping duration for this order.
+         */
         $shippingDuration = Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
         $deliveryTime = strtotime("+{$shippingDuration} days", strtotime($orderDate));
+
+        /**
+         * Get the cut-off time. This is formatted as H:i:s.
+         */
+        $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
+        $orderTime = date('Hi00', Mage::getModel('core/date')->timestamp());
+
+        /**
+         * Check if the current time (as His) is greater than the cut-off time.
+         */
+        if ($orderTime > str_replace(':', '', $cutOffTime)) {
+            $deliveryTime = strtotime('+1 day', $deliveryTime);
+            $shippingDuration++;
+        }
+
+        /**
+         * Get the delivery day (1-7).
+         */
         $deliveryDay = date('N', $deliveryTime);
 
+        /**
+         * If the delivery day is a monday, we need to make sure that sunday sorting is allowed. Otherwise delivery on a
+         * monday is not possible.
+         */
         if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
-            $deliveryTime = strtotime('+1 day', $deliveryTime);
+            $sundayCutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
+            if ($orderTime <= str_replace(':', '', $sundayCutOffTime)) {
+                $deliveryTime = strtotime('+1 day', $deliveryTime);
+                $shippingDuration++;
+            }
+        }
+
+        if ($asDays) {
+            return $shippingDuration;
         }
 
         $deliveryDate = date('Y-m-d', $deliveryTime);
@@ -618,36 +654,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
-         * PostNL delivery options cannot be used for virtual orders
-         */
-        if ($quote && $quote->isVirtual()) {
-            $errors = array(
-                array(
-                    'code'    => 'POSTNL-0104',
-                    'message' => $this->__('The quote is virtual.'),
-                )
-            );
-            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
-            Mage::register($registryKey, false);
-            return false;
-        }
-
-        /**
-         * Check if the quote has a valid minimum amount
-         */
-        if ($quote && !$quote->validateMinimumAmount()) {
-            $errors = array(
-                array(
-                    'code'    => 'POSTNL-0105',
-                    'message' => $this->__("The quote's grand total is below the minimum amount required."),
-                )
-            );
-            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
-            Mage::register($registryKey, false);
-            return false;
-        }
-
-        /**
          * Check that dutch addresses are allowed
          */
         if (!$this->canUseStandard()) {
@@ -655,8 +661,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 array(
                     'code'    => 'POSTNL-0106',
                     'message' => $this->__(
-                        'No standard product options are enabled. At least 1 option must be active.'
-                    ),
+                                      'No standard product options are enabled. At least 1 option must be active.'
+                        ),
                 )
             );
             Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
@@ -670,6 +676,51 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         if (!$quote) {
             Mage::register($registryKey, true);
             return true;
+        }
+
+        $canUseDeliveryOptionsForQuote = $this->canUseDeliveryOptionsForQuote($quote);
+
+        Mage::register($registryKey, $canUseDeliveryOptionsForQuote);
+        return $canUseDeliveryOptionsForQuote;
+    }
+
+    /**
+     * Check if delivery options are allowed for the specified quote.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     */
+    public function canUseDeliveryOptionsForQuote(Mage_Sales_Model_Quote $quote)
+    {
+        Mage::unregister('postnl_delivery_options_can_use_delivery_options_errors');
+
+        /**
+         * PostNL delivery options cannot be used for virtual orders
+         */
+        if ($quote->isVirtual()) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0104',
+                    'message' => $this->__('The quote is virtual.'),
+                )
+            );
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+            return false;
+        }
+
+        /**
+         * Check if the quote has a valid minimum amount
+         */
+        if (!$quote->validateMinimumAmount()) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0105',
+                    'message' => $this->__("The quote's grand total is below the minimum amount required."),
+                )
+            );
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+            return false;
         }
 
         $storeId = $quote->getStoreId();
@@ -686,12 +737,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     array(
                         'code'    => 'POSTNL-0150',
                         'message' => $this->__(
-                            "The quote's total weight is below the miniumum required to use PostNL delivery options."
-                        ),
+                                          "The quote's total weight is below the miniumum required to use PostNL delivery options."
+                            ),
                     )
                 );
                 Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
-                Mage::register($registryKey, false);
                 return false;
             }
         }
@@ -711,12 +761,29 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     )
                 );
                 Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
-                Mage::register($registryKey, false);
                 return false;
             }
         }
 
-        Mage::register($registryKey, true);
+        /**
+         * Check if the quote contains a product for which delivery options are not allowed.
+         *
+         * @var Mage_Sales_Model_Quote_Item $item
+         */
+        foreach ($quote->getAllVisibleItems() as $item) {
+            $product = $item->getProduct();
+            if ($product->hasPostnlAllowDeliveryOptions() && !$product->getPostnlAllowDeliveryOptions()) {
+                $errors = array(
+                    array(
+                        'code'    => 'POSTNL-0161',
+                        'message' => $this->__('Delivery options are not allowed for product #%s.', $product->getId()),
+                    )
+                );
+                Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+                return false;
+            }
+        }
+
         return true;
     }
 

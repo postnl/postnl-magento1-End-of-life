@@ -41,22 +41,22 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.2.2</version>
+			<version>1.2.3</version>
 		</TIG_PostNL>
 	</modules>
 
-	<global>
-		<blocks>
-        	<!-- Block definitions per submodule -->
-			<postnl>
-				<class>TIG_PostNL_Block</class>
-			</postnl>
-			<postnl_core>
-				<class>TIG_PostNL_Block_Core</class>
-			</postnl_core>
-			<postnl_adminhtml>
-				<class>TIG_PostNL_Block_Adminhtml</class>
-			</postnl_adminhtml>
+    <global>
+        <blocks>
+            <!-- Block definitions per submodule -->
+            <postnl>
+                <class>TIG_PostNL_Block</class>
+            </postnl>
+            <postnl_core>
+                <class>TIG_PostNL_Block_Core</class>
+            </postnl_core>
+            <postnl_adminhtml>
+                <class>TIG_PostNL_Block_Adminhtml</class>
+            </postnl_adminhtml>
             <postnl_checkout>
                 <class>TIG_PostNL_Block_Checkout</class>
             </postnl_checkout>
@@ -66,14 +66,14 @@
             <postnl_mijnpakket>
                 <class>TIG_PostNL_Block_Mijnpakket</class>
             </postnl_mijnpakket>
-		</blocks>
-		<helpers>
-			<postnl>
-				<class>TIG_PostNL_Helper</class>
-			</postnl>
-		</helpers>
+        </blocks>
+        <helpers>
+            <postnl>
+                <class>TIG_PostNL_Helper</class>
+            </postnl>
+        </helpers>
         <models>
-        	<!-- Model definitions per submodule -->
+            <!-- Model definitions per submodule -->
             <postnl>
                 <class>TIG_PostNL_Model</class>
                 <resourceModel>postnl_resource</resourceModel>
@@ -87,7 +87,7 @@
                 <resourceModel>postnl_carrier_resource</resourceModel>
             </postnl_carrier>
             <postnl_adminhtml>
-            	<class>TIG_PostNL_Model_Adminhtml</class>
+                <class>TIG_PostNL_Model_Adminhtml</class>
             </postnl_adminhtml>
             <postnl_extensioncontrol>
                 <class>TIG_PostNL_Model_ExtensionControl</class>
@@ -154,36 +154,36 @@
             </postnl_setup>
             <postnl_write>
                 <connection>
-                	<use>core_write</use>
+                    <use>core_write</use>
                 </connection>
             </postnl_write>
             <postnl_read>
                 <connection>
-               		<use>core_read</use>
-            	</connection>
+                    <use>core_read</use>
+                </connection>
             </postnl_read>
         </resources>
         <events>
-        	<sales_order_shipment_save_after>
-        		<observers>
-        			<!-- Creates a postnl shipment entity and generates a barcode through CIF-->
-        			<postnl_shipment_generate_barcode>
-					    <type>model</type>
-					    <class>postnl_core/observer_barcode</class>
-					    <method>generateBarcode</method>
-        			</postnl_shipment_generate_barcode>
-        		</observers>
-        	</sales_order_shipment_save_after>
-        	<order_cancel_after>
-        	    <observers>
-        	        <!-- Checks if this order has a PostNL Checkout order and if so, cancels it -->
-        	        <postnl_cancel_checkout_order>
-        	            <type>model</type>
+            <sales_order_shipment_save_after>
+                <observers>
+                    <!-- Creates a postnl shipment entity and generates a barcode through CIF-->
+                    <postnl_shipment_generate_barcode>
+                        <type>model</type>
+                        <class>postnl_core/observer_barcode</class>
+                        <method>generateBarcode</method>
+                    </postnl_shipment_generate_barcode>
+                </observers>
+            </sales_order_shipment_save_after>
+            <order_cancel_after>
+                <observers>
+                    <!-- Checks if this order has a PostNL Checkout order and if so, cancels it -->
+                    <postnl_cancel_checkout_order>
+                        <type>model</type>
                         <class>postnl_checkout/observer_order</class>
                         <method>cancelOrder</method>
-        	        </postnl_cancel_checkout_order>
-        	    </observers>
-        	</order_cancel_after>
+                    </postnl_cancel_checkout_order>
+                </observers>
+            </order_cancel_after>
             <sales_order_place_after>
                 <observers>
                     <!-- Update an associated PostNL order. -->
@@ -213,7 +213,17 @@
                 </postnl_config>
             </types>
         </cache>
-	</global>
+        <sales>
+            <quote>
+                <item>
+                    <product_attributes>
+                        <postnl_shipping_duration/>
+                        <postnl_allow_delivery_options/>
+                    </product_attributes>
+                </item>
+            </quote>
+        </sales>
+    </global>
 
     <admin>
         <routers>
@@ -354,12 +364,6 @@
                         <class>postnl_deliveryoptions/observer_shippingMethodAvailable</class>
                         <method>addDeliveryOptions</method>
                     </checkout_deliveryoptions>
-                    <!-- Adds Mijnpakket login functionality to onepage checkout. -->
-                    <checkout_onepage_mijnpakket_success>
-                        <type>singleton</type>
-                        <class>postnl_mijnpakket/observer_onepage</class>
-                        <method>addAccountNotification</method>
-                    </checkout_onepage_mijnpakket_success>
                 </observers>
             </core_block_abstract_to_html_before>
         </events>
@@ -1554,6 +1558,11 @@
                 <url/>
                 <type>error</type>
             </POSTNL-0160>
+            <POSTNL-0161>
+                <message>Delivery options are not allowed for product #%s.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0161>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>
