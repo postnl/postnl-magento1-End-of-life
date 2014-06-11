@@ -212,8 +212,10 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
 
-            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
-            $deliveryDate = date('d-m-Y', $tomorrow);
+            $shippingDuration = Mage::helper('postnl/deliveryOptions')->getShippingDate(null, null, true);
+
+            $nextDeliveryDay = strtotime("+{$shippingDuration} days", Mage::getModel('core/date')->timestamp());
+            $deliveryDate = date('d-m-Y', $nextDeliveryDay);
         }
 
         $this->setDeliveryDate($deliveryDate);

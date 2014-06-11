@@ -220,7 +220,7 @@
         <reference name="head">
             <action method="addCss"><stylesheet>css/TIG/PostNL/mijnpakket.css</stylesheet></action>
         </reference>
-        <reference name="checkout.success">
+        <reference name="content">
             <block type="postnl_mijnpakket/accountNotification" name="postnl_mijnpakket_account_notification" template="TIG/PostNL/mijnpakket/account_notification.phtml"/>
         </reference>
         <reference name="before_body_end">
