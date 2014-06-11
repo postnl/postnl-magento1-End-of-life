@@ -58,7 +58,7 @@ class TIG_PostNL_Model_Payment_Service
                 Mage::helper('postnl')->__(
                     'An error occurred while creating an invoice for this shipment.'
                 ),
-                'POSTNL-0164'
+                'POSTNL-0166'
             );
         }
 
@@ -99,7 +99,7 @@ class TIG_PostNL_Model_Payment_Service
         if (!$order->getId()) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Unable to create an invoice for this shipment due to the order missing.'),
-                'POSTNL-0162'
+                'POSTNL-0164'
             );
         }
         /**
@@ -110,7 +110,7 @@ class TIG_PostNL_Model_Payment_Service
                 Mage::helper('postnl')->__(
                     'Unable to create an invoice for this shipment because the order cannot be invoiced.'
                 ),
-                'POSTNL-0163'
+                'POSTNL-0165'
             );
         }
 
@@ -126,7 +126,7 @@ class TIG_PostNL_Model_Payment_Service
         if (!$invoice->getTotalQty()) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Cannot create an invoice without products.'),
-                'POSTNL-0160'
+                'POSTNL-0162'
             );
         }
 
@@ -155,7 +155,7 @@ class TIG_PostNL_Model_Payment_Service
             if (!$item->getOrderItem()->canInvoice()) {
                 throw new TIG_PostNL_Exception(
                     Mage::helper('postnl')->__('Order item #%s could not be invoiced.', $item->getOrderItemId()),
-                    'POSTNL-0161'
+                    'POSTNL-0163'
                 );
             }
 
