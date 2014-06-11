@@ -219,7 +219,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $result = $this->call('updateStatistic', $soapParams);
 
         /**
-         * Check if the request was succesfull
+         * Check if the request was successful
          */
         if (!is_array($result)
             || !isset($result['status'])
@@ -232,7 +232,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         }
 
         /**
-         * If a succesfull update has taken place we can confirm that the extension has been activated
+         * If a successful update has taken place we can confirm that the extension has been activated
          */
         $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if (!$isActivated || $isActivated == '1') {
@@ -243,7 +243,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     }
 
     /**
-     * Gets information about the Magento vrsion and edition as well as the version of the currently installed PostNL extension.
+     * Gets information about the Magento version and edition as well as the version of the currently installed PostNL extension.
      *
      * @return array
      */
@@ -329,7 +329,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     }
 
     /**
-     * Get thje hostname of the admin area to use in the module activation procedure or the hostname of a specified website to
+     * Get the hostname of the admin area to use in the module activation procedure or the hostname of a specified website to
      * use with the updateStatistics method
      *
      * @param Mage_Core_Model_Website $website

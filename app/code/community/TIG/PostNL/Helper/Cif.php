@@ -201,6 +201,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     );
 
     /**
+     * @var null|array
+     */
+    protected $_supportedProductOptions = null;
+
+    /**
      * Get an array of EU countries
      *
      * @return array

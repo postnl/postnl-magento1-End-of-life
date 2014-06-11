@@ -536,7 +536,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
 
         /**
-         * If the customer has checked the subscrive to newsletter checkbox, subscribe him to the newsletter
+         * If the customer has checked the subscribe to newsletter checkbox, subscribe him to the newsletter
          */
         if ($code == 'NEWS') {
             $customerEmail = $order->getCustomerEmail();

@@ -105,6 +105,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
     }
 
     /**
+     * If a PakjeGemak address was added to the quote, this method will copy it to the order.
+     *
      * @param Mage_Sales_Model_Order $order
      *
      * @return $this
@@ -146,9 +148,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
               ->save();
 
         /**
-         * This is required for some PSP extensions which will not save the PakjeGemak address otherwise. We are still
-         * investigating why exactly this is required. The entire address collection is supposed to be saved when the
-         * order is saved...
+         * This is required for some PSP extensions which will not save the PakjeGemak address otherwise.
          *
          * @since v1.2.1
          */

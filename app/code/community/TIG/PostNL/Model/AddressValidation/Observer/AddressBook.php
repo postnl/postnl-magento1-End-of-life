@@ -83,13 +83,6 @@ class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Obj
     public function addressBookPostcodeCheck(Varien_Event_Observer $observer)
     {
         /**
-         * Check if the extension is active
-         */
-        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
-            return $this;
-        }
-
-        /**
          * Checks if the current block is the one we want to edit.
          *
          * Unfortunately there is no unique event for this block.
@@ -100,6 +93,13 @@ class TIG_PostNL_Model_AddressValidation_Observer_AddressBook extends Varien_Obj
         $blockClass = $this->getAddressBlockClass();
 
         if (get_class($block) !== $blockClass) {
+            return $this;
+        }
+
+        /**
+         * Check if the extension is active
+         */
+        if (!Mage::helper('postnl/addressValidation')->isPostcodeCheckEnabled(null, self::POSTCODECHECK_ENV)) {
             return $this;
         }
 

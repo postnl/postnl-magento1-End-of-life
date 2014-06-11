@@ -582,7 +582,7 @@
                     <fields>
                         <label_size translate="label comment" module="postnl">
                             <label>Label size</label>
-                            <comment>This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4. Single Dutch or EPS labels are always printed in A6.</comment>
+                            <comment>This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_labelSize</source_model>
                             <sort_order>10</sort_order>
@@ -622,7 +622,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <validate>validate-select</validate>
                         </shipment_reference_type>
                         <custom_shipment_reference translate="label comment tooltip" module="postnl">
                             <label>Custom reference value</label>
@@ -726,6 +725,41 @@
                             <show_in_store>1</show_in_store>
                             <validate>validate-select</validate>
                         </track_and_trace_email_template>
+                        <send_copy translate="label comment" module="postnl">
+                            <label>Send a copy of the track &amp; trace email</label>
+                            <comment>If enabled, you may enter seperate email addresses to which the track &amp; trace email will be sent in addition to the customer.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                        </send_copy>
+                        <copy_to translate="label comment" module="postnl">
+                            <label>Send track &amp; trace email copy to</label>
+                            <comment>You can enter multiple email addresses seperated by commas.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>160</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <send_copy>1</send_copy>
+                            </depends>
+                        </copy_to>
+                        <copy_method translate="label" module="postnl">
+                            <label>Track &amp; trace email copy method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_method</source_model>
+                            <sort_order>170</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <send_copy>1</send_copy>
+                            </depends>
+                        </copy_method>
                     </fields>
                 </cif_labels_and_confirming>
                 <parcelware_export translate="label comment" module="postnl">

@@ -53,7 +53,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const XML_PATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
 
     /**
-     * XML paths to flags that dtermine which environment allows the postcode check functionality
+     * XML paths to flags that determine which environment allows the postcode check functionality
      */
     const XML_PATH_POSTCODE_CHECK_IN_CHECKOUT    = 'postnl/cif_address/postcode_check_in_checkout';
     const XML_PATH_POSTCODE_CHECK_IN_ADDRESSBOOK = 'postnl/cif_address/postcode_check_in_addressbook';
@@ -296,7 +296,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $isPostnlEnabled = $this->isEnabled($storeId, false);
+        $isPostnlEnabled = $this->isEnabled($storeId);
         if (!$isPostnlEnabled) {
             return false;
         }

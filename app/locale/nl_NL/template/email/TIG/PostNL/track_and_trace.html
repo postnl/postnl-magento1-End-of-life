@@ -1,4 +1,4 @@
-<!--@subject PostNL - Track & trace information for your shipment {{var shipment.increment_id}} @-->
+<!--@subject PostNL - Track & trace informatie voor uw zending {{var shipment.increment_id}} @-->
 <!--@vars
 {"store url=\"\"":"Store Url",
 "var logo_url":"Email Logo Image Url",
@@ -15,17 +15,17 @@
     <tr>
         <td align="center" valign="top" style="padding:20px 0 20px 0">
             <!-- [ header starts here] -->
-            <table bgcolor="FFFFFF" cellspacing="0" cellpadding="10" border="0" width="470">
+            <table bgcolor="#FFFFFF" cellspacing="0" cellpadding="10" border="0" width="470">
                 <tr>
                     <td valign="top">
-                        <a href="{{store url=""}}" style="color:#1E7EC8;"><img src="{{var logo_url}}" alt="{{var logo_alt}}" border="0"/></a>
-                        <img src="{{var logo_url}}" alt="{{var logo_alt}}" border="0" style="float:right"/>
+                        <a href='{{store url=""}}' style="color:#1E7EC8;"><img src="{{var logo_url}}" alt="{{var logo_alt}}" border="0"/></a>
+                        <img src='{{skin url="images/TIG/PostNL/postnl_email_logo.png" _area="frontend"}}' alt="PostNL" border="0" style="float:right"/>
                     </td>
                 </tr>
                 <!-- [ middle starts here] -->
                 <tr>
                     <td valign="top">
-                        <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Beste heer/mevrouw {{htmlescape var=$order.getCustomerName()}},</h1>
+                        <p style="font-size:11px; font-weight:normal; line-height:1.5em; margin:0 0 11px 0;">Beste heer/mevrouw {{htmlescape var=$order.getCustomerName()}},</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0 0 8px 0;">Uw bestelling van {{var store.getFrontendName()}}, met barcode {{var barcode}} wordt vandaag verzonden.</p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">Volg uw pakket op <a href="{{var barcode_url}}" target="_blank">mijnpakket</a> om te zien wanneer PostNL het pakket bij u bezorgt. <p>
                         <p style="font-size:11px; line-height:1.5em; margin:0;">Met vriendelijke groet,</p>
