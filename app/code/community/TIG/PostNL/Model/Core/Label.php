@@ -252,7 +252,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         Varien_Profiler::start('tig::postnl::core::label_createpdf');
 
         /**
-         * Open a new pdf object and assign some basic values
+         * Open a new pdf object and assign some basic values.
          */
         $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
         $pdf->open();
@@ -267,12 +267,12 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             $labels = array($labels);
         }
         /**
-         * Create a pdf containing multiple labels
+         * Create a pdf containing multiple labels.
          */
         $pdf = $this->_createMultiLabelPdf($pdf, $labels);
 
         /**
-         * Destroy the temporary labels as they are no longer needed
+         * Destroy the temporary labels as they are no longer needed.
          */
         $this->_destroyTempLabels();
 

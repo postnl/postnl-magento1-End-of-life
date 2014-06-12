@@ -39,7 +39,7 @@
 class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridMassAction
 {
     /**
-     * Returns an option array for available shipment grid mass actions
+     * Returns an option array for available shipment grid mass actions.
      *
      * @return array
      */
@@ -54,6 +54,10 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridMassAction
             array(
                 'value' => 'postnl_print_labels',
                 'label' => $helper->__('Print shipping labels'),
+            ),
+            array(
+                'value' => 'postnl_print_packingslips',
+                'label' => $helper->__('Print packingslips'),
             ),
             array(
                 'value' => 'postnl_confirm_shipments',

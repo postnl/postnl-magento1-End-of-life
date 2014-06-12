@@ -747,6 +747,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'url'        => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabels'),
         );
 
+        $packingslipOptions = array(
+            'label'      => $helper->__('PostNL - Print packingslips'),
+            'url'        => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingslips'),
+        );
+
         $confirmOptions = array(
             'label' => $helper->__('PostNL - Confirm shipments'),
             'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massConfirm'),
@@ -799,6 +804,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case 'postnl_print_labels':
                 $printOptions['selected'] = true;
                 break;
+            case 'postnl_print_packingslips':
+                $packingslipOptions['selected'] = true;
+                break;
             case 'postnl_confirm_shipments':
                 $confirmOptions['selected'] = true;
                 break;
@@ -808,9 +816,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             // no default
         }
 
-        $printAllowed   = $helper->checkIsPostnlActionAllowed('print_label');
-        $confirmAllowed = $helper->checkIsPostnlActionAllowed('confirm');
-        $exportAllowed  = $helper->checkIsPostnlActionAllowed('create_parcelware_export');
+        $printAllowed       = $helper->checkIsPostnlActionAllowed('print_label');
+        $packingslipAllowed = $helper->checkIsPostnlActionAllowed('print_packingslip');
+        $confirmAllowed     = $helper->checkIsPostnlActionAllowed('confirm');
+        $exportAllowed      = $helper->checkIsPostnlActionAllowed('create_parcelware_export');
 
         /**
          * Add the mass actions to the grid if the current admin user is allowed to use them.
@@ -826,6 +835,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $massactionBlock->addItem(
                 'postnl_print_labels',
                 $printOptions
+            );
+        }
+
+        if ($printAllowed && $packingslipAllowed) {
+            $massactionBlock->addItem(
+                'postnl_print_packingslips',
+                $packingslipOptions
             );
         }
 

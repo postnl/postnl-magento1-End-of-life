@@ -86,7 +86,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             /**
              * get the labels from CIF
              */
-            $labels = $this->_printLabels($shipment);
+            $labels = $this->_getLabels($shipment);
 
             /**
              * We need to check for warnings before the label download response
@@ -668,7 +668,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Get the labels from CIF
              */
             foreach ($shipments as $shipment) {
-                $shipmentLabels = $this->_printLabels($shipment, true);
+                $shipmentLabels = $this->_getLabels($shipment, true);
                 $labels = array_merge($labels, $shipmentLabels);
             }
 
@@ -767,7 +767,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Get the labels from CIF
              */
             foreach ($shipments as $shipment) {
-                $labels = array_merge($labels, $this->_printLabels($shipment, false));
+                $labels = array_merge($labels, $this->_getLabels($shipment, false));
             }
 
             /**
@@ -805,6 +805,100 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $helper->logException($e);
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
                 $this->__('An error occurred while processing this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Prints shipping labels for selected shipments.
+     *
+     * Please note that if you use a different label than the default 'GraphicFile|PDF' you must overload the
+     * 'postnl_core/label' model.
+     *
+     * @return $this
+     */
+    public function massPrintPackingslipsAction()
+    {
+        $helper = Mage::helper('postnl');
+        if (!$this->_checkIsAllowed('print_label')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                                       $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
+
+        /**
+         * Check if a shipment was selected
+         */
+        if (!is_array($shipmentIds)) {
+            $shipmentIds = array(46, 45);
+//            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0013', 'error',
+//                $this->__('Please select one or more shipments.')
+//            );
+//            $this->_redirect('adminhtml/sales_shipment/index');
+//            return $this;
+        }
+
+        if(count($shipmentIds) > 200 && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0014', 'error',
+                $this->__('You can print a maximum of 200 labels at once.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/index');
+        }
+
+        $packingSlips = array();
+        try {
+            /**
+             * Load the shipments and check if they are valid
+             */
+            $shipments = $this->_loadAndCheckShipments($shipmentIds, true);
+
+
+            $packingSlipModel = Mage::getModel('postnl_core/packingslip');
+
+            /**
+             * Get the labels from CIF
+             */
+            foreach ($shipments as $shipment) {
+                $shipmentLabels = $this->_getLabels($shipment, false);
+                $packingSlips[] = $packingSlipModel->createPdf($shipmentLabels, $shipment);
+            }
+
+            /**
+             * We need to check for warnings before the label download response
+             */
+            $this->_checkForWarnings();
+
+            $output = $packingSlips[0]->render();
+
+            $this->getResponse()
+                 ->setHttpResponseCode(200)
+                 ->setHeader('Pragma', 'public', true)
+                 ->setHeader('Cache-Control', 'private, max-age=0, must-revalidate', true)
+                 ->setHeader('Content-type', 'application/pdf', true)
+                 ->setHeader('Content-Disposition', 'inline; filename="PostNL Packingslips.pdf"')
+                 ->setHeader('Last-Modified', date('r'));
+
+            $this->getResponse()->setBody($output);
+        } catch (TIG_PostNL_Exception $e) {
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        } catch (Exception $e) {
+            $helper->logException($e);
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
+                                       $this->__('An error occurred while processing this action.')
             );
 
             $this->_redirect('adminhtml/sales_shipment/index');
@@ -1039,7 +1133,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      *
      * @throws TIG_PostNL_Exception
      */
-    protected function _printLabels($shipment, $confirm = false)
+    protected function _getLabels($shipment, $confirm = false)
     {
         /**
          * Load the PostNL shipment.
