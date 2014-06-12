@@ -90,7 +90,7 @@ class TIG_PostNL_Model_Payment_Observer_Cod
         }
 
         try {
-            Mage::getModel('postnl_payment/service')->registerInvoiceFromShipment($shipment->getShipment());
+            Mage::getModel('postnl_core/service')->registerInvoiceFromShipment($shipment->getShipment());
             $order->addStatusHistoryComment(
                 $helper->__("This order has been automatically invoiced by the PostNL COD payment method.")
             );

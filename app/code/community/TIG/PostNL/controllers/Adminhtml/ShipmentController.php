@@ -840,7 +840,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          * Check if a shipment was selected
          */
         if (!is_array($shipmentIds)) {
-            $shipmentIds = array(46, 45);
+            $shipmentIds = array(49,48,47,46);
 //            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0013', 'error',
 //                $this->__('Please select one or more shipments.')
 //            );
@@ -858,7 +858,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         $packingSlips = array();
         try {
             /**
-             * Load the shipments and check if they are valid
+             * Load the shipments and check if they are valid.
              */
             $shipments = $this->_loadAndCheckShipments($shipmentIds, true);
 
@@ -866,7 +866,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $packingSlipModel = Mage::getModel('postnl_core/packingslip');
 
             /**
-             * Get the labels from CIF
+             * Get the labels from CIF.
              */
             foreach ($shipments as $shipment) {
                 $shipmentLabels = $this->_getLabels($shipment, false);
@@ -874,11 +874,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             }
 
             /**
-             * We need to check for warnings before the label download response
+             * We need to check for warnings before the label download response.
              */
             $this->_checkForWarnings();
 
-            $output = $packingSlips[0]->render();
+            $pdf = new Zend_Pdf();
+            foreach ($packingSlips as $packingSlip) {
+                foreach ($packingSlip->pages as $page) {
+                    $pdf->pages[] = clone $page;
+                }
+            }
+            $output = $pdf->render();
 
             $this->getResponse()
                  ->setHttpResponseCode(200)

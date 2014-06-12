@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Payment_Service
+class TIG_PostNL_Model_Core_Service
 {
     /**
      * Registers an invoice based on a shipment.
@@ -52,7 +52,7 @@ class TIG_PostNL_Model_Payment_Service
         /**
          * Create and register the invoice.
          */
-        $invoice = $this->_initInvoice($shipment);
+        $invoice = $this->initInvoice($shipment);
         if (!$invoice) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
@@ -84,12 +84,13 @@ class TIG_PostNL_Model_Payment_Service
      * Initialize invoice model instance.
      *
      * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param boolean                         $createDummyInvoice
      *
      * @return Mage_Sales_Model_Order_Invoice
      *
      * @throws TIG_PostNL_Exception
      */
-    protected function _initInvoice(Mage_Sales_Model_Order_Shipment $shipment)
+    public function initInvoice(Mage_Sales_Model_Order_Shipment $shipment, $createDummyInvoice = false)
     {
         $order = $shipment->getOrder();
 
@@ -105,7 +106,7 @@ class TIG_PostNL_Model_Payment_Service
         /**
          * Check invoice create availability.
          */
-        if (!$order->canInvoice()) {
+        if (!$createDummyInvoice && !$order->canInvoice()) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Unable to create an invoice for this shipment because the order cannot be invoiced.'
@@ -117,12 +118,17 @@ class TIG_PostNL_Model_Payment_Service
         /**
          * Get an array of order items and their quantities to invoice.
          */
-        $qtys = $this->_getItemQtys($shipment);
+        $qtys = $this->_getItemQtys($shipment, $createDummyInvoice);
 
         /**
          * Create the invoice.
          */
-        $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice($qtys);
+        if (!$createDummyInvoice) {
+            $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice($qtys);
+        } else {
+            $invoice = $this->_prepareDummyInvoice($order, $qtys);
+        }
+
         if (!$invoice->getTotalQty()) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Cannot create an invoice without products.'),
@@ -130,7 +136,74 @@ class TIG_PostNL_Model_Payment_Service
             );
         }
 
+        Mage::unregister('current_invoice');
         Mage::register('current_invoice', $invoice);
+        return $invoice;
+    }
+
+    /**
+     * Prepares a dummy invoice. This invoice is identical to a regular invoice, except that
+     *
+     * @param Mage_Sales_Model_Order $order
+     * @param array                  $qtys
+     *
+     * @return Mage_Sales_Model_Order_Invoice
+     */
+    protected function _prepareDummyInvoice($order, $qtys = array())
+    {
+        Mage::getModel('sales/service_order', $order)->updateLocaleNumbers($qtys);
+
+        $convertor = Mage::getModel('sales/convert_order');
+
+        $dummyOrder = Mage::getModel('postnl_core/service_orderDummy');
+        $dummyOrder->setData($order->getData())
+                   ->setSubtotalInvoiced(0)
+                   ->setBaseSubtotalInvoiced(0)
+                   ->setTaxInvoiced(0)
+                   ->setHiddenTaxInvoiced(0)
+                   ->setBaseTaxInvoiced(0)
+                   ->setBaseHiddenTaxInvoiced(0);
+
+        $invoice = Mage::getModel('postnl_core/service_invoiceDummy');
+        $invoice->setOrder($dummyOrder)
+                ->setStoreId($dummyOrder->getStoreId())
+                ->setCustomerId($dummyOrder->getCustomerId())
+                ->setBillingAddressId($dummyOrder->getBillingAddressId())
+                ->setShippingAddressId($dummyOrder->getShippingAddressId());
+
+        Mage::helper('core')->copyFieldset('sales_convert_order', 'to_invoice', $order, $invoice);
+
+        /**
+         * @var Mage_Sales_Model_Order_Item $orderItem
+         */
+        $totalQty = 0;
+        foreach ($order->getAllItems() as $orderItem) {
+            $item = $convertor->itemToInvoiceItem($orderItem);
+
+            $qty = 0;
+            if ($orderItem->isDummy()) {
+                $qty = $orderItem->getQtyOrdered() ? $orderItem->getQtyOrdered() : 1;
+            } else if (!empty($qtys)) {
+                if (isset($qtys[$orderItem->getId()])) {
+                    $qty = (float) $qtys[$orderItem->getId()];
+                }
+            } else {
+                $qty = $orderItem->getQtyToInvoice();
+            }
+
+            $orderItem->setQtyInvoiced(0)
+                      ->setRowInvoiced(0)
+                      ->setBaseRowInvoiced(0);
+
+            $totalQty += $qty;
+            $item->setData('qty', $qty);
+            $invoice->addItem($item);
+        }
+
+        $invoice->setTotalQty($totalQty);
+
+        $invoice->collectTotals();
+
         return $invoice;
     }
 
@@ -138,12 +211,13 @@ class TIG_PostNL_Model_Payment_Service
      * Get an array of order items and quantities that should be invoiced.
      *
      * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param boolean                         $createDummyInvoice
      *
      * @return array
      *
      * @throws TIG_PostNL_Exception
      */
-    protected function _getItemQtys(Mage_Sales_Model_Order_Shipment $shipment)
+    protected function _getItemQtys(Mage_Sales_Model_Order_Shipment $shipment, $createDummyInvoice = false)
     {
         $shipmentItems = $shipment->getItemsCollection();
         $qtys = array();
@@ -152,10 +226,10 @@ class TIG_PostNL_Model_Payment_Service
          * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
         foreach ($shipmentItems as $item) {
-            if (!$item->getOrderItem()->canInvoice()) {
+            if (!$createDummyInvoice && !$item->getOrderItem()->canInvoice()) {
                 throw new TIG_PostNL_Exception(
                     Mage::helper('postnl')->__('Order item #%s could not be invoiced.', $item->getOrderItemId()),
-                    'POSTNL-0163'
+                    'POSTNL-0162'
                 );
             }
 

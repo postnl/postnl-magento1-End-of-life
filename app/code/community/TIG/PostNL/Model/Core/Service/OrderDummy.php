@@ -36,62 +36,30 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection extends Mage_Sales_Model_Resource_Order_Shipment_Grid_Collection
+class TIG_PostNL_Model_Core_Service_OrderDummy extends Mage_Sales_Model_Order
 {
     /**
-     * Fix for grid pager count believing there is only 1 item when $collection->getSelect()->groupBy() has been used
-     *
-     * @see Mage_Core_Model_Resource_Db_Collection_Abstract::getSelectCountSql()
-     *
-     * @return Zend_Db_Select
+     * @var string
      */
-    public function getSelectCountSql()
+    protected $_eventPrefix = 'postnl_dummy_order';
+
+    /**
+     * Overloaded getId() method to prevent other objects from being loaded that are linked to this dummy order.
+     *
+     * @return mixed|null
+     */
+    public function getId()
     {
-        $this->_renderFilters();
-
-        $countSelect = clone $this->getSelect();
-        $countSelect->reset(Zend_Db_Select::ORDER);
-        $countSelect->reset(Zend_Db_Select::LIMIT_COUNT);
-        $countSelect->reset(Zend_Db_Select::LIMIT_OFFSET);
-        $countSelect->reset(Zend_Db_Select::COLUMNS);
-
-        if(count($this->getSelect()->getPart(Zend_Db_Select::GROUP)) > 0) {
-            $countSelect->reset(Zend_Db_Select::GROUP);
-            $countSelect->distinct(true);
-            $group = $this->getSelect()->getPart(Zend_Db_Select::GROUP);
-            $countSelect->columns("COUNT(DISTINCT ".implode(", ", $group).")");
-        } else {
-            $countSelect->columns('COUNT(*)');
-        }
-        return $countSelect;
+        return null;
     }
 
     /**
-     * Fix for getSize not re-counting the number of records in a collection after clear() had been called
+     * Overloaded save method to prevent the order from being accidentally saved.
      *
-     * @return Varien_Data_Collection
+     * @return bool|Mage_Core_Model_Abstract
      */
-    public function clear()
+    public function save()
     {
-        $this->_setIsLoaded(false);
-        $this->_totalRecords = null;
-
-        $this->_items = array();
-        return $this;
-    }
-
-    /**
-     * Replace the select by a given select object.
-     * This effectively copies another collection (not entirely, but close enough for our purposes).
-     *
-     * @param Varien_db_Select $select
-     *
-     * @return TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection
-     */
-    public function setSelect($select)
-    {
-        $this->_select = $select;
-
-        return $this;
+        return false;
     }
 }

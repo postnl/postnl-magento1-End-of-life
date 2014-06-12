@@ -33,13 +33,23 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Payment_System_Config_Backend_SaveCodPaymentOption extends Mage_Core_Model_Config_Data
+class TIG_PostNL_Model_Core_Service_InvoiceDummy extends Mage_Sales_Model_Order_Invoice
 {
-    protected function _afterSave()
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_dummy_invoice';
+
+    /**
+     * Overloaded save method to prevent the invoice from being accidentally saved.
+     *
+     * @return bool|Mage_Core_Model_Abstract
+     */
+    public function save()
     {
-        echo 'test';exit;
+        return false;
     }
 }
