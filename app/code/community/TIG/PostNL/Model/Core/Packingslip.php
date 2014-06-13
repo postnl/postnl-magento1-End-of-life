@@ -36,15 +36,21 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Shipment
+class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstract
 {
     /**
      * @var int|void
      */
     public $rightColumnY;
 
+    public function getPdf()
+    {
+        return false;
+    }
+
     /**
-     * Create
+     * Create the full packingslip pdf. This will create an initial Zend_Pdf object with all the address and order info
+     * and then merge that with the shipping labels using Fpdi.
      *
      * @param array $labels
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
@@ -55,11 +61,21 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Shipm
     {
         $pdf = $this->_getPackingSlipPdf($postnlShipment);
 
-        $labelModel = Mage::getModel('postnl_core/label');
-        if ($this->y < 421) {
-            $labelsString = $labelModel->setLabelSize('A4')
-                                       ->setOutputMode('S')
-                                       ->createPdf($labels);
+        $labelModel = Mage::getModel('postnl_core/label')
+                          ->setLabelSize('A4')
+                          ->setOutputMode('S');
+
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment_Label $firstLabel
+         */
+        $labels = $labelModel->sortLabels($labels);
+        $firstLabel = array_shift($labels);
+
+        if (
+            $this->y < 421
+            || ($firstLabel->getLabelType() != 'Label' && $firstLabel->getLabelType() != 'Label-combi')
+        ) {
+            $labelsString = $labelModel->createPdf($labels);
 
             $labelPdf = Zend_Pdf::parse($labelsString);
 
@@ -68,18 +84,18 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Shipm
             }
         } else {
             $packingSlipString = $pdf->render();
-            $labelsString = $labelModel->createPackingSlipLabel(array_shift($labels), $packingSlipString);
+            $labelsString = $labelModel->createPackingSlipLabel($firstLabel, $packingSlipString);
 
             $pdf = Zend_Pdf::parse($labelsString);
 
-            $additionalLabelsString = $labelModel->setLabelSize('A4')
-                                                 ->setOutputMode('S')
-                                                 ->createPdf($labels);
+            if (count($labels) > 0) {
+                $additionalLabelsString = $labelModel->createPdf($labels);
 
-            $labelPdf = Zend_Pdf::parse($additionalLabelsString);
+                $labelPdf = Zend_Pdf::parse($additionalLabelsString);
 
-            foreach ($labelPdf->pages as $page) {
-                $pdf->pages[] = clone $page;
+                foreach ($labelPdf->pages as $page) {
+                    $pdf->pages[] = clone $page;
+                }
             }
         }
 
@@ -108,9 +124,6 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Shipm
 
         $pdf = new Zend_Pdf();
         $this->_setPdf($pdf);
-        $style = new Zend_Pdf_Style();
-
-        $this->_setFontBold($style, 8);
 
         if ($shipment->getStoreId()) {
             Mage::app()->getLocale()->emulate($storeId);

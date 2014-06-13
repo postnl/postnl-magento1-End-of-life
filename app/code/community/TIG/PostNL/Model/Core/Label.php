@@ -366,7 +366,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         $tempLabel = $this->_saveTempLabel($label);
 
         $pdf->Rotate(90);
-        $pdf->insertTemplate($tempLabel, $this->pix2pt(-1050), $this->pix2pt(405), 0);
+        $pdf->insertTemplate($tempLabel, $this->pix2pt(-1050), $this->pix2pt(405), $this->pix2pt(538));
         $pdf->Rotate(0);
 
         /**
@@ -417,7 +417,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
         $this->setIsFirstLabel(true);
         $this->setIsFirstCodCardLabel(true);
-        $labels = $this->_sortLabels($labels);
+        $labels = $this->sortLabels($labels);
         foreach ($labels as $label) {
             $pdf = $this->_addPdfTemplate($pdf, $label);
         }
@@ -514,7 +514,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 /**
                  * Calculate the position of the next label to be printed.
                  */
-
+                $position = $this->_getPosition($this->getLabelCounter());
+                $position['w'] = $this->pix2pt(538);
 
                 $this->increaseLabelCounter();
                 break;
@@ -647,7 +648,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      *
      * @return array
      */
-    protected function _sortLabels($labels)
+    public function sortLabels($labels)
     {
         $generalLabels = array();
         $globalLabels  = array();
