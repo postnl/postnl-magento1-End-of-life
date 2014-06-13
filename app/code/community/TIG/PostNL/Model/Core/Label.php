@@ -81,6 +81,35 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     protected $_isFirstCodCardLabel = false;
 
     /**
+     * Output mode. Currently 2 modes are supported: I and S.
+     *
+     * @see lib/TIG/PostNL/Fpdf/fpdf.php::Output()
+     *
+     * @var string
+     */
+    protected $_outputMode = 'I';
+
+    /**
+     * @param string $outputMode
+     *
+     * @return $this
+     */
+    public function setOutputMode($outputMode)
+    {
+        $this->_outputMode = $outputMode;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOutputMode()
+    {
+        return $this->_outputMode;
+    }
+
+    /**
      * @param boolean $isFirstLabel
      *
      * @return $this
@@ -252,7 +281,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         Varien_Profiler::start('tig::postnl::core::label_createpdf');
 
         /**
-         * Open a new pdf object and assign some basic values
+         * Open a new pdf object and assign some basic values.
          */
         $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
         $pdf->open();
@@ -267,21 +296,90 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             $labels = array($labels);
         }
         /**
-         * Create a pdf containing multiple labels
+         * Create a pdf containing multiple labels.
          */
         $pdf = $this->_createMultiLabelPdf($pdf, $labels);
 
         /**
-         * Destroy the temporary labels as they are no longer needed
+         * Destroy the temporary labels as they are no longer needed.
          */
         $this->_destroyTempLabels();
 
         /**
          * Get the final label.
          */
-        $label = $pdf->Output('PostNL Shipping Labels.pdf', 'I');
+        $label = $pdf->Output('PostNL Shipping Labels.pdf', $this->getOutputMode());
 
         Varien_Profiler::stop('tig::postnl::core::label_createpdf');
+
+        return $label;
+    }
+
+    public function createPackingSlipLabel($label, $packingSlip)
+    {
+        Varien_Profiler::start('tig::postnl::core::label_createpackingslippdf');
+
+        /**
+         * Open a new pdf object and assign some basic values.
+         */
+        $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
+        $pdf->open();
+        $pdf->SetFont('Arial', 'I', 40);
+        $pdf->SetTextColor(0,0,0);
+        $pdf->SetFillColor(255,255,255);
+        $pdf->SetTitle('PostNL Shipping Labels');
+        $pdf->SetAuthor('PostNL');
+        $pdf->SetCreator('PostNL');
+
+        $pdf->addOrientedPage('P', 'A4');
+
+        /**
+         * construct the path to the temporary file.
+         */
+        $tempFilePath = Mage::getConfig()->getVarDir('TIG' . DS . 'PostNL' . DS . 'temp_label')
+            . DS
+            . md5(md5($label->getLabel()) . md5($packingSlip))
+            . '-'
+            . time()
+            . '-'
+            . self::TEMP_LABEL_FILENAME;
+
+        if (file_exists($tempFilePath)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Temporary template file already exists: %s', $tempFilePath),
+                'POSTNL-0066'
+            );
+        }
+
+        /**
+         * Add the base64 decoded label to the file.
+         */
+        file_put_contents($tempFilePath, $packingSlip);
+
+        /**
+         * Save the name of the temp file so it can be destroyed later.
+         */
+        $this->addTempFileSaved($tempFilePath);
+
+        $pdf->insertTemplate($tempFilePath, 0, 0);
+
+        $tempLabel = $this->_saveTempLabel($label);
+
+        $pdf->Rotate(90);
+        $pdf->insertTemplate($tempLabel, $this->pix2pt(-1050), $this->pix2pt(405), $this->pix2pt(538));
+        $pdf->Rotate(0);
+
+        /**
+         * Destroy the temporary labels as they are no longer needed.
+         */
+        $this->_destroyTempLabels();
+
+        /**
+         * Get the final label.
+         */
+        $label = $pdf->Output('PostNL Shipping Labels.pdf', $this->getOutputMode());
+
+        Varien_Profiler::stop('tig::postnl::core::label_createpackingslippdf');
 
         return $label;
     }
@@ -319,7 +417,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
         $this->setIsFirstLabel(true);
         $this->setIsFirstCodCardLabel(true);
-        $labels = $this->_sortLabels($labels);
+        $labels = $this->sortLabels($labels);
         foreach ($labels as $label) {
             $pdf = $this->_addPdfTemplate($pdf, $label);
         }
@@ -534,7 +632,9 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     {
         $tempFilesSaved = $this->getTempFilesSaved();
         foreach ($tempFilesSaved as $tempFile) {
-            unlink($tempFile);
+            if (file_exists($tempFile)) {
+                unlink($tempFile);
+            }
         }
 
         return $this;
@@ -548,7 +648,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      *
      * @return array
      */
-    protected function _sortLabels($labels)
+    public function sortLabels($labels)
     {
         $generalLabels = array();
         $globalLabels  = array();

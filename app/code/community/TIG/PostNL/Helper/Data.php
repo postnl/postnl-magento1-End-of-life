@@ -549,26 +549,17 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'create_shipment':
                 $aclPath = 'sales/order/actions/ship';
                 break;
-            case 'confirm':
-                $aclPath = 'postnl/shipment/actions/confirm';
-                break;
-            case 'print_label':
-                $aclPath = 'postnl/shipment/actions/print_label';
-                break;
             case 'view_complete_status':
                 $aclPath = 'postnl/shipment/complete_status';
                 break;
-            case 'reset_confirmation':
-                $aclPath = 'postnl/shipment/actions/reset_confirmation';
-                break;
-            case 'delete_labels':
-                $aclPath = 'postnl/shipment/actions/delete_labels';
-                break;
-            case 'create_parcelware_export':
-                $aclPath = 'postnl/shipment/actions/create_parcelware_export';
-                break;
+            case 'confirm': //no break
+            case 'print_label': //no break
+            case 'print_packingslip': //no break
+            case 'reset_confirmation': //no break
+            case 'delete_labels': //no break
+            case 'create_parcelware_export': //no break
             case 'send_track_and_trace':
-                $aclPath = 'postnl/shipment/actions/send_track_and_trace';
+                $aclPath = 'postnl/shipment/actions/' . $action;
                 break;
             default:
                 $aclPath = false;

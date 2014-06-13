@@ -77,6 +77,10 @@
                                                 <title>Print Shipping Label</title>
                                                 <sort_order>20</sort_order>
                                             </print_label>
+                                            <print_packingslip translate="title" module="postnl">
+                                                <title>Print Packingslip</title>
+                                                <sort_order>30</sort_order>
+                                            </print_packingslip>
                                             <create_parcelware_export translate="title" module="postnl">
                                                 <title>Create Parcelware Export</title>
                                                 <sort_order>40</sort_order>

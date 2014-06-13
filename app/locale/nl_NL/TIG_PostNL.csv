@@ -369,7 +369,6 @@ TIG_PostNL::Payment Method,Betaalmethode
 TIG_PostNL::Shipping Method,Verzendmethode
 TIG_PostNL::Items Ordered,Artikelen besteld
 TIG_PostNL::Product Name,Product naam
-TIG_PostNL::Price,Prijs
 TIG_PostNL::Qty,Aantal
 TIG_PostNL::Subtotal,Subtotaal
 TIG_PostNL::Return to the shopping cart.,Terug naar winkelmandje.
@@ -914,5 +913,31 @@ TIG_PostNL::Send a copy of the track & trace email,Verstuur een kopie van de tra
 "TIG_PostNL::If enabled, you may enter seperate email addresses to which the track & trace email will be sent in addition to the customer.","Indien u deze optie aan zet, zal er een kopie van de track & trace e-mail worden verstuurd naar de opgegeven e-mail adressen."
 TIG_PostNL::Send track & trace email copy to,Verstuur track & trace e-mail kopie naar
 TIG_PostNL::You can enter multiple email addresses seperated by commas.,U kunt meerdere e-mailaddressen invullen gescheiden door komma's
-TIG_PostNL::Track & trace email copy method,Track & trace e-mail kopie methode
+TIG_PostNL::Track & trace email copy method,Track & trace e-mail kopie method
 PostNL configuration.,PostNL configuratie.
+TIG_PostNL::A required configuration value is missing: %s.,Een verplichte configuratie waarde mist: %s.
+TIG_PostNL::Delivery options are not allowed for product #%s.,Bezorgopties zijn niet toegestaan voor product#%s.
+TIG_PostNL::Cannot create an invoice without products.,Kan geen factuur aanmaken zonder producten.
+TIG_PostNL::Order item #%s could not be invoiced.,Order item #%s kon niet gefactureerd worden.
+TIG_PostNL::Unable to create an invoice for this shipment due to the order missing.,"Kan geen factuur aanmaken voor deze zending, omdat de bestelling mist."
+TIG_PostNL::Unable to create an invoice for this shipment because the order cannot be invoiced.,"Kan geen factuur aanmaken voor deze zending, omdat de bestelling niet gefactureerd kan worden."
+TIG_PostNL::An error occurred while creating an invoice for this shipment.,Er is een fout opgetreden tijdens het aanmaken van een factuur voor deze zending.
+TIG_PostNL::No valid shipment type found for shipment #%s,Geen valide zending gevonden voor zending #%s.
+TIG_PostNL::Print packingslips,Print pakbonnen
+TIG_PostNL::PostNL - Print packingslips,PostNL - Print pakbonnen
+TIG_PostNL::Products,Producten
+TIG_PostNL::SKU,SKU
+TIG_PostNL::VAT,BTW
+TIG_PostNL::No valid order available for packing slip.,Geen valide bestelling beschikbaar voor de pakbon.
+TIG_PostNL::CoC,KvK
+TIG_PostNL::Customer number,Klantnummer
+TIG_PostNL::Billing address,Factuur adres
+TIG_PostNL::Shipping address,Verzend adres
+TIG_PostNL::Order date,Besteldatum
+TIG_PostNL::Payment method,Betaalmethode
+TIG_PostNL::Shipping method,Verzendmethode
+TIG_PostNL::Ship order on,Verzend pakket op
+TIG_PostNL::Packingslip,Pakbon
+TIG_PostNL::Order,Bestelling
+TIG_PostNL::Shipment,Zending
+TIG_PostNL::Post office address,Postkantoor adres
