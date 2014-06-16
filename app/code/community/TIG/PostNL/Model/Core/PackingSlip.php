@@ -36,32 +36,132 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstract
+class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstract
 {
+    /**
+     * Xpaths to packing slip configuration settings.
+     */
+    const XPATH_PACKING_SLIP_LOGO = 'postnl/cif_labels_and_confirming/packing_slip_logo';
+
     /**
      * @var int|void
      */
     public $rightColumnY;
 
-    public function getPdf()
+    /**
+     * @var TIG_PostNL_Helper_Data
+     */
+    protected $_helper;
+
+    /**
+     * @var Mage_Core_Helper_Data
+     */
+    protected $_coreHelper;
+
+    /**
+     * @var Mage_Core_Helper_String
+     */
+    protected $_stringHelper;
+
+    /**
+     * @param TIG_PostNL_Helper_Data $helper
+     *
+     * @return $this
+     */
+    public function setHelper($helper)
     {
-        return false;
+        $this->_helper = $helper;
+
+        return $this;
     }
 
     /**
-     * Create the full packingslip pdf. This will create an initial Zend_Pdf object with all the address and order info
+     * @return TIG_PostNL_Helper_Data
+     */
+    public function getHelper()
+    {
+        return $this->_helper;
+    }
+
+    /**
+     * @param Mage_Core_Helper_Data $coreHelper
+     *
+     * @return $this
+     */
+    public function setCoreHelper($coreHelper)
+    {
+        $this->_coreHelper = $coreHelper;
+
+        return $this;
+    }
+
+    /**
+     * @return Mage_Core_Helper_Data
+     */
+    public function getCoreHelper()
+    {
+        return $this->_coreHelper;
+    }
+
+    /**
+     * @param Mage_Core_Helper_String $stringHelper
+     *
+     * @return $this
+     */
+    public function setStringHelper($stringHelper)
+    {
+        $this->_stringHelper = $stringHelper;
+
+        return $this;
+    }
+
+    /**
+     * @return Mage_Core_Helper_String
+     */
+    public function getStringHelper()
+    {
+        return $this->_stringHelper;
+    }
+
+    protected function _construct()
+    {
+        $this->setHelper(Mage::helper('postnl'))
+             ->setCoreHelper(Mage::helper('core'))
+             ->setStringHelper(Mage::helper('core/string'));
+    }
+
+    /**
+     * Alias for createPdf().
+     *
+     * @param array                                $labels
+     * @param TIG_PostNL_Model_Core_Shipment|bool  $postnlShipment
+     *
+     * @return bool|Zend_Pdf
+     */
+    public function getPdf($labels = array(), $postnlShipment = false, $mainPdf = false)
+    {
+        if (!$postnlShipment || !$mainPdf) {
+            return false;
+        }
+
+        return $this->createPdf($labels, $postnlShipment, $mainPdf);
+    }
+
+    /**
+     * Create the full packing slip pdf. This will create an initial Zend_Pdf object with all the address and order info
      * and then merge that with the shipping labels using Fpdi.
      *
      * @param array $labels
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     * @param Zend_Pdf                       $mainPdf
      *
      * @return Zend_Pdf
      */
-    public function createPdf($labels, $postnlShipment)
+    public function createPdf($labels, $postnlShipment, &$mainPdf)
     {
         $pdf = $this->_getPackingSlipPdf($postnlShipment);
 
-        $labelModel = Mage::getModel('postnl_core/label')
+        $labelModel = Mage::getSingleton('postnl_core/label')
                           ->setLabelSize('A4')
                           ->setOutputMode('S');
 
@@ -69,41 +169,47 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
          * @var TIG_PostNL_Model_Core_Shipment_Label $firstLabel
          */
         $labels = $labelModel->sortLabels($labels);
-        $firstLabel = array_shift($labels);
+        $firstLabel = current($labels);
 
         if (
             $this->y < 421
             || ($firstLabel->getLabelType() != 'Label' && $firstLabel->getLabelType() != 'Label-combi')
         ) {
+            foreach($pdf->pages as &$page) {
+                $mainPdf->pages[] = clone $page;
+            }
+
             $labelsString = $labelModel->createPdf($labels);
 
             $labelPdf = Zend_Pdf::parse($labelsString);
 
-            foreach ($labelPdf->pages as $page) {
-                $pdf->pages[] = clone $page;
+            foreach ($labelPdf->pages as &$page) {
+                $mainPdf->pages[] = clone $page;
             }
         } else {
             $packingSlipString = $pdf->render();
-            $labelsString = $labelModel->createPackingSlipLabel($firstLabel, $packingSlipString);
+            $labelsString = $labelModel->createPackingSlipLabel(array_shift($labels), $packingSlipString);
 
             $pdf = Zend_Pdf::parse($labelsString);
+            foreach($pdf->pages as &$page) {
+                $mainPdf->pages[] = clone $page;
+            }
 
             if (count($labels) > 0) {
                 $additionalLabelsString = $labelModel->createPdf($labels);
 
                 $labelPdf = Zend_Pdf::parse($additionalLabelsString);
 
-                foreach ($labelPdf->pages as $page) {
-                    $pdf->pages[] = clone $page;
+                foreach ($labelPdf->pages as &$page) {
+                    $mainPdf->pages[] = clone $page;
                 }
             }
         }
-
-        return $pdf;
+        return $mainPdf;
     }
 
     /**
-     * Builds the packingslip part of the final pdf.
+     * Builds the packing slip part of the final pdf.
      *
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      *
@@ -165,10 +271,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         /**
          * Add order addresses.
          */
-        $this->_insertOrderAddresses(
-             $page,
-             $order
-        );
+        $this->_insertOrderAddresses($page, $order);
 
         /**
          * Add shipment info.
@@ -198,8 +301,8 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
             /**
              * Draw item
              */
-            $page->drawLine(15, $this->y - 5, 580, $this->y - 5);
             $this->_drawItem($item, $page, $order);
+            $page->drawLine(15, $this->y + 15, 580, $this->y + 15);
             $page = end($pdf->pages);
         }
         $page->setLineColor(new Zend_Pdf_Color_GrayScale(0));
@@ -274,12 +377,23 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
     protected function _insertLogo(&$page, $store = null)
     {
         $this->y = $this->y ? $this->y : 815;
-        $image = Mage::getStoreConfig('sales/identity/logo', $store);
+        $image = Mage::getStoreConfig(self::XPATH_PACKING_SLIP_LOGO, $store);
         if (!$image) {
             return;
         }
 
-        $image = Mage::getBaseDir('media') . '/sales/store/logo/' . $image;
+        $image = Mage::getBaseDir('media')
+               . DS
+               . 'TIG'
+               . DS
+               . 'PostNL'
+               . DS
+               . 'core'
+               . DS
+               . 'packing_slip_logo'
+               . DS
+               . $image;
+
         if (!is_file($image)) {
             return;
         }
@@ -339,7 +453,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
             }
 
             $value = preg_replace('/<br[^>]*>/i', "\n", $value);
-            $splitString = Mage::helper('core/string')->str_split($value, 45, true, true);
+            $splitString = $this->getStringHelper()->str_split($value, 45, true, true);
             foreach ($splitString as $_value) {
                 $page->drawText(
                      trim(
@@ -370,7 +484,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         $top = 775;
 
         $page->drawText(
-             Mage::helper('postnl')->__('CoC') . ' ' . 'xxxxxxxx',
+             $this->getHelper()->__('CoC') . ' ' . 'xxxxxxxx',
              165,
              $top,
              'UTF-8'
@@ -378,7 +492,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         $top -= 10;
 
         $page->drawText(
-             Mage::helper('postnl')->__('VAT') . ' ' . 'xxxxxxxx',
+             $this->getHelper()->__('VAT') . ' ' . 'xxxxxxxx',
              165,
              $top,
              'UTF-8'
@@ -400,7 +514,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         $top = 815;
 
         $font = $this->_setFontBold($page, 15);
-        $text = Mage::helper('postnl')->__('Packingslip');
+        $text = $this->getHelper()->__('Packing slip');
         $x = 580 - $this->widthForStringUsingFontSize($text, $font, 15);
         $page->drawText(
              $text,
@@ -412,7 +526,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         $top -= 20;
 
         $font = $this->_setFontRegular($page, 8);
-        $text = Mage::helper('postnl')->__('Order') . ' # ' . $order->getIncrementId();
+        $text = $this->getHelper()->__('Order') . ' # ' . $order->getIncrementId();
         $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
         $page->drawText(
              $text,
@@ -423,7 +537,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
 
         $top -= 10;
 
-        $text = Mage::helper('postnl')->__('Shipment') . ' # ' . $shipment->getIncrementId();
+        $text = $this->getHelper()->__('Shipment') . ' # ' . $shipment->getIncrementId();
         $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
         $page->drawText(
              $text,
@@ -434,9 +548,9 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
 
         $top -= 10;
 
-        $text = Mage::helper('postnl')->__('Order date')
+        $text = $this->getHelper()->__('Order date')
               . ': '
-              . Mage::helper('core')->formatDate($order->getCreatedAtDate(), 'long', false);
+              . $this->getCoreHelper()->formatDate($order->getCreatedAtDate(), 'long', false);
         $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
         $page->drawText(
              $text,
@@ -460,7 +574,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         $top = $this->rightColumnY;
 
         $font = $this->_setFontBold($page, 8);
-        $text = Mage::helper('postnl')->__('Payment method');
+        $text = $this->getHelper()->__('Payment method');
         $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
         $page->drawText(
              $text,
@@ -489,7 +603,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
             if (trim($value) != '') {
                 //Printing "Payment Method" lines
                 $value = preg_replace('/<br[^>]*>/i', "\n", $value);
-                foreach (Mage::helper('core/string')->str_split($value, 45, true, true) as $_value) {
+                foreach ($this->getStringHelper()->str_split($value, 45, true, true) as $_value) {
                     $text = strip_tags(trim($_value));
                     $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
 
@@ -513,7 +627,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         $top = $this->rightColumnY;
 
         $font = $this->_setFontBold($page, 8);
-        $text = Mage::helper('postnl')->__('Shipping method');
+        $text = $this->getHelper()->__('Shipping method');
         $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
         $page->drawText(
              $text,
@@ -534,14 +648,14 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         $top -= 10;
 
         $deliveryDate = $postnlShipment->getDeliveryDate();
-        $text = Mage::helper('core')->formatDate($deliveryDate, 'short', false);
+        $text = $this->getCoreHelper()->formatDate($deliveryDate, 'short', false);
         $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
         $page->drawText($text, $x, $top, 'UTF-8');
 
         $top -= 24;
 
         $font = $this->_setFontBold($page, 8);
-        $text = Mage::helper('postnl')->__('Ship order on');
+        $text = $this->getHelper()->__('Ship order on');
         $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
         $page->drawText(
              $text,
@@ -554,7 +668,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
 
         $font = $this->_setFontRegular($page, 8);
         $confirmDate = $postnlShipment->getConfirmDate();
-        $text = Mage::helper('core')->formatDate($confirmDate, 'full', false);
+        $text = $this->getCoreHelper()->formatDate($confirmDate, 'full', false);
         $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
         $page->drawText(
              $text,
@@ -584,7 +698,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         $top = $this->y - 24;
 
         $page->drawText(
-             Mage::helper('postnl')->__('Customer number'),
+             $this->getHelper()->__('Customer number'),
              15,
              $top,
              'UTF-8'
@@ -621,7 +735,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
             $order = $shipment->getOrder();
         } else {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('No valid order available for packing slip.').
+                $this->getHelper()->__('No valid order available for packing slip.').
                 'POSTNL-0168'
             );
         }
@@ -653,10 +767,10 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         }
 
         $this->_setFontBold($page, 8);
-        $page->drawText(Mage::helper('postnl')->__('Billing address'), 15, ($top - 15), 'UTF-8');
-        $page->drawText(Mage::helper('postnl')->__('Shipping address'), 165, ($top - 15), 'UTF-8');
+        $page->drawText($this->getHelper()->__('Billing address'), 15, ($top - 15), 'UTF-8');
+        $page->drawText($this->getHelper()->__('Shipping address'), 165, ($top - 15), 'UTF-8');
         if ($pakjeGemakAddress) {
-            $page->drawText(Mage::helper('postnl')->__('Post office address'), 315, ($top - 15), 'UTF-8');
+            $page->drawText($this->getHelper()->__('Post office address'), 315, ($top - 15), 'UTF-8');
         }
 
         $this->_setFontRegular($page, 8);
@@ -666,7 +780,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         foreach ($billingAddress as $value){
             if ($value !== '') {
                 $text = array();
-                foreach (Mage::helper('core/string')->str_split($value, 20, true, true) as $_value) {
+                foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $_value) {
                     $text[] = $_value;
                 }
                 foreach ($text as $part) {
@@ -683,7 +797,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
             foreach ($shippingAddress as $value){
                 if ($value!=='') {
                     $text = array();
-                    foreach (Mage::helper('core/string')->str_split($value, 20, true, true) as $_value) {
+                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $_value) {
                         $text[] = $_value;
                     }
                     foreach ($text as $part) {
@@ -702,7 +816,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
             foreach ($pakjeGemakAddress as $value){
                 if ($value!=='') {
                     $text = array();
-                    foreach (Mage::helper('core/string')->str_split($value, 20, true, true) as $_value) {
+                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $_value) {
                         $text[] = $_value;
                     }
                     foreach ($text as $part) {
@@ -745,42 +859,42 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         $lines = array(
             array(
                 array(
-                    'text'      => Mage::helper('postnl')->__('Products'),
+                    'text'      => $this->getHelper()->__('Products'),
                     'feed'      => 20,
                     'font'      => 'bold',
                     'align'     => 'left',
                     'font_size' => 8,
                 ),
                 array(
-                    'text'      => Mage::helper('postnl')->__('SKU'),
+                    'text'      => $this->getHelper()->__('SKU'),
                     'feed'      => 275,
                     'font'      => 'bold',
                     'align'     => 'right',
                     'font_size' => 8,
                 ),
                 array(
-                    'text'      => Mage::helper('postnl')->__('Price'),
+                    'text'      => $this->getHelper()->__('Price'),
                     'feed'      => 365,
                     'font'      => 'bold',
                     'align'     => 'right',
                     'font_size' => 8,
                 ),
                 array(
-                    'text'      => Mage::helper('postnl')->__('Qty'),
+                    'text'      => $this->getHelper()->__('Qty'),
                     'feed'      => 435,
                     'font'      => 'bold',
                     'align'     => 'right',
                     'font_size' => 8,
                 ),
                 array(
-                    'text'      => Mage::helper('postnl')->__('VAT'),
+                    'text'      => $this->getHelper()->__('VAT'),
                     'feed'      => 495,
                     'font'      => 'bold',
                     'align'     => 'right',
                     'font_size' => 8,
                 ),
                 array(
-                    'text'      => Mage::helper('postnl')->__('Subtotal'),
+                    'text'      => $this->getHelper()->__('Subtotal'),
                     'feed'      => 575,
                     'font'      => 'bold',
                     'align'     => 'right',
@@ -821,7 +935,7 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
         $top = $this->y;
 
         $commentText = $comment->getComment();
-        $commentTextParts = Mage::helper('core/string')->str_split($commentText, 70, true, true);
+        $commentTextParts = $this->getStringHelper()->str_split($commentText, 70, true, true);
         $height = 12 * count($commentTextParts) + 10;
 
         $page->setFillColor(new Zend_Pdf_Color_GrayScale(0.9));
@@ -900,5 +1014,136 @@ class TIG_PostNL_Model_Core_Packingslip extends Mage_Sales_Model_Order_Pdf_Abstr
 
         $this->y -= 4;
         $page = $this->drawLineBlocks($page, array($lineBlock));
+    }
+
+    /**
+     * Draw lines
+     *
+     * draw items array format:
+     * lines        array;array of line blocks (required)
+     * shift        int; full line height (optional)
+     * height       int;line spacing (default 10)
+     *
+     * line block has line columns array
+     *
+     * column array format
+     * text         string|array; draw text (required)
+     * feed         int; x position (required)
+     * font         string; font style, optional: bold, italic, regular
+     * font_file    string; path to font file (optional for use your custom font)
+     * font_size    int; font size (default 7)
+     * align        string; text align (also see feed parameter), optional left, right
+     * height       int;line spacing (default 10)
+     * shift        int;Vertical indentation. In addition to the line spacing
+     *
+     * @param  Zend_Pdf_Page $page
+     * @param  array $draw
+     * @param  array $pageSettings
+     * @throws Mage_Core_Exception
+     * @return Zend_Pdf_Page
+     */
+    public function drawLineBlocks(Zend_Pdf_Page $page, array $draw, array $pageSettings = array())
+    {
+        foreach ($draw as $itemsProp) {
+            if (!isset($itemsProp['lines']) || !is_array($itemsProp['lines'])) {
+                Mage::throwException(Mage::helper('sales')->__('Invalid draw line data. Please define "lines" array.'));
+            }
+            $lines  = $itemsProp['lines'];
+            $height = isset($itemsProp['height']) ? $itemsProp['height'] : 10;
+
+            if (empty($itemsProp['shift'])) {
+                $shift = 0;
+                foreach ($lines as $line) {
+                    $maxHeight = 0;
+                    foreach ($line as $column) {
+                        $lineSpacing = !empty($column['height']) ? $column['height'] : $height;
+                        if (!is_array($column['text'])) {
+                            $column['text'] = array($column['text']);
+                        }
+                        $top = 0;
+                        foreach ($column['text'] as $part) {
+                            $top += $lineSpacing;
+                        }
+
+                        $maxHeight = $top > $maxHeight ? $top : $maxHeight;
+                    }
+                    $shift += $maxHeight;
+                }
+                $itemsProp['shift'] = $shift;
+            }
+
+            if ($this->y - $itemsProp['shift'] < 15) {
+                $page = $this->newPage($pageSettings);
+            }
+
+            foreach ($lines as $line) {
+                $maxHeight = 0;
+                foreach ($line as $column) {
+                    $fontSize = empty($column['font_size']) ? 10 : $column['font_size'];
+                    if (!empty($column['font_file'])) {
+                        $font = Zend_Pdf_Font::fontWithPath($column['font_file']);
+                        $page->setFont($font, $fontSize);
+                    } else {
+                        $fontStyle = empty($column['font']) ? 'regular' : $column['font'];
+                        switch ($fontStyle) {
+                            case 'bold':
+                                $font = $this->_setFontBold($page, $fontSize);
+                                break;
+                            case 'italic':
+                                $font = $this->_setFontItalic($page, $fontSize);
+                                break;
+                            default:
+                                $font = $this->_setFontRegular($page, $fontSize);
+                                break;
+                        }
+                    }
+
+                    if (!is_array($column['text'])) {
+                        $column['text'] = array($column['text']);
+                    }
+
+                    $lineSpacing = !empty($column['height']) ? $column['height'] : $height;
+                    $top = 0;
+                    foreach ($column['text'] as $part) {
+                        $shift = 0;
+                        if (array_key_exists('shift', $column)) {
+                            $shift = $column['shift'];
+                        }
+
+                        $top += $shift;
+
+                        if ($this->y - $lineSpacing - $shift < 15) {
+                            $page = $this->newPage($pageSettings);
+                        }
+
+                        $feed = $column['feed'];
+                        $textAlign = empty($column['align']) ? 'left' : $column['align'];
+                        $width = empty($column['width']) ? 0 : $column['width'];
+                        switch ($textAlign) {
+                            case 'right':
+                                if ($width) {
+                                    $feed = $this->getAlignRight($part, $feed, $width, $font, $fontSize);
+                                }
+                                else {
+                                    $feed = $feed - $this->widthForStringUsingFontSize($part, $font, $fontSize);
+                                }
+                                break;
+                            case 'center':
+                                if ($width) {
+                                    $feed = $this->getAlignCenter($part, $feed, $width, $font, $fontSize);
+                                }
+                                break;
+                        }
+                        $page->drawText($part, $feed, $this->y-$top, 'UTF-8');
+                        $top += $lineSpacing;
+                    }
+
+                    $maxHeight = $top > $maxHeight ? $top : $maxHeight;
+                }
+                $this->y -= $maxHeight;
+            }
+        }
+
+        return $page;
     }
 }

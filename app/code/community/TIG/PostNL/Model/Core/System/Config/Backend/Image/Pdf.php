@@ -36,22 +36,56 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Observer_Cache
+class TIG_PostNL_Model_Core_System_Config_Backend_Image_Pdf extends Mage_Adminhtml_Model_System_Config_Backend_Image_Pdf
 {
     /**
-     * Cleans the PostNL config cache after PostNL's configuration has been saved.
-     *
-     * @return $this
-     *
-     * @event admin_system_config_changed_section_postnl|admin_system_config_changed_section_carrier
-     *
-     * @observer postnl_clean_cache
+     * Maximum size (in pixels).
      */
-    public function cleanCache()
-    {
-        $cache = Mage::getSingleton('postnl_core/cache');
-        $cache->cleanCache();
+    const MAX_WIDTH  = 900;
+    const MAX_HEIGHT = 100;
 
-        return $this;
+    /**
+     * If an image was saved, make sure the image is not too large. If it is, resize it.
+     *
+     * @return Mage_Core_Model_Abstract
+     */
+    protected function _afterSave()
+    {
+        /**
+         * If we have no value, no new file was uploaded.
+         */
+        if (!$this->getValue()) {
+            return parent::_afterSave();
+        }
+
+        /**
+         * Locate the file and make sure it exists.
+         */
+        $uploadDir = $this->_getUploadDir();
+        $fileName = $this->getValue();
+        $file = $uploadDir . DS . $fileName;
+
+        if (!file_exists($file)) {
+            return parent::_afterSave();
+        }
+
+        /**
+         * Load the image as a Varien_Image object.
+         */
+        $image = new Varien_Image($file);
+        $image->keepAspectRatio(true);
+
+        /**
+         * Check the image's size and resize the image if necessary.
+         */
+        if ($image->getOriginalWidth() > self::MAX_WIDTH) {
+            $image->resize(self::MAX_WIDTH, self::MAX_HEIGHT);
+            $image->save($file);
+        } elseif ($image->getOriginalHeight() > self::MAX_HEIGHT) {
+            $image->resize(null, self::MAX_HEIGHT);
+            $image->save($file);
+        }
+
+        return parent::_afterSave();
     }
 }

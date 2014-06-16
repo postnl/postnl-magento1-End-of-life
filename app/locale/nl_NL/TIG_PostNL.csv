@@ -923,8 +923,8 @@ TIG_PostNL::Unable to create an invoice for this shipment due to the order missi
 TIG_PostNL::Unable to create an invoice for this shipment because the order cannot be invoiced.,"Kan geen factuur aanmaken voor deze zending, omdat de bestelling niet gefactureerd kan worden."
 TIG_PostNL::An error occurred while creating an invoice for this shipment.,Er is een fout opgetreden tijdens het aanmaken van een factuur voor deze zending.
 TIG_PostNL::No valid shipment type found for shipment #%s,Geen valide zending gevonden voor zending #%s.
-TIG_PostNL::Print packingslips,Print pakbonnen
-TIG_PostNL::PostNL - Print packingslips,PostNL - Print pakbonnen
+TIG_PostNL::Print packing slips,Print pakbonnen
+TIG_PostNL::PostNL - Print packing slips,PostNL - Print pakbonnen
 TIG_PostNL::Products,Producten
 TIG_PostNL::SKU,SKU
 TIG_PostNL::VAT,BTW
@@ -937,7 +937,9 @@ TIG_PostNL::Order date,Besteldatum
 TIG_PostNL::Payment method,Betaalmethode
 TIG_PostNL::Shipping method,Verzendmethode
 TIG_PostNL::Ship order on,Verzend pakket op
-TIG_PostNL::Packingslip,Pakbon
+TIG_PostNL::Packing slip,Pakbon
 TIG_PostNL::Order,Bestelling
 TIG_PostNL::Shipment,Zending
 TIG_PostNL::Post office address,Postkantoor adres
+TIG_PostNL::Invalid label type supplied for packing slip label pdf: %s.,Ongeldig label type opgegeven voor pakbon label pdf: %s.
+TIG_PostNL::Approaching memory limit for this operation. Please select fewer shipments and try again.,Geheugen limiet bereikt. Selecteer s.v.p. minder zendingen en probeer het opnieuw.

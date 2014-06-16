@@ -822,7 +822,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      *
      * @return $this
      */
-    public function massPrintPackingslipsAction()
+    public function massPrintPackingSlipsAction()
     {
         $helper = Mage::helper('postnl');
         if (!$this->_checkIsAllowed('print_label')) {
@@ -840,12 +840,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          * Check if a shipment was selected
          */
         if (!is_array($shipmentIds)) {
-            $shipmentIds = array(49,48,47,46);
-//            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0013', 'error',
-//                $this->__('Please select one or more shipments.')
-//            );
-//            $this->_redirect('adminhtml/sales_shipment/index');
-//            return $this;
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0013', 'error',
+                $this->__('Please select one or more shipments.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
         }
 
         if(count($shipmentIds) > 200 && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
@@ -855,35 +854,76 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $this->_redirect('adminhtml/sales_shipment/index');
         }
 
-        $packingSlips = array();
         try {
+            /**
+             * Printing many packing slips can take a while, therefore we need to disable the PHP execution time limit.
+             */
+            set_time_limit(0);
+
             /**
              * Load the shipments and check if they are valid.
              */
             $shipments = $this->_loadAndCheckShipments($shipmentIds, true);
 
-
-            $packingSlipModel = Mage::getModel('postnl_core/packingslip');
+            /**
+             * Get the packing slip model.
+             */
+            $packingSlipModel = Mage::getModel('postnl_core/packingSlip');
 
             /**
-             * Get the labels from CIF.
+             * Get the current memory limit as an integer in bytes. Because printing packing slips can be very memory
+             * intensive, we need to monitor memory usage.
              */
-            foreach ($shipments as $shipment) {
-                $shipmentLabels = $this->_getLabels($shipment, false);
-                $packingSlips[] = $packingSlipModel->createPdf($shipmentLabels, $shipment);
+            $memoryLimit = ini_get('memory_limit');
+            if (preg_match('/^(\d+)(.)$/', $memoryLimit, $matches)) {
+                if (!isset($matches[2])) {
+                    $memoryLimit = $matches[1];
+                } elseif ($matches[2] == 'G' || $matches[2] == 'g') {
+                    $memoryLimit = $matches[1] * 1024 * 1024 * 1024;
+                } elseif ($matches[2] == 'M' || $matches[2] == 'm') {
+                    $memoryLimit = $matches[1] * 1024 * 1024;
+                } elseif ($matches[2] == 'K' || $matches[2] == 'k') {
+                    $memoryLimit = $matches[1] * 1024;
+                }
             }
+
+            /**
+             * Create the pdf's and add them to the main pdf object.
+             */
+            $pdf = new Zend_Pdf();
+            foreach ($shipments as $shipment) {
+                /**
+                 * If the current memory usage exceeds 75%, end the script. Otherwise we risk other processes being
+                 * unable to finish and throwing fatal errors.
+                 */
+                $memoryUsage = memory_get_usage(true);
+
+                if ($memoryUsage / $memoryLimit > 0.75) {
+                    throw new TIG_PostNL_Exception(
+                        $this->__(
+                             'Approaching memory limit for this operation. Please select fewer shipments and try again.'
+                        ),
+                        'POSTNL-170'
+                    );
+                }
+
+                $shipmentLabels = $this->_getLabels($shipment, false);
+                $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
+            }
+            unset($shipment);
+            unset($shipments);
+            unset($shipmentLabels);
+            unset($packingSlip);
+            unset($packingSlipModel);
 
             /**
              * We need to check for warnings before the label download response.
              */
             $this->_checkForWarnings();
 
-            $pdf = new Zend_Pdf();
-            foreach ($packingSlips as $packingSlip) {
-                foreach ($packingSlip->pages as $page) {
-                    $pdf->pages[] = clone $page;
-                }
-            }
+            /**
+             * Render the pdf as a string.
+             */
             $output = $pdf->render();
 
             $this->getResponse()
@@ -891,7 +931,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                  ->setHeader('Pragma', 'public', true)
                  ->setHeader('Cache-Control', 'private, max-age=0, must-revalidate', true)
                  ->setHeader('Content-type', 'application/pdf', true)
-                 ->setHeader('Content-Disposition', 'inline; filename="PostNL Packingslips.pdf"')
+                 ->setHeader('Content-Disposition', 'inline; filename="PostNL Packing Slips.pdf"')
                  ->setHeader('Last-Modified', date('r'));
 
             $this->getResponse()->setBody($output);
@@ -904,7 +944,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         } catch (Exception $e) {
             $helper->logException($e);
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
-                                       $this->__('An error occurred while processing this action.')
+                $this->__('An error occurred while processing this action.')
             );
 
             $this->_redirect('adminhtml/sales_shipment/index');
@@ -1327,7 +1367,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
      */
     protected function _loadShipment($shipmentId, $loadPostnlShipments, $postnlShippingMethods)
     {
-        if ($loadPostnlShipments ===  false) {
+        if ($loadPostnlShipments === false) {
+            /**
+             * @var Mage_Sales_Model_Order_Shipment $shipment
+             */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
             if (!$shipment || !$shipment->getId()) {
                 return false;
@@ -1335,6 +1378,9 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
 
             $shippingMethod = $shipment->getOrder()->getShippingMethod();
         } else {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
             $shipment = Mage::getModel('postnl_core/shipment')->load($shipmentId, 'shipment_id');
             if (!$shipment || !$shipment->getId()) {
                 return false;

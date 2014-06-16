@@ -892,6 +892,26 @@
                                 <send_copy>1</send_copy>
                             </depends>
                         </copy_method>
+                        <packing_slip_header translate="label" module="postnl">
+                            <label>Here you can customize the way packing slips are printed.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>180</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </packing_slip_header>
+                        <packing_slip_logo translate="label comment">
+                            <label>Logo for packing slips</label>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_image_pdf</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="0">TIG/PostNL/core/packing_slip_logo</upload_dir>
+                            <base_url type="media" scope_info="1">TIG/PostNL/core/packing_slip_logo</base_url>
+                            <sort_order>190</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>The image will automatically be resized to fit the maximum dimensions of 900x100px.</comment>
+                        </packing_slip_logo>
                     </fields>
                 </cif_labels_and_confirming>
                 <parcelware_export translate="label comment" module="postnl">

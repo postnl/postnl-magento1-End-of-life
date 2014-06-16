@@ -56,8 +56,8 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridMassAction
                 'label' => $helper->__('Print shipping labels'),
             ),
             array(
-                'value' => 'postnl_print_packingslips',
-                'label' => $helper->__('Print packingslips'),
+                'value' => 'postnl_print_packing slips',
+                'label' => $helper->__('Print packing slips'),
             ),
             array(
                 'value' => 'postnl_confirm_shipments',

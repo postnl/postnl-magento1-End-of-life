@@ -554,7 +554,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 break;
             case 'confirm': //no break
             case 'print_label': //no break
-            case 'print_packingslip': //no break
+            case 'print_packing_slips': //no break
             case 'reset_confirmation': //no break
             case 'delete_labels': //no break
             case 'create_parcelware_export': //no break
