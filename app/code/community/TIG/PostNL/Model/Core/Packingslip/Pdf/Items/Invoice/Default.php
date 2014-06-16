@@ -48,49 +48,45 @@ class TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default extends Mage_S
          */
         $order     = $this->getOrder();
         $item      = $this->getItem();
-        $orderItem = $item->getOrderItem();
         $pdf       = $this->getPdf();
         $page      = $this->getPage();
-
-        $orderItemQty = $orderItem->getQtyOrdered();
-        $itemQty = $item->getQty();
 
         $lines = array(
             array(
                 array(
-                    'text' => Mage::helper('core/string')->str_split($item->getName(), 60, true, true),
-                    'feed' => 20,
-                    'align' => 'left',
+                    'text'      => Mage::helper('core/string')->str_split($item->getName(), 60, true, true),
+                    'feed'      => 20,
+                    'align'     => 'left',
                     'font_size' => 8,
                 ),
                 array(
-                    'text'  => Mage::helper('core/string')->str_split($this->getSku($item), 25),
-                    'feed'  => 275,
-                    'align' => 'right',
+                    'text'      => Mage::helper('core/string')->str_split($this->getSku($item), 25),
+                    'feed'      => 275,
+                    'align'     => 'right',
                     'font_size' => 8,
                 ),
                 array(
-                    'text'  => $order->formatPriceTxt($item->getPrice()),
-                    'feed'  => 370,
-                    'align' => 'right',
+                    'text'      => $order->formatPriceTxt($item->getPrice()),
+                    'feed'      => 370,
+                    'align'     => 'right',
                     'font_size' => 8,
                 ),
                 array(
-                    'text'  => $itemQty * 1,
-                    'feed'  => 435,
-                    'align' => 'right',
+                    'text'      => $item->getQty() * 1,
+                    'feed'      => 435,
+                    'align'     => 'right',
+                    'font_size' => 8
+                ),
+                array(
+                    'text'      => $order->formatPriceTxt($item->getTaxAmount()),
+                    'feed'      => 500,
+                    'align'     => 'right',
                     'font_size' => 8,
                 ),
                 array(
-                    'text'  => $order->formatPriceTxt($item->getTaxAmount()),
-                    'feed'  => 500,
-                    'align' => 'right',
-                    'font_size' => 8,
-                ),
-                array(
-                    'text'  => $order->formatPriceTxt($item->getRowTotalInclTax()),
-                    'feed'  => 578,
-                    'align' => 'right',
+                    'text'      => $order->formatPriceTxt($item->getRowTotalInclTax()),
+                    'feed'      => 578,
+                    'align'     => 'right',
                     'font_size' => 8,
                 ),
             ),
@@ -100,26 +96,24 @@ class TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default extends Mage_S
         $options = $this->getItemOptions();
         if ($options) {
             foreach ($options as $option) {
-                // draw options label
-                $lines[][] = array(
-                    'text' => Mage::helper('core/string')->str_split(strip_tags($option['label']), 70, true, true),
-                    'font' => 'italic',
-                    'feed' => 110
-                );
+                $optionText = strip_tags($option['label']);
 
-                // draw options value
                 if ($option['value']) {
-                    $_printValue = isset($option['print_value'])
+                    $printValue = isset($option['print_value'])
                         ? $option['print_value']
                         : strip_tags($option['value']);
-                    $values = explode(', ', $_printValue);
-                    foreach ($values as $value) {
-                        $lines[][] = array(
-                            'text' => Mage::helper('core/string')->str_split($value, 50, true, true),
-                            'feed' => 115
-                        );
-                    }
+                    $value = str_replace(', ', ' - ', $printValue);
+                    $optionText .= ' - ' . $value;
                 }
+
+                // draw options
+                $lines[][] = array(
+                    'text'      => Mage::helper('core/string')->str_split(strip_tags($optionText), 120, true, true),
+                    'font'      => 'italic',
+                    'feed'      => 20,
+                    'font_size' => 7,
+                    'shift'     => -8,
+                );
             }
         }
 

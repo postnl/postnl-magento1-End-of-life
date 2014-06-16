@@ -747,8 +747,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             'url'        => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabels'),
         );
 
-        $packingslipOptions = array(
-            'label'      => $helper->__('PostNL - Print packingslips'),
+        $packingSlipOptions = array(
+            'label'      => $helper->__('PostNL - Print packing slips'),
             'url'        => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingslips'),
         );
 
@@ -804,8 +804,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case 'postnl_print_labels':
                 $printOptions['selected'] = true;
                 break;
-            case 'postnl_print_packingslips':
-                $packingslipOptions['selected'] = true;
+            case 'postnl_print_packing_slips':
+                $packingSlipOptions['selected'] = true;
                 break;
             case 'postnl_confirm_shipments':
                 $confirmOptions['selected'] = true;
@@ -817,7 +817,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
 
         $printAllowed       = $helper->checkIsPostnlActionAllowed('print_label');
-        $packingslipAllowed = $helper->checkIsPostnlActionAllowed('print_packingslip');
+        $packingSlipAllowed = $helper->checkIsPostnlActionAllowed('print_packing_slips');
         $confirmAllowed     = $helper->checkIsPostnlActionAllowed('confirm');
         $exportAllowed      = $helper->checkIsPostnlActionAllowed('create_parcelware_export');
 
@@ -838,10 +838,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             );
         }
 
-        if ($printAllowed && $packingslipAllowed) {
+        if ($printAllowed && $packingSlipAllowed) {
             $massactionBlock->addItem(
-                'postnl_print_packingslips',
-                $packingslipOptions
+                'postnl_print_packing_slips',
+                $packingSlipOptions
             );
         }
 

@@ -41,9 +41,11 @@
 class TIG_PostNL_Model_Core_Label extends Varien_Object
 {
     /**
-     * base name of temporary pdf files. An md5 hash will be prepended to this name in order to make each filename unique
+     * Base name of temporary pdf files. An md5 hash and several other parameters will be prepended to this file name to
+     * make it unique.
      */
-    const TEMP_LABEL_FILENAME = 'TIG_PostNL_temp.pdf';
+    const TEMP_LABEL_FILENAME       = 'TIG_PostNL_temp.pdf';
+    const TEMP_PACKINGSLIP_FILENAME = 'TIG_PostNL_temp_packingslip.pdf';
 
     /**
      * XML path to label size setting
@@ -285,9 +287,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
         $pdf->open();
-        $pdf->SetFont('Arial', 'I', 40);
-        $pdf->SetTextColor(0,0,0);
-        $pdf->SetFillColor(255,255,255);
         $pdf->SetTitle('PostNL Shipping Labels');
         $pdf->SetAuthor('PostNL');
         $pdf->SetCreator('PostNL');
@@ -315,6 +314,17 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         return $label;
     }
 
+    /**
+     * Creates a pdf containing both the packing slip and a shipping label. The shipping label must be of the 'Label' or
+     * 'Label-combi' type.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment_Label $label
+     * @param string                               $packingSlip
+     *
+     * @return string
+     *
+     * @throws TIG_PostNL_Exception
+     */
     public function createPackingSlipLabel($label, $packingSlip)
     {
         Varien_Profiler::start('tig::postnl::core::label_createpackingslippdf');
@@ -324,50 +334,31 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         $pdf = new TIG_PostNL_Fpdi(); //lib/TIG/PostNL/Fpdi
         $pdf->open();
-        $pdf->SetFont('Arial', 'I', 40);
-        $pdf->SetTextColor(0,0,0);
-        $pdf->SetFillColor(255,255,255);
-        $pdf->SetTitle('PostNL Shipping Labels');
+        $pdf->SetTitle('PostNL Packingslip');
         $pdf->SetAuthor('PostNL');
         $pdf->SetCreator('PostNL');
 
         $pdf->addOrientedPage('P', 'A4');
 
-        /**
-         * construct the path to the temporary file.
-         */
-        $tempFilePath = Mage::getConfig()->getVarDir('TIG' . DS . 'PostNL' . DS . 'temp_label')
-            . DS
-            . md5(md5($label->getLabel()) . md5($packingSlip))
-            . '-'
-            . time()
-            . '-'
-            . self::TEMP_LABEL_FILENAME;
+        $tempPackingslip = $this->_saveTempPackingslip($label, $packingSlip);
+        $tempLabel       = $this->_saveTempLabel($label);
 
-        if (file_exists($tempFilePath)) {
+        $pdf->insertTemplate($tempPackingslip, 0, 0);
+
+        if ($label->getLabelType() == 'Label') {
+            $pdf->Rotate(90);
+            $pdf->insertTemplate($tempLabel, $this->pix2pt(-1037), $this->pix2pt(413), $this->pix2pt(538));
+            $pdf->Rotate(0);
+        } elseif ($label->getLabelType() == 'Label-combi') {
+            $pdf->insertTemplate($tempLabel, $this->pix2pt(400), $this->pix2pt(569), $this->pix2pt(400));
+        } else {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Temporary template file already exists: %s', $tempFilePath),
-                'POSTNL-0066'
+                Mage::helper('postnl')->__(
+                    'Invalid label type supplied for packing slip label pdf: %s.', $label->getLabelType()
+                ),
+                'POSTNL-0169'
             );
         }
-
-        /**
-         * Add the base64 decoded label to the file.
-         */
-        file_put_contents($tempFilePath, $packingSlip);
-
-        /**
-         * Save the name of the temp file so it can be destroyed later.
-         */
-        $this->addTempFileSaved($tempFilePath);
-
-        $pdf->insertTemplate($tempFilePath, 0, 0);
-
-        $tempLabel = $this->_saveTempLabel($label);
-
-        $pdf->Rotate(90);
-        $pdf->insertTemplate($tempLabel, $this->pix2pt(-1050), $this->pix2pt(405), $this->pix2pt(538));
-        $pdf->Rotate(0);
 
         /**
          * Destroy the temporary labels as they are no longer needed.
@@ -400,9 +391,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * Check if printing the required number of labels is allowed.
          *
          * This is limited to 200 by default to prevent out of memory errors.
-         * On a clean Magento install with 256 MB of memory, several thousands of
-         * labels can be printed at once. However, for safety reasons a limit
-         * of 200 is used. By default you shouldn't be able to select more than 200
+         * On a clean Magento install with 256 MB of memory, several thousands of labels can be printed at once.
+         * However, for safety reasons a limit of 200 is used. By default you shouldn't be able to select more than 200
          * in the shipment grid.
          */
         if(count($labels) > 200 && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
@@ -454,8 +444,10 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         if ($labelType == 'Label' || $labelType == 'Label-combi') {
             if ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
                 $pdf->addOrientedPage('L', 'A4');
-                $this->setIsFirstLabel(false)
-                     ->resetLabelCounter();
+                $this->setIsFirstLabel(false);
+                if (!$this->getLabelCounter()) {
+                    $this->resetLabelCounter();
+                }
             } elseif ($this->getLabelSize() == 'A4'
                 && (
                     !$this->getLabelCounter() || $this->getLabelCounter() > 4
@@ -466,7 +458,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             }
 
             /**
-             * If the configured label size is A6, add a new page every label
+             * If the configured label size is A6, add a new page every label.
              */
             if($this->getLabelSize() == 'A6') {
                 $this->setLabelCounter(3); //used to calculate the top left position
@@ -624,6 +616,49 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
+     * Save a packing slip to a temporary pdf file. Temporary pdf files are stored in var/TIG/PostNL/temp_label/
+     *
+     * @param TIG_PostNL_Model_Core_Shipment_Label $label
+     * @param string                               $packingSlip
+     *
+     * @return string
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _saveTempPackingslip(TIG_PostNL_Model_Core_Shipment_Label $label, $packingSlip)
+    {
+        /**
+         * construct the path to the temporary file.
+         */
+        $tempFilePath = Mage::getConfig()->getVarDir('TIG' . DS . 'PostNL' . DS . 'temp_label')
+            . DS
+            . md5($label->getLabel() . $packingSlip)
+            . '-'
+            . time()
+            . '-'
+            . self::TEMP_PACKINGSLIP_FILENAME;
+
+        if (file_exists($tempFilePath)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Temporary template file already exists: %s', $tempFilePath),
+                'POSTNL-0066'
+            );
+        }
+
+        /**
+         * Add the packing slip to the file.
+         */
+        file_put_contents($tempFilePath, $packingSlip);
+
+        /**
+         * Save the name of the temp file so it can be destroyed later.
+         */
+        $this->addTempFileSaved($tempFilePath);
+
+        return $tempFilePath;
+    }
+
+    /**
      * Destroy all temporary pdf files
      *
      * @return $this
@@ -685,7 +720,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         }
 
         /**
-         * Sort all non-standard labels.
+         * Sort all GlobalPack labels.
          */
         $sortedGlobalLabels = array();
         foreach ($globalLabels as $shipmentLabels) {
@@ -703,7 +738,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         }
 
         /**
-         * merge all labels back into a single array
+         * Merge all labels back into a single array.
          */
         $labels = array_merge($generalLabels, $sortedGlobalLabels, $codCards);
         return $labels;
