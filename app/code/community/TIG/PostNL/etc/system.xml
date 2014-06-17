@@ -730,8 +730,8 @@
                             <frontend_type>text</frontend_type>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
                             <validate>validate-greater-than-zero validate-number</validate>
                         </weight_per_parcel>
                         <weight_unit translate="label comment" module="postnl">
@@ -905,6 +905,7 @@
                     <fields>
                         <logo translate="label comment" module="postnl">
                             <label>Logo for packing slips</label>
+                            <comment>The image will automatically be resized to fit the maximum dimensions of 900x100px.</comment>
                             <frontend_type>image</frontend_type>
                             <backend_model>postnl_core/system_config_backend_image_pdf</backend_model>
                             <upload_dir config="system/filesystem/media" scope_info="1">TIG/PostNL/core/packing_slip_logo</upload_dir>
@@ -913,7 +914,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <comment>The image will automatically be resized to fit the maximum dimensions of 900x100px.</comment>
                         </logo>
                         <show_webshop_info translate="label comment" module="postnl">
                             <label>Show webshop information</label>
@@ -923,7 +923,7 @@
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_webshop_info>
                         <coc_number translate="label" module="postnl">
@@ -955,7 +955,7 @@
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_customer_number>
@@ -965,7 +965,7 @@
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_billing_address>
@@ -975,7 +975,7 @@
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_shipping_address>
@@ -985,7 +985,7 @@
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_pakjegemak_address>
@@ -996,7 +996,7 @@
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_order_info>
@@ -1006,7 +1006,7 @@
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_payment_method>
@@ -1016,7 +1016,7 @@
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_shipping_method>
@@ -1026,7 +1026,7 @@
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_shipping_date>
@@ -1034,9 +1034,9 @@
                             <label>Show shipment totals</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>310</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_totals>
@@ -1044,9 +1044,9 @@
                             <label>Show shipment comment</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_comment>
@@ -1055,9 +1055,9 @@
                             <comment>You can choose to show a static, pre-configured message or you can show the last visible comment added to the shipment on the shipment detail page.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_commentType</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                             <depends>
@@ -1067,10 +1067,10 @@
                         <comment_text translate="label" module="postnl">
                             <label>Comment text</label>
                             <frontend_type>textarea</frontend_type>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
                             <validate>validate-select</validate>
                             <depends>
                                 <show_comment>1</show_comment>
@@ -1082,9 +1082,9 @@
                             <comment>If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_label>

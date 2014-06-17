@@ -580,6 +580,25 @@
                 <copy_to/>
                 <copy_method>bcc</copy_method> <!-- Use the bcc method for sending the track & trace email copy -->
             </cif_labels_and_confirming>
+            <packing_slip>
+                <logo/>
+                <show_webshop_info>1</show_webshop_info> <!-- Show webshop info on the packing slip -->
+                <coc_number/>
+                <vat_number/>
+                <show_customer_number>1</show_customer_number> <!-- Show the customer ID on the packing slip -->
+                <show_billing_address>1</show_billing_address> <!-- Show the shipment's billing address on the packing slip -->
+                <show_shipping_address>1</show_shipping_address> <!-- Show the shipment's shipping address on the packing slip -->
+                <show_pakjegemak_address>1</show_pakjegemak_address> <!-- Show the shipment's PakjeGemak address ont he packing slip -->
+                <show_order_info>1</show_order_info> <!-- Show the shipment's order info on the packing slip -->
+                <show_payment_method>1</show_payment_method> <!-- Show the shipment's order info on the packing slip -->
+                <show_shipping_method>1</show_shipping_method> <!-- Show the shipment's shipping method on the packing slip -->
+                <show_shipping_date>1</show_shipping_date> <!-- Show the shipment's shipping date on the packing slip -->
+                <show_totals>1</show_totals> <!-- Show the shipment's total amounts on the packing slip -->
+                <show_comment>1</show_comment> <!-- Show a comment on the packing slip -->
+                <comment_type>shipment_comment</comment_type> <!-- Show the shipment's last comment, rather than a pre-defined comment -->
+                <comment_text/>
+                <show_label>1</show_label> <!-- Automatically add the shipping label to the packing slip -->
+            </packing_slip>
         	<parcelware_export>
         	    <active>0</active> <!-- Inactive -->
         	    <auto_confirm>0</auto_confirm> <!-- Do not auto confirm -->
