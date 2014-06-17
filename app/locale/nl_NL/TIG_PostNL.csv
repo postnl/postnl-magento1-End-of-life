@@ -927,12 +927,12 @@ TIG_PostNL::Print packing slips,Print pakbonnen
 TIG_PostNL::PostNL - Print packing slips,PostNL - Print pakbonnen
 TIG_PostNL::Products,Producten
 TIG_PostNL::SKU,SKU
-TIG_PostNL::VAT,BTW
+TIG_PostNL::VAT,Btw
 TIG_PostNL::No valid order available for packing slip.,Geen valide bestelling beschikbaar voor de pakbon.
 TIG_PostNL::CoC,KvK
 TIG_PostNL::Customer number,Klantnummer
-TIG_PostNL::Billing address,Factuur adres
-TIG_PostNL::Shipping address,Verzend adres
+TIG_PostNL::Billing address,Factuuradres
+TIG_PostNL::Shipping address,Verzendadres
 TIG_PostNL::Order date,Besteldatum
 TIG_PostNL::Payment method,Betaalmethode
 TIG_PostNL::Shipping method,Verzendmethode
@@ -940,6 +940,34 @@ TIG_PostNL::Ship order on,Verzend pakket op
 TIG_PostNL::Packing slip,Pakbon
 TIG_PostNL::Order,Bestelling
 TIG_PostNL::Shipment,Zending
-TIG_PostNL::Post office address,Postkantoor adres
+TIG_PostNL::Post office address,Postkantooradres
 TIG_PostNL::Invalid label type supplied for packing slip label pdf: %s.,Ongeldig label type opgegeven voor pakbon label pdf: %s.
 TIG_PostNL::Approaching memory limit for this operation. Please select fewer shipments and try again.,Geheugen limiet bereikt. Selecteer s.v.p. minder zendingen en probeer het opnieuw.
+TIG_PostNL::Packing Slip Settings,Pakbon Instellingen
+TIG_PostNL::Here you can configure which elements you would like to show on the PostNL packing slip.,Hier kunt u aangeven welke elementen u wilt tonen op de PostNL pakbonnen.
+TIG_PostNL::Logo for packing slips,Pakbon logo
+TIG_PostNL::The image will automatically be resized to fit the maximum dimensions of 900x100px.,"Deze afbeelding zal automatisch geschaald worden, zodat deze binnen de maximum afmetingen van 900x100px past."
+TIG_PostNL::Show webshop information,Toon webshopinformatie
+"TIG_PostNL::If enabled, the shop's name, contact address, CoC and VAT numbers will be displayed on the packing slip.","Indien geactiveerd, zal de naam van de webshop, het contact adres, KvK nummer en btw nummer getoond worden op de pakbon."
+TIG_PostNL::CoC number,KvK nummer
+TIG_PostNL::VAT number,Btw nummer
+TIG_PostNL::Show customer number,Toon klantnummer
+"TIG_PostNL::If enabled, the customer ID will be printed on the packing slip for registered customers.","Indien geactiveerd, zal het klantnummer van de klant getoond worden voor geregistreerde klanten."
+TIG_PostNL::Show billing address,Toon factuuradres
+TIG_PostNL::Show shipping address,Toon verzendadres
+TIG_PostNL::Show post office address,Toon postkantooradres
+TIG_PostNL::Show order information,Toon bestellinginformatie
+"TIG_PostNL::If enabled, the order ID, shipment ID and order date will be shown on the packing slip.","Indien geactiveerd, zal het bestelling ID, zending ID en de bestellingsdatum getoond worden op de pakbon."
+TIG_PostNL::Show payment method,Toon betaalmethode
+TIG_PostNL::Show shipping method,Toon verzendmethode
+TIG_PostNL::Show shipping date,Toon verzenddatum
+TIG_PostNL::Show shipment totals,Toon zending totaalbedragen
+TIG_PostNL::Show shipment comment,Toon zending opmerking
+TIG_PostNL::Comment type,Opmerking type
+"TIG_PostNL::You can choose to show a static, pre-configured message or you can show the last visible comment added to the shipment on the shipment detail page.","U kunt kiezen om een statisch, voor geconfigureerd bericht te tonen of om de laatste toegevoegde, zichtbare opmerking van de zending te tonen."
+TIG_PostNL::Comment text,Opmerking tekst
+TIG_PostNL::Show shipping label,Toon verendlabel
+"TIG_PostNL::If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.","Indien geactiveerd, zal het verzendlabel direct op de pakbon geprint worden, indien mogelijk. Anders zal deze op een losse pagina toegevoegd worden."
+TIG_PostNL::Pre-configured message,Voorgeconfigureerd bericht
+TIG_PostNL::Last shipment comment,Laatste zending opmerking
+TIG_PostNL::None of the orders you have selected have any associated shipments. Please choose at least one order that has a shipment.,"Geen van de bestellingen die u heeft geselecteerd, bevat een zending. Kies s.v.p. tenminste één bestelling die een zending bevat."
