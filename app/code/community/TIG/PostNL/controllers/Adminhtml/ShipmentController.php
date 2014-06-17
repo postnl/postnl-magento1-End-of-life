@@ -647,7 +647,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         }
 
         /**
-         * Validate the numer of labels to be printed. Every shipment has at least 1 label. So if we have more than 200
+         * Validate the number of labels to be printed. Every shipment has at least 1 label. So if we have more than 200
          * shipments we can stop the process right here.
          */
         if(count($shipmentIds) > 200 && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
@@ -791,7 +791,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                  ->setHeader('Pragma', 'public', true)
                  ->setHeader('Cache-Control', 'private, max-age=0, must-revalidate', true)
                  ->setHeader('Content-type', 'application/pdf', true)
-                 ->setHeader('Content-Disposition', 'inline; filename="PostNL Shipping Labels.pdf"')
+                 ->setHeader(
+                     'Content-Disposition',
+                     'inline; filename="PostNL Shipping Labels' . date('YmdHis') . '.pdf"'
+                 )
                  ->setHeader('Last-Modified', date('r'));
 
             $this->getResponse()->setBody($output);
@@ -834,22 +837,59 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             return $this;
         }
 
-        $shipmentIds = $this->getRequest()->getParam('shipment_ids');
+        $request = $this->getRequest();
+        if ($request->getParam('shipment_ids')) {
+            $shipmentIds = $this->getRequest()->getParam('shipment_ids', array());
 
-        /**
-         * Check if a shipment was selected
-         */
-        if (!is_array($shipmentIds)) {
-            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0013', 'error',
-                $this->__('Please select one or more shipments.')
-            );
-            $this->_redirect('adminhtml/sales_shipment/index');
-            return $this;
+            /**
+             * Check if a shipment was selected.
+             */
+            if (empty($shipmentIds)) {
+                $helper->addSessionMessage('adminhtml/session', 'POSTNL-0013', 'error',
+                    $this->__('Please select one or more shipments.')
+                );
+                $this->_redirect('adminhtml/sales_shipment/index');
+                return $this;
+            }
+        } else {
+            $orderIds = $request->getParam('order_ids', array());
+
+            /**
+             * Check if an order was selected.
+             */
+            if (empty($orderIds)) {
+                $helper->addSessionMessage('adminhtml/session', 'POSTNL-0011', 'error',
+                    $this->__('Please select one or more orders.')
+                );
+                $this->_redirect('adminhtml/sales_shipment/index');
+                return $this;
+            }
+
+            $shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection')
+                                      ->addFieldToSelect('entity_id')
+                                      ->addFieldToFilter('order_id', array('in', $orderIds));
+
+            $shipmentIds = $shipmentCollection->getColumnValues('entity_id');
+            unset($shipmentCollection);
+
+            /**
+             * Check if a shipment was selected
+             */
+            if (empty($shipmentIds)) {
+                $helper->addSessionMessage('adminhtml/session', 'POSTNL-0171', 'error',
+                    $this->__(
+                        'None of the orders you have selected have any associated shipments. Please choose at least ' .
+                        'one order that has a shipment.'
+                    )
+                );
+                $this->_redirect('adminhtml/sales_order/index');
+                return $this;
+            }
         }
 
         if(count($shipmentIds) > 200 && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0014', 'error',
-                $this->__('You can print a maximum of 200 labels at once.')
+                                       $this->__('You can print a maximum of 200 labels at once.')
             );
             $this->_redirect('adminhtml/sales_shipment/index');
         }
@@ -910,11 +950,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                 $shipmentLabels = $this->_getLabels($shipment, false);
                 $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
             }
-            unset($shipment);
-            unset($shipments);
-            unset($shipmentLabels);
-            unset($packingSlip);
-            unset($packingSlipModel);
+            unset($shipment, $shipments, $shipmentLabels, $packingSlip, $packingSlipModel);
 
             /**
              * We need to check for warnings before the label download response.
@@ -926,12 +962,15 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              */
             $output = $pdf->render();
 
+            $fileName = 'PostNL Packing Slips '
+                      . date('Ymd-His', Mage::getSingleton('core/date')->timestamp())
+                      . '.pdf';
             $this->getResponse()
                  ->setHttpResponseCode(200)
                  ->setHeader('Pragma', 'public', true)
                  ->setHeader('Cache-Control', 'private, max-age=0, must-revalidate', true)
                  ->setHeader('Content-type', 'application/pdf', true)
-                 ->setHeader('Content-Disposition', 'inline; filename="PostNL Packing Slips.pdf"')
+                 ->setHeader('Content-Disposition', 'inline; filename="' . $fileName . '"')
                  ->setHeader('Last-Modified', date('r'));
 
             $this->getResponse()->setBody($output);

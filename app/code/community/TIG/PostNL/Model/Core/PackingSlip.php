@@ -35,15 +35,20 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method TIG_PostNL_Model_Core_PackingSlip setStoreId(int $value)
+ * @method int                               getStoreId()
  */
 class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstract
 {
     /**
-     * Xpaths to packing slip configuration settings.
+     * Xpath to packing slip configuration settings.
      */
-    const XPATH_PACKING_SLIP_LOGO = 'postnl/cif_labels_and_confirming/packing_slip_logo';
+    const XPATH_PACKING_SLIP_SETTINGS = 'postnl/packing_slip';
 
     /**
+     * Y coordinate for right column elements.
+     *
      * @var int|void
      */
     public $rightColumnY;
@@ -62,6 +67,11 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      * @var Mage_Core_Helper_String
      */
     protected $_stringHelper;
+
+    /**
+     * @var array
+     */
+    protected $_config;
 
     /**
      * @param TIG_PostNL_Helper_Data $helper
@@ -123,6 +133,39 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         return $this->_stringHelper;
     }
 
+    /**
+     * @param array $config
+     *
+     * @return $this
+     */
+    public function setConfig($config)
+    {
+        $this->_config = $config;
+
+        return $this;
+    }
+
+    /**
+     * @param string|null $key
+     *
+     * @return array
+     */
+    public function getConfig($key = null)
+    {
+        $config = $this->_config;
+
+        if (!is_null($key) && array_key_exists($key, $config)) {
+            return $config[$key];
+        }
+
+        return $config;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @return void
+     */
     protected function _construct()
     {
         $this->setHelper(Mage::helper('postnl'))
@@ -133,8 +176,9 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     /**
      * Alias for createPdf().
      *
-     * @param array                                $labels
-     * @param TIG_PostNL_Model_Core_Shipment|bool  $postnlShipment
+     * @param array                                  $labels
+     * @param TIG_PostNL_Model_Core_Shipment|boolean $postnlShipment
+     * @param Zend_Pdf|boolean                       $mainPdf
      *
      * @return bool|Zend_Pdf
      */
@@ -172,7 +216,8 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         $firstLabel = current($labels);
 
         if (
-            $this->y < 421
+            !$this->getConfig('show_label')
+            || $this->y < 421
             || ($firstLabel->getLabelType() != 'Label' && $firstLabel->getLabelType() != 'Label-combi')
         ) {
             foreach($pdf->pages as &$page) {
@@ -196,6 +241,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             }
 
             if (count($labels) > 0) {
+                $labelModel->resetLabelCounter();
                 $additionalLabelsString = $labelModel->createPdf($labels);
 
                 $labelPdf = Zend_Pdf::parse($additionalLabelsString);
@@ -218,18 +264,23 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     protected function _getPackingSlipPdf($postnlShipment)
     {
         $shipment = $postnlShipment->getShipment();
-
         /**
-         * Create a dummy invoice for the totals at the bottom of the packingslip.
+         * Create a dummy invoice for the totals at the bottom of the packing slip.
          */
         $invoice  = Mage::getModel('postnl_core/service')->initInvoice($shipment, true);
         $storeId  = $shipment->getStoreId();
+
+        $this->setStoreId($storeId);
+        $this->setConfig(Mage::getStoreConfig(self::XPATH_PACKING_SLIP_SETTINGS, $storeId));
 
         $this->_beforeGetPdf();
         $this->_initRenderer('postnl_packingslip');
 
         $pdf = new Zend_Pdf();
         $this->_setPdf($pdf);
+
+        $this->y            = 815;
+        $this->rightColumnY = 815;
 
         if ($shipment->getStoreId()) {
             Mage::app()->getLocale()->emulate($storeId);
@@ -241,12 +292,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         /*
          * Add image.
          */
-        $this->_insertLogo($page, $storeId);
-
-        /*
-         * Add address.
-         */
-        $this->_insertAddress($page, $storeId);
+        $this->_insertLogo($page);
 
         /**
          * Add company info.
@@ -374,10 +420,10 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      *
      * @return void
      */
-    protected function _insertLogo(&$page, $store = null)
+    protected function _insertLogo(&$page)
     {
         $this->y = $this->y ? $this->y : 815;
-        $image = Mage::getStoreConfig(self::XPATH_PACKING_SLIP_LOGO, $store);
+        $image = $this->getConfig('logo');
         if (!$image) {
             return;
         }
@@ -440,13 +486,19 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      * @param Zend_Pdf_Page &$page
      * @param null|int      $store
      */
-    protected function _insertAddress(&$page, $store = null)
+    protected function _insertCompanyInfo(&$page, $store = null)
     {
+        if (!$this->getConfig('show_webshop_info')) {
+            return;
+        }
+
         $page->setFillColor(new Zend_Pdf_Color_GrayScale(0));
         $this->_setFontRegular($page, 8);
         $page->setLineWidth(0);
         $this->y = $this->y ? $this->y : 815;
-        $top = 775;
+        $top     = $this->y;
+        $rightTop = $this->y;
+
         foreach (explode("\n", Mage::getStoreConfig('sales/identity/address', $store)) as $value){
             if (empty($value)) {
                 continue;
@@ -466,38 +518,28 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                 $top -= 10;
             }
         }
-        $this->y = ($this->y > $top) ? $top : $this->y;
-    }
 
-    /**
-     * Add company info.
-     *
-     * @param Zend_Pdf_Page &$page
-     * @param int|null      $store
-     */
-    protected function _insertCompanyInfo(&$page, $store = null)
-    {
-        $page->setFillColor(new Zend_Pdf_Color_GrayScale(0));
-        $this->_setFontRegular($page, 8);
-        $page->setLineWidth(0);
-        $this->y = $this->y ? $this->y : 815;
-        $top = 775;
+        if ($this->getConfig('coc_number')) {
+            $page->drawText(
+                 $this->getHelper()->__('CoC') . ' ' . $this->getConfig('coc_number'),
+                 165,
+                 $rightTop,
+                 'UTF-8'
+            );
+            $rightTop -= 10;
+        }
 
-        $page->drawText(
-             $this->getHelper()->__('CoC') . ' ' . 'xxxxxxxx',
-             165,
-             $top,
-             'UTF-8'
-        );
-        $top -= 10;
+        if ($this->getConfig('vat_number')) {
+            $page->drawText(
+                 $this->getHelper()->__('VAT') . ' ' . $this->getConfig('vat_number'),
+                 165,
+                 $rightTop,
+                 'UTF-8'
+            );
+            $rightTop -= 10;
+        }
 
-        $page->drawText(
-             $this->getHelper()->__('VAT') . ' ' . 'xxxxxxxx',
-             165,
-             $top,
-             'UTF-8'
-        );
-        $top -= 10;
+        $top = ($top > $rightTop) ? $rightTop : $top;
 
         $this->y = ($this->y > $top) ? $top : $this->y;
     }
@@ -511,7 +553,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _insertOrderInfo(&$page, $order, $shipment)
     {
-        $top = 815;
+        $top = $this->rightColumnY;
 
         $font = $this->_setFontBold($page, 15);
         $text = $this->getHelper()->__('Packing slip');
@@ -524,6 +566,12 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         );
 
         $top -= 20;
+
+        $this->rightColumnY = $top;
+
+        if (!$this->getConfig('show_order_info')) {
+            return;
+        }
 
         $font = $this->_setFontRegular($page, 8);
         $text = $this->getHelper()->__('Order') . ' # ' . $order->getIncrementId();
@@ -570,6 +618,10 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _insertPaymentInfo(&$page, $order)
     {
+        if (!$this->getConfig('show_payment_method')) {
+            return;
+        }
+
         $this->rightColumnY -= 24;
         $top = $this->rightColumnY;
 
@@ -585,13 +637,16 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
 
         $top -= 10;
 
-        /* Payment */
-        $paymentInfo = Mage::helper('payment')->getInfoBlock($order->getPayment())
+        /**
+         * Payment info.
+         */
+        $paymentInfo = Mage::helper('payment')
+                           ->getInfoBlock($order->getPayment())
                            ->setIsSecureMode(true)
                            ->toPdf();
         $paymentInfo = htmlspecialchars_decode($paymentInfo, ENT_QUOTES);
         $payment = explode('{{pdf_row_separator}}', $paymentInfo);
-        foreach ($payment as $key=>$value){
+        foreach ($payment as $key => $value){
             if (strip_tags(trim($value)) == '') {
                 unset($payment[$key]);
             }
@@ -623,6 +678,10 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _insertShipmentInfo(&$page, $order, $postnlShipment)
     {
+        if (!$this->getConfig('show_shipping_method')) {
+            return;
+        }
+
         $this->rightColumnY -= 14;
         $top = $this->rightColumnY;
 
@@ -666,20 +725,22 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
 
         $top -= 10;
 
-        $font = $this->_setFontRegular($page, 8);
-        $confirmDate = $postnlShipment->getConfirmDate();
-        $text = $this->getCoreHelper()->formatDate($confirmDate, 'full', false);
-        $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
-        $page->drawText(
-             $text,
-             $x,
-             $top,
-             'UTF-8'
-        );
+        if ($this->getConfig('show_shipping_date')) {
+            $font = $this->_setFontRegular($page, 8);
+            $confirmDate = $postnlShipment->getConfirmDate();
+            $text = $this->getCoreHelper()->formatDate($confirmDate, 'full', false);
+            $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
+            $page->drawText(
+                 $text,
+                 $x,
+                 $top,
+                 'UTF-8'
+            );
 
-        $top -= 10;
+            $top -= 10;
+        }
 
-        $this->rightColumnY = $top;
+        $this->rightColumnY = $top - 14;
     }
 
     /**
@@ -688,7 +749,15 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _insertCustomerId(&$page, $customerId)
     {
+        if (!$this->getConfig('show_customer_number')) {
+            return;
+        }
+
         if (!$customerId) {
+            return;
+        }
+
+        if (!$this->getConfig('logo')) {
             return;
         }
 
@@ -727,6 +796,14 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _insertOrderAddresses(&$page, $obj)
     {
+        $showBillingAddress    = $this->getConfig('show_billing_address');
+        $showShippingAddress   = $this->getConfig('show_shipping_address');
+        $showPakjegemakAddress = $this->getConfig('show_pakjegemak_address');
+
+        if (!$showBillingAddress && !$showShippingAddress && !$showPakjegemakAddress) {
+            return;
+        }
+
         if ($obj instanceof Mage_Sales_Model_Order) {
             $shipment = null;
             $order = $obj;
@@ -743,56 +820,69 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         $this->y = $this->y ? $this->y : 815;
         $top = $this->y - 14;
 
-        $this->_setFontRegular($page, 8);
+        $this->_setFontBold($page, 8);
 
-        /* Billing Address */
-        $billingAddress = $this->_formatAddress($order->getBillingAddress()->format('pdf'));
-        /* Shipping Address */
-        $shippingAddress = $this->_formatAddress($order->getShippingAddress()->format('pdf'));
+        $addressX = 15;
 
-        /**
-         * PakjeGemak Address
-         *
-         * @var Mage_Sales_Model_Order_Address $address
-         */
+        $billingAddress    = false;
+        $shippingAddress   = false;
         $pakjeGemakAddress = false;
-        $addressesCollection = $order->getAddressesCollection();
-        foreach ($addressesCollection as $address) {
-            if ($address->getAddressType() != 'pakje_gemak') {
-                continue;
-            }
 
-            $pakjeGemakAddress = $this->_formatAddress($address->format('pdf'));
-            break;
+        if ($showBillingAddress) {
+            $billingAddress = $this->_formatAddress($order->getBillingAddress()->format('pdf'));
+
+            $page->drawText($this->getHelper()->__('Billing address'), $addressX, ($top - 15), 'UTF-8');
+            $addressX += 150;
         }
 
-        $this->_setFontBold($page, 8);
-        $page->drawText($this->getHelper()->__('Billing address'), 15, ($top - 15), 'UTF-8');
-        $page->drawText($this->getHelper()->__('Shipping address'), 165, ($top - 15), 'UTF-8');
-        if ($pakjeGemakAddress) {
-            $page->drawText($this->getHelper()->__('Post office address'), 315, ($top - 15), 'UTF-8');
+        if ($showShippingAddress) {
+            $shippingAddress = $this->_formatAddress($order->getShippingAddress()->format('pdf'));
+
+            $page->drawText($this->getHelper()->__('Shipping address'), $addressX, ($top - 15), 'UTF-8');
+            $addressX += 150;
+        }
+
+        if ($showPakjegemakAddress) {
+            /**
+             * @var Mage_Sales_Model_Order_Address $address
+             */
+            $addressesCollection = $order->getAddressesCollection();
+            foreach ($addressesCollection as $address) {
+                if ($address->getAddressType() != 'pakje_gemak') {
+                    continue;
+                }
+
+                $pakjeGemakAddress = $this->_formatAddress($address->format('pdf'));
+
+                $page->drawText($this->getHelper()->__('Post office address'), $addressX, ($top - 15), 'UTF-8');
+            }
         }
 
         $this->_setFontRegular($page, 8);
         $this->y = $top - 25;
         $addressesStartY = $this->y;
+        $addressX = 15;
 
-        foreach ($billingAddress as $value){
-            if ($value !== '') {
-                $text = array();
-                foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $_value) {
-                    $text[] = $_value;
-                }
-                foreach ($text as $part) {
-                    $page->drawText(strip_tags(ltrim($part)), 15, $this->y, 'UTF-8');
-                    $this->y -= 10;
+        if ($showBillingAddress && $billingAddress) {
+            foreach ($billingAddress as $value){
+                if ($value !== '') {
+                    $text = array();
+                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $_value) {
+                        $text[] = $_value;
+                    }
+                    foreach ($text as $part) {
+                        $page->drawText(strip_tags(ltrim($part)), $addressX, $this->y, 'UTF-8');
+                        $this->y -= 10;
+                    }
                 }
             }
+
+            $addressX += 150;
         }
 
         $addressesEndY = $this->y;
 
-        if (isset($shippingAddress)) {
+        if ($showShippingAddress && $shippingAddress) {
             $this->y = $addressesStartY;
             foreach ($shippingAddress as $value){
                 if ($value!=='') {
@@ -801,7 +891,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                         $text[] = $_value;
                     }
                     foreach ($text as $part) {
-                        $page->drawText(strip_tags(ltrim($part)), 165, $this->y, 'UTF-8');
+                        $page->drawText(strip_tags(ltrim($part)), $addressX, $this->y, 'UTF-8');
                         $this->y -= 10;
                     }
                 }
@@ -809,9 +899,11 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
 
             $addressesEndY = min($addressesEndY, $this->y);
             $this->y = $addressesEndY;
+
+            $addressX += 150;
         }
 
-        if ($pakjeGemakAddress) {
+        if ($showPakjegemakAddress && $pakjeGemakAddress) {
             $this->y = $addressesStartY;
             foreach ($pakjeGemakAddress as $value){
                 if ($value!=='') {
@@ -820,7 +912,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                         $text[] = $_value;
                     }
                     foreach ($text as $part) {
-                        $page->drawText(strip_tags(ltrim($part)), 315, $this->y, 'UTF-8');
+                        $page->drawText(strip_tags(ltrim($part)), $addressX, $this->y, 'UTF-8');
                         $this->y -= 10;
                     }
                 }
@@ -842,6 +934,8 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _drawItemsHeader(Zend_Pdf_Page $page)
     {
+        $this->y = $this->y ? $this->y : 815;
+
         /*
          * Add table head.
          */
@@ -920,21 +1014,34 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _insertShipmentComment(&$page, $shipment)
     {
-        $commentsCollection = $shipment->getCommentsCollection();
-        $commentsCollection->getSelect()
-                           ->limit(1);
-
-        /**
-         * @var Mage_Sales_Model_Order_Shipment_Comment $comment
-         */
-        $comment = $commentsCollection->getFirstItem();
-        if (!$comment || !$comment->getId()) {
+        if (!$this->getConfig('show_comment')) {
             return;
+        }
+
+        $commentType = $this->getConfig('comment_type');
+
+        if ($commentType == 'static') {
+            $commentText = $this->getStringHelper()->stripTags($this->getConfig('comment_text'));
+        } else {
+            $commentsCollection = $shipment->getCommentsCollection()
+                                           ->addFieldToFilter('is_visible_on_front', array('eq' => 1));
+
+            $commentsCollection->getSelect()
+                               ->limit(1);
+
+            /**
+             * @var Mage_Sales_Model_Order_Shipment_Comment $comment
+             */
+            $comment = $commentsCollection->getFirstItem();
+            if (!$comment || !$comment->getId()) {
+                return;
+            }
+
+            $commentText = $comment->getComment();
         }
 
         $top = $this->y;
 
-        $commentText = $comment->getComment();
         $commentTextParts = $this->getStringHelper()->str_split($commentText, 70, true, true);
         $height = 12 * count($commentTextParts) + 10;
 
@@ -968,6 +1075,10 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _insertTotals(&$page, $order, $invoice)
     {
+        if (!$this->getConfig('show_totals')) {
+            return;
+        }
+
         $totals = $this->_getTotalsList($order);
         $lineBlock = array(
             'lines'  => array(),
@@ -1061,7 +1172,8 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                             $column['text'] = array($column['text']);
                         }
                         $top = 0;
-                        foreach ($column['text'] as $part) {
+                        $textCount = count($column['text']);
+                        for ($i = 0; $i < $textCount; $i++) {
                             $top += $lineSpacing;
                         }
 
@@ -1143,6 +1255,22 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
                 $this->y -= $maxHeight;
             }
         }
+
+        return $page;
+    }
+
+    /**
+     * Create new page and assign to PDF object.
+     *
+     * @param  array $settings
+     * @return Zend_Pdf_Page
+     */
+    public function newPage(array $settings = array())
+    {
+        $pageSize = !empty($settings['page_size']) ? $settings['page_size'] : Zend_Pdf_Page::SIZE_A4;
+        $page = $this->_getPdf()->newPage($pageSize);
+        $this->_getPdf()->pages[] = $page;
+        $this->y = 815;
 
         return $page;
     }
