@@ -36,10 +36,10 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridMassAction
+class TIG_PostNL_Model_Core_System_Config_Source_CommentType
 {
     /**
-     * Returns an option array for available shipment grid mass actions.
+     * Returns an option array for comment type options
      *
      * @return array
      */
@@ -48,24 +48,12 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridMassAction
         $helper = Mage::helper('postnl');
         $options = array(
             array(
-                'value' => 'postnl_print_labels_and_confirm',
-                'label' => $helper->__('Print shipping labels & confirm shipment'),
+                'value' => 'static',
+                'label' => $helper->__('Pre-configured message'),
             ),
             array(
-                'value' => 'postnl_print_labels',
-                'label' => $helper->__('Print shipping labels'),
-            ),
-            array(
-                'value' => 'postnl_print_packing_slips',
-                'label' => $helper->__('Print packing slips'),
-            ),
-            array(
-                'value' => 'postnl_confirm_shipments',
-                'label' => $helper->__('Confirm shipments'),
-            ),
-            array(
-                'value' => 'postnl_parcelware_export',
-                'label' => $helper->__('Parcelware export'),
+                'value' => 'shipment_comment',
+                'label' => $helper->__('Last shipment comment'),
             ),
         );
 

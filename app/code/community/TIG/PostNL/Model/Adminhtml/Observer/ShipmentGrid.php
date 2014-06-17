@@ -738,18 +738,18 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * Build all the mass action option arrays
          */
         $printAndConfirmOptions = array(
-            'label'      => $helper->__('PostNL - Print shipping labels & confirm shipment'),
-            'url'        => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabelsAndConfirm'),
+            'label' => $helper->__('PostNL - Print shipping labels & confirm shipment'),
+            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabelsAndConfirm'),
         );
 
         $printOptions = array(
-            'label'      => $helper->__('PostNL - Print shipping labels'),
-            'url'        => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabels'),
+            'label' => $helper->__('PostNL - Print shipping labels'),
+            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintLabels'),
         );
 
         $packingSlipOptions = array(
-            'label'      => $helper->__('PostNL - Print packing slips'),
-            'url'        => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingslips'),
+            'label' => $helper->__('PostNL - Print packing slips'),
+            'url'   => $adminhtmlHelper->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingslips'),
         );
 
         $confirmOptions = array(
