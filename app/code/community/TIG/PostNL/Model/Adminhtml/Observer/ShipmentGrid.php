@@ -70,12 +70,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * XML path to 'shipping grid columns' setting
      */
-    const XML_PATH_SHIPPING_GRID_COLUMNS = 'postnl/cif_labels_and_confirming/shipping_grid_columns';
+    const XPATH_SHIPPING_GRID_COLUMNS = 'postnl/cif_labels_and_confirming/shipping_grid_columns';
 
     /**
      * XML path to default selected mass action setting
      */
-    const XML_PATH_SHIPPING_GRID_MASSACTION_DEFAULT = 'postnl/cif_labels_and_confirming/shipping_grid_massaction_default';
+    const XPATH_SHIPPING_GRID_MASSACTION_DEFAULT = 'postnl/cif_labels_and_confirming/shipping_grid_massaction_default';
 
     /**
      * Xpath to label size setting.
@@ -90,7 +90,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     public function getOptionalColumnsToDisplay()
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        $columnsToDisplay = Mage::getStoreConfig(self::XML_PATH_SHIPPING_GRID_COLUMNS, $storeId);
+        $columnsToDisplay = Mage::getStoreConfig(self::XPATH_SHIPPING_GRID_COLUMNS, $storeId);
 
         $columnsToDisplay = explode(',', $columnsToDisplay);
 
@@ -790,7 +790,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
          * Check which mass action should be selected by default
          */
         $defaultSelectedOption = Mage::getStoreConfig(
-            self::XML_PATH_SHIPPING_GRID_MASSACTION_DEFAULT,
+            self::XPATH_SHIPPING_GRID_MASSACTION_DEFAULT,
             Mage_Core_Model_App::ADMIN_STORE_ID
         );
 

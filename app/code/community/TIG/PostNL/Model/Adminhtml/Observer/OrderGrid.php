@@ -68,12 +68,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * XML path to show_grid_options setting.
      */
-    const XML_PATH_SHOW_OPTIONS = 'postnl/cif_labels_and_confirming/show_grid_options';
+    const XPATH_SHOW_OPTIONS = 'postnl/cif_labels_and_confirming/show_grid_options';
 
     /**
      * XML path to show shipment type column setting.
      */
-    const XML_PATH_SHOW_SHIPMENT_TYPE_COLUMN = 'postnl/cif_labels_and_confirming/show_shipment_type_column';
+    const XPATH_SHOW_SHIPMENT_TYPE_COLUMN = 'postnl/cif_labels_and_confirming/show_shipment_type_column';
 
     /**
      * Edits the sales order grid by adding a mass action to create shipments for selected orders.
@@ -300,7 +300,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         );
 
         $showShipmentTypeColumn = Mage::getStoreConfigFlag(
-            self::XML_PATH_SHOW_SHIPMENT_TYPE_COLUMN,
+            self::XPATH_SHOW_SHIPMENT_TYPE_COLUMN,
             Mage_Core_Model_App::ADMIN_STORE_ID
         );
 
@@ -387,7 +387,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'url'  => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massCreateShipments'),
         );
 
-        $showOptions = Mage::getStoreConfig(self::XML_PATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $showOptions = Mage::getStoreConfig(self::XPATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
 
         if ($showOptions) {
             $optionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');

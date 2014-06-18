@@ -51,7 +51,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     /**
      * Rate type (tablerate or flatrate).
      */
-    const XML_PATH_RATE_TYPE = 'carriers/postnl/rate_type';
+    const XPATH_RATE_TYPE = 'carriers/postnl/rate_type';
 
     /**
      * Whether to use Magento's tabelrates or PostNL's.
@@ -197,7 +197,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
             }
         }
 
-        $rateType = Mage::getStoreConfig(self::XML_PATH_RATE_TYPE, Mage::app()->getStore()->getId());
+        $rateType = Mage::getStoreConfig(self::XPATH_RATE_TYPE, Mage::app()->getStore()->getId());
 
         if ($rateType == 'flat') {
             $result = $this->_getFlatRate($request);

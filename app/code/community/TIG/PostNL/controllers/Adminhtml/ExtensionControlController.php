@@ -41,23 +41,23 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     /**
      * XML path to extensioncontrol email setting
      */
-    const XML_PATH_EMAIL = 'postnl/general/email';
+    const XPATH_EMAIL = 'postnl/general/email';
 
     /**
      * XML path to 'is_activated' flag
      */
-    const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
+    const XPATH_IS_ACTIVATED = 'postnl/general/is_activated';
 
     /**
      * XML paths for security keys
      */
-    const XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY  = 'postnl/general/unique_key';
-    const XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY = 'postnl/general/private_key';
+    const XPATH_EXTENSIONCONTROL_UNIQUE_KEY  = 'postnl/general/unique_key';
+    const XPATH_EXTENSIONCONTROL_PRIVATE_KEY = 'postnl/general/private_key';
 
     /**
      * XML path for active setting
      */
-    const XML_PATH_ACTIVE = 'postnl/general/active';
+    const XPATH_ACTIVE = 'postnl/general/active';
 
     /**
      * Error code for 'website already exists' error
@@ -71,7 +71,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
      */
     public function activateAction()
     {
-        $activationStatus = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $activationStatus = Mage::getStoreConfig(self::XPATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if (!$activationStatus) {
             $this->_registerWebshop();
         } elseif ($activationStatus == 1) {
@@ -101,7 +101,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         $email = false;
         if (isset($groups['general']['fields']['email']['value'])) {
             $email = $groups['general']['fields']['email']['value'];
-            Mage::getModel('core/config')->saveConfig(self::XML_PATH_EMAIL, $email);
+            Mage::getModel('core/config')->saveConfig(self::XPATH_EMAIL, $email);
 
             /**
              * reinit configuration
@@ -123,7 +123,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
              * single update statistics request.
              */
             if (isset($e->faultcode) && $e->faultcode == self::SHOP_ALREADY_REGISTERED_FAULTCODE) {
-                Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 1);
+                Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 1);
 
                 return $this->_updateStatistics();
             }
@@ -139,7 +139,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             return $this;
         }
 
-        Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 1);
+        Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 1);
 
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
@@ -179,7 +179,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             if (isset($generalFields['active']['value'])) {
                 $active = $generalFields['active']['value'];
                 if (!empty($active)) {
-                    Mage::getModel('core/config')->saveConfig(self::XML_PATH_ACTIVE, $active);
+                    Mage::getModel('core/config')->saveConfig(self::XPATH_ACTIVE, $active);
 
                     $configChanged = true;
                 }
@@ -196,7 +196,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
                      */
                     $encryptedUniqueKey = Mage::helper('postnl/webservices')->encryptValue($uniqueKey);
                     Mage::getModel('core/config')->saveConfig(
-                        self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY,
+                        self::XPATH_EXTENSIONCONTROL_UNIQUE_KEY,
                         $encryptedUniqueKey
                     );
 
@@ -215,7 +215,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
                      */
                     $encryptedPrivateKey = Mage::helper('postnl/webservices')->encryptValue($privateKey);
                     Mage::getModel('core/config')->saveConfig(
-                        self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY,
+                        self::XPATH_EXTENSIONCONTROL_PRIVATE_KEY,
                         $encryptedPrivateKey
                     );
 
@@ -237,11 +237,11 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
          */
         $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
         if (!isset($uniqueKey)) {
-            $uniqueKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, $adminStoreId);
+            $uniqueKey = Mage::getStoreConfig(self::XPATH_EXTENSIONCONTROL_UNIQUE_KEY, $adminStoreId);
         }
 
         if (!isset($privateKey)) {
-            $privateKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, $adminStoreId);
+            $privateKey = Mage::getStoreConfig(self::XPATH_EXTENSIONCONTROL_PRIVATE_KEY, $adminStoreId);
         }
 
         $helper = Mage::helper('postnl');
@@ -266,7 +266,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             return $this;
         }
 
-        Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 2);
+        Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 2);
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__('The extension has been successfully activated!')
@@ -283,7 +283,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
      */
     public function showActivationFieldsAction()
     {
-        Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 0);
+        Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 0);
 
         Mage::helper('postnl')->saveConfigState(array('postnl_general' => 1));
 

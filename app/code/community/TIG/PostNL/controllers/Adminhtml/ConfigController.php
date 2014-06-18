@@ -46,9 +46,9 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
     /**
      * XML path to password
      */
-    const XML_PATH_LIVE_PASSWORD = 'postnl/cif/live_password';
+    const XPATH_LIVE_PASSWORD = 'postnl/cif/live_password';
 
-    const XML_PATH_TEST_PASSWORD = 'postnl/cif/test_password';
+    const XPATH_TEST_PASSWORD = 'postnl/cif/test_password';
 
     /**
      * @var boolean
@@ -198,9 +198,9 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
 
-        $xpath = self::XML_PATH_LIVE_PASSWORD;
+        $xpath = self::XPATH_LIVE_PASSWORD;
         if ($this->_isTestMode) {
-            $xpath = self::XML_PATH_TEST_PASSWORD;
+            $xpath = self::XPATH_TEST_PASSWORD;
         }
 
         $websiteCode = $this->getRequest()->getParam('website');

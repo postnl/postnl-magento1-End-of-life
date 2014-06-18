@@ -52,7 +52,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
      *
      * This setting is ignored for GlobalPack labels and single Dutch or EPS labels
      */
-    const XML_PATH_LABEL_SIZE = 'postnl/cif_labels_and_confirming/label_size';
+    const XPATH_LABEL_SIZE = 'postnl/cif_labels_and_confirming/label_size';
 
     /**
      * An array of temporary files that have been created. these files will be destroyed at the end of the script.
@@ -210,7 +210,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             return $this->getData('label_size');
         }
 
-        $labelSize = Mage::getStoreConfig(self::XML_PATH_LABEL_SIZE, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $labelSize = Mage::getStoreConfig(self::XPATH_LABEL_SIZE, Mage_Core_Model_App::ADMIN_STORE_ID);
 
         $this->setLabelSize($labelSize);
         return $labelSize;

@@ -327,7 +327,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
 
     /**
      * Checks the store's config to see if the extension is compatible with the installed Magento version. If not, a
-     * message will be added to Mage_Adminnotification.
+     * message will be added to Mage_AdminNotification.
      *
      * @return $this
      */
@@ -488,7 +488,10 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     }
 
     /**
-     * Resets an array of config fields to factory defaults.
+     * Resets an array of config fields to factory defaults. This is done by actually deleting the config value from the
+     * core_config_data table.
+     * Because Magento overwrites the default values in the config.xml files with those from the db, if we remove the
+     * values from the db, the default values from the config.xml files will again be used.
      *
      * @param array|string $configFields
      *
@@ -611,7 +614,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
      *
      * @return $this
      */
-    protected function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
+    public function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
                                                  $removeOldValue = true)
     {
         $config = Mage::getConfig();
@@ -704,7 +707,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     }
 
     /**
-     * Sets the shipment type of every PostNL shipment.
+     * Sets the shipment type of every PostNL shipment. Before 1.3.0 the shipment type was determined on the fly. Since
+     * 1.3.0 it is instead set once in the PostNL Shipment table. This method updates the table for all PostNL shipments
+     * that do not yet have a shipment type.
      *
      * @return $this
      */
@@ -714,6 +719,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
 
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         foreach ($postnlShipmentCollection as $shipment) {
+            /**
+             * The getShipmentType() method will calculate and set the shipment type if none is available.
+             */
             $shipment->getShipmentType();
             $transactionSave->addObject($shipment);
         }

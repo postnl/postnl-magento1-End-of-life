@@ -61,42 +61,42 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * XML path to postnl general active/inactive setting.
      */
-    const XML_PATH_EXTENSION_ACTIVE = 'postnl/general/active';
+    const XPATH_EXTENSION_ACTIVE = 'postnl/general/active';
 
     /**
      * XML path to postnl carrier active/inactive setting.
      */
-    const XML_PATH_CARRIER_ACTIVE = 'carriers/postnl/active';
+    const XPATH_CARRIER_ACTIVE = 'carriers/postnl/active';
 
     /**
      * XML path to test/live mode config option.
      */
-    const XML_PATH_TEST_MODE = 'postnl/cif/mode';
+    const XPATH_TEST_MODE = 'postnl/cif/mode';
 
     /**
      * XML path to the test mode allowed config option.
      */
-    const XML_PATH_TEST_MODE_ALLOWED = 'postnl/advanced/allow_test_mode';
+    const XPATH_TEST_MODE_ALLOWED = 'postnl/advanced/allow_test_mode';
 
     /**
      * XML path to debug mode config option.
      */
-    const XML_PATH_DEBUG_MODE = 'postnl/advanced/debug_mode';
+    const XPATH_DEBUG_MODE = 'postnl/advanced/debug_mode';
 
     /**
      * XML path to 'is_activated' flag.
      */
-    const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
+    const XPATH_IS_ACTIVATED = 'postnl/general/is_activated';
 
     /**
      * XML path to 'show_error_details_in_frontend' flag.
      */
-    const XML_PATH_SHOW_ERROR_DETAILS_IN_FRONTEND = 'postnl/advanced/show_error_details_in_frontend';
+    const XPATH_SHOW_ERROR_DETAILS_IN_FRONTEND = 'postnl/advanced/show_error_details_in_frontend';
 
     /**
      * XML path to use_globalpack settings.
      */
-    const XML_PATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
+    const XPATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
 
     /**
      * XPATH to allow EPS BE only product option setting.
@@ -156,7 +156,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
-     * @var null|TIG_PostNL_Model_Core_Cache
+     * @var null|boolean|TIG_PostNL_Model_Core_Cache
      */
     protected $_cache = null;
 
@@ -201,7 +201,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param null|TIG_PostNL_Model_Core_Cache $cache
+     * @param null|boolean|TIG_PostNL_Model_Core_Cache $cache
      *
      * @return TIG_PostNL_Helper_Data
      */
@@ -213,7 +213,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @return null|TIG_PostNL_Model_Core_Cache
+     * Gets the cache if it's been set. If the cache is null, it means the cache had not been defined yet. In this case
+     * we instantiate the cache model. If the cache is active, the _cache variable will be set with the cache instance.
+     * Otherwise the _cache variable will be false.
+     *
+     * @return null|boolean|TIG_PostNL_Model_Core_Cache
      */
     public function getCache()
     {
@@ -241,7 +245,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return Mage::registry('postnl_debug_mode');
         }
 
-        $debugMode = (int) Mage::getStoreConfig(self::XML_PATH_DEBUG_MODE, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $debugMode = (int) Mage::getStoreConfig(self::XPATH_DEBUG_MODE, Mage_Core_Model_App::ADMIN_STORE_ID);
 
         Mage::register('postnl_debug_mode', $debugMode);
         return $debugMode;
@@ -583,7 +587,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
 
-        $useGlobal = Mage::getStoreConfigFlag(self::XML_PATH_USE_GLOBALPACK, $storeId);
+        $useGlobal = Mage::getStoreConfigFlag(self::XPATH_USE_GLOBALPACK, $storeId);
         return $useGlobal;
     }
 
@@ -604,7 +608,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
+        $testMode = Mage::getStoreConfigFlag(self::XPATH_TEST_MODE, $storeId);
 
         Mage::register('postnl_test_mode', $testMode);
         return $testMode;
@@ -689,7 +693,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Check if the module has been enabled
          */
-        $enabled = Mage::getStoreConfigFlag(self::XML_PATH_EXTENSION_ACTIVE, $storeId);
+        $enabled = Mage::getStoreConfigFlag(self::XPATH_EXTENSION_ACTIVE, $storeId);
         if ($enabled === false) {
             $errors = array(
                 array(
@@ -721,7 +725,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Check if the PostNL shipping method is active
          */
-        $postnlShippingMethodEnabled = Mage::getStoreConfigFlag(self::XML_PATH_CARRIER_ACTIVE, $storeId);
+        $postnlShippingMethodEnabled = Mage::getStoreConfigFlag(self::XPATH_CARRIER_ACTIVE, $storeId);
         if ($postnlShippingMethodEnabled === false) {
             if ($this->isSystemConfig() || $this->isLoggingEnabled()) {
                 $shippingMethodSectionurl = Mage::helper("adminhtml")->getUrl(
@@ -883,7 +887,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Check if the module has been activated
          */
-        $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $isActivated = Mage::getStoreConfig(self::XPATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($isActivated != 2) {
             $errors[] = array(
                 'code'    => 'POSTNL-0033',
@@ -1246,14 +1250,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             return true;
         }
 
-        /**
-         * Do a version check instead.
-         */
-        $version = Mage::getVersion();
-        if (version_compare($version, '1.9.0.0', '>=')) {
-            return true;
-        }
-
         return false;
     }
 
@@ -1592,7 +1588,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * Check if the show_error_details_in_frontend setting is set to true
          */
         $storeId = Mage::app()->getStore()->getId();
-        if (Mage::getStoreConfigFlag(self::XML_PATH_SHOW_ERROR_DETAILS_IN_FRONTEND, $storeId)) {
+        if (Mage::getStoreConfigFlag(self::XPATH_SHOW_ERROR_DETAILS_IN_FRONTEND, $storeId)) {
             return true;
         }
 

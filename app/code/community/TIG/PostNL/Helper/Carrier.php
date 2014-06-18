@@ -61,7 +61,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     /**
      * XML path to rate type setting
      */
-    const XML_PATH_RATE_TYPE = 'carriers/postnl/rate_type';
+    const XPATH_RATE_TYPE = 'carriers/postnl/rate_type';
 
     /**
      * Array of possible PostNL shipping methods
@@ -117,7 +117,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $rateType = Mage::getStoreConfig(self::XML_PATH_RATE_TYPE, $storeId);
+        $rateType = Mage::getStoreConfig(self::XPATH_RATE_TYPE, $storeId);
 
         $carrier = self::POSTNL_CARRIER;
         switch ($rateType) {

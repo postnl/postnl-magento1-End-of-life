@@ -50,8 +50,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
     /**
      * XML paths to use GlobalPack/Checkout settings.
      */
-    const XML_PATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
-    const XML_PATH_USE_CHECKOUT   = 'postnl/cif/use_checkout';
+    const XPATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
+    const XPATH_USE_CHECKOUT   = 'postnl/cif/use_checkout';
 
     /**
      * Template file used by this element.
@@ -136,7 +136,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
      */
     public function isGlobalConfigured()
     {
-        $globalEnabled = Mage::getStoreConfigFlag(self::XML_PATH_USE_GLOBALPACK, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $globalEnabled = Mage::getStoreConfigFlag(self::XPATH_USE_GLOBALPACK, Mage_Core_Model_App::ADMIN_STORE_ID);
         if (!$globalEnabled) {
             return true;
         }

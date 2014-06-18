@@ -62,25 +62,25 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * XML path to infinite label printiong setting
      */
-    const XML_PATH_INFINITE_LABEL_PRINTING = 'postnl/advanced/infinite_label_printing';
+    const XPATH_INFINITE_LABEL_PRINTING = 'postnl/advanced/infinite_label_printing';
 
     /**
      * XML path to weight unit used
      */
-    const XML_PATH_WEIGHT_UNIT = 'postnl/cif_labels_and_confirming/weight_unit';
+    const XPATH_WEIGHT_UNIT = 'postnl/cif_labels_and_confirming/weight_unit';
 
     /**
      * XML path to weight per parcel config setting
      */
-    const XML_PATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
+    const XPATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
 
     /**
      * XML paths to default product options settings
      */
-    const XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
-    const XML_PATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
-    const XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
-    const XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
+    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
+    const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
+    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
+    const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
 
     /**
      * Regular expression used to split streetname from housenumber. This regex works well for dutch addresses, but may
@@ -454,7 +454,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     public function allowInfinitePrinting()
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        $enabled = Mage::getStoreConfigFlag(self::XML_PATH_INFINITE_LABEL_PRINTING, $storeId);
+        $enabled = Mage::getStoreConfigFlag(self::XPATH_INFINITE_LABEL_PRINTING, $storeId);
 
         return $enabled;
     }
@@ -669,11 +669,11 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $storeId = Mage::app()->getStore()->getId();
 
-        $defaultDutchOption          = Mage::getStoreConfig(self::XML_PATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
-        $defaultEuOption             = Mage::getStoreConfig(self::XML_PATH_DEFAULT_EU_PRODUCT_OPTION, $storeId);
-        $defaultGlobalOption         = Mage::getStoreConfig(self::XML_PATH_DEFAULT_GLOBAL_PRODUCT_OPTION, $storeId);
+        $defaultDutchOption          = Mage::getStoreConfig(self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION, $storeId);
+        $defaultEuOption             = Mage::getStoreConfig(self::XPATH_DEFAULT_EU_PRODUCT_OPTION, $storeId);
+        $defaultGlobalOption         = Mage::getStoreConfig(self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION, $storeId);
         $defaultPakketautomaatOption = Mage::getStoreConfig(
-            self::XML_PATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION,
+            self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION,
             $storeId
         );
 
@@ -714,7 +714,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         /**
          * Get the weight per parcel.
          */
-        $weightPerParcel = Mage::getStoreConfig(self::XML_PATH_WEIGHT_PER_PARCEL, $shipment->getStoreId());
+        $weightPerParcel = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $shipment->getStoreId());
         $weightPerParcel = $this->standardizeWeight($weightPerParcel, $shipment->getStoreId());
 
         /**
@@ -830,7 +830,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
 
-        $unitUsed = Mage::getStoreConfig(self::XML_PATH_WEIGHT_UNIT, $storeId);
+        $unitUsed = Mage::getStoreConfig(self::XPATH_WEIGHT_UNIT, $storeId);
 
         switch ($unitUsed) {
             case 'tonne':
