@@ -41,7 +41,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StreetField
     /**
      * XML path to community edition address lines configuration option
      */
-    const XML_PATH_COMMUNITY_STREET_LINES = 'customer/address/street_lines';
+    const XPATH_COMMUNITY_STREET_LINES = 'customer/address/street_lines';
 
     /**
      * @var null|array The resulting product option array
@@ -86,13 +86,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_StreetField
          * Get the allowed number of address lines based on the current scope
          */
         if ($request->getParam('store')) {
-            $lineCount = Mage::getStoreConfig(self::XML_PATH_COMMUNITY_STREET_LINES, $request->getParam('store'));
+            $lineCount = Mage::getStoreConfig(self::XPATH_COMMUNITY_STREET_LINES, $request->getParam('store'));
         } elseif ($request->getParam('website')) {
             $website = Mage::getModel('core/website')->load($request->getParam('website'), 'code');
-            $lineCount = $website->getConfig(self::XML_PATH_COMMUNITY_STREET_LINES, $website->getId());
+            $lineCount = $website->getConfig(self::XPATH_COMMUNITY_STREET_LINES, $website->getId());
         } else {
             $lineCount = Mage::getStoreConfig(
-                self::XML_PATH_COMMUNITY_STREET_LINES,
+                self::XPATH_COMMUNITY_STREET_LINES,
                 Mage_Core_Model_App::ADMIN_STORE_ID
             );
         }

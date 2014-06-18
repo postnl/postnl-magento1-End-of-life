@@ -41,28 +41,28 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     /**
      * XML path to use_postcode_check setting
      */
-    const XML_PATH_USE_POSTCODE_CHECK = 'postnl/cif_address/use_postcode_check';
+    const XPATH_USE_POSTCODE_CHECK = 'postnl/cif_address/use_postcode_check';
 
     /**
      * Constants containing XML paths to cif address configuration options
      */
-    const XML_PATH_SPLIT_STREET                = 'postnl/cif_address/split_street';
-    const XML_PATH_STREETNAME_FIELD            = 'postnl/cif_address/streetname_field';
-    const XML_PATH_HOUSENUMBER_FIELD           = 'postnl/cif_address/housenr_field';
-    const XML_PATH_SPLIT_HOUSENUMBER           = 'postnl/cif_address/split_housenr';
-    const XML_PATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
+    const XPATH_SPLIT_STREET                = 'postnl/cif_address/split_street';
+    const XPATH_STREETNAME_FIELD            = 'postnl/cif_address/streetname_field';
+    const XPATH_HOUSENUMBER_FIELD           = 'postnl/cif_address/housenr_field';
+    const XPATH_SPLIT_HOUSENUMBER           = 'postnl/cif_address/split_housenr';
+    const XPATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
 
     /**
      * XML paths to flags that determine which environment allows the postcode check functionality
      */
-    const XML_PATH_POSTCODE_CHECK_IN_CHECKOUT    = 'postnl/cif_address/postcode_check_in_checkout';
-    const XML_PATH_POSTCODE_CHECK_IN_ADDRESSBOOK = 'postnl/cif_address/postcode_check_in_addressbook';
+    const XPATH_POSTCODE_CHECK_IN_CHECKOUT    = 'postnl/cif_address/postcode_check_in_checkout';
+    const XPATH_POSTCODE_CHECK_IN_ADDRESSBOOK = 'postnl/cif_address/postcode_check_in_addressbook';
 
     /**
      * XML paths that control some features of postcode check
      */
-    const XML_PATH_POSTCODE_CHECK_MAX_ATTEMPTS = 'postnl/cif_address/postcode_check_max_attempts';
-    const XML_PATH_POSTCODE_CHECK_TIMEOUT     = 'postnl/cif_address/postcode_check_timeout';
+    const XPATH_POSTCODE_CHECK_MAX_ATTEMPTS = 'postnl/cif_address/postcode_check_max_attempts';
+    const XPATH_POSTCODE_CHECK_TIMEOUT     = 'postnl/cif_address/postcode_check_timeout';
 
     /**
      * Xpath to OSC street fields sort order.
@@ -119,7 +119,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             return true;
         }
 
-        $useSplitStreet = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_STREET, $storeId);
+        $useSplitStreet = Mage::getStoreConfigFlag(self::XPATH_SPLIT_STREET, $storeId);
         return $useSplitStreet;
     }
 
@@ -140,7 +140,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             return true;
         }
 
-        $useSplitStreet = Mage::getStoreConfigFlag(self::XML_PATH_SPLIT_HOUSENUMBER, $storeId);
+        $useSplitStreet = Mage::getStoreConfigFlag(self::XPATH_SPLIT_HOUSENUMBER, $storeId);
         return $useSplitStreet;
     }
 
@@ -161,7 +161,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             return 1;
         }
 
-        $streetnameField = (int) Mage::getStoreConfig(self::XML_PATH_STREETNAME_FIELD, $storeId);
+        $streetnameField = (int) Mage::getStoreConfig(self::XPATH_STREETNAME_FIELD, $storeId);
         return $streetnameField;
     }
 
@@ -183,7 +183,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             return 2;
         }
 
-        $housenumberField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_FIELD, $storeId);
+        $housenumberField = (int) Mage::getStoreConfig(self::XPATH_HOUSENUMBER_FIELD, $storeId);
         return $housenumberField;
     }
 
@@ -204,7 +204,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             return 3;
         }
 
-        $housenumberExtensionField = (int) Mage::getStoreConfig(self::XML_PATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);
+        $housenumberExtensionField = (int) Mage::getStoreConfig(self::XPATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);
         return $housenumberExtensionField;
     }
 
@@ -221,7 +221,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $timeout = (int) Mage::getStoreConfig(self::XML_PATH_POSTCODE_CHECK_TIMEOUT, $storeId);
+        $timeout = (int) Mage::getStoreConfig(self::XPATH_POSTCODE_CHECK_TIMEOUT, $storeId);
         return $timeout;
     }
 
@@ -239,7 +239,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $maxAttempts = (int) Mage::getStoreConfig(self::XML_PATH_POSTCODE_CHECK_MAX_ATTEMPTS, $storeId);
+        $maxAttempts = (int) Mage::getStoreConfig(self::XPATH_POSTCODE_CHECK_MAX_ATTEMPTS, $storeId);
         if (!$maxAttempts) {
             return 'false';
         }
@@ -277,7 +277,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $usePostcodeCheck = Mage::getStoreConfigFlag(self::XML_PATH_USE_POSTCODE_CHECK, $storeId);
+        $usePostcodeCheck = Mage::getStoreConfigFlag(self::XPATH_USE_POSTCODE_CHECK, $storeId);
         return $usePostcodeCheck;
     }
 
@@ -312,10 +312,10 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
         $environmentAllowed = false;
         switch ($environment) {
             case 'checkout':
-                $environmentAllowed = Mage::getStoreConfigFlag(self::XML_PATH_POSTCODE_CHECK_IN_CHECKOUT, $storeId);
+                $environmentAllowed = Mage::getStoreConfigFlag(self::XPATH_POSTCODE_CHECK_IN_CHECKOUT, $storeId);
                 break;
             case 'addressbook':
-                $environmentAllowed = Mage::getStoreConfigFlag(self::XML_PATH_POSTCODE_CHECK_IN_ADDRESSBOOK, $storeId);
+                $environmentAllowed = Mage::getStoreConfigFlag(self::XPATH_POSTCODE_CHECK_IN_ADDRESSBOOK, $storeId);
                 break;
             case false:
                 $environmentAllowed = true;

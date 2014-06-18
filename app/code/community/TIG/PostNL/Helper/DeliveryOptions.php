@@ -825,7 +825,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
+        $testMode = Mage::getStoreConfigFlag(self::XPATH_TEST_MODE, $storeId);
 
         Mage::register('delivery_options_test_mode', $testMode);
         return $testMode;

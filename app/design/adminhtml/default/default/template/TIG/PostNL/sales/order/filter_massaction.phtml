@@ -110,21 +110,26 @@
          * Get each selected row's shipment type and add it to the filter array
          */
         $$('.massaction-checkbox:checked').each(function(checkbox) {
+            var productType;
             var value = checkbox.value;
             var shipmentType = $('postnl-shipmenttype-' + value);
-            if (!shipmentType) {
-                return;
+            if (shipmentType) {
+                productType = shipmentType.getAttribute('data-product-type');
             }
 
-            var productType = shipmentType.getAttribute('data-product-type');
+            if (!productType) {
+                productType = 'non-postnl';
+            }
 
             if (indexOf.call(filteredTypes, productType) == -1) {
                 filteredTypes.push(productType);
             }
         });
 
-        console.log(filteredTypes.length);
-        if (filteredTypes.length > 1) {
+        if (indexOf.call(filteredTypes, 'non-postnl') != -1) {
+            useDefault.up().hide();
+            filterMassAction(false);
+        } else if (filteredTypes.length > 1) {
             useDefault.up().hide();
             useDefault.checked = 'checked';
 

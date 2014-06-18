@@ -1001,8 +1001,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         /**
-         * Determine which address to use. Currently only 'Sender' and 'Receiver' are fully supported.
-         * Other possible address types will use the default 'receiver' address.
+         * Determine which address to use. Currently only 'Sender', 'Alternative', 'PakjeGemak' and 'Receiver' are fully
+         * supported.
          */
         $streetData = false;
         switch ($addressType) {
@@ -1025,7 +1025,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 break;
             case 'Alternative':
                 /**
-                 * Check if the return address is the same as the sender address. If so, no address is returned
+                 * Check if the return address is the same as the sender address. If so, no address is returned.
                  */
                 $useSenderAddress = Mage::getStoreConfig(
                     self::XPATH_USE_SENDER_ADDRESS_AS_RETURN,
@@ -1036,9 +1036,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 }
 
                 /**
-                 * Get all cif_return_address fields as an array and convert that to a Varien_Object
-                 * This allows the _prepareAddress method to access this data in the same way as a
-                 * conventional Mage_Sales_Model_Order_Address object.
+                 * Get all cif_return_address fields as an array and convert that to a Varien_Object. This allows the
+                 * _prepareAddress method to access this data in the same way as a conventional
+                 * Mage_Sales_Model_Order_Address object.
                  */
                 $returnAddress = Mage::getStoreConfig(self::XPATH_RETURN_ADDRESS, $this->getStoreId());
 

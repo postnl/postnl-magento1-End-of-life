@@ -306,7 +306,7 @@
                     </postnl_core_shipment_save>
                 </observers>
 			</controller_action_predispatch_adminhtml_sales_order_shipment_save>
-            <controller_action_postdispatch_postnl>
+            <controller_action_postdispatch_postnl_admin>
                 <observers>
                     <!-- Admin logging -->
                     <postnl_enterprise_logging>
@@ -315,7 +315,7 @@
                         <method>controllerPostdispatch</method>
                     </postnl_enterprise_logging>
                 </observers>
-            </controller_action_postdispatch_postnl>
+            </controller_action_postdispatch_postnl_admin>
             <admin_system_config_changed_section_postnl>
                 <observers>
                     <!-- Clean PostNL config cache -->

@@ -41,7 +41,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     /**
      * XML path of show_summary_page setting
      */
-    const XML_PATH_SHOW_SUMMARY_PAGE = 'postnl/checkout/show_summary_page';
+    const XPATH_SHOW_SUMMARY_PAGE = 'postnl/checkout/show_summary_page';
 
     /**
      * Order class variable
@@ -243,7 +243,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         /**
          * Check if showing the checkout summary page is allowed
          */
-        $showSummarypage = Mage::getStoreConfigFlag(self::XML_PATH_SHOW_SUMMARY_PAGE);
+        $showSummarypage = Mage::getStoreConfigFlag(self::XPATH_SHOW_SUMMARY_PAGE);
         if (!$showSummarypage) {
             $this->_redirect('checkout/cart');
             return $this;

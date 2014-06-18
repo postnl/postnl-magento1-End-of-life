@@ -106,16 +106,16 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
     /**
      * PostNl cache ID.
      *
-     * @var null|string
+     * @var string
      */
-    protected $_cacheId = null;
+    protected $_cacheId;
 
     /**
      * Flag whether or not the cache may be used.
      *
      * @var null|boolean
      */
-    protected $_canUseCache = null;
+    protected $_canUseCache;
 
     /**
      * @param string $cacheId
@@ -134,7 +134,14 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
      */
     public function getCacheId()
     {
-        return $this->_cacheId;
+        if ($this->hasCacheId()) {
+            return $this->_cacheId;
+        }
+
+        $cacheId = $this->_getCacheId();
+
+        $this->setCacheId($cacheId);
+        return $cacheId;
     }
 
     /**
@@ -204,6 +211,10 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
     {
         if ($this->canUseCache()) {
             $data = $this->loadCache();
+            if (!$data) {
+                return $this;
+            }
+
             $this->setData($data);
         }
 
@@ -221,7 +232,11 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
             return array();
         }
 
-        $data = Mage::app()->loadCache($this->_getCacheId());
+        $data = Mage::app()->loadCache($this->getCacheId());
+        if (!$data) {
+            return false;
+        }
+
         $data = unserialize($data);
 
         return $data;
@@ -238,7 +253,7 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
             return $this;
         }
 
-        Mage::app()->saveCache(serialize($this->getData()), $this->_getCacheId(), array(self::CACHE_TAG), null);
+        Mage::app()->saveCache(serialize($this->getData()), $this->getCacheId(), array(self::CACHE_TAG), null);
         return $this;
     }
 
@@ -253,7 +268,7 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
             return $this->getCanUseCache();
         }
 
-        $canUseCache = Mage::app()->useCache('postnl_config');
+        $canUseCache = Mage::app()->useCache(self::CACHE_TAG);
 
         $this->setCanUseCache($canUseCache);
         return $canUseCache;
@@ -276,11 +291,9 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
      */
     public function cleanCache()
     {
-        if ($this->canUseCache()) {
-            Mage::app()->cleanCache(self::CACHE_TAG);
+        Mage::app()->cleanCache(self::CACHE_TAG);
 
-            $this->unsetData();
-        }
+        $this->unsetData();
 
         return $this;
     }
@@ -292,13 +305,8 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
      */
     protected function _getCacheId()
     {
-        if ($this->hasCacheId()) {
-            return $this->getCacheId();
-        }
-
         $cacheId = 'postnl_' . Mage::app()->getStore()->getId();
 
-        $this->setCacheId($cacheId);
         return $cacheId;
     }
 }

@@ -41,8 +41,8 @@ class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Mode
     /**
      * The XMl feed's url and protocol.
      */
-    const XML_PATH_FEED_USE_HTTPS  = 'postnl/advanced/feed_use_https';
-    const XML_PATH_FEED_URL        = 'postnl/advanced/feed_url';
+    const XPATH_FEED_USE_HTTPS  = 'postnl/advanced/feed_use_https';
+    const XPATH_FEED_URL        = 'postnl/advanced/feed_url';
 
     /**
      * Retrieve feed url.
@@ -58,12 +58,12 @@ class TIG_PostNL_Model_ExtensionControl_Feed extends Mage_AdminNotification_Mode
         $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
 
         $scheme = 'http://';
-        $useHttps = Mage::getStoreConfigFlag(self::XML_PATH_FEED_USE_HTTPS, $adminStoreId);
+        $useHttps = Mage::getStoreConfigFlag(self::XPATH_FEED_USE_HTTPS, $adminStoreId);
         if ($useHttps) {
             $scheme = 'https://';
         }
 
-        $feedUrl = $scheme . Mage::getStoreConfig(self::XML_PATH_FEED_URL, $adminStoreId);
+        $feedUrl = $scheme . Mage::getStoreConfig(self::XPATH_FEED_URL, $adminStoreId);
 
         $this->setFeedurl($feedUrl);
         return $feedUrl;

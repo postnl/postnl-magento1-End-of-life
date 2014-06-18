@@ -44,9 +44,9 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     /**
      * XML paths to Parcelware references
      */
-    const XML_PATH_CONTRACT_REF_NR = 'postnl/parcelware_export/contract_ref_nr';
-    const XML_PATH_CONTRACT_NAME   = 'postnl/parcelware_export/contract_name';
-    const XML_PATH_SENDER_REF_NR   = 'postnl/parcelware_export/sender_ref_nr';
+    const XPATH_CONTRACT_REF_NR = 'postnl/parcelware_export/contract_ref_nr';
+    const XPATH_CONTRACT_NAME   = 'postnl/parcelware_export/contract_name';
+    const XPATH_SENDER_REF_NR   = 'postnl/parcelware_export/sender_ref_nr';
 
     /**
      * @var Mage_Core_Model_Resource_Transaction|void
@@ -727,7 +727,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getContractReference()
     {
-        $contractReference = Mage::getStoreConfig(self::XML_PATH_CONTRACT_REF_NR, $this->getStoreId());
+        $contractReference = Mage::getStoreConfig(self::XPATH_CONTRACT_REF_NR, $this->getStoreId());
 
         return $contractReference;
     }
@@ -739,7 +739,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getContractName()
     {
-        $contractName = Mage::getStoreConfig(self::XML_PATH_CONTRACT_NAME, $this->getStoreId());
+        $contractName = Mage::getStoreConfig(self::XPATH_CONTRACT_NAME, $this->getStoreId());
 
         return $contractName;
     }
@@ -751,7 +751,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getSenderReference()
     {
-        $senderReference = Mage::getStoreConfig(self::XML_PATH_SENDER_REF_NR, $this->getStoreId());
+        $senderReference = Mage::getStoreConfig(self::XPATH_SENDER_REF_NR, $this->getStoreId());
 
         return $senderReference;
     }
