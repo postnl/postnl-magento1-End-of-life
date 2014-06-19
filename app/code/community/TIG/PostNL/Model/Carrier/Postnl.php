@@ -525,11 +525,25 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
 
         $shippingAddress = $shipment->getShippingAddress();
 
+        /**
+         * @var Mage_Sales_Model_Order_Address $address
+         */
+        $addresses = $shipment->getOrder()->getAddressesCollection();
+        foreach ($addresses as $address) {
+            if ($address->getAddressType() == 'pakje_gemak') {
+                $shippingAddress = $address;
+                break;
+            }
+        }
+
+
         $statusModel->setCarrier($track->getCarrierCode())
                     ->setCarrierTitle($this->getConfigData('name'))
                     ->setTracking($track->getTrackNumber())
                     ->setPopup(1)
-                    ->setUrl($this->getHelper()->getBarcodeUrl($track->getTrackNumber(), $shippingAddress, $lang, false));
+                    ->setUrl(
+                        $this->getHelper()->getBarcodeUrl($track->getTrackNumber(), $shippingAddress, $lang, false)
+                    );
 
         return $statusModel;
     }
