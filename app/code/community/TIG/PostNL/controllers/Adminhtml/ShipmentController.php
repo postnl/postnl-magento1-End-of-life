@@ -914,18 +914,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Get the current memory limit as an integer in bytes. Because printing packing slips can be very memory
              * intensive, we need to monitor memory usage.
              */
-            $memoryLimit = ini_get('memory_limit');
-            if (preg_match('/^(\d+)(.)$/', $memoryLimit, $matches)) {
-                if (!isset($matches[2])) {
-                    $memoryLimit = $matches[1];
-                } elseif ($matches[2] == 'G' || $matches[2] == 'g') {
-                    $memoryLimit = $matches[1] * 1024 * 1024 * 1024;
-                } elseif ($matches[2] == 'M' || $matches[2] == 'm') {
-                    $memoryLimit = $matches[1] * 1024 * 1024;
-                } elseif ($matches[2] == 'K' || $matches[2] == 'k') {
-                    $memoryLimit = $matches[1] * 1024;
-                }
-            }
+            $memoryLimit = $helper->getMemoryLimit();
 
             /**
              * Create the pdf's and add them to the main pdf object.

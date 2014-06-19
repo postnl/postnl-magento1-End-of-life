@@ -75,6 +75,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_SystemConfig
 
         $helper = Mage::helper('postnl');
 
+        if (!$helper->checkIsPostnlActionAllowed('download_logs')) {
+            return false;
+        }
+
         $onClickUrl = $configEditBlock->getUrl('postnl_admin/adminhtml_config/downloadLogs');
         $onClick = "setLocation('{$onClickUrl}')";
 

@@ -73,6 +73,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
 
     /**
+     * Minimum server memory required by the PostNL extension in bytes.
+     */
+    const MIN_SERVER_MEMORY = 268435456; //256MB
+
+    /**
      * callAfterApplyAllUpdates flag. Causes applyAfterUpdates() to be called.
      *
      * @var boolean
@@ -201,6 +206,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $configVer = $this->getConfigVer();
 
         $this->_checkVersionCompatibility();
+        $this->_checkMemoryRequirement();
 
         if (version_compare($configVer, $dbVer) != self::VERSION_COMPARE_GREATER) {
             return $this;
@@ -391,7 +397,44 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
             return $this;
         }
 
+
         Mage::register('postnl_version_compatibility_checked', true);
+        return $this;
+    }
+
+    /**
+     * Make sure that the server meets Magento's (and PostNL's) memory requirements.
+     *
+     * @return $this
+     * @throws Exception
+     */
+    protected function _checkMemoryRequirement()
+    {
+        if (Mage::registry('postnl_memory_requirement_checked')) {
+            return $this;
+        }
+
+        $helper = Mage::helper('postnl');
+
+        if ($helper->getMemoryLimit() < self::MIN_SERVER_MEMORY) {
+            $message = '[POSTNL-0175] '
+                . $helper->__(
+                    'The server\'s memory limit is less than %1$dMB. The PostNL extension requires at least %1$dMB to' .
+                    ' function properly. Using the PostNL extension on servers with less memory than this may cause' .
+                    ' unexpected errors.',
+                    self::MIN_SERVER_MEMORY / 1024 / 1024
+                );
+
+            $inbox = Mage::getModel('postnl/inbox');
+            $inbox->addCritical(
+                $message,
+                $message,
+                '',
+                true
+            )->save();
+        }
+
+        Mage::register('postnl_memory_requirement_checked', true);
         return $this;
     }
 
