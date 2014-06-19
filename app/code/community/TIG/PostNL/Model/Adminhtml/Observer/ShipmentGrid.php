@@ -178,7 +178,45 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     }
 
     /**
-     * Adds additional joins to the collection that will be used by newly added columns
+     * Adds additional joins to the collection that will be used by newly added columns.
+     *
+     * Resulting query:
+     * SELECT `main_table`.*,
+     *     IF(
+     *         `pakjegemak_address`.`parent_id`, `pakjegemak_address`.`country_id`, `shipping_address`.`country_id`
+     *     ) AS `country_id`,
+     *     IF(
+     *         `pakjegemak_address`.`parent_id`, `pakjegemak_address`.`postcode`, `shipping_address`.`postcode`
+     *     ) AS `postcode`,
+     *     `order`.`shipping_method`,
+     *     `order`.`shipping_description`,
+     *     `postnl_shipment`.`confirm_date`,
+     *     `postnl_shipment`.`main_barcode`,
+     *     `postnl_shipment`.`confirm_status`,
+     *     `postnl_shipment`.`labels_printed`,
+     *     `postnl_shipment`.`shipping_phase`,
+     *     `postnl_shipment`.`parcel_count`,
+     *     `postnl_shipment`.`is_parcelware_exported`,
+     *     `postnl_shipment`.`product_code`,
+     *     `postnl_shipment`.`extra_cover_amount`,
+     *     `postnl_order`.`is_pakje_gemak`,
+     *     `postnl_order`.`delivery_date`,
+     *     `postnl_order`.`is_pakketautomaat`,
+     *     `postnl_order`.`type` AS `delivery_option_type`
+     * FROM `sales_flat_shipment_grid` AS `main_table`
+     * INNER JOIN `sales_flat_order` AS `order`
+     *     ON `main_table`.`order_id`=`order`.`entity_id`
+     * LEFT JOIN `sales_flat_order_address` AS `shipping_address`
+     *     ON `main_table`.`order_id`=`shipping_address`.`parent_id`
+     *     AND `shipping_address`.`address_type`='shipping'
+     * LEFT JOIN `sales_flat_order_address` AS `pakjegemak_address`
+     *     ON `main_table`.`order_id`=`pakjegemak_address`.`parent_id`
+     *     AND `pakjegemak_address`.`address_type`='pakje_gemak'
+     * LEFT JOIN `tig_postnl_shipment` AS `postnl_shipment`
+     *     ON `main_table`.`entity_id`=`postnl_shipment`.`shipment_id`
+     * LEFT JOIN `tig_postnl_order` AS `postnl_order`
+     *     ON `main_table`.`order_id`=`postnl_order`.`order_id`
+     * ORDER BY created_at DESC LIMIT 20
      *
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      *
@@ -187,6 +225,21 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     protected function _joinCollection($collection)
     {
         $resource = Mage::getSingleton('core/resource');
+
+        /**
+         * Add a conditional SELECT clause for the country_id and postode fields. If the shipment has a PakjeGemak
+         * address we need the postcode and country_id from that address. Otherwise we need them from the shipping
+         * address.
+         */
+        $collection->addExpressionFieldToSelect(
+            'country_id',
+            'IF(`pakjegemak_address`.`parent_id`, `pakjegemak_address`.`country_id`, `shipping_address`.`country_id`)',
+            'country_id'
+        )->addExpressionFieldToSelect(
+            'postcode',
+            'IF(`pakjegemak_address`.`parent_id`, `pakjegemak_address`.`postcode`, `shipping_address`.`postcode`)',
+            'postcode'
+        );
 
         $select = $collection->getSelect();
 
@@ -200,6 +253,22 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 'shipping_method'      => 'order.shipping_method',
                 'shipping_description' => 'order.shipping_description',
             )
+        );
+
+        /**
+         * join sales_flat_order_address table. Once for the shipping address and once for the pakje_gemak address. We
+         * need both for the conditional select used to get the postcode and country_id of the detination_address.
+         */
+        $select->joinLeft(
+            array('shipping_address' => $resource->getTableName('sales/order_address')),
+            "`main_table`.`order_id`=`shipping_address`.`parent_id` AND `shipping_address`.`address_type`='shipping'",
+            array()
+        );
+        $select->joinLeft(
+            array('pakjegemak_address' => $resource->getTableName('sales/order_address')),
+            "`main_table`.`order_id`=`pakjegemak_address`.`parent_id`" .
+            " AND `pakjegemak_address`.`address_type`='pakje_gemak'",
+            array()
         );
 
         /**
@@ -367,7 +436,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                     'align'            => 'left',
                     'index'            => 'extra_cover_amount',
                     'type'             => 'currency',
-                    'currency_code'    => Mage::app()->getStore()->getBaseCurrencyCode(), //returns the base currency code for the admin store
+                    'currency_code'    => Mage::app()->getStore()->getBaseCurrencyCode(), //returns the base currency
+                                                                                          //code for the admin store
                 ),
                 $after
             );
