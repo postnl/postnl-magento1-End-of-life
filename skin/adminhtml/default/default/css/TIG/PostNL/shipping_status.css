@@ -48,6 +48,3 @@
 .status-delivered .progress-delivered .end { background:url(../../../images/TIG/PostNL/bkg_progress_sprite.png) 0 -238px no-repeat; }
 
 .hidden { display:none !important; }
-
-button.download span { background-image:url(../../../images/TIG/PostNL/btn_download_icon.png); padding-left:20px; }
-button.download span span { background:none !important; padding:0 !important; }

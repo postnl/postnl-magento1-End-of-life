@@ -253,7 +253,12 @@ class TIG_PostNL_Model_Core_Cache extends Varien_Object
             return $this;
         }
 
-        Mage::app()->saveCache(serialize($this->getData()), $this->getCacheId(), array(self::CACHE_TAG), null);
+        $data = $this->getData();
+        if (empty($data)) {
+            return $this;
+        }
+
+        Mage::app()->saveCache(serialize($data), $this->getCacheId(), array(self::CACHE_TAG), null);
         return $this;
     }
 

@@ -67,14 +67,15 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
     /**
      * Creates the system > config > edit form for the PostNL section.
      *
-     * Due to the way the form is initialized, each fieldset is initialized with it's fields in order. Due to this order a field
-     * can only depend on a field that is in the same fieldset or in a fieldset that is already initialized. An example:
-     * We have fieldset_a containing field_a. We also have fieldset_b containing field_b. If field_a depends on field_b, this
-     * is not possible. When field_a is initialized, fieldset_b and therefore field_b, will not yet have been initialized and
-     * will not be available.
+     * Due to the way the form is initialized, each fieldset is initialized with it's fields in order. Due to this order
+     * a field can only depend on a field that is in the same fieldset or in a fieldset that is already initialized. An
+     * example: We have fieldset_a containing field_a. We also have fieldset_b containing field_b. If field_a depends on
+     * field_b, this is not possible. When field_a is initialized, fieldset_b and therefore field_b, will not yet have
+     * been initialized and will not be available.
      *
-     * We have split the initialization of fieldsets and fields. This way Magento will first initialize all fieldsets and then
-     * init all fields. So when field_a is initialized, fieldset_b is already available and the dependency will work.
+     * We have split the initialization of fieldsets and fields. This way Magento will first initialize all fieldsets
+     * and then init all fields. So when field_a is initialized, fieldset_b is already available and the dependency will
+     * work.
      *
      * @return $this
      */
