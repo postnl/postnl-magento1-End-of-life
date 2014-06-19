@@ -156,6 +156,26 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     );
 
     /**
+     * Array of possible log files created by the PostNL extension.
+     *
+     * @var array
+     */
+    protected $_logFiles = array(
+        'TIG_PostNL_Cendris_Debug.log',
+        'TIG_PostNL_Cendris_Exception.log',
+        'TIG_PostNL_Checkout_Debug.log',
+        'TIG_PostNL_CIF_Debug.log',
+        'TIG_PostNL_CIF_Exception.log',
+        'TIG_PostNL_Cron_Debug.log',
+        'TIG_PostNL_Debug.log',
+        'TIG_PostNL_Exception.log',
+        'TIG_PostNL_MijnPakket_Debug.log',
+        'TIG_PostNL_Payment_Debug.log',
+        'TIG_PostNL_Webservices_Debug.log',
+        'TIG_PostNL_Webservices_Exception.log',
+    );
+
+    /**
      * @var null|boolean|TIG_PostNL_Model_Core_Cache
      */
     protected $_cache = null;
@@ -232,6 +252,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         $this->setCache($cache);
         return $cache;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLogFiles()
+    {
+        return $this->_logFiles;
     }
 
     /**

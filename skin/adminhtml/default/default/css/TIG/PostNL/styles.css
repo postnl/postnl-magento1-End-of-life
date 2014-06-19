@@ -36,3 +36,7 @@ body.no-scroll { overflow:hidden !important; }
 .postnl-tooltip > div:before { position:absolute; top:-5px; left:0; content:''; width:325px; height:5px; overflow:hidden; background:url(../../../images/TIG/PostNL/bkg_tooltip.png) no-repeat 0 0; }
 .postnl-tooltip > div:after { position:absolute; bottom:-14px; left:-1px; content:''; width:325px; height:14px; overflow:hidden; background:url(../../../images/TIG/PostNL/bkg_tooltip.png) no-repeat -325px 0; }
 .postnl-tooltip:hover > div { opacity:1; width:301px; visibility:visible; bottom:30px;}
+
+/* Download button */
+button.download span { background-image:url(../../../images/TIG/PostNL/btn_download_icon.png); padding-left:20px; }
+button.download span span { background:none !important; padding:0 !important; }
