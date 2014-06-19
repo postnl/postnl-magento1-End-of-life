@@ -181,6 +181,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_cache = null;
 
     /**
+     * THe current server's memory limit.
+     *
+     * @var int
+     */
+    protected $_memoryLimit;
+
+    /**
      * Get required fields array.
      *
      * @return array
@@ -260,6 +267,48 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function getLogFiles()
     {
         return $this->_logFiles;
+    }
+
+    /**
+     * Gets the current memory limit in bytes.
+     *
+     * @return int
+     */
+    public function getMemoryLimit()
+    {
+        if ($this->_memoryLimit) {
+            return $this->_memoryLimit;
+        }
+
+        $memoryLimit = ini_get('memory_limit');
+        if (preg_match('/^(\d+)(.)$/', $memoryLimit, $matches)) {
+            if (!isset($matches[2])) {
+                $memoryLimit = $matches[1];
+            } elseif ($matches[2] == 'G' || $matches[2] == 'g') {
+                $memoryLimit = $matches[1] * 1024 * 1024 * 1024;
+            } elseif ($matches[2] == 'M' || $matches[2] == 'm') {
+                $memoryLimit = $matches[1] * 1024 * 1024;
+            } elseif ($matches[2] == 'K' || $matches[2] == 'k') {
+                $memoryLimit = $matches[1] * 1024;
+            }
+        } else {
+            $memoryLimit = (int) $memoryLimit;
+        }
+
+        $this->setMemoryLimit($memoryLimit);
+        return $memoryLimit;
+    }
+
+    /**
+     * @param int $memoryLimit
+     *
+     * @return $this
+     */
+    public function setMemoryLimit($memoryLimit)
+    {
+        $this->_memoryLimit = $memoryLimit;
+
+        return $this;
     }
 
     /**
@@ -583,6 +632,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 break;
             case 'view_complete_status':
                 $aclPath = 'postnl/shipment/complete_status';
+                break;
+            case 'download_logs':
+                $aclPath = 'system/config/postnl/download_logs';
                 break;
             case 'confirm': //no break
             case 'print_label': //no break

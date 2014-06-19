@@ -39,12 +39,12 @@
 class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Action
 {
     /**
-     * Base XML path of config settings that will be checked
+     * Base XML path of config settings that will be checked.
      */
     const XML_BASE_PATH = 'postnl/cif';
 
     /**
-     * XML paths to passwords
+     * XML paths to passwords.
      */
     const XPATH_LIVE_PASSWORD = 'postnl/cif/live_password';
     const XPATH_TEST_PASSWORD = 'postnl/cif/test_password';
@@ -260,6 +260,15 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
     {
         $helper = Mage::helper('postnl');
 
+        if (!$helper->checkIsPostnlActionAllowed('download_logs')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+            return $this;
+        }
+
         /**
          * Get the folder where all PostNL logs are stored and make sure it exists.
          */
@@ -310,7 +319,7 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
                     'adminhtml/session',
                     'POSTNL-0173',
                     'warning',
-                    $this->__('Log %s is too large and was skipped.', $logName)
+                    $helper->__('Log %s is too large (%.2fMB) and was skipped.', $logName, $fileSize / 1024 / 1024)
                 );
                 continue;
             }

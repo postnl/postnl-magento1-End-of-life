@@ -50,6 +50,12 @@
 									<postnl translate="title" module="postnl">
 										<title>PostNL</title>
 										<sort_order>330</sort_order>
+                                        <children>
+                                            <download_logs translate="title" module="postnl">
+                                                <title>Download PostNL log files</title>
+                                                <sort_order>10</sort_order>
+                                            </download_logs>
+                                        </children>
 									</postnl>
 								</children>
 							</config>
