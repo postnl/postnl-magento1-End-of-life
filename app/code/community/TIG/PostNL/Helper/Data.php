@@ -965,7 +965,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         Mage::unregister('postnl_core_is_configured_errors');
 
         /**
-         * Check if the module has been activated
+         * Check if the module has been activated.
+         *
+         * The is_activated config value can have 3 possible values:
+         *  0 - The extension has not yet been activated.
+         *  1 - The activation procedure has begun and keys have been sent to the merchant.
+         *  2 - The activation procedure has been finished. The merchant has entered his keys.
          */
         $isActivated = Mage::getStoreConfig(self::XPATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($isActivated != 2) {
@@ -985,7 +990,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $baseFields = $this->getRequiredFields();
 
         /**
-         * Get either the live mode or test mode required fields
+         * Get either the live mode or test mode required fields.
          */
         if ($testMode) {
             $modeFields = $this->getTestModeRequiredFields();
@@ -994,12 +999,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
         $requiredFields = array_merge($modeFields, $baseFields);
 
+        /**
+         * Check if all required fields are entered. This method will return an array of errors containing the fields
+         * that are missing. If all fields are entered, the array will be empty.
+         */
         $fieldErrors = $this->_getFieldsConfiguredErrors($requiredFields, $storeId);
-
         $errors = array_merge($errors, $fieldErrors);
 
         /**
-         * If any errors were detected, add them to the registry and return false
+         * If any errors were detected, add them to the registry and return false.
          */
         if (!empty($errors)) {
             Mage::register('postnl_core_is_configured_errors', $errors);
@@ -1079,8 +1087,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
              * @var Varien_Simplexml_Element $section
              */
             $configFields = Mage::getSingleton('adminhtml/config');
-            $sections     = $configFields->getSections('postnl');
-            $section      = $sections->postnl;
+            $section      = $configFields->getSections('postnl')->postnl;
         }
 
         foreach ($requiredFields as $requiredField) {
