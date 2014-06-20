@@ -88,6 +88,8 @@ PostnlDeliveryOptions.prototype = {
 
     selectedOption           : false,
     selectedType             : false,
+    lastSelectedOption       : false,
+    lastSelectedType         : false,
     paPhoneCheckPassed       : false,
 
     deliveryOptionsMap       : false,
@@ -231,6 +233,26 @@ PostnlDeliveryOptions.prototype = {
 
     setSelectedType : function(type) {
         this.selectedType = type;
+
+        return this;
+    },
+
+    getLastSelectedOption : function() {
+        return this.lastSelectedOption;
+    },
+
+    setLastSelectedOption : function(option) {
+        this.lastSelectedOption = option;
+
+        return this;
+    },
+
+    getLastSelectedType : function() {
+        return this.lastSelectedType;
+    },
+
+    setLastSelectedType : function(type) {
+        this.lastSelectedType = type;
 
         return this;
     },
@@ -446,6 +468,17 @@ PostnlDeliveryOptions.prototype = {
 
                 for (var i = 0; i < shippingMethods.length; i++) {
                     if (element.identify() == shippingMethods[i]) {
+                        if (!this.getSelectedOption() && this.getParsedTimeframes()) {
+                            if (this.getLastSelectedType() == 'Avond' || this.getLastSelectedType() == 'Overdag') {
+                                this.selectTimeframe(this.getLastSelectedOption().getElement());
+                            } else if (this.getLastSelectedType()) {
+                                this.selectLocation(
+                                    this.getLastSelectedOption().getElements()[this.getLastSelectedType()]
+                                );
+                            } else {
+                                this.timeframes[0].select();
+                            }
+                        }
                         return;
                     }
                 }
@@ -648,11 +681,19 @@ PostnlDeliveryOptions.prototype = {
          */
         var timeframes = responseText.evalJSON(true);
 
+        var shippingMethodName = this.getOptions().shippingMethodName;
+        var checkbox = $(shippingMethodName);
+        var selectPostnlShippingMethod = false;
+
+        if (checkbox.checked) {
+            selectPostnlShippingMethod = true;
+        }
+
         /**
          * Parse and render the result.
          */
         this.parseTimeframes(timeframes)
-            .renderTimeframes(true);
+            .renderTimeframes(selectPostnlShippingMethod);
 
         this.setParsedTimeframes(true)
             .hideSpinner();
@@ -1026,7 +1067,9 @@ PostnlDeliveryOptions.prototype = {
 
         timeframes.each(function(timeframe) {
             if (element && timeframe.element.identify() == element.identify()) {
+                this.setLastSelectedOption(timeframe);
                 this.setSelectedOption(timeframe);
+                this.setLastSelectedType(timeframe.getType());
                 this.setSelectedType(timeframe.getType());
 
                 if (this.debug) {
@@ -1084,7 +1127,9 @@ PostnlDeliveryOptions.prototype = {
 
                 var locationElement = elements[index];
                 if (element && locationElement.identify() == element.identify()) {
+                    this.setLastSelectedOption(location);
                     this.setSelectedOption(location);
+                    this.setLastSelectedType(index);
                     this.setSelectedType(index);
                     location.select(index);
 
@@ -1145,6 +1190,7 @@ PostnlDeliveryOptions.prototype = {
         this.unSelectLocation();
         this.unSelectTimeframe();
         this.setSelectedType(null);
+        this.setSelectedOption(null);
 
         return this;
     },

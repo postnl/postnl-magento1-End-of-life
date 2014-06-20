@@ -79,6 +79,9 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     {
         $helper = Mage::helper('postnl/payment');
 
+        /**
+         * Make sure the quote is available.
+         */
         if (is_null($quote)) {
             $helper->log(
                 $helper->__('PostNL COD is not available, because the quote is empty.')
@@ -86,6 +89,9 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             return false;
         }
 
+        /**
+         * COD is not available for virtual shipments.
+         */
         if ($quote->isVirtual()) {
             $helper->log(
                 $helper->__('PostNL COD is not available, because the order is virtual.')
@@ -93,6 +99,9 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             return false;
         }
 
+        /**
+         * If COD is only available for PostNL shipping methods, we need to check if the shipping method is PostNL.
+         */
         if (!(bool) $this->getConfigData('allow_for_non_postnl', $quote->getStoreId())) {
             $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
             $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
@@ -118,6 +127,9 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             return false;
         }
 
+        /**
+         * Make sure all required fields are entered.
+         */
         $codSettings = Mage::getStoreConfig(self::XPATH_COD_SETTINGS, Mage::app()->getStore()->getId());
 
         if (!isset($codSettings['account_name'])
@@ -133,6 +145,9 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             return false;
         }
 
+        /**
+         * Finally, perform Magento's own checks.
+         */
         $parentIsAvailable = parent::isAvailable($quote);
         if (!$parentIsAvailable) {
             $helper->log(

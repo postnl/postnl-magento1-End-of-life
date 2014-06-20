@@ -61,4 +61,19 @@ $conn->addColumn($installer->getTable('postnl_core/shipment'),
     )
 );
 
+
+/**
+ * Update the PostNL shipment table so that a PostNl shipment is deleted when it's corresponding Magento shipment is
+ * deleted. This prevents errors caused by missing ID's.
+ */
+$conn->addForeignKey(
+    $installer->getFkName('postnl_core/shipment', 'shipment_id', 'sales/shipment', 'entity_id'),
+    $installer->getTable('postnl_core/shipment'),
+    'shipment_id',
+    $installer->getTable('sales/shipment'),
+    'entity_id',
+    Varien_Db_Ddl_Table::ACTION_CASCADE,
+    Varien_Db_Ddl_Table::ACTION_CASCADE
+);
+
 $installer->endSetup();
