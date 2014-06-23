@@ -47,6 +47,12 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     const XPATH_PACKING_SLIP_SETTINGS = 'postnl/packing_slip';
 
     /**
+     * The height of a page's top and bottom margins.
+     */
+    const PAGE_TOP_HEIGHT    = 815;
+    const PAGE_BOTTOM_HEIGHT = 15;
+
+    /**
      * Y coordinate for right column elements.
      *
      * @var int|void
@@ -220,7 +226,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             || $this->y < 421
             || ($firstLabel->getLabelType() != 'Label' && $firstLabel->getLabelType() != 'Label-combi')
         ) {
-            foreach($pdf->pages as &$page) {
+            foreach($pdf->pages as $page) {
                 $mainPdf->pages[] = clone $page;
             }
 
@@ -228,7 +234,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
 
             $labelPdf = Zend_Pdf::parse($labelsString);
 
-            foreach ($labelPdf->pages as &$page) {
+            foreach ($labelPdf->pages as $page) {
                 $mainPdf->pages[] = clone $page;
             }
         } else {
@@ -236,7 +242,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             $labelsString = $labelModel->createPackingSlipLabel(array_shift($labels), $packingSlipString);
 
             $pdf = Zend_Pdf::parse($labelsString);
-            foreach($pdf->pages as &$page) {
+            foreach($pdf->pages as $page) {
                 $mainPdf->pages[] = clone $page;
             }
 
@@ -246,7 +252,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
 
                 $labelPdf = Zend_Pdf::parse($additionalLabelsString);
 
-                foreach ($labelPdf->pages as &$page) {
+                foreach ($labelPdf->pages as $page) {
                     $mainPdf->pages[] = clone $page;
                 }
             }
@@ -283,8 +289,8 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         $pdf = new Zend_Pdf();
         $this->_setPdf($pdf);
 
-        $this->y            = 815;
-        $this->rightColumnY = 815;
+        $this->y            = self::PAGE_TOP_HEIGHT;
+        $this->rightColumnY = self::PAGE_TOP_HEIGHT;
 
         if ($shipment->getStoreId()) {
             Mage::app()->getLocale()->emulate($storeId);
@@ -410,7 +416,10 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     protected function _insertLogo(&$page)
     {
-        $this->y = $this->y ? $this->y : 815;
+        if (!$this->y) {
+            $this->y = self::PAGE_TOP_HEIGHT;
+        }
+
         $image = $this->getConfig('logo');
         if (!$image) {
             return $this;
@@ -489,10 +498,14 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             return $this;
         }
 
+        if (!$this->y) {
+            $this->y = self::PAGE_TOP_HEIGHT;
+        }
+
         $page->setFillColor(new Zend_Pdf_Color_GrayScale(0));
         $this->_setFontRegular($page, 8);
         $page->setLineWidth(0);
-        $this->y = $this->y ? $this->y : 815;
+
         $top     = $this->y;
         $rightTop = $this->y;
 
@@ -766,9 +779,12 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             return $this;
         }
 
+        if (!$this->y) {
+            $this->y = self::PAGE_TOP_HEIGHT;
+        }
+
         $this->_setFontBold($page, 8);
         $page->setLineWidth(0);
-        $this->y = $this->y ? $this->y : 815;
         $top = $this->y - 24;
 
         $page->drawText(
@@ -827,7 +843,10 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             );
         }
 
-        $this->y = $this->y ? $this->y : 815;
+        if (!$this->y) {
+            $this->y = self::PAGE_TOP_HEIGHT;
+        }
+
         $top = $this->y - 14;
 
         $this->_setFontBold($page, 8);
@@ -876,11 +895,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         if ($showBillingAddress && $billingAddress) {
             foreach ($billingAddress as $value){
                 if ($value !== '') {
-                    $text = array();
-                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $_value) {
-                        $text[] = $_value;
-                    }
-                    foreach ($text as $part) {
+                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $part) {
                         $page->drawText(strip_tags(ltrim($part)), $addressX, $this->y, 'UTF-8');
                         $this->y -= 10;
                     }
@@ -896,11 +911,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             $this->y = $addressesStartY;
             foreach ($shippingAddress as $value){
                 if ($value!=='') {
-                    $text = array();
-                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $_value) {
-                        $text[] = $_value;
-                    }
-                    foreach ($text as $part) {
+                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $part) {
                         $page->drawText(strip_tags(ltrim($part)), $addressX, $this->y, 'UTF-8');
                         $this->y -= 10;
                     }
@@ -918,10 +929,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
             foreach ($pakjeGemakAddress as $value){
                 if ($value!=='') {
                     $text = array();
-                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $_value) {
-                        $text[] = $_value;
-                    }
-                    foreach ($text as $part) {
+                    foreach ($this->getStringHelper()->str_split($value, 20, true, true) as $part) {
                         $page->drawText(strip_tags(ltrim($part)), $addressX, $this->y, 'UTF-8');
                         $this->y -= 10;
                     }
@@ -944,9 +952,11 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      *
      * @return $this
      */
-    protected function _drawItemsHeader(Zend_Pdf_Page $page)
+    protected function _drawItemsHeader(Zend_Pdf_Page &$page)
     {
-        $this->y = $this->y ? $this->y : 815;
+        if (!$this->y) {
+            $this->y = self::PAGE_TOP_HEIGHT;
+        }
 
         /*
          * Add table head.
@@ -1150,7 +1160,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     }
 
     /**
-     * Draw lines
+     * Draw lines.
      *
      * draw items array format:
      * lines        array;array of line blocks (required)
@@ -1181,106 +1191,205 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     {
         foreach ($draw as $itemsProp) {
             if (!isset($itemsProp['lines']) || !is_array($itemsProp['lines'])) {
-                Mage::throwException(Mage::helper('sales')->__('Invalid draw line data. Please define "lines" array.'));
-            }
-            $lines  = $itemsProp['lines'];
-            $height = isset($itemsProp['height']) ? $itemsProp['height'] : 10;
-
-            if (empty($itemsProp['shift'])) {
-                $shift = 0;
-                foreach ($lines as $line) {
-                    $maxHeight = 0;
-                    foreach ($line as $column) {
-                        $lineSpacing = !empty($column['height']) ? $column['height'] : $height;
-                        if (!is_array($column['text'])) {
-                            $column['text'] = array($column['text']);
-                        }
-                        $top = 0;
-                        $textCount = count($column['text']);
-                        for ($i = 0; $i < $textCount; $i++) {
-                            $top += $lineSpacing;
-                        }
-
-                        $maxHeight = $top > $maxHeight ? $top : $maxHeight;
-                    }
-                    $shift += $maxHeight;
-                }
-                $itemsProp['shift'] = $shift;
+                Mage::throwException(
+                    Mage::helper('sales')->__('Invalid draw line data. Please define "lines" array.')
+                );
             }
 
-            if ($this->y - $itemsProp['shift'] < 15) {
-                $page = $this->newPage($pageSettings);
-            }
-
-            foreach ($lines as $line) {
-                $maxHeight = 0;
-                foreach ($line as $column) {
-                    $fontSize = empty($column['font_size']) ? 10 : $column['font_size'];
-                    if (!empty($column['font_file'])) {
-                        $font = Zend_Pdf_Font::fontWithPath($column['font_file']);
-                        $page->setFont($font, $fontSize);
-                    } else {
-                        $fontStyle = empty($column['font']) ? 'regular' : $column['font'];
-                        switch ($fontStyle) {
-                            case 'bold':
-                                $font = $this->_setFontBold($page, $fontSize);
-                                break;
-                            case 'italic':
-                                $font = $this->_setFontItalic($page, $fontSize);
-                                break;
-                            default:
-                                $font = $this->_setFontRegular($page, $fontSize);
-                                break;
-                        }
-                    }
-
-                    if (!is_array($column['text'])) {
-                        $column['text'] = array($column['text']);
-                    }
-
-                    $lineSpacing = !empty($column['height']) ? $column['height'] : $height;
-                    $top = 0;
-                    foreach ($column['text'] as $part) {
-                        $shift = 0;
-                        if (array_key_exists('shift', $column)) {
-                            $shift = $column['shift'];
-                        }
-
-                        $top += $shift;
-
-                        if ($this->y - $lineSpacing - $shift < 15) {
-                            $page = $this->newPage($pageSettings);
-                        }
-
-                        $feed = $column['feed'];
-                        $textAlign = empty($column['align']) ? 'left' : $column['align'];
-                        $width = empty($column['width']) ? 0 : $column['width'];
-                        switch ($textAlign) {
-                            case 'right':
-                                if ($width) {
-                                    $feed = $this->getAlignRight($part, $feed, $width, $font, $fontSize);
-                                }
-                                else {
-                                    $feed = $feed - $this->widthForStringUsingFontSize($part, $font, $fontSize);
-                                }
-                                break;
-                            case 'center':
-                                if ($width) {
-                                    $feed = $this->getAlignCenter($part, $feed, $width, $font, $fontSize);
-                                }
-                                break;
-                        }
-                        $page->drawText($part, $feed, $this->y-$top, 'UTF-8');
-                        $top += $lineSpacing;
-                    }
-
-                    $maxHeight = $top > $maxHeight ? $top : $maxHeight;
-                }
-                $this->y -= $maxHeight;
-            }
+            $this->_drawLineBlock($page, $pageSettings, $itemsProp);
         }
 
         return $page;
+    }
+
+    /**
+     * Draw a single line.
+     *
+     * @param Zend_Pdf_Page $page
+     * @param array         $pageSettings
+     * @param array         $itemsProp
+     *
+     * @return $this
+     *
+     * @throws Zend_Pdf_Exception
+     */
+    protected function _drawLineBlock($page, $pageSettings, $itemsProp)
+    {
+        $lines  = $itemsProp['lines'];
+        $height = 10;
+
+        if (isset($itemsProp['height'])) {
+            $height = $itemsProp['height'];
+        }
+
+        if (!isset($itemsProp['shift']) || empty($itemsProp['shift'])) {
+            $itemsProp['shift'] = $this->_getItemShift($lines, $height);
+        }
+
+        if ($this->y - $itemsProp['shift'] < self::PAGE_BOTTOM_HEIGHT) {
+            $page = $this->newPage($pageSettings);
+        }
+
+        foreach ($lines as $line) {
+            $maxHeight = 0;
+            foreach ($line as $column) {
+                $maxHeight = $this->_drawLineBlockColumn($page, $height, $maxHeight, $pageSettings, $column);
+            }
+            $this->y -= $maxHeight;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Calculates the shift of an item.
+     *
+     * @param array $lines
+     * @param int   $height
+     *
+     * @return int
+     */
+    protected function _getItemShift($lines, $height)
+    {
+        $shift = 0;
+        foreach ($lines as $line) {
+            $maxHeight = 0;
+            foreach ($line as $column) {
+                $lineSpacing = $height;
+                if (isset($column['height']) && $column['height']) {
+                    $lineSpacing = $column['height'];
+                }
+
+                if (isset($column['text']) && !is_array($column['text'])) {
+                    $column['text'] = array($column['text']);
+                }
+
+                $top = 0;
+                $textCount = count($column['text']);
+                $top += ($lineSpacing * $textCount);
+
+                if ($top > $maxHeight) {
+                    $maxHeight = $top;
+                }
+            }
+
+            $shift += $maxHeight;
+        }
+
+        return $shift;
+    }
+
+    /**
+     * Draw a column of a line block.
+     *
+     * @param Zend_Pdf_Page &$page
+     * @param int           $height
+     * @param int           $maxHeight
+     * @param array         $pageSettings
+     * @param array         $column
+     *
+     * @return int
+     *
+     * @throws Zend_Pdf_Exception
+     */
+    protected function _drawLineBlockColumn(&$page, $height, $maxHeight, $pageSettings, $column)
+    {
+        list($font, $fontSize) = $this->_setLineBlockColumnFont($page, $column);
+
+        if (!is_array($column['text'])) {
+            $column['text'] = array($column['text']);
+        }
+
+        $lineSpacing = $height;
+        if (isset($column['height']) && !empty($column['height'])) {
+            $lineSpacing = $column['height'];
+        }
+
+        $top = 0;
+        foreach ($column['text'] as $part) {
+            $feed      = $column['feed'];
+            $shift     = 0;
+            $textAlign = 'left';
+            $width     = 0;
+
+            if (array_key_exists('shift', $column)) {
+                $shift = $column['shift'];
+            }
+
+            if (isset($column['align']) && !empty($column['align'])) {
+                $textAlign = $column['align'];
+            }
+
+            if (isset($column['width']) && !empty($column['width'])) {
+                $width = $column['width'];
+            }
+
+            $top += $shift;
+
+            if ($this->y - $lineSpacing - $shift < self::PAGE_BOTTOM_HEIGHT) {
+                $page = $this->newPage($pageSettings);
+            }
+
+            /**
+             * If the text align is not the default 'left', we need to modify the feed parameter to match the
+             * text's alignment.
+             */
+            if ($textAlign == 'right' && $width) {
+                $feed = $this->getAlignRight($part, $feed, $width, $font, $fontSize);
+            } elseif ($textAlign == 'right') {
+                $feed = $feed - $this->widthForStringUsingFontSize($part, $font, $fontSize);
+            } elseif ($textAlign == 'center') {
+                $feed = $this->getAlignCenter($part, $feed, $width, $font, $fontSize);
+            }
+
+            $page->drawText($part, $feed, ($this->y - $top), 'UTF-8');
+            $top += $lineSpacing;
+        }
+
+        if ($top > $maxHeight) {
+            $maxHeight = $top;
+        }
+
+        return $maxHeight;
+    }
+
+    /**
+     * Sets the page's font for a given column.
+     *
+     * @param Zend_Pdf_Page &$page
+     * @param array         $column
+     *
+     * @return array
+     *
+     * @throws Zend_Pdf_Exception
+     */
+    protected function _setLineBlockColumnFont(&$page, $column)
+    {
+        $fontSize = 8;
+        if (isset($column['font_size']) && !empty($column['font_size'])) {
+            $fontSize = $column['font_size'];
+        }
+
+        if (isset($column['font_file']) && !empty($column['font_file'])) {
+            $font = Zend_Pdf_Font::fontWithPath($column['font_file']);
+            $page->setFont($font, $fontSize);
+        } else {
+            $fontStyle = 'regular';
+            if (isset($column['font']) && !empty($column['font'])) {
+                $fontStyle = $column['font'];
+            }
+
+            if ($fontStyle == 'bold') {
+                $font = $this->_setFontBold($page, $fontSize);
+            } elseif ($fontStyle == 'italic') {
+                $font = $this->_setFontItalic($page, $fontSize);
+            } else {
+                $font = $this->_setFontRegular($page, $fontSize);
+            }
+        }
+
+        $fontData = array($font, $fontSize);
+        return $fontData;
     }
 
     /**
@@ -1291,10 +1400,15 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      */
     public function newPage(array $settings = array())
     {
-        $pageSize = !empty($settings['page_size']) ? $settings['page_size'] : Zend_Pdf_Page::SIZE_A4;
+        $pageSize = Zend_Pdf_Page::SIZE_A4;
+        if (isset($column['text']) && !empty($settings['page_size'])) {
+            $pageSize = $settings['page_size'];
+        }
+
         $page = $this->_getPdf()->newPage($pageSize);
+
         $this->_getPdf()->pages[] = $page;
-        $this->y = 815;
+        $this->y = self::PAGE_TOP_HEIGHT;
 
         return $page;
     }

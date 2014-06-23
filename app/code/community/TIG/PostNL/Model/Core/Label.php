@@ -55,6 +55,11 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     const XPATH_LABEL_SIZE = 'postnl/cif_labels_and_confirming/label_size';
 
     /**
+     * Maximum number of labels that may be printed at once.
+     */
+    const MAX_LABEL_COUNT = 200;
+
+    /**
      * An array of temporary files that have been created. these files will be destroyed at the end of the script.
      *
      * @var array
@@ -395,7 +400,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * However, for safety reasons a limit of 200 is used. By default you shouldn't be able to select more than 200
          * in the shipment grid.
          */
-        if(count($labels) > 200 && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
+        if(count($labels) > self::MAX_LABEL_COUNT && !Mage::helper('postnl/cif')->allowInfinitePrinting()) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
                     'Maximum amount of labels exceeded. Maximum allowed: 200. Requested: %s',
