@@ -261,16 +261,25 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Retrieves a Mage_Sales_Model_Order_Shipment entity linked to the postnl shipment.
      *
-     * @return Mage_Sales_Model_Order_Shipment | null
+     * @param boolean $throwException
+     *
+     * @return Mage_Sales_Model_Order_Shipment|null
+     *
+     * @throws TIG_PostNL_Exception
      */
-    public function getShipment()
+    public function getShipment($throwException = true)
     {
         if ($this->hasShipment()) {
             return $this->_getData('shipment');
         }
 
         $shipmentId = $this->getShipmentId();
-        if (!$shipmentId) {
+        if (!$shipmentId && $throwException) {
+            throw new TIG_PostNL_Exception(
+                $this->getHelper()->__('No shipment found for PostNL shipment #%d.', $this->getId()),
+                'POSTNL-0176'
+            );
+        } elseif (!$shipmentId) {
             return null;
         }
 
@@ -295,7 +304,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shipmentId = $this->getShipmentId();
-        if (!$shipmentId && !$this->getShipment()) {
+        if (!$shipmentId && !$this->getShipment(false)) {
             return null;
         }
 
@@ -317,7 +326,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shipmentId = $this->getShipmentId();
-        if (!$shipmentId && !$this->getShipment()) {
+        if (!$shipmentId && !$this->getShipment(false)) {
             return null;
         }
 
@@ -348,7 +357,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this->_getData('store_id');
         }
 
-        if ($this->getShipment()) {
+        if ($this->getShipment(false)) {
             $storeId = $this->getShipment()->getStoreId();
 
             $this->setStoreId($storeId);
@@ -372,7 +381,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this->_getData('order_id');
         }
 
-        $shipment = $this->getShipment();
+        $shipment = $this->getShipment(false);
         if (!$shipment || !$shipment->getOrderId()) {
             return null;
         }
@@ -637,7 +646,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Check if this PostNL shipment has a linked Mage_Sales_Model_Order_Shipment object
          */
-        $shipment = $this->getShipment();
+        $shipment = $this->getShipment(false);
         if (!$shipment) {
             return null;
         }
@@ -1564,7 +1573,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canGenerateBarcode()
     {
-        if (!$this->getShipmentId() && !$this->getShipment()) {
+        if (!$this->getShipmentId() && !$this->getShipment(false)) {
             return false;
         }
 
@@ -1588,7 +1597,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        if (!$this->getShipmentId() && !$this->getShipment()) {
+        if (!$this->getShipmentId() && !$this->getShipment(false)) {
             return false;
         }
 

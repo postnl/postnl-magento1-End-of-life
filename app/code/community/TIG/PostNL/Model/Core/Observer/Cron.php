@@ -371,7 +371,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
              * Attempt to update the shipping status. Continue with the next one if it fails.
              */
             try{
-                if (!$postnlShipment->getShipment()) {
+                if (!$postnlShipment->getShipment(false)) {
                     continue;
                 }
 
