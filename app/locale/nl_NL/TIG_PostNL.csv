@@ -241,7 +241,7 @@ TIG_PostNL::Confirmed,Voorgemeld
 TIG_PostNL::Confirmation expired,Voormelding verlopen
 TIG_PostNL::Today,Vandaag
 TIG_PostNL::No barcode available.,Geen barcode beschikbaar.
-TIG_PostNL::This shipment has already been confirmed.,Deze zending is al voorgemeld.
+TIG_PostNL::Shipment #%s has already been confirmed.,Zending #%s is al voorgemeld.
 TIG_PostNL::You must first print a shipping label for this shipment.,U moet eerst een label printen voor deze zending
 TIG_PostNL::Are you sure? The PostNL extension will not function until you\'ve reactivated the extension.,Weet u het zeker? De PostNL extensie werkt niet totdat u deze heractiveert
 TIG_PostNL::Finish activation,Rond activatie af
@@ -388,9 +388,9 @@ TIG_PostNL::The extension has not been activated.,De extensie is nog niet geacti
 TIG_PostNL::Product code %s is not allowed for this shipment.,Product code %s is niet toegestaan voor deze zending.
 TIG_PostNL::PostNL Checkout is not available due to the following reasons:,PostNL Checkout is niet beschikbaar om de volgende redenen:
 TIG_PostNL::Click here for more information from the TiG knowledgebase.,Klik hier voor meer informatie in de TiG knowledgebase.
-TIG_PostNL::This action cannot be used on non-PostNL shipments.,Deze actie kan niet gedaan worden op niet-PostNL zendingen.
-TIG_PostNL::This shipment cannot be confirmed at this time.,Deze zending kan niet voorgemeld worden.
-TIG_PostNL::For EU shipments you may only confirm a shipment after it's labels have been printed.,Europese verzendingen kunnen alleen voorgemeld worden als de labels zijn uitgeprint.
+"TIG_PostNL::This action is not available for shipment #%s, because it was not shipped using PostNL.","Deze actie is niet beschikbaar voor zending #%s, omdat deze niet verzonden is met PostNL."
+TIG_PostNL::Shipment #%s cannot be confirmed at this time.,Zending #%s kan momenteel niet voorgemeld worden.
+"TIG_PostNL::Shipment #%s could not be confirmed, because for EU shipments you may only confirm a shipment after it's labels have been printed.","Zending #%s kan niet voorgemeld worden, omdat Europese zendingen pas voorgemeld mogen worden nadat de labels geprint zijn."
 TIG_PostNL::Show error details in the frontend,Toon error details in de frontend
 "TIG_PostNL::If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.","Indien deze instelling op 'ja' staat, zullen ook in de frontend bij de meeste errors een foutcode en link naar de TiG knowledgebase getoond worden. Dit is nuttig wanneer u de extensie moet debuggen, echter zou nooit aan mogen staan in een productie omgeving."
 TIG_PostNL::The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.,De PostNL extensie is niet compatibel met uw Magento versie! Dit kan onverwachtte problemen veroorzaken.
@@ -977,3 +977,6 @@ TIG_PostNL::No valid log files were found.,Geen valide log bestanden gevonden.
 TIG_PostNL::Log %s is too large (%.2fMB) and was skipped.,Log %s is te groot (%.2fMB) en is daarom overgeslagen.
 TIG_PostNL::The total size of all log files exceeds the maximum size allowed.,De totale grootte van alle log bestanden hoger dan de maximum toegestane grootte.
 TIG_PostNL::The server's memory limit is less than %1$dMB. The PostNL extension requires at least %1$dMB to function properly. Using the PostNL extension on servers with less memory than this may cause unexpected errors.,Het geheugen limiet van de server is minder dan %1$dMB. De PostNL extensie vereist minimaal %1$dMB geheugen om correctte functioneren. Gebruik maken van de PostNL extensie op servers met minder geheugen kan leiden tot onverwachtte foutmeldingen.
+TIG_PostNL::The following shipments or orders could not be processed:,De volgende zendingen of bestellingen konden niet verwerkt worden:
+TIG_PostNL::Unfortunately no shipments could be processed. Please check the error messages for more details.,Helaas konden er geen zendingen verwerkt worden. Controleer de errormeldingen voor meer informatie.
+TIG_PostNL::None of the shipments could be created. Please check the error messages for more details.,Geen van de zendingen konden aangemaakt worden. Controleer de errormeldingen voor meer informatie.

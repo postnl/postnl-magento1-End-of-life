@@ -880,7 +880,7 @@
                 <type>error</type>
             </POSTNL-0008>
             <POSTNL-0009>
-                <message>This action cannot be used on non-PostNL shipments.</message>
+                <message>This action is not available for shipment #%s, because it was not shipped using PostNL.</message>
                 <url>http://kb.totalinternetgroup.nl/topic/31061687</url>
                 <type>error</type>
             </POSTNL-0009>
@@ -915,17 +915,17 @@
                 <type>error</type>
             </POSTNL-0015>
             <POSTNL-0016>
-                <message>For EU shipments you may only confirm a shipment after it's labels have been printed.</message>
+                <message>Shipment #%s could not be confirmed, because for EU shipments you may only confirm a shipment after it's labels have been printed.</message>
                 <url>http://kb.totalinternetgroup.nl/topic/31573296</url>
                 <type>error</type>
             </POSTNL-0016>
             <POSTNL-0017>
-                <message>This shipment has already been confirmed.</message>
+                <message>Shipment #%s has already been confirmed.</message>
                 <url>http://kb.totalinternetgroup.nl/topic/31066127</url>
                 <type>error</type>
             </POSTNL-0017>
             <POSTNL-0018>
-                <message>This shipment cannot be confirmed at this time.</message>
+                <message>Shipment #%s cannot be confirmed at this time.</message>
                 <url>http://kb.totalinternetgroup.nl/topic/31123903</url>
                 <type>error</type>
             </POSTNL-0018>

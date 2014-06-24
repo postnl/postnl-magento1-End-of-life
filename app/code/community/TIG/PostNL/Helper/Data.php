@@ -1497,11 +1497,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function addSessionMessage($session, $code = null, $messageType = null, $message = null)
     {
         /***************************************************************************************************************
-         * Check that the required arguments are available and valid
+         * Check that the required arguments are available and valid.
          **************************************************************************************************************/
 
         /**
-         * If $code is null or 0, $messageType and $message are required
+         * If $code is null or 0, $messageType and $message are required.
          */
         if (
             (is_null($code) || $code === 0)
@@ -1513,7 +1513,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * If the session is a string, treat it as a class name and instantiate it
+         * If the session is a string, treat it as a class name and instantiate it.
          */
         if (is_string($session) && strpos($session, '/') !== false) {
             $session = Mage::getSingleton($session);
@@ -1522,7 +1522,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * If the session could not be loaded or is not of the correct type, throw an exception
+         * If the session could not be loaded or is not of the correct type, throw an exception.
          */
         if (!$session
             || !is_object($session)
@@ -1534,8 +1534,63 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             );
         }
 
+        $errorMessage = $this->getSessionMessage($code, $messageType, $message);
+
         /***************************************************************************************************************
-         * Get the actual error from config.xml if it's available
+         * Add the error to the session.
+         **************************************************************************************************************/
+
+        /**
+         * The method we'll use to add the message to the session has to be built first.
+         */
+        $addMethod = 'add' . ucfirst($messageType);
+
+        /**
+         * If the method doesn't exist, throw an exception.
+         */
+        if (!method_exists($session, $addMethod)) {
+            throw new TIG_PostNL_Exception(
+                $this->__('Invalid message type requested: %s.', $messageType),
+                'POSTNL-0094'
+            );
+        }
+
+        /**
+         * Add the message to the session.
+         */
+        $session->$addMethod($errorMessage);
+
+        return $this;
+    }
+
+    /**
+     * Formats a message string so it can be added as a session message.
+     *
+     * @param null|string $code
+     * @param null|string $messageType
+     * @param null|string $message
+     *
+     * @return string
+     *
+     * @throws TIG_PostNL_Exception
+     * @throws InvalidArgumentException
+     */
+    public function getSessionMessage($code = null, $messageType = null, $message = null)
+    {
+        /**
+         * If $code is null or 0, $messageType and $message are required.
+         */
+        if (
+            (is_null($code) || $code === 0)
+            && (is_null($messageType) || is_null($message))
+        ) {
+            throw new InvalidArgumentException(
+                "Warning: Missing argument for addSessionMessage method: 'messageType' and 'message' are required."
+            );
+        }
+
+        /***************************************************************************************************************
+         * Get the actual error from config.xml if it's available.
          **************************************************************************************************************/
 
         $error = false;
@@ -1557,14 +1612,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          **************************************************************************************************************/
 
         /**
-         * If the specified error was found and no message was supplied, get the error's default message
+         * If the specified error was found and no message was supplied, get the error's default message.
          */
         if ($error && !$message) {
             $message = (string) $error->message;
         }
 
         /**
-         * If we still don't have a valid message, throw an exception
+         * If we still don't have a valid message, throw an exception.
          */
         if (!$message) {
             throw new TIG_PostNL_Exception(
@@ -1574,7 +1629,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * If the specified error was found and no message type was supplied, get the error's default type
+         * If the specified error was found and no message type was supplied, get the error's default type.
          */
         if ($error && !$messageType) {
             $messageType = (string) $error->type;
@@ -1582,7 +1637,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
 
         /**
-         * If we still don't have a valid message type, throw an exception
+         * If we still don't have a valid message type, throw an exception.
          */
         if (!$messageType) {
             throw new TIG_PostNL_Exception(
@@ -1598,7 +1653,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         /**
          * Flag that determines whether the error code and knowledgebase link will be included in the error message
-         * (if available)
+         * (if available).
          */
         $canShowErrorDetails = $this->_canShowErrorDetails();
 
@@ -1614,46 +1669,22 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Add the actual message. This is the only required part. The code and link are optional
+         * Add the actual message. This is the only required part. The code and link are optional.
          */
         $errorMessage .= $this->__($message);
 
         /**
-         * Add the link to the knowledgebase if we have one
+         * Add the link to the knowledgebase if we have one.
          */
         if ($canShowErrorDetails && $link) {
             $errorMessage .= ' <a href="'
-                           . $link
-                           . '" target="_blank" class="postnl-message">'
-                           . $this->__('Click here for more information from the TiG knowledgebase.')
-                           . '</a>';
+                . $link
+                . '" target="_blank" class="postnl-message">'
+                . $this->__('Click here for more information from the TiG knowledgebase.')
+                . '</a>';
         }
 
-        /***************************************************************************************************************
-         * Finally, let's add the error to the session
-         **************************************************************************************************************/
-
-        /**
-         * The method we'll use to add the message to the session has to be built first
-         */
-        $addMethod = 'add' . ucfirst($messageType);
-
-        /**
-         * If the method doesn't exist, throw an exception
-         */
-        if (!method_exists($session, $addMethod)) {
-            throw new TIG_PostNL_Exception(
-                $this->__('Invalid message type requested: %s.', $messageType),
-                'POSTNL-0094'
-            );
-        }
-
-        /**
-         * Add the message to the session
-         */
-        $session->$addMethod($errorMessage);
-
-        return $this;
+        return $errorMessage;
     }
 
     /**
