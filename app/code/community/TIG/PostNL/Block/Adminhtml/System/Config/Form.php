@@ -207,7 +207,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
     /**
      * Init fieldset fields. Copied from EE1.13 Mage_Adminhtml_Block_System_Config_Form::initFields to allow for
-     * cross-fieldset dependencies in CE 1.6. Only made a small change to core code for backwards compatibility.
+     * cross-fieldset dependencies in CE 1.6 and 1.7.0.0, and EE 1.11 and 1.12.0.0. Only made a small change to core
+     * code for backwards compatibility.
      *
      * @param Varien_Data_Form_Element_Fieldset $fieldset
      * @param Varien_Simplexml_Element          $group

@@ -72,7 +72,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     public function getInstructions()
     {
         $instructions = trim($this->getConfigData('instructions'));
-        
+
         return $instructions;
     }
 

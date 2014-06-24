@@ -7,7 +7,8 @@ a.postnl-message {color:#EA7601 !important; text-decoration:underline;}
 .module-message.info { background:#e6eef8 url(../../../images/TIG/PostNL/glyph_info.gif) 9px 9px no-repeat; border-color:#264697; }
 .module-message.warning { background:#fff7bd url(../../../images/TIG/PostNL/glyph_warning.gif) 9px 9px no-repeat; border-color:#c68c05; }
 .module-message.error { background:#fdece4 url(../../../images/TIG/PostNL/glyph_error.gif) 9px 9px no-repeat; border-color:#c63625; }
-.module-message ul.postnl-errors {list-style:disc inside; }
+.module-message ul.postnl-errors,
+.postnl-warning li {list-style:disc inside; }
 
 /* Waiting notification */
 .waiting-notification { width:100%; height:999em; position:absolute; top:83px; left:0; background:rgba(255, 255, 255, .7); }

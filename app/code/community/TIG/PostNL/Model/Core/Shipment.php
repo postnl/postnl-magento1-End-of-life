@@ -1011,7 +1011,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Try to get the delivery date fr a PostNL order.
+         * Try to get the delivery date for a PostNL order.
          */
         $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder && $postnlOrder->getDeliveryDate()) {
