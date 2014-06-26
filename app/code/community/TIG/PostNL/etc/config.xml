@@ -245,14 +245,93 @@
                     <shipping>
                         <class>postnl_carrier/quote_address_total_shipping</class>
                     </shipping>
+                    <postnl_cod_fee>
+                        <class>postnl_payment/quote_address_total_codFee</class>
+                        <before>tax,grand_total</before>
+                        <after>subtotal,discount,shipping</after>
+                        <renderer>postnl_payment/checkout_total_codFee</renderer>
+                    </postnl_cod_fee>
+                    <postnl_cod_fee_tax>
+                        <class>postnl_payment/quote_address_total_codFeeTax</class>
+                        <before>grand_total</before>
+                        <after>subtotal,discount,shipping,tax</after>
+                    </postnl_cod_fee_tax>
                 </totals>
             </quote>
+            <order_invoice>
+                <totals>
+                    <postnl_cod_fee>
+                        <class>postnl_payment/order_invoice_total_codFee</class>
+                        <after>subtotal,discount,shipping</after>
+                        <before>tax,grand_total</before>
+                    </postnl_cod_fee>
+                    <postnl_cod_fee_tax>
+                        <class>postnl_payment/order_invoice_total_codFeeTax</class>
+                        <after>subtotal,discount,shipping,tax</after>
+                        <before>grand_total</before>
+                    </postnl_cod_fee_tax>
+                </totals>
+            </order_invoice>
+            <!--<order_creditmemo>-->
+                <!--<totals>-->
+                    <!--<postnl_cod_fee>-->
+                        <!--<class>postnl_payment/order_creditmemo_total_codFee</class>-->
+                        <!--<after>subtotal,discount,shipping</after>-->
+                        <!--<before>tax,grand_total</before>-->
+                    <!--</postnl_cod_fee>-->
+                    <!--<postnl_cod_fee_tax>-->
+                        <!--<class>postnl_payment/order_creditmemo_total_codFeeTax</class>-->
+                        <!--<after>subtotal,discount,shipping,tax</after>-->
+                        <!--<before>grand_total</before>-->
+                    <!--</postnl_cod_fee_tax>-->
+                <!--</totals>-->
+            <!--</order_creditmemo>-->
         </sales>
         <pdf>
             <postnl_packingslip>
                 <default>postnl_core/packingslip_pdf_items_invoice_default</default>
             </postnl_packingslip>
+            <totals>
+                <postnl_cod_fee translate="title">
+                    <title>Cod fee</title>
+                    <source_field>vaimo_klarna_fee</source_field>
+                    <font_size>7</font_size>
+                    <display_zero>0</display_zero>
+                    <sort_order>550</sort_order>
+                    <model>postnl_payment/order_pdf_total_codFee</model>
+                </postnl_cod_fee>
+            </totals>
         </pdf>
+        <fieldsets>
+            <sales_convert_quote_address>
+                <postnl_cod_fee>
+                    <to_order>*</to_order>
+                </postnl_cod_fee>
+                <base_postnl_cod_fee>
+                    <to_order>*</to_order>
+                </base_postnl_cod_fee>
+                <postnl_cod_fee_tax>
+                    <to_order>*</to_order>
+                </postnl_cod_fee_tax>
+                <base_postnl_cod_fee_tax>
+                    <to_order>*</to_order>
+                </base_postnl_cod_fee_tax>
+            </sales_convert_quote_address>
+            <sales_convert_order>
+                <postnl_cod_fee>
+                    <to_quote_address_shipping>*</to_quote_address_shipping>
+                </postnl_cod_fee>
+                <base_postnl_cod_fee>
+                    <to_quote_address_shipping>*</to_quote_address_shipping>
+                </base_postnl_cod_fee>
+                <postnl_cod_fee_tax>
+                    <to_quote_address_shipping>*</to_quote_address_shipping>
+                </postnl_cod_fee_tax>
+                <base_postnl_cod_fee_tax>
+                    <to_quote_address_shipping>*</to_quote_address_shipping>
+                </base_postnl_cod_fee_tax>
+            </sales_convert_order>
+        </fieldsets>
     </global>
 
     <admin>
@@ -519,6 +598,11 @@
     <!-- Default configuration values. You can edit most of these in system/config -->
     <!-- If a setting is specified here it does not guarantee it's availability in system/config. It does mean you can override it by creating an entry in the core_config_data table -->
     <default>
+        <sales>
+            <totals_sort>
+                <postnl_cod_fee>25</postnl_cod_fee>
+            </totals_sort>
+        </sales>
         <payment>
             <postnl_cod>
                 <active>0</active> <!-- Disabled -->

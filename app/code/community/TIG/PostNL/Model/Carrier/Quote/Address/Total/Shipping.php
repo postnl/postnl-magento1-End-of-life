@@ -25,7 +25,7 @@
  */
 
 
-class TIG_PostNL_Model_DeliveryOptions_Quote_Address_Total_Shipping
+class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
     extends Mage_Sales_Model_Quote_Address_Total_Shipping
 {
     /**
