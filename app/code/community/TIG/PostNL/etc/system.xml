@@ -1404,7 +1404,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <validate>postnl-validate-empty</validate>
                         </firstname>
                         <lastname translate="label" module="postnl">
                             <label>Last Name</label>
@@ -1422,6 +1421,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>postnl-validate-empty</validate>
                         </company>
                         <department translate="label" module="postnl">
                             <label>Department</label>
@@ -3400,10 +3400,21 @@
                             <show_in_store>1</show_in_store>
                             <validate>validate-select</validate>
                         </show_error_details_in_frontend>
+                        <postnl_shipping_methods translate="label comment" module="postnl">
+                            <label>PostNL Shipping Methods</label>
+                            <comment>Please select the shipping methods that will be considered to be 'PostNL' by this extension. Orders placed using one of these shipping methods may be processed using the PostNl extension.</comment>
+                            <frontend_type>multiselect</frontend_type>
+                            <can_be_empty>0</can_be_empty>
+                            <source_model>postnl_core/system_config_source_shippingMethods</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </postnl_shipping_methods>
                         <cif_versions_header translate="label" module="postnl">
                             <label>The following fields determine the CIF version used by each service. Tampering with these settings may result in unexpected behaviour or it may disable the extension altogether.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3411,7 +3422,7 @@
                         <cif_versions_infobox translate="comment" module="postnl">
                             <comment>ONLY CHANGE THESE SETTINGS WITH DIRECT INSTRUCTION FROM POSTNL OR TOTAL INTERNET GROUP</comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_warningBox</frontend_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3419,7 +3430,7 @@
                         <cif_version_shippingstatus translate="label" module="postnl">
                             <label>ShippingStatus webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3428,7 +3439,7 @@
                         <cif_version_confirming translate="label" module="postnl">
                             <label>Confirming webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3437,7 +3448,7 @@
                         <cif_version_labelling translate="label" module="postnl">
                             <label>Labelling webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3446,7 +3457,7 @@
                         <cif_version_barcode translate="label" module="postnl">
                             <label>Barcode webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -3455,7 +3466,7 @@
                         <cif_version_checkout translate="label" module="postnl">
                             <label>Checkout webservice version</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>

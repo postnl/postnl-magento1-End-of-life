@@ -53,6 +53,8 @@
 <?php else: ?>
     <dl class="sp-methods">
     <?php $shippingCodePrice = array(); ?>
+    <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
+    <?php $_deliveryOptionsShown = false; ?>
     <?php $_sole = count($_shippingRateGroups) == 1; foreach ($_shippingRateGroups as $code => $_rates): ?>
         <dt><?php echo $this->escapeHtml($this->getCarrierName($code)) ?></dt>
         <dd>
@@ -90,20 +92,21 @@
                         </label>
                    <?php endif ?>
 
-                   <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
-                   <?php $_canUseDeliveryOptions = false; ?>
-                   <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote()) && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
-                       <?php $_canUseDeliveryOptions = true; ?>
-                   <?php endif; ?>
-                   <?php if ($_canUseDeliveryOptions
-                       && in_array($_rate->getCode(), $_postnlShippingMethods)
-                       && $this->getChild('postnl.delivery.options')
-                   ): ?>
-                       <div class="postnl-container">
-                           <?php echo $this->getChild('postnl.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
-                       </div>
-                   <?php endif; ?>
-
+                    <?php if (!$_deliveryOptionsShown): ?>
+                        <?php $_canUseDeliveryOptions = false; ?>
+                        <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote()) && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
+                        <?php $_canUseDeliveryOptions = true; ?>
+                        <?php endif; ?>
+                        <?php if ($_canUseDeliveryOptions
+                            && in_array($_rate->getCode(), $_postnlShippingMethods)
+                            && $this->getChild('postnl.delivery.options')
+                        ): ?>
+                            <div class="postnl-container">
+                                <?php echo $this->getChild('postnl.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
+                            </div>
+                            <?php $_deliveryOptionsShown = true; ?>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </li>
             <?php endforeach; ?>
             </ul>

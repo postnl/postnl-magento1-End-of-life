@@ -241,6 +241,11 @@
                         <postnl_allow_delivery_options/>
                     </product_attributes>
                 </item>
+                <totals>
+                    <shipping>
+                        <class>postnl_carrier/quote_address_total_shipping</class>
+                    </shipping>
+                </totals>
             </quote>
         </sales>
         <pdf>
@@ -775,7 +780,8 @@
         		<feed_url>ext.tigpostnl.nl/rss</feed_url> <!-- Default URL for the RSS notification feed -->
         		<feed_use_https>0</feed_use_https> <!-- use regular http:// to get the latest feed updates. At the moment https is not yet supported, however it may be in the future. -->
         		<show_error_details_in_frontend>0</show_error_details_in_frontend> <!-- Do not show error details in the frontend -->
-        		<cif_version_shippingstatus>1_3</cif_version_shippingstatus> <!-- v1.3 -->
+        		<postnl_shipping_methods>postnl_flatrate,postnl_tablerate</postnl_shipping_methods> <!-- By default only the PostNL shipping methods may be consider to be 'PostNL shipping methods' -->
+                <cif_version_shippingstatus>1_3</cif_version_shippingstatus> <!-- v1.3 -->
         		<cif_version_confirming>1_4</cif_version_confirming> <!-- v1.4 -->
         		<cif_version_labelling>1_5</cif_version_labelling> <!-- v1.5 -->
         		<cif_version_barcode>1_0</cif_version_barcode> <!-- v1.0 -->

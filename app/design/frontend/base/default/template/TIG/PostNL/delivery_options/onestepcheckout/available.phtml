@@ -48,6 +48,7 @@
 <?php if (!($_shippingRateGroups = $this->getShippingRates())): ?>
     <strong><?php echo $this->__('Sorry, no quotes are available for this order at this time.') ?></strong>
 <?php else: ?>
+    <?php $_deliveryOptionsShown = false; ?>
     <?php $_canUseDeliveryOptions = false; ?>
     <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
 
@@ -62,7 +63,8 @@
             <dd><?php echo $this->getCarrierName($code) ?></dd>
                 <?php foreach ($_rates as $_rate): ?>
                     <?php $_isPostnl = false; ?>
-                    <?php if ($_canUseDeliveryOptions
+                    <?php if (!$_deliveryOptionsShown
+                        && $_canUseDeliveryOptions
                         && in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
                         <?php $_isPostnl = true; ?>
                     <?php endif; ?>
@@ -90,6 +92,7 @@
                         <div class="postnl-container" id="postnl_container" style="display:none;">
                             <?php echo $this->getChild('postnl.osc.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
                         </div>
+                        <?php $_deliveryOptionsShown = true; ?>
                     <?php endif; ?>
                    <?php endif ?>
                    </dt>
@@ -102,7 +105,8 @@
                 <dd><?php echo $this->getCarrierName($code) ?></dd>
                     <?php foreach ($_rates as $_rate): ?>
                         <?php $_isPostnl = false; ?>
-                        <?php if ($_canUseDeliveryOptions
+                        <?php if (!$_deliveryOptionsShown
+                            && $_canUseDeliveryOptions
                             && in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
                             <?php $_isPostnl = true; ?>
                         <?php endif; ?>
@@ -132,6 +136,7 @@
                                     <div class="postnl-container" id="postnl_container" style="display:none;">
                                         <?php echo $this->getChild('postnl.osc.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
                                     </div>
+                            <?php $_deliveryOptionsShown = true; ?>
                                 <?php endif; ?>
 
                            <?php endif ?>

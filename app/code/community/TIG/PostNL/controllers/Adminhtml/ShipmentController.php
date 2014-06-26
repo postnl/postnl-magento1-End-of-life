@@ -64,12 +64,19 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     }
 
     /**
-     * @param array $warning
+     * @param array|string $warning
      *
      * @return $this
      */
-    public function addWarning(array $warning)
+    public function addWarning($warning)
     {
+        if (!is_array($warning)) {
+            $warning = array(
+                'code'        => null,
+                'description' => $warning,
+            );
+        }
+
         $warnings = $this->getWarnings();
         $warnings[] = $warning;
 
@@ -1014,7 +1021,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                     if ($memoryUsage / $memoryLimit > 0.75) {
                         throw new TIG_PostNL_Exception(
                             $this->__(
-                                'Approaching memory limit for this operation. Please select fewer shipments and try again.'
+                                'Approaching memory limit for this operation. Please select fewer shipments and try ' .
+                                'again.'
                             ),
                             'POSTNL-170'
                         );
@@ -1696,6 +1704,21 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          * Add each warning to the message.
          */
         foreach ($warnings as $warning) {
+            /**
+             * Warnings must have a description.
+             */
+            if (!array_key_exists('description', $warning)) {
+                continue;
+            }
+
+            /**
+             * Codes are optional for warnings, but must be present in the array. If no code is found in the warning we
+             * add an empty one.
+             */
+            if (!array_key_exists('code', $warning)) {
+                $warning['code'] = null;
+            }
+
             /**
              * Get the formatted warning message.
              */
