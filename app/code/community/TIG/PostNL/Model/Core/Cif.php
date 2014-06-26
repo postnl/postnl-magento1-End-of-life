@@ -1099,6 +1099,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Remark'           => $this->_getRemark($address),
         );
 
+        foreach ($addressArray as $field => $value) {
+            if ($value === '') {
+                $addressArray[$field] = null;
+            }
+        }
+
         return $addressArray;
     }
 

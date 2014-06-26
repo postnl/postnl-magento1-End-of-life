@@ -64,15 +64,16 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     const XPATH_RATE_TYPE = 'carriers/postnl/rate_type';
 
     /**
+     * Xpath to the 'postnl_shipping_methods' setting.
+     */
+    const XPATH_POSTNL_SHIPPING_METHODS = 'postnl/advanced/postnl_shipping_methods';
+
+    /**
      * Array of possible PostNL shipping methods
      *
      * @var array
      */
-    protected $_postnlShippingMethods = array(
-        'postnl_postnl',    //deprecated
-        'postnl_flatrate',
-        'postnl_tablerate',
-    );
+    protected $_postnlShippingMethods;
 
     /**
      * Gets an array of possible PostNL shipping methods
@@ -81,8 +82,27 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      */
     public function getPostnlShippingMethods()
     {
-        $shippingMethods = $this->_postnlShippingMethods;
+        if ($this->_postnlShippingMethods) {
+            return $this->_postnlShippingMethods;
+        }
+
+        $shippingMethods = Mage::getStoreConfig(self::XPATH_POSTNL_SHIPPING_METHODS, Mage::app()->getStore()->getId());
+        $shippingMethods = explode(',', $shippingMethods);
+
+        $this->setPostnlShippingMethods($shippingMethods);
         return $shippingMethods;
+    }
+
+    /**
+     * @param array $postnlShippingMethods
+     *
+     * @return $this
+     */
+    public function setPostnlShippingMethods($postnlShippingMethods)
+    {
+        $this->_postnlShippingMethods = $postnlShippingMethods;
+
+        return $this;
     }
 
     /**

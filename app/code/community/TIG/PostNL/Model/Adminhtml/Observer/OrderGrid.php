@@ -606,7 +606,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         if ($sort) {
             $dir = $session->getData(self::ORDER_GRID_DIR_VAR_NAME);
 
-            $this->_sortCollection($collection, $sort, $dir);
+            $this->_sortCollection($sort, $dir);
         }
 
         return $this;
@@ -787,13 +787,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Sorts the collection by a specified column in a specified direction
      *
-     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
      * @param string $sort The column that the collection is sorted by
      * @param string $dir The direction that is used to sort the collection
      *
      * @return $this
      */
-    protected function _sortCollection($collection, $sort, $dir)
+    protected function _sortCollection($sort, $dir)
     {
         $block = $this->getBlock();
         $column = $block->getColumn($sort);

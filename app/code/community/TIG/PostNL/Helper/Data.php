@@ -64,11 +64,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_EXTENSION_ACTIVE = 'postnl/general/active';
 
     /**
-     * XML path to postnl carrier active/inactive setting.
-     */
-    const XPATH_CARRIER_ACTIVE = 'carriers/postnl/active';
-
-    /**
      * XML path to test/live mode config option.
      */
     const XPATH_TEST_MODE = 'postnl/cif/mode';
@@ -113,8 +108,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         'postnl/cif/customer_number',
         'postnl/cif/collection_location',
         'postnl/cif_labels_and_confirming/label_size',
-        'postnl/cif_sender_address/firstname',
-        'postnl/cif_sender_address/lastname',
+        array(
+            'postnl/cif_sender_address/lastname',
+            'postnl/cif_sender_address/company',
+        ),
         'postnl/cif_sender_address/streetname',
         'postnl/cif_sender_address/housenumber',
         'postnl/cif_sender_address/postcode',
@@ -803,10 +800,27 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         /**
-         * Check if the PostNL shipping method is active
+         * Check if at least one PostNL shipping method is active.
+         *
+         * First get a list of all PostNl shipping methods from the PostNl config. Then compare this to a list of all
+         * active shipping methods in Magento.
          */
-        $postnlShippingMethodEnabled = Mage::getStoreConfigFlag(self::XPATH_CARRIER_ACTIVE, $storeId);
-        if ($postnlShippingMethodEnabled === false) {
+        $postnlShippingMethodEnabled = false;
+        $postnlShippingMethods       = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $activeMethods               = Mage::getModel('postnl_core/system_config_source_shippingMethods')
+                                           ->toArray(true);
+
+        if ($postnlShippingMethods) {
+            $activePostnlMethods = array_intersect($postnlShippingMethods, $activeMethods);
+            if (!empty($activePostnlMethods)) {
+                $postnlShippingMethodEnabled = true;
+            }
+        }
+
+        if (!$postnlShippingMethodEnabled) {
+            $link = '';
+            $linkEnd = '';
+
             if ($this->isSystemConfig() || $this->isLoggingEnabled()) {
                 $shippingMethodSectionurl = Mage::helper("adminhtml")->getUrl(
                     'adminhtml/system_config/edit',
@@ -816,22 +830,20 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                     )
                 );
 
-                $errorMessage = $this->__(
-                    'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under '
-                    . '%sSystem > Config > Shipping Methods%s.',
-                    '<a href="'
-                    . $shippingMethodSectionurl
-                    . '" target="_blank" title="'
-                    . $this->__('Shipping Methods')
-                    . '">',
-                    '</a>'
-                );
-            } else {
-                $errorMessage = $this->__(
-                    'The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under '
-                    . 'System > Config > Shipping Methods.'
-                );
+                $link = '<a href="'
+                      . $shippingMethodSectionurl
+                      . '" target="_blank" title="'
+                      . $this->__('Shipping Methods')
+                      . '">';
+                $linkEnd = '</a>';
             }
+
+            $errorMessage = $this->__(
+                'No PostNL shipping method has been enabled. You can enable the PostNL shipping method under '
+                . '%sSystem > Config > Shipping Methods%s.',
+                $link,
+                $linkEnd
+            );
 
             $errors = array(
                 array(
@@ -1077,12 +1089,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $errors = array();
 
         /**
-         * Check if each required field is filled.
+         * If full logging is enabled or we are on the system > config page in the backend, we may add additional
+         * details about fields that are missing. To do this we need to load the very large Mage_Adminhtml_Model_Config
+         * singleton.
          */
         if ($this->isSystemConfig() || $this->isLoggingEnabled()) {
             /**
-             * If not, add the field's label to an array of missing fields so we can later inform the merchant which
-             * fields exactly are missing.
+             * Load the adminhtml config model and get the PostNL section.
              *
              * @var Varien_Simplexml_Element $section
              */
@@ -1090,35 +1103,61 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $section      = $configFields->getSections('postnl')->postnl;
         }
 
+        /**
+         * Loop through all required fields and check if they're configured.
+         *
+         * $requiredField may be the full xpath to the config setting or it may be an array of xpaths. In the latter
+         * case one of the fields in the array must be configured.
+         */
         foreach ($requiredFields as $requiredField) {
-            $value = Mage::getStoreConfig($requiredField, $storeId);
+            /**
+             * Get the value of this field.
+             */
+            if (is_array($requiredField)) {
+                $value = null;
+                foreach ($requiredField as $requiredSubField) {
+                    if (Mage::getStoreConfig($requiredSubField, $storeId)) {
+                        $value = true;
+                        break;
+                    }
+                }
+            } else {
+                $value = Mage::getStoreConfig($requiredField, $storeId);
+            }
 
+            /**
+             * If the value is null or an empty string, it is not configured. Please note that 0 is a valid value.
+             */
             if ($value !== null && $value !== '') {
                 continue;
             }
 
-            if (isset($section)) {
-                $fieldParts = explode('/', $requiredField);
-                $field = $fieldParts[2];
-                $group = $fieldParts[1];
-
-                /**
-                 * @var Varien_Simplexml_Element $sectionGroup
-                 */
-                $sectionGroup = $section->groups->$group;
-
-                $label      = (string) $sectionGroup->fields->$field->label;
-                $groupLabel = (string) $sectionGroup->label;
-                $groupName  = $sectionGroup->getName();
+            /**
+             * Add the error message. The error message may be different based on whether the missing field is a single
+             * field, an array of fields and whether we are currently on the system > config page.
+             */
+            if (isset($section) && !is_array($requiredField)) {
+                $errorMessage = $this->_getFieldMissingErrorMessage($requiredField, $section);
 
                 $errors[] = array(
                     'code'    => 'POSTNL-0034',
-                    'message' => $this->__('%s > %s is required.', $this->__($groupLabel), $this->__($label)),
+                    'message' => $errorMessage,
                 );
+            } elseif (isset($section)) {
+                $message = $this->__('One of the following fields is required:');
 
-                if ($this->isSystemConfig()) {
-                    $this->saveConfigState(array('postnl_' . $groupName => 1));
+                $fieldErrors = array();
+                foreach ($requiredField as $requiredSubField) {
+                    $fieldErrors[] = $this->_getFieldMissingErrorMessage($requiredSubField, $section, '%s > %s');
                 }
+
+                $implodeString = ' ' . $this->__('or') . ' ';
+                $message .= ' ' . implode($implodeString, $fieldErrors);
+
+                $errors[] = array(
+                    'code'    => 'POSTNL-0034',
+                    'message' => $message,
+                );
             } else {
                 $errors[] = array(
                     'code'    => 'POSTNL-0160',
@@ -1128,6 +1167,43 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $errors;
+    }
+
+    /**
+     * Get a formatted error message for a missing system > config value.
+     *
+     * @param string                   $requiredField The full xpath to the field.
+     * @param Varien_Simplexml_Element $section The system.xml section the field is present in.
+     * @param null|string              $format The format of the message. By default: '%s > %s is required.'.
+     * @param boolean                  $saveConfigState
+     *
+     * @return string
+     */
+    protected function _getFieldMissingErrorMessage($requiredField, $section, $format = null, $saveConfigState = true)
+    {
+        $fieldParts = explode('/', $requiredField);
+        $field      = $fieldParts[2];
+        $group      = $fieldParts[1];
+
+        /**
+         * @var Varien_Simplexml_Element $sectionGroup
+         */
+        $sectionGroup = $section->groups->$group;
+
+        $label      = (string) $sectionGroup->fields->$field->label;
+        $groupLabel = (string) $sectionGroup->label;
+        $groupName  = $sectionGroup->getName();
+
+        if (!$format) {
+            $format = '%s > %s is required.';
+        }
+        $message = $this->__($format, $this->__($groupLabel), $this->__($label));
+
+        if ($saveConfigState && $this->isSystemConfig()) {
+            $this->saveConfigState(array('postnl_' . $groupName => 1));
+        }
+
+        return $message;
     }
 
     /**
