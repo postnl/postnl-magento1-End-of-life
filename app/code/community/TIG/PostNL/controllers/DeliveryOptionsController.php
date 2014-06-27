@@ -825,7 +825,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $countryCode = $address['Countrycode'];
         $street      = $address['Street'];
         $houseNumber = $address['HouseNr'];
-        $postcode    = $address['Zipcode'];
+        $postcode    = str_replace(' ', '', $address['Zipcode']);
         $name        = $address['Name'];
 
         $countryCodes = Mage::getResourceModel('directory/country_collection')->getColumnValues('iso2_code');
@@ -1098,7 +1098,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          */
         if (array_key_exists('postcode', $postData)) {
             $postcode = $postData['postcode'];
-            $postcode = strtoupper($postcode);
+            $postcode = strtoupper(str_replace(' ', '', $postcode));
 
             $validator = new Zend_Validate_PostCode('nl_NL');
             if (!$validator->isValid($postcode)) {

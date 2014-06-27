@@ -272,20 +272,20 @@
                     </postnl_cod_fee_tax>
                 </totals>
             </order_invoice>
-            <!--<order_creditmemo>-->
-                <!--<totals>-->
-                    <!--<postnl_cod_fee>-->
-                        <!--<class>postnl_payment/order_creditmemo_total_codFee</class>-->
-                        <!--<after>subtotal,discount,shipping</after>-->
-                        <!--<before>tax,grand_total</before>-->
-                    <!--</postnl_cod_fee>-->
-                    <!--<postnl_cod_fee_tax>-->
-                        <!--<class>postnl_payment/order_creditmemo_total_codFeeTax</class>-->
-                        <!--<after>subtotal,discount,shipping,tax</after>-->
-                        <!--<before>grand_total</before>-->
-                    <!--</postnl_cod_fee_tax>-->
-                <!--</totals>-->
-            <!--</order_creditmemo>-->
+            <order_creditmemo>
+                <totals>
+                    <postnl_cod_fee>
+                        <class>postnl_payment/order_creditmemo_total_codFee</class>
+                        <after>subtotal,discount,shipping</after>
+                        <before>tax,grand_total</before>
+                    </postnl_cod_fee>
+                    <postnl_cod_fee_tax>
+                        <class>postnl_payment/order_creditmemo_total_codFeeTax</class>
+                        <after>subtotal,discount,shipping,tax</after>
+                        <before>grand_total</before>
+                    </postnl_cod_fee_tax>
+                </totals>
+            </order_creditmemo>
         </sales>
         <pdf>
             <postnl_packingslip>
