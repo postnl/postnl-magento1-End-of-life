@@ -40,6 +40,22 @@
 -->
 <config>
     <sections>
+        <sales>
+            <groups>
+                <totals_sort>
+                    <fields>
+                        <postnl_cod_fee translate="label" module="postnl">
+                            <label>PostNL COD fee</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </postnl_cod_fee>
+                    </fields>
+                </totals_sort>
+            </groups>
+        </sales>
         <payment>
             <groups>
                 <postnl_cod translate="label" module="postnl">
