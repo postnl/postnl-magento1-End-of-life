@@ -142,7 +142,8 @@ class TIG_PostNL_Model_Core_Service
     }
 
     /**
-     * Prepares a dummy invoice. This invoice is identical to a regular invoice, except that
+     * Prepares a dummy invoice. This invoice is identical to a regular invoice, except that none of the items will
+     * actually be invoiced.
      *
      * @param Mage_Sales_Model_Order $order
      * @param array                  $qtys
@@ -219,7 +220,7 @@ class TIG_PostNL_Model_Core_Service
      */
     protected function _getItemQtys(Mage_Sales_Model_Order_Shipment $shipment, $createDummyInvoice = false)
     {
-        $shipmentItems = $shipment->getItemsCollection();
+        $shipmentItems = $shipment->getAllItems();
         $qtys = array();
 
         /**
