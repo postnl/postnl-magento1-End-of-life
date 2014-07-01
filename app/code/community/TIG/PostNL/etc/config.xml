@@ -294,7 +294,7 @@
             <totals>
                 <postnl_cod_fee translate="title">
                     <title>Cod fee</title>
-                    <source_field>vaimo_klarna_fee</source_field>
+                    <source_field>postnl_cod_fee</source_field>
                     <font_size>7</font_size>
                     <display_zero>0</display_zero>
                     <sort_order>550</sort_order>

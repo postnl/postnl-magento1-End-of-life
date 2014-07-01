@@ -42,6 +42,11 @@
 class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
 {
     /**
+     * Xpath to PostNL COD fee tax class.
+     */
+    const XPATH_COD_TAX_CLASS = 'tax/classes/postnl_cod_fee';
+
+    /**
      * Debug log file for PostNL payments.
      */
     const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_Payment_Debug.log';
@@ -63,5 +68,154 @@ class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
     public function getCodPaymentMethods()
     {
         return $this->_codPaymentMethods;
+    }
+
+    /**
+     * Add PostNL COD fee tax info to the full tax info array.
+     *
+     * This is a really annoying hack to fix the problem where the full tax info does not include the custom PostNL COD
+     * fee tax info. Magento only supports tax info from shipping tax or product tax by default
+     * (@see Mage_Tax_Helper_Data::getCalculatedTaxes()). If anybody knows of a better way to fix this (that does not
+     * require a core rewrite) please let us know at servicedesk@totalinternetgroup.nl.
+     *
+     * @param array                                                                                   $fullInfo
+     * @param Mage_Sales_Model_Order|Mage_Sales_Model_Order_Invoice|Mage_Sales_Model_Order_Creditmemo $source
+     * @param Mage_Sales_Model_Order                                                                  $order
+     *
+     * @return array
+     */
+    public function addPostnlCodFeeTaxInfo($fullInfo, $source, Mage_Sales_Model_Order $order)
+    {
+        $feeTax = (float) $order->getPostnlCodFeeTax();
+        if ($feeTax <= 0) {
+            return $fullInfo;
+        }
+
+        $orderClassName = Mage::getConfig()->getModelClassName('sales/order');
+        if ($source instanceof $orderClassName) {
+            $fullInfo = $this->_updateTaxAmountForTaxInfo($order, $fullInfo);
+        } else {
+            $taxItemCollection = Mage::getResourceModel('tax/sales_order_tax_item_collection');
+            $taxItemCollection->addFieldToSelect('tax_id');
+            $taxItemCollection->getSelect()->distinct();
+
+            $taxItemIds = $taxItemCollection->getColumnValues('tax_id');
+
+            $taxCollection = Mage::getResourceModel('sales/order_tax_collection')
+                                 ->addFieldToFilter('order_id', array('eq'  => $order->getId()))
+                                 ->addFieldToFilter('tax_id',   array('nin' => $taxItemIds));
+
+            if ($taxCollection->getSize()) {
+                $fullInfo = $this->_addPostnlCodFeeTaxInfoFromCollection($taxCollection, $fullInfo, $source);
+            } else {
+                $fullInfo = $this->_addPostnlCodFeeTaxInfoFromRequest($order, $fullInfo, $source);
+            }
+        }
+
+        return $fullInfo;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order $order
+     * @param array $fullInfo
+     *
+     * @return array
+     */
+    protected function _updateTaxAmountForTaxInfo($order, $fullInfo)
+    {
+        $taxCollection = Mage::getResourceModel('sales/order_tax_collection')
+                             ->addFieldToSelect('amount')
+                             ->addFieldToFilter('order_id', array('eq' => $order->getId()));
+
+        foreach ($taxCollection as $tax) {
+            foreach ($fullInfo as $key => $taxInfo) {
+                if ($tax->getTitle() == $taxInfo['title'] && $tax->getAmount() != $taxInfo['tax_amount']) {
+                    $fullInfo[$key]['tax_amount']      = $tax->getAmount();
+                    $fullInfo[$key]['base_tax_amount'] = $tax->getBaseAmount();
+                }
+            }
+        }
+
+        return $fullInfo;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Resource_Order_Tax_Collection                   $taxCollection
+     * @param array                                                            $fullInfo
+     * @param Mage_Sales_Model_Order_Invoice|Mage_Sales_Model_Order_Creditmemo $source
+     *
+     * @return array
+     */
+    protected function _addPostnlCodFeeTaxInfoFromCollection($taxCollection, $fullInfo, $source)
+    {
+        foreach ($taxCollection as $tax) {
+            foreach ($fullInfo as $key => $taxInfo) {
+                if ($taxInfo['title'] == $tax->getTitle()) {
+                    $fullInfo[$key]['tax_amount']      += $source->getPostnlCodFeeTax();
+                    $fullInfo[$key]['base_tax_amount'] += $source->getBasePostnlCodFeeTax();
+
+                    break(2);
+                }
+            }
+
+            $fullInfo[] = array(
+                'tax_amount'      => $source->getPostnlCodFeeTax(),
+                'base_tax_amount' => $source->getBasePostnlCodFeeTax(),
+                'title'           => $tax->getTitle(),
+                'percent'         => $tax->getPercent(),
+            );
+        }
+
+        return $fullInfo;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order                                           $order
+     * @param array                                                            $fullInfo
+     * @param Mage_Sales_Model_Order_Invoice|Mage_Sales_Model_Order_Creditmemo $source
+     *
+     * @return array
+     */
+    protected function _addPostnlCodFeeTaxInfoFromRequest($order, $fullInfo, $source)
+    {
+        $store = $order->getStore();
+        $taxCalculation = Mage::getSingleton('tax/calculation');
+
+        $customerTaxClass = $order->getCustomerTaxClassId();
+        $shippingAddress  = $order->getShippingAddress();
+        $billingAddress   = $order->getBillingAddress();
+        $codTaxClass      = Mage::getStoreConfig(self::XPATH_COD_TAX_CLASS, $store);
+
+        $taxRequest = $taxCalculation->getRateRequest(
+            $shippingAddress,
+            $billingAddress,
+            $customerTaxClass,
+            $store
+        );
+
+        $taxRequest->setProductClassId($codTaxClass);
+
+        if (!$taxRequest) {
+            return $fullInfo;
+        }
+
+        $appliedRates = Mage::getSingleton('tax/calculation')
+                            ->getAppliedRates($taxRequest);
+
+        if (!isset($appliedRates[0]['rates'][0]['title'])) {
+            return $fullInfo;
+        }
+
+        $postnlCodFeeTaxTitle = $appliedRates[0]['rates'][0]['title'];
+
+        foreach ($fullInfo as $key => $taxInfo) {
+            if ($taxInfo['title'] == $postnlCodFeeTaxTitle) {
+                $fullInfo[$key]['tax_amount']      += $source->getPostnlCodFeeTax();
+                $fullInfo[$key]['base_tax_amount'] += $source->getBasePostnlCodFeeTax();
+                break;
+            }
+        }
+
+        return $fullInfo;
     }
 }
