@@ -382,7 +382,7 @@ TIG_PostNL::You have not yet enabled PostNL Checkout.,U heeft PostNL Checkout no
 TIG_PostNL::%s > %s is required.,%s > %s is verplicht.
 TIG_PostNL::You need to enable at least one payment method.,U moet tenminste een betaalmethode activeren.
 TIG_PostNL::You have not yet enabled the extension.,U heeft de extensie nog niet geactiveerd.
-TIG_PostNL::The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under %sSystem > Config > Shipping Methods%s.,"De PostNL verzendmethode is niet geactiveerd, U kunt deze activeren onder %sSysteem > Configuratie > Versturing Methodes%s."
+TIG_PostNL::No PostNL shipping method has been enabled. You can enable the PostNL shipping method under %sSystem > Config > Shipping Methods%s.,Er is nog geen PostNL verzendmethode geactiveerd. U kunt deze activeren onder %sSysteem > Configuratie > Versturing Methodes%s.
 TIG_PostNL::The shop's base currency code must be set to EUR for PostNL to function.,De basis munteenheid van de shop moet Euro zijn voor een juiste werking van de PostNL extensie.
 TIG_PostNL::The extension has not been activated.,De extensie is nog niet geactiveerd.
 TIG_PostNL::Product code %s is not allowed for this shipment.,Product code %s is niet toegestaan voor deze zending.
@@ -425,7 +425,7 @@ TIG_PostNL::The 2kg limit will be based on the product's weight and the weight u
 TIG_PostNL::The mobile phonenumber will be saved as the customer's regular phonenumber when used.,Het mobiele telefoonnummer zal opgeslagen worden als het normale telefoonnummer van de klant wanneer deze optie aan staat.
 TIG_PostNL::All addresses outside of the Netherlands are considered 'foreign'. Addresses outside the EU are not possible regardless of this setting.,"Alle addresses buiten Nederlands worden gezien als buitenlandse adressen. Adressen buiten de EU zijn niet toegstaan, ongeacht deze instelling."
 TIG_PostNL::You can enter a URL where the customer can find your terms and conditions in your PostNL Checkout account at http://checkout.postnl.nl,U kunt een URL opgeven waar de klant de algemene voorwaarden van de webshop kan vinden in uw PostNL Checkout account op http://checkout.postnl.nl
-TIG_PostNL::or,of
+TIG_PostNL::,of
 TIG_PostNL::Missing customs description for product #%s.,Missende douane beschrijving voor product #%s.
 TIG_PostNL::Missing customs value for product #%s.,Missende douane waarde voor product #%s.
 TIG_PostNL::Missing country of origin value for product #%s.,Missende land van herkomst waarde voor product #%s.
@@ -980,3 +980,10 @@ TIG_PostNL::The server's memory limit is less than %1$dMB. The PostNL extension 
 TIG_PostNL::The following shipments or orders could not be processed:,De volgende zendingen of bestellingen konden niet verwerkt worden:
 TIG_PostNL::Unfortunately no shipments could be processed. Please check the error messages for more details.,Helaas konden er geen zendingen verwerkt worden. Controleer de errormeldingen voor meer informatie.
 TIG_PostNL::None of the shipments could be created. Please check the error messages for more details.,Geen van de zendingen konden aangemaakt worden. Controleer de errormeldingen voor meer informatie.
+TIG_PostNL::One of the following fields is required:,Eén van de volgende velden is verplicht:
+TIG_PostNL::or,of
+TIG_PostNL::flat rate,plat tarief
+TIG_PostNL::table rate,tabel tarief
+TIG_PostNL::Display PostNL COD fee,Toon PostNL rembours toeslag
+TIG_PostNL::PostNL COD fee,PostNL rembours toeslag
+TIG_PostNL::Tax class for PostNL COD fee,BTW klasse voor PostNL rembours toeslag

@@ -36,21 +36,29 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax extends Mage_Tax_Model_Sales_Total_Quote_Tax
+class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
+    extends TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract
 {
     /**
      * The code of this 'total'.
      *
      * @var string
      */
-    protected $_code = 'postnl_cod_fee_tax';
+    protected $_totalCode = 'postnl_cod_fee_tax';
 
+    /**
+     * Collect the PostNL COD fee tax for the given address.
+     *
+     * @param Mage_Sales_Model_Quote_Address $address
+     *
+     * @return $this
+     */
     public function collect(Mage_Sales_Model_Quote_Address $address)
     {
         /**
          * We can only add the fee to the shipping address.
          */
-        if ($address->getAddressType() != "shipping") {
+        if ($address->getAddressType() !='shipping') {
             return $this;
         }
 
@@ -75,59 +83,46 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax extends Mage_Tax_Mo
             return $this;
         }
 
-        $this->_setAddress($address);
-
+        /**
+         * First, reset the fee amounts to 0 for this address and the quote.
+         */
         $address->setPostnlCodFeeTax(0)
                 ->setBasePostnlCodFeeTax(0);
 
         $quote->setPostnlCodFeeTax(0)
               ->setBasePostnlCodFeeTax(0);
 
-        $customerTaxClass = $quote->getCustomerTaxClassId();
-        /**
-         * @todo replace with actual tax class
-         */
-        $codTaxClass      = 5;
-        $billingAddress   = $quote->getBillingAddress();
-        $taxCalculation   = Mage::getSingleton('tax/calculation');
+        $taxRequest = $this->_getCodFeeTaxRequest($quote);
 
-        if (!$codTaxClass) {
+        if (!$taxRequest) {
             return $this;
         }
 
-        $request = $taxCalculation->getRateRequest(
+        $taxRate = $this->_getCodFeeTaxRate($taxRequest);
+
+        if (!$taxRate || $taxRate <= 0) {
+            return $this;
+        }
+
+        $fee     = (float) Mage::getStoreConfig(self::XPATH_COD_FEE, $store);
+        $baseFee = $store->convertPrice($fee);
+
+        $feeTax     = $this->_getCodFeeTax($address, $taxRate, $fee);
+        $baseFeeTax = $this->_getBaseCodFeeTax($address, $taxRate, $baseFee);
+
+        $appliedRates = Mage::getSingleton('tax/calculation')
+                            ->getAppliedRates($taxRequest);
+
+        $this->_saveAppliedTaxes(
             $address,
-            $billingAddress,
-            $customerTaxClass,
-            $store
-        );
-
-        $request->setProductClassId($codTaxClass);
-
-        $rate = $taxCalculation->getRate($request);
-
-        if (!$rate) {
-            return $this;
-        }
-
-        $feeTax = $taxCalculation->calcTaxAmount(
-            $address->getPostnlCodFee(),
-            $rate,
-            false,
-            true
-        );
-
-        $baseFeeTax = $taxCalculation->calcTaxAmount(
-            $address->getBasePostnlCodFee(),
-            $rate,
-            false,
-            true
+            $appliedRates,
+            $feeTax,
+            $baseFeeTax,
+            $taxRate
         );
 
         $address->setTaxAmount($address->getTaxAmount() + $feeTax)
                 ->setBaseTaxAmount($address->getBaseTaxAmount() + $baseFeeTax)
-                ->setGrandTotal($address->getGrandTotal())
-                ->setBaseGrandTotal($address->getBaseGrandTotal() + $baseFeeTax)
                 ->setPostnlCodFeeTax($feeTax)
                 ->setBasePostnlCodFeeTax($baseFeeTax);
 
@@ -136,15 +131,6 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax extends Mage_Tax_Mo
 
         $quote->setPostnlCodFeeTax($feeTax)
               ->setBasePostnlCodFeeTax($baseFeeTax);
-
-        $appliedRates = $taxCalculation->getAppliedRates($request);
-        $this->_saveAppliedTaxes(
-            $address,
-            $appliedRates,
-            $feeTax,
-            $baseFeeTax,
-            $rate
-        );
 
         return $this;
     }

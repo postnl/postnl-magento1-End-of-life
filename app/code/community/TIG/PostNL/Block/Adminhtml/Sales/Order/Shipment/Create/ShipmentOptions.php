@@ -134,7 +134,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     {
         $shipment = $this->getShipment();
 
-        $parcelCount = Mage::helper('postnl/cif')->getParcelCount($shipment);
+        $parcelCount = (int) Mage::helper('postnl/cif')->getParcelCount($shipment);
+        if ($parcelCount < 1) {
+            $parcelCount = 1;
+        }
+
         return $parcelCount;
     }
 

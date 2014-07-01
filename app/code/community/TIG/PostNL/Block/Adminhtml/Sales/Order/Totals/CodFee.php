@@ -39,6 +39,18 @@
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtml_Block_Sales_Order_Totals
 {
     /**
+     * Display modes for the PostNL COD fee.
+     */
+    const DISPLAY_MODE_EXCL = 1;
+    const DISPLAY_MODE_INCL = 2;
+    const DISPLAY_MODE_BOTH = 3;
+
+    /**
+     * Xpath to the PostNL COD fee display mode setting.
+     */
+    const XPATH_DISPLAY_MODE_COD_FEE = 'tax/sales_display/postnl_cod_fee';
+
+    /**
      * Initialize order totals array
      *
      * @return $this
@@ -55,14 +67,64 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtm
             return $this;
         }
 
-        $total = new Varien_Object();
-        $total->setLabel(Mage::helper('postnl')->__('PostNL COD fee'))
-              ->setValue($fee)
-              ->setBaseValue($baseFee)
-              ->setCode('postnl_cod_fee');
+        $displayMode = $this->getDisplayMode();
 
-        $parent->addTotal($total, 'subtotal');
+        if ($displayMode === self::DISPLAY_MODE_EXCL || $displayMode === self::DISPLAY_MODE_BOTH) {
+            $label = Mage::helper('postnl')->__('PostNL COD fee');
+            if ($displayMode === self::DISPLAY_MODE_BOTH) {
+                $label .= ' (' . $this->getTaxLabel(false) . ')';
+            }
+
+            $total = new Varien_Object();
+            $total->setLabel($label)
+                  ->setValue($fee)
+                  ->setBaseValue($baseFee)
+                  ->setCode('postnl_cod_fee');
+
+            $parent->addTotalBefore($total, 'shipping');
+        }
+
+        if ($displayMode === self::DISPLAY_MODE_INCL || $displayMode === self::DISPLAY_MODE_BOTH) {
+            $label = Mage::helper('postnl')->__('PostNL COD fee');
+            if ($displayMode === self::DISPLAY_MODE_BOTH) {
+                $label .= ' (' . $this->getTaxLabel(true) . ')';
+            }
+
+            $totalInclTax = new Varien_Object();
+            $totalInclTax->setLabel($label)
+                         ->setValue($fee + $order->getPostnlCodFeeTax())
+                         ->setBaseValue($baseFee + $order->getBasePostnlCodFeeTax())
+                         ->setCode('postnl_cod_fee_incl_tax');
+
+            $parent->addTotalBefore($totalInclTax, 'shipping');
+        }
 
         return $this;
+    }
+
+    /**
+     * Get the display mode for the PostNL COD fee.
+     *
+     * @return int
+     */
+    public function getDisplayMode()
+    {
+        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE, $this->_store);
+
+        return $displayMode;
+    }
+
+    /**
+     * Get the tax label for either incl. or excl. tax.
+     *
+     * @param boolean $inclTax
+     *
+     * @return string
+     */
+    public function getTaxLabel($inclTax = false)
+    {
+        $taxLabel = Mage::helper('tax')->getIncExcText($inclTax);
+
+        return $taxLabel;
     }
 }
