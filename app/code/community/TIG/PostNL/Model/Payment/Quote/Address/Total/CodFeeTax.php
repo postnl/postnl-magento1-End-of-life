@@ -39,12 +39,57 @@
 class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax extends Mage_Tax_Model_Sales_Total_Quote_Tax
 {
     /**
+     * Xpath to PostNL COD fee tax class.
+     */
+    const XPATH_COD_TAX_CLASS = 'tax/classes/postnl_cod_fee';
+
+    /**
      * The code of this 'total'.
      *
      * @var string
      */
     protected $_code = 'postnl_cod_fee_tax';
 
+    /**
+     * @var Mage_Tax_Model_Calculation
+     */
+    protected $_taxCalculation;
+
+    /**
+     * @return Mage_Tax_Model_Calculation
+     */
+    public function getTaxCalculation()
+    {
+        $taxCalculation = $this->_taxCalculation;
+        if ($taxCalculation) {
+            return $taxCalculation;
+        }
+
+        $taxCalculation = Mage::getSingleton('tax/calculation');
+
+        $this->setTaxCalculation($taxCalculation);
+        return $taxCalculation;
+    }
+
+    /**
+     * @param Mage_Tax_Model_Calculation $taxCalculation
+     *
+     * @return $this
+     */
+    public function setTaxCalculation(Mage_Tax_Model_Calculation $taxCalculation)
+    {
+        $this->_taxCalculation = $taxCalculation;
+
+        return $this;
+    }
+
+    /**
+     * Collect the PostNL COD fee tax for the given address.
+     *
+     * @param Mage_Sales_Model_Quote_Address $address
+     *
+     * @return $this
+     */
     public function collect(Mage_Sales_Model_Quote_Address $address)
     {
         /**
@@ -55,7 +100,6 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax extends Mage_Tax_Mo
         }
 
         $quote = $address->getQuote();
-        $store = $quote->getStore();
 
         if (!$quote->getId()) {
             return $this;
@@ -75,53 +119,39 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax extends Mage_Tax_Mo
             return $this;
         }
 
-        $this->_setAddress($address);
-
+        /**
+         * First, reset the fee amounts to 0 for this address and the quote.
+         */
         $address->setPostnlCodFeeTax(0)
                 ->setBasePostnlCodFeeTax(0);
 
         $quote->setPostnlCodFeeTax(0)
               ->setBasePostnlCodFeeTax(0);
 
-        $customerTaxClass = $quote->getCustomerTaxClassId();
-        /**
-         * @todo replace with actual tax class
-         */
-        $codTaxClass      = 5;
-        $billingAddress   = $quote->getBillingAddress();
-        $taxCalculation   = Mage::getSingleton('tax/calculation');
+        $taxRequest = $this->_getCodFeeTaxRequest($quote);
 
-        if (!$codTaxClass) {
+        if (!$taxRequest) {
             return $this;
         }
 
-        $request = $taxCalculation->getRateRequest(
+        $taxRate = $this->_getCodFeeTaxRate($taxRequest);
+
+        if (!$taxRate || $taxRate <= 0) {
+            return $this;
+        }
+
+        $feeTax     = $this->getCodFeeTax($address, $taxRate);
+        $baseFeeTax = $this->getBaseCodFeeTax($address, $taxRate);
+
+        $appliedRates = Mage::getSingleton('tax/calculation')
+                            ->getAppliedRates($taxRequest);
+
+        $this->_saveAppliedTaxes(
             $address,
-            $billingAddress,
-            $customerTaxClass,
-            $store
-        );
-
-        $request->setProductClassId($codTaxClass);
-
-        $rate = $taxCalculation->getRate($request);
-
-        if (!$rate) {
-            return $this;
-        }
-
-        $feeTax = $taxCalculation->calcTaxAmount(
-            $address->getPostnlCodFee(),
-            $rate,
-            false,
-            true
-        );
-
-        $baseFeeTax = $taxCalculation->calcTaxAmount(
-            $address->getBasePostnlCodFee(),
-            $rate,
-            false,
-            true
+            $appliedRates,
+            $feeTax,
+            $baseFeeTax,
+            $taxRate
         );
 
         $address->setTaxAmount($address->getTaxAmount() + $feeTax)
@@ -137,15 +167,97 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax extends Mage_Tax_Mo
         $quote->setPostnlCodFeeTax($feeTax)
               ->setBasePostnlCodFeeTax($baseFeeTax);
 
-        $appliedRates = $taxCalculation->getAppliedRates($request);
-        $this->_saveAppliedTaxes(
-            $address,
-            $appliedRates,
-            $feeTax,
-            $baseFeeTax,
-            $rate
+        return $this;
+    }
+
+    /**
+     * Get the tax request obvject for the current quote.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool|Varien_Object
+     */
+    protected function _getCodFeeTaxRequest(Mage_Sales_Model_Quote $quote)
+    {
+        $store = $quote->getStore();
+        $taxCalculation = $this->getTaxCalculation();
+
+        $customerTaxClass = $quote->getCustomerTaxClassId();
+        $shippingAddress  = $quote->getShippingAddress();
+        $billingAddress   = $quote->getBillingAddress();
+        $codTaxClass      = Mage::getStoreConfig(self::XPATH_COD_TAX_CLASS, $store);
+
+        if (!$codTaxClass) {
+            return false;
+        }
+
+        $request = $taxCalculation->getRateRequest(
+            $shippingAddress,
+            $billingAddress,
+            $customerTaxClass,
+            $store
         );
 
-        return $this;
+        $request->setProductClassId($codTaxClass);
+
+        return $request;
+    }
+
+    /**
+     * Get the tax rate based on the previously created tax request.
+     *
+     * @param Varien_Object $request
+     *
+     * @return float
+     */
+    protected function _getCodFeeTaxRate($request)
+    {
+        $rate = $this->getTaxCalculation()->getRate($request);
+
+        return $rate;
+    }
+
+    /**
+     * Get the fee tax based on the shipping address and tax rate.
+     *
+     * @param Mage_Sales_Model_Quote_Address $address
+     * @param float                          $taxRate
+     *
+     * @return float
+     */
+    public function getCodFeeTax($address, $taxRate)
+    {
+        $taxCalculation = $this->getTaxCalculation();
+
+        $feeTax = $taxCalculation->calcTaxAmount(
+            $address->getPostnlCodFee(),
+            $taxRate,
+            false,
+            true
+        );
+
+        return $feeTax;
+    }
+
+    /**
+     * Get the base fee tax based on the shipping address and tax rate.
+     *
+     * @param Mage_Sales_Model_Quote_Address $address
+     * @param float                          $taxRate
+     *
+     * @return float
+     */
+    public function getBaseCodFeeTax($address, $taxRate)
+    {
+        $taxCalculation = $this->getTaxCalculation();
+
+        $baseFeeTax = $taxCalculation->calcTaxAmount(
+            $address->getBasePostnlCodFee(),
+            $taxRate,
+            false,
+            true
+        );
+
+        return $baseFeeTax;
     }
 }

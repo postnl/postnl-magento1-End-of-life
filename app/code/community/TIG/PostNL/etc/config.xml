@@ -749,7 +749,7 @@
                 <country>NL</country> <!-- All return addresses must be located in the Netherlands -->
         	</cif_return_address>
         	<cif_product_options>
-        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3534,3544,3533,3543,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3533</supported_product_options> <!-- all possible options except for EPS BE only -->
+        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553</supported_product_options> <!-- all possible options except for EPS BE only -->
                 <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->
         		<default_product_option>3085</default_product_option> <!-- standard shipment -->
         		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
@@ -759,12 +759,13 @@
                 <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- Post Office + signature on delivery -->
                 <default_pge_product_option>3543</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
         		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
+                <default_eu_be_product_option>4952</default_eu_be_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
-        	    <default_cod_product_option>3086</default_cod_product_option>
-                <default_evening_cod_product_option>3086</default_evening_cod_product_option>
-                <default_pakjegemak_cod_product_option>3535</default_pakjegemak_cod_product_option>
-                <default_pge_cod_product_option>3545</default_pge_cod_product_option>
+        	    <default_cod_product_option>3086</default_cod_product_option> <!-- COD -->
+                <default_evening_cod_product_option>3086</default_evening_cod_product_option> <!-- COD -->
+                <default_pakjegemak_cod_product_option>3535</default_pakjegemak_cod_product_option> <!-- Post Office + COD -->
+                <default_pge_cod_product_option>3545</default_pge_cod_product_option> <!-- Post Office + COD + Notification -->
             </cif_product_options>
             <cod>
                 <account_name/>

@@ -39,6 +39,11 @@
 class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee extends Mage_Sales_Model_Quote_Address_Total_Abstract
 {
     /**
+     * Xpath to the PostNL COD fee setting.
+     */
+    const XPATH_COD_FEE = 'payment/postnl_cod/fee';
+
+    /**
      * The code of this 'total'.
      *
      * @var string
@@ -50,7 +55,7 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee extends Mage_Sales_Mod
      *
      * @param Mage_Sales_Model_Quote_Address $address
      *
-     * @return $this|Mage_Sales_Model_Quote_Address_Total_Abstract
+     * @return $this
      */
     public function collect(Mage_Sales_Model_Quote_Address $address)
     {
@@ -73,22 +78,30 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee extends Mage_Sales_Mod
             return $this;
         }
 
-        if ($quote->getPayment()->getMethod() != 'postnl_cod') {
-            return $this;
-        }
-
         /**
-         * First, reset the fee amounts to 0 for this address.
+         * First, reset the fee amounts to 0 for this address and the quote.
          */
         $address->setPostnlCodFee(0)
                 ->setBasePostnlCodFee(0);
 
+        $quote->setPostnlCodFee(0)
+              ->setBasePostnlCodFee(0);
+
+        /**
+         * Check if the order was placed using a PostNL COD payment method.
+         */
+        $paymentMethod = $quote->getPayment()->getMethod();
+
+        $helper = Mage::helper('postnl/payment');
+        $codPaymentMethods = $helper->getCodPaymentMethods();
+        if (!in_array($paymentMethod, $codPaymentMethods)) {
+            return $this;
+        }
+
         /**
          * Get the fee amount.
-         *
-         * @todo get the actual amount
          */
-        $fee = 1;
+        $fee = (float) Mage::getStoreConfig(self::XPATH_COD_FEE, $store);
         if ($fee <= 0) {
             return $this;
         }
@@ -108,7 +121,7 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee extends Mage_Sales_Mod
               ->setBasePostnlCodFee($baseFee);
 
         /**
-         * Update the address' grandtotal amounts.
+         * Update the address' grand total amounts.
          */
         $address->setBaseGrandTotal($address->getBaseGrandTotal() + $baseFee);
         $address->setGrandTotal($address->getGrandTotal() + $fee);

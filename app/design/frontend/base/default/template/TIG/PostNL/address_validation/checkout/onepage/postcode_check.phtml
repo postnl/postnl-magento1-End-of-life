@@ -44,11 +44,11 @@
     <?php $_readOnlyClass = 'postnl-readonly'; ?>
 <?php endif; ?>
 
-<?php $_addressType = $this->hasAddressType() ? $this->getAddressType() : 'billing'; ?>
-<?php $_streetValidationClass = $this->helper('postnl/addressValidation')->getAttributeValidationClass('street'); ?>
-<?php $_streetValidationClassNotRequired = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
-
 <?php $_postnlHelper = Mage::helper('postnl/addressValidation'); ?>
+
+<?php $_addressType = $this->hasAddressType() ? $this->getAddressType() : 'billing'; ?>
+<?php $_streetValidationClass = $_postnlHelper->getAttributeValidationClass('street'); ?>
+<?php $_streetValidationClassNotRequired = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
 
 <?php $_timeoutDelay = $_postnlHelper->getPostcodeCheckTimeoutDelay(); ?>
 <?php $_maxAttempts  = $_postnlHelper->getPostcodeCheckMaxAttempts(); ?>

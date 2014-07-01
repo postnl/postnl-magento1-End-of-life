@@ -56,6 +56,65 @@
                 </totals_sort>
             </groups>
         </sales>
+        <tax>
+            <groups>
+                <classes>
+                    <fields>
+                        <postnl_cod_fee translate="label comment" module="postnl">
+                            <label>Tax class for PostNL COD fee</label>
+                            <comment>This tax class will be used when calculating the tax for the PostNL COD fee.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_payment/system_config_source_codFeeTaxClass</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </postnl_cod_fee>
+                    </fields>
+                </classes>
+                <calculation>
+                    <fields>
+                        <postnl_cod_fee translate="label comment" module="postnl">
+                            <label>PostNL COD fee</label>
+                            <comment>Whether the PostNL COD fee you have entered is incl. or excl. tax.</comment>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>tax/config_price_include</backend_model>
+                            <source_model>tax/system_config_source_priceType</source_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </postnl_cod_fee>
+                    </fields>
+                </calculation>
+                <cart_display>
+                    <fields>
+                        <postnl_cod_fee translate="label" module="postnl">
+                            <label>Display PostNL COD fee</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>tax/system_config_source_tax_display_type</source_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </postnl_cod_fee>
+                    </fields>
+                </cart_display>
+                <sales_display>
+                    <fields>
+                        <postnl_cod_fee translate="label" module="postnl">
+                            <label>Display PostNL COD fee</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>tax/system_config_source_tax_display_type</source_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </postnl_cod_fee>
+                    </fields>
+                </sales_display>
+            </groups>
+        </tax>
         <payment>
             <groups>
                 <postnl_cod translate="label" module="postnl">
@@ -87,12 +146,24 @@
                                 <active>1</active>
                             </depends>
                         </title>
+                        <fee translate="label comment" modul="postnl">
+                            <label>Fee</label>
+                            <comment>This fee will be charged to the customer when they choose to pay using PostNL COD.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </fee>
                         <order_status translate="label comment" module="postnl">
                             <label>New order status</label>
                             <comment>Newly placed orders will have this status.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_order_status_new</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -105,7 +176,7 @@
                             <comment>This text will be shown to customers when they choose this payment method.</comment>
                             <tooltip>Html tags are allowed in this field.</tooltip>
                             <frontend_type>textarea</frontend_type>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -116,7 +187,7 @@
                         <allowspecific translate="label" module="postnl">
                             <label>Payment from applicable countries</label>
                             <frontend_type>allowspecific</frontend_type>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -128,7 +199,7 @@
                         <specificcountry translate="label" module="postnl">
                             <label>Payment from specific countries</label>
                             <frontend_type>multiselect</frontend_type>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -141,7 +212,7 @@
                         <min_order_total translate="label" module="postnl">
                             <label>Minimum order total</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -152,7 +223,7 @@
                         <max_order_total translate="label" module="postnl">
                             <label>Maximum order total</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -165,7 +236,7 @@
                             <comment>Set this option to 'yes' to allow orders placed using a different shipping method than PostNL to use this payment method.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -176,7 +247,7 @@
                         <sort_order translate="label" module="postnl">
                             <label>Sort order</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>

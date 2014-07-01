@@ -171,6 +171,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION        = 'postnl/cif_product_options/default_pge_cod_product_option';
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
+    const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION          = 'postnl/cif_product_options/default_eu_be_product_option';
     const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
     const XPATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/cif_product_options/use_alternative_default';
     const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/cif_product_options/alternative_default_max_amount';
@@ -779,7 +780,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
                 break;
             case 'eps':
-                $xpath = self::XPATH_DEFAULT_EU_PRODUCT_OPTION;
+                if ($this->getHelper()->canUseEpsBEOnlyOption($this->getStoreId())
+                    && $this->getShippingAddress()->getCountryId() == 'BE'
+                ) {
+                    $xpath = self::XPATH_DEFAULT_EU_BE_PRODUCT_OPTION;
+                } else {
+                    $xpath = self::XPATH_DEFAULT_EU_PRODUCT_OPTION;
+                }
                 break;
             case 'globalpack':
                 $xpath = self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;

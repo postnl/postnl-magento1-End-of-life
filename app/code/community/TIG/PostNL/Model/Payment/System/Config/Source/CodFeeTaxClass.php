@@ -36,17 +36,18 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_helper = $this->helper('postnl'); ?>
-<script type="text/javascript">
-//<![CDATA[
-    Validation.add('postnl-validate-postcode', '<?php echo $_helper->__('Please enter a valid postcode. A valid postcode contains 4 numbers and 2 letters without spaces, for example: 1000XX.'); ?>', {
-        pattern : /^[1-9][0-9]{3}[\s]?[a-zA-Z]{2}$/i
-    });
+class TIG_PostNL_Model_Payment_System_Config_Source_CodFeeTaxClass
+{
+    /**
+     * Get available tax classes for PostNL COD fee. Available tax classes are the same as those used for product tax
+     * classes.
+     *
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        $options = Mage::getModel('tax/class_source_product')->toOptionArray();
 
-    Validation.add('postnl-validate-housenumber', '<?php echo $_helper->__('Please enter a valid housenumber. Housenumbers may only contain digits.'); ?>', {
-        minLength : 1,
-        include   : ['validate-digits']
-    });
-//]]>
-</script>
+        return $options;
+    }
+}
