@@ -74,7 +74,7 @@
                 </classes>
                 <calculation>
                     <fields>
-                        <postnl_cod_fee translate="label comment" module="postnl">
+                        <postnl_cod_fee_including_tax translate="label comment" module="postnl">
                             <label>PostNL COD fee</label>
                             <comment>Whether the PostNL COD fee you have entered is incl. or excl. tax.</comment>
                             <frontend_type>select</frontend_type>
@@ -84,7 +84,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </postnl_cod_fee>
+                        </postnl_cod_fee_including_tax>
                     </fields>
                 </calculation>
                 <cart_display>
