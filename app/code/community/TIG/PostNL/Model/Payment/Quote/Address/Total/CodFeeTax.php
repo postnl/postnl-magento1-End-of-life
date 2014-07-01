@@ -123,8 +123,6 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
 
         $address->setTaxAmount($address->getTaxAmount() + $feeTax)
                 ->setBaseTaxAmount($address->getBaseTaxAmount() + $baseFeeTax)
-                ->setGrandTotal($address->getGrandTotal())
-                ->setBaseGrandTotal($address->getBaseGrandTotal() + $baseFeeTax)
                 ->setPostnlCodFeeTax($feeTax)
                 ->setBasePostnlCodFeeTax($baseFeeTax);
 

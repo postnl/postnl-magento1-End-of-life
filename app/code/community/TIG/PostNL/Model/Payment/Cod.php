@@ -140,12 +140,9 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          */
         $codSettings = Mage::getStoreConfig(self::XPATH_COD_SETTINGS, Mage::app()->getStore()->getId());
 
-        if (!isset($codSettings['account_name'])
-            || !$codSettings['account_name']
-            || !isset($codSettings['iban'])
-            || !$codSettings['iban']
-            || !isset($codSettings['bic'])
-            || !$codSettings['bic']
+        if (empty($codSettings['account_name'])
+            || empty($codSettings['iban'])
+            || empty($codSettings['bic'])
         ) {
             $helper->log(
                 $helper->__('PostNL COD is not available, because required fields are missing.')
