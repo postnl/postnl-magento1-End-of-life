@@ -44,7 +44,12 @@ class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
     /**
      * Xpath to PostNL COD fee tax class.
      */
-    const XPATH_COD_TAX_CLASS = 'tax/classes/postnl_cod_fee';
+    const XPATH_COD_FEE_TAX_CLASS = 'tax/classes/postnl_cod_fee';
+
+    /**
+     * Xpath to PostNL COD fee label setting.
+     */
+    const XPATH_COD_FEE_LABEL = 'payment/postnl_cod/fee_label';
 
     /**
      * Debug log file for PostNL payments.
@@ -71,11 +76,28 @@ class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Get the PostNL COD fee label for a given store.
+     *
+     * @param null|int|Mage_Core_Model_Store $store
+     *
+     * @return mixed
+     */
+    public function getPostnlCodFeeLabel($store = null)
+    {
+        if (is_null($store)) {
+            $store = Mage::app()->getStore();
+        }
+
+        $label = Mage::getStoreConfig(self::XPATH_COD_FEE_LABEL, $store);
+        return $label;
+    }
+
+    /**
      * Add PostNL COD fee tax info to the full tax info array.
      *
      * This is a really annoying hack to fix the problem where the full tax info does not include the custom PostNL COD
      * fee tax info. Magento only supports tax info from shipping tax or product tax by default
-     * (@see Mage_Tax_Helper_Data::getCalculatedTaxes()). If anybody knows of a better way to fix this (that does not
+     * (see Mage_Tax_Helper_Data::getCalculatedTaxes()). If anybody knows of a better way to fix this (that does not
      * require a core rewrite) please let us know at servicedesk@totalinternetgroup.nl.
      *
      * @param array                                                                                   $fullInfo
@@ -83,6 +105,8 @@ class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
      * @param Mage_Sales_Model_Order                                                                  $order
      *
      * @return array
+     *
+     * @see Mage_Tax_Helper_Data::getCalculatedTaxes()
      */
     public function addPostnlCodFeeTaxInfo($fullInfo, $source, Mage_Sales_Model_Order $order)
     {
@@ -184,7 +208,7 @@ class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
         $customerTaxClass = $order->getCustomerTaxClassId();
         $shippingAddress  = $order->getShippingAddress();
         $billingAddress   = $order->getBillingAddress();
-        $codTaxClass      = Mage::getStoreConfig(self::XPATH_COD_TAX_CLASS, $store);
+        $codTaxClass      = Mage::getStoreConfig(self::XPATH_COD_FEE_TAX_CLASS, $store);
 
         $taxRequest = $taxCalculation->getRateRequest(
             $shippingAddress,

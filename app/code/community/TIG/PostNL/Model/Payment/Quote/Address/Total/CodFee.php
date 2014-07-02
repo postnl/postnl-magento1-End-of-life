@@ -45,6 +45,16 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
     const XPATH_COD_FEE_INCLUDING_TAX = 'tax/calculation/postnl_cod_fee_including_tax';
 
     /**
+     * Xpath to Idev's OneStepCheckout's 'display_tax_included' setting.
+     */
+    const XPATH_ONESTEPCHECKOUT_DISPLAY_TAX_INCLUDED = 'onestepcheckout/general/display_tax_included';
+
+    /**
+     * Module name used by OneStepCheckout.
+     */
+    const ONESTEPCHECKOUT_MODULE_NAME = 'onestepcheckout';
+
+    /**
      * The code of this 'total'.
      *
      * @var string
@@ -135,7 +145,7 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
      *
      * @param Mage_Sales_Model_Quote_Address $address
      *
-     * @return $this|array
+     * @return $this
      */
     public function fetch(Mage_Sales_Model_Quote_Address $address)
     {
@@ -145,10 +155,21 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
             return $this;
         }
 
+        $storeId = $address->getQuote()->getStoreId();
+
+        /**
+         * Add the COD fee tax for OSC if the 'display_tax_included' setting is turned on.
+         */
+        if (Mage::app()->getRequest()->getModuleName() == self::ONESTEPCHECKOUT_MODULE_NAME
+            && Mage::getStoreConfigFlag(self::XPATH_ONESTEPCHECKOUT_DISPLAY_TAX_INCLUDED, $storeId)
+        ) {
+            $amount += $address->getPostnlCodFeeTax();
+        }
+
         $address->addTotal(
             array(
                 'code'  => $this->getCode(),
-                'title' => Mage::helper('postnl')->__('PostNL COD fee'),
+                'title' => Mage::helper('postnl/payment')->getPostnlCodFeeLabel($storeId),
                 'value' => $amount,
             )
         );

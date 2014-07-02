@@ -118,7 +118,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * replace the collection, as the default collection has a bug preventing it from being reset.
          * Without being able to reset it, we can't edit it. Therefore we are forced to replace it altogether
          *
-         * TODO see if this can be avoided in any way
+         * @todo see if this can be avoided in any way
          */
         $collection = Mage::getResourceModel('postnl/order_grid_collection');
         $collection->setSelect($select)
@@ -131,7 +131,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $this->_joinCollection($collection);
         $this->_modifyColumns($block);
         $this->_addColumns($block);
-        $this->_applySortAndFilter($collection);
+        $this->_applySortAndFilter();
         $this->_addMassaction($block);
 
         $block->setCollection($collection);
@@ -586,11 +586,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Applies sorting and filtering to the collection
      *
-     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
-     *
      * @return $this
      */
-    protected function _applySortAndFilter($collection)
+    protected function _applySortAndFilter()
     {
         $session = Mage::getSingleton('adminhtml/session');
 
@@ -598,7 +596,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $filter = Mage::helper('adminhtml')->prepareFilterString($filter);
 
         if ($filter) {
-            $this->_filterCollection($collection, $filter);
+            $this->_filterCollection($filter);
         }
 
         $sort = $session->getData(self::ORDER_GRID_SORT_VAR_NAME);
@@ -615,17 +613,20 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Adds new filters to the collection if these filters are based on columns added by this observer
      *
-     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
      * @param array                                           $filter     Array of filters to be added
      *
      * @return $this
      */
-    protected function _filterCollection($collection, $filter)
+    protected function _filterCollection($filter)
     {
         $block = $this->getBlock();
 
         foreach ($filter as $columnName => $value) {
             $column = $block->getColumn($columnName);
+
+            if (!$column) {
+                continue;
+            }
 
             $column->getFilter()->setValue($value);
             $this->_addColumnFilterToCollection($column);

@@ -170,7 +170,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $this->_joinCollection($collection);
         $this->_modifyColumns($block);
         $this->_addColumns($block);
-        $this->_applySortAndFilter($collection);
+        $this->_applySortAndFilter();
         $this->_addMassaction($block);
 
         $block->setCollection($this->getCollection());
@@ -256,8 +256,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         );
 
         /**
-         * join sales_flat_order_address table. Once for the shipping address and once for the pakje_gemak address. We
-         * need both for the conditional select used to get the postcode and country_id of the detination_address.
+         * Join sales_flat_order_address table. Once for the shipping address and once for the pakje_gemak address. We
+         * need both for the conditional select used to get the postcode and country_id of the destination_address.
          */
         $select->joinLeft(
             array('shipping_address' => $resource->getTableName('sales/order_address')),
@@ -298,7 +298,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             array('postnl_order' => $resource->getTableName('postnl_core/order')),
             '`main_table`.`order_id`=`postnl_order`.`order_id`',
             array(
-                'delivery_date'        => 'postnl_order.delivery_date',
+                'delivery_date' => 'postnl_order.delivery_date',
             )
         );
 
@@ -936,11 +936,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Applies sorting and filtering to the collection
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
-     *
      * @return $this
      */
-    protected function _applySortAndFilter($collection)
+    protected function _applySortAndFilter()
     {
         $session = Mage::getSingleton('adminhtml/session');
 
@@ -948,7 +946,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $filter = Mage::helper('adminhtml')->prepareFilterString($filter);
 
         if ($filter) {
-            $this->_filterCollection($collection, $filter);
+            $this->_filterCollection($filter);
         }
 
         $sort = $session->getData(self::SHIPMENT_GRID_SORT_VAR_NAME);
@@ -956,7 +954,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         if ($sort) {
             $dir = $session->getData(self::SHIPMENT_GRID_DIR_VAR_NAME);
 
-            $this->_sortCollection($collection, $sort, $dir);
+            $this->_sortCollection($sort, $dir);
         }
 
         return $this;
@@ -965,17 +963,17 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Adds new filters to the collection if these filters are based on columns added by this observer
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      * @param array $filter Array of filters to be added
      *
      * @return $this
      */
-    protected function _filterCollection($collection, $filter)
+    protected function _filterCollection($filter)
     {
         $block = $this->getBlock();
 
         foreach ($filter as $columnName => $value) {
             $column = $block->getColumn($columnName);
+
             if (!$column) {
                 continue;
             }
@@ -1020,13 +1018,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * Sorts the collection by a specified column in a specified direction
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      * @param string $sort The column that the collection is sorted by
      * @param string $dir The direction that is used to sort the collection
      *
      * @return $this
      */
-    protected function _sortCollection($collection, $sort, $dir)
+    protected function _sortCollection($sort, $dir)
     {
         $block = $this->getBlock();
         $column = $block->getColumn($sort);
