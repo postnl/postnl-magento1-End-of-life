@@ -292,12 +292,18 @@
                 <default>postnl_core/packingslip_pdf_items_invoice_default</default>
             </postnl_packingslip>
             <totals>
-                <postnl_cod_fee translate="title">
-                    <title>Cod fee</title>
+                <tax>
+                    <model>postnl_payment/order_pdf_total_tax</model>
+                </tax>
+                <grand_total>
+                    <model>postnl_payment/order_pdf_total_grandtotal</model>
+                </grand_total>
+                <postnl_cod_fee translate="title" module="postnl">
+                    <title>PostNL COD fee</title>
                     <source_field>postnl_cod_fee</source_field>
                     <font_size>7</font_size>
                     <display_zero>0</display_zero>
-                    <sort_order>550</sort_order>
+                    <sort_order>300</sort_order>
                     <model>postnl_payment/order_pdf_total_codFee</model>
                 </postnl_cod_fee>
             </totals>
@@ -600,13 +606,29 @@
     <default>
         <sales>
             <totals_sort>
-                <postnl_cod_fee>25</postnl_cod_fee>
+                <postnl_cod_fee>25</postnl_cod_fee> <!-- Between discount and shipping -->
             </totals_sort>
         </sales>
+        <tax>
+            <classes>
+                <postnl_cod_fee/>
+            </classes>
+            <calculation>
+                <postnl_cod_fee_including_tax>1</postnl_cod_fee_including_tax> <!-- PostNL COD fee is entered incl. tax. -->
+            </calculation>
+            <cart_display>
+                <postnl_cod_fee>1</postnl_cod_fee> <!-- Display PostNL COD fee incl. tax -->
+            </cart_display>
+            <sales_display>
+                <postnl_cod_fee>1</postnl_cod_fee> <!-- Display PostNL COD fee incl. tax -->
+            </sales_display>
+        </tax>
         <payment>
             <postnl_cod>
                 <active>0</active> <!-- Disabled -->
                 <title>PostNL Rembours</title> <!-- PostNL Cash on Delivery -->
+                <fee>0</fee> <!-- Do not charge a fee for using COD -->
+                <fee_label>PostNL rembourstoeslag</fee_label> <!-- PostNL COD fee -->
                 <order_status>pending</order_status> <!-- Pending status -->
                 <allowspecific>1</allowspecific> <!-- Allow only specific countries -->
                 <specificcountry>NL</specificcountry> <!-- Allow only NL -->

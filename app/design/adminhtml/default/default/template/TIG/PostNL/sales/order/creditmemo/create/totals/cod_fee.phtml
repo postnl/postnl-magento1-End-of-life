@@ -40,26 +40,25 @@
 <?php $_source  = $this->getSource() ?>
 <?php if ($_source): ?>
     <tr>
-        <td class="label"><?php echo $this->__('PostNL COD fee') ?></td>
-        <td><input type="text" name="creditmemo[postnl_cod_fee]" value="<?php echo $_source->getPostnlCodFee()?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="postnl_cod_fee_amount" /></td>
+        <td class="label">
+            <label for="postnl_cod_fee_amount">
+                <?php echo Mage::helper('postnl/payment')->getPostnlCodFeeLabel($_source->getStoreId()); ?> <?php echo Mage::helper('tax')->getIncExcTaxLabel(false); ?>
+            </label>
+        </td>
+        <td>
+            <input type="text" name="creditmemo[postnl_cod_fee]" value="<?php echo $_source->getPostnlCodFee()?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="postnl_cod_fee_amount" />
+        </td>
     </tr>
     <tr>
-        <td colspan="2"><div id="postnl_cod_fee_amount_advice"></div></td>
+        <td colspan="2">
+            <div id="postnl_cod_fee_amount_advice"></div>
+        </td>
     </tr>
     <script type="text/javascript">
         //<![CDATA[
-        Validation.addAllThese([
-            ['not-negative-amount', '<?php echo $this->helper('sales')->__('Please enter positive number in this field.') ?>', function(v) {
-                if(v.length)
-                    return /^\s*\d+([,.]\d+)*\s*%?\s*$/.test(v);
-                else
-                    return true;
-            }]
-        ]);
-
         var postnlCodFeeAmountField = $('postnl_cod_fee_amount');
         if (postnlCodFeeAmountField) {
-            postnlCodFeeAmountField.advaiceContainer = $('postnl_cod_fee_amount_advice');
+            postnlCodFeeAmountField.advaiceContainer = $('postnl_cod_fee_amount_advice'); //The typo is intentional
             unblockSubmit('postnl_cod_fee_amount');
         }
 

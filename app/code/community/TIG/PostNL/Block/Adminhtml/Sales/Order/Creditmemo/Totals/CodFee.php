@@ -35,10 +35,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @method Varien_Object getTotal()
  */
-class TIG_PostNL_Block_Payment_Checkout_Total_CodFee extends Mage_Checkout_Block_Total_Default
+class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
+    extends TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee
 {
     /**
      * Display modes for the PostNL COD fee.
@@ -50,12 +49,63 @@ class TIG_PostNL_Block_Payment_Checkout_Total_CodFee extends Mage_Checkout_Block
     /**
      * Xpath to the PostNL COD fee display mode setting.
      */
-    const XPATH_DISPLAY_MODE_COD_FEE = 'tax/cart_display/postnl_cod_fee';
+    const XPATH_DISPLAY_MODE_COD_FEE = 'tax/sales_display/postnl_cod_fee';
 
     /**
-     * @var string
+     * Initialize order totals array
+     *
+     * @return $this
      */
-    protected $_template = 'TIG/PostNL/payment/checkout/total/cod_fee.phtml';
+    public function initTotals()
+    {
+        /**
+         * @var  Mage_Adminhtml_Block_Sales_Order_Invoice_Totals $parent
+         */
+        $parent     = $this->getParentBlock();
+        $creditmemo = $parent->getCreditmemo();
+
+        $fee     = $creditmemo->getPostnlCodFee();
+        $baseFee = $creditmemo->getBasePostnlCodFee();
+
+        if (!$fee || !$baseFee) {
+            return $this;
+        }
+
+        $displayMode = $this->getDisplayMode();
+        $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($creditmemo->getStoreId());
+
+        if ($displayMode === self::DISPLAY_MODE_EXCL || $displayMode === self::DISPLAY_MODE_BOTH) {
+            $label = $baseLabel;
+            if ($displayMode === self::DISPLAY_MODE_BOTH) {
+                $label .= ' (' . $this->getTaxLabel(false) . ')';
+            }
+
+            $total = new Varien_Object();
+            $total->setLabel($label)
+                  ->setValue($fee)
+                  ->setBaseValue($baseFee)
+                  ->setCode('postnl_cod_fee');
+
+            $parent->addTotalBefore($total, 'shipping');
+        }
+
+        if ($displayMode === self::DISPLAY_MODE_INCL || $displayMode === self::DISPLAY_MODE_BOTH) {
+            $label = $baseLabel;
+            if ($displayMode === self::DISPLAY_MODE_BOTH) {
+                $label .= ' (' . $this->getTaxLabel(true) . ')';
+            }
+
+            $totalInclTax = new Varien_Object();
+            $totalInclTax->setLabel($label)
+                         ->setValue($fee + $creditmemo->getPostnlCodFeeTax())
+                         ->setBaseValue($baseFee + $creditmemo->getBasePostnlCodFeeTax())
+                         ->setCode('postnl_cod_fee_incl_tax');
+
+            $parent->addTotalBefore($totalInclTax, 'shipping');
+        }
+
+        return $this;
+    }
 
     /**
      * Get the display mode for the PostNL COD fee.
@@ -78,28 +128,8 @@ class TIG_PostNL_Block_Payment_Checkout_Total_CodFee extends Mage_Checkout_Block
      */
     public function getTaxLabel($inclTax = false)
     {
-        $taxLabel = Mage::helper('tax')->getIncExcTaxLabel($inclTax);
+        $taxLabel = Mage::helper('tax')->getIncExcText($inclTax);
 
         return $taxLabel;
-    }
-
-    /**
-     * Get the PostNL COD fee value incl or excl. tax.
-     *
-     * @param bool $inclTax
-     *
-     * @return bool
-     */
-    public function getValue($inclTax = false)
-    {
-        $address = $this->getTotal()->getAddress();
-
-        $exclTax = $address->getPostnlCodFee();
-        if (!$inclTax) {
-            return $exclTax;
-        }
-
-        $inclTax = $exclTax + $address->getPostnlCodFeeTax();
-        return $inclTax;
     }
 }

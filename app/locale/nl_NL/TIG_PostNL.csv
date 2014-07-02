@@ -984,6 +984,12 @@ TIG_PostNL::One of the following fields is required:,Eén van de volgende velden
 TIG_PostNL::or,of
 TIG_PostNL::flat rate,plat tarief
 TIG_PostNL::table rate,tabel tarief
-TIG_PostNL::Display PostNL COD fee,Toon PostNL rembours toeslag
-TIG_PostNL::PostNL COD fee,PostNL rembours toeslag
-TIG_PostNL::Tax class for PostNL COD fee,BTW klasse voor PostNL rembours toeslag
+TIG_PostNL::Display PostNL COD fee,Toon PostNL rembourstoeslag
+TIG_PostNL::PostNL COD fee,PostNL rembourstoeslag
+TIG_PostNL::Tax class for PostNL COD fee,BTW klasse voor PostNL rembourstoeslag
+TIG_PostNL::Whether the PostNL COD fee you have entered is incl. or excl. tax.,Of de PostNL tembourstoeslag ingevul is incl. of excl. BTW.
+TIG_PostNL::This tax class will be used when calculating the tax for the PostNL COD fee.,Deze BTW klasse zal gebruikt worden om de BTW op de PostNL rembourstoeslag te berekenen.
+TIG_PostNL::Fee,Toeslag
+TIG_PostNL::This fee will be charged to the customer when they choose to pay using PostNL COD.,Deze toeslag zal aan de klant berekend worden wanneer zij kiezen voor de PostNL rembours betaalmethode.
+TIG_PostNL::Fee label,Toeslag label
+"TIG_PostNL::This label will be displayed next to the fee on the checkout, order, invoice and creditmemo pages and pdfs.","Dit label zal getoond worden naast de toeslag op de afreken-, bestelling-, factuur- en kredietmemopagina's."

@@ -68,9 +68,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtm
         }
 
         $displayMode = $this->getDisplayMode();
+        $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($order->getStoreId());
 
         if ($displayMode === self::DISPLAY_MODE_EXCL || $displayMode === self::DISPLAY_MODE_BOTH) {
-            $label = Mage::helper('postnl')->__('PostNL COD fee');
+            $label = $baseLabel;
             if ($displayMode === self::DISPLAY_MODE_BOTH) {
                 $label .= ' (' . $this->getTaxLabel(false) . ')';
             }
@@ -85,7 +86,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtm
         }
 
         if ($displayMode === self::DISPLAY_MODE_INCL || $displayMode === self::DISPLAY_MODE_BOTH) {
-            $label = Mage::helper('postnl')->__('PostNL COD fee');
+            $label = $baseLabel;
             if ($displayMode === self::DISPLAY_MODE_BOTH) {
                 $label .= ' (' . $this->getTaxLabel(true) . ')';
             }

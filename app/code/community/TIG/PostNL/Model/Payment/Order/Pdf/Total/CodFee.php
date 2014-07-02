@@ -35,9 +35,14 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method int|string                getFontSize()
+ * @method Mage_Sales_Model_Order    getOrder()
+ * @method string                    getAmountPrefix()
+ * @method string                    getTitle()
+ * @method Mage_Sales_Model_Abstract getSource()
  */
-class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
-    extends TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee
+class TIG_PostNL_Model_Payment_Order_Pdf_Total_CodFee extends Mage_Sales_Model_Order_Pdf_Total_Default
 {
     /**
      * Display modes for the PostNL COD fee.
@@ -52,59 +57,60 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
     const XPATH_DISPLAY_MODE_COD_FEE = 'tax/sales_display/postnl_cod_fee';
 
     /**
-     * Initialize order totals array
+     * Get the PostNL COD fee total amounts to display on the pdf.
      *
-     * @return $this
+     * @return array
      */
-    public function initTotals()
+    public function getTotalsForDisplay()
     {
-        /**
-         * @var  Mage_Adminhtml_Block_Sales_Order_Invoice_Totals $parent
-         */
-        $parent  = $this->getParentBlock();
-        $invoice = $parent->getInvoice();
+        $fontSize = $this->getFontSize() ? $this->getFontSize() : 7;
 
-        $fee     = $invoice->getPostnlCodFee();
-        $baseFee = $invoice->getBasePostnlCodFee();
-
-        if (!$fee || !$baseFee) {
-            return $this;
-        }
+        $totals = array();
 
         $displayMode = $this->getDisplayMode();
-        $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($invoice->getStoreId());
+        $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($this->getOrder()->getStoreId());
 
         if ($displayMode === self::DISPLAY_MODE_EXCL || $displayMode === self::DISPLAY_MODE_BOTH) {
+            $amount = $this->getAmount();
+            $amount = $this->getOrder()->formatPriceTxt($amount);
+            if ($this->getAmountPrefix()) {
+                $amount = $this->getAmountPrefix() . $amount;
+            }
+
             $label = $baseLabel;
             if ($displayMode === self::DISPLAY_MODE_BOTH) {
                 $label .= ' (' . $this->getTaxLabel(false) . ')';
             }
+            $label .= ':';
 
-            $total = new Varien_Object();
-            $total->setLabel($label)
-                  ->setValue($fee)
-                  ->setBaseValue($baseFee)
-                  ->setCode('postnl_cod_fee');
-
-            $parent->addTotalBefore($total, 'shipping');
+            $totals[] = array(
+                'amount'    => $amount,
+                'label'     => $label,
+                'font_size' => $fontSize
+            );
         }
 
         if ($displayMode === self::DISPLAY_MODE_INCL || $displayMode === self::DISPLAY_MODE_BOTH) {
+            $amount = $this->getAmount() + $this->getSource()->getPostnlCodFeeTax();
+            $amount = $this->getOrder()->formatPriceTxt($amount);
+            if ($this->getAmountPrefix()) {
+                $amount = $this->getAmountPrefix() . $amount;
+            }
+
             $label = $baseLabel;
             if ($displayMode === self::DISPLAY_MODE_BOTH) {
                 $label .= ' (' . $this->getTaxLabel(true) . ')';
             }
+            $label .= ':';
 
-            $totalInclTax = new Varien_Object();
-            $totalInclTax->setLabel($label)
-                         ->setValue($fee + $invoice->getPostnlCodFeeTax())
-                         ->setBaseValue($baseFee + $invoice->getBasePostnlCodFeeTax())
-                         ->setCode('postnl_cod_fee_incl_tax');
-
-            $parent->addTotalBefore($totalInclTax, 'shipping');
+            $totals[] = array(
+                'amount'    => $amount,
+                'label'     => $label,
+                'font_size' => $fontSize
+            );
         }
 
-        return $this;
+        return $totals;
     }
 
     /**
@@ -114,7 +120,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
      */
     public function getDisplayMode()
     {
-        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE, $this->_store);
+        $displayMode = (int) Mage::getStoreConfig(self::XPATH_DISPLAY_MODE_COD_FEE, $this->getOrder()->getStoreId());
 
         return $displayMode;
     }
@@ -128,7 +134,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
      */
     public function getTaxLabel($inclTax = false)
     {
-        $taxLabel = Mage::helper('tax')->getIncExcText($inclTax);
+        $taxLabel = Mage::helper('tax')->getIncExcText($inclTax, $this->getOrder()->getStoreId());
 
         return $taxLabel;
     }
