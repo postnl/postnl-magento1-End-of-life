@@ -84,63 +84,147 @@ $conn->addForeignKey(
 $salesOrderTable = $installer->getTable('sales/order');
 $conn->addColumn(
     $salesOrderTable,
-    'postnl_cod_fee',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesOrderTable,
     'base_postnl_cod_fee',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesOrderTable,
-    'postnl_cod_fee_invoiced',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee',
+        'after'    => 'base_shipping_tax_refunded',
+    )
 );
 $conn->addColumn(
     $salesOrderTable,
     'base_postnl_cod_fee_invoiced',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesOrderTable,
-    'postnl_cod_fee_tax',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesOrderTable,
-    'base_postnl_cod_fee_tax',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesOrderTable,
-    'postnl_cod_fee_tax_invoiced',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesOrderTable,
-    'base_postnl_cod_fee_tax_invoiced',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesOrderTable,
-    'postnl_cod_fee_refunded',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee Invoiced',
+        'after'    => 'base_postnl_cod_fee',
+    )
 );
 $conn->addColumn(
     $salesOrderTable,
     'base_postnl_cod_fee_refunded',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee Refunded',
+        'after'    => 'base_postnl_cod_fee_invoiced',
+    )
 );
 $conn->addColumn(
     $salesOrderTable,
-    'postnl_cod_fee_tax_refunded',
-    "decimal(12,4) null"
+    'base_postnl_cod_fee_tax',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee Tax',
+        'after'    => 'base_postnl_cod_fee_refunded',
+    )
+);
+$conn->addColumn(
+    $salesOrderTable,
+    'base_postnl_cod_fee_tax_invoiced',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee Tax Invoiced',
+        'after'    => 'base_postnl_cod_fee_tax',
+    )
 );
 $conn->addColumn(
     $salesOrderTable,
     'base_postnl_cod_fee_tax_refunded',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee Tax Refunded',
+        'after'    => 'base_postnl_cod_fee_tax_invoiced',
+    )
+);
+$conn->addColumn(
+    $salesOrderTable,
+    'postnl_cod_fee',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee',
+        'after'    => 'shipping_tax_refunded',
+    )
+);
+$conn->addColumn(
+    $salesOrderTable,
+    'postnl_cod_fee_invoiced',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee Invoiced',
+        'after'    => 'postnl_cod_fee',
+    )
+);
+$conn->addColumn(
+    $salesOrderTable,
+    'postnl_cod_fee_refunded',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee Refunded',
+        'after'    => 'postnl_cod_fee_invoiced',
+    )
+);
+$conn->addColumn(
+    $salesOrderTable,
+    'postnl_cod_fee_tax',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee Tax',
+        'after'    => 'postnl_cod_fee_refunded',
+    )
+);
+$conn->addColumn(
+    $salesOrderTable,
+    'postnl_cod_fee_tax_invoiced',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee Tax Invoiced',
+        'after'    => 'postnl_cod_fee_tax',
+    )
+);
+$conn->addColumn(
+    $salesOrderTable,
+    'postnl_cod_fee_tax_refunded',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee Tax Refunded',
+        'after'    => 'postnl_cod_fee_tax_invoiced',
+    )
 );
 
 /***********************************************************************************************************************
@@ -153,23 +237,51 @@ $conn->addColumn(
 $salesInvoiceTable = $installer->getTable('sales/invoice');
 $conn->addColumn(
     $salesInvoiceTable,
-    'postnl_cod_fee',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesInvoiceTable,
     'base_postnl_cod_fee',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesInvoiceTable,
-    'postnl_cod_fee_tax',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee',
+        'after'    => 'base_shipping_amount',
+    )
 );
 $conn->addColumn(
     $salesInvoiceTable,
     'base_postnl_cod_fee_tax',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee Tax',
+        'after'    => 'base_postnl_cod_fee',
+    )
+);
+$conn->addColumn(
+    $salesInvoiceTable,
+    'postnl_cod_fee',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee',
+        'after'    => 'base_postnl_cod_fee_tax',
+    )
+);
+$conn->addColumn(
+    $salesInvoiceTable,
+    'postnl_cod_fee_tax',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee Tax',
+        'after'    => 'postnl_cod_fee',
+    )
 );
 
 /***********************************************************************************************************************
@@ -182,23 +294,51 @@ $conn->addColumn(
 $salesQuoteTable = $installer->getTable('sales/quote');
 $conn->addColumn(
     $salesQuoteTable,
-    'postnl_cod_fee',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesQuoteTable,
     'base_postnl_cod_fee',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesQuoteTable,
-    'postnl_cod_fee_tax',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee',
+        'after'    => 'customer_gender',
+    )
 );
 $conn->addColumn(
     $salesQuoteTable,
     'base_postnl_cod_fee_tax',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee Tax',
+        'after'    => 'base_postnl_cod_fee',
+    )
+);
+$conn->addColumn(
+    $salesQuoteTable,
+    'postnl_cod_fee',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee',
+        'after'    => 'base_postnl_cod_fee_tax',
+    )
+);
+$conn->addColumn(
+    $salesQuoteTable,
+    'postnl_cod_fee_tax',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee Tax',
+        'after'    => 'postnl_cod_fee',
+    )
 );
 
 /***********************************************************************************************************************
@@ -211,23 +351,51 @@ $conn->addColumn(
 $salesQuoteAddressTable = $installer->getTable('sales/quote_address');
 $conn->addColumn(
     $salesQuoteAddressTable,
-    'postnl_cod_fee',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesQuoteAddressTable,
     'base_postnl_cod_fee',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesQuoteAddressTable,
-    'postnl_cod_fee_tax',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee',
+        'after'    => 'base_shipping_tax_amount',
+    )
 );
 $conn->addColumn(
     $salesQuoteAddressTable,
     'base_postnl_cod_fee_tax',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee Tax',
+        'after'    => 'base_postnl_cod_fee',
+    )
+);
+$conn->addColumn(
+    $salesQuoteAddressTable,
+    'postnl_cod_fee',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee',
+        'after'    => 'base_postnl_cod_fee_tax',
+    )
+);
+$conn->addColumn(
+    $salesQuoteAddressTable,
+    'postnl_cod_fee_tax',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee Tax',
+        'after'    => 'postnl_cod_fee',
+    )
 );
 
 /***********************************************************************************************************************
@@ -240,23 +408,51 @@ $conn->addColumn(
 $salesCreditmemoTable = $installer->getTable('sales/creditmemo');
 $conn->addColumn(
     $salesCreditmemoTable,
-    'postnl_cod_fee',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesCreditmemoTable,
     'base_postnl_cod_fee',
-    "decimal(12,4) null"
-);
-$conn->addColumn(
-    $salesCreditmemoTable,
-    'postnl_cod_fee_tax',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee',
+        'after'    => 'shipping_tax_amount',
+    )
 );
 $conn->addColumn(
     $salesCreditmemoTable,
     'base_postnl_cod_fee_tax',
-    "decimal(12,4) null"
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'Base PostNL COD Fee Tax',
+        'after'    => 'base_postnl_cod_fee',
+    )
+);
+$conn->addColumn(
+    $salesCreditmemoTable,
+    'postnl_cod_fee',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee',
+        'after'    => 'base_postnl_cod_fee_tax',
+    )
+);
+$conn->addColumn(
+    $salesCreditmemoTable,
+    'postnl_cod_fee_tax',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'nullable' => true,
+        'default'  => 0,
+        'length'   => '12,4',
+        'comment'  => 'PostNL COD Fee Tax',
+        'after'    => 'postnl_cod_fee',
+    )
 );
 
 $installer->endSetup();
