@@ -44,6 +44,11 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     const XPATH_COD_SETTINGS = 'postnl/cod';
 
     /**
+     * Xpath to the PostNL COD fee setting.
+     */
+    const XPATH_COD_FEE = 'payment/postnl_cod/fee';
+
+    /**
      * This payment method's unique code.
      *
      * @var string
@@ -161,5 +166,27 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
         }
 
         return $parentIsAvailable;
+    }
+
+    /**
+     * Get the payment method title.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        $title = parent::getTitle();
+
+        /**
+         * Get the fee from the config and convert and format it according to the chosen currency and locale.
+         */
+        $fee = Mage::getStoreConfig(self::XPATH_COD_FEE, Mage::app()->getStore()->getId());
+        $fee = Mage::app()->getStore()->convertPrice($fee, true, false);
+
+        /**
+         * Replace any parameters in the title with the fee.
+         */
+        $title = sprintf($title, $fee);
+        return $title;
     }
 }
