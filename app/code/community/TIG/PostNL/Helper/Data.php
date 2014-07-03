@@ -1306,9 +1306,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function log($message, $level = null, $file = null, $forced = false, $isError = false)
     {
-        if ($isError === true && !$this->isExceptionLoggingEnabled()) {
+        if ($isError === true
+            && !$this->isExceptionLoggingEnabled()
+            && !$forced
+        ) {
             return $this;
-        } elseif ($isError !== true && !$this->isLoggingEnabled()) {
+        } elseif ($isError !== true
+            && !$this->isLoggingEnabled()
+            && !$forced
+        ) {
             return $this;
         }
 
