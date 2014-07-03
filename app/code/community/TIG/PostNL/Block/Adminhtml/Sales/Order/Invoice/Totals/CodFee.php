@@ -37,7 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
-    extends TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee
+    extends Mage_Adminhtml_Block_Sales_Order_Invoice_Totals
 {
     /**
      * Display modes for the PostNL COD fee.

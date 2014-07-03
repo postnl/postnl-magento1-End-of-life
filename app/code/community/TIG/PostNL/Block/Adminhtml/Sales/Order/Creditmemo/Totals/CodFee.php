@@ -37,7 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
-    extends TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee
+    extends Mage_Adminhtml_Block_Sales_Order_Creditmemo_Totals
 {
     /**
      * Display modes for the PostNL COD fee.
@@ -59,7 +59,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
     public function initTotals()
     {
         /**
-         * @var  Mage_Adminhtml_Block_Sales_Order_Invoice_Totals $parent
+         * @var Mage_Adminhtml_Block_Sales_Order_Invoice_Totals $parent
+         * @var Mage_Sales_Model_Order_Creditmemo $creditmemo
          */
         $parent     = $this->getParentBlock();
         $creditmemo = $parent->getCreditmemo();
@@ -74,7 +75,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
         $displayMode = $this->getDisplayMode();
         $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($creditmemo->getStoreId());
 
-        if ($displayMode === self::DISPLAY_MODE_EXCL || $displayMode === self::DISPLAY_MODE_BOTH) {
+        if ($displayMode === self::DISPLAY_MODE_EXCL
+            || $displayMode === self::DISPLAY_MODE_BOTH
+            && $creditmemo->getId()
+        ) {
             $label = $baseLabel;
             if ($displayMode === self::DISPLAY_MODE_BOTH) {
                 $label .= ' (' . $this->getTaxLabel(false) . ')';
@@ -101,7 +105,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
                          ->setBaseValue($baseFee + $creditmemo->getBasePostnlCodFeeTax())
                          ->setCode('postnl_cod_fee_incl_tax');
 
-            $parent->addTotalBefore($totalInclTax, 'shipping');
+            if ($creditmemo->getId()) {
+                $parent->addTotalBefore($totalInclTax, 'shipping');
+            } else {
+                $parent->addTotal($totalInclTax, 'subtotal_incl');
+            }
         }
 
         return $this;

@@ -2465,7 +2465,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             }
 
             // Set all required params and send emails.
-            $mailer->setSender(Mage::getStoreConfig($order::XPATH_EMAIL_IDENTITY, $storeId));
+            $mailer->setSender(Mage::getStoreConfig($order::XML_PATH_EMAIL_IDENTITY, $storeId));
             $mailer->setStoreId($storeId);
             $mailer->setTemplateId($template);
             $mailer->setTemplateParams($templateVariables);
@@ -3032,7 +3032,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /*******************************************************************************************************************
-     * BEFORE- AND AFTERSAVE METHODS
+     * BEFORE AND AFTER SAVE METHODS
      ******************************************************************************************************************/
 
     /**
