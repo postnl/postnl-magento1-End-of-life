@@ -101,16 +101,19 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
     protected function _getCodFeeTaxRequest(Mage_Sales_Model_Quote $quote)
     {
         $store = $quote->getStore();
-        $taxCalculation = $this->getTaxCalculation();
-
-        $customerTaxClass = $quote->getCustomerTaxClassId();
-        $shippingAddress  = $quote->getShippingAddress();
-        $billingAddress   = $quote->getBillingAddress();
         $codTaxClass      = Mage::getStoreConfig(self::XPATH_COD_TAX_CLASS, $store);
 
+        /**
+         * If no tax class is configured for the COD fee, there is no tax to be calculated.
+         */
         if (!$codTaxClass) {
             return false;
         }
+
+        $taxCalculation   = $this->getTaxCalculation();
+        $customerTaxClass = $quote->getCustomerTaxClassId();
+        $shippingAddress  = $quote->getShippingAddress();
+        $billingAddress   = $quote->getBillingAddress();
 
         $request = $taxCalculation->getRateRequest(
             $shippingAddress,
@@ -150,7 +153,7 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
     protected function _getCodFeeTax($address, $taxRate, $fee = null)
     {
         if (is_null($fee)) {
-            $fee = (float) $address->getBasePostnlCodFee();
+            $fee = (float) $address->getPostnlCodFee();
         }
 
         $taxCalculation = $this->getTaxCalculation();

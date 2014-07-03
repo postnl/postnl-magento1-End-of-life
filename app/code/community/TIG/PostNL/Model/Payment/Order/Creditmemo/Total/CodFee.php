@@ -38,6 +38,13 @@
  */
 class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee extends Mage_Sales_Model_Order_Creditmemo_Total_Abstract
 {
+    /**
+     * Get the COD fee total amount.
+     *
+     * @param Mage_Sales_Model_Order_Creditmemo $creditmemo
+     *
+     * @return $this
+     */
     public function collect(Mage_Sales_Model_Order_Creditmemo $creditmemo)
     {
         $order = $creditmemo->getOrder();
@@ -45,6 +52,10 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee extends Mage_Sales_
         $fee     = $creditmemo->getPostnlCodFee();
         $baseFee = $creditmemo->getBasePostnlCodFee();
 
+        /**
+         * If the creditmemo has a fee already, we only need to set the totals. This is the case for existing
+         * creditmemos that are being viewed.
+         */
         if ($fee && $baseFee) {
             $creditmemo->setPostnlCodFee($fee)
                        ->setBasePostnlCodFee($baseFee)
@@ -57,7 +68,16 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee extends Mage_Sales_
             return $this;
         }
 
+        /**
+         * If we are currently in the backend and logged in, we need to check the POST parameters to see if any fee
+         * amount is to be refunded.
+         */
         if (Mage::helper('postnl')->isAdmin() && Mage::getSingleton('admin/session')->isLoggedIn()) {
+            /**
+             * This is unfortunately the only way to determine the fee amount that needs to be refunded without
+             * rewriting a core class. If anybody knows of a better way, please let us know at
+             * servicedesk@totalinternetgroup.nl.
+             */
             $request = Mage::app()->getRequest();
             $creditmemoParameters = $request->getParam('creditmemo', array());
 
@@ -65,14 +85,24 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee extends Mage_Sales_
                 && $creditmemoParameters['postnl_cod_fee'] !== null
                 && $creditmemoParameters['postnl_cod_fee'] !== ''
             ) {
-                $fee     = (float) $creditmemoParameters['postnl_cod_fee'];
-                $baseFee = $creditmemo->getStore()->convertPrice($fee, false);
+                /**
+                 * Get the fee amounts that are to be refunded.
+                 */
+                $baseFee = (float) $creditmemoParameters['postnl_cod_fee'];
+                $fee     = $baseFee * $order->getBaseToOrderRate();
 
-                $store = $creditmemo->getStore();
-                $roundedTotalFee = $store->roundPrice($order->getPostnlCodFeeRefunded()) + $store->roundPrice($fee);
+                /**
+                 * Round the fee amounts that are already refunded and add the fee amount that is to be refunded.
+                 */
+                $store               = $creditmemo->getStore();
+                $roundedTotalFee     = $store->roundPrice($order->getPostnlCodFeeRefunded()) + $store->roundPrice($fee);
                 $roundedTotalBaseFee = $store->roundPrice($order->getBasePostnlCodFeeRefunded())
                                      + $store->roundPrice($baseFee);
 
+                /**
+                 * If the total amount refuned exceeds the available fee amount, we have a rounding error. Modify the
+                 * fee amounts accordingly.
+                 */
                 if ($roundedTotalFee > $order->getPostnlCodFee()) {
                     $fee -= 0.0001;
                 }
@@ -81,6 +111,9 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee extends Mage_Sales_
                     $baseFee -= 0.0001;
                 }
 
+                /**
+                 * Update the creditmemo totals with the new amounts.
+                 */
                 $creditmemo->setPostnlCodFee($fee)
                            ->setBasePostnlCodFee($baseFee)
                            ->setGrandTotal($creditmemo->getGrandTotal() + $fee)
@@ -93,6 +126,10 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee extends Mage_Sales_
             }
         }
 
+        /**
+         * If none of the above are true, we are creating a new creditmemo and need to show the fee amounts that may be
+         * refunded (if any).
+         */
         $fee     = $order->getPostnlCodFee() - $order->getPostnlCodFeeRefunded();
         $baseFee = $order->getBasePostnlCodFee() - $order->getBasePostnlCodFeeRefunded();
 

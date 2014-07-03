@@ -70,19 +70,31 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_CodFee extends Mage_Sales_Model_O
         $displayMode = $this->getDisplayMode();
         $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($this->getOrder()->getStoreId());
 
+        /**
+         * Get the fee excl. tax.
+         */
         if ($displayMode === self::DISPLAY_MODE_EXCL || $displayMode === self::DISPLAY_MODE_BOTH) {
+            /**
+             * Get the amount excl. tax and format it.
+             */
             $amount = $this->getAmount();
             $amount = $this->getOrder()->formatPriceTxt($amount);
             if ($this->getAmountPrefix()) {
                 $amount = $this->getAmountPrefix() . $amount;
             }
 
+            /**
+             * Determine the label.
+             */
             $label = $baseLabel;
             if ($displayMode === self::DISPLAY_MODE_BOTH) {
                 $label .= ' (' . $this->getTaxLabel(false) . ')';
             }
             $label .= ':';
 
+            /**
+             * Add the total amount.
+             */
             $totals[] = array(
                 'amount'    => $amount,
                 'label'     => $label,
@@ -90,19 +102,31 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_CodFee extends Mage_Sales_Model_O
             );
         }
 
+        /**
+         * Get the fee incl. tax.
+         */
         if ($displayMode === self::DISPLAY_MODE_INCL || $displayMode === self::DISPLAY_MODE_BOTH) {
+            /**
+             * Get the amount incl. tax and format it.
+             */
             $amount = $this->getAmount() + $this->getSource()->getPostnlCodFeeTax();
             $amount = $this->getOrder()->formatPriceTxt($amount);
             if ($this->getAmountPrefix()) {
                 $amount = $this->getAmountPrefix() . $amount;
             }
 
+            /**
+             * Determine the label.
+             */
             $label = $baseLabel;
             if ($displayMode === self::DISPLAY_MODE_BOTH) {
                 $label .= ' (' . $this->getTaxLabel(true) . ')';
             }
             $label .= ':';
 
+            /**
+             * Add the total amount.
+             */
             $totals[] = array(
                 'amount'    => $amount,
                 'label'     => $label,
