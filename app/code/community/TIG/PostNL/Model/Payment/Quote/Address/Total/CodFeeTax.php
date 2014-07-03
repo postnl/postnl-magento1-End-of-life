@@ -92,6 +92,9 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
         $quote->setPostnlCodFeeTax(0)
               ->setBasePostnlCodFeeTax(0);
 
+        /**
+         * Get the tax request and corresponding tax rate.
+         */
         $taxRequest = $this->_getCodFeeTaxRequest($quote);
 
         if (!$taxRequest) {
@@ -104,15 +107,24 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
             return $this;
         }
 
-        $fee     = (float) Mage::getStoreConfig(self::XPATH_COD_FEE, $store);
-        $baseFee = $store->convertPrice($fee);
+        /**
+         * Calculate the tax for the fee using the tax rate.
+         */
+        $baseFee = (float) Mage::getStoreConfig(self::XPATH_COD_FEE, $store);
+        $fee     = $store->convertPrice($baseFee);
 
         $feeTax     = $this->_getCodFeeTax($address, $taxRate, $fee);
         $baseFeeTax = $this->_getBaseCodFeeTax($address, $taxRate, $baseFee);
 
+        /**
+         * Get all taxes that were applied for this tax request.
+         */
         $appliedRates = Mage::getSingleton('tax/calculation')
                             ->getAppliedRates($taxRequest);
 
+        /**
+         * Save the newly applied taxes.
+         */
         $this->_saveAppliedTaxes(
             $address,
             $appliedRates,
@@ -121,6 +133,9 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
             $taxRate
         );
 
+        /**
+         * Update the total amounts.
+         */
         $address->setTaxAmount($address->getTaxAmount() + $feeTax)
                 ->setBaseTaxAmount($address->getBaseTaxAmount() + $baseFeeTax)
                 ->setPostnlCodFeeTax($feeTax)

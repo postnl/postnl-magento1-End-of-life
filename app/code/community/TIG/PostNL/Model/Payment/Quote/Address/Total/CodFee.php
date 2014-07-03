@@ -112,15 +112,15 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
         /**
          * Get the fee amount.
          */
-        $fee = $this->_getCodFee($quote);
-        if ($fee <= 0) {
+        $baseFee = $this->_getCodFee($quote);
+        if ($baseFee <= 0) {
             return $this;
         }
 
         /**
          * Convert the fee to the base fee amount.
          */
-        $baseFee = $store->convertPrice($fee);
+        $fee = $store->convertPrice($baseFee);
 
         /**
          * Set the fee for the address and quote.
@@ -188,28 +188,43 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
     {
         $storeId = $quote->getStoreId();
 
+        /**
+         * Get the fee as configured by the merchant.
+         */
         $fee = (float) Mage::getStoreConfig(self::XPATH_COD_FEE, $storeId);
         if ($fee <= 0) {
             return 0;
         }
 
+        /**
+         * If the fee is entered without tax, return the fee amount. Otherwise, we need to calculate and remove the tax.
+         */
         $feeIsIncludingTax = Mage::getStoreConfigFlag(self::XPATH_COD_FEE_INCLUDING_TAX, $storeId);
         if (!$feeIsIncludingTax) {
             return $fee;
         }
 
+        /**
+         * Build a tax request to calculate the fee tax.
+         */
         $taxRequest = $this->_getCodFeeTaxRequest($quote);
 
         if (!$taxRequest) {
             return $fee;
         }
 
+        /**
+         * Get the tax rate for the request.
+         */
         $taxRate = $this->_getCodFeeTaxRate($taxRequest);
 
         if (!$taxRate || $taxRate <= 0) {
             return $fee;
         }
 
+        /**
+         * Remove the tax from the fee.
+         */
         $feeTax = $this->_getCodFeeTax($quote->getShippingAddress(), $taxRate, $fee);
         $fee -= $feeTax;
 

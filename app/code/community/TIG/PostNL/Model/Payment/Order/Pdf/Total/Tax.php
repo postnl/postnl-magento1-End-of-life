@@ -48,6 +48,9 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_Tax extends Mage_Tax_Model_Sales_
         $shippingTax    = $this->_getShippingTax();
         $taxClassAmount = array_merge($taxClassAmount, $shippingTax);
 
+        /**
+         * Add the COD fee tax info.
+         */
         $taxClassAmount = Mage::helper('postnl/payment')->addPostnlCodFeeTaxInfo(
             $taxClassAmount,
             $this->getSource(),
