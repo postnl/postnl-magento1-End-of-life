@@ -155,6 +155,8 @@ class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Add PostNL COD fee tax info by updating an incorrect tax record.
+     *
      * @param Mage_Sales_Model_Order $order
      * @param array $fullInfo
      *
@@ -185,6 +187,8 @@ class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Add PostNL COD fee tax info by updating or adding a missing tax record.
+     *
      * @param Mage_Sales_Model_Resource_Order_Tax_Collection                   $taxCollection
      * @param array                                                            $fullInfo
      * @param Mage_Sales_Model_Order_Invoice|Mage_Sales_Model_Order_Creditmemo $source
@@ -225,6 +229,8 @@ class TIG_PostNL_Helper_Payment extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Add PostNL COD fee tax info by recreating the tax request.
+     *
      * @param Mage_Sales_Model_Order                                           $order
      * @param array                                                            $fullInfo
      * @param Mage_Sales_Model_Order_Invoice|Mage_Sales_Model_Order_Creditmemo $source

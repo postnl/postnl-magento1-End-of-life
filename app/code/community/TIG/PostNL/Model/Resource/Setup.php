@@ -766,10 +766,76 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
              * The getShipmentType() method will calculate and set the shipment type if none is available.
              */
             $shipment->getShipmentType();
-            $transactionSave->addObject($shipment);
+
+            if ($shipment->hasDataChanges()) {
+                $transactionSave->addObject($shipment);
+            }
         }
 
         $transactionSave->save();
+
+        return $this;
+    }
+
+    /**
+     * Add new resources to all admin roles.
+     *
+     * @param array      $resourcesToAdd The resources to add.
+     * @param null|array $resourcesRequired The resources that a role already needs to have.
+     *
+     * @return $this
+     */
+    public function addAclRules($resourcesToAdd, $resourcesRequired = null)
+    {
+        $adminRoles = Mage::getResourceModel('admin/role_collection');
+
+        /**
+         * @var Mage_Admin_Model_Rules $role
+         */
+        foreach ($adminRoles as $role) {
+            $rules = Mage::getResourceModel('admin/rules_collection')->getByRoles($role->getId());
+            $rules->addFieldToFilter('permission', array('eq' => 'allow'));
+            $resources = $rules->getColumnValues('resource_id');
+
+            /**
+             * If the role has no resources, it's probably deleted and we shouldn't add any.
+             */
+            if (!$resources) {
+                continue;
+            }
+
+            /**
+             * If the role has the resource 'all', it already has access to everything.
+             */
+            if (in_array('all', $resources)) {
+                continue;
+            }
+
+            /**
+             * If any resources are required, check that the role has these resources. If even one of the required
+             * resources is missing, skip this role.
+             */
+            if ($resourcesRequired) {
+                foreach ($resourcesRequired as $requiredResource) {
+                    if (!in_array($requiredResource, $resources)) {
+                        continue(2);
+                    }
+                }
+            }
+
+            /**
+             * Add the new resources to the existing ones.
+             */
+            $resources = array_merge($resources, $resourcesToAdd);
+
+            /**
+             * Save the role.
+             */
+            Mage::getModel('admin/rules')
+                ->setRoleId($role->getId())
+                ->setResources($resources)
+                ->saveRel();
+        }
 
         return $this;
     }

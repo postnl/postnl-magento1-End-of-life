@@ -626,8 +626,8 @@
         <payment>
             <postnl_cod>
                 <active>0</active> <!-- Disabled -->
-                <title>PostNL Rembours</title> <!-- PostNL Cash on Delivery -->
-                <fee>0</fee> <!-- Do not charge a fee for using COD -->
+                <title>PostNL Rembours (+%s)</title> <!-- PostNL Cash on Delivery -->
+                <fee>17.45</fee> <!-- Charge an additional fee of 17.45 EUR for the use of PostNL COD. This is the amount PostNL charges for using COD -->
                 <fee_label>PostNL rembourstoeslag</fee_label> <!-- PostNL COD fee -->
                 <order_status>pending</order_status> <!-- Pending status -->
                 <allowspecific>1</allowspecific> <!-- Allow only specific countries -->

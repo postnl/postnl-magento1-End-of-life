@@ -42,4 +42,25 @@
  */
 $installer = $this;
 
-$installer->setShipmentType();
+$newConfigAclResources = array(
+    'admin/system/config/postnl/download_logs',
+);
+$configRequiredResources = array(
+    'admin/system/',
+    'admin/system/config',
+    'admin/system/config/postnl',
+);
+
+$newPostnLAclResources = array(
+    'admin/postnl/shipment/actions/print_label/print_packing_slips',
+);
+$postnlRequiredResources = array(
+    'admin/postnl',
+    'admin/postnl/shipment',
+    'admin/postnl/shipment/actions',
+    'admin/postnl/shipment/actions/print_label',
+);
+
+$installer->setShipmentType()
+          ->addAclRules($newConfigAclResources, $configRequiredResources)
+          ->addAclRules($newPostnLAclResources, $postnlRequiredResources);
