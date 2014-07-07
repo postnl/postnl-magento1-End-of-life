@@ -36,8 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
-    extends Mage_Adminhtml_Block_Sales_Order_Creditmemo_Totals
+class TIG_PostNL_Block_Payment_Sales_Order_Creditmemo_Totals_CodFee extends Mage_Sales_Block_Order_Creditmemo_Totals
 {
     /**
      * Display modes for the PostNL COD fee.

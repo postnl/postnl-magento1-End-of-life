@@ -36,8 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
-    extends Mage_Adminhtml_Block_Sales_Order_Creditmemo_Totals
+class TIG_PostNL_Block_Payment_Sales_Order_Totals_CodFee extends Mage_Sales_Block_Order_Totals
 {
     /**
      * Display modes for the PostNL COD fee.
@@ -58,27 +57,20 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
      */
     public function initTotals()
     {
-        /**
-         * @var Mage_Adminhtml_Block_Sales_Order_Invoice_Totals $parent
-         * @var Mage_Sales_Model_Order_Creditmemo $creditmemo
-         */
-        $parent     = $this->getParentBlock();
-        $creditmemo = $parent->getCreditmemo();
+        $parent = $this->getParentBlock();
+        $order  = $this->getOrder();
 
-        $fee     = $creditmemo->getPostnlCodFee();
-        $baseFee = $creditmemo->getBasePostnlCodFee();
+        $fee     = $order->getPostnlCodFee();
+        $baseFee = $order->getBasePostnlCodFee();
 
         if (!$fee || !$baseFee) {
             return $this;
         }
 
         $displayMode = $this->getDisplayMode();
-        $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($creditmemo->getStoreId());
+        $baseLabel = Mage::helper('postnl/payment')->getPostnlCodFeeLabel($order->getStoreId());
 
-        if ($displayMode === self::DISPLAY_MODE_EXCL
-            || $displayMode === self::DISPLAY_MODE_BOTH
-            && $creditmemo->getId()
-        ) {
+        if ($displayMode === self::DISPLAY_MODE_EXCL || $displayMode === self::DISPLAY_MODE_BOTH) {
             $label = $baseLabel;
             if ($displayMode === self::DISPLAY_MODE_BOTH) {
                 $label .= ' (' . $this->getTaxLabel(false) . ')';
@@ -93,10 +85,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
             $parent->addTotalBefore($total, 'shipping');
         }
 
-        if ($displayMode === self::DISPLAY_MODE_INCL
-            || $displayMode === self::DISPLAY_MODE_BOTH
-            && $creditmemo->getId()
-        ) {
+        if ($displayMode === self::DISPLAY_MODE_INCL || $displayMode === self::DISPLAY_MODE_BOTH) {
             $label = $baseLabel;
             if ($displayMode === self::DISPLAY_MODE_BOTH) {
                 $label .= ' (' . $this->getTaxLabel(true) . ')';
@@ -104,11 +93,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
 
             $totalInclTax = new Varien_Object();
             $totalInclTax->setLabel($label)
-                         ->setValue($fee + $creditmemo->getPostnlCodFeeTax())
-                         ->setBaseValue($baseFee + $creditmemo->getBasePostnlCodFeeTax())
+                         ->setValue($fee + $order->getPostnlCodFeeTax())
+                         ->setBaseValue($baseFee + $order->getBasePostnlCodFeeTax())
                          ->setCode('postnl_cod_fee_incl_tax');
 
-            $parent->addTotal($totalInclTax, 'subtotal_incl');
+            $parent->addTotalBefore($totalInclTax, 'shipping');
         }
 
         return $this;

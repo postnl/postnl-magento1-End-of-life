@@ -36,7 +36,8 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFeeTax extends Mage_Sales_Model_Order_Creditmemo_Total_Tax
+class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFeeTax
+    extends TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
 {
     /**
      * Get the COD fee tax total amount.
@@ -92,26 +93,19 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFeeTax extends Mage_Sal
             $totalFeeTax = $order->getPostnlCodFeeTax();
             $feeTax      = $totalFeeTax * $ratio;
 
-            $store = $creditmemo->getStore();
-
             /**
-             * Calculate the total tax being refunded and round these numbers.
+             * If the total amount refunded exceeds the available fee tax amount, we have a rounding error. Modify the
+             * fee tax amounts accordingly.
              */
-            $roundedTotalFeeTax = $store->roundPrice($order->getPostnlCodFeeTaxRefunded())
-                                + $store->roundPrice($feeTax);
-            $roundedTotalBaseFeeTax = $store->roundPrice($order->getBasePostnlCodFeeTaxRefunded())
-                                    + $store->roundPrice($baseFeeTax);
-
-            /**
-             * If we are attempting to refund more than is possible, we need to modify the fee amounts to compensate for
-             * the rounding error.
-             */
-            if ($roundedTotalFeeTax > $order->getPostnlCodFeeTax()) {
-                $feeTax -= 0.0001;
+            $totalBaseFeeTax = $baseFeeTax - $order->getBasePostnlCodFeeTax()
+                                           - $order->getBasePostnlCodFeeTaxRefunded();
+            if ($totalBaseFeeTax < 0.0001 && $totalBaseFeeTax > -0.0001) {
+                $baseFeeTax = $order->getBasePostnlCodFeeTax() - $order->getBasePostnlCodFeeTaxRefunded();
             }
 
-            if ($roundedTotalBaseFeeTax > $order->getBasePostnlCodFeeTax()) {
-                $baseFeeTax -= 0.0001;
+            $totalFeeTax = $feeTax - $order->getPostnlCodFeeTax() - $order->getPostnlCodFeeTaxRefunded();
+            if ($totalFeeTax < 0.0001 && $totalFeeTax > -0.0001) {
+                $feeTax = $order->getPostnlCodFeeTax() - $order->getPostnlCodFeeTaxRefunded();
             }
 
             /**

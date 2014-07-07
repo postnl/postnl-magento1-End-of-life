@@ -36,7 +36,8 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract extends Mage_Tax_Model_Sales_Total_Quote_Tax
+abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
+    extends Mage_Sales_Model_Order_Creditmemo_Total_Tax
 {
     /**
      * Xpath to the PostNL COD fee setting.
@@ -119,13 +120,13 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
     /**
      * Get the tax request object for the current quote.
      *
-     * @param Mage_Sales_Model_Quote $quote
+     * @param Mage_Sales_Model_Order $order
      *
      * @return bool|Varien_Object
      */
-    protected function _getCodFeeTaxRequest(Mage_Sales_Model_Quote $quote)
+    protected function _getCodFeeTaxRequest(Mage_Sales_Model_Order $order)
     {
-        $store = $quote->getStore();
+        $store = $order->getStore();
         $codTaxClass      = Mage::getStoreConfig(self::XPATH_COD_TAX_CLASS, $store);
 
         /**
@@ -136,9 +137,9 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
         }
 
         $taxCalculation   = $this->getTaxCalculation();
-        $customerTaxClass = $quote->getCustomerTaxClassId();
-        $shippingAddress  = $quote->getShippingAddress();
-        $billingAddress   = $quote->getBillingAddress();
+        $customerTaxClass = $order->getCustomerTaxClassId();
+        $shippingAddress  = $order->getShippingAddress();
+        $billingAddress   = $order->getBillingAddress();
 
         $request = $taxCalculation->getRateRequest(
             $shippingAddress,

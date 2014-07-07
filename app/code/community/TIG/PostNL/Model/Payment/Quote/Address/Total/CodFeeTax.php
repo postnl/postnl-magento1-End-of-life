@@ -113,8 +113,9 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
         $baseFee = (float) Mage::getStoreConfig(self::XPATH_COD_FEE, $store);
         $fee     = $store->convertPrice($baseFee);
 
-        $feeTax     = $this->_getCodFeeTax($address, $taxRate, $fee);
-        $baseFeeTax = $this->_getBaseCodFeeTax($address, $taxRate, $baseFee);
+        $feeIsIncltax = $this->getFeeIsInclTax($store);
+        $feeTax     = $this->_getCodFeeTax($address, $taxRate, $fee, $feeIsIncltax);
+        $baseFeeTax = $this->_getBaseCodFeeTax($address, $taxRate, $baseFee, $feeIsIncltax);
 
         /**
          * Get all taxes that were applied for this tax request.
