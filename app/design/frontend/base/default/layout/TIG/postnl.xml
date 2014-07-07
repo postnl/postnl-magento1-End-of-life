@@ -295,4 +295,22 @@
             <block type="postnl/payment_sales_order_creditmemo_totals_codFee" before="tax" name="postnl_cod_fee" />
         </reference>
     </sales_order_printcreditmemo>
+
+    <sales_email_order_items>
+        <reference name="order_totals">
+            <block type="postnl/payment_sales_order_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_email_order_items>
+
+    <sales_email_order_invoice_items>
+        <reference name="invoice_totals">
+            <block type="postnl/payment_sales_order_invoice_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_email_order_invoice_items>
+
+    <sales_email_order_creditmemo_items>
+        <reference name="creditmemo_totals">
+            <block type="postnl/payment_sales_order_creditmemo_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_email_order_creditmemo_items>
 </layout>
