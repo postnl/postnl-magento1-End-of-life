@@ -42,11 +42,11 @@
     <tr>
         <td class="label">
             <label for="postnl_cod_fee_amount">
-                <?php echo Mage::helper('postnl/payment')->getPostnlCodFeeLabel($_source->getStoreId()); ?> <?php echo Mage::helper('tax')->getIncExcTaxLabel(false); ?>
+                <?php echo $this->getCodFeeLabel(); ?>
             </label>
         </td>
         <td>
-            <input type="text" name="creditmemo[postnl_cod_fee]" value="<?php echo $_source->getBasePostnlCodFee()?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="postnl_cod_fee_amount" />
+            <input type="text" name="creditmemo[postnl_cod_fee]" value="<?php echo $this->getCodFeeAmount(); ?>" class="input-text not-negative-amount" style="width:60px;text-align:right" id="postnl_cod_fee_amount" />
         </td>
     </tr>
     <tr>

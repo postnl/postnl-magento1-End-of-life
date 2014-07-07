@@ -40,11 +40,6 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
     extends TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract
 {
     /**
-     * Xpath to the PostNL COD fee including tax setting.
-     */
-    const XPATH_COD_FEE_INCLUDING_TAX = 'tax/calculation/postnl_cod_fee_including_tax';
-
-    /**
      * Xpath to Idev's OneStepCheckout's 'display_tax_included' setting.
      */
     const XPATH_ONESTEPCHECKOUT_DISPLAY_TAX_INCLUDED = 'onestepcheckout/general/display_tax_included';
@@ -199,7 +194,7 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
         /**
          * If the fee is entered without tax, return the fee amount. Otherwise, we need to calculate and remove the tax.
          */
-        $feeIsIncludingTax = Mage::getStoreConfigFlag(self::XPATH_COD_FEE_INCLUDING_TAX, $storeId);
+        $feeIsIncludingTax = $this->getFeeIsInclTax($storeId);
         if (!$feeIsIncludingTax) {
             return $fee;
         }
@@ -225,7 +220,7 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee
         /**
          * Remove the tax from the fee.
          */
-        $feeTax = $this->_getCodFeeTax($quote->getShippingAddress(), $taxRate, $fee);
+        $feeTax = $this->_getCodFeeTax($quote->getShippingAddress(), $taxRate, $fee, true);
         $fee -= $feeTax;
 
         return $fee;

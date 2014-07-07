@@ -634,7 +634,7 @@
                 <specificcountry>NL</specificcountry> <!-- Allow only NL -->
                 <instructions/>
                 <min_order_total/>
-                <max_order_total/>
+                <max_order_total>2000</max_order_total> <!-- PostNL COD is only available for orders whose base grand total amount is less than 2000 EUR -->
                 <allow_for_non_postnl>0</allow_for_non_postnl> <!-- Only show this payment method if the order is being shipped using PostNL -->
                 <sort_order>1000</sort_order> <!-- 1000 -->
                 <model>postnl_payment/cod</model> <!-- TIG_PostNL_Model_Payment_Cod -->

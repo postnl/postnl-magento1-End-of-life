@@ -36,14 +36,22 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee extends Mage_Sales_Model_Order_Creditmemo_Total_Abstract
+class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee
+    extends TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
 {
+    /**
+     * Xpath to the PostNL COD fee including tax setting.
+     */
+    const XPATH_COD_FEE_INCLUDING_TAX = 'tax/calculation/postnl_cod_fee_including_tax';
+
     /**
      * Get the COD fee total amount.
      *
      * @param Mage_Sales_Model_Order_Creditmemo $creditmemo
      *
      * @return $this
+     *
+     * @throws TIG_PostNL_Exception
      */
     public function collect(Mage_Sales_Model_Order_Creditmemo $creditmemo)
     {
@@ -89,26 +97,40 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee extends Mage_Sales_
                  * Get the fee amounts that are to be refunded.
                  */
                 $baseFee = (float) $creditmemoParameters['postnl_cod_fee'];
-                $fee     = $baseFee * $order->getBaseToOrderRate();
 
                 /**
-                 * Round the fee amounts that are already refunded and add the fee amount that is to be refunded.
+                 * If the fee was entered incl. tax calculate the fee without tax.
                  */
-                $store               = $creditmemo->getStore();
-                $roundedTotalFee     = $store->roundPrice($order->getPostnlCodFeeRefunded()) + $store->roundPrice($fee);
-                $roundedTotalBaseFee = $store->roundPrice($order->getBasePostnlCodFeeRefunded())
-                                     + $store->roundPrice($baseFee);
-
-                /**
-                 * If the total amount refuned exceeds the available fee amount, we have a rounding error. Modify the
-                 * fee amounts accordingly.
-                 */
-                if ($roundedTotalFee > $order->getPostnlCodFee()) {
-                    $fee -= 0.0001;
+                if ($this->getFeeIsInclTax($order->getStore())) {
+                    $baseFee = $this->_getCodFeeExclTax($baseFee, $order);
                 }
 
-                if ($roundedTotalBaseFee + $store->roundPrice($baseFee) > $order->getBasePostnlCodFee()) {
-                    $baseFee -= 0.0001;
+                /**
+                 * If the total amount refunded exceeds the available fee amount, we have a rounding error. Modify the
+                 * fee amounts accordingly.
+                 */
+                $totalBaseFee = $baseFee - $order->getBasePostnlCodFee() - $order->getBasePostnlCodFeeRefunded();
+                if ($totalBaseFee < 0.0001 && $totalBaseFee > -0.0001) {
+                    $baseFee = $order->getBasePostnlCodFee() - $order->getBasePostnlCodFeeRefunded();
+                }
+
+                $fee = $baseFee * $order->getBaseToOrderRate();
+
+                $totalFee = $fee - $order->getPostnlCodFee() - $order->getPostnlCodFeeRefunded();
+                if ($totalFee < 0.0001 && $totalFee > -0.0001) {
+                    $fee = $order->getPostnlCodFee() - $order->getPostnlCodFeeRefunded();
+                }
+
+                if (round($order->getBasePostnlCodFeeRefunded() + $baseFee, 4) > $order->getBasePostnlCodFee()) {
+                    throw new TIG_PostNL_Exception(
+                        Mage::helper('postnl')->__(
+                            'Maximum PostNL COD fee amount available to refunds is %s.',
+                            $order->formatPriceTxt(
+                                $order->getBasePostnlCodFee() - $order->getBasePostnlCodFeeRefunded()
+                            )
+                        ),
+                        'POSTNL-0177'
+                    );
                 }
 
                 /**
@@ -146,5 +168,44 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee extends Mage_Sales_
         }
 
         return $this;
+    }
+
+
+    /**
+     * Gets the configured PostNL COD fee excl. tax for a given quote.
+     *
+     * @param float                  $fee
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return float|int
+     */
+    protected function _getCodFeeExclTax($fee, Mage_Sales_Model_Order $order)
+    {
+
+        /**
+         * Build a tax request to calculate the fee tax.
+         */
+        $taxRequest = $this->_getCodFeeTaxRequest($order);
+
+        if (!$taxRequest) {
+            return $fee;
+        }
+
+        /**
+         * Get the tax rate for the request.
+         */
+        $taxRate = $this->_getCodFeeTaxRate($taxRequest);
+
+        if (!$taxRate || $taxRate <= 0) {
+            return $fee;
+        }
+
+        /**
+         * Remove the tax from the fee.
+         */
+        $feeTax = $this->_getCodFeeTax($order->getShippingAddress(), $taxRate, $fee, true);
+        $fee -= $feeTax;
+
+        return $fee;
     }
 }

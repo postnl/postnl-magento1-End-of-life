@@ -137,6 +137,7 @@
                         </active>
                         <title translate="label" module="postnl">
                             <label>Title</label>
+                            <tooltip><![CDATA[<p>If you have configured a fee in the field below, you may use '%s' in the title. This will be replaced with the fee amount in the customer's chosen currency.</p><p>I.e. If the fee is 17.45 EUR and the title you have entered is "PostNL COD (+%s)" then the title will show "PostNL COD (+€17,45)". If the customer has chosen to pay in USD, the title will show "PostNL COD (+$23.73)" instead.</p>]]></tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
