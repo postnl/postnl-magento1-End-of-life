@@ -116,20 +116,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Get the fee charged for evening timeframes.
+     * Get the fee charged for evening time frames.
      *
      * @param boolean $formatted
      * @param boolean $includingTax
+     * @param boolean $convert
      *
      * @return float
      */
-    public function getEveningFee($formatted = false, $includingTax = true)
+    public function getEveningFee($formatted = false, $includingTax = true, $convert = true)
     {
         $storeId = Mage::app()->getStore()->getId();
 
         $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
 
-        $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted);
+        $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted, $convert);
 
         return $price;
     }
@@ -139,16 +140,17 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @param boolean $formatted
      * @param boolean $includingTax
+     * @param boolean $convert
      *
      * @return float
      */
-    public function getExpressFee($formatted = false, $includingTax = true)
+    public function getExpressFee($formatted = false, $includingTax = true, $convert = true)
     {
         $storeId = Mage::app()->getStore()->getId();
 
         $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
 
-        $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted);
+        $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted, $convert);
 
         return $price;
     }
@@ -280,20 +282,24 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param float   $price
      * @param boolean $includingTax
      * @param boolean $formatted
+     * @param boolean $convert
      *
      * @return float
      *
      * @see Mage_Checkout_Block_Onepage_Shipping_Method_Available::getShippingPrice()
      */
-    public function getPriceWithTax($price, $includingTax, $formatted = false)
+    public function getPriceWithTax($price, $includingTax, $formatted = false, $convert = true)
     {
         $quote = $this->getQuote();
         $store = $quote->getStore();
 
         $shippingPrice  = Mage::helper('tax')->getShippingPrice($price, $includingTax, $quote->getShippingAddress());
-        $convertedPrice = $store->convertPrice($shippingPrice, $formatted, false);
 
-        return $convertedPrice;
+        if ($convert) {
+            $shippingPrice = $store->convertPrice($shippingPrice, $formatted, false);
+        }
+
+        return $shippingPrice;
     }
 
     /**

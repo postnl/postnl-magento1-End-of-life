@@ -33,51 +33,44 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Payment_Form_Cod extends Mage_Payment_Block_Form
-{
-    /**
-     * @var string
-     */
-    protected $_eventPrefix = 'postnl_payment_form_cod';
 
-    /**
-     * @var string
-     */
-    protected $_instructions;
+/**
+ * @see Mage_Payment_Block_Form_Cashondelivery
+ */
+?>
+<?php $_methodCode = $this->getMethodCode(); ?>
+<?php if ($this->getInstructions()): ?>
+    <ul class="form-list checkout-agreements" id="payment_form_<?php echo $_methodCode; ?>" style="display:none;">
+        <li>
+            <div class="<?php echo $_methodCode; ?>-instructions-content agreement-content">
+                <?php echo nl2br($this->getInstructions()); ?>
+            </div>
+        </li>
+    </ul>
+<?php endif; ?>
+<script type="text/javascript">
+    //<![CDATA[
+    payment.addAfterInitFunction(
+        '<?php echo $_methodCode; ?>',
+        function() {
+            var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
+            var chosenDeliveryOptions = window.deliveryOptions;
+            if (postnlCodPaymentMethod
+                && chosenDeliveryOptions
+                && chosenDeliveryOptions.selectedType == 'PA'
+            ) {
+                postnlCodPaymentMethod.disabled = true;
+                postnlCodPaymentMethod.up().hide();
 
-    /**
-     * @var string
-     */
-    protected $_template = 'TIG/PostNL/payment/checkout/form/cod.phtml';
-
-    /**
-     * Get instructions text from config
-     *
-     * @return string
-     */
-    public function getInstructions()
-    {
-        if (is_null($this->_instructions)) {
-            $this->_instructions = $this->getMethod()->getInstructions();
+                var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
+                if (postnlCodPaymentForm) {
+                    postnlCodPaymentForm.up().hide();
+                }
+            }
         }
-        return $this->_instructions;
-    }
-
-    /**
-     * Renders a template block. Also throws 2 events based on the current event prefix.
-     *
-     * @return string
-     */
-    protected function _toHtml()
-    {
-        Mage::dispatchEvent($this->_eventPrefix . '_to_html_before');
-
-        $html = parent::_toHtml();
-
-        Mage::dispatchEvent($this->_eventPrefix . '_to_html_after');
-        return $html;
-    }
-}
+    );
+    //]]>
+</script>
