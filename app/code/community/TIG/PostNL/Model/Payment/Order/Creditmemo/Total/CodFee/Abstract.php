@@ -55,21 +55,6 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
     const XPATH_COD_FEE_INCLUDING_TAX = 'tax/calculation/postnl_cod_fee_including_tax';
 
     /**
-     * @var string
-     */
-    protected $_totalCode;
-
-    public function __construct()
-    {
-        $this->setCode($this->_totalCode);
-        $this->setTaxCalculation(Mage::getSingleton('tax/calculation'));
-
-        $this->_helper = Mage::helper('tax');
-        $this->_config = Mage::getSingleton('tax/config');
-        $this->_weeeHelper = Mage::helper('weee');
-    }
-
-    /**
      * @return Mage_Tax_Model_Calculation
      */
     public function getTaxCalculation()

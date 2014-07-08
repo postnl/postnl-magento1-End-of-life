@@ -204,17 +204,20 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
 
             $fee = 0;
             if ($type == 'PGE') {
-                $fee = Mage::helper('postnl/deliveryOptions')->getExpressFee(false, $includingTax);
+                $fee = Mage::helper('postnl/deliveryOptions')->getExpressFee(false, $includingTax, false);
             } elseif ($type == 'Avond' ) {
-                $fee = Mage::helper('postnl/deliveryOptions')->getEveningFee(false, $includingTax);
+                $fee = Mage::helper('postnl/deliveryOptions')->getEveningFee(false, $includingTax, false);
             }
 
             $price += $fee;
 
             $amountPrice = $address->getQuote()->getStore()->convertPrice($price, false);
+
             $this->_setAmount($amountPrice);
             $this->_setBaseAmount($price);
+
             $shippingDescription = $rate->getCarrierTitle() . ' - ' . $rate->getMethodTitle();
+
             $address->setShippingDescription(trim($shippingDescription, ' -'));
             break;
         }

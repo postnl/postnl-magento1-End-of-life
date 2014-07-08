@@ -32,7 +32,15 @@ $_order = $this->getOrder();
 $_fullInfo = $this->getFullTaxInfo();
 $_fullInfo = Mage::helper('postnl/payment')->addPostnlCodFeeTaxInfo($_fullInfo, $_source, $_order);
 
-$_weees = $this->helper('tax')->getAllWeee($_order);
+/**
+ * Weee tax was not included in earlier Magento versions.
+ */
+$_weees = array();
+if (method_exists($this->helper('tax'), 'getAllWeee')) {
+    $_weees = $this->helper('tax')
+                   ->getAllWeee($_order);
+}
+
 global $taxIter;
 $taxIter++;
 ?>

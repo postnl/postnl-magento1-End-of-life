@@ -51,6 +51,7 @@
     <?php $_deliveryOptionsShown = false; ?>
     <?php $_canUseDeliveryOptions = false; ?>
     <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
+    <?php $_store = $this->getQuote()->getStore(); ?>
 
     <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote())
         && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
@@ -74,8 +75,8 @@
                    <?php if ($_rate->getErrorMessage()): ?>
                    <ul class="messages"><li class="error-msg"><ul><li><?php echo $_rate->getErrorMessage() ?></li></ul></li></ul>
                    <?php else: ?>
-                        <?php $_priceExcl = Mage::helper('tax')->getShippingPrice($_rate->getPrice(), false, $this->getAddress()); ?>
-                        <?php $_priceIncl = Mage::helper('tax')->getShippingPrice($_rate->getPrice(), true, $this->getAddress()); ?>
+                        <?php $_priceExcl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), false, $this->getAddress())); ?>
+                        <?php $_priceIncl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), true, $this->getAddress())); ?>
                    <input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>" checked="checked" />
                    <label data-price="<?php echo $_priceExcl; ?>" data-price-incl="<?php echo $_priceIncl; ?>" for="s_method_<?php echo $_rate->getCode() ?>"><!--<b><?php echo $this->getCarrierName($code) ?>:</b>--> <?php echo $_rate->getMethodTitle() ?>
                         <strong>
@@ -116,8 +117,8 @@
                            <?php if ($_rate->getErrorMessage()): ?>
                             <ul class="messages"><li class="error-msg"><ul><li><?php echo $_rate->getErrorMessage() ?></li></ul></li></ul>
                            <?php else: ?>
-                                <?php $_priceExcl = Mage::helper('tax')->getShippingPrice($_rate->getPrice(), false, $this->getAddress()); ?>
-                                <?php $_priceIncl = Mage::helper('tax')->getShippingPrice($_rate->getPrice(), true, $this->getAddress()); ?>
+                                <?php $_priceExcl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), false, $this->getAddress())); ?>
+                                <?php $_priceIncl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), true, $this->getAddress())); ?>
 
                                 <input name="shipping_method" type="radio" class="validate-one-required-by-name" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> />
                                 <label data-price="<?php echo $_priceExcl; ?>" data-price-incl="<?php echo $_priceIncl; ?>" for="s_method_<?php echo $_rate->getCode() ?>"><!--<b><?php echo $this->getCarrierName($code) ?>:</b>--> <?php echo $_rate->getMethodTitle() ?>
