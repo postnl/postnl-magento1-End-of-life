@@ -1560,10 +1560,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                         ->getDataUsingMethod($countryOfOriginAttribute);
 
         if (empty($countryOfOrigin)) {
+            $productId = $shipmentItem->getProductId();
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
-                    'Missing country of origin value for product #%s.',
-                    $shipmentItem->getProductId()
+                    'Missing country of origin value for product <a href="%s" target="_blank">#%s</a>.',
+                    Mage::helper('adminhtml')->getUrl('adminhtml/catalog_product/edit', array('id' => $productId)),
+                    $productId
                 ),
                 'POSTNL-0091'
             );
@@ -1596,8 +1598,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                      ->getDataUsingMethod($customsValueAttribute);
 
         if (empty($customsValue)) {
+            $productId = $shipmentItem->getProductId();
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('Missing customs value for product #%s.', $shipmentItem->getProductId()),
+                Mage::helper('postnl')->__(
+                    'Missing customs value for product <a href="%s" target="_blank">#%s</a>.',
+                    Mage::helper('adminhtml')->getUrl('adminhtml/catalog_product/edit', array('id' => $productId)),
+                    $productId
+                ),
                 'POSTNL-0092'
             );
         }
@@ -1629,12 +1636,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                     ->getDataUsingMethod($descriptionAttribute);
 
         if (empty($description)) {
+            $productId = $shipmentItem->getProductId();
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
-                    'Missing customs description for product #%s.',
-                    $shipmentItem->getProductId()
+                    'Missing customs description for product <a href="%s" target="_blank">#%s</a>.',
+                    Mage::helper('adminhtml')->getUrl('adminhtml/catalog_product/edit', array('id' => $productId)),
+                    $productId
                 ),
-                'POSTNL-0093'
+                'POSTNL-0092'
             );
         }
 
