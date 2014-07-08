@@ -67,7 +67,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
         $fee     = $invoice->getPostnlCodFee();
         $baseFee = $invoice->getBasePostnlCodFee();
 
-        if (!$fee || !$baseFee) {
+        if ($fee < 0.01 || $baseFee < 0.01) {
             return $this;
         }
 
