@@ -44,8 +44,19 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_Grandtotal extends Mage_Tax_Model
     public function getFullTaxInfo()
     {
         $fontSize       = $this->getFontSize() ? $this->getFontSize() : 7;
-        $taxClassAmount = $this->_getCalculatedTaxes();
-        $shippingTax    = $this->_getShippingTax();
+
+        if (method_exists($this, '_getCalculatedTaxes')) {
+            $taxClassAmount = $this->_getCalculatedTaxes();
+        } else {
+            $taxClassAmount = Mage::helper('tax')->getCalculatedTaxes($this->getOrder());
+        }
+
+        if (method_exists($this, '_getShippingTax')) {
+            $shippingTax = $this->_getShippingTax();
+        } else {
+            $shippingTax = Mage::helper('tax')->getShippingTax($this->getOrder());
+        }
+
         $taxClassAmount = array_merge($taxClassAmount, $shippingTax);
 
         /**
@@ -91,5 +102,13 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_Grandtotal extends Mage_Tax_Model
         }
 
         return $taxClassAmount;
+    }
+
+    /**
+     * @return Mage_Tax_Helper_Data
+     */
+    protected function _getTaxHelper()
+    {
+        return Mage::helper('tax');
     }
 }
