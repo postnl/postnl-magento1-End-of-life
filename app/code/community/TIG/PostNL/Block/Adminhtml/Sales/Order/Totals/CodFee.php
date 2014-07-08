@@ -63,7 +63,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Totals_CodFee extends Mage_Adminhtm
         $fee     = $order->getPostnlCodFee();
         $baseFee = $order->getBasePostnlCodFee();
 
-        if (!$fee || !$baseFee) {
+        if ($fee < 0.01 || $baseFee < 0.01) {
             return $this;
         }
 

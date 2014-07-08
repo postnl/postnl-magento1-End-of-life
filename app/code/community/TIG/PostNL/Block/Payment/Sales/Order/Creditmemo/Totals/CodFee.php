@@ -67,7 +67,7 @@ class TIG_PostNL_Block_Payment_Sales_Order_Creditmemo_Totals_CodFee extends Mage
         $fee     = $creditmemo->getPostnlCodFee();
         $baseFee = $creditmemo->getBasePostnlCodFee();
 
-        if (!$fee || !$baseFee) {
+        if ($fee < 0.01 || $baseFee < 0.01) {
             return $this;
         }
 
@@ -89,7 +89,7 @@ class TIG_PostNL_Block_Payment_Sales_Order_Creditmemo_Totals_CodFee extends Mage
                   ->setBaseValue($baseFee)
                   ->setCode('postnl_cod_fee');
 
-            $parent->addTotalBefore($total, 'shipping');
+            $parent->addTotal($total, 'subtotal_incl');
         }
 
         if ($displayMode === self::DISPLAY_MODE_INCL

@@ -66,7 +66,7 @@ class TIG_PostNL_Block_Payment_Sales_Order_Invoice_Totals_CodFee extends Mage_Sa
         $fee     = $invoice->getPostnlCodFee();
         $baseFee = $invoice->getBasePostnlCodFee();
 
-        if (!$fee || !$baseFee) {
+        if ($fee < 0.01 || $baseFee < 0.01) {
             return $this;
         }
 

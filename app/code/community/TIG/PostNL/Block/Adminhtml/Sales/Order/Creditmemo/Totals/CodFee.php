@@ -68,7 +68,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
         $fee     = $creditmemo->getPostnlCodFee();
         $baseFee = $creditmemo->getBasePostnlCodFee();
 
-        if (!$fee || !$baseFee) {
+        if ($fee < 0.01 || $baseFee < 0.01) {
             return $this;
         }
 
