@@ -241,7 +241,7 @@ TIG_PostNL::Confirmed,Voorgemeld
 TIG_PostNL::Confirmation expired,Voormelding verlopen
 TIG_PostNL::Today,Vandaag
 TIG_PostNL::No barcode available.,Geen barcode beschikbaar.
-TIG_PostNL::This shipment has already been confirmed.,Deze zending is al voorgemeld.
+TIG_PostNL::Shipment #%s has already been confirmed.,Zending #%s is al voorgemeld.
 TIG_PostNL::You must first print a shipping label for this shipment.,U moet eerst een label printen voor deze zending
 TIG_PostNL::Are you sure? The PostNL extension will not function until you\'ve reactivated the extension.,Weet u het zeker? De PostNL extensie werkt niet totdat u deze heractiveert
 TIG_PostNL::Finish activation,Rond activatie af
@@ -364,12 +364,11 @@ TIG_PostNL::PostNL requires the cron to be active in order to function.,PostNL h
 TIG_PostNL::Checkout Summary,Checkout Overzicht
 TIG_PostNL::Billing Address,Betaaladres
 TIG_PostNL::Shipping Address,Verzendadres
-TIG_PostNL::Collection Address,Afhaal Locatie
+TIG_PostNL::Collection Address,Afhaallocatie
 TIG_PostNL::Payment Method,Betaalmethode
-TIG_PostNL::Shipping Method,Verzend methode
+TIG_PostNL::Shipping Method,Verzendmethode
 TIG_PostNL::Items Ordered,Artikelen besteld
 TIG_PostNL::Product Name,Product naam
-TIG_PostNL::Price,Prijs
 TIG_PostNL::Qty,Aantal
 TIG_PostNL::Subtotal,Subtotaal
 TIG_PostNL::Return to the shopping cart.,Terug naar winkelmandje.
@@ -383,15 +382,15 @@ TIG_PostNL::You have not yet enabled PostNL Checkout.,U heeft PostNL Checkout no
 TIG_PostNL::%s > %s is required.,%s > %s is verplicht.
 TIG_PostNL::You need to enable at least one payment method.,U moet tenminste een betaalmethode activeren.
 TIG_PostNL::You have not yet enabled the extension.,U heeft de extensie nog niet geactiveerd.
-TIG_PostNL::The PostNL shipping method has not been enabled. You can enable the PostNL shipping method under %sSystem > Config > Shipping Methods%s.,"De PostNL verzendmethode is niet geactiveerd, U kunt deze activeren onder %sSysteem > Configuratie > Versturing Methodes%s."
+TIG_PostNL::No PostNL shipping method has been enabled. You can enable the PostNL shipping method under %sSystem > Config > Shipping Methods%s.,Er is nog geen PostNL verzendmethode geactiveerd. U kunt deze activeren onder %sSysteem > Configuratie > Versturing Methodes%s.
 TIG_PostNL::The shop's base currency code must be set to EUR for PostNL to function.,De basis munteenheid van de shop moet Euro zijn voor een juiste werking van de PostNL extensie.
 TIG_PostNL::The extension has not been activated.,De extensie is nog niet geactiveerd.
 TIG_PostNL::Product code %s is not allowed for this shipment.,Product code %s is niet toegestaan voor deze zending.
 TIG_PostNL::PostNL Checkout is not available due to the following reasons:,PostNL Checkout is niet beschikbaar om de volgende redenen:
 TIG_PostNL::Click here for more information from the TiG knowledgebase.,Klik hier voor meer informatie in de TiG knowledgebase.
-TIG_PostNL::This action cannot be used on non-PostNL shipments.,Deze actie kan niet gedaan worden op niet-PostNL zendingen.
-TIG_PostNL::This shipment cannot be confirmed at this time.,Deze zending kan niet voorgemeld worden.
-TIG_PostNL::For EU shipments you may only confirm a shipment after it's labels have been printed.,Europese verzendingen kunnen alleen voorgemeld worden als de labels zijn uitgeprint.
+"TIG_PostNL::This action is not available for shipment #%s, because it was not shipped using PostNL.","Deze actie is niet beschikbaar voor zending #%s, omdat deze niet verzonden is met PostNL."
+TIG_PostNL::Shipment #%s cannot be confirmed at this time.,Zending #%s kan momenteel niet voorgemeld worden.
+"TIG_PostNL::Shipment #%s could not be confirmed, because for EU shipments you may only confirm a shipment after it's labels have been printed.","Zending #%s kan niet voorgemeld worden, omdat Europese zendingen pas voorgemeld mogen worden nadat de labels geprint zijn."
 TIG_PostNL::Show error details in the frontend,Toon error details in de frontend
 "TIG_PostNL::If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.","Indien deze instelling op 'ja' staat, zullen ook in de frontend bij de meeste errors een foutcode en link naar de TiG knowledgebase getoond worden. Dit is nuttig wanneer u de extensie moet debuggen, echter zou nooit aan mogen staan in een productie omgeving."
 TIG_PostNL::The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.,De PostNL extensie is niet compatibel met uw Magento versie! Dit kan onverwachtte problemen veroorzaken.
@@ -426,7 +425,7 @@ TIG_PostNL::The 2kg limit will be based on the product's weight and the weight u
 TIG_PostNL::The mobile phonenumber will be saved as the customer's regular phonenumber when used.,Het mobiele telefoonnummer zal opgeslagen worden als het normale telefoonnummer van de klant wanneer deze optie aan staat.
 TIG_PostNL::All addresses outside of the Netherlands are considered 'foreign'. Addresses outside the EU are not possible regardless of this setting.,"Alle addresses buiten Nederlands worden gezien als buitenlandse adressen. Adressen buiten de EU zijn niet toegstaan, ongeacht deze instelling."
 TIG_PostNL::You can enter a URL where the customer can find your terms and conditions in your PostNL Checkout account at http://checkout.postnl.nl,U kunt een URL opgeven waar de klant de algemene voorwaarden van de webshop kan vinden in uw PostNL Checkout account op http://checkout.postnl.nl
-TIG_PostNL::or,of
+TIG_PostNL::,of
 TIG_PostNL::Missing customs description for product #%s.,Missende douane beschrijving voor product #%s.
 TIG_PostNL::Missing customs value for product #%s.,Missende douane waarde voor product #%s.
 TIG_PostNL::Missing country of origin value for product #%s.,Missende land van herkomst waarde voor product #%s.
@@ -873,9 +872,124 @@ TIG_PostNL::The customer was redirected to the cart because the quote is multish
 TIG_PostNL::more delivery times and pick-up locations,meer bezorgtijden en ophaalpunten
 TIG_PostNL::Select this checkbox to only show post office locations that are open as early as 8:30 A.M.,Activeer deze filter om enkel de ophaalpunten te tonen die extra vroeg ophalen (vanaf 8.30 uur) bieden.
 TIG_PostNL::Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.,Activeer deze filter om enkel postkantoor locaties te tonen die 's avonds na 19:00 uur geopend zijn op de eerstvolgende bezorgdag.
+TIG_PostNL::COD,Rembours
+TIG_PostNL::COD + Extra cover,Rembours + Verhoogd aansprakelijk
+TIG_PostNL::COD + Return when not home,Rembours + Retour indien niet thuis
+TIG_PostNL::COD + Extra cover + Return when not home,Rembours + Retour indien niet thuis + Verhoogd aansprakelijk
+TIG_PostNL::Post Office + COD,Postkantoor + Rembours
+TIG_PostNL::Post Office + COD + Notification,Postkantoor + Rembours + Notificatie
+TIG_PostNL::Post Office + COD + Extra Cover,Postkantoor + Rembours + Verhoogd aansprakelijk
+TIG_PostNL::Post Office + COD + Extra Cover + Notification,Postkantoor + Rembours + Verhoogd aansprakelijk + Notificatie
+TIG_PostNL::This order has been automatically invoiced by the PostNL COD payment method.,Deze bestelling is automatisch gefactureerd door de PostNL rembours betaalmethode.
+TIG_PostNL::Cannot create an invoice without products.,Een factuur kan niet aangemaakt worden zonder producten.
+TIG_PostNL::Order item #%s could not be invoiced.,Bestelling item #%s kon niet gefactureerd worden.
+TIG_PostNL::Unable to create an invoice for this shipment due to the order missing.,"Er kan geen factuur aangemaakt worden voor deze zending, omdat de bestelling mist."
+TIG_PostNL::Unable to create an invoice for this shipment because the order cannot be invoiced.,"Er kan geen factuur aangemaakt worden voor deze zending, omdat de bestelling niet gefactureerd kan worden."
+TIG_PostNL::An error occurred while creating an invoice for this shipment.,Er is een fout opgestreden tijdens het aanmaken van een factuur voor deze zending.
+TIG_PostNL::COD Settings,Rembours Instellingen
+TIG_PostNL::Here you can configure the way PostNL COD works. Please note that this requires the PostNL COD payment method to be active.,Hier kunt u instellen hoe PostNL rembours werkt. N.B.: PostNL rembours vereist dat de PostNL rembours betaalmethode geactiveerd is.
+TIG_PostNL::Bankaccount name,Bankrekening naam
+TIG_PostNL::Bankaccount IBAN,Bankrekening IBAN
+TIG_PostNL::Bankaccount BIC,Bankrekening BIC
+TIG_PostNL::Automatically create an invoice,Automatisch factureren
+"TIG_PostNL::If enabled, this will allow the PostNL COD payment method to automatically create an invoice once a shipment has been delivered.","Indien deze optie aan staat, zullen bestellingen die geplaatst zijn met de PostNL rembours betaalmethode automatisch gefactureerd worden nadat een bijbehorende zending bezorgd is."
+TIG_PostNL::Please enter your bankaccount credentials. COD payments will be transfered to this account.,Vul s.v.p. uw bankrekeninggegevens in. Rembours betalingen zullen op deze rekening gestort worden.
+TIG_PostNL::PostNL Cash on Delivery,PostNL rembours
+TIG_PostNL::Enable or disable the PostNL Cash on Delivery payment method.,Activeer de PostNL rembours betaalmethode.
+TIG_PostNL::Title,Titel
+TIG_PostNL::New order status,Nieuwe bestelling status
+TIG_PostNL::Newly placed orders will have this status.,Nieuwe bestellingen zullen deze status krijgen.
+TIG_PostNL::Instructions,Instructies
+TIG_PostNL::This text will be shown to customers when they choose this payment method.,Deze tekst zal aan klanten getoond worden wanneer zij voor deze betaalmethode kiezen.
+TIG_PostNL::Html tags are allowed in this field.,Html is toegstaan in dit veld.
+TIG_PostNL::Payment from applicable countries,Betalingen toestaan van specifieke landen
+TIG_PostNL::Payment from specific countries,Toegestane landen
+TIG_PostNL::Minimum order total,Minimaal bestellingbedrag
+TIG_PostNL::Maximum order total,Maximaal bestellingbedrag
+TIG_PostNL::Allow for non-PostNL orders,Toestaan voor niet-PostNL bestellingen
+TIG_PostNL::Sort order,Sorteervolgorde
+TIG_PostNL::Set this option to 'yes' to allow orders placed using a different shipping method than PostNL to use this payment method.,Zet deze optie op 'ja' om deze betaalmethode ook aan te bieden voor bestellingen die geen gebruik maken van de PostNL verzendmethode.
 TIG_PostNL::Send a copy of the track & trace email,Verstuur een kopie van de track & trace e-mail
 "TIG_PostNL::If enabled, you may enter seperate email addresses to which the track & trace email will be sent in addition to the customer.","Indien u deze optie aan zet, zal er een kopie van de track & trace e-mail worden verstuurd naar de opgegeven e-mail adressen."
 TIG_PostNL::Send track & trace email copy to,Verstuur track & trace e-mail kopie naar
 TIG_PostNL::You can enter multiple email addresses seperated by commas.,U kunt meerdere e-mailaddressen invullen gescheiden door komma's
-TIG_PostNL::Track & trace email copy method,Track & trace e-mail kopie methode
+TIG_PostNL::Track & trace email copy method,Track & trace e-mail kopie method
 PostNL configuration.,PostNL configuratie.
+TIG_PostNL::A required configuration value is missing: %s.,Een verplichte configuratie waarde mist: %s.
+TIG_PostNL::Delivery options are not allowed for product #%s.,Bezorgopties zijn niet toegestaan voor product#%s.
+TIG_PostNL::Cannot create an invoice without products.,Kan geen factuur aanmaken zonder producten.
+TIG_PostNL::Order item #%s could not be invoiced.,Order item #%s kon niet gefactureerd worden.
+TIG_PostNL::Unable to create an invoice for this shipment due to the order missing.,"Kan geen factuur aanmaken voor deze zending, omdat de bestelling mist."
+TIG_PostNL::Unable to create an invoice for this shipment because the order cannot be invoiced.,"Kan geen factuur aanmaken voor deze zending, omdat de bestelling niet gefactureerd kan worden."
+TIG_PostNL::An error occurred while creating an invoice for this shipment.,Er is een fout opgetreden tijdens het aanmaken van een factuur voor deze zending.
+TIG_PostNL::No valid shipment type found for shipment #%s,Geen valide zending gevonden voor zending #%s.
+TIG_PostNL::Print packing slips,Print pakbonnen
+TIG_PostNL::PostNL - Print packing slips,PostNL - Print pakbonnen
+TIG_PostNL::Products,Producten
+TIG_PostNL::SKU,SKU
+TIG_PostNL::VAT,Btw
+TIG_PostNL::No valid order available for packing slip.,Geen valide bestelling beschikbaar voor de pakbon.
+TIG_PostNL::CoC,KvK
+TIG_PostNL::Customer number,Klantnummer
+TIG_PostNL::Billing address,Factuuradres
+TIG_PostNL::Shipping address,Verzendadres
+TIG_PostNL::Order date,Besteldatum
+TIG_PostNL::Payment method,Betaalmethode
+TIG_PostNL::Shipping method,Verzendmethode
+TIG_PostNL::Ship order on,Verzend pakket op
+TIG_PostNL::Packing slip,Pakbon
+TIG_PostNL::Order,Bestelling
+TIG_PostNL::Shipment,Zending
+TIG_PostNL::Post office address,Postkantooradres
+TIG_PostNL::Invalid label type supplied for packing slip label pdf: %s.,Ongeldig label type opgegeven voor pakbon label pdf: %s.
+TIG_PostNL::Approaching memory limit for this operation. Please select fewer shipments and try again.,Geheugen limiet bereikt. Selecteer s.v.p. minder zendingen en probeer het opnieuw.
+TIG_PostNL::Packing Slip Settings,Pakbon Instellingen
+TIG_PostNL::Here you can configure which elements you would like to show on the PostNL packing slip.,Hier kunt u aangeven welke elementen u wilt tonen op de PostNL pakbonnen.
+TIG_PostNL::Logo for packing slips,Pakbon logo
+TIG_PostNL::The image will automatically be resized to fit the maximum dimensions of 900x100px.,"Deze afbeelding zal automatisch geschaald worden, zodat deze binnen de maximum afmetingen van 900x100px past."
+TIG_PostNL::Show webshop information,Toon webshopinformatie
+"TIG_PostNL::If enabled, the shop's name, contact address, CoC and VAT numbers will be displayed on the packing slip.","Indien geactiveerd, zal de naam van de webshop, het contact adres, KvK nummer en btw nummer getoond worden op de pakbon."
+TIG_PostNL::CoC number,KvK nummer
+TIG_PostNL::VAT number,Btw nummer
+TIG_PostNL::Show customer number,Toon klantnummer
+"TIG_PostNL::If enabled, the customer ID will be printed on the packing slip for registered customers.","Indien geactiveerd, zal het klantnummer van de klant getoond worden voor geregistreerde klanten."
+TIG_PostNL::Show billing address,Toon factuuradres
+TIG_PostNL::Show shipping address,Toon verzendadres
+TIG_PostNL::Show post office address,Toon postkantooradres
+TIG_PostNL::Show order information,Toon bestellinginformatie
+"TIG_PostNL::If enabled, the order ID, shipment ID and order date will be shown on the packing slip.","Indien geactiveerd, zal het bestelling ID, zending ID en de bestellingsdatum getoond worden op de pakbon."
+TIG_PostNL::Show payment method,Toon betaalmethode
+TIG_PostNL::Show shipping method,Toon verzendmethode
+TIG_PostNL::Show shipping date,Toon verzenddatum
+TIG_PostNL::Show shipment totals,Toon zending totaalbedragen
+TIG_PostNL::Show shipment comment,Toon zending opmerking
+TIG_PostNL::Comment type,Opmerking type
+"TIG_PostNL::You can choose to show a static, pre-configured message or you can show the last visible comment added to the shipment on the shipment detail page.","U kunt kiezen om een statisch, voor geconfigureerd bericht te tonen of om de laatste toegevoegde, zichtbare opmerking van de zending te tonen."
+TIG_PostNL::Comment text,Opmerking tekst
+TIG_PostNL::Show shipping label,Toon verzendlabel
+"TIG_PostNL::If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.","Indien geactiveerd, zal het verzendlabel direct op de pakbon geprint worden, indien mogelijk. Anders zal deze op een losse pagina toegevoegd worden."
+TIG_PostNL::Pre-configured message,Voorgeconfigureerd bericht
+TIG_PostNL::Last shipment comment,Laatste zending opmerking
+TIG_PostNL::None of the orders you have selected have any associated shipments. Please choose at least one order that has a shipment.,"Geen van de bestellingen die u heeft geselecteerd, bevat een zending. Kies s.v.p. tenminste één bestelling die een zending bevat."
+TIG_PostNL::Print packing slips,Print pakbonnen
+TIG_PostNL::Download PostNL log files,Download PostNL log bestanden
+TIG_PostNL::No valid log files were found.,Geen valide log bestanden gevonden.
+TIG_PostNL::Log %s is too large (%.2fMB) and was skipped.,Log %s is te groot (%.2fMB) en is daarom overgeslagen.
+TIG_PostNL::The total size of all log files exceeds the maximum size allowed.,De totale grootte van alle log bestanden hoger dan de maximum toegestane grootte.
+TIG_PostNL::The server's memory limit is less than %1$dMB. The PostNL extension requires at least %1$dMB to function properly. Using the PostNL extension on servers with less memory than this may cause unexpected errors.,Het geheugen limiet van de server is minder dan %1$dMB. De PostNL extensie vereist minimaal %1$dMB geheugen om correctte functioneren. Gebruik maken van de PostNL extensie op servers met minder geheugen kan leiden tot onverwachtte foutmeldingen.
+TIG_PostNL::The following shipments or orders could not be processed:,De volgende zendingen of bestellingen konden niet verwerkt worden:
+TIG_PostNL::Unfortunately no shipments could be processed. Please check the error messages for more details.,Helaas konden er geen zendingen verwerkt worden. Controleer de errormeldingen voor meer informatie.
+TIG_PostNL::None of the shipments could be created. Please check the error messages for more details.,Geen van de zendingen konden aangemaakt worden. Controleer de errormeldingen voor meer informatie.
+TIG_PostNL::One of the following fields is required:,Eén van de volgende velden is verplicht:
+TIG_PostNL::or,of
+TIG_PostNL::flat rate,plat tarief
+TIG_PostNL::table rate,tabel tarief
+TIG_PostNL::Display PostNL COD fee,Toon PostNL rembourstoeslag
+TIG_PostNL::PostNL COD fee,PostNL rembourstoeslag
+TIG_PostNL::Tax class for PostNL COD fee,BTW klasse voor PostNL rembourstoeslag
+TIG_PostNL::Whether the PostNL COD fee you have entered is incl. or excl. tax.,Of de PostNL tembourstoeslag ingevul is incl. of excl. BTW.
+TIG_PostNL::This tax class will be used when calculating the tax for the PostNL COD fee.,Deze BTW klasse zal gebruikt worden om de BTW op de PostNL rembourstoeslag te berekenen.
+TIG_PostNL::Fee,Toeslag
+TIG_PostNL::This fee will be charged to the customer when they choose to pay using PostNL COD.,Deze toeslag zal aan de klant berekend worden wanneer zij kiezen voor de PostNL rembours betaalmethode.
+TIG_PostNL::Fee label,Toeslag label
+"TIG_PostNL::This label will be displayed next to the fee on the checkout, order, invoice and creditmemo pages and pdfs.","Dit label zal getoond worden naast de toeslag op de afreken-, bestelling-, factuur- en kredietmemopagina's."

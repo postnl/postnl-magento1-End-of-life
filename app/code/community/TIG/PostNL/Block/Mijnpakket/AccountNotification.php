@@ -73,7 +73,6 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
     /**
      * Xpaths determining various options regarding the MijnPakket notification.
      */
-    const XPATH_MIJNPAKKET_NOTIFICATION             = 'postnl/delivery_options/mijnpakket_notification';
     const XPATH_SHOW_CREATE_MIJNPAKKET_ACCOUNT_LINK = 'postnl/delivery_options/show_create_mijnpakket_account_link';
     const XPATH_SHOW_MIJNPAKKET_APP_LINK            = 'postnl/delivery_options/show_mijnpakket_app_link';
 
@@ -93,13 +92,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
             return $this->_getData('can_show_notification');
         }
 
-        if (!Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions()) {
-            $this->setCanShowNotification(false);
-            return false;
-        }
-
-        $storeId = Mage::app()->getStore()->getId();
-        $canShowNotification = Mage::getStoreConfigFlag(self::XPATH_MIJNPAKKET_NOTIFICATION, $storeId);
+        $canShowNotification = Mage::helper('postnl/mijnpakket')->canShowMijnpakketNotification();
 
         $this->setCanShowNotification($canShowNotification);
         return $canShowNotification;
@@ -289,7 +282,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
         );
 
         /**
-         * If this address hads a VAT ID, it's probably a B2B client.
+         * If this address has a VAT ID, it's probably a B2B client.
          */
         $vat = $shippingAddress->getVatId();
         if ($vat) {
@@ -306,7 +299,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
         }
 
         /**
-         * If we have a mobile phonenumber for this address, add that as well.
+         * If we have a mobile phone number for this address, add that as well.
          *
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */

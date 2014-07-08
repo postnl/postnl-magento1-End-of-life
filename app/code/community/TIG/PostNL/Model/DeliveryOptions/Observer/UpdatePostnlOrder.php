@@ -117,6 +117,14 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * @var Mage_Sales_Model_Quote $quote
          */
         $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
+        if (!$quote || !$quote->getId()) {
+            $quote = $order->getQuote();
+        }
+
+        if (!$quote || !$quote->getId()) {
+            return $this;
+        }
+
         $quoteAddresses = $quote->getAllAddresses();
 
         /**

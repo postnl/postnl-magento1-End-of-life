@@ -51,34 +51,34 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     /**
      * XML paths for security keys
      */
-    const XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY  = 'postnl/general/unique_key';
-    const XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY = 'postnl/general/private_key';
+    const XPATH_EXTENSIONCONTROL_UNIQUE_KEY  = 'postnl/general/unique_key';
+    const XPATH_EXTENSIONCONTROL_PRIVATE_KEY = 'postnl/general/private_key';
 
     /**
      * XML paths for webshop activation settings
      */
-    const XML_PATH_GENERAL_EMAIL     = 'postnl/general/email';
-    const XML_PATH_UNSECURE_BASE_URL = 'web/unsecure/base_url';
+    const XPATH_GENERAL_EMAIL     = 'postnl/general/email';
+    const XPATH_UNSECURE_BASE_URL = 'web/unsecure/base_url';
 
     /**
      * XML paths for setting statistics
      */
-    const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
-    const XML_PATH_SPLIT_STREET              = 'postnl/cif_address/split_street';
-    const XML_PATH_CHECKOUT_ACTIVE           = 'postnl/checkout/active';
-    const XML_PATH_CHECKOUT_WEBSHOP_ID       = 'postnl/cif/webshop_id';
-    const XML_PATH_CONTACT_NAME              = 'postnl/cif/contact_name';
-    const XML_PATH_CUSTOMER_NUMBER           = 'postnl/cif/customer_number';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+    const XPATH_SPLIT_STREET              = 'postnl/cif_address/split_street';
+    const XPATH_CHECKOUT_ACTIVE           = 'postnl/checkout/active';
+    const XPATH_CHECKOUT_WEBSHOP_ID       = 'postnl/cif/webshop_id';
+    const XPATH_CONTACT_NAME              = 'postnl/cif/contact_name';
+    const XPATH_CUSTOMER_NUMBER           = 'postnl/cif/customer_number';
 
     /**
      * XML path to extension activation setting
      */
-    const XML_PATH_ACTIVE = 'postnl/general/active';
+    const XPATH_ACTIVE = 'postnl/general/active';
 
     /**
      * XML path to 'is_activated' flag
      */
-    const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
+    const XPATH_IS_ACTIVATED = 'postnl/general/is_activated';
 
     /**
      * Expected success response
@@ -234,9 +234,9 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         /**
          * If a successful update has taken place we can confirm that the extension has been activated
          */
-        $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $isActivated = Mage::getStoreConfig(self::XPATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if (!$isActivated || $isActivated == '1') {
-            Mage::getModel('core/config')->saveConfig(self::XML_PATH_IS_ACTIVATED, 2);
+            Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 2);
         }
 
         return $result;
@@ -291,7 +291,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
          */
         $websites = array();
         foreach (Mage::app()->getWebsites() as $website) {
-            $extensionEnabled = $website->getConfig(self::XML_PATH_ACTIVE);
+            $extensionEnabled = $website->getConfig(self::XPATH_ACTIVE);
             if (!$extensionEnabled) {
                 continue;
             }
@@ -323,7 +323,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getEmail()
     {
-        $email = Mage::getStoreConfig(self::XML_PATH_GENERAL_EMAIL, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $email = Mage::getStoreConfig(self::XPATH_GENERAL_EMAIL, Mage_Core_Model_App::ADMIN_STORE_ID);
 
         return $email;
     }
@@ -350,7 +350,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         /**
          * Get the website's base URL
          */
-        $baseUrl = $website->getConfig(self::XML_PATH_UNSECURE_BASE_URL, $website->getId());
+        $baseUrl = $website->getConfig(self::XPATH_UNSECURE_BASE_URL, $website->getId());
 
         /**
          * Parse the URL and get the host name
@@ -368,7 +368,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUniqueKey()
     {
-        $uniqueKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $uniqueKey = Mage::getStoreConfig(self::XPATH_EXTENSIONCONTROL_UNIQUE_KEY, Mage_Core_Model_App::ADMIN_STORE_ID);
         $uniqueKey = Mage::helper('core')->decrypt($uniqueKey);
 
         $uniqueKey = trim($uniqueKey);
@@ -383,7 +383,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getPrivateKey()
     {
-        $privateKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $privateKey = Mage::getStoreConfig(self::XPATH_EXTENSIONCONTROL_PRIVATE_KEY, Mage_Core_Model_App::ADMIN_STORE_ID);
         $privateKey = Mage::helper('core')->decrypt($privateKey);
 
         $privateKey = trim($privateKey);
@@ -522,7 +522,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getMerchantName($website)
     {
-        $name = $website->getConfig(self::XML_PATH_CONTACT_NAME);
+        $name = $website->getConfig(self::XPATH_CONTACT_NAME);
 
         return $name;
     }
@@ -539,7 +539,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         /**
          * Get a list of supported product options and a list of global product options
          */
-        $supportedProductOptions = $website->getConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS);
+        $supportedProductOptions = $website->getConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS);
         $supportedProductOptions = explode(',', $supportedProductOptions);
 
         $globalProductOptions = Mage::helper('postnl/cif')->getGlobalProductCodes();
@@ -565,7 +565,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsesSplitAddress($website)
     {
-        $splitStreet = (bool) $website->getConfig(self::XML_PATH_SPLIT_STREET);
+        $splitStreet = (bool) $website->getConfig(self::XPATH_SPLIT_STREET);
 
         return $splitStreet;
     }
@@ -579,7 +579,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsesPostnlCheckout($website)
     {
-        $checkoutActive = (bool) $website->getConfig(self::XML_PATH_CHECKOUT_ACTIVE);
+        $checkoutActive = (bool) $website->getConfig(self::XPATH_CHECKOUT_ACTIVE);
 
         return $checkoutActive;
     }
@@ -593,7 +593,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getCheckoutWebshopId($website)
     {
-        $webshopId = $website->getConfig(self::XML_PATH_CHECKOUT_WEBSHOP_ID);
+        $webshopId = $website->getConfig(self::XPATH_CHECKOUT_WEBSHOP_ID);
         $webshopId = Mage::helper('core')->decrypt($webshopId);
 
         return $webshopId;
@@ -608,7 +608,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getCustomerNumber($website)
     {
-        $webshopId = $website->getConfig(self::XML_PATH_CUSTOMER_NUMBER);
+        $webshopId = $website->getConfig(self::XPATH_CUSTOMER_NUMBER);
 
         return $webshopId;
     }

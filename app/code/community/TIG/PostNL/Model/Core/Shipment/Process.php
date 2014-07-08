@@ -76,7 +76,7 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
      * Lock process without blocking.
      * This method allow protect multiple process running and fast lock validation.
      *
-     * @return TIG_PostNL_Model_Core_Shipment_Process
+     * @return $this
      */
     public function lock()
     {
@@ -89,9 +89,9 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     }
 
     /**
-     * Lock and block process
+     * Lock and block process.
      *
-     * @return TIG_PostNL_Model_Core_Shipment_Process
+     * @return $this
      */
     public function lockAndBlock()
     {
@@ -104,9 +104,9 @@ class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
     }
 
     /**
-     * Unlock process
+     * Unlock process.
      *
-     * @return TIG_PostNL_Model_Core_Shipment_Process
+     * @return $this
      */
     public function unlock()
     {

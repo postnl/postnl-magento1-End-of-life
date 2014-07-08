@@ -35,76 +35,64 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @method boolean                                      hasLoginBlockClass()
- * @method TIG_PostNL_Model_Mijnpakket_Observer_Onepage setLoginBlockClass(string $value)
- * @method boolean                                      hasSuccessBlockClass()
- * @method TIG_PostNL_Model_Mijnpakket_Observer_Onepage setSuccessBlockClass(string $value)
  */
-class TIG_PostNL_Model_Mijnpakket_Observer_Onepage extends Varien_Object
+class TIG_PostNL_Model_Adminhtml_Observer_SystemConfig
 {
     /**
-     * The block class that we want to edit.
-     */
-    const SUCCESS_BLOCK_NAME = 'checkout/onepage_success';
-
-    /**
-     * The new template.
-     */
-    const ACCOUNT_NOTIFICATION_TEMPLATE = 'TIG/PostNL/mijnpakket/onepage/success.phtml';
-
-    /**
-     * Gets the classname for the checkout success block that we want to alter.
-     *
-     * @return string
-     */
-    public function getSucessBlockClass()
-    {
-        if ($this->hasSuccessBlockClass()) {
-            return $this->_getData('success_block_class');
-        }
-
-        $blockClass = Mage::getConfig()->getBlockClassName(self::SUCCESS_BLOCK_NAME);
-
-        $this->setSuccessBlockClass($blockClass);
-        return $blockClass;
-    }
-
-    /**
-     * Replace the onepage checkout success template.
+     * Adds a button to the system > config page for the PostNL section, allowing the admin to download all PostNL debug
+     * logs.
      *
      * @param Varien_Event_Observer $observer
      *
      * @return $this
      *
-     * @event core_block_abstract_to_html_before
+     * @event controller_action_layout_render_before_adminhtml_system_config_edit
      *
-     * @observer checkout_onepage_mijnpakket_success
+     * @observer postnl_add_download_log_button
      */
-    public function addAccountNotification(Varien_Event_Observer $observer)
+    public function addDownloadLogButton(Varien_Event_Observer $observer)
     {
+        $section = Mage::app()->getRequest()->getParam('section');
+        if ($section !== 'postnl') {
+            return $this;
+        }
+
+        $configEditBlock = false;
+        $contentBlocks = Mage::getSingleton('core/layout')->getBlock('content')->getChild();
+
         /**
-         * Checks if the current block is the one we want to edit.
-         *
-         * Unfortunately there is no unique event for this block.
-         *
          * @var Mage_Core_Block_Abstract $block
          */
-        $block      = $observer->getBlock();
-        $blockClass = $this->getSucessBlockClass();
+        foreach ($contentBlocks as $block) {
+            if ($block instanceof Mage_Adminhtml_Block_System_Config_Edit) {
+                $configEditBlock = $block;
+            }
+        }
 
-        if (!$block || !is_object($block) || get_class($block) != $blockClass) {
+        if (!$configEditBlock) {
             return $this;
         }
 
-        if (!Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions()) {
-            return $this;
+        $helper = Mage::helper('postnl');
+
+        if (!$helper->checkIsPostnlActionAllowed('download_logs')) {
+            return false;
         }
 
-        /**
-         * @var Mage_Checkout_Block_Onepage_Success $block
-         */
-        $block->setTemplate(self::ACCOUNT_NOTIFICATION_TEMPLATE);
+        $onClickUrl = $configEditBlock->getUrl('postnl_admin/adminhtml_config/downloadLogs');
+        $onClick = "setLocation('{$onClickUrl}')";
+
+        $button = $configEditBlock->getLayout()->createBlock('adminhtml/widget_button');
+        $button->setData(
+            array(
+                'label'   => $helper->__('Download PostNL log files'),
+                'onclick' => $onClick,
+                'class'   => 'download',
+            )
+        );
+
+        $configEditBlock->setChild('download_postnl_logs_button', $button);
+        $configEditBlock->setTemplate('TIG/PostNL/system/config/edit.phtml');
 
         return $this;
     }

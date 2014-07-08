@@ -73,6 +73,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
 
     /**
+     * Minimum server memory required by the PostNL extension in bytes.
+     */
+    const MIN_SERVER_MEMORY = 268435456; //256MB
+
+    /**
      * callAfterApplyAllUpdates flag. Causes applyAfterUpdates() to be called.
      *
      * @var boolean
@@ -201,6 +206,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $configVer = $this->getConfigVer();
 
         $this->_checkVersionCompatibility();
+        $this->_checkMemoryRequirement();
 
         if (version_compare($configVer, $dbVer) != self::VERSION_COMPARE_GREATER) {
             return $this;
@@ -327,20 +333,22 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
 
     /**
      * Checks the store's config to see if the extension is compatible with the installed Magento version. If not, a
-     * message will be added to Mage_Adminnotification.
+     * message will be added to Mage_AdminNotification.
      *
      * @return $this
      */
     public function _checkVersionCompatibility()
     {
+        if (Mage::registry('postnl_version_compatibility_checked')) {
+            return $this;
+        }
+
         $helper = Mage::helper('postnl');
         if ($helper->isEnterprise()) {
             $edition = 'enterprise';
         } else {
             $edition = 'community';
         }
-
-        $inbox = Mage::getModel('postnl/inbox');
 
         $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/' . $edition);
         if ($supportedVersions === false) {
@@ -350,6 +358,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                          . 'behaviour.'
                      );
 
+            $inbox = Mage::getModel('postnl/inbox');
             $inbox->addCritical(
                       $message,
                       $message,
@@ -358,6 +367,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                   )
                   ->save();
 
+            Mage::register('postnl_version_compatibility_checked', true);
             return $this;
         }
 
@@ -374,6 +384,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                          . 'behaviour.'
                      );
 
+            $inbox = Mage::getModel('postnl/inbox');
             $inbox->addCritical(
                       $message,
                       $message,
@@ -382,9 +393,48 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                   )
                   ->save();
 
+            Mage::register('postnl_version_compatibility_checked', true);
             return $this;
         }
 
+
+        Mage::register('postnl_version_compatibility_checked', true);
+        return $this;
+    }
+
+    /**
+     * Make sure that the server meets Magento's (and PostNL's) memory requirements.
+     *
+     * @return $this
+     * @throws Exception
+     */
+    protected function _checkMemoryRequirement()
+    {
+        if (Mage::registry('postnl_memory_requirement_checked')) {
+            return $this;
+        }
+
+        $helper = Mage::helper('postnl');
+
+        if ($helper->getMemoryLimit() < self::MIN_SERVER_MEMORY) {
+            $message = '[POSTNL-0175] '
+                . $helper->__(
+                    'The server\'s memory limit is less than %1$dMB. The PostNL extension requires at least %1$dMB to' .
+                    ' function properly. Using the PostNL extension on servers with less memory than this may cause' .
+                    ' unexpected errors.',
+                    self::MIN_SERVER_MEMORY / 1024 / 1024
+                );
+
+            $inbox = Mage::getModel('postnl/inbox');
+            $inbox->addCritical(
+                $message,
+                $message,
+                '',
+                true
+            )->save();
+        }
+
+        Mage::register('postnl_memory_requirement_checked', true);
         return $this;
     }
 
@@ -481,7 +531,10 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     }
 
     /**
-     * Resets an array of config fields to factory defaults.
+     * Resets an array of config fields to factory defaults. This is done by actually deleting the config value from the
+     * core_config_data table.
+     * Because Magento overwrites the default values in the config.xml files with those from the db, if we remove the
+     * values from the db, the default values from the config.xml files will again be used.
      *
      * @param array|string $configFields
      *
@@ -604,7 +657,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
      *
      * @return $this
      */
-    protected function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
+    public function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
                                                  $removeOldValue = true)
     {
         $config = Mage::getConfig();
@@ -692,6 +745,97 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     {
         Mage::getConfig()->reinit();
         Mage::app()->reinitStores();
+
+        return $this;
+    }
+
+    /**
+     * Sets the shipment type of every PostNL shipment. Before 1.3.0 the shipment type was determined on the fly. Since
+     * 1.3.0 it is instead set once in the PostNL Shipment table. This method updates the table for all PostNL shipments
+     * that do not yet have a shipment type.
+     *
+     * @return $this
+     */
+    public function setShipmentType()
+    {
+        $transactionSave = Mage::getResourceModel('core/transaction');
+
+        $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        foreach ($postnlShipmentCollection as $shipment) {
+            /**
+             * The getShipmentType() method will calculate and set the shipment type if none is available.
+             */
+            $shipment->getShipmentType();
+
+            if ($shipment->hasDataChanges()) {
+                $transactionSave->addObject($shipment);
+            }
+        }
+
+        $transactionSave->save();
+
+        return $this;
+    }
+
+    /**
+     * Add new resources to all admin roles.
+     *
+     * @param array      $resourcesToAdd The resources to add.
+     * @param null|array $resourcesRequired The resources that a role already needs to have.
+     *
+     * @return $this
+     */
+    public function addAclRules($resourcesToAdd, $resourcesRequired = null)
+    {
+        $adminRoles = Mage::getResourceModel('admin/role_collection');
+
+        /**
+         * @var Mage_Admin_Model_Rules $role
+         */
+        foreach ($adminRoles as $role) {
+            $rules = Mage::getResourceModel('admin/rules_collection')->getByRoles($role->getId());
+            $rules->addFieldToFilter('permission', array('eq' => 'allow'));
+            $resources = $rules->getColumnValues('resource_id');
+
+            /**
+             * If the role has no resources, it's probably deleted and we shouldn't add any.
+             */
+            if (!$resources) {
+                continue;
+            }
+
+            /**
+             * If the role has the resource 'all', it already has access to everything.
+             */
+            if (in_array('all', $resources)) {
+                continue;
+            }
+
+            /**
+             * If any resources are required, check that the role has these resources. If even one of the required
+             * resources is missing, skip this role.
+             */
+            if ($resourcesRequired) {
+                foreach ($resourcesRequired as $requiredResource) {
+                    if (!in_array($requiredResource, $resources)) {
+                        continue(2);
+                    }
+                }
+            }
+
+            /**
+             * Add the new resources to the existing ones.
+             */
+            $resources = array_merge($resources, $resourcesToAdd);
+
+            /**
+             * Save the role.
+             */
+            Mage::getModel('admin/rules')
+                ->setRoleId($role->getId())
+                ->setResources($resources)
+                ->saveRel();
+        }
 
         return $this;
     }

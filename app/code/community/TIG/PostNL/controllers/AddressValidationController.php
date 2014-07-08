@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_Action
@@ -46,7 +46,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
     /**
      * @param TIG_PostNL_Model_AddressValidation_Cendris $cendrisModel
      *
-     * @return TIG_PostNL_AddressValidationController
+     * @return $this
      */
     public function setCendrisModel($cendrisModel)
     {
@@ -75,7 +75,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
     /**
      * Validates and enriches a postcode/housenumber combination. This will result in the address's city and streetname if valid.
      *
-     * @return TIG_PostNL_AddressValidationController
+     * @return $this
      */
     public function postcodeCheckAction()
     {

@@ -43,9 +43,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
      * Additional column names used
      */
     const SHIPPING_METHOD_COLUMN      = 'shipping_method';
-    const IS_PAKJE_GEMAK_COLUMN       = 'is_pakje_gemak';
-    const IS_PAKKETAUTOMAAT_COLUMN    = 'is_pakketautomaat';
-    const DELIVERY_OPTION_TYPE_COLUMN = 'delivery_option_type';
 
     /**
      * Renders the column value as a shipment type value (Domestic, EPS or GlobalPack)
@@ -62,7 +59,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         $column = $this->getColumn();
 
         /**
-         * The shipment was not shipped using PostNL
+         * The shipment was not shipped using PostNL.
          */
         $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
@@ -80,77 +77,58 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
 
         $helper = Mage::helper('postnl/cif');
 
-        $optionType = $row->getData(self::DELIVERY_OPTION_TYPE_COLUMN);
-        if ($optionType == 'Avond') {
-            $label   = $helper->__('Domestic');
-            $comment = $helper->__('Evening Delivery');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>avond</div><b>{$label}"
-                . "</b><br /><em>{$comment}</em>";
-
-            return $renderedValue;
+        $label         = '';
+        $comment       = false;
+        switch ($value) {
+            case 'domestic':
+                $label = $helper->__('Domestic');
+                break;
+            case 'domestic_cod':
+                $label   = $helper->__('Domestic');
+                $comment = $helper->__('COD');
+                break;
+            case 'avond':
+                $label   = $helper->__('Domestic');
+                $comment = $helper->__('Evening Delivery');
+                break;
+            case 'avond_cod':
+                $label   = $helper->__('Domestic');
+                $comment = $helper->__('Evening Delivery') . ' + ' . $helper->__('COD');
+                break;
+            case 'pg':
+                $label = $helper->__('Post Office');
+                break;
+            case 'pg_cod':
+                $label   = $helper->__('Post Office');
+                $comment = $helper->__('COD');
+                break;
+            case 'pge':
+                $label   = $helper->__('Post Office');
+                $comment = $helper->__('Early Pickup');
+                break;
+            case 'pge_cod':
+                $label = $helper->__('Post Office');
+                $comment = $helper->__('Early Pickup') . ' + ' . $helper->__('COD');
+                break;
+            case 'pa':
+                $label = $helper->__('Parcel Dispenser');
+                break;
+            case 'pa_cod':
+                $label   = $helper->__('Parcel Dispenser');
+                $comment = $helper->__('COD');
+                break;
+            case 'eps':
+                $label = $helper->__('EPS');
+                break;
+            case 'globalpack':
+                $label = $helper->__('GlobalPack');
+                break;
         }
 
-        if ($optionType == 'PGE') {
-            $label   = $helper->__('Post Office');
-            $comment = $helper->__('Early Pickup');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak_express"
-                . "</div><b>{$label}</b><br /><em>{$comment}</em>";
-
-            return $renderedValue;
+        $renderedValue = "<b>{$label}</b>";
+        if ($comment) {
+            $renderedValue .= "<br /><em>{$comment}</em>";
         }
-
-        if ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
-            $label = $helper->__('Parcel Dispenser');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakketautomaat</div><b>"
-                . "{$label}</b>";
-
-            return $renderedValue;
-        }
-
-        if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
-            $label = $helper->__('Post Office');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak</div><b>"
-                . "{$label}</b>";
-
-            return $renderedValue;
-        }
-
-        /**
-         * Check if this order is domestic.
-         */
-        if ($value == 'NL') {
-            $label = $helper->__('Domestic');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>standard</div><b>"
-                . "{$label}</b>";
-
-            return $renderedValue;
-        }
-
-        /**
-         * Check if this order's shipping address is in an EU country.
-         */
-        $euCountries = $helper->getEuCountries();
-        if (in_array($value, $euCountries)) {
-            $label = $helper->__('EPS');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>eps</div><b>{$label}"
-                . "</b>";
-
-            return $renderedValue;
-        }
-
-        /**
-         * If none of the above apply, it's an international order.
-         */
-        $label = $helper->__('GlobalPack');
-
-        $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>global_pack</div><b>{$label}"
-            . "</b>";
 
         return $renderedValue;
     }

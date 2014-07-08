@@ -43,7 +43,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_Core_Observer_Barcode
+     * @return $this
      *
      * @event sales_order_shipment_save_after
      *

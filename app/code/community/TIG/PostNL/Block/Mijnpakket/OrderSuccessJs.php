@@ -54,14 +54,14 @@ class TIG_PostNL_Block_Mijnpakket_OrderSuccessJs extends TIG_PostNL_Block_Checko
     protected $_template = 'TIG/PostNL/mijnpakket/order_success_js.phtml';
 
     /**
-     * Check if the current customer may login using Mijnpakket.
+     * Check if the MijnPakket notification may be shown.
      *
      * @return string
      */
     protected function _tohtml()
     {
         $helper = Mage::helper('postnl/mijnpakket');
-        if (!$helper->canLoginWithMijnpakket()) {
+        if (!$helper->canShowMijnpakketNotification()) {
             return '';
         }
 

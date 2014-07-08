@@ -39,7 +39,6 @@
  */
 -->
 <jstranslator>
-    <!-- deliveryOptions.js -->
     <more_info translate="message" module="postnl">
         <message>More Info</message>
     </more_info>

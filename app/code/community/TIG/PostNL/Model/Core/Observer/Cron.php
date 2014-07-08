@@ -41,17 +41,17 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Xml path to maximum file storage setting in system/config
      */
-    const XML_PATH_MAX_FILE_STORAGE  = 'postnl/advanced/max_temp_file_storage_time';
+    const XPATH_MAX_FILE_STORAGE  = 'postnl/advanced/max_temp_file_storage_time';
 
     /**
      * XML path to confirmation expire time setting
      */
-    const XML_PATH_CONFIRM_EXPIRE_DAYS = 'postnl/advanced/confirm_expire_days';
+    const XPATH_CONFIRM_EXPIRE_DAYS = 'postnl/advanced/confirm_expire_days';
 
     /**
      * XML path to setting that determines whether or not to send track and trace emails
      */
-    const XML_PATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
+    const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
 
     /**
      * Method to destroy temporary label files that have been stored for too long.
@@ -62,7 +62,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      * sure these files will not survive indefinitely, which may lead to the file system
      * being overburdened or the server running out of harddrive space.
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -93,7 +93,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Check the maximum amount of time a temp file may be stored. By default this is 300s (5m).
          * If this settings is empty, end the script.
          */
-        $maxFileStorageTime = (int) Mage::getStoreConfig(self::XML_PATH_MAX_FILE_STORAGE, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $maxFileStorageTime = (int) Mage::getStoreConfig(self::XPATH_MAX_FILE_STORAGE, Mage_Core_Model_App::ADMIN_STORE_ID);
         if (empty($maxFileStorageTime)) {
             $helper->cronLog('No max file storage time defined. Exiting cron.');
             return $this;
@@ -165,7 +165,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Method to destroy old lock files.
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -254,7 +254,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Retrieve barcodes for postnl shipments that do not have one.
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     public function getBarcodes()
     {
@@ -285,8 +285,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $counter = 1000;
         foreach ($postnlShipmentCollection as $postnlShipment) {
             /**
-             * Process a maximum of 1000 shipments (to prevent Cif from being overburdoned).
-             * Only successfull requests count towards this number
+             * Process a maximum of 1000 shipments (to prevent Cif from being overburdened).
+             * Only successful requests count towards this number
              */
             if ($counter < 1) {
                 break;
@@ -314,7 +314,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Update shipping status for all confirmed, but undelivered shipments.
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     public function updateShippingStatus()
     {
@@ -371,7 +371,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
              * Attempt to update the shipping status. Continue with the next one if it fails.
              */
             try{
-                if (!$postnlShipment->getShipment()) {
+                if (!$postnlShipment->getShipment(false)) {
                     continue;
                 }
 
@@ -407,7 +407,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      * @param TIG_PostNL_Model_Core_Cif_Exception $e
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     protected function _parseErrorCodes($e, $postnlShipment)
     {
@@ -466,7 +466,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Removes expired confirmations by resetting the postnl shipment to a pre-confirm state
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     public function expireConfirmation()
     {
@@ -488,7 +488,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
         $collectionPhase = $postnlShipmentModelClass::SHIPPING_PHASE_COLLECTION;
 
-        $confirmationExpireDays = Mage::getStoreConfig(self::XML_PATH_CONFIRM_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $confirmationExpireDays = Mage::getStoreConfig(self::XPATH_CONFIRM_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
         $expireTimestamp = strtotime("-{$confirmationExpireDays} days", Mage::getModel('core/date')->gmtTimestamp());
         $expireDate = date('Y-m-d H:i:s', $expireTimestamp);
 
@@ -553,7 +553,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Send a track & trace e-mail to the customer
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     public function sendTrackAndTraceEmail()
     {
@@ -573,7 +573,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
          */
         $allowedStoreIds = array();
         foreach (array_keys(Mage::app()->getStores()) as $storeId) {
-            if (Mage::getStoreConfig(self::XML_PATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId)) {
+            if (Mage::getStoreConfig(self::XPATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId)) {
                 $allowedStoreIds[] = $storeId;
             }
         }
@@ -682,9 +682,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
     }
 
     /**
-     * Deletes labels belonging to shipments that have been delievered as well as labels who have no associated shipments.
+     * Deletes labels belonging to shipments that have been delivered as well as labels who have no associated
+     * shipments.
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     public function removeOldLabels()
     {
@@ -700,7 +701,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog('RemoveOldLabels cron starting...');
 
         /**
-         * Get the PostNL Shipment classname for later use
+         * Get the PostNL Shipment class name for later use
          *
          * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
          */

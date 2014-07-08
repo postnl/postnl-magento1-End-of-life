@@ -92,7 +92,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             );
         }
 
-        $shippingDuration = Mage::helper('postnl/deliveryoptions')->getShippingDuration($quote);
+        $shippingDuration = Mage::helper('postnl/deliveryOptions')->getShippingDuration($quote);
 
         $soapParams = array(
             'GetDeliveryDate' => array(

@@ -68,12 +68,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * XML path to show_grid_options setting.
      */
-    const XML_PATH_SHOW_OPTIONS = 'postnl/cif_labels_and_confirming/show_grid_options';
+    const XPATH_SHOW_OPTIONS = 'postnl/cif_labels_and_confirming/show_grid_options';
 
     /**
      * XML path to show shipment type column setting.
      */
-    const XML_PATH_SHOW_SHIPMENT_TYPE_COLUMN = 'postnl/cif_labels_and_confirming/show_shipment_type_column';
+    const XPATH_SHOW_SHIPMENT_TYPE_COLUMN = 'postnl/cif_labels_and_confirming/show_shipment_type_column';
 
     /**
      * Edits the sales order grid by adding a mass action to create shipments for selected orders.
@@ -118,7 +118,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * replace the collection, as the default collection has a bug preventing it from being reset.
          * Without being able to reset it, we can't edit it. Therefore we are forced to replace it altogether
          *
-         * TODO see if this can be avoided in any way
+         * @todo see if this can be avoided in any way
          */
         $collection = Mage::getResourceModel('postnl/order_grid_collection');
         $collection->setSelect($select)
@@ -131,7 +131,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $this->_joinCollection($collection);
         $this->_modifyColumns($block);
         $this->_addColumns($block);
-        $this->_applySortAndFilter($collection);
+        $this->_applySortAndFilter();
         $this->_addMassaction($block);
 
         $block->setCollection($collection);
@@ -158,8 +158,19 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             array('order' => $resource->getTableName('sales/order')),
             '`main_table`.`entity_id`=`order`.`entity_id`',
             array(
-                'shipping_method'      => 'order.shipping_method',
+                'shipping_method' => 'order.shipping_method',
             )
+        );
+
+        /**
+         * Join sales_flat_order_payment table
+         */
+        $select->joinLeft(
+               array('payment' => $resource->getTableName('sales/order_payment')),
+               '`main_table`.`entity_id`=`payment`.`parent_id`',
+               array(
+                   'payment_method' => 'payment.method',
+               )
         );
 
         /**
@@ -273,8 +284,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'align'                     => 'left',
             'index'                     => 'country_id',
             'type'                      => 'options',
-            'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_shipmentType',
-            'width'                     => '110px',
+            'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_orderType',
+            'width'                     => '140px',
             'filter_condition_callback' => array($this, '_filterShipmentType'),
             'sortable'                  => false,
             'options'                   => array(
@@ -289,7 +300,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         );
 
         $showShipmentTypeColumn = Mage::getStoreConfigFlag(
-            self::XML_PATH_SHOW_SHIPMENT_TYPE_COLUMN,
+            self::XPATH_SHOW_SHIPMENT_TYPE_COLUMN,
             Mage_Core_Model_App::ADMIN_STORE_ID
         );
 
@@ -325,58 +336,259 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $helper = Mage::helper('postnl');
 
         /**
-         * Make sure the admin is allowed ship orders.
+         * Make sure the admin is allowed to ship orders and add the mass action.
          */
-        if (!$helper->checkIsPostnlActionAllowed('create_shipment')) {
-            return $this;
+        if ($helper->checkIsPostnlActionAllowed('create_shipment')) {
+            $createShipmentMassActionData = $this->_getCreateShipmentMassAction();
+
+            /**
+             * Add the massaction.
+             */
+            $block->getMassactionBlock()
+                  ->addItem(
+                      'create_shipments',
+                      $createShipmentMassActionData
+                  );
         }
 
         /**
-         * Build an array of options for the massaction item
+         * Make sure the admin is allowed to print packing slips and add the mass action.
+         */
+        if ($helper->checkIsPostnlActionAllowed('print_packing_slips')) {
+            $printPackingSlipMassActionData = $this->_getCreatePackingSlipMassAction();
+
+            /**
+             * Add the massaction.
+             */
+            $block->getMassactionBlock()
+                  ->addItem(
+                      'print_packing_slip',
+                      $printPackingSlipMassActionData
+                  );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets mass action data for the createShipments mass action.
+     *
+     * @return array
+     */
+    protected function _getCreateShipmentMassAction()
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Build an array of options for the massaction item.
          */
         $massActionData = array(
             'label'=> $helper->__('PostNL - Create Shipments'),
             'url'  => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massCreateShipments'),
         );
 
-        $showOptions = Mage::getStoreConfig(self::XML_PATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $showOptions = Mage::getStoreConfig(self::XPATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
 
         if ($showOptions) {
+            $optionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
+
             /**
-             * Add another dropdown containing the possible product options
+             * Add another dropdown containing the possible product options.
              */
             $massActionData['additional'] = array(
-                'product_options' => array(
-                    'name'   => 'product_options',
+                'postnl_use_default' => array(
+                    'name'    => 'product_options[use_default]',
+                    'type'    => 'checkbox',
+                    'label'   => $helper->__('Use default option'),
+                    'value'   => 1,
+                    'checked' => 'checked',
+                ),
+                'postnl_domestic_options' => array(
+                    'name'   => 'product_options[domestic_options]',
                     'type'   => 'select',
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
-                    'values' => Mage::getModel('postnl_core/system_config_source_allProductOptions')
-                                    ->getAvailableOptions(true, true, false, false, false, true, true),
+                    'values' => $optionsModel->getOptions(
+                                             array(
+                                                 'group' => 'standard_options',
+                                                 'isCod' => false,
+                                             ),
+                                             false,
+                                             true
+                        ),
+                ),
+                'postnl_avond_options' => array(
+                    'name'   => 'product_options[avond_options]',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => $helper->__('Product options'),
+                    'values' => $optionsModel->getOptions(
+                                             array(
+                                                 'group'   => 'standard_options',
+                                                 'isCod'   => false,
+                                                 'isAvond' => true),
+                                             false,
+                                             true
+                        ),
+                ),
+                'postnl_pg_options' => array(
+                    'name'   => 'product_options[pg_options]',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => $helper->__('Product options'),
+                    'values' => $optionsModel->getOptions(
+                                             array(
+                                                 'group' => 'pakjegemak_options',
+                                                 'isCod' => false,
+                                             ),
+                                             false,
+                                             true
+                        ),
+                ),
+                'postnl_pge_options' => array(
+                    'name'   => 'product_options[pge_options]',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => $helper->__('Product options'),
+                    'values' => $optionsModel->getOptions(
+                                             array(
+                                                 'group' => 'pakjegemak_options',
+                                                 'isCod' => false,
+                                                 'isPge' => true,
+                                             ),
+                                             false,
+                                             true
+                        ),
+                ),
+                'postnl_eps_options' => array(
+                    'name'   => 'product_options[eps_options]',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => $helper->__('Product options'),
+                    'values' => $optionsModel->getOptions(
+                                             array(
+                                                 'group' => 'eu_options',
+                                             ),
+                                             false,
+                                             true
+                        ),
+                ),
+                'postnl_globalpack_options' => array(
+                    'name'   => 'product_options[globalpack_options]',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => $helper->__('Product options'),
+                    'values' => $optionsModel->getOptions(
+                                             array(
+                                                 'group' => 'global_options',
+                                             ),
+                                             false,
+                                             true
+                        ),
+                ),
+                'postnl_domestic_cod_options' => array(
+                    'name'   => 'product_options[domestic_cod_options]',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => $helper->__('Product options'),
+                    'values' => $optionsModel->getOptions(
+                                             array(
+                                                 'group' => 'standard_options',
+                                                 'isCod' => true,
+                                             ),
+                                             false,
+                                             true
+                        ),
+                ),
+                'postnl_avond_cod_options' => array(
+                    'name'   => 'product_options[avond_cod_options]',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => $helper->__('Product options'),
+                    'values' => $optionsModel->getOptions(
+                                             array(
+                                                 'group'   => 'standard_options',
+                                                 'isCod'   => true,
+                                                 'isAvond' => true,
+                                             ),
+                                             false,
+                                             true
+                        ),
+                ),
+                'postnl_pg_cod_options' => array(
+                    'name'   => 'product_options[pg_cod_options]',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => $helper->__('Product options'),
+                    'values' => $optionsModel->getOptions(
+                                             array(
+                                                 'group' => 'pakjegemak_options',
+                                                 'isCod' => true,
+                                             ),
+                                             false,
+                                             true
+                        ),
+                ),
+                'postnl_pge_cod_options' => array(
+                    'name'   => 'product_options[pge_cod_options]',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => $helper->__('Product options'),
+                    'values' => $optionsModel->getOptions(
+                                             array(
+                                                 'group' => 'pakjegemak_options',
+                                                 'isCod' => true,
+                                                 'isPge' => true,
+                                             ),
+                                             false,
+                                             true
+                        ),
+                ),
+                'postnl_pa_options' => array(
+                    'name'   => 'product_options[pa_options]',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => $helper->__('Product options'),
+                    'values' => $optionsModel->getOptions(
+                                             array(
+                                                 'group' => 'pakketautomaat_options',
+                                             ),
+                                             false,
+                                             true
+                        ),
                 ),
             );
         }
 
-        /**
-         * Add the massaction
-         */
-        $block->getMassactionBlock()
-              ->addItem(
-                  'create_shipments',
-                  $massActionData
-              );
+        return $massActionData;
+    }
 
-        return $this;
+    /**
+     * Gets mass action data for the printPackingSlips mass action.
+     *
+     * @return array
+     */
+    protected function _getCreatePackingSlipMassAction()
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Build an array of options for the massaction item.
+         */
+        $massActionData = array(
+            'label' => $helper->__('PostNL - Print packing slips'),
+            'url'   => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingslips'),
+        );
+
+        return $massActionData;
     }
 
     /**
      * Applies sorting and filtering to the collection
      *
-     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
-     *
      * @return $this
      */
-    protected function _applySortAndFilter($collection)
+    protected function _applySortAndFilter()
     {
         $session = Mage::getSingleton('adminhtml/session');
 
@@ -384,7 +596,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $filter = Mage::helper('adminhtml')->prepareFilterString($filter);
 
         if ($filter) {
-            $this->_filterCollection($collection, $filter);
+            $this->_filterCollection($filter);
         }
 
         $sort = $session->getData(self::ORDER_GRID_SORT_VAR_NAME);
@@ -392,7 +604,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         if ($sort) {
             $dir = $session->getData(self::ORDER_GRID_DIR_VAR_NAME);
 
-            $this->_sortCollection($collection, $sort, $dir);
+            $this->_sortCollection($sort, $dir);
         }
 
         return $this;
@@ -401,17 +613,20 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Adds new filters to the collection if these filters are based on columns added by this observer
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
-     * @param array $filter Array of filters to be added
+     * @param array                                           $filter     Array of filters to be added
      *
      * @return $this
      */
-    protected function _filterCollection($collection, $filter)
+    protected function _filterCollection($filter)
     {
         $block = $this->getBlock();
 
         foreach ($filter as $columnName => $value) {
             $column = $block->getColumn($columnName);
+
+            if (!$column) {
+                continue;
+            }
 
             $column->getFilter()->setValue($value);
             $this->_addColumnFilterToCollection($column);
@@ -423,8 +638,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Filters the collection by the 'shipment_type' column. Th column has 3 options: domestic, EPS and GlobalPack.
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
-     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column         $column
      *
      * @return $this
      */
@@ -485,7 +700,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 
         /**
          * If the filter condition is NL, filter out all orders not being shipped to the Netherlands. PakjeGemak,
-         * PakjeeGmak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
+         * PakjeGemak Express, evening delivery and pakketautomaat shipments are also shipped to the Netherlands so we
          * need to explicitly filter those as well.
          */
         if ($filterCond == 'nl') {
@@ -573,13 +788,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Sorts the collection by a specified column in a specified direction
      *
-     * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      * @param string $sort The column that the collection is sorted by
      * @param string $dir The direction that is used to sort the collection
      *
      * @return $this
      */
-    protected function _sortCollection($collection, $sort, $dir)
+    protected function _sortCollection($sort, $dir)
     {
         $block = $this->getBlock();
         $column = $block->getColumn($sort);

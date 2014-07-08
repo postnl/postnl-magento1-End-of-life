@@ -45,18 +45,18 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     /**
      * XML paths for security keys
      */
-    const XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY  = 'postnl/general/unique_key';
-    const XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY = 'postnl/general/private_key';
+    const XPATH_EXTENSIONCONTROL_UNIQUE_KEY  = 'postnl/general/unique_key';
+    const XPATH_EXTENSIONCONTROL_PRIVATE_KEY = 'postnl/general/private_key';
 
     /**
      * XML path to updateStatistics on/off switch
      */
-    const XML_PATH_SEND_STATISTICS = 'postnl/advanced/send_statistics';
+    const XPATH_SEND_STATISTICS = 'postnl/advanced/send_statistics';
 
     /**
      * XML path to receiveUpdates on/off switch
      */
-    const XML_PATH_RECEIVE_UPDATES = 'postnl/advanced/receive_updates';
+    const XPATH_RECEIVE_UPDATES = 'postnl/advanced/receive_updates';
 
     /**
      * Log filename to log all webservices exceptions
@@ -87,12 +87,12 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
             /**
              * If a website was specified, check if the module may send statistics for that website
              */
-            $sendStatistics = $website->getConfig(self::XML_PATH_SEND_STATISTICS);
+            $sendStatistics = $website->getConfig(self::XPATH_SEND_STATISTICS);
         } else {
             /**
              * otherwise, check if ending statistics was enabled in default settings
              */
-            $sendStatistics = Mage::getStoreConfigFlag(self::XML_PATH_SEND_STATISTICS, $storeId);
+            $sendStatistics = Mage::getStoreConfigFlag(self::XPATH_SEND_STATISTICS, $storeId);
         }
 
         if (!$sendStatistics) {
@@ -102,8 +102,8 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
         /**
          * Check if the security keys have been entered.
          */
-        $privateKey = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_PRIVATE_KEY, $storeId);
-        $uniqueKey  = Mage::getStoreConfig(self::XML_PATH_EXTENSIONCONTROL_UNIQUE_KEY, $storeId);
+        $privateKey = Mage::getStoreConfig(self::XPATH_EXTENSIONCONTROL_PRIVATE_KEY, $storeId);
+        $uniqueKey  = Mage::getStoreConfig(self::XPATH_EXTENSIONCONTROL_UNIQUE_KEY, $storeId);
 
         if (empty($privateKey) || empty($uniqueKey)) {
             return false;
@@ -121,7 +121,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
 
-        $receiveUpdates =  Mage::getStoreConfigFlag(self::XML_PATH_RECEIVE_UPDATES, $storeId);
+        $receiveUpdates =  Mage::getStoreConfigFlag(self::XPATH_RECEIVE_UPDATES, $storeId);
         if (!$receiveUpdates) {
             return false;
         }
@@ -150,7 +150,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
      *
      * @param Zend_Soap_Client $client
      *
-     * @return TIG_PostNL_Helper_Webservices
+     * @return $this
      *
      * @see Mage::log()
      */
@@ -181,7 +181,7 @@ class TIG_PostNL_Helper_Webservices extends TIG_PostNL_Helper_Data
      *
      * @param Mage_Core_Exception|TIG_PostNL_Exception|SoapFault $exception
      *
-     * @return TIG_PostNL_Helper_Webservices
+     * @return $this
      *
      * @see Mage::logException()
      */
