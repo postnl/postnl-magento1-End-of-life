@@ -71,9 +71,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     const XPATH_SHOW_OPTIONS = 'postnl/cif_labels_and_confirming/show_grid_options';
 
     /**
-     * XML path to show shipment type column setting.
+     * XML path to 'order grid columns' setting
      */
-    const XPATH_SHOW_SHIPMENT_TYPE_COLUMN = 'postnl/cif_labels_and_confirming/show_shipment_type_column';
+    const XPATH_ORDER_GRID_COLUMNS = 'postnl/cif_labels_and_confirming/order_grid_columns';
 
     /**
      * Edits the sales order grid by adding a mass action to create shipments for selected orders.
@@ -139,7 +139,42 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     }
 
     /**
-     * Adds additional joins to the collection that will be used by newly added columns
+     * Adds additional joins to the collection that will be used by newly added columns.
+     *
+     * Resulting query:
+     * SELECT `main_table`.*,
+     *     `order`.`shipping_method`,
+     *     `payment`.`method` AS `payment_method`,
+     *     `shipping_address`.`country_id`,
+     *     `postnl_order`.`is_pakje_gemak`,
+     *     `postnl_order`.`is_pakketautomaat`,
+     *     `postnl_order`.`type` AS `delivery_option_type`,
+     *     `postnl_order`.`confirm_date`,
+     *     group_concat(
+     *         `postnl_shipment`.`confirm_status`
+     *         ORDER BY `postnl_shipment`.`created_at` DESC
+     *         SEPARATOR ","
+     *     ) AS `confirm_status`,
+     *     group_concat(
+     *         `postnl_shipment`.`shipping_phase`
+     *         ORDER BY `postnl_shipment`.`created_at` DESC
+     *         SEPARATOR ","
+     *     ) AS `shipping_phase`
+     * FROM `sales_flat_order_grid` AS `main_table`
+     * INNER JOIN `sales_flat_order` AS `order`
+     *     ON `main_table`.`entity_id`=`order`.`entity_id`
+     * LEFT JOIN `sales_flat_order_payment` AS `payment`
+     *     ON `main_table`.`entity_id`=`payment`.`parent_id`
+     * LEFT JOIN `sales_flat_order_address` AS `shipping_address`
+     *     ON `main_table`.`entity_id`=`shipping_address`.`parent_id`
+     *     AND `shipping_address`.`address_type`='shipping'
+     * LEFT JOIN `tig_postnl_order` AS `postnl_order`
+     *     ON `main_table`.`entity_id`=`postnl_order`.`order_id`
+     * LEFT JOIN `tig_postnl_shipment` AS `postnl_shipment`
+     *     ON `main_table`.`entity_id`=`postnl_shipment`.`order_id`
+     * GROUP BY `main_table`.`entity_id`
+     * ORDER BY increment_id DESC
+     * LIMIT 20
      *
      * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
      *
@@ -152,7 +187,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $select = $collection->getSelect();
 
         /**
-         * Join sales_flat_order table
+         * Join sales_flat_order table.
          */
         $select->joinInner(
             array('order' => $resource->getTableName('sales/order')),
@@ -163,7 +198,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         );
 
         /**
-         * Join sales_flat_order_payment table
+         * Join sales_flat_order_payment table.
          */
         $select->joinLeft(
                array('payment' => $resource->getTableName('sales/order_payment')),
@@ -174,7 +209,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         );
 
         /**
-         * Join sales_flat_order_address table
+         * Join sales_flat_order_address table.
          */
         $select->joinLeft(
             array('shipping_address' => $resource->getTableName('sales/order_address')),
@@ -185,7 +220,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         );
 
         /**
-         * Join tig_postnl_order table
+         * Join tig_postnl_order table.
          */
         $select->joinLeft(
             array('postnl_order' => $resource->getTableName('postnl_core/order')),
@@ -194,8 +229,29 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'is_pakje_gemak'       => 'postnl_order.is_pakje_gemak',
                 'is_pakketautomaat'    => 'postnl_order.is_pakketautomaat',
                 'delivery_option_type' => 'postnl_order.type',
+                'confirm_date'         => 'postnl_order.confirm_date',
             )
         );
+
+        /**
+         * Join tig_postnl_shipment table.
+         */
+        $select->joinLeft(
+            array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
+            '`main_table`.`entity_id`=`postnl_shipment`.`order_id`',
+            array(
+                'confirm_status' => new Zend_Db_Expr(
+                    'group_concat(`postnl_shipment`.`confirm_status` ORDER BY `postnl_shipment`.`created_at` DESC ' .
+                    'SEPARATOR ",")'
+                ),
+                'shipping_phase' => new Zend_Db_Expr(
+                    'group_concat(`postnl_shipment`.`shipping_phase` ORDER BY `postnl_shipment`.`created_at` DESC ' .
+                    'SEPARATOR ",")'
+                ),
+            )
+        );
+
+        $select->group('main_table.entity_id');
 
         return $this;
     }
@@ -279,7 +335,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     {
         $helper = Mage::helper('postnl');
 
-        $columnAttributes = array(
+        $countryIdColumnAttributes = array(
             'header'                    => $helper->__('Shipment type'),
             'align'                     => 'left',
             'index'                     => 'country_id',
@@ -299,29 +355,269 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             ),
         );
 
-        $showShipmentTypeColumn = Mage::getStoreConfigFlag(
-            self::XPATH_SHOW_SHIPMENT_TYPE_COLUMN,
-            Mage_Core_Model_App::ADMIN_STORE_ID
-        );
+        $showOrderColumns = Mage::getStoreConfig(self::XPATH_ORDER_GRID_COLUMNS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $showOrderColumns = explode(',', $showOrderColumns);
 
         /**
-         * If we don't need to display the shipment type column, hide it. We'll still need it for some javascript functionality
+         * If we don't need to display the shipment type column, hide it. We'll still need it for some javascript
+         * functionality
          */
-        if (!$showShipmentTypeColumn) {
-            $columnAttributes['column_css_class'] = 'no-display';
-            $columnAttributes['header_css_class'] = 'no-display';
-            $columnAttributes['display'] = 'none';
+        if (!in_array('shipment_type', $showOrderColumns)) {
+            $countryIdColumnAttributes['column_css_class'] = 'no-display';
+            $countryIdColumnAttributes['header_css_class'] = 'no-display';
+            $countryIdColumnAttributes['display'] = 'none';
         }
 
         $block->addColumnAfter(
             'country_id',
-            $columnAttributes,
+            $countryIdColumnAttributes,
             'shipping_name'
         );
+
+        /**
+         * Add the confirm date column.
+         */
+        $after = 'country_id';
+        if (in_array('confirm_date', $showOrderColumns)) {
+            $block->addColumnAfter(
+                'confirm_date',
+                array(
+                    'type'           => 'date',
+                    'header'         => $helper->__('Send date'),
+                    'index'          => 'confirm_date',
+                    'filter_index'   => 'postnl_order.confirm_date',
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_orderConfirmDate',
+                    'width'          => '150px',
+                    'frame_callback' => array($this, 'decorateConfirmDate'),
+                ),
+                $after
+            );
+
+            $after = 'confirm_date';
+        }
+
+        /**
+         * Add the confirm status column.
+         */
+        if (in_array('confirm_status', $showOrderColumns)) {
+            $block->addColumnAfter(
+                'confirm_status',
+                array(
+                    'header'         => $helper->__('Confirm Status'),
+                    'type'           => 'text',
+                    'index'          => 'confirm_status',
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_confirmStatus',
+                    'frame_callback' => array($this, 'decorateConfirmStatus'),
+                    'sortable'       => false,
+                    'filter'         => false,
+                ),
+                $after
+            );
+
+            $after = 'confirm_status';
+        }
+
+        /**
+         * Add the shipping phase column.
+         */
+        if (in_array('shipping_phase', $showOrderColumns)) {
+            $block->addColumnAfter(
+                'shipping_phase',
+                array(
+                    'header'         => $helper->__('Shipping Phase'),
+                    'align'          => 'left',
+                    'index'          => 'shipping_phase',
+                    'type'           => 'text',
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_shippingPhase',
+                    'frame_callback' => array($this, 'decorateShippingPhase'),
+                    'sortable'       => false,
+                    'filter'         => false,
+                ),
+                $after
+            );
+        }
 
         $block->sortColumnsByOrder();
 
         return $this;
+    }
+
+    /**
+     * Decorates the confirm_sate column
+     *
+     * @param string|null                             $value
+     * @param Mage_Sales_Model_Order_Shipment         $row
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     * @param boolean                                 $isExport
+     *
+     * @return string
+     */
+    public function decorateConfirmDate($value, $row, $column, $isExport)
+    {
+        if ($isExport) {
+            return $value;
+        }
+
+        $class = $this->_getConfirmDateClass($row, $column);
+
+        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
+    }
+
+    /**
+     * Gets classname for the confirmDate column of the current row.
+     *
+     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     *
+     * @return string
+     */
+    protected function _getConfirmDateClass($row, $column)
+    {
+        $origValue = $row->getData($column->getIndex());
+        $dateModel = Mage::getModel('core/date');
+
+        if (!$origValue) {
+            return '';
+        }
+
+        if (date('Ymd', $dateModel->gmtTimestamp()) == date('Ymd', strtotime($origValue))) {
+            return 'grid-severity-minor';
+        }
+
+        if ($dateModel->gmtTimestamp() > strtotime($origValue)) {
+            return 'grid-severity-critical';
+        }
+
+        return 'grid-severity-notice';
+    }
+
+    /**
+     * Decorates the confirm_status column
+     *
+     * @param string | null $values
+     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     * @param boolean $isExport
+     *
+     * @return string
+     */
+    public function decorateConfirmStatus($values, $row, $column, $isExport)
+    {
+        if ($isExport) {
+            return $values;
+        }
+
+        if (is_null($values)) {
+            return '';
+        }
+
+        $html      = '';
+        $statusses = explode(',', $row->getData($column->getIndex()));
+        $values    = explode(',', $values);
+
+        foreach ($statusses as $key => $status) {
+            $html .= $this->_decorateConfirmStatus($status, $values[$key]);
+        }
+
+        return $html;
+    }
+
+    /**
+     * Decorate a single confirm status value.
+     *
+     * @param string $status
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function _decorateConfirmStatus($status, $value)
+    {
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
+         */
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+
+        switch ($status) {
+            case $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED:
+                $class = 'grid-severity-notice';
+                break;
+            case $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED:
+            case $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED:
+                $class = 'grid-severity-critical';
+                break;
+            default:
+                $class = '';
+                break;
+        }
+
+        $html = '<span class="'.$class.'"><span>'.$value.'</span></span>';
+        return $html;
+    }
+
+    /**
+     * Decorates the shipping_phase column
+     *
+     * @param string|null                             $values
+     * @param Mage_Sales_Model_Order_Shipment         $row
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
+     * @param boolean                                 $isExport
+     *
+     * @return string
+     */
+    public function decorateShippingPhase($values, $row, $column, $isExport)
+    {
+        if ($isExport) {
+            return $values;
+        }
+
+        $html           = '';
+        $shippingPhases = explode(',', $row->getData($column->getIndex()));
+        $values         = explode(',', $values);
+
+        foreach ($shippingPhases as $key => $phase) {
+            $html .= $this->_decorateShippingPhase($phase, $values[$key]);
+        }
+
+        return $html;
+    }
+
+    /**
+     * Decorate a single shipping phase and corresponding value.
+     *
+     * @param string|int $phase
+     * @param string     $value
+     *
+     * @return string
+     */
+    protected function _decorateShippingPhase($phase, $value)
+    {
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
+         */
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+
+        switch ($phase) {
+            case null: //rows with no value (non-PostNL shipments) or unconfirmed shipments.
+                $class = '';
+                break;
+            case $postnlShipmentClass::SHIPPING_PHASE_DELIVERED:
+                $class = 'grid-severity-notice';
+                break;
+            case $postnlShipmentClass::SHIPPING_PHASE_SORTING: //no break;
+            case $postnlShipmentClass::SHIPPING_PHASE_DISTRIBUTION: //no break;
+            case $postnlShipmentClass::SHIPPING_PHASE_COLLECTION:
+                $class = 'grid-severity-minor';
+                break;
+            case $postnlShipmentClass::SHIPPING_PHASE_NOT_APPLICABLE:
+                $class = 'grid-severity-critical';
+                break;
+            default:
+                $class = '';
+                break;
+        }
+
+        $html = '<span class="' . $class . '"><span>' . $value . '</span></span>';
+        return $html;
     }
 
     /**

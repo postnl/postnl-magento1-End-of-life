@@ -749,6 +749,27 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         return $this;
     }
 
+    public function setOrderId()
+    {
+        $transactionSave = Mage::getResourceModel('core/transaction');
+
+        $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        foreach ($postnlShipmentCollection as $shipment) {
+            /**
+             * The getOrderId() method will calculate and set the order id if none is available.
+             */
+            $shipment->getOrderId();
+
+            if ($shipment->hasDataChanges()) {
+                $transactionSave->addObject($shipment);
+            }
+        }
+
+        $transactionSave->save();
+
+        return $this;
+    }
+
     /**
      * Sets the shipment type of every PostNL shipment. Before 1.3.0 the shipment type was determined on the fly. Since
      * 1.3.0 it is instead set once in the PostNL Shipment table. This method updates the table for all PostNL shipments
