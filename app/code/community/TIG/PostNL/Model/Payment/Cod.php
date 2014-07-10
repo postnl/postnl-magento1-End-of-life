@@ -277,11 +277,27 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     {
         $title = parent::getTitle();
 
+        if (Mage::helper('postnl')->isAdmin()) {
+            $adminSession = Mage::getSingleton('adminhtml/session_quote');
+            if ($adminSession && $adminSession->getStore() !== null) {
+                $store = $adminSession->getStore();
+            } else {
+                $store = Mage::app()->getStore();
+            }
+        } else {
+            $checkoutSession = Mage::getSingleton('checkout/session');
+            if ($checkoutSession && $checkoutSession->getQuote()) {
+                $store = $checkoutSession->getQuote()->getStore();
+            } else {
+                $store = Mage::app()->getStore();
+            }
+        }
+
         /**
          * Get the fee from the config and convert and format it according to the chosen currency and locale.
          */
-        $fee = Mage::getStoreConfig(self::XPATH_COD_FEE, Mage::app()->getStore()->getId());
-        $fee = Mage::app()->getStore()->convertPrice($fee, true, false);
+        $fee = Mage::getStoreConfig(self::XPATH_COD_FEE, $store);
+        $fee = $store->convertPrice($fee, true, false);
 
         /**
          * Replace any parameters in the title with the fee.

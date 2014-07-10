@@ -250,6 +250,7 @@
                         <before>tax,grand_total</before>
                         <after>subtotal,discount,shipping</after>
                         <renderer>postnl_payment/checkout_total_codFee</renderer>
+                        <admin_renderer>postnl_adminhtml/sales_order_create_totals_codFee</admin_renderer>
                     </postnl_cod_fee>
                     <postnl_cod_fee_tax>
                         <class>postnl_payment/quote_address_total_codFeeTax</class>
