@@ -36,13 +36,35 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Resource_Order extends Mage_Core_Model_Resource_Db_Abstract
+class TIG_PostNL_Model_Adminhtml_System_Config_Source_OrderGridColumns
 {
     /**
-     * Initialize PostNL order model.
+     * Returns an option array for optional shipment grid columns
+     *
+     * @return array
      */
-    public function _construct()
+    public function toOptionArray()
     {
-        $this->_init('postnl_core/order', 'entity_id');
+        $helper = Mage::helper('postnl');
+        $columns = array(
+            array(
+                'value' => 'shipment_type',
+                'label' => $helper->__('Shipment type')
+            ),
+            array(
+                'value' => 'confirm_date',
+                'label' => $helper->__('Send date')
+            ),
+            array(
+                'value' => 'confirm_status',
+                'label' => $helper->__('Confirm Status')
+            ),
+            array(
+                'value' => 'shipping_phase',
+                'label' => $helper->__('Shipping phase')
+            ),
+        );
+
+        return $columns;
     }
 }

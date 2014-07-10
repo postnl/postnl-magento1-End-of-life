@@ -183,10 +183,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * Resulting query:
      * SELECT `main_table`.*,
      *     IF(
-     *         `pakjegemak_address`.`parent_id`, `pakjegemak_address`.`country_id`, `shipping_address`.`country_id`
+     *         `pakjegemak_address`.`parent_id`,
+     *         `pakjegemak_address`.`country_id`,
+     *         `shipping_address`.`country_id`
      *     ) AS `country_id`,
      *     IF(
-     *         `pakjegemak_address`.`parent_id`, `pakjegemak_address`.`postcode`, `shipping_address`.`postcode`
+     *         `pakjegemak_address`.`parent_id`,
+     *         `pakjegemak_address`.`postcode`,
+     *         `shipping_address`.`postcode`
      *     ) AS `postcode`,
      *     `order`.`shipping_method`,
      *     `order`.`shipping_description`,
@@ -216,7 +220,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *     ON `main_table`.`entity_id`=`postnl_shipment`.`shipment_id`
      * LEFT JOIN `tig_postnl_order` AS `postnl_order`
      *     ON `main_table`.`order_id`=`postnl_order`.`order_id`
-     * ORDER BY created_at DESC LIMIT 20
+     * ORDER BY created_at DESC
+     * LIMIT 20
      *
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      *

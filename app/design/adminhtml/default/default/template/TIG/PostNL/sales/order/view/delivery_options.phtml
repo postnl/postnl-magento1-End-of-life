@@ -35,14 +35,53 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
  */
-class TIG_PostNL_Model_Core_Resource_Order extends Mage_Core_Model_Resource_Db_Abstract
-{
-    /**
-     * Initialize PostNL order model.
-     */
-    public function _construct()
-    {
-        $this->_init('postnl_core/order', 'entity_id');
-    }
-}
+?>
+<?php /** @var TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions $this */ ?>
+<?php $_helper = Mage::helper('postnl'); ?>
+
+<?php $_postnlOrder = $this->getPostnlOrder(); ?>
+
+<?php if ($_postnlOrder->getId() && $_postnlOrder->getType()): ?>
+    <div class="hor-scroll" id="postnl_delivery_option_info">
+        <table cellspacing="0" class="form-list">
+            <tr>
+                <td class="label"><label><?php echo $this->__('Delivery option'); ?></label></td>
+                <td class="value">
+                    <strong><?php echo $this->getShipmentType(); ?></strong>
+                    <?php $_subType = $this->getShipmentSubType(); ?>
+                    <?php if ($_subType): ?>
+                        <br/>
+                        <span>
+                            <em><?php echo $_subType; ?></em>
+                        </span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><label><?php echo $this->__('Requested delivery date'); ?></label></td>
+                <td class="value"><strong><?php echo $this->formatDate($_postnlOrder->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        //<![CDATA[
+        var shippingFieldset = $$('.box-right fieldset')[1];
+
+        shippingFieldset.insert({
+            bottom: $('postnl_delivery_option_info')
+        });
+
+        var shippingTrackingLink = $$('.box-right fieldset a#linkId');
+
+        if (shippingTrackingLink) {
+            shippingFieldset.insert({
+                bottom: shippingTrackingLink[0]
+            });
+            shippingFieldset.down('br').remove();
+        }
+        //]]>
+    </script>
+<?php endif; ?>

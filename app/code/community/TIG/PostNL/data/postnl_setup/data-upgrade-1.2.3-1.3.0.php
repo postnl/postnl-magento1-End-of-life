@@ -61,6 +61,7 @@ $postnlRequiredResources = array(
     'admin/postnl/shipment/actions/print_label',
 );
 
-$installer->setShipmentType()
+$installer->setOrderId()
+          ->setShipmentType()
           ->addAclRules($newConfigAclResources, $configRequiredResources)
           ->addAclRules($newPostnLAclResources, $postnlRequiredResources);

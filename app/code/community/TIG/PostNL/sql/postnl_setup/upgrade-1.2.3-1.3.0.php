@@ -51,6 +51,17 @@ $conn = $installer->getConnection();
  **********************************************************************************************************************/
 
 $conn->addColumn($installer->getTable('postnl_core/shipment'),
+    'order_id',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_INTEGER,
+        'length'   => 10,
+        'nullable' => true,
+        'comment'  => 'Order Id',
+        'after'    => 'shipment_id',
+    )
+);
+
+$conn->addColumn($installer->getTable('postnl_core/shipment'),
     'shipment_type',
     array(
         'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
@@ -59,6 +70,22 @@ $conn->addColumn($installer->getTable('postnl_core/shipment'),
         'comment'  => 'Shipment Type',
         'after'    => 'product_code',
     )
+);
+
+$conn->addIndex(
+    $installer->getTable('postnl_core/shipment'),
+    $installer->getIdxName($installer->getTable('postnl_core/shipment'), array('order_id')),
+    'order_id'
+);
+
+$conn->addForeignKey(
+    $installer->getFkName('postnl_core/shipment', 'order_id', 'sales/order', 'entity_id'),
+    $installer->getTable('postnl_core/shipment'),
+    'order_id',
+    $installer->getTable('sales/order'),
+    'entity_id',
+    Varien_Db_Ddl_Table::ACTION_CASCADE, //on delete cascade
+    Varien_Db_Ddl_Table::ACTION_CASCADE //on update cascade
 );
 
 /**

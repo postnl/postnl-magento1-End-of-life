@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
 {
     /**
@@ -60,6 +60,15 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
         }
 
         $value = $row->getData($this->getColumn()->getIndex());
+
+        /**
+         * If we have no value, then no delivery date was chosen by the customer. In this case we can send the order
+         * whenever we're ready.
+         */
+        if (!$value) {
+            return '';
+        }
+
         $now = date('Ymd', Mage::getModel('core/date')->gmtTimestamp());
 
         /**

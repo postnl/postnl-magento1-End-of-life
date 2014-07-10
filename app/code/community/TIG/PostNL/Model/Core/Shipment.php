@@ -378,7 +378,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getOrderId()
     {
-        if ($this->hasOrderId()) {
+        if ($this->hasOrderId() && $this->_getData('order_id')) {
             return $this->_getData('order_id');
         }
 
@@ -3099,6 +3099,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         if (!$this->getConfirmDate()) {
             $this->setConfirmDate();
+        }
+
+        /**
+         * If no order ID has been set, use the getOrderId() method. This will automatically set the order ID.
+         */
+        if (!$this->_getData('order_id')) {
+            $this->getOrderId();
         }
 
         /**
