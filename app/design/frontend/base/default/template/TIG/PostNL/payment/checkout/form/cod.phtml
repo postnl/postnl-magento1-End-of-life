@@ -53,6 +53,7 @@
 <?php endif; ?>
 <script type="text/javascript">
     //<![CDATA[
+    payment.init = Payment.prototype.init.bind(payment);
     payment.addAfterInitFunction(
         '<?php echo $_methodCode; ?>',
         function() {
