@@ -60,7 +60,7 @@ TIG_PostNL::Show product options in order grid,Toon productopties in het bestell
 "TIG_PostNL::This will add a product options field to the create shipments mass action in the order grid. If disabled, default options will be used.","Dit zal een extra optie toevoegen aan de 'maak zendingen aan' bulk actie in het bestellingen overzicht. Indien uitgeschakeld, zullen de standaard instellingen altijd gebruikt worden bij het bepalen van de product optie van de zendingen."
 TIG_PostNL::Optional shipment grid columns,Optionele kolommen voor verzendoverzicht
 TIG_PostNL::Select which optional columns to show in the shipment grid.,Selecteer welke optionele kolommen in het verzendoverzicht getoond moeten worden
-TIG_PostNL::Select a default option for the shipment grid mass action,Selecteer een standaard waarde voor de massa actie voor de verzendingen
+TIG_PostNL::Select a default option for the shipment grid mass action.,Selecteer een standaard waarde voor de massa actie voor de het zendingenoverzicht.
 TIG_PostNL::These fields are used to configure the track & trace email that may be automatically emailed to customers after a shipment has been confirmed.,Deze velden worden gebruikt om de track & trace e-mail te configureren. Deze e-mail wordt automatisch naar uw klanten verstuurd wanneer een zending wordt voorgemeld.
 TIG_PostNL::Automatically send track & trace email to customer,Stuur de track & trace e-mail automatisch naar de klant
 "TIG_PostNL::If enabled, a track & trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.","Indien geactiveerd, wordt er ongeveer 20 minuten na de zending voormelding een track & trace e-mail naar de klant gestuurd."
@@ -996,6 +996,9 @@ TIG_PostNL::Send date,Verzenddatum
 TIG_PostNL::Optional order grid columns,Optionele kolommen voor besteloverzicht
 TIG_PostNL::Select which optional columns to show in the order grid.,Selecteer welke optionele kolommen in het besteloverzicht getoond moeten worden
 TIG_PostNL::Selecting too many columns may cause the order grid to no longer fit on your monitor.,"Indien u teveel kolommen selecteert, kan dit er toe leiden dat het overzicht niet langer op uw beeldscherm past."
-TIG_PostNL::Delivery option,Bezorgoptie
-TIG_PostNL::Requested delivery date,Gekozen bezorgdatum
-TIG_PostNL::asap,zsm
+TIG_PostNL::Delivery option,Gekozen bezorgoptie
+TIG_PostNL::Requested delivery date,Gekozen bezorgdag
+TIG_PostNL::Shipping phase,Verzendfase
+TIG_PostNL::No order found for PostNL shipment #%d.,Geen bestelling gevonden voor PostNL zending #%d.
+TIG_PostNL::Select a default option for the order grid mass action.,Selecteer een standaard waarde voor de massa actie voor het bestellingsoverzicht.
+TIG_PostNL::No shipments found,Geen zendingen gevonden
