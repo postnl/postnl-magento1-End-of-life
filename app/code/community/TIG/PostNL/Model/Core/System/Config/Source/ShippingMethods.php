@@ -39,8 +39,8 @@
 class TIG_PostNL_Model_Core_System_Config_Source_ShippingMethods
 {
     /**
-     * Return an option array of carriers and shipping methods.
-     * If $isActiveOnlyFlag is set to true, only active carriers and their methods will be returned.
+     * Return an option array of carriers and shipping methods. If $isActiveOnlyFlag is set to true, only active
+     * carriers and their methods will be returned. {@inheritdoc}
      *
      * @param boolean $isMultiSelect
      * @param boolean $isActiveOnlyFlag
@@ -60,8 +60,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingMethods
                 continue;
             }
 
-            $carrierMethods = $carrierModel->getAllowedMethods();
-            if (!$carrierMethods) {
+            try {
+                $carrierMethods = $carrierModel->getAllowedMethods();
+                if (!$carrierMethods) {
+                    continue;
+                }
+            } catch (Exception $e) {
+                Mage::helper('postnl')->logException($e);
                 continue;
             }
 
