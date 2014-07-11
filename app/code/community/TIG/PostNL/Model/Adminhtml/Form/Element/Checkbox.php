@@ -36,15 +36,54 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_helper = $this->helper('postnl'); ?>
-<script type="text/javascript">
-    //<![CDATA[
-    var postnlMassActionFilter;
-    document.observe('dom:loaded', function() {
-        postnlMassActionFilter =  new PostnlMassActionFilter(sales_order_grid_massactionJsObject);
-    });
+class TIG_PostNL_Model_Adminhtml_Form_Element_Checkbox extends Varien_Data_Form_Element_Checkbox
+{
+    /**
+     * Render a checkbox with an associated hidden field. This allows you to disable the checkbox while still
+     * transmitting it's value when submitting the form.
+     *
+     * @return string
+     */
+    public function getElementHtml()
+    {
+        $checked = $this->getChecked();
+        if ($checked) {
+            $this->setData('checked', true);
+        } else {
+            $this->unsetData('checked');
+        }
 
-    sales_order_grid_massactionJsObject.onSelectChange();
-    //]]>
-</script>
+        $html = '<input id="'.$this->getHtmlId().'" name="'.$this->getName()
+            .'" value="'.$this->getEscapedValue().'" type="hidden"/>'."\n";
+        $html .= '<input id="'.$this->getHtmlId().'_checkbox" name="'.$this->getName()
+            .'_checkbox" value="'.$this->getEscapedValue().'" '.$this->serialize($this->getHtmlAttributes()).'/>'."\n";
+
+        $html .= '<script type="text/javascript">' . PHP_EOL
+               . '//<![CDATA[' . PHP_EOL
+               . '$("'.$this->getHtmlId().'_checkbox").observe("click", '
+               . 'function(){$('.$this->getHtmlId().').setValue(this.getValue());});' . PHP_EOL
+               . '//]]>' . PHP_EOL
+               . '</script>';
+
+        $html.= $this->getAfterElementHtml();
+
+        return $html;
+    }
+
+    /**
+     * Render HTML for element's label
+     *
+     * @param string $idSuffix
+     * @return string
+     */
+    public function getLabelHtml($idSuffix = '')
+    {
+        if (!is_null($this->getLabel())) {
+            $html = '<label for="'.$this->getHtmlId() . $idSuffix . '_checkbox">' . $this->_escape($this->getLabel())
+                . ( $this->getRequired() ? ' <span class="required">*</span>' : '' ) . '</label>' . "\n";
+        } else {
+            $html = '';
+        }
+        return $html;
+    }
+}

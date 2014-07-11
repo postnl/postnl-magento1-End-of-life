@@ -36,15 +36,20 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_helper = $this->helper('postnl'); ?>
-<script type="text/javascript">
-    //<![CDATA[
-    var postnlMassActionFilter;
-    document.observe('dom:loaded', function() {
-        postnlMassActionFilter =  new PostnlMassActionFilter(sales_order_grid_massactionJsObject);
-    });
-
-    sales_order_grid_massactionJsObject.onSelectChange();
-    //]]>
-</script>
+class TIG_PostNL_Model_Core_System_Config_Source_BuspakjeProductOptions
+    extends TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstract
+{
+    /**
+     * @var array
+     */
+    protected $_options = array(
+        array(
+            'value'        => '2828',
+            'label'        => 'Buspakje',
+        ),
+        array(
+            'value'        => '2928',
+            'label'        => 'Buspakje Extra',
+        ),
+    );
+}

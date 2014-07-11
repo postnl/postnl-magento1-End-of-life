@@ -569,7 +569,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         /**
          * Check if any options were selected. If not, the default will be used
          */
-        $chosenOptions = $this->getRequest()->getParams();
+        $chosenOptions = $this->getRequest()->getParam('product_options', array());
 
         if ($chosenOptions
             && (!isset($chosenOptions['use_default']) || $chosenOptions['use_default'] != '1')

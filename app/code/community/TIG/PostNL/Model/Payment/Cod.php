@@ -150,19 +150,6 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
             }
         }
 
-        $quoteId = $quote->getId();
-
-        /**
-         * @var TIG_PostNL_Model_Core_Order $postnlOrder
-         */
-        $postnlOrder = Mage::getModel('postnl_core/order')->load($quoteId, 'quote_id');
-        if ($postnlOrder->getId() && $postnlOrder->getType() == 'PA') {
-            $helper->log(
-                $helper->__('PostNL COD is not available, because the chosen delivery option is PA.')
-            );
-            return false;
-        }
-
         /**
          * Make sure all required fields are entered.
          */

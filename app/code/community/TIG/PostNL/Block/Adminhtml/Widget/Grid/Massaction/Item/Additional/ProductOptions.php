@@ -36,15 +36,24 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_helper = $this->helper('postnl'); ?>
-<script type="text/javascript">
-    //<![CDATA[
-    var postnlMassActionFilter;
-    document.observe('dom:loaded', function() {
-        postnlMassActionFilter =  new PostnlMassActionFilter(sales_order_grid_massactionJsObject);
-    });
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Massaction_Item_Additional_ProductOptions
+    extends Mage_Adminhtml_Block_Widget_Grid_Massaction_Item_Additional_Default
+{
+    /**
+     * @param array $configuration
+     *
+     * @return $this
+     */
+    public function createFromConfiguration(array $configuration)
+    {
+        $form = new Varien_Data_Form();
+        $form->addType('postnl_checkbox', 'TIG_PostNL_Model_Adminhtml_Form_Element_Checkbox');
 
-    sales_order_grid_massactionJsObject.onSelectChange();
-    //]]>
-</script>
+        foreach ($configuration as $itemId=>$item) {
+            $item['class'] = isset($item['class']) ? $item['class'] . ' absolute-advice' : 'absolute-advice';
+            $form->addField($itemId, $item['type'], $item);
+        }
+        $this->setForm($form);
+        return $this;
+    }
+}

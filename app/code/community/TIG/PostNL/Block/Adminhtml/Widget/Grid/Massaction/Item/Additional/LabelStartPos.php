@@ -42,7 +42,8 @@
  * @method Varien_Data_Collection                           getCollection()
  * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setBlock(Mage_Core_Block_Abstract $value)
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Grid_Massaction_LabelStartPos extends Mage_Adminhtml_Block_Abstract
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Massaction_Item_Additional_LabelStartPos
+    extends Mage_Adminhtml_Block_Abstract
 {
     /**
      * @var string

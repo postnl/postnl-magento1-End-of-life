@@ -382,6 +382,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Get an array of buspakje product codes.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getBuspakjeProductCodes($flat = true)
+    {
+        $buspakjeProductCodes = Mage::getSingleton('postnl_core/system_config_source_buspakjeProductOptions');
+        return $buspakjeProductCodes->getAvailableOptions($flat);
+    }
+
+    /**
      * Get an array of possible shipment types
      *
      * @return array

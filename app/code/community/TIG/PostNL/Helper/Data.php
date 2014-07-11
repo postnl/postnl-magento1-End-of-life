@@ -510,6 +510,38 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Checks to see if the module may ship buspakjes.
+     *
+     * @return boolean
+     */
+    public function canUseBuspakje()
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCoreCanUseBuspakje()) {
+            return $cache->getPostnlCoreCanUseBuspakje();
+        }
+
+        $buspakjeProductOptions = Mage::getModel('postnl_core/system_config_source_buspakjeProductOptions')
+                                      ->getAvailableOptions();
+        if (empty($buspakjeProductOptions)) {
+            if ($cache) {
+                $cache->setPostnlCoreCanUseBuspakje(false)
+                      ->saveCache();
+            }
+
+            return false;
+        }
+
+        if ($cache) {
+            $cache->setPostnlCoreCanUseBuspakje(true)
+                  ->saveCache();
+        }
+
+        return true;
+    }
+
+    /**
      * Checks whether the EPS BE only product option is allowed.
      *
      * @param bool|int $storeId

@@ -111,6 +111,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setDeliveryDate(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsPakketautomaat(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setShipmentType(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setOrder(Mage_Sales_Model_Order $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -127,6 +128,7 @@
  * @method bool                           hasIsPakketautomaat()
  * @method bool                           hasDeliveryDate()
  * @method bool                           hasShipmentType()
+ * @method bool                           hasOrder()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -173,6 +175,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
     const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION          = 'postnl/cif_product_options/default_eu_be_product_option';
     const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
+    const XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION       = 'postnl/cif_product_options/default_buspakje_product_option';
     const XPATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/cif_product_options/use_alternative_default';
     const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/cif_product_options/alternative_default_max_amount';
     const XPATH_ALTERNATIVE_DEFAULT_OPTION            = 'postnl/cif_product_options/alternative_default_option';
@@ -544,6 +547,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             }
         }
 
+        if ($this->isBuspaakjeShipment()) {
+            return 'buspakje';
+        }
+
         if ($this->isPgeShipment()) {
             return 'pge';
         }
@@ -818,6 +825,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             case 'globalpack':
                 $xpath = self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
                 break;
+            case 'buspakje':
+                $xpath = self::XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION;
+                break;
             //no default
         }
 
@@ -1024,6 +1034,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 break;
             case 'globalpack':
                 $allowedProductCodes = $cifHelper->getGlobalProductCodes($flat);
+                break;
+            case 'buspakje':
+                $allowedProductCodes = $cifHelper->getBuspakjeProductCodes($flat);
                 break;
             default:
                 $allowedProductCodes = array();
@@ -1547,6 +1560,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * Check if the current shipment is a buspakje shipment.
+     *
+     * @return boolean
+     *
+     * @todo implement this method.
+     */
+    public function isBuspaakjeShipment()
+    {
         return false;
     }
 
@@ -2763,6 +2788,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             if (is_array($productCode)) {
                 $productCode = $this->_extractProductcodeForType($productCode);
             }
+
             $this->_checkProductCodeAllowed($productCode);
 
             return $productCode;
