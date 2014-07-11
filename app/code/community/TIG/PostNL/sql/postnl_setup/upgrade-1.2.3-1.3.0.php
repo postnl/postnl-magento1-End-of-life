@@ -89,8 +89,8 @@ $conn->addForeignKey(
 );
 
 /**
- * Update the PostNL shipment table so that a PostNl shipment is deleted when it's corresponding Magento shipment is
- * deleted. This prevents errors caused by missing ID's.
+ * Update the PostNL shipment table so that a PostNl shipment is deleted when its corresponding Magento shipment is
+ * deleted. This prevents errors caused by missing IDs.
  */
 $conn->addForeignKey(
     $installer->getFkName('postnl_core/shipment', 'shipment_id', 'sales/shipment', 'entity_id'),

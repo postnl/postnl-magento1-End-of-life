@@ -114,6 +114,23 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
         /**
          * Finally, simply render the date
          */
-        return parent::render($row);
+        $format = $this->_getFormat();
+        try {
+            if($this->getColumn()->getGmtoffset()) {
+                $data = Mage::app()->getLocale()
+                            ->date($value, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
+            } else {
+                $data = Mage::getSingleton('core/locale')
+                            ->date($value, Zend_Date::ISO_8601, null, false)->toString($format);
+            }
+        } catch (Exception $e) {
+            if($this->getColumn()->getTimezone()) {
+                $data = Mage::app()->getLocale()
+                            ->date($value, Varien_Date::DATETIME_INTERNAL_FORMAT)->toString($format);
+            } else {
+                $data = Mage::getSingleton('core/locale')->date($value, null, null, false)->toString($format);
+            }
+        }
+        return $data;
     }
 }
