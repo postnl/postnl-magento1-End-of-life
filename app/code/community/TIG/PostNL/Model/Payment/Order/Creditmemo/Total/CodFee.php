@@ -129,7 +129,7 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee
                                 $order->getBasePostnlCodFee() - $order->getBasePostnlCodFeeRefunded()
                             )
                         ),
-                        'POSTNL-0177'
+                        'POSTNL-0178'
                     );
                 }
 

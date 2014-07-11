@@ -42,6 +42,9 @@
  */
 $installer = $this;
 
+/**
+ * Several new ACL roles have been added.
+ */
 $newConfigAclResources = array(
     'admin/system/config/postnl/download_logs',
 );
@@ -60,6 +63,20 @@ $postnlRequiredResources = array(
     'admin/postnl/shipment/actions',
     'admin/postnl/shipment/actions/print_label',
 );
+
+/**
+ * These settings have moved.
+ */
+$settingsToMove = array(
+    'postnl/delivery_options/shipping_duration'    => 'postnl/cif_labels_and_confirming/shipping_duration',
+    'postnl/delivery_options/cutoff_time'          => 'postnl/cif_labels_and_confirming/cutoff_time',
+    'postnl/delivery_options/allow_sunday_sorting' => 'postnl/cif_labels_and_confirming/allow_sunday_sorting',
+    'postnl/delivery_options/sunday_cutoff_time'   => 'postnl/cif_labels_and_confirming/sunday_cutoff_time',
+);
+
+foreach ($settingsToMove as $oldXpath => $newXpath) {
+    $installer->moveConfigSetting($oldXpath, $newXpath, true);
+}
 
 $installer->setOrderId()
           ->setShipmentType()

@@ -1095,6 +1095,9 @@ PostnlDeliveryOptions.prototype = {
      */
     unSelectTimeframe : function() {
         var timeframes = this.timeframes;
+        if (!timeframes) {
+            return this;
+        }
 
         timeframes.each(function(timeframe) {
             timeframe.unSelect();

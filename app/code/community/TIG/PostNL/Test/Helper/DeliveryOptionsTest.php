@@ -57,7 +57,7 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
      */
     public function shouldAllowSundaySorting()
     {
-        Mage::app()->getStore()->setConfig('postnl/delivery_options/allow_sunday_sorting', true);
+        Mage::app()->getStore()->setConfig('postnl/cif_labels_and_confirming/allow_sunday_sorting', true);
 
         $helper = $this->_getInstance();
 
@@ -71,7 +71,7 @@ class TIG_PostNL_Test_Helper_DeliveryOptionsTest extends TIG_PostNL_Test_Framewo
     {
         $this->resetMagento();
 
-        Mage::app()->getStore()->setConfig('postnl/delivery_options/allow_sunday_sorting', false);
+        Mage::app()->getStore()->setConfig('postnl/cif_labels_and_confirming/allow_sunday_sorting', false);
 
         $helper = $this->_getInstance();
 

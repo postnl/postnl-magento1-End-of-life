@@ -260,7 +260,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      ******************************************************************************************************************/
 
     /**
-     * Retrieves a Mage_Sales_Model_Order_Shipment entity linked to the postnl shipment.
+     * Retrieves a Mage_Sales_Model_Order_Shipment entity linked to the PostNL shipment.
      *
      * @param boolean $throwException
      *
@@ -291,6 +291,35 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setShipment($shipment);
         return $shipment;
+    }
+
+    /**
+     * Retrieves a Mage_Sales_Model_Order entity linked to this PostNL shipment.
+     *
+     * @param boolean $throwException
+     *
+     * @return Mage_Sales_Model_Order
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function getOrder($throwException = true)
+    {
+        if ($this->hasOrder()) {
+            return $this->_getData('order');
+        }
+
+        $orderId = $this->getOrderId();
+        if (!$orderId && $throwException) {
+            throw new TIG_PostNL_Exception(
+                $this->getHelper()->__('No order found for PostNL shipment #%d.', $this->getId()),
+                'POSTNL-0177'
+            );
+        }
+
+        $order = Mage::getModel('sales/order')->load($orderId);
+
+        $this->setOrder($order);
+        return $order;
     }
 
     /**
@@ -398,9 +427,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param string $type
      *
-     * @return TIG_PostNL_Helper_Data|TIG_PostNL_Helper_Cif|TIG_PostNL_Helper_Carrier|TIG_PostNL_Helper_Checkout
-     *         |TIG_PostNL_Helper_AddressValidation|TIG_PostNL_Helper_DeliveryOptions|TIG_PostNL_Helper_Parcelware
-     *         |TIG_PostNL_Helper_Webservices|TIG_PostNL_Helper_Mijnpakket
+     * @return mixed
      */
     public function getHelper($type = 'data')
     {
@@ -1025,6 +1052,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $deliveryDate = $postnlOrder->getDeliveryDate();
 
             $this->setDeliveryDate($deliveryDate);
+            return $deliveryDate;
+        }
+
+        /**
+         * @var TIG_PostNL_Helper_DeliveryOptions $helper
+         */
+        $helper = $this->getHelper('deliveryOptions');
+        $deliveryDate = $helper->getShippingDate($this->getOrder()->getCreatedAt(), $this->getStoreId());
+
+        if ($deliveryDate) {
             return $deliveryDate;
         }
 

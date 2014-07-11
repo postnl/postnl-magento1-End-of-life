@@ -214,7 +214,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
 
         $helper = Mage::helper('postnl');
 
-        $inbox = Mage::getModel('postnl/inbox');
+        $inbox = Mage::getModel('postnl_admin/inbox');
         if ($dbVer) {
             $message = '[POSTNL-0083] ' . $helper->__(
                 'PostNL extension has been successfully updated to version v%s.',
@@ -358,7 +358,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                          . 'behaviour.'
                      );
 
-            $inbox = Mage::getModel('postnl/inbox');
+            $inbox = Mage::getModel('postnl_admin/inbox');
             $inbox->addCritical(
                       $message,
                       $message,
@@ -384,7 +384,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                          . 'behaviour.'
                      );
 
-            $inbox = Mage::getModel('postnl/inbox');
+            $inbox = Mage::getModel('postnl_admin/inbox');
             $inbox->addCritical(
                       $message,
                       $message,
@@ -425,7 +425,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
                     self::MIN_SERVER_MEMORY / 1024 / 1024
                 );
 
-            $inbox = Mage::getModel('postnl/inbox');
+            $inbox = Mage::getModel('postnl_admin/inbox');
             $inbox->addCritical(
                 $message,
                 $message,
@@ -749,6 +749,14 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         return $this;
     }
 
+    /**
+     * Sets the order ID of every postNL shipment. this is mostly for convenience's sake. Using the new order ID we can
+     * load an order directly from the PostNL shipment without first having to load the Magento shipment.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     */
     public function setOrderId()
     {
         $transactionSave = Mage::getResourceModel('core/transaction');
@@ -776,6 +784,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
      * that do not yet have a shipment type.
      *
      * @return $this
+     *
+     * @throws Exception
      */
     public function setShipmentType()
     {

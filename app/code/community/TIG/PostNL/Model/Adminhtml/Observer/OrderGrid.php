@@ -76,6 +76,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     const XPATH_ORDER_GRID_COLUMNS = 'postnl/cif_labels_and_confirming/order_grid_columns';
 
     /**
+     * Xpath to the 'order_grid_massaction_default' setting.
+     */
+    const XPATH_ORDER_GRID_MASSACTION_DEFAULT = 'postnl/cif_labels_and_confirming/order_grid_massaction_default';
+
+    /**
      * Edits the sales order grid by adding a mass action to create shipments for selected orders.
      *
      * @param Varien_Event_Observer $observer
@@ -160,6 +165,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *         ORDER BY `postnl_shipment`.`created_at` DESC
      *         SEPARATOR ","
      *     ) AS `shipping_phase`
+     *     IF(
+     *         `postnl_shipment`.`confirm_date`,
+     *         `postnl_shipment`.`confirm_date`,
+     *         `postnl_order`.`confirm_date`
+     *     ) AS `confirm_date`
      * FROM `sales_flat_order_grid` AS `main_table`
      * INNER JOIN `sales_flat_order` AS `order`
      *     ON `main_table`.`entity_id`=`order`.`entity_id`
@@ -173,7 +183,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      * LEFT JOIN `tig_postnl_shipment` AS `postnl_shipment`
      *     ON `main_table`.`entity_id`=`postnl_shipment`.`order_id`
      * GROUP BY `main_table`.`entity_id`
-     * ORDER BY increment_id DESC
+     * ORDER BY created_at DESC
      * LIMIT 20
      *
      * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
@@ -183,6 +193,19 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     protected function _joinCollection($collection)
     {
         $resource = Mage::getSingleton('core/resource');
+
+        /**
+         * If the order has any PostNl shipments, we can use their confirm_date. Otherwise we can check the confirm_date
+         * stored by the tig_postnl_order table.
+         */
+        $collection->addExpressionFieldToSelect(
+            'confirm_date',
+            'IF({{shipment_confirm_date}}, {{shipment_confirm_date}}, {{order_confirm_date}})',
+            array(
+                'shipment_confirm_date' => '`postnl_shipment`.`confirm_date`',
+                'order_confirm_date'    => '`postnl_order`.`confirm_date`',
+            )
+        );
 
         $select = $collection->getSelect();
 
@@ -229,7 +252,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'is_pakje_gemak'       => 'postnl_order.is_pakje_gemak',
                 'is_pakketautomaat'    => 'postnl_order.is_pakketautomaat',
                 'delivery_option_type' => 'postnl_order.type',
-                'confirm_date'         => 'postnl_order.confirm_date',
             )
         );
 
@@ -251,6 +273,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             )
         );
 
+        /**
+         * Group the results by the ID column.
+         */
         $select->group('main_table.entity_id');
 
         return $this;
@@ -406,7 +431,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'header'         => $helper->__('Confirm Status'),
                     'type'           => 'text',
                     'index'          => 'confirm_status',
-                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_confirmStatus',
+                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_orderConfirmStatus',
                     'frame_callback' => array($this, 'decorateConfirmStatus'),
                     'sortable'       => false,
                     'filter'         => false,
@@ -458,37 +483,81 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return $value;
         }
 
-        $class = $this->_getConfirmDateClass($row, $column);
+        $class = $this->_getConfirmDateClass($value, $row, $column);
 
         return '<span class="'.$class.'"><span>'.$value.'</span></span>';
     }
 
     /**
-     * Gets classname for the confirmDate column of the current row.
+     * Gets class name for the confirmDate column of the current row.
      *
-     * @param Mage_Sales_Model_Order_Shipment $row
+     * @param string|null                             $value
+     * @param Mage_Sales_Model_Order_Shipment         $row
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
      *
      * @return string
      */
-    protected function _getConfirmDateClass($row, $column)
+    protected function _getConfirmDateClass($value, $row, $column)
     {
+        if (!$value) {
+            return '';
+        }
+
         $origValue = $row->getData($column->getIndex());
         $dateModel = Mage::getModel('core/date');
 
         if (!$origValue) {
-            return '';
+            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getShippingDate(
+                $row->getCreatedAt(),
+                $row->getStoreId()
+            );
+            $origValue = date('Y-m-d H:i:s', strtotime('-1 day', strtotime($deliveryDate)));
+        }
+
+        $isConfirmed = $this->_isRowConfirmed($row);
+
+        if ($isConfirmed) {
+            return 'grid-severity-notice';
         }
 
         if (date('Ymd', $dateModel->gmtTimestamp()) == date('Ymd', strtotime($origValue))) {
-            return 'grid-severity-minor';
+            return 'grid-severity-major';
         }
 
         if ($dateModel->gmtTimestamp() > strtotime($origValue)) {
             return 'grid-severity-critical';
         }
 
-        return 'grid-severity-notice';
+        return 'grid-severity-minor';
+    }
+
+    /**
+     * Checks if the row has been fully confirmed.
+     *
+     * @param Mage_Sales_Model_Order_Shipment $row
+     *
+     * @return boolean
+     */
+    protected function _isRowConfirmed($row)
+    {
+        $confirmStatus = $row->getConfirmStatus();
+
+        if (!$confirmStatus) {
+            return false;
+        }
+
+        /**
+         * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
+         */
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        $statusses = explode(',', $confirmStatus);
+        foreach ($statusses as $status) {
+            if ($status != $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -511,8 +580,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return '';
         }
 
+        $origValues = $row->getData($column->getIndex());
+        if (!$origValues) {
+            $html = '<span class="grid-severity-minor"><span>' . $values . '</span></span>';
+            return $html;
+        }
+
         $html      = '';
-        $statusses = explode(',', $row->getData($column->getIndex()));
+        $statusses = explode(',', $origValues);
         $values    = explode(',', $values);
 
         foreach ($statusses as $key => $status) {
@@ -642,7 +717,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
              */
             $block->getMassactionBlock()
                   ->addItem(
-                      'create_shipments',
+                      'postnl_create_shipments',
                       $createShipmentMassActionData
                   );
         }
@@ -658,7 +733,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
              */
             $block->getMassactionBlock()
                   ->addItem(
-                      'print_packing_slip',
+                      'postnl_print_packing_slip',
                       $printPackingSlipMassActionData
                   );
         }
@@ -683,7 +758,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'url'  => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massCreateShipments'),
         );
 
-        $showOptions = Mage::getStoreConfig(self::XPATH_SHOW_OPTIONS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+
+        $defaultMassAction = Mage::getStoreConfig(self::XPATH_ORDER_GRID_MASSACTION_DEFAULT, $storeId);
+        if ($defaultMassAction == 'postnl_create_shipments') {
+            $massActionData['selected'] = true;
+        }
+
+        $showOptions = Mage::getStoreConfig(self::XPATH_SHOW_OPTIONS, $storeId);
 
         if ($showOptions) {
             $optionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
@@ -875,6 +957,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             'label' => $helper->__('PostNL - Print packing slips'),
             'url'   => Mage::helper('adminhtml')->getUrl('postnl_admin/adminhtml_shipment/massPrintPackingslips'),
         );
+
+        $defaultMassAction = Mage::getStoreConfig(
+            self::XPATH_ORDER_GRID_MASSACTION_DEFAULT,
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+        if ($defaultMassAction == 'postnl_print_packing_slip') {
+            $massActionData['selected'] = true;
+        }
 
         return $massActionData;
     }
