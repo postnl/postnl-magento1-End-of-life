@@ -55,7 +55,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     /**
      * Xpath for shipping duration setting.
      */
-    const XPATH_SHIPPING_DURATION = 'postnl/delivery_options/shipping_duration';
+    const XPATH_SHIPPING_DURATION = 'postnl/cif_labels_and_confirming/shipping_duration';
 
     /**
      * Gets a PostNL Order. If none is set; load one.

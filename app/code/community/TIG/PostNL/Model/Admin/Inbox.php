@@ -40,7 +40,7 @@
  * CE 1.7. This class adds those methods in case they're missing. Each method will return it's parent if it exists to
  * ensure forwards compatibility.
  */
-class TIG_PostNL_Model_Inbox extends Mage_AdminNotification_Model_Inbox
+class TIG_PostNL_Model_Admin_Inbox extends Mage_AdminNotification_Model_Inbox
 {
     /**
      * Add new message.

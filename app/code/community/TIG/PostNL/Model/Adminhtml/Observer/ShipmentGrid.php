@@ -232,24 +232,33 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $resource = Mage::getSingleton('core/resource');
 
         /**
-         * Add a conditional SELECT clause for the country_id and postode fields. If the shipment has a PakjeGemak
+         * Add a conditional SELECT clause for the country_id and postcode fields. If the shipment has a PakjeGemak
          * address we need the postcode and country_id from that address. Otherwise we need them from the shipping
          * address.
          */
         $collection->addExpressionFieldToSelect(
             'country_id',
-            'IF(`pakjegemak_address`.`parent_id`, `pakjegemak_address`.`country_id`, `shipping_address`.`country_id`)',
-            'country_id'
-        )->addExpressionFieldToSelect(
+            'IF({{pakjegemak_parent_id}}, {{pakjegemak_country_id}}, {{shipping_country_id}})',
+            array(
+                'pakjegemak_parent_id' => '`pakjegemak_address`.`parent_id`',
+                'pakjegemak_country_id'  => '`pakjegemak_address`.`country_id`',
+                'shipping_country_id'    => '`shipping_address`.`country_id`',
+            )
+        );
+        $collection->addExpressionFieldToSelect(
             'postcode',
-            'IF(`pakjegemak_address`.`parent_id`, `pakjegemak_address`.`postcode`, `shipping_address`.`postcode`)',
-            'postcode'
+            'IF({{pakjegemak_parent_id}}, {{pakjegemak_postcode}}, {{shipping_postcode}})',
+            array(
+                'pakjegemak_parent_id' => '`pakjegemak_address`.`parent_id`',
+                'pakjegemak_postcode'  => '`pakjegemak_address`.`postcode`',
+                'shipping_postcode'    => '`shipping_address`.`postcode`',
+            )
         );
 
         $select = $collection->getSelect();
 
         /**
-         * Join sales_flat_order table
+         * Join sales_flat_order table.
          */
         $select->joinInner(
             array('order' => $resource->getTableName('sales/order')),
@@ -277,7 +286,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         );
 
         /**
-         * Join tig_postnl_shipment table
+         * Join tig_postnl_shipment table.
          */
         $select->joinLeft(
             array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
@@ -297,7 +306,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         );
 
         /**
-         * Join tig_postnl_order table
+         * Join tig_postnl_order table.
          */
         $select->joinLeft(
             array('postnl_order' => $resource->getTableName('postnl_core/order')),

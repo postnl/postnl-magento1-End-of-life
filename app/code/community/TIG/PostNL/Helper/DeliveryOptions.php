@@ -57,19 +57,20 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     const XPATH_SHOW_OPTIONS_FOR_LETTER     = 'postnl/delivery_options/show_options_for_letter';
     const XPATH_SHOW_OPTIONS_FOR_BACKORDERS = 'postnl/delivery_options/show_options_for_backorders';
-    const XPATH_ALLOW_SUNDAY_SORTING        = 'postnl/delivery_options/allow_sunday_sorting';
+    const XPATH_ALLOW_SUNDAY_SORTING        = 'postnl/cif_labels_and_confirming/allow_sunday_sorting';
 
     /**
      * Xpaths to extra fee config settings.
      */
     const XPATH_EVENING_TIMEFRAME_FEE  = 'postnl/delivery_options/evening_timeframe_fee';
     const XPATH_PAKJEGEMAK_EXPRESS_FEE = 'postnl/delivery_options/pakjegemak_express_fee';
+
     /**
      * Xpath for shipping duration setting.
      */
-    const XPATH_SHIPPING_DURATION  = 'postnl/delivery_options/shipping_duration';
-    const XPATH_CUTOFF_TIME        = 'postnl/delivery_options/cutoff_time';
-    const XPATH_SUNDAY_CUTOFF_TIME = 'postnl/delivery_options/sunday_cutoff_time';
+    const XPATH_SHIPPING_DURATION  = 'postnl/cif_labels_and_confirming/shipping_duration';
+    const XPATH_CUTOFF_TIME        = 'postnl/cif_labels_and_confirming/cutoff_time';
+    const XPATH_SUNDAY_CUTOFF_TIME = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
 
     /**
      * The time we consider to be the start of the evening.
