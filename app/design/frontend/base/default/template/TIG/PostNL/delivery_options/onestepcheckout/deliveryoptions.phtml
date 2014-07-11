@@ -217,7 +217,7 @@
     function startDeliveryOptions(postcode, housenumber, fullAddress) {
         var options;
         var params;
-        var debug = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
+        var postnlDebugMode = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
 
         params = {
             saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
@@ -254,7 +254,7 @@
         };
 
         try {
-            deliveryOptions = new PostnlDeliveryOptions(params, options, debug);
+            deliveryOptions = new PostnlDeliveryOptions(params, options, postnlDebugMode);
             window.deliveryOptions = deliveryOptions;
         } catch(e) {
             console.error(e);

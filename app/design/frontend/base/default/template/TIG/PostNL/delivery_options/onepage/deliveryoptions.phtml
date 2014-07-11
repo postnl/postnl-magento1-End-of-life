@@ -112,7 +112,6 @@
     var options;
     var params;
     var postnlDebugMode = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
-    console.info(postnlDebugMode);
 
     params = {
         saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
