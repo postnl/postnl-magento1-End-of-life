@@ -131,7 +131,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
 
-        $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted, $convert);
+        $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted, false);
+
+        if ($price > 2) {
+            $price = 0;
+        }
+
+        if ($convert) {
+            $quote = $this->getQuote();
+            $store = $quote->getStore();
+
+            $price = $store->convertPrice($price, $formatted, false);
+        }
 
         return $price;
     }
@@ -151,7 +162,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
 
-        $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted, $convert);
+        $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted, false);
+
+        if ($price > 2) {
+            $price = 0;
+        }
+
+        if ($convert) {
+            $quote = $this->getQuote();
+            $store = $quote->getStore();
+
+            $price = $store->convertPrice($price, $formatted, false);
+        }
 
         return $price;
     }
