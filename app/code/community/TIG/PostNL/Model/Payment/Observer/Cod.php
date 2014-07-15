@@ -44,9 +44,15 @@ class TIG_PostNL_Model_Payment_Observer_Cod
     const XPATH_COD_AUTO_INVOICE = 'postnl/cod/auto_invoice';
 
     /**
+     * Automatically invoice a shipment after it has been delivered.
+     *
      * @param Varien_Event_Observer $observer
      *
      * @return $this
+     *
+     * @event postnl_shipment_setshippingphase_delivered
+     *
+     * @observer postnl_cod_auto_invoice
      */
     public function autoInvoice(Varien_Event_Observer $observer)
     {
@@ -96,6 +102,64 @@ class TIG_PostNL_Model_Payment_Observer_Cod
             );
         } catch (Exception $e) {
             $helper->logException($e);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Prevents the creation of partial shipments by comparing the total qty of the shipment with that of the order.
+     *
+     * Unfortunately partial shipments are not possible for orders placed using COD.
+     *
+     * @param Varien_Event_Observer $observer
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @event sales_order_shipment_save_before
+     *
+     * @observer postnl_cod_prevent_partial_shipment
+     */
+    public function preventPartialShipment(Varien_Event_Observer $observer)
+    {
+        /**
+         * @var Mage_Sales_Model_Order_Shipment $shipment
+         * @var Mage_Sales_Model_Order $order
+         */
+        $shipment = $observer->getShipment();
+        $order = $shipment->getOrder();
+
+        /**
+         * Check if the order was placed using a PostNL COD payment method.
+         */
+        $paymentMethod = $order->getPayment()->getMethod();
+
+        $helper = Mage::helper('postnl/payment');
+        $codPaymentMethods = $helper->getCodPaymentMethods();
+        if (!in_array($paymentMethod, $codPaymentMethods)) {
+            return $this;
+        }
+
+        $shipmentQty = $shipment->getTotalQty();
+        $orderQty = 0;
+
+        /**
+         * @var Mage_Sales_Model_Order_Item $item
+         */
+        foreach ($order->getAllItems() as $item) {
+            $orderQty += $item->getQtyOrdered();
+        }
+
+        if ($orderQty > $shipmentQty) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__(
+                    'It is not possible to create partial shipments for orders placed using PostNL COD. Please ' .
+                    'create only full shipments.'
+                ),
+                'POSTNL-0179'
+            );
         }
 
         return $this;

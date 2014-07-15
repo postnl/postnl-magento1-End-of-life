@@ -1002,3 +1002,11 @@ TIG_PostNL::Shipping phase,Verzendfase
 TIG_PostNL::No order found for PostNL shipment #%d.,Geen bestelling gevonden voor PostNL zending #%d.
 TIG_PostNL::Select a default option for the order grid mass action.,Selecteer een standaard waarde voor de massa actie voor het bestellingsoverzicht.
 TIG_PostNL::No shipments found,Geen zendingen gevonden
+TIG_PostNL::Letter box parcel options,Buspakje opties
+TIG_PostNL::Default letter box parcel option,Standaard buspakje optie
+TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to letter box parcel shipments.,Deze installeing kan worden overschreven door handmatig zendingen aan te maken. Deze instelling is enkel van toepassing op buspakje zendingen.
+TIG_PostNL::Is letter box parcel,Is buspakje
+TIG_PostNL::Use default option,Gebruik standaardwaarde
+TIG_PostNL::Letter Box Parcel,Buspakje
+TIG_PostNL::Letter Box Parcel Extra,Buspakje Extra
+TIG_PostNL::It is not possible to create partial shipments for orders placed using PostNL COD. Please create only full shipments.,Het is niet mogelijk om deelzendingen aan te maken voor bestellingen die geplaatst zijn met PostNL rembours. Maak s.v.p. enkel volledige zendingen aan.

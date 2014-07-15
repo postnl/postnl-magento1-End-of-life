@@ -1203,13 +1203,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $shipment = $postnlShipment->getShipment();
             }
 
-            $value = number_format($postnlShipment->getShipmentBaseGrandTotal(), 2, '.', '');
+            $order = $shipment->getOrder();
+
+            $value = number_format($order->getBaseGrandTotal(), 2, '.', '');
             $amount[] = array(
                 'AccountName'       => $this->_getCodAccountName(),
                 'BIC'               => $this->_getCodBic(),
                 'IBAN'              => $this->_getCodIban(),
                 'AmountType'        => '01', // 01 = COD, 02 = Insured
-                'Currency'          => $shipment->getOrder()->getBaseCurrencyCode(),
+                'Currency'          => $order->getBaseCurrencyCode(),
                 'Reference'         => $this->_getReference($shipment),
                 'TransactionNumber' => '',
                 'Value'             => $value,
