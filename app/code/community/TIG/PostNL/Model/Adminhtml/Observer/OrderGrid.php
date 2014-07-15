@@ -164,7 +164,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *         `postnl_shipment`.`shipping_phase`
      *         ORDER BY `postnl_shipment`.`created_at` DESC
      *         SEPARATOR ","
-     *     ) AS `shipping_phase`
+     *     ) AS `shipping_phase`,
      *     IF(
      *         `postnl_shipment`.`confirm_date`,
      *         `postnl_shipment`.`confirm_date`,
@@ -785,7 +785,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'postnl_is_buspakje' => array(
                     'name'    => 'product_options[is_buspakje]',
                     'type'    => 'checkbox',
-                    'label'   => $helper->__('Is buspakje'),
+                    'label'   => $helper->__('Is letter box parcel'),
                     'value'   => 1,
                 ),
                 'postnl_domestic_options' => array(

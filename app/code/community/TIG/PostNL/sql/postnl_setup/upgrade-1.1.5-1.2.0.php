@@ -75,7 +75,7 @@ $conn->addColumn($installer->getTable('postnl_core/shipment'),
     'is_pakketautomaat',
     array(
         'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
-        'nullable' => false,
+        'nullable' => true,
         'default'  => 0,
         'comment'  => 'Is Pakketautomaat',
         'after'    => 'is_pakje_gemak',

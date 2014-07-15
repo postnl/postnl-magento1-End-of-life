@@ -571,9 +571,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          */
         $chosenOptions = $this->getRequest()->getParam('product_options', array());
 
-        if ($chosenOptions
-            && (!isset($chosenOptions['use_default']) || $chosenOptions['use_default'] != '1')
-        ) {
+        if (!empty($chosenOptions)) {
             Mage::register('postnl_product_option', $chosenOptions);
         }
 

@@ -1901,8 +1901,8 @@
                             </depends>
                         </default_pge_product_option>
                         <default_buspakje_options translate="label comment" module="postnl">
-                            <label>Default buspakje option</label>
-                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to buspakje shipments.</comment>
+                            <label>Default letter box parcel option</label>
+                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to letter box parcel shipments.</comment>
                             <frontend_type>select</frontend_type>
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>

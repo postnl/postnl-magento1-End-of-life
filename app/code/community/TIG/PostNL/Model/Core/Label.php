@@ -446,7 +446,11 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * First we need to add pages to the pdf for certain label types under certain conditions.
          */
         $labelType = $label->getLabelType();
-        if ($labelType == 'Label' || $labelType == 'Label-combi') {
+        if ($labelType == 'Label'
+            || $labelType == 'Label-combi'
+            || $labelType == 'BusPakje'
+            || $labelType == 'BuspakjeExtra'
+        ) {
             if ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
                 $pdf->addOrientedPage('L', 'A4');
                 $this->setIsFirstLabel(false);
@@ -508,6 +512,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $rotate = true;
                 break;
             case 'Label':
+            case 'BusPakje':
+            case 'BuspakjeExtra':
                 /**
                  * Calculate the position of the next label to be printed.
                  */
@@ -701,7 +707,11 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             /**
              * Separate general labels from the rest.
              */
-            if ($label->getLabelType() == 'Label' || $label->getLabelType() == 'Label-combi') {
+            if ($label->getLabelType() == 'Label'
+                || $label->getLabelType() == 'Label-combi'
+                || $label->getLabelType() == 'BusPakje'
+                || $label->getLabelType() == 'BuspakjeExtra'
+            ) {
                 $generalLabels[] = $label;
                 continue;
             }
@@ -797,6 +807,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     /**
      * Calculates the position of the requested label using a counter system. This method is for labels which are
      * rotated by 90 degrees. Currently this is only used for EPS combi-labels.
+     *
      * The labels will be positioned accordingly:
      * first: top left
      * second: top right

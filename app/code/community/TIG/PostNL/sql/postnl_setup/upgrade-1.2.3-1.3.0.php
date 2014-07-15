@@ -72,6 +72,16 @@ $conn->addColumn($installer->getTable('postnl_core/shipment'),
     )
 );
 
+$conn->addColumn($installer->getTable('postnl_core/shipment'),
+    'is_buspakje',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+        'nullable' => true,
+        'comment'  => 'Is Buspakje',
+        'after'    => 'is_pakketautomaat',
+    )
+);
+
 $conn->addIndex(
     $installer->getTable('postnl_core/shipment'),
     $installer->getIdxName($installer->getTable('postnl_core/shipment'), array('order_id')),

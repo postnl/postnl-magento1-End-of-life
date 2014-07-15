@@ -45,11 +45,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_BuspakjeProductOptions
     protected $_options = array(
         array(
             'value'        => '2828',
-            'label'        => 'Buspakje',
+            'label'        => 'Letter Box Parcel',
         ),
         array(
             'value'        => '2928',
-            'label'        => 'Buspakje Extra',
+            'label'        => 'Letter Box Parcel Extra',
         ),
     );
 }

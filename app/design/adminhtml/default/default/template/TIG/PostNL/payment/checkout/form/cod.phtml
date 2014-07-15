@@ -51,26 +51,3 @@
         </li>
     </ul>
 <?php endif; ?>
-<script type="text/javascript">
-    //<![CDATA[
-    payment.addAfterInitFunction(
-        '<?php echo $_methodCode; ?>',
-        function() {
-            var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
-            var chosenDeliveryOptions = window.deliveryOptions;
-            if (postnlCodPaymentMethod
-                && chosenDeliveryOptions
-                && chosenDeliveryOptions.selectedType == 'PA'
-            ) {
-                postnlCodPaymentMethod.disabled = true;
-                postnlCodPaymentMethod.up().hide();
-
-                var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
-                if (postnlCodPaymentForm) {
-                    postnlCodPaymentForm.up().hide();
-                }
-            }
-        }
-    );
-    //]]>
-</script>

@@ -112,6 +112,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setIsPakketautomaat(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setShipmentType(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setOrder(Mage_Sales_Model_Order $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsBuspakje(int $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -2812,10 +2813,37 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected function _extractProductcodeForType($codes)
     {
         $shipmentType = $this->getShipmentType();
+
+        /**
+         * If this is a domestic shipment and the shipment has been marked as 'buspakje', update the shipment type.
+         */
+        if ($shipmentType == 'domestic'
+            && array_key_exists('is_buspakje', $codes)
+            && $codes['is_buspakje'] == '1'
+        ) {
+            $shipmentType = 'buspakje';
+            $this->setIsBuspakje(true)
+                 ->setShipmentType('buspakje');
+        }
+
+        /**
+         * The merchant may choose to use the default product code for this shipment.
+         */
+        if (array_key_exists('use_default', $codes) && $codes['use_default'] == '1') {
+            return $this->getDefaultProductCode();
+        }
+
+        /**
+         * Get the selected product code for the current shipment's shipment type.
+         */
+        $shipmentType .= '_options';
         if (array_key_exists($shipmentType, $codes)) {
             return $codes[$shipmentType];
         }
 
+        /**
+         * If no code was found, use the default.
+         */
         return $this->getDefaultProductCode();
     }
 
@@ -2837,7 +2865,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $allowedProductCodes = $this->getAllowedProductCodes();
 
         /**
-         * Check if the product code is allowed
+         * Check if the product code is allowed.
          */
         if (!in_array($productCode, $allowedProductCodes)) {
             throw new TIG_PostNL_Exception(
@@ -2847,7 +2875,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Check if the product code is restricted to certain countries
+         * Check if the product code is restricted to certain countries.
          */
         $allowedCountries = $this->_isCodeRestricted($productCode);
         if ($allowedCountries === false) {
@@ -2855,7 +2883,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Check if the destination country of this shipment is allowed
+         * Check if the destination country of this shipment is allowed.
          */
         $destination = $this->getShippingAddress()->getCountryId();
         if (!in_array($destination, $allowedCountries)) {
@@ -2869,7 +2897,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Checks if a given product code is only allowed for a specific country
+     * Checks if a given product code is only allowed for a specific country.
      *
      * @param $code
      *

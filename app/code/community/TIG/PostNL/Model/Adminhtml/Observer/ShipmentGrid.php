@@ -415,6 +415,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                         'pakketautomaat'      => $helper->__('Parcel Dispenser'),
                         'avond'               => $helper->__('Evening Delivery'),
                         'pakje_gemak_express' => $helper->__('Early Pickup'),
+                        'buspakje'            => $helper->__('Letter Box Parcel'),
                     ),
                 ),
                 $after
