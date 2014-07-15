@@ -40,6 +40,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Massaction_Item_Additional_ProductO
     extends Mage_Adminhtml_Block_Widget_Grid_Massaction_Item_Additional_Default
 {
     /**
+     * Create a new massaction item from a config array.
+     *
      * @param array $configuration
      *
      * @return $this
