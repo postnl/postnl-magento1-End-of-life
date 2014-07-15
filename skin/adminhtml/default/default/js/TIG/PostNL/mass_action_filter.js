@@ -44,6 +44,8 @@ PostnlMassActionFilter.prototype = {
     isDefaultCheckbox  : false,
     isBuspakjeCheckbox : false,
 
+    isDefaultChecked   : false,
+
     initialize : function(massActionObject) {
         this.massactionObject = massActionObject;
 
@@ -54,8 +56,23 @@ PostnlMassActionFilter.prototype = {
                 this.checkedString = varienStringArray.remove(checkbox.value, this.checkedString);
             }
             this.updateCount();
-            document.fire('postnl:massaction-checkbox_change');
+            document.fire('postnl:massaction_checkbox_change');
         }.bind(massActionObject);
+
+        massActionObject.checkCheckboxes = function() {
+            this.getCheckboxes().each(function(checkbox) {
+                checkbox.checked = varienStringArray.has(checkbox.value, this.checkedString);
+            }.bind(this));
+
+            document.fire('postnl:massaction_checkbox_change');
+        }.bind(massActionObject);
+
+        massActionObject.grid.initGridAjax = function() {
+            this.initGrid();
+            this.initGridRows();
+
+            document.fire('postnl:massaction_grid_reload');
+        }.bind(massActionObject.grid);
 
         this.registerObservers();
         this.init();
@@ -66,13 +83,16 @@ PostnlMassActionFilter.prototype = {
     registerObservers : function() {
         $('sales_order_grid_massaction-select').observe('change', this.init.bind(this));
 
-        document.observe('postnl:massaction-checkbox_change', this.filterOptions.bind(this));
+        document.observe('postnl:massaction_checkbox_change', this.filterOptions.bind(this));
+        document.observe('postnl:massaction_grid_reload', this.init.bind(this));
 
         return this;
     },
 
     init : function() {
         this.reset();
+
+        this.massactionObject.onSelectChange();
 
         this.getIsDefaultCheckbox().disabled = true;
         this.getIsDefaultCheckbox().checked = true;
@@ -138,6 +158,8 @@ PostnlMassActionFilter.prototype = {
     },
 
     defaultCheckboxChange : function() {
+        this.isDefaultChecked = this.isDefaultCheckboxChecked();
+
         if (this.isDefaultCheckboxChecked()) {
             this.hideOptions();
         } else {
@@ -166,6 +188,8 @@ PostnlMassActionFilter.prototype = {
 
         var filteredTypes = this.filteredTypes;
         if (filteredTypes.length != 1) {
+            this.isDefaultChecked = this.getIsDefaultCheckbox().checked;
+
             this.getIsDefaultCheckbox().disabled = true;
             this.getIsDefaultCheckbox().checked = true;
             this.getIsBuspakjeCheckbox().up().hide();
@@ -174,6 +198,7 @@ PostnlMassActionFilter.prototype = {
         }
 
         this.getIsDefaultCheckbox().disabled = false;
+        this.getIsDefaultCheckbox().checked = this.isDefaultChecked;
 
         var filteredType = filteredTypes[0];
         if (filteredType == 'domestic' || filteredType == 'buspakje') {

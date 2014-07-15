@@ -94,13 +94,13 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ValidateDefaultOption extends 
         /**
          * Search for the label of the current field and translate it.
          */
-        $label = $sections->$pathParts[0]->groups->$pathParts[1]->fields->$pathParts[2]->label;
+        $label = (string) $sections->$pathParts[0]->groups->$pathParts[1]->fields->$pathParts[2]->label;
         $label = $helper->__($label);
 
         /**
          * Get the translated label of the supported options field.
          */
-        $supportedOptionsLabel =(string) $sections->postnl
+        $supportedOptionsLabel = (string) $sections->postnl
                                                   ->groups
                                                   ->cif_product_options
                                                   ->fields
