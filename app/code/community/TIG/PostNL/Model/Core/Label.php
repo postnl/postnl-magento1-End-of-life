@@ -191,20 +191,10 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             ),
         ),
         'CODcard' => array(
-            1 => array(
-                'x' => 3.9,
-                'y' => 3.9,
-                'w' => 141.6,
-            ),
-            2 => array(
-                'x' => 3.9,
-                'y' => 77.9,
-                'w' => 141.6,
-            ),
-            3 => array(
-                'x' => 3.9,
-                'y' => 151.6,
-                'w' => 141.6,
+            array(
+                'x' => 2,
+                'y' => -39,
+                'w' => 103,
             ),
         ),
         'CN23' => array(
@@ -653,15 +643,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $pdf->addOrientedPage('L', 'A6');
             }
         } elseif ($labelType == 'CODcard') {
-            if ($this->getIsFirstCodCardLabel()) {
-                $this->setIsFirstCodCardLabel(false);
-
-                $pdf->addOrientedPage('P', 'A4');
-                $this->resetLabelCounter();
-            } elseif (!$this->getLabelCounter() || $this->getLabelCounter() > 3) {
-                $pdf->addOrientedPage('P', 'A4');
-                $this->resetLabelCounter();
-            }
+            $pdf->addOrientedPage('P', array(156.65, 73.85));
         } elseif ($labelType == 'CN23'
             || $labelType == 'CommercialInvoice'
             || $labelType == 'CODcard'
@@ -711,9 +693,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $this->setLabelCounter(5);
                 break;
             case 'CODcard':
-                $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
+                $pdf->Rotate('-90');
+
+                $position = $this->_getLabelPosition($labelType);
 
                 $this->increaseLabelCounter();
+
+                $rotate = true;
                 break;
             default:
                 throw new TIG_PostNL_Exception(
