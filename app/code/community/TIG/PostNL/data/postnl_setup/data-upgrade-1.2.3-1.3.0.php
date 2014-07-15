@@ -78,7 +78,12 @@ foreach ($settingsToMove as $oldXpath => $newXpath) {
     $installer->moveConfigSetting($oldXpath, $newXpath, true);
 }
 
+/**
+ * In this new version we need to fill the new 'order_id' and 'shipment_type' columns. We also need to add several new
+ * ACL rules and add 2 new support product codes for 'buspakje' shipments.
+ */
 $installer->setOrderId()
           ->setShipmentType()
           ->addAclRules($newConfigAclResources, $configRequiredResources)
-          ->addAclRules($newPostnLAclResources, $postnlRequiredResources);
+          ->addAclRules($newPostnLAclResources, $postnlRequiredResources)
+          ->addSupportedProductCode(array('2828', '2928'));
