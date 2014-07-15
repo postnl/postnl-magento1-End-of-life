@@ -164,7 +164,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *         `postnl_shipment`.`shipping_phase`
      *         ORDER BY `postnl_shipment`.`created_at` DESC
      *         SEPARATOR ","
-     *     ) AS `shipping_phase`
+     *     ) AS `shipping_phase`,
      *     IF(
      *         `postnl_shipment`.`confirm_date`,
      *         `postnl_shipment`.`confirm_date`,
@@ -772,14 +772,21 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 
             /**
              * Add another dropdown containing the possible product options.
+             * Mage_Adminhtml_Block_Widget_Grid_Massaction_Item_Additional_Default
              */
-            $massActionData['additional'] = array(
+            $config = array(
                 'postnl_use_default' => array(
                     'name'    => 'product_options[use_default]',
-                    'type'    => 'checkbox',
+                    'type'    => 'postnl_checkbox',
                     'label'   => $helper->__('Use default option'),
                     'value'   => 1,
                     'checked' => 'checked',
+                ),
+                'postnl_is_buspakje' => array(
+                    'name'    => 'product_options[is_buspakje]',
+                    'type'    => 'checkbox',
+                    'label'   => $helper->__('Is letter box parcel'),
+                    'value'   => 1,
                 ),
                 'postnl_domestic_options' => array(
                     'name'   => 'product_options[domestic_options]',
@@ -787,13 +794,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
-                                             array(
-                                                 'group' => 'standard_options',
-                                                 'isCod' => false,
-                                             ),
-                                             false,
-                                             true
+                        array(
+                            'group' => 'standard_options',
+                            'isCod' => false,
                         ),
+                        false,
+                        true
+                    ),
                 ),
                 'postnl_avond_options' => array(
                     'name'   => 'product_options[avond_options]',
@@ -801,13 +808,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
-                                             array(
-                                                 'group'   => 'standard_options',
-                                                 'isCod'   => false,
-                                                 'isAvond' => true),
-                                             false,
-                                             true
-                        ),
+                        array(
+                            'group'   => 'standard_options',
+                            'isCod'   => false,
+                            'isAvond' => true),
+                        false,
+                        true
+                    ),
                 ),
                 'postnl_pg_options' => array(
                     'name'   => 'product_options[pg_options]',
@@ -815,13 +822,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
-                                             array(
-                                                 'group' => 'pakjegemak_options',
-                                                 'isCod' => false,
-                                             ),
-                                             false,
-                                             true
+                        array(
+                            'group' => 'pakjegemak_options',
+                            'isCod' => false,
                         ),
+                        false,
+                        true
+                    ),
                 ),
                 'postnl_pge_options' => array(
                     'name'   => 'product_options[pge_options]',
@@ -829,14 +836,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
-                                             array(
-                                                 'group' => 'pakjegemak_options',
-                                                 'isCod' => false,
-                                                 'isPge' => true,
-                                             ),
-                                             false,
-                                             true
+                        array(
+                            'group' => 'pakjegemak_options',
+                            'isCod' => false,
+                            'isPge' => true,
                         ),
+                        false,
+                        true
+                    ),
                 ),
                 'postnl_eps_options' => array(
                     'name'   => 'product_options[eps_options]',
@@ -844,12 +851,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
-                                             array(
-                                                 'group' => 'eu_options',
-                                             ),
-                                             false,
-                                             true
+                        array(
+                            'group' => 'eu_options',
                         ),
+                        false,
+                        true
+                    ),
                 ),
                 'postnl_globalpack_options' => array(
                     'name'   => 'product_options[globalpack_options]',
@@ -857,12 +864,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
-                                             array(
-                                                 'group' => 'global_options',
-                                             ),
-                                             false,
-                                             true
+                        array(
+                            'group' => 'global_options',
                         ),
+                        false,
+                        true
+                    ),
                 ),
                 'postnl_domestic_cod_options' => array(
                     'name'   => 'product_options[domestic_cod_options]',
@@ -870,13 +877,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
-                                             array(
-                                                 'group' => 'standard_options',
-                                                 'isCod' => true,
-                                             ),
-                                             false,
-                                             true
+                        array(
+                            'group' => 'standard_options',
+                            'isCod' => true,
                         ),
+                        false,
+                        true
+                    ),
                 ),
                 'postnl_avond_cod_options' => array(
                     'name'   => 'product_options[avond_cod_options]',
@@ -884,14 +891,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
-                                             array(
-                                                 'group'   => 'standard_options',
-                                                 'isCod'   => true,
-                                                 'isAvond' => true,
-                                             ),
-                                             false,
-                                             true
+                        array(
+                            'group'   => 'standard_options',
+                            'isCod'   => true,
+                            'isAvond' => true,
                         ),
+                        false,
+                        true
+                    ),
                 ),
                 'postnl_pg_cod_options' => array(
                     'name'   => 'product_options[pg_cod_options]',
@@ -899,13 +906,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
-                                             array(
-                                                 'group' => 'pakjegemak_options',
-                                                 'isCod' => true,
-                                             ),
-                                             false,
-                                             true
+                        array(
+                            'group' => 'pakjegemak_options',
+                            'isCod' => true,
                         ),
+                        false,
+                        true
+                    ),
                 ),
                 'postnl_pge_cod_options' => array(
                     'name'   => 'product_options[pge_cod_options]',
@@ -913,14 +920,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
-                                             array(
-                                                 'group' => 'pakjegemak_options',
-                                                 'isCod' => true,
-                                                 'isPge' => true,
-                                             ),
-                                             false,
-                                             true
+                        array(
+                            'group' => 'pakjegemak_options',
+                            'isCod' => true,
+                            'isPge' => true,
                         ),
+                        false,
+                        true
+                    ),
                 ),
                 'postnl_pa_options' => array(
                     'name'   => 'product_options[pa_options]',
@@ -928,14 +935,35 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
-                                             array(
-                                                 'group' => 'pakketautomaat_options',
-                                             ),
-                                             false,
-                                             true
+                        array(
+                         'group' => 'pakketautomaat_options',
                         ),
+                        false,
+                        true
+                    ),
+                ),
+                'postnl_buspakje_options' => array(
+                    'name'   => 'product_options[buspakje_options]',
+                    'type'   => 'select',
+                    'class'  => 'required-entry',
+                    'label'  => $helper->__('Product options'),
+                    'values' => $optionsModel->getOptions(
+                        array(
+                            'group' => 'buspakje_options',
+                        ),
+                        false,
+                        true
+                    ),
                 ),
             );
+
+            /**
+             * @var TIG_PostNL_Block_Adminhtml_Widget_Grid_Massaction_Item_Additional_ProductOptions $block
+             */
+            $block = Mage::app()
+                         ->getLayout()
+                         ->createBlock('postnl_adminhtml/widget_grid_massaction_item_additional_productOptions');
+            $massActionData['additional'] = $block->createFromConfiguration($config);
         }
 
         return $massActionData;

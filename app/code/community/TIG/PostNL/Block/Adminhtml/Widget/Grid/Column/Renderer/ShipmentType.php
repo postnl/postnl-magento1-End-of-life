@@ -123,6 +123,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
             case 'globalpack':
                 $label = $helper->__('GlobalPack');
                 break;
+            case 'buspakje':
+                $label = $helper->__('Letter Box Parcel');
+                break;
         }
 
         $renderedValue = "<b>{$label}</b>";

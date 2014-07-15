@@ -179,7 +179,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
 
         if (is_object($destination) && $destination instanceof Varien_Object) {
             $countryCode = $destination->getCountry();
-            $postcode    = $destination->getPostcode();
+            $postcode    = str_replace(' ', '', $destination->getPostcode());
         }
 
         /**

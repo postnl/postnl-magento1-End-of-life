@@ -55,6 +55,7 @@
  * @method boolean                     hasPostnlDeliveryOptionsCanUseSundaySorting()
  * @method boolean                     hasPostnlMijnpakketIsActive()
  * @method boolean                     hasPostnlMijnpakketCanShowNotification()
+ * @method boolean                     hasPostnlCoreCanUseBuspakje()
  *
  * @method boolean                     getPostnlCoreIsEnabled()
  * @method boolean                     getPostnlCoreIsConfigured()
@@ -75,6 +76,7 @@
  * @method boolean                     getPostnlDeliveryOptionsCanUseSundaySorting()
  * @method boolean                     getPostnlMijnpakketIsActive()
  * @method boolean                     getPostnlMijnpakketCanShowNotification()
+ * @method boolean                     getPostnlCoreCanUseBuspakje()
  *
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsEnabled(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsConfigured(boolean $value)
@@ -95,6 +97,7 @@
  * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseSundaySorting(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlMijnpakketIsActive(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlMijnpakketCanShowNotification(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseBuspakje(boolean $value)
  */
 class TIG_PostNL_Model_Core_Cache extends Varien_Object
 {

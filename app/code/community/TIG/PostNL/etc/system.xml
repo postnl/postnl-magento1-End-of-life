@@ -1900,10 +1900,22 @@
                                 </enable_pakjegemak_express>
                             </depends>
                         </default_pge_product_option>
+                        <default_buspakje_options translate="label comment" module="postnl">
+                            <label>Default letter box parcel option</label>
+                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to letter box parcel shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </default_buspakje_options>
                         <cod_product_options_header translate="label" module="postnl">
                             <label>The following options are only for COD orders.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1915,7 +1927,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1927,7 +1939,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1953,7 +1965,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1965,7 +1977,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>

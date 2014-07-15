@@ -680,7 +680,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $parcelCount = $postnlShipment->getParcelCount();
 
         $parcelData = array();
-        $postcode = $shipment->getShippingAddress()->getPostcode();
+        $postcode = str_replace(' ', '', $shipment->getShippingAddress()->getPostcode());
         for ($i = 0; $i < $parcelCount; $i++) {
             $parcelData[] = array(
                 'Barcode'  => $postnlShipment->getBarcode($i),
