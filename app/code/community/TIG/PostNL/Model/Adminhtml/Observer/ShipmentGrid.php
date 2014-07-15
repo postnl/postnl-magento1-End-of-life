@@ -415,6 +415,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                         'pakketautomaat'      => $helper->__('Parcel Dispenser'),
                         'avond'               => $helper->__('Evening Delivery'),
                         'pakje_gemak_express' => $helper->__('Early Pickup'),
+                        'buspakje'            => $helper->__('Letter Box Parcel'),
                     ),
                 ),
                 $after
@@ -853,8 +854,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             /**
              * Get the additional options block for 'label printing' mass actions.
              */
-            $printAdditional = Mage::app()->getLayout()
-                                          ->createBlock('postnl_adminhtml/widget_grid_massaction_labelStartPos');
+            $printAdditional = Mage::app()
+                                   ->getLayout()
+                                   ->createBlock(
+                                       'postnl_adminhtml/widget_grid_massaction_item_additional_labelStartPos'
+                                   );
 
             $printAdditional->setData(
                             array(

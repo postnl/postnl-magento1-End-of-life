@@ -33,21 +33,20 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * Observer to edit the sales > shipments grid
+ *
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setCollection(Varien_Data_Collection $value)
+ * @method Varien_Data_Collection                           getCollection()
+ * @method TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid setBlock(Mage_Core_Block_Abstract $value)
  */
-
-/**
- * @see Mage_Payment_Block_Form_Cashondelivery
- */
-?>
-<?php $_methodCode = $this->getMethodCode(); ?>
-<?php if ($this->getInstructions()): ?>
-    <ul class="form-list checkout-agreements" id="payment_form_<?php echo $_methodCode; ?>" style="display:none;">
-        <li>
-            <div class="<?php echo $_methodCode; ?>-instructions-content agreement-content">
-                <?php echo nl2br($this->getInstructions()); ?>
-            </div>
-        </li>
-    </ul>
-<?php endif; ?>
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Massaction_Item_Additional_LabelStartPos
+    extends Mage_Adminhtml_Block_Abstract
+{
+    /**
+     * @var string
+     */
+    protected $_template = 'TIG/PostNL/widget/grid/massaction/label_start_pos.phtml';
+}

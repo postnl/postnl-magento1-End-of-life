@@ -144,23 +144,10 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
 
             if (!in_array($shippingMethod, $postnlShippingMethods)) {
                 $helper->log(
-                       $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
+                    $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
                 );
                 return false;
             }
-        }
-
-        $quoteId = $quote->getId();
-
-        /**
-         * @var TIG_PostNL_Model_Core_Order $postnlOrder
-         */
-        $postnlOrder = Mage::getModel('postnl_core/order')->load($quoteId, 'quote_id');
-        if ($postnlOrder->getId() && $postnlOrder->getType() == 'PA') {
-            $helper->log(
-                $helper->__('PostNL COD is not available, because the chosen delivery option is PA.')
-            );
-            return false;
         }
 
         /**
@@ -182,10 +169,21 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          * Check that the shipping address isn't a P.O. box. Unfortunately we can only check this by checking if the
          * street name contains the word 'postbus' (dutch for P.O. box).
          */
-        $fullStreet = $quote->getShippingAddress()->getStreetFull();
+        $shippingAddress = $quote->getShippingAddress();
+        $fullStreet = $shippingAddress->getStreetFull();
         if (stripos($fullStreet, 'postbus') !== false) {
             $helper->log(
                 $helper->__('PostNL COD is not available, because the shipping address is a P.O. box.')
+            );
+            return false;
+        }
+
+        /**
+         * Check that the destination country is allowed.
+         */
+        if (!$this->canUseForCountry($shippingAddress->getCountry())) {
+            $helper->log(
+                $helper->__('PostNL COD is not available, because the shipping destination country is not allowed.')
             );
             return false;
         }

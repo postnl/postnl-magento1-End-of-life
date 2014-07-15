@@ -277,7 +277,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
             'middleName'      => $shippingAddress->getMiddlename(),
             'lastName'        => $shippingAddress->getLastname(),
             'email'           => $shippingAddress->getEmail(),
-            'postalCode'      => $shippingAddress->getPostcode(),
+            'postalCode'      => str_replace(' ', '', $shippingAddress->getPostcode()),
             'business'        => 'P',
         );
 

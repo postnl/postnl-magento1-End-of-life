@@ -33,21 +33,27 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+class TIG_PostNL_Block_Adminhtml_Widget_Grid_Massaction_Item_Additional_ProductOptions
+    extends Mage_Adminhtml_Block_Widget_Grid_Massaction_Item_Additional_Default
+{
+    /**
+     * @param array $configuration
+     *
+     * @return $this
+     */
+    public function createFromConfiguration(array $configuration)
+    {
+        $form = new Varien_Data_Form();
+        $form->addType('postnl_checkbox', 'TIG_PostNL_Model_Adminhtml_Form_Element_Checkbox');
 
-/**
- * @see Mage_Payment_Block_Form_Cashondelivery
- */
-?>
-<?php $_methodCode = $this->getMethodCode(); ?>
-<?php if ($this->getInstructions()): ?>
-    <ul class="form-list checkout-agreements" id="payment_form_<?php echo $_methodCode; ?>" style="display:none;">
-        <li>
-            <div class="<?php echo $_methodCode; ?>-instructions-content agreement-content">
-                <?php echo nl2br($this->getInstructions()); ?>
-            </div>
-        </li>
-    </ul>
-<?php endif; ?>
+        foreach ($configuration as $itemId=>$item) {
+            $item['class'] = isset($item['class']) ? $item['class'] . ' absolute-advice' : 'absolute-advice';
+            $form->addField($itemId, $item['type'], $item);
+        }
+        $this->setForm($form);
+        return $this;
+    }
+}

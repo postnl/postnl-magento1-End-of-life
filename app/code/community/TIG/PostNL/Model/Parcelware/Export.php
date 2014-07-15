@@ -362,7 +362,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             'Street'        => $streetData['streetname'],
             'HouseNr'       => $streetData['housenumber'],
             'HouseNrExt'    => $streetData['housenumberExtension'],
-            'Zipcode'       => $address->getPostcode(),
+            'Zipcode'       => str_replace(' ', '', $address->getPostcode()),
             'City'          => $address->getCity(),
             'Countrycode'   => $address->getCountryId(),
             'CustomerEmail' => $address->getEmail(),
@@ -411,7 +411,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             'PG_Street'      => $streetData['streetname'],
             'PG_HouseNr'     => $streetData['housenumber'],
             'PG_HouseNrExt'  => $streetData['housenumberExtension'],
-            'PG_Zipcode'     => $pakjeGemakAddress->getPostcode(),
+            'PG_Zipcode'     => str_replace(' ', '', $pakjeGemakAddress->getPostcode()),
             'PG_City'        => $pakjeGemakAddress->getCity(),
             'PG_Countrycode' => $pakjeGemakAddress->getCountryId(),
         );
