@@ -609,7 +609,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         if ($helper->checkIsPostnlActionAllowed('confirm')) {
             $actions[] = array(
                 'caption'   => $helper->__('Confirm'),
-                'url'       => array('base' => 'postnl/adminhtml_shipment/confirm'),
+                'url'       => array('base' => 'postnl_admin/adminhtml_shipment/confirm'),
                 'field'     => 'shipment_id',
                 'is_postnl' => true, //custom flag for renderer
                 'code'      => 'postnl_confirm',

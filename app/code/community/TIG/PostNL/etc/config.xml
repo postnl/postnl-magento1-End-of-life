@@ -252,6 +252,7 @@
                     <product_attributes>
                         <postnl_shipping_duration/>
                         <postnl_allow_delivery_options/>
+                        <postnl_max_qty_for_buspakje/>
                     </product_attributes>
                 </item>
                 <totals>

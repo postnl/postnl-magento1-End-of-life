@@ -1085,6 +1085,55 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return null;
     }
 
+    public function getIsBuspakje()
+    {
+        $isBuspakje = $this->_getData('is_buspakje');
+
+        if (!is_null($isBuspakje)) {
+            return $isBuspakje;
+        }
+
+        $isBuspakje = $this->_getIsBuspakje();
+
+        $this->setIsBuspakje($isBuspakje);
+        return $isBuspakje;
+    }
+
+    protected function _getIsBuspakje()
+    {
+        $isBuspakje = $this->getIsBuspakje();
+
+        if (!is_null($isBuspakje)) {
+            return $isBuspakje;
+        }
+
+        $order = $this->getOrder();
+        $orderItems = $order->getAllVisibleItems();
+
+        if ($orderItems->getSize() > 1) {
+            return false;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Order_Item $orderItem
+         */
+        $orderItem = $orderItems[0];
+        $product = $orderItem->getProduct();
+
+        if (!$product->hasPostnlMaxQtyForBuspakje()) {
+            return false;
+        }
+
+        $maxQty = $product->getPostnlMaxQtyForBuspakje();
+        $orderItemQty = $orderItem->getQtyOrdered();
+
+        if ($orderItemQty > $maxQty) {
+            return false;
+        }
+
+        return true;
+    }
+
     /*******************************************************************************************************************
      * SETTER METHODS
      ******************************************************************************************************************/
@@ -2824,6 +2873,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $shipmentType = 'buspakje';
             $this->setIsBuspakje(true)
                  ->setShipmentType('buspakje');
+        } elseif ($shipmentType == 'domestic') {
+            $isBuspakje = $this->_getIsBuspakje();
+        } else {
+            $this->setIsBuspakje(false);
         }
 
         /**
@@ -2839,6 +2892,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shipmentType .= '_options';
         if (array_key_exists($shipmentType, $codes)) {
             return $codes[$shipmentType];
+        } elseif (array_key_exists('product_option', $codes)) {
+            return $codes['product_option'];
         }
 
         /**
@@ -2978,9 +3033,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected function _calculateParcelCount()
     {
         /**
-         * Only NL shipments support multi-colli shipments
+         * Only Dutch shipments that are not COD support multi-colli shipments
          */
-        if (!$this->isDutchShipment()) {
+        if (!$this->isDutchShipment() || $this->isCod()) {
             return 1;
         }
 
