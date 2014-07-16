@@ -653,6 +653,32 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Check if a given shipment is COD
+     *
+     * @param TIG_PostNL_Model_Core_Shipment|Mage_Sales_Model_Order_Shipment $shipment
+     *
+     * @return boolean
+     *
+     * @see TIG_PostNL_Model_Core_Shipment->isCod();
+     */
+    public function isCodShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isCod();
+        }
+
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isCod();
+    }
+
+
+    /**
      * Gets the default product option for a shipment
      *
      * @param Mage_Sales_Model_Order_Shipment

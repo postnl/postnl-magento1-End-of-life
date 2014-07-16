@@ -35,6 +35,16 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean hasShipment()
+ * @method boolean hasProductOptions()
+ * @method boolean hasBuspakjeProductOptions()
+ * @method boolean hasDefaultProductOption()
+ *
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setShipment(Mage_Sales_Model_Order_Shipment $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setProductOptions(array $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setDefaultProductOption(string $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setBuspakjeProductOptions(array $value)
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions extends TIG_PostNL_Block_Adminhtml_Template
 {
@@ -50,8 +60,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
      */
     public function getShipment()
     {
-        if ($this->getData('shipment')) {
-            return $this->getData('shipment');
+        if ($this->hasShipment()) {
+            return $this->_getData('shipment');
         }
 
         $shipment = Mage::registry('current_shipment');
@@ -67,8 +77,8 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
      */
     public function getProductOptions()
     {
-        if ($this->getData('product_options')) {
-            return $this->getData('product_options');
+        if ($this->hasProductOptions()) {
+            return $this->_getData('product_options');
         }
 
         $shipment = $this->getShipment();
@@ -80,14 +90,31 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
+     * Gets all allowed buspakje product options.
+     *
+     * @return array
+     */
+    public function getBuspakjeProductOptions()
+    {
+        if ($this->hasBuspakjeProductOptions()) {
+            return $this->getData('buspakje_product_options');
+        }
+
+        $productOptions = Mage::helper('postnl/cif')->getBuspakjeProductCodes(false);
+
+        $this->setBuspakjeProductOptions($productOptions);
+        return $productOptions;
+    }
+
+    /**
      * Get the default product option for the current shipment
      *
      * @return string
      */
     public function getDefaultProductOption()
     {
-        if ($this->getData('default_product_option')) {
-            return $this->getData('default_product_option');
+        if ($this->hasDefaultProductOption()) {
+            return $this->_getData('default_product_option');
         }
 
         $shipment = $this->getShipment();

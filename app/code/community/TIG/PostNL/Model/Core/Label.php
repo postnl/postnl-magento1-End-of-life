@@ -146,7 +146,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 'w' => 141.6,
             ),
         ),
-        'BuspakjeExtra' => array(
+        'BusPakjeExtra' => array(
             1 => array(
                 'x' => 152.4,
                 'y' => 3.9,
@@ -618,7 +618,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         if ($labelType == 'Label'
             || $labelType == 'Label-combi'
             || $labelType == 'BusPakje'
-            || $labelType == 'BuspakjeExtra'
+            || $labelType == 'BusPakjeExtra'
         ) {
             if ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
                 $pdf->addOrientedPage('L', 'A4');
@@ -670,7 +670,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 break;
             case 'Label':
             case 'BusPakje':
-            case 'BuspakjeExtra':
+            case 'BusPakjeExtra':
                 $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
 
                 $this->increaseLabelCounter();
@@ -826,7 +826,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
-     * Sorts labels by label type. First all labels of the 'Label', 'Label-combi', 'BusPakje' and 'BuspakjeExtra' type.
+     * Sorts labels by label type. First all labels of the 'Label', 'Label-combi', 'BusPakje' and 'BusPakjeExtra' type.
      * Then all other labels in the order of 'CODcard' > 'CN23' > 'CP71' > 'CommercialInvoice' grouped by shipments.
      *
      * @param array $labels
@@ -849,7 +849,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             if ($label->getLabelType() == 'Label'
                 || $label->getLabelType() == 'Label-combi'
                 || $label->getLabelType() == 'BusPakje'
-                || $label->getLabelType() == 'BuspakjeExtra'
+                || $label->getLabelType() == 'BusPakjeExtra'
             ) {
                 $generalLabels[] = $label;
                 continue;

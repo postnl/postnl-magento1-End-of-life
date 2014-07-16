@@ -84,6 +84,7 @@ foreach ($settingsToMove as $oldXpath => $newXpath) {
  */
 $installer->setOrderId()
           ->setShipmentType()
+          ->setIsBuspakje()
           ->addAclRules($newConfigAclResources, $configRequiredResources)
           ->addAclRules($newPostnLAclResources, $postnlRequiredResources)
           ->addSupportedProductCode(array('2828', '2928'));
