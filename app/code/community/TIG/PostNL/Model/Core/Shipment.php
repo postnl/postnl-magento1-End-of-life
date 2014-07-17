@@ -70,7 +70,6 @@
  * @method string|null                    getConfirmedStatus
  * @method string                         getStatusHistoryUpdatedAt()
  * @method string                         getConfirmStatus()
- * @method string                         getMainBarcode()
  * @method string                         getCreatedAt()
  * @method int                            getIsPakjeGemak()
  * @method string                         getConfirmDate()
@@ -130,6 +129,7 @@
  * @method bool                           hasDeliveryDate()
  * @method bool                           hasShipmentType()
  * @method bool                           hasOrder()
+ * @method bool                           hasMainBarcode()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -250,6 +250,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * @var TIG_PostNL_Model_Core_Shipment_Process
      */
     protected $_process;
+
+    /**
+     * For certain product codes a custom barcode is required.
+     *
+     * @var array
+     */
+    protected $_customBarcodes = array(
+        '2828' => '3STFGG000000000'
+    );
 
     /**
      * Initialize the shipment
@@ -484,6 +493,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function getExtraCoverProductCodes()
     {
         return $this->_extraCoverProductCodes;
+    }
+
+    /**
+     * get an array of all product codes that need a custom barcode.
+     *
+     * @return array
+     */
+    public function getCustomBarcodes()
+    {
+        return $this->_customBarcodes;
     }
 
     /**
@@ -868,6 +887,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Gets this shipment's main barcode.
+     *
+     * @return string|null
+     */
+    public function getMainBarcode()
+    {
+        if ($this->hasMainBarcode()) {
+            return $this->_getData('main_barcode');
+        }
+
+        /**
+         * Check if the current product code needs a custom barcode.
+         */
+        $customBarcodes = $this->getCustomBarcodes();
+        $productCode    = $this->getProductCode();
+
+        if (array_key_exists($productCode, $customBarcodes)) {
+            return $customBarcodes[$productCode];
+        }
+
+        return null;
+    }
+
+    /**
      * Get a specific barcode for this shipment
      *
      * @param int|null $barcodeNumber Which barcode to get
@@ -1085,6 +1128,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return null;
     }
 
+    /**
+     * Get whether this shipment is a buspakje shipment. If no value is set, calculate the correct value and set it.
+     *
+     * @return bool
+     */
     public function getIsBuspakje()
     {
         $isBuspakje = $this->_getData('is_buspakje');
@@ -1099,6 +1147,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $isBuspakje;
     }
 
+    /**
+     * Calculate whether this shipment is a buspakje shipment.
+     *
+     * @return bool
+     *
+     * @throws TIG_PostNL_Exception
+     */
     protected function _getIsBuspakje()
     {
         $isBuspakje = $this->getIsBuspakje();
@@ -1110,9 +1165,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $order = $this->getOrder();
         $orderItems = $order->getAllVisibleItems();
 
-        if ($orderItems->getSize() > 1) {
+        if (count($orderItems) > 1) {
             return false;
         }
+
+        /**
+         * @todo check shipment items as well as order items
+         */
 
         /**
          * @var Mage_Sales_Model_Order_Item $orderItem
@@ -1696,6 +1755,32 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
+        if (!$this->canGenerateBarcodeForProductCode()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether a barcode may be generated for a given product code.
+     *
+     * @param bool|string|int $productCode
+     *
+     * @return bool
+     */
+    public function canGenerateBarcodeForProductCode($productCode = false)
+    {
+        if (!$productCode) {
+            $productCode = $this->getProductCode();
+        }
+
+        $customBarcodes = $this->getCustomBarcodes();
+        $disallowedProductCodes = array_keys($customBarcodes);
+        if (in_array($productCode, $disallowedProductCodes)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -1737,7 +1822,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Checks if the current shipment is eligible for a shipping status update.
      * Unconfirmed shipments, shipments whose labels are not yet printed or shipments that are already delivered are
-     * ineligible.
+     * ineligible. Also shipments which use a custom barcode are ineligible.
      *
      * @return boolean
      */
@@ -1764,6 +1849,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         if (!$this->getMainBarcode()) {
+            return false;
+        }
+
+        $customBarcodes = $this->getCustomBarcodes();
+        $productCode    = $this->getProductCode();
+
+        if (array_key_exists($productCode, $customBarcodes)) {
             return false;
         }
 
@@ -1856,7 +1948,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $process->lockAndBlock();
 
         $this->isLocked();
-        $this->isLocked();
         return $this;
     }
 
@@ -1913,7 +2004,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         Mage::dispatchEvent('postnl_shipment_generatebarcode_before', array('shipment' => $this));
 
         /**
-         * Generate and save the main barcode
+         * Generate and save the main barcode.
          */
         $mainBarcode = $this->_generateBarcode();
         $this->setMainBarcode($mainBarcode);
@@ -1924,7 +2015,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * If this shipment consists of a single parcel we only need the main barcode
+         * If this shipment consists of a single parcel we only need the main barcode.
          */
         if ($parcelCount < 2) {
             Mage::dispatchEvent('postnl_shipment_generatebarcode_after', array('shipment' => $this));
@@ -1934,7 +2025,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Generate a barcode for each parcel and save it
+         * Generate a barcode for each parcel and save it.
          */
         for ($i = 1; $i < $parcelCount; $i++) {
             $barcode = $this->_generateBarcode();
@@ -2864,19 +2955,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shipmentType = $this->getShipmentType();
 
         /**
-         * If this is a domestic shipment and the shipment has been marked as 'buspakje', update the shipment type.
+         * If this is a domestic shipment and the shipment has been marked as 'buspakje', update the shipment type. If
          */
         if ($shipmentType == 'domestic'
             && array_key_exists('is_buspakje', $codes)
             && $codes['is_buspakje'] == '1'
         ) {
-            $shipmentType = 'buspakje';
-            $this->setIsBuspakje(true)
-                 ->setShipmentType('buspakje');
-        } elseif ($shipmentType == 'domestic') {
+            $isBuspakje = true;
+        } elseif ($shipmentType == 'domestic'
+            && (!array_key_exists('is_buspakje', $codes)
+                || $codes['is_buspakje'] == '0'
+            )
+        ) {
             $isBuspakje = $this->_getIsBuspakje();
         } else {
-            $this->setIsBuspakje(false);
+            $isBuspakje = false;
+        }
+
+        /**
+         * If this is a buspakje shipment, change the shipment type accordingly.
+         */
+        $this->setIsBuspakje($isBuspakje);
+        if ($isBuspakje) {
+            $shipmentType = 'buspakje';
+            $this->setShipmentType('buspakje');
         }
 
         /**

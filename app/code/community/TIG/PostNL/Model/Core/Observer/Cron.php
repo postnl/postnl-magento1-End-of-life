@@ -292,6 +292,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 break;
             }
 
+            if (!$postnlShipment->canGenerateBarcode()) {
+                continue;
+            }
+
             /**
              * Attempt to generate a barcode. Continue with the next one if it fails.
              */
@@ -538,9 +542,15 @@ class TIG_PostNL_Model_Core_Observer_Cron
             try{
                 $helper->cronLog("Expiring confirmation of shipment #{$postnlShipment->getId()}");
                 $postnlShipment->resetConfirmation()
-                               ->setConfirmStatus($postnlShipment::CONFIRM_STATUS_CONFIRM_EXPIRED)
-                               ->generateBarcodes() //generate new barcodes as the current ones have expired
-                               ->save();
+                               ->setConfirmStatus($postnlShipment::CONFIRM_STATUS_CONFIRM_EXPIRED);
+
+                /**
+                 * generate new barcodes as the current ones have expired.
+                 */
+                if ($postnlShipment->canGenerateBarcode()) {
+                    $postnlShipment->generateBarcodes();
+                }
+                $postnlShipment->save();
             } catch (Exception $e) {
                 $helper->logException($e);
             }

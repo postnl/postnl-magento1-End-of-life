@@ -1424,7 +1424,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         /**
          * If the shipment does not have a barcode, generate one
          */
-        if (!$postnlShipment->getMainBarcode()) {
+        if (!$postnlShipment->getMainBarcode() && $postnlShipment->canGenerateBarcode()) {
             $postnlShipment->generateBarcodes();
         }
 
@@ -1494,7 +1494,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         /**
          * If the shipment does not have a main barcode, generate new barcodes.
          */
-        if (!$postnlShipment->getMainBarcode()) {
+        if (!$postnlShipment->getMainBarcode() && $postnlShipment->canGenerateBarcode()) {
             $postnlShipment->generateBarcodes();
         }
 

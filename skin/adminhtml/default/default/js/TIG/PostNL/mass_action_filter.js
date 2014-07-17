@@ -131,7 +131,7 @@ PostnlMassActionFilter.prototype = {
             return this.isBuspakjeCheckbox;
         }
 
-        var buspakjeCheckbox = $('postnl_is_buspakje');
+        var buspakjeCheckbox = $('postnl_is_buspakje_checkbox');
 
         this.isBuspakjeCheckbox = buspakjeCheckbox;
         return buspakjeCheckbox;
