@@ -40,9 +40,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmStatus
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
 {
     /**
-     * Additional column names used
+     * Additional column names used.
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
+    const CONFIRM_DATE_COLUMN    = 'confirm_date';
 
     /**
      * Renders the column value as a Yes or No value
@@ -63,11 +64,14 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmStatus
         }
 
         /**
-         * Check if any data is available
+         * Check if any data is available.
          */
-        $values = $row->getData($this->getColumn()->getIndex());
-        if (is_null($values) || $values === '') {
+        $values      = $row->getData($this->getColumn()->getIndex());
+        $confirmDate = $row->getData(self::CONFIRM_DATE_COLUMN);
+        if (is_null($values) && is_null($confirmDate)) {
             return Mage::helper('postnl')->__('No shipments found');
+        } elseif (is_null($values)) {
+            return parent::render($row);
         }
 
         /**

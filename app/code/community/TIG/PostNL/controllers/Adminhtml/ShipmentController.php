@@ -1407,7 +1407,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
          * do that first.
          */
         if ($postnlShipment->hasLabels()) {
-            if ($confirm === true && !$postnlShipment->isConfirmed()) {
+            if ($confirm === true && !$postnlShipment->isConfirmed() && $postnlShipment->canConfirm()) {
                 $this->_confirmShipment($postnlShipment);
             }
 
@@ -1415,14 +1415,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         }
 
         /**
-         * If the PostNL shipment is new, set the magento shipment ID
+         * If the PostNL shipment is new, set the magento shipment ID.
          */
         if (!$postnlShipment->getShipmentId()) {
             $postnlShipment->setShipmentId($shipment->getId());
         }
 
         /**
-         * If the shipment does not have a barcode, generate one
+         * If the shipment does not have a barcode, generate one.
          */
         if (!$postnlShipment->getMainBarcode() && $postnlShipment->canGenerateBarcode()) {
             $postnlShipment->generateBarcodes();
@@ -1431,16 +1431,21 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         if ($confirm === true
             && !$postnlShipment->hasLabels()
             && !$postnlShipment->isConfirmed()
+            && $postnlShipment->canConfirm()
         ) {
             /**
-             * Confirm the shipment and request a new label
+             * Confirm the shipment and request a new label.
              */
-            $postnlShipment->confirmAndGenerateLabel()
-                           ->addTrackingCodeToShipment()
-                           ->save();
+            $postnlShipment->confirmAndGenerateLabel();
+
+            if ($postnlShipment->canAddTrackingCode()) {
+                $postnlShipment->addTrackingCodeToShipment();
+            }
+
+            $postnlShipment->save();
         } else {
             /**
-             * generate new shipping labels without confirming
+             * generate new shipping labels without confirming.
              */
             $postnlShipment->generateLabel()
                            ->save();
@@ -1451,7 +1456,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     }
 
     /**
-     * Confirms the shipment without printing labels
+     * Confirms the shipment without printing labels.
      *
      * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
      *
@@ -1524,9 +1529,13 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
         /**
          * Confirm the shipment.
          */
-        $postnlShipment->confirm()
-                       ->addTrackingCodeToShipment()
-                       ->save();
+        $postnlShipment->confirm();
+
+        if ($postnlShipment->canAddTrackingCode()) {
+            $postnlShipment->addTrackingCodeToShipment();
+        }
+
+        $postnlShipment->save();
 
         return $this;
     }
@@ -1720,7 +1729,11 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             /**
              * Get the formatted warning message.
              */
-            $warningText = $helper->getSessionMessage($warning['code'], 'warning', $warning['description']);
+            $warningText = $helper->getSessionMessage(
+                $warning['code'],
+                'warning',
+                $this->__($warning['description'])
+            );
 
             /**
              * Build the message proper.

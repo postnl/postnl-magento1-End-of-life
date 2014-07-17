@@ -93,7 +93,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Check the maximum amount of time a temp file may be stored. By default this is 300s (5m).
          * If this settings is empty, end the script.
          */
-        $maxFileStorageTime = (int) Mage::getStoreConfig(self::XPATH_MAX_FILE_STORAGE, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $maxFileStorageTime = (int) Mage::getStoreConfig(
+            self::XPATH_MAX_FILE_STORAGE,
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
         if (empty($maxFileStorageTime)) {
             $helper->cronLog('No max file storage time defined. Exiting cron.');
             return $this;
@@ -147,7 +150,9 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             $time = $nameParts[1];
             if ((time() - $time) < $maxFileStorageTime) {
-                $helper->cronLog("File {$filename} is less than {$maxFileStorageTime}s old. Continuing with the next file.");
+                $helper->cronLog(
+                    "File {$filename} is less than {$maxFileStorageTime}s old. Continuing with the next file."
+                );
                 continue;
             }
 
@@ -383,7 +388,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
                 if (!$postnlShipment->canUpdateShippingStatus()) {
                     $postnlShipment->unlock();
-                    $helper->cronLog("Updating shipment #{$postnlShipment->getShipment()->getId()} is not allowed. Continuing with next shipment.");
+                    $helper->cronLog("Updating shipment #{$postnlShipment->getShipment()->getId()} is not allowed. " .
+                        "Continuing with next shipment.");
                     continue;
                 }
 
@@ -492,15 +498,18 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
         $collectionPhase = $postnlShipmentModelClass::SHIPPING_PHASE_COLLECTION;
 
-        $confirmationExpireDays = Mage::getStoreConfig(self::XPATH_CONFIRM_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $confirmationExpireDays = Mage::getStoreConfig(
+            self::XPATH_CONFIRM_EXPIRE_DAYS,
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
         $expireTimestamp = strtotime("-{$confirmationExpireDays} days", Mage::getModel('core/date')->gmtTimestamp());
         $expireDate = date('Y-m-d H:i:s', $expireTimestamp);
 
         $helper->cronLog("All confirmation placed before {$expireDate} will be expired.");
 
         /**
-         * Get all postnl shipments that have been confirmed over X days ago and who have not yet been shipped (shipping_phase
-         * other than 'collection')
+         * Get all postnl shipments that have been confirmed over X days ago and who have not yet been shipped
+         * (shipping_phase other than 'collection')
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter(
@@ -545,7 +554,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                ->setConfirmStatus($postnlShipment::CONFIRM_STATUS_CONFIRM_EXPIRED);
 
                 /**
-                 * generate new barcodes as the current ones have expired.
+                 * Generate new barcodes as the current ones have expired.
                  */
                 if ($postnlShipment->canGenerateBarcode()) {
                     $postnlShipment->generateBarcodes();
@@ -561,7 +570,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     }
 
     /**
-     * Send a track & trace e-mail to the customer
+     * Send a track & trace e-mail to the customer.
      *
      * @return $this
      */
@@ -570,7 +579,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper = Mage::helper('postnl');
 
         /**
-         * Check if the PostNL module is active
+         * Check if the PostNL module is active.
          */
         if (!$helper->isEnabled()) {
             return $this;
@@ -579,7 +588,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog('SendTrackAndTraceEmail cron starting...');
 
         /**
-         * Check each storeview if sending track & trace emails is allowed
+         * Check each storeview if sending track & trace emails is allowed.
          */
         $allowedStoreIds = array();
         foreach (array_keys(Mage::app()->getStores()) as $storeId) {
@@ -602,10 +611,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $twentyMinutesAgo = strtotime("-20 minutes", Mage::getModel('core/date')->gmtTimestamp());
         $twentyMinutesAgo = date('Y-m-d H:i:s', $twentyMinutesAgo);
 
-        $helper->cronLog("Track and trace email will be sent for all shipments that were confirmed on or before {$twentyMinutesAgo}.");
+        $helper->cronLog("Track and trace email will be sent for all shipments that were confirmed on or before " .
+            "{$twentyMinutesAgo}.");
 
         /**
-         * Get all postnl shipments that have been confirmed over 20 minutes ago whose track & trace e-mail has not yet been sent
+         * Get all postnl shipments that have been confirmed over 20 minutes ago whose track & trace e-mail has not yet
+         * been sent
          *
          * Resulting SQL:
          * SELECT `main_table` . *
@@ -670,7 +681,9 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             $storeId = $postnlShipment->getStoreId();
             if (!in_array($storeId, $allowedStoreIds) || !$postnlShipment->canSendTrackAndTraceEmail()) {
-                $helper->cronLog("Sending the track and trace email is not allowed for shipment #{$postnlShipment->getId()}.");
+                $helper->cronLog(
+                    "Sending the track and trace email is not allowed for shipment #{$postnlShipment->getId()}."
+                );
                 continue;
             }
 
@@ -748,7 +761,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Resulting query:
          * SELECT `main_table`.`label_id` , `postnl_shipment`.`shipping_phase`
          * FROM `tig_postnl_shipment_label` AS `main_table`
-         * LEFT JOIN `tig_postnl_shipment` AS `postnl_shipment` ON `main_table`.`parent_id` = `postnl_shipment`.`entity_id`
+         * LEFT JOIN `tig_postnl_shipment` AS `postnl_shipment`
+         *     ON `main_table`.`parent_id` = `postnl_shipment`.`entity_id`
          * WHERE (
          *     (
          *         parent_id IS NULL

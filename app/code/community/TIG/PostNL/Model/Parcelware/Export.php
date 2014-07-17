@@ -552,6 +552,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $itemCount = 0;
         $items = $this->_sortCustomsItems($shipment->getAllItems());
 
+        $helper = Mage::helper('postnl');
+
         /**
          * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
@@ -566,7 +568,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             /**
              * Calculate the item's weight in kg
              */
-            $itemWeight = Mage::helper('postnl/cif')->standardizeWeight(
+            $itemWeight = $helper->standardizeWeight(
                 $item->getWeight(),
                 $this->getStoreId()
             );

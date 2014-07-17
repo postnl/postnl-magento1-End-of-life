@@ -664,6 +664,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $origValue = $row->getData($column->getIndex());
         $dateModel = Mage::getModel('core/date');
 
+        $productCode = $row->getData('product_code');
+        $customBarcodes = Mage::helper('postnl')->getCustomBarcodes();
+        if (array_key_exists($productCode, $customBarcodes)) {
+            return 'grid-severity-notice';
+        }
+
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
             return 'grid-severity-notice';
         }
@@ -672,19 +678,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return 'grid-severity-critical';
         }
 
-        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && date('Ymd', $dateModel->gmtTimestamp()) == date('Ymd', strtotime($origValue))
-        ) {
-            return 'grid-severity-major';
-        }
-
-        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && $dateModel->gmtTimestamp() > strtotime($origValue)
-        ) {
-            return 'grid-severity-critical';
-        }
-
         if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
+            if (date('Ymd', $dateModel->gmtTimestamp()) == date('Ymd', strtotime($origValue))) {
+                return 'grid-severity-major';
+            }
+
+            if ($dateModel->gmtTimestamp() > strtotime($origValue)) {
+                return 'grid-severity-critical';
+            }
+
             return 'grid-severity-minor';
         }
 

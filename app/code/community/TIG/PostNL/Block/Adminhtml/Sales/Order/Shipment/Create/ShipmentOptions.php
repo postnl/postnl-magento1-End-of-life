@@ -170,6 +170,21 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
+     * Check whether the current shipment would fit as a buspakje.
+     *
+     * @return bool
+     */
+    public function getFitsAsBuspakje()
+    {
+        $shipment = $this->getShipment();
+        $items = $shipment->getItemsCollection();
+
+        $fits = Mage::helper('postnl')->fitsAsBuspakje($items);
+
+        return $fits;
+    }
+
+    /**
      * Do a few checks to see if the template should be rendered before actually rendering it.
      *
      * @return string | parent::_toHtml()

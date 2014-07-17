@@ -43,6 +43,7 @@ PostnlMassActionFilter.prototype = {
 
     isDefaultCheckbox  : false,
     isBuspakjeCheckbox : false,
+    isBuspakjeField    : false,
 
     isDefaultChecked   : false,
 
@@ -96,7 +97,7 @@ PostnlMassActionFilter.prototype = {
 
         this.getIsDefaultCheckbox().disabled = true;
         this.getIsDefaultCheckbox().checked = true;
-        this.getIsBuspakjeCheckbox().up().hide();
+        this.hideIsBuspakjeContainer();
         this.hideOptions();
 
         this.getIsDefaultCheckbox().observe('click', this.defaultCheckboxChange.bind(this));
@@ -111,6 +112,7 @@ PostnlMassActionFilter.prototype = {
         this.filteredTypes = [];
         this.isDefaultCheckbox = false;
         this.isBuspakjeCheckbox = false;
+        this.isBuspakjeField = false;
 
         return this;
     },
@@ -132,9 +134,50 @@ PostnlMassActionFilter.prototype = {
         }
 
         var buspakjeCheckbox = $('postnl_is_buspakje_checkbox');
+        if (!buspakjeCheckbox) {
+            buspakjeCheckbox = new Element('input');
+        }
 
         this.isBuspakjeCheckbox = buspakjeCheckbox;
         return buspakjeCheckbox;
+    },
+
+    getIsBuspakjeField : function() {
+        if (this.isBuspakjeField) {
+            return this.isBuspakjeField;
+        }
+
+        var buspakjeField = $('postnl_is_buspakje');
+        if (!buspakjeField) {
+            buspakjeField = new Element('input');
+        }
+
+        this.isBuspakjeField = buspakjeField;
+        return buspakjeField;
+    },
+
+    showIsBuspakjeContainer : function() {
+        var isBuspakjeCheckbox = this.getIsBuspakjeCheckbox();
+        var container = isBuspakjeCheckbox.up();
+
+        if (!container) {
+            return this;
+        }
+
+        container.show();
+        return this;
+    },
+
+    hideIsBuspakjeContainer : function() {
+        var isBuspakjeCheckbox = this.getIsBuspakjeCheckbox();
+        var container = isBuspakjeCheckbox.up();
+
+        if (!container) {
+            return this;
+        }
+
+        container.hide();
+        return this;
     },
 
     isDefaultCheckboxChecked : function() {
@@ -192,7 +235,20 @@ PostnlMassActionFilter.prototype = {
 
             this.getIsDefaultCheckbox().disabled = true;
             this.getIsDefaultCheckbox().checked = true;
-            this.getIsBuspakjeCheckbox().up().hide();
+            this.getIsBuspakjeField().setValue(-1);
+            this.hideIsBuspakjeContainer();
+
+            return this;
+        }
+
+        var filteredType = filteredTypes[0];
+        if (filteredType == 'non-postnl') {
+            this.isDefaultChecked = this.getIsDefaultCheckbox().checked;
+
+            this.getIsDefaultCheckbox().disabled = true;
+            this.getIsDefaultCheckbox().checked = true;
+            this.getIsBuspakjeField().setValue(-1);
+            this.hideIsBuspakjeContainer();
 
             return this;
         }
@@ -200,11 +256,12 @@ PostnlMassActionFilter.prototype = {
         this.getIsDefaultCheckbox().disabled = false;
         this.getIsDefaultCheckbox().checked = this.isDefaultChecked;
 
-        var filteredType = filteredTypes[0];
         if (filteredType == 'domestic' || filteredType == 'buspakje') {
-            this.getIsBuspakjeCheckbox().up().show();
+            this.getIsBuspakjeField().setValue(this.isBuspakjeCheckboxChecked() ? 1 : '');
+            this.showIsBuspakjeContainer();
         } else {
-            this.getIsBuspakjeCheckbox().up().hide();
+            this.getIsBuspakjeField().setValue(-1);
+            this.hideIsBuspakjeContainer();
         }
 
         if (this.isDefaultCheckboxChecked()) {
@@ -220,8 +277,12 @@ PostnlMassActionFilter.prototype = {
         this.filteredTypes = [];
 
         $$('input.massaction-checkbox:checked').each(function(element) {
-            var shipmentType = $('postnl-shipmenttype-' + element.getValue());
-            shipmentType = shipmentType.getAttribute('data-product-type');
+            var shipmentTypeColumn = $('postnl-shipmenttype-' + element.getValue());
+            if (shipmentTypeColumn) {
+                shipmentType = shipmentTypeColumn.getAttribute('data-product-type');
+            } else {
+                shipmentType = 'non-postnl';
+            }
 
             this.addTypeToFilter(shipmentType);
         }.bind(this));
