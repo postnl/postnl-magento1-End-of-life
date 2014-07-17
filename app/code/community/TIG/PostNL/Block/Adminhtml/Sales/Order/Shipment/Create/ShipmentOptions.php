@@ -56,7 +56,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     /**
      * Get current shipment
      *
-     * @return Mage_Sales_Model_Order_Shipment
+     * @return Mage_Sales_Model_Order_Shipment.
      */
     public function getShipment()
     {
@@ -71,7 +71,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
-     * Get available product options for the current shipment
+     * Get available product options for the current shipment.
      *
      * @return array
      */
@@ -107,7 +107,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
-     * Get the default product option for the current shipment
+     * Get the default product option for the current shipment.
      *
      * @return string
      */
@@ -126,7 +126,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
-     * Gets an array of shipment types for use with GlobalPack shipments
+     * Gets an array of shipment types for use with GlobalPack shipments.
      *
      * @return array
      */
@@ -138,7 +138,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
-     * Check if the current shipment is belgian
+     * Check if the current shipment is belgian.
      *
      * @return boolean
      */
@@ -153,7 +153,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
-     * Gets the number of parcels in this shipment based on it's weight
+     * Gets the number of parcels in this shipment based on it's weight.
      *
      * @return int
      */
@@ -170,7 +170,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
-     * Do a few checks to see if the template should be rendered before actually rendering it
+     * Do a few checks to see if the template should be rendered before actually rendering it.
      *
      * @return string | parent::_toHtml()
      *

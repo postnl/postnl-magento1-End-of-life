@@ -784,7 +784,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 ),
                 'postnl_is_buspakje' => array(
                     'name'    => 'product_options[is_buspakje]',
-                    'type'    => 'checkbox',
+                    'type'    => 'postnl_checkbox',
                     'label'   => $helper->__('Is letter box parcel'),
                     'value'   => 1,
                 ),
