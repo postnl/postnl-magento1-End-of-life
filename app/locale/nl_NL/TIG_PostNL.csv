@@ -1010,3 +1010,16 @@ TIG_PostNL::Use default option,Gebruik standaardwaarde
 TIG_PostNL::Letter Box Parcel,Buspakje
 TIG_PostNL::Letter Box Parcel Extra,Buspakje Extra
 TIG_PostNL::It is not possible to create partial shipments for orders placed using PostNL COD. Please create only full shipments.,Het is niet mogelijk om deelzendingen aan te maken voor bestellingen die geplaatst zijn met PostNL rembours. Maak s.v.p. enkel volledige zendingen aan.
+TIG_PostNL::The given value must be a multiple of 500.,De opgegeven waarde moet een veelvoud van 500 zijn.
+TIG_PostNL::The addTrackingCodeToShipment action is currently unavailable.,De addTrackingCodeToShipment actie is momenteel niet beschikbaar.
+TIG_PostNL::This shipment does not need to be confirmed.,Deze zending hoeft niet voorgemeld te worden.
+TIG_PostNL::Show letter box parcel option in order grid,Toon buspakje optie in het besteloverzicht
+TIG_PostNL::This will add the option to mark shipments as being letter box parcels when creating shipments from the order grid.,Dit voegt de optie toe om bestellingen te markeren als buspakjes wanneer u zendingen aanmaakt vanuit het besteloverzicht.
+TIG_PostNL::Calculation mode,Berekeningsmodus
+TIG_PostNL::You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend.,U kunt de PostNL extensie automatisch laten bepalen of een zending door de brievenbus past of u kunt dit handmatig aangeven wanneer u zendingen aanmaakt.
+TIG_PostNL::If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.,"Indien deze instelling op 'automatisch' staat, zal de extensie de 'Gewicht' en 'PostNL Max Hoeveelheid voor Buspakjes' productattributen gebruiken om te bepalen of een zending door de brievenbus past. U kunt dit altijd overschrijven door zelf aan te geven of een zending een buspakje is wanneer u handmatig een zending aanmaakt."
+TIG_PostNL::Use letter box parcels,Gebruik buspakjes
+TIG_PostNL::If you disable this field all shipments will be considered regular package shipments.,"Indien u deze instelling uit zet, zullen alle zendingen beschouwd worden als reguliere pakketzendingen."
+"TIG_PostNL::These settings allow you to configure if and how PostNL determines if a shipment is a letter box parcel or a regular package shipment. Letter box parcels have to be able to fit through a mail slot and will be delivered using the regular mail service, rather than PostNL's parcel service.",Met deze instellingen kunt u aangeven of en hoe PostNL bepaalt of een zending een buspakje of een reguliere pakketzending is. Buspakjes moeten door de brievenbus passen en zullen bezorgd worden met de postdienst in plaats van de pakketbezorging van PostNL.
+TIG_PostNL::Manual,Handmatig
+TIG_PostNL::Automatic,Automatisch

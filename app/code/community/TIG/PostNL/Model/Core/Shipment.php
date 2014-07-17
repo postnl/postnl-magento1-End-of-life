@@ -256,9 +256,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @var array
      */
-    protected $_customBarcodes = array(
-        '2828' => '3STFGG000000000'
-    );
+    protected $_customBarcodes;
 
     /**
      * Initialize the shipment
@@ -329,6 +327,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             );
         }
 
+        /**
+         * @var Mage_Sales_Model_Order $order
+         */
         $order = Mage::getModel('sales/order')->load($orderId);
 
         $this->setOrder($order);
@@ -502,7 +503,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getCustomBarcodes()
     {
-        return $this->_customBarcodes;
+        if ($this->_customBarcodes) {
+            return $this->_customBarcodes;
+        }
+
+        $customBarcodes = $this->getHelper()->getCustomBarcodes();
+
+        $this->_customBarcodes = $customBarcodes;
+        return $customBarcodes;
     }
 
     /**
@@ -565,10 +573,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             if ($this->isDutchShipment()) {
                 return 'domestic_cod';
             }
-        }
-
-        if ($this->isBuspaakjeShipment()) {
-            return 'buspakje';
         }
 
         if ($this->isPgeShipment()) {
@@ -677,7 +681,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          *
          * @var TIG_PostNL_Helper_Cif $helper
          */
-        $helper = $this->getHelper('cif');
+        $helper = $this->getHelper();
         $weight = $helper->standardizeWeight(
             $weight,
             $this->getStoreId(),
@@ -735,7 +739,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Gets the url for this shipment's main barcode
+     * Gets the url for this shipment's main barcode.
      *
      * @param boolean $forceNl
      *
@@ -798,7 +802,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Gets the default product code for this shipment from the module's configuration
+     * Gets the default product code for this shipment from the module's configuration.
      *
      * @return string
      */
@@ -853,11 +857,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         /**
          * If the shipment is not EU or global, it's dutch (AKA a 'standard' shipment)
-         */
-
-        /**
-         * Dutch shipments may use an alternative default option when the shipment's base grandtotal exceeds a specified
-         * amount.
+         *
+         * Dutch shipments may use an alternative default option when the shipment's base grand total exceeds a
+         * specified amount.
          */
         $useAlternativeDefault = Mage::getStoreConfig(self::XPATH_USE_ALTERNATIVE_DEFAULT, $storeId);
         if (!$xpath && $useAlternativeDefault) {
@@ -1137,7 +1139,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $isBuspakje = $this->_getData('is_buspakje');
 
-        if (!is_null($isBuspakje)) {
+        if (!is_null($isBuspakje) && false) {
             return $isBuspakje;
         }
 
@@ -1145,52 +1147,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setIsBuspakje($isBuspakje);
         return $isBuspakje;
-    }
-
-    /**
-     * Calculate whether this shipment is a buspakje shipment.
-     *
-     * @return bool
-     *
-     * @throws TIG_PostNL_Exception
-     */
-    protected function _getIsBuspakje()
-    {
-        $isBuspakje = $this->getIsBuspakje();
-
-        if (!is_null($isBuspakje)) {
-            return $isBuspakje;
-        }
-
-        $order = $this->getOrder();
-        $orderItems = $order->getAllVisibleItems();
-
-        if (count($orderItems) > 1) {
-            return false;
-        }
-
-        /**
-         * @todo check shipment items as well as order items
-         */
-
-        /**
-         * @var Mage_Sales_Model_Order_Item $orderItem
-         */
-        $orderItem = $orderItems[0];
-        $product = $orderItem->getProduct();
-
-        if (!$product->hasPostnlMaxQtyForBuspakje()) {
-            return false;
-        }
-
-        $maxQty = $product->getPostnlMaxQtyForBuspakje();
-        $orderItemQty = $orderItem->getQtyOrdered();
-
-        if ($orderItemQty > $maxQty) {
-            return false;
-        }
-
-        return true;
     }
 
     /*******************************************************************************************************************
@@ -1464,6 +1420,25 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return true;
     }
 
+    /**
+     * Checks if this shipment uses a custom barcode.
+     *
+     * @return bool
+     */
+    public function hasCustomBarcode()
+    {
+        $productCode = $this->getProductCode();
+
+        $customBarcodes         = $this->getCustomBarcodes();
+        $disallowedProductCodes = array_keys($customBarcodes);
+
+        if (in_array($productCode, $disallowedProductCodes)) {
+            return true;
+        }
+
+        return false;
+    }
+
     /*******************************************************************************************************************
      * IS- AND CAN- METHODS
      ******************************************************************************************************************/
@@ -1673,18 +1648,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Check if the current shipment is a buspakje shipment.
-     *
-     * @return boolean
-     *
-     * @todo implement this method.
-     */
-    public function isBuspaakjeShipment()
-    {
-        return false;
-    }
-
-    /**
      * Checks if this shipment is a COD shipment.
      *
      * @return boolean
@@ -1816,6 +1779,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
+        if ($this->hasCustomBarcode()) {
+            return false;
+        }
+
         return true;
     }
 
@@ -1877,6 +1844,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Checks whether a tracking code may be added to this shipment.
+     *
+     * @return bool
+     */
+    public function canAddTrackingCode()
+    {
+        /**
+         * If this shipment has a custom barcode, we can't add tracking info.
+         */
+        if ($this->hasCustomBarcode()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Checks if the current shipment can send a track & trace email to the customer.
      *
      * @param boolean $ignoreAlreadySent Flag to ignore the 'already sent' check
@@ -1890,10 +1874,31 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
+        /**
+         * If the email is already sent, don't send it again.
+         */
         if ($ignoreAlreadySent !== true && $this->getTrackAndTraceEmailSent()) {
             return false;
         }
 
+        /**
+         * If we have no barcode, there is no point in sending the track and trace email.
+         */
+        if (!$this->getMainBarcode()) {
+            return false;
+        }
+
+        /**
+         * if this shipment uses a custom barcode we can't send the track and trace email, because custom barcodes can't
+         * be tracked.
+         */
+        if ($this->hasCustomBarcode()) {
+            return false;
+        }
+
+        /**
+         * Make sure sending the email is allowed in the config.
+         */
         if ($ignoreConfig !== true) {
             $storeId = $this->getStoreId();
             $canSendTrackAndTrace = Mage::getStoreConfig(self::XPATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId);
@@ -2560,6 +2565,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function addTrackingCodeToShipment()
     {
+        if (!$this->canAddTrackingCode()) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('The addTrackingCodeToShipment action is currently unavailable.'),
+                'POSTNL-0180'
+            );
+        }
+
         $shipment = $this->getShipment();
         $barcode = $this->getMainBarcode();
 
@@ -2909,6 +2921,29 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /*******************************************************************************************************************
+     * BUSPAKJE METHODS
+     ******************************************************************************************************************/
+
+    /**
+     * Calculate whether this shipment is a buspakje shipment.
+     *
+     * @return bool
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getIsBuspakje()
+    {
+        $shipmentItems = $this->getShipment()
+                              ->getItemsCollection();
+
+        if (!$this->getHelper()->fitsAsBuspakje($shipmentItems)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /*******************************************************************************************************************
      * PRODUCT CODE METHODS
      ******************************************************************************************************************/
 
@@ -2956,6 +2991,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         /**
          * If this is a domestic shipment and the shipment has been marked as 'buspakje', update the shipment type. If
+         * no buspakje field was entered or the field has a value of -1, automatically determine whether this shipment
+         * is a buspakje shipment.
          */
         if ($shipmentType == 'domestic'
             && array_key_exists('is_buspakje', $codes)
@@ -2964,7 +3001,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $isBuspakje = true;
         } elseif ($shipmentType == 'domestic'
             && (!array_key_exists('is_buspakje', $codes)
-                || $codes['is_buspakje'] == '0'
+                || $codes['is_buspakje'] == '-1'
             )
         ) {
             $isBuspakje = $this->_getIsBuspakje();
@@ -3151,7 +3188,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          *
          * @var TIG_PostNL_Helper_Cif $helper
          */
-        $helper = $this->getHelper('cif');
+        $helper = $this->getHelper();
         $weightPerParcel = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $this->getStoreId());
         $weightPerParcel = $helper->standardizeWeight($weightPerParcel, $this->getStoreId());
 
@@ -3177,10 +3214,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function resetConfirmation($deleteLabels = true, $deleteTracks = true)
     {
-        $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED) //set status to unconfirmed
+        $confirmStatus = null;
+        if (!$this->hasCustomBarcode()) {
+            $confirmStatus = self::CONFIRM_STATUS_UNCONFIRMED;
+        }
+
+        $this->setConfirmStatus($confirmStatus) //set status to unconfirmed
              ->setShippingPhase(false) //delete current shipping phase
-             ->setConfirmedAt(false) //delete 'confirmed at' date
-             ->deleteBarcodes() //delete all associated barcodes
+             ->setConfirmedAt(false); //delete 'confirmed at' date
+
+        $this->deleteBarcodes() //delete all associated barcodes
              ->deleteStatusHistory(); //delete all associated status history items
 
 
@@ -3260,7 +3303,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Deletes all status history items associated with this shipment
+     * Deletes all status history items associated with this shipment.
      *
      * @return $this
      */
@@ -3306,7 +3349,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Set confirm status.
          */
-        if ($this->getConfirmStatus() === null) {
+        if ($this->getConfirmStatus() === null && !$this->hasCustomBarcode()) {
             $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
         }
 
