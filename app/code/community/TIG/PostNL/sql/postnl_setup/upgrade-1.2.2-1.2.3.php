@@ -74,7 +74,6 @@ $installer->addAttribute('catalog_product', 'postnl_allow_delivery_options', arr
     'is_html_allowed_on_front'   => false,
     'used_in_product_listing'    => false,
     'user_defined'               => false,
-    'apply_to'                   => Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
     'is_configurable'            => false,
     'used_for_sort_by'           => false,
     'position'                   => 0,

@@ -87,4 +87,5 @@ $installer->setOrderId()
           ->setIsBuspakje()
           ->addAclRules($newConfigAclResources, $configRequiredResources)
           ->addAclRules($newPostnLAclResources, $postnlRequiredResources)
-          ->addSupportedProductCode(array('2828', '2928'));
+          ->addSupportedProductCode(array('2828', '2928'))
+          ->clearConfigCache();
