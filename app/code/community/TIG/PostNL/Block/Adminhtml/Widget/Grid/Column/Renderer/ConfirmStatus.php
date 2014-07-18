@@ -74,17 +74,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmStatus
         $helper = Mage::helper('postnl');
 
         /**
-         * If this shipment uses a custom barcode it does not need to be confirmed.
-         */
-        $productCode    = $row->getData(self::PRODUCT_CODE_COLUMN);
-        $customBarcodes = $helper->getCustomBarcodes();
-
-        if (array_key_exists($productCode, $customBarcodes)) {
-            return parent::render($row);
-        }
-
-
-        /**
          * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
          */
         $postnlShipmentClass = Mage::app()->getConfig()->getModelClassName('postnl_core/shipment');
@@ -104,7 +93,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmStatus
                 continue;
             }
 
-            $labels[] = $helper->__('Confirmation Expired');
+            if ($value == $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED) {
+                $labels[] = $helper->__('Confirmation Expired');
+
+                continue;
+            }
         }
 
         $label = implode(',', $labels);

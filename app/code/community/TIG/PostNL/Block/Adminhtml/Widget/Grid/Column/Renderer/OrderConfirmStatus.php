@@ -67,11 +67,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmStatus
          * Check if any data is available.
          */
         $values      = $row->getData($this->getColumn()->getIndex());
-        $confirmDate = $row->getData(self::CONFIRM_DATE_COLUMN);
-        if (is_null($values) && is_null($confirmDate)) {
+        if (is_null($values)) {
             return Mage::helper('postnl')->__('No shipments found');
-        } elseif (is_null($values)) {
-            return parent::render($row);
         }
 
         /**
@@ -96,8 +93,17 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmStatus
                 continue;
             }
 
-            $labels[] = Mage::helper('postnl')
-                            ->__('Confirmation Expired');
+            if ($value == $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED) {
+                $labels[] = Mage::helper('postnl')
+                                ->__('Confirmation Expired');
+                continue;
+            }
+
+            if ($value == $postnlShipmentClass::CONFIRM_STATUS_BUSPAKJE) {
+                $labels[] = Mage::helper('postnl')
+                                ->__('No Confirmation Required');
+                continue;
+            }
         }
 
         $label = implode(',', $labels);
