@@ -496,38 +496,40 @@ $conn->addColumn(
  * PRODUCT ATTRIBUTES
  **********************************************************************************************************************/
 
-$installer->addAttribute(
-    'catalog_product',
-    'postnl_max_qty_for_buspakje',
-    array(
-        'backend'                    => 'catalog/product_attribute_backend_boolean',
-        'group'                      => 'General',
-        'sort_order'                 => 110,
-        'frontend'                   => '',
-        'frontend_class'             => 'validate-digits',
-        'default'                    => '0',
-        'label'                      => 'PostNL Max Qty For Letter Box Parcels',
-        'input'                      => 'text',
-        'type'                       => 'int',
-        'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL,
-        'visible'                    => true,
-        'required'                   => false,
-        'searchable'                 => false,
-        'filterable'                 => false,
-        'filterable_in_search'       => false,
-        'unique'                     => false,
-        'comparable'                 => false,
-        'visible_on_front'           => false,
-        'visible_in_advanced_search' => false,
-        'is_html_allowed_on_front'   => false,
-        'used_in_product_listing'    => false,
-        'user_defined'               => false,
-        'apply_to'                   => Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
-        'is_configurable'            => false,
-        'used_for_sort_by'           => false,
-        'position'                   => 0,
-        'used_for_promo_rules'       => false,
-    )
-);
+if (!$installer->getAttribute('catalog_product', 'postnl_max_qty_for_buspakje')) {
+    $installer->addAttribute(
+        'catalog_product',
+        'postnl_max_qty_for_buspakje',
+        array(
+            'backend'                    => 'catalog/product_attribute_backend_boolean',
+            'group'                      => 'General',
+            'sort_order'                 => 110,
+            'frontend'                   => '',
+            'frontend_class'             => 'validate-digits',
+            'default'                    => '0',
+            'label'                      => 'PostNL Max Qty For Letter Box Parcels',
+            'input'                      => 'text',
+            'type'                       => 'int',
+            'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL,
+            'visible'                    => true,
+            'required'                   => false,
+            'searchable'                 => false,
+            'filterable'                 => false,
+            'filterable_in_search'       => false,
+            'unique'                     => false,
+            'comparable'                 => false,
+            'visible_on_front'           => false,
+            'visible_in_advanced_search' => false,
+            'is_html_allowed_on_front'   => false,
+            'used_in_product_listing'    => false,
+            'user_defined'               => false,
+            'apply_to'                   => Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+            'is_configurable'            => false,
+            'used_for_sort_by'           => false,
+            'position'                   => 0,
+            'used_for_promo_rules'       => false,
+        )
+    );
+}
 
 $installer->endSetup();
