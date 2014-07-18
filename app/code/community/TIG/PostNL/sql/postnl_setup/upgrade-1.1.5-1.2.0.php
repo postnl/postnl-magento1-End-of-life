@@ -246,7 +246,6 @@ $installer->addAttribute('catalog_product', 'postnl_shipping_duration', array(
     'is_html_allowed_on_front'   => false,
     'used_in_product_listing'    => false,
     'user_defined'               => false,
-    'apply_to'                   => 'simple',
     'is_configurable'            => false,
     'used_for_sort_by'           => false,
     'position'                   => 0,
