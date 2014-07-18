@@ -151,6 +151,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const CONFIRM_STATUS_CONFIRMED       = 'confirmed';
     const CONFIRM_STATUS_UNCONFIRMED     = 'unconfirmed';
     const CONFIRM_STATUS_CONFIRM_EXPIRED = 'confirm_expired';
+    const CONFIRM_STATUS_BUSPAKJE        = 'buspakje';
 
     /**
      * Possible shipping phases.
@@ -3214,9 +3215,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function resetConfirmation($deleteLabels = true, $deleteTracks = true)
     {
-        $confirmStatus = null;
         if (!$this->hasCustomBarcode()) {
             $confirmStatus = self::CONFIRM_STATUS_UNCONFIRMED;
+        } else {
+            $confirmStatus = self::CONFIRM_STATUS_BUSPAKJE;
         }
 
         $this->setConfirmStatus($confirmStatus) //set status to unconfirmed
@@ -3349,7 +3351,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Set confirm status.
          */
-        if ($this->getConfirmStatus() === null && !$this->hasCustomBarcode()) {
+        if ($this->getConfirmStatus() === null && $this->hasCustomBarcode()) {
+            $this->setConfirmStatus(self::CONFIRM_STATUS_BUSPAKJE);
+        } elseif ($this->getConfirmStatus() === null) {
             $this->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
         }
 
