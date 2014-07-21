@@ -275,6 +275,9 @@
             </quote>
             <order_invoice>
                 <totals>
+                    <subtotal>
+                        <class>postnl_payment/order_invoice_total_subtotal</class>
+                    </subtotal>
                     <postnl_cod_fee>
                         <class>postnl_payment/order_invoice_total_codFee</class>
                         <after>subtotal,discount,shipping</after>
