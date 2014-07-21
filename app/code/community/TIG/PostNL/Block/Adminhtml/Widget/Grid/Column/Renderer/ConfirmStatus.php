@@ -43,6 +43,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmStatus
      * Additional column names used
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
+    const PRODUCT_CODE_COLUMN    = 'product_code';
 
     /**
      * Renders the column value as a Yes or No value
@@ -70,6 +71,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmStatus
             return parent::render($row);
         }
 
+        $helper = Mage::helper('postnl');
+
         /**
          * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
          */
@@ -79,21 +82,22 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmStatus
         $labels = array();
         foreach ($values as $value) {
             if ($value == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
-                $labels[] = Mage::helper('postnl')
-                                ->__('Confirmed');
+                $labels[] = $helper->__('Confirmed');
 
                 continue;
             }
 
             if ($value == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
-                $labels[] = Mage::helper('postnl')
-                                ->__('Unconfirmed');
+                $labels[] = $helper->__('Unconfirmed');
 
                 continue;
             }
 
-            $labels[] = Mage::helper('postnl')
-                            ->__('Confirmation Expired');
+            if ($value == $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED) {
+                $labels[] = $helper->__('Confirmation Expired');
+
+                continue;
+            }
         }
 
         $label = implode(',', $labels);

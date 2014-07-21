@@ -36,48 +36,26 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_checkoutJsUrl        = $this->getCheckoutJsUrl(); ?>
-<?php $_checkoutPremiumJsUrl = $this->getCheckoutPremiumJsUrl(); ?>
-<?php $_continueUrl          = $this->getContinueUrl(); ?>
-<?php $_environment          = $this->getEnvironment(); ?>
-<?php $_checkUserLoggedIn = true; ?>
-<script type="text/javascript" src="<?php echo $_checkoutJsUrl; ?>"></script>
-<script type="text/javascript" src="<?php echo $_checkoutPremiumJsUrl; ?>"></script>
-<script type="text/javascript">
-    //<![CDATA[
-    var postnlcheckoutWidget;
-    var pingUrl = '<?php echo $this->getUrl('postnl/checkout/ping', array('_secure' => true)); ?>';
-    window.startPostnlCheckoutPing = function() {
-        if (typeof pingUrl == 'undefined') {
+class TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty extends Mage_Adminhtml_Block_Sales_Items_Column_Qty
+{
+    /**
+     * Gets the maximum qty allowed for buspakje.
+     *
+     * @return boolean|int|string
+     */
+    public function getMaxQtyForBuspakje()
+    {
+        /**
+         * @var Mage_Sales_Model_Order_Item $item
+         */
+        $item = $this->getItem();
+        $product = $item->getProduct();
+
+        if (!$product->hasData('postnl_max_qty_for_buspakje')) {
             return false;
         }
 
-        $('waiting_for_ping_spinner').show();
-
-        new Ajax.Request(pingUrl,{
-            method: 'get',
-            parameters: null,
-            onComplete: function(response) {
-                var responseText = response.responseText;
-                $('waiting_for_ping_spinner').hide();
-
-                if (responseText == 'OK') {
-                    $('postnl_checkout_seperator').show();
-                    $('postnl_checkout').show();
-                } else {
-                    $('postnl_checkout_link_disabled').show();
-                }
-            }
-        });
-
-        postnlcheckoutWidget = new PostNLCheckout(
-            '<?php echo $this->getUrl('postnl/checkout/prepareOrder'); ?>',
-            '<?php echo $_continueUrl; ?>',
-            <?php echo $_environment; ?>
-        );
-
-        return true;
-    };
-    //]]>
-</script>
+        $maxQty = $product->getDataUsingMethod('postnl_max_qty_for_buspakje');
+        return $maxQty;
+    }
+}

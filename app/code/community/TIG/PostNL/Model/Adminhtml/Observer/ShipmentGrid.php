@@ -609,7 +609,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         if ($helper->checkIsPostnlActionAllowed('confirm')) {
             $actions[] = array(
                 'caption'   => $helper->__('Confirm'),
-                'url'       => array('base' => 'postnl/adminhtml_shipment/confirm'),
+                'url'       => array('base' => 'postnl_admin/adminhtml_shipment/confirm'),
                 'field'     => 'shipment_id',
                 'is_postnl' => true, //custom flag for renderer
                 'code'      => 'postnl_confirm',
@@ -656,15 +656,29 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     protected function _getConfirmDateClass($row, $column)
     {
+
+        $origValue = $row->getData($column->getIndex());
+
+        if (!$origValue) {
+            return '';
+        }
+
+        $dateModel = Mage::getModel('core/date');
+
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
+        $origDate            = new DateTime($origValue);
+        $now                 = new DateTime($dateModel->gmtDate());
+        $interval            = $now->diff($origDate);
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
-        $origValue = $row->getData($column->getIndex());
-        $dateModel = Mage::getModel('core/date');
-
-        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
+        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED
+            || ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_BUSPAKJE
+                && $interval->d >= 1
+                && $interval->invert
+            )
+        ) {
             return 'grid-severity-notice';
         }
 
@@ -672,23 +686,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return 'grid-severity-critical';
         }
 
-        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && date('Ymd', $dateModel->gmtTimestamp()) == date('Ymd', strtotime($origValue))
-        ) {
+        if ($interval->d == 0) {
             return 'grid-severity-major';
         }
 
-        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && $dateModel->gmtTimestamp() > strtotime($origValue)
-        ) {
+        if ($interval->d >= 1 && $interval->invert) {
             return 'grid-severity-critical';
         }
 
-        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
-            return 'grid-severity-minor';
-        }
-
-        return '';
+        return 'grid-severity-minor';
     }
 
     /**
@@ -721,6 +727,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED:
             case $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED:
                 $class = 'grid-severity-critical';
+                break;
+            case $postnlShipmentClass::CONFIRM_STATUS_BUSPAKJE:
+                $class = 'grid-severity-notice no-display';
                 break;
             default:
                 $class = '';

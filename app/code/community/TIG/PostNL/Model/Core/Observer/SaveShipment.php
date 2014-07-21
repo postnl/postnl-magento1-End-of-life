@@ -67,7 +67,7 @@ class TIG_PostNL_Model_Core_Observer_SaveShipment
         $productOption = $controller->getRequest()->getParam('postnl');
 
         if ($productOption && isset($productOption['product_option'])) {
-            Mage::register('postnl_product_option', $productOption['product_option']);
+            Mage::register('postnl_product_option', $productOption);
             unset($productOption['product_option']);
         }
 

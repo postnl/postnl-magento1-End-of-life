@@ -35,49 +35,11 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @deprecated 1.3.0 This class has been moved to TIG_PostNL_Model_Admin_Inbox. A dummy class has been left behind to
+ *                   provide backwards compatibility. This class may be removed in the future without further notice.
  */
-?>
-<?php $_checkoutJsUrl        = $this->getCheckoutJsUrl(); ?>
-<?php $_checkoutPremiumJsUrl = $this->getCheckoutPremiumJsUrl(); ?>
-<?php $_continueUrl          = $this->getContinueUrl(); ?>
-<?php $_environment          = $this->getEnvironment(); ?>
-<?php $_checkUserLoggedIn = true; ?>
-<script type="text/javascript" src="<?php echo $_checkoutJsUrl; ?>"></script>
-<script type="text/javascript" src="<?php echo $_checkoutPremiumJsUrl; ?>"></script>
-<script type="text/javascript">
-    //<![CDATA[
-    var postnlcheckoutWidget;
-    var pingUrl = '<?php echo $this->getUrl('postnl/checkout/ping', array('_secure' => true)); ?>';
-    window.startPostnlCheckoutPing = function() {
-        if (typeof pingUrl == 'undefined') {
-            return false;
-        }
+class TIG_PostNL_Model_Inbox extends TIG_PostNL_Model_Admin_Inbox
+{
 
-        $('waiting_for_ping_spinner').show();
-
-        new Ajax.Request(pingUrl,{
-            method: 'get',
-            parameters: null,
-            onComplete: function(response) {
-                var responseText = response.responseText;
-                $('waiting_for_ping_spinner').hide();
-
-                if (responseText == 'OK') {
-                    $('postnl_checkout_seperator').show();
-                    $('postnl_checkout').show();
-                } else {
-                    $('postnl_checkout_link_disabled').show();
-                }
-            }
-        });
-
-        postnlcheckoutWidget = new PostNLCheckout(
-            '<?php echo $this->getUrl('postnl/checkout/prepareOrder'); ?>',
-            '<?php echo $_continueUrl; ?>',
-            <?php echo $_environment; ?>
-        );
-
-        return true;
-    };
-    //]]>
-</script>
+}

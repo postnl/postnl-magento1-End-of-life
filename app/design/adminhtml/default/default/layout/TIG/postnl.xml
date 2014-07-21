@@ -183,10 +183,11 @@
     </adminhtml_sales_shipment_index>
 
     <adminhtml_sales_order_shipment_new>
-        <reference name="head">
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/TIG/PostNL/shipment_options.js</name>
+        <reference name="order_items">
+            <action method="addColumnRender">
+                <column>qty</column>
+                <block>postnl_adminhtml/sales_items_column_qty</block>
+                <template>TIG/PostNL/sales/items/column/qty.phtml</template>
             </action>
         </reference>
         <reference name="before_body_end">

@@ -146,7 +146,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 'w' => 141.6,
             ),
         ),
-        'BuspakjeExtra' => array(
+        'BusPakjeExtra' => array(
             1 => array(
                 'x' => 152.4,
                 'y' => 3.9,
@@ -191,20 +191,10 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             ),
         ),
         'CODcard' => array(
-            1 => array(
-                'x' => 3.9,
-                'y' => 3.9,
-                'w' => 141.6,
-            ),
-            2 => array(
-                'x' => 3.9,
-                'y' => 77.9,
-                'w' => 141.6,
-            ),
-            3 => array(
-                'x' => 3.9,
-                'y' => 151.6,
-                'w' => 141.6,
+            array(
+                'x' => 2,
+                'y' => -39,
+                'w' => 103,
             ),
         ),
         'CN23' => array(
@@ -628,7 +618,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
         if ($labelType == 'Label'
             || $labelType == 'Label-combi'
             || $labelType == 'BusPakje'
-            || $labelType == 'BuspakjeExtra'
+            || $labelType == 'BusPakjeExtra'
         ) {
             if ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
                 $pdf->addOrientedPage('L', 'A4');
@@ -653,15 +643,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $pdf->addOrientedPage('L', 'A6');
             }
         } elseif ($labelType == 'CODcard') {
-            if ($this->getIsFirstCodCardLabel()) {
-                $this->setIsFirstCodCardLabel(false);
-
-                $pdf->addOrientedPage('P', 'A4');
-                $this->resetLabelCounter();
-            } elseif (!$this->getLabelCounter() || $this->getLabelCounter() > 3) {
-                $pdf->addOrientedPage('P', 'A4');
-                $this->resetLabelCounter();
-            }
+            $pdf->addOrientedPage('P', array(156.65, 73.85));
         } elseif ($labelType == 'CN23'
             || $labelType == 'CommercialInvoice'
             || $labelType == 'CODcard'
@@ -688,7 +670,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 break;
             case 'Label':
             case 'BusPakje':
-            case 'BuspakjeExtra':
+            case 'BusPakjeExtra':
                 $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
 
                 $this->increaseLabelCounter();
@@ -711,9 +693,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $this->setLabelCounter(5);
                 break;
             case 'CODcard':
-                $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
+                $pdf->Rotate('-90');
+
+                $position = $this->_getLabelPosition($labelType);
 
                 $this->increaseLabelCounter();
+
+                $rotate = true;
                 break;
             default:
                 throw new TIG_PostNL_Exception(
@@ -840,7 +826,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
-     * Sorts labels by label type. First all labels of the 'Label', 'Label-combi', 'BusPakje' and 'BuspakjeExtra' type.
+     * Sorts labels by label type. First all labels of the 'Label', 'Label-combi', 'BusPakje' and 'BusPakjeExtra' type.
      * Then all other labels in the order of 'CODcard' > 'CN23' > 'CP71' > 'CommercialInvoice' grouped by shipments.
      *
      * @param array $labels
@@ -863,7 +849,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             if ($label->getLabelType() == 'Label'
                 || $label->getLabelType() == 'Label-combi'
                 || $label->getLabelType() == 'BusPakje'
-                || $label->getLabelType() == 'BuspakjeExtra'
+                || $label->getLabelType() == 'BusPakjeExtra'
             ) {
                 $generalLabels[] = $label;
                 continue;

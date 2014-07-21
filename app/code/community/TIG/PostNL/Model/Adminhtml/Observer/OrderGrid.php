@@ -71,6 +71,16 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     const XPATH_SHOW_OPTIONS = 'postnl/cif_labels_and_confirming/show_grid_options';
 
     /**
+     * XML path to show_buspakje_options setting.
+     */
+    const XPATH_SHOW_BUSPAKJE_OPTION = 'postnl/cif_labels_and_confirming/show_buspakje_option';
+
+    /**
+     * XML path to buspakje_calculation_mode setting.
+     */
+    const XPATH_BUSPAKJE_CALCULATION_MODE = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
+
+    /**
      * XML path to 'order grid columns' setting
      */
     const XPATH_ORDER_GRID_COLUMNS = 'postnl/cif_labels_and_confirming/order_grid_columns';
@@ -224,11 +234,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * Join sales_flat_order_payment table.
          */
         $select->joinLeft(
-               array('payment' => $resource->getTableName('sales/order_payment')),
-               '`main_table`.`entity_id`=`payment`.`parent_id`',
-               array(
-                   'payment_method' => 'payment.method',
-               )
+            array('payment' => $resource->getTableName('sales/order_payment')),
+            '`main_table`.`entity_id`=`payment`.`parent_id`',
+            array(
+                'payment_method' => 'payment.method',
+            )
         );
 
         /**
@@ -505,26 +515,40 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 
         $origValue = $row->getData($column->getIndex());
         $dateModel = Mage::getModel('core/date');
+        $now       = new DateTime($dateModel->gmtDate());
 
         if (!$origValue) {
             $deliveryDate = Mage::helper('postnl/deliveryOptions')->getShippingDate(
                 $row->getCreatedAt(),
                 $row->getStoreId()
             );
-            $origValue = date('Y-m-d H:i:s', strtotime('-1 day', strtotime($deliveryDate)));
+            $origDate = new DateTime($deliveryDate);
+            $origDate = $origDate->sub(new DateInterval('P1D'));
+        } else {
+            $origDate = new DateTime($origValue);
         }
 
-        $isConfirmed = $this->_isRowConfirmed($row);
+        /**
+         * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
+         */
+        $interval            = $now->diff($origDate);
+        $isConfirmed         = $this->_isRowConfirmed($row);
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
-        if ($isConfirmed) {
+        if ($isConfirmed ||
+            ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_BUSPAKJE
+                && $interval->d >= 1
+                && $interval->invert
+            )
+        ) {
             return 'grid-severity-notice';
         }
 
-        if (date('Ymd', $dateModel->gmtTimestamp()) == date('Ymd', strtotime($origValue))) {
+        if ($interval->d == 0) {
             return 'grid-severity-major';
         }
 
-        if ($dateModel->gmtTimestamp() > strtotime($origValue)) {
+        if ($interval->d >= 1 && $interval->invert) {
             return 'grid-severity-critical';
         }
 
@@ -541,10 +565,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     protected function _isRowConfirmed($row)
     {
         $confirmStatus = $row->getConfirmStatus();
-
-        if (!$confirmStatus) {
-            return false;
-        }
 
         /**
          * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
@@ -616,9 +636,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             case $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED:
                 $class = 'grid-severity-notice';
                 break;
-            case $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED:
+            case $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED: //no break
             case $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED:
                 $class = 'grid-severity-critical';
+                break;
+            case $postnlShipmentClass::CONFIRM_STATUS_BUSPAKJE:
+                $class = 'grid-severity-notice no-display';
                 break;
             default:
                 $class = '';
@@ -781,12 +804,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'label'   => $helper->__('Use default option'),
                     'value'   => 1,
                     'checked' => 'checked',
-                ),
-                'postnl_is_buspakje' => array(
-                    'name'    => 'product_options[is_buspakje]',
-                    'type'    => 'checkbox',
-                    'label'   => $helper->__('Is letter box parcel'),
-                    'value'   => 1,
                 ),
                 'postnl_domestic_options' => array(
                     'name'   => 'product_options[domestic_options]',
@@ -956,6 +973,29 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     ),
                 ),
             );
+
+            $buspakjeCalculationMode = Mage::getStoreConfig(self::XPATH_BUSPAKJE_CALCULATION_MODE, $storeId);
+            $showBuspakjeOptions = Mage::getStoreConfigFlag(self::XPATH_SHOW_BUSPAKJE_OPTION, $storeId);
+            if ($helper->canUseBuspakje()
+                && $buspakjeCalculationMode == 'manual'
+                && $showBuspakjeOptions
+            ) {
+                $buspakjeConfig = array(
+                    'postnl_is_buspakje' => array(
+                        'name'    => 'product_options[is_buspakje]',
+                        'type'    => 'postnl_checkbox',
+                        'label'   => $helper->__('Is letter box parcel'),
+                        'value'   => 1,
+                    ),
+                );
+
+                /**
+                 * Insert the is_buspakje checkbox at the second position in the config array.
+                 */
+                $config = array_slice($config, 0, 1, true)
+                        + $buspakjeConfig
+                        + array_slice($config, 1, count($config) - 1, true);
+            }
 
             /**
              * @var TIG_PostNL_Block_Adminhtml_Widget_Grid_Massaction_Item_Additional_ProductOptions $block

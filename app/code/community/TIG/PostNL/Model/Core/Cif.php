@@ -831,7 +831,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
              * Get the parcel weight and then convert it to grams.
              */
             $parcelWeight = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $postnlShipment->getStoreId());
-            $parcelWeight = Mage::helper('postnl/cif')->standardizeWeight($parcelWeight, $shipment->getStoreId(), true);
+            $parcelWeight = Mage::helper('postnl')->standardizeWeight($parcelWeight, $shipment->getStoreId(), true);
 
             /**
              * All parcels except for the last one weigh a configured amount. The last parcel weighs the remainder
@@ -1388,6 +1388,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $content = array();
         $items = $this->_sortCustomsItems($shipment->getAllItems());
 
+        $helper = Mage::helper('postnl');
+
         /**
          * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
@@ -1402,7 +1404,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             /**
              * Calculate the item's weight in kg
              */
-            $itemWeight = Mage::helper('postnl/cif')->standardizeWeight(
+            $itemWeight = $helper->standardizeWeight(
                 $item->getWeight(),
                 $this->getStoreId()
             );

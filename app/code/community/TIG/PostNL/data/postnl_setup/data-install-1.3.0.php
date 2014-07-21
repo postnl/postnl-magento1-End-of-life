@@ -36,48 +36,18 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-?>
-<?php $_checkoutJsUrl        = $this->getCheckoutJsUrl(); ?>
-<?php $_checkoutPremiumJsUrl = $this->getCheckoutPremiumJsUrl(); ?>
-<?php $_continueUrl          = $this->getContinueUrl(); ?>
-<?php $_environment          = $this->getEnvironment(); ?>
-<?php $_checkUserLoggedIn = true; ?>
-<script type="text/javascript" src="<?php echo $_checkoutJsUrl; ?>"></script>
-<script type="text/javascript" src="<?php echo $_checkoutPremiumJsUrl; ?>"></script>
-<script type="text/javascript">
-    //<![CDATA[
-    var postnlcheckoutWidget;
-    var pingUrl = '<?php echo $this->getUrl('postnl/checkout/ping', array('_secure' => true)); ?>';
-    window.startPostnlCheckoutPing = function() {
-        if (typeof pingUrl == 'undefined') {
-            return false;
-        }
 
-        $('waiting_for_ping_spinner').show();
+/**
+ * @var TIG_PostNL_Model_Resource_Setup $installer
+ */
+$installer = $this;
 
-        new Ajax.Request(pingUrl,{
-            method: 'get',
-            parameters: null,
-            onComplete: function(response) {
-                var responseText = response.responseText;
-                $('waiting_for_ping_spinner').hide();
+$installer->startSetup();
 
-                if (responseText == 'OK') {
-                    $('postnl_checkout_seperator').show();
-                    $('postnl_checkout').show();
-                } else {
-                    $('postnl_checkout_link_disabled').show();
-                }
-            }
-        });
+$installer->generateShippingStatusCronExpr()
+          ->generateUpdateStatisticsCronExpr()
+          ->expandSupportTab()
+          ->installTestPassword()
+          ->installWebshopId();
 
-        postnlcheckoutWidget = new PostNLCheckout(
-            '<?php echo $this->getUrl('postnl/checkout/prepareOrder'); ?>',
-            '<?php echo $_continueUrl; ?>',
-            <?php echo $_environment; ?>
-        );
-
-        return true;
-    };
-    //]]>
-</script>
+$installer->endSetup();

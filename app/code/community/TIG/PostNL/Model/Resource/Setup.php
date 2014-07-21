@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
+class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
 {
     /**
      * Cron expression and cron model definitions for shipping_status cron
@@ -797,6 +797,34 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
              * The getShipmentType() method will calculate and set the shipment type if none is available.
              */
             $shipment->getShipmentType();
+
+            if ($shipment->hasDataChanges()) {
+                $transactionSave->addObject($shipment);
+            }
+        }
+
+        $transactionSave->save();
+
+        return $this;
+    }
+
+    /**
+     * Sets the newly added 'is_buspakje' flag of every PostNL shipment.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     */
+    public function setIsBuspakje()
+    {
+        $transactionSave = Mage::getResourceModel('core/transaction');
+
+        $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        foreach ($postnlShipmentCollection as $shipment) {
+            /**
+             * Set the 'is_buspakje' flag to false for all existing shipments.
+             */
+            $shipment->setIsBuspakje(false);
 
             if ($shipment->hasDataChanges()) {
                 $transactionSave->addObject($shipment);
