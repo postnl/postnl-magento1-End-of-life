@@ -39,6 +39,9 @@
 class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
 {
     /**
+     * Updates the PostNL order after the order has been placed. Also copies the PakjeGemak quote address to the order
+     * as an order address or deletes it if it's no longer needed.
+     *
      * @param Varien_Event_Observer $observer
      *
      * @return $this
@@ -55,20 +58,6 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $order = $observer->getOrder();
 
         /**
-         * Check if this order was placed using PostNL.
-         */
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-        $shippingMethod = $order->getShippingMethod();
-
-        /**
-         * If this order was not placed with PostNL, remove any PakjeGemak addresses that may have been saved.
-         */
-        if (!in_array($shippingMethod, $postnlShippingMethods)) {
-            $this->_removePakjeGemakAddress($order);
-            return $this;
-        }
-
-        /**
          * Get the PostNL order associated with this order.
          *
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
@@ -76,11 +65,17 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $postnlOrder = Mage::getModel('postnl_core/order')->load($order->getQuoteId(), 'quote_id');
 
         /**
-         * If this order is not being shipped to the Netherlands, remove any PakjeGemak addresses that may have been
-         * saved and delete the PostNL order.
+         * Get all shipping methods that are considered to be PostNL.
+         */
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $shippingMethod = $order->getShippingMethod();
+
+        /**
+         * If this order is not being shipped to the Netherlands or was not placed using PostNL, remove any PakjeGemak
+         * addresses that may have been saved and delete the PostNL order.
          */
         $shippingCountry = $order->getShippingAddress()->getCountryId();
-        if ($shippingCountry != 'NL') {
+        if ($shippingCountry != 'NL' || !in_array($shippingMethod, $postnlShippingMethods)) {
             $this->_removePakjeGemakAddress($order);
             $postnlOrder->delete();
             return $this;
@@ -154,6 +149,15 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
 
         $order->addAddress($orderAddress)
               ->save();
+
+        /**
+         * This is a fix for the order address missing a parent ID.
+         *
+         * @since v1.3.0
+         */
+        if (!$orderAddress->getParentId()) {
+            $orderAddress->setParentId($order->getId());
+        }
 
         /**
          * This is required for some PSP extensions which will not save the PakjeGemak address otherwise.

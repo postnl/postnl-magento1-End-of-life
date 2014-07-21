@@ -68,7 +68,17 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
         }
 
         /**
-         * Check if any data is available
+         * If this is a buspakje shipment, a custom barcode is used that will not be displayed here.
+         *
+         * @var $postnlShipmentClassName TIG_PostNL_Model_Core_Shipment
+         */
+        $postnlShipmentClassName = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($row->getData(self::CONFIRM_STATUS_COLUMN) == $postnlShipmentClassName::CONFIRM_STATUS_BUSPAKJE) {
+            return '';
+        }
+
+        /**
+         * Check if any data is available.
          */
         $value = $row->getData($this->getColumn()->getIndex());
         if (!$value) {
@@ -78,10 +88,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Barcode
 
         /**
          * If the shipment hasn't been confirmed yet, the barcode will not be known by PostNL track & trace.
-         *
-         * @var $postnlShipmentClassName TIG_PostNL_Model_Core_Shipment
          */
-        $postnlShipmentClassName = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         if ($row->getData(self::CONFIRM_STATUS_COLUMN) != $postnlShipmentClassName::CONFIRM_STATUS_CONFIRMED) {
             return $value;
         }

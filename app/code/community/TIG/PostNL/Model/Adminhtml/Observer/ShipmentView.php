@@ -196,7 +196,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         /**
          * Add a button to confirm this shipment.
          */
-        if (!$postnlShipment->isConfirmed() && $confirmAllowed) {
+        if (!$postnlShipment->isConfirmed() && $postnlShipment->canConfirm() && $confirmAllowed) {
             $confirmUrl = $this->getConfirmUrl($shipment->getId());
 
             $block->addButton('confirm_shipment', array(

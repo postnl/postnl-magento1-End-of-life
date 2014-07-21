@@ -257,6 +257,18 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
             'isExtraCover' => false,
             'group'        => 'pakketautomaat_options',
         ),
+        '2828' => array(
+            'value'        => '2828',
+            'label'        => 'Letter Box Parcel',
+            'isExtraCover' => false,
+            'group'        => 'buspakje_options',
+        ),
+        '2928' => array(
+            'value'        => '2928',
+            'label'        => 'Letter Box Parcel Extra',
+            'isExtraCover' => false,
+            'group'        => 'buspakje_options',
+        ),
     );
 
     /**
@@ -268,6 +280,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         'eu_options'             => 'EU options',
         'global_options'         => 'Global options',
         'pakketautomaat_options' => 'Parcel Dispenser options',
+        'buspakje_options'       => 'Letter Box Parcel options',
     );
 
     /**

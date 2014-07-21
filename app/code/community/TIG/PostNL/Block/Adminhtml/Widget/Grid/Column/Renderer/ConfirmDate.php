@@ -40,10 +40,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
 {
     /**
-     * Additional column names used
+     * Additional column name used
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
-    const CONFIRM_STATUS_COLUMN  = 'confirm_status';
 
     /**
      * Renders column.
@@ -60,20 +59,23 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
             return parent::render($row);
         }
 
-        $value = $row->getData($this->getColumn()->getIndex());
-        $now = date('Ymd', Mage::getModel('core/date')->gmtTimestamp());
+        $value    = $row->getData($this->getColumn()->getIndex());
+        $origDate = new DateTime($value);
+        $now      = new DateTime(Mage::getModel('core/date')->gmtTimestamp());
+
+        $interval = $now->diff($origDate);
 
         /**
          * Check if the shipment should be confirmed today
          */
-        if ($now == date('Ymd', strtotime($value))) {
+        if ($interval->d == 0) {
             return Mage::helper('postnl')->__('Today');
         }
 
         /**
          * Check if the shipment should be confirmed somewhere in the future
          */
-        if ($now < date('Ymd', strtotime($value))) {
+        if ($interval->d == 1 && $interval->invert) {
             $confirmDate = new DateTime($value);
             $today = new DateTime($now);
 

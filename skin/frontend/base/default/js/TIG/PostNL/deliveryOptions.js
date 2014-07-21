@@ -44,6 +44,8 @@ if (typeof Translator == 'undefined' && typeof Translate === 'function') {
 } else if (typeof Translator == 'undefined') {
     var Translate = new Class.create();
     Translate.prototype = {
+        initialize : function() {},
+
         translate : function(text) {
             return text;
         }
@@ -1095,6 +1097,9 @@ PostnlDeliveryOptions.prototype = {
      */
     unSelectTimeframe : function() {
         var timeframes = this.timeframes;
+        if (!timeframes) {
+            return this;
+        }
 
         timeframes.each(function(timeframe) {
             timeframe.unSelect();

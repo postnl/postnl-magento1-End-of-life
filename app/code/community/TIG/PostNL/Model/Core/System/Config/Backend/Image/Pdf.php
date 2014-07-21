@@ -61,7 +61,7 @@ class TIG_PostNL_Model_Core_System_Config_Backend_Image_Pdf extends Mage_Adminht
         /**
          * Locate the file and make sure it exists.
          */
-        $uploadDir = $this->_getUploadDir();
+        $uploadDir = $this->_getBaseUploadDir();
         $fileName = $this->getValue();
         $file = $uploadDir . DS . $fileName;
 
@@ -87,5 +87,38 @@ class TIG_PostNL_Model_Core_System_Config_Backend_Image_Pdf extends Mage_Adminht
         }
 
         return parent::_afterSave();
+    }
+
+    /**
+     * Return path to directory for upload file without scope.
+     *
+     * @return string
+     *
+     * @throw Mage_Core_Exception
+     */
+    protected function _getBaseUploadDir()
+    {
+        /**
+         * @var $fieldConfig Varien_Simplexml_Element
+         */
+        $fieldConfig = $this->getFieldConfig();
+
+        if (empty($fieldConfig->upload_dir)) {
+            Mage::throwException(Mage::helper('catalog')->__('The base directory to upload file is not specified.'));
+        }
+
+        $uploadDir = (string)$fieldConfig->upload_dir;
+
+        $el = $fieldConfig->descend('upload_dir');
+
+        /**
+         * Take root from config
+         */
+        if (!empty($el['config'])) {
+            $uploadRoot = $this->_getUploadRoot((string)$el['config']);
+            $uploadDir = $uploadRoot . '/' . $uploadDir;
+        }
+
+        return $uploadDir;
     }
 }

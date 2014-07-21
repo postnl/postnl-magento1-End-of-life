@@ -282,13 +282,6 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
                 return 0;
         }
 
-        /**
-         * If no fee is entered or an invalid value was entered, return an empty string.
-         */
-        if (!$fee || $fee > 2 || $fee < 0) {
-            return 0;
-        }
-
         return $fee;
     }
 

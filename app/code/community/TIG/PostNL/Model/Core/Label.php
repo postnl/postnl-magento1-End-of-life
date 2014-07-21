@@ -97,6 +97,130 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     protected $_outputMode = 'I';
 
     /**
+     * An array of label position coordinates per position per label type.
+     *
+     * @var array
+     */
+    protected $_labelPositions = array(
+        'Label' => array(
+            1 => array(
+                'x' => 152.4,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            2 => array(
+                'x' => 152.4,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
+            3 => array(
+                'x' => 3.9,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            4 => array(
+                'x' => 3.9,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
+        ),
+        'BusPakje' => array(
+            1 => array(
+                'x' => 152.4,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            2 => array(
+                'x' => 152.4,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
+            3 => array(
+                'x' => 3.9,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            4 => array(
+                'x' => 3.9,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
+        ),
+        'BusPakjeExtra' => array(
+            1 => array(
+                'x' => 152.4,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            2 => array(
+                'x' => 152.4,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
+            3 => array(
+                'x' => 3.9,
+                'y' => 3.9,
+                'w' => 141.6,
+            ),
+            4 => array(
+                'x' => 3.9,
+                'y' => 108.9,
+                'w' => 141.6,
+            ),
+        ),
+        'Label-combi' => array(
+            1 => array(
+                'x' => 0.5,
+                'y' => -277.6,
+                'w' => 105.3,
+            ),
+            2 => array(
+                'x' => 105.3,
+                'y' => -277.6,
+                'w' => 105.3,
+            ),
+            3 => array(
+                'x' => 0.5,
+                'y' => -127.1,
+                'w' => 105.3,
+            ),
+            4 => array(
+                'x' => 105.3,
+                'y' => -127.1,
+                'w' => 105.3,
+            ),
+        ),
+        'CODcard' => array(
+            array(
+                'x' => 2,
+                'y' => -39,
+                'w' => 103,
+            ),
+        ),
+        'CN23' => array(
+            array(
+                'x' => 3.9,
+                'y' => 4.5,
+                'w' => 204.2,
+            ),
+        ),
+        'CommercialInvoice' => array(
+            array(
+                'x' => 3.9,
+                'y' => 4.5,
+                'w' => 204.2,
+            ),
+        ),
+        'CP71' => array(
+            array(
+                'x' => 3.9,
+                'y' => 152.1,
+                'w' => 204.2,
+            ),
+        ),
+    );
+
+    /**
      * @param string $outputMode
      *
      * @return $this
@@ -219,6 +343,51 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
         $this->setLabelSize($labelSize);
         return $labelSize;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLabelPositions()
+    {
+        return $this->_labelPositions;
+    }
+
+    /**
+     * Gets position coordinates for a given label type and an optional counter.
+     *
+     * @param string      $type
+     * @param boolean|int $counter
+     *
+     * @return array
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function _getLabelPosition($type, $counter = false)
+    {
+        $labelPositions = $this->getLabelPositions();
+
+        if (!array_key_exists($type, $labelPositions)) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Invalid label type supplied: %s', $type),
+                'POSTNL-0065'
+            );
+        }
+
+        $positions = $labelPositions[$type];
+        if (count($positions) === 1) {
+            return current($positions);
+        }
+
+        if (!$counter || !array_key_exists($counter, $positions)) {
+            return array(
+                'x' => 0,
+                'y' => 0,
+                'w' => 0,
+            );
+        }
+
+        return $positions[$counter];
     }
 
     /**
@@ -446,7 +615,11 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          * First we need to add pages to the pdf for certain label types under certain conditions.
          */
         $labelType = $label->getLabelType();
-        if ($labelType == 'Label' || $labelType == 'Label-combi') {
+        if ($labelType == 'Label'
+            || $labelType == 'Label-combi'
+            || $labelType == 'BusPakje'
+            || $labelType == 'BusPakjeExtra'
+        ) {
             if ($this->getLabelSize() == 'A4' && $this->getIsFirstLabel()) {
                 $pdf->addOrientedPage('L', 'A4');
                 $this->setIsFirstLabel(false);
@@ -470,15 +643,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $pdf->addOrientedPage('L', 'A6');
             }
         } elseif ($labelType == 'CODcard') {
-            if ($this->getIsFirstCodCardLabel()) {
-                $this->setIsFirstCodCardLabel(false);
-
-                $pdf->addOrientedPage('P', 'A4');
-                $this->resetLabelCounter();
-            } elseif (!$this->getLabelCounter() || $this->getLabelCounter() > 3) {
-                $pdf->addOrientedPage('P', 'A4');
-                $this->resetLabelCounter();
-            }
+            $pdf->addOrientedPage('P', array(156.65, 73.85));
         } elseif ($labelType == 'CN23'
             || $labelType == 'CommercialInvoice'
             || $labelType == 'CODcard'
@@ -497,35 +662,22 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                  */
                 $pdf->Rotate('-90');
 
-                /**
-                 * Calculate the position of the next label to be printed
-                 */
-                $position = $this->_getRotatedPosition($this->getLabelCounter());
-                $position['w'] = $this->pix2pt(400);
+                $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
 
                 $this->increaseLabelCounter();
 
                 $rotate = true;
                 break;
             case 'Label':
-                /**
-                 * Calculate the position of the next label to be printed.
-                 */
-                $position = $this->_getPosition($this->getLabelCounter());
-                $position['w'] = $this->pix2pt(538);
+            case 'BusPakje':
+            case 'BusPakjeExtra':
+                $position = $this->_getLabelPosition($labelType, $this->getLabelCounter());
 
                 $this->increaseLabelCounter();
                 break;
             case 'CN23':
             case 'CommercialInvoice':
-                /**
-                 * Calculate the position of the next label to be printed.
-                 */
-                $position = array(
-                    'x' => $this->pix2pt(15),
-                    'y' => $this->pix2pt(17),
-                    'w' => $this->pix2pt(776)
-                );
+                $position = $this->_getLabelPosition($labelType);
 
                 /**
                  * increase the label counter to above 4. This will prompt the creation of a new page.
@@ -533,14 +685,7 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $this->setLabelCounter(5);
                 break;
             case 'CP71':
-                /**
-                 * Calculate the position of the next label to be printed.
-                 */
-                $position = array(
-                    'x' => $this->pix2pt(15),
-                    'y' => $this->pix2pt(578),
-                    'w' => $this->pix2pt(776)
-                );
+                $position = $this->_getLabelPosition($labelType);
 
                 /**
                  * increase the label counter to above 4. This will prompt the creation of a new page.
@@ -548,13 +693,13 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
                 $this->setLabelCounter(5);
                 break;
             case 'CODcard':
-                /**
-                 * Calculate the position of the next label to be printed.
-                 */
-                $position = $this->_getCodCardPosition($this->getLabelCounter());
-                $position['w'] = $this->pix2pt(538);
+                $pdf->Rotate('-90');
+
+                $position = $this->_getLabelPosition($labelType);
 
                 $this->increaseLabelCounter();
+
+                $rotate = true;
                 break;
             default:
                 throw new TIG_PostNL_Exception(
@@ -681,8 +826,8 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
     }
 
     /**
-     * Sorts labels by label type. First all labels of the 'Label' and 'Label-combi' type. Then all other labels in the
-     * order of 'CODcard' > 'CN23' > 'CP71' > 'CommercialInvoice' grouped by shipments
+     * Sorts labels by label type. First all labels of the 'Label', 'Label-combi', 'BusPakje' and 'BusPakjeExtra' type.
+     * Then all other labels in the order of 'CODcard' > 'CN23' > 'CP71' > 'CommercialInvoice' grouped by shipments.
      *
      * @param array $labels
      *
@@ -701,7 +846,11 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
             /**
              * Separate general labels from the rest.
              */
-            if ($label->getLabelType() == 'Label' || $label->getLabelType() == 'Label-combi') {
+            if ($label->getLabelType() == 'Label'
+                || $label->getLabelType() == 'Label-combi'
+                || $label->getLabelType() == 'BusPakje'
+                || $label->getLabelType() == 'BusPakjeExtra'
+            ) {
                 $generalLabels[] = $label;
                 continue;
             }
@@ -747,139 +896,6 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
          */
         $labels = array_merge($generalLabels, $sortedGlobalLabels, $codCards);
         return $labels;
-    }
-
-    /**
-     * Calculates the position of the requested label using a counter system.
-     * The labels will be positioned accordingly:
-     * first: top left
-     * second: top right
-     * third: bottom left
-     * fourth: bottom right
-     *
-     * @param bool|int $counter
-     *
-     * @throws TIG_PostNL_Exception
-     *
-     * @return $this
-     */
-    protected function _getPosition($counter = false)
-    {
-        if ($counter === false) {
-            $position = array('x' => 0, 'y' => 0);
-
-            return $position;
-        }
-
-        switch($counter) {
-            case 1:
-                $position = array('x' => $this->pix2pt(579), 'y' => $this->pix2pt(15));
-                break;
-            case 2:
-                $position = array('x' => $this->pix2pt(579), 'y' => $this->pix2pt(414));
-                break;
-            case 3:
-                $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(15));
-                break;
-            case 4:
-                $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(414));
-                break;
-            default:
-                throw new TIG_PostNL_Exception(
-                    Mage::helper('postnl')->__('Invalid counter: %s', $counter),
-                    'POSTNL-0067'
-                );
-        }
-
-        return $position;
-    }
-
-    /**
-     * Calculates the position of the requested label using a counter system. This method is for labels which are
-     * rotated by 90 degrees. Currently this is only used for EPS combi-labels.
-     * The labels will be positioned accordingly:
-     * first: top left
-     * second: top right
-     * third: bottom left
-     * fourth: bottom right
-     *
-     * @param bool|int $counter
-     *
-     * @throws TIG_PostNL_Exception
-     *
-     * @return array
-     */
-    protected function _getRotatedPosition($counter = false)
-    {
-        if ($counter === false) {
-            $position = array('x' => 0, 'y' => 0);
-
-            return $position;
-        }
-
-        switch($counter) {
-            case 1:
-                $position = array('x' => $this->pix2pt(2), 'y' => $this->pix2pt(-1055));
-                break;
-            case 2:
-                $position = array('x' => $this->pix2pt(400), 'y' => $this->pix2pt(-1055));
-                break;
-            case 3:
-                $position = array('x' => $this->pix2pt(2),  'y' => $this->pix2pt(-483));
-                break;
-            case 4:
-                $position = array('x' => $this->pix2pt(400),  'y' => $this->pix2pt(-483));
-                break;
-            default:
-                throw new TIG_PostNL_Exception(
-                    Mage::helper('postnl')->__('Invalid counter: %s', $counter),
-                    'POSTNL-0067'
-                );
-        }
-
-        return $position;
-    }
-
-    /**
-     * Calculates the position of the requested CODCard label using a counter system.
-     * The labels will be positioned accordingly:
-     * first: top
-     * second: middle
-     * third: bottom
-     *
-     * @param bool|int $counter
-     *
-     * @throws TIG_PostNL_Exception
-     *
-     * @return array
-     *
-     */
-    protected function _getCodCardPosition($counter = false)
-    {
-        if ($counter === false) {
-            $position = array('x' => 0, 'y' => 0);
-
-            return $position;
-        }
-
-        switch($counter) {
-            case 1:
-                $position = array('x' => $this->pix2pt(15), 'y' => $this->pix2pt(15));
-                break;
-            case 2:
-                $position = array('x' => $this->pix2pt(15), 'y' => $this->pix2pt(296));
-                break;
-            case 3:
-                $position = array('x' => $this->pix2pt(15),  'y' => $this->pix2pt(576));
-                break;
-            default:
-                throw new TIG_PostNL_Exception(
-                    Mage::helper('postnl')->__('Invalid counter: %s', $counter),
-                    'POSTNL-0067'
-                );
-        }
-
-        return $position;
     }
 
     /**

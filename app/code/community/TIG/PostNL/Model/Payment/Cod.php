@@ -144,23 +144,10 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
 
             if (!in_array($shippingMethod, $postnlShippingMethods)) {
                 $helper->log(
-                       $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
+                    $helper->__('PostNL COD is not available, because the chosen shipping method is not PostNL.')
                 );
                 return false;
             }
-        }
-
-        $quoteId = $quote->getId();
-
-        /**
-         * @var TIG_PostNL_Model_Core_Order $postnlOrder
-         */
-        $postnlOrder = Mage::getModel('postnl_core/order')->load($quoteId, 'quote_id');
-        if ($postnlOrder->getId() && $postnlOrder->getType() == 'PA') {
-            $helper->log(
-                $helper->__('PostNL COD is not available, because the chosen delivery option is PA.')
-            );
-            return false;
         }
 
         /**
@@ -182,10 +169,21 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
          * Check that the shipping address isn't a P.O. box. Unfortunately we can only check this by checking if the
          * street name contains the word 'postbus' (dutch for P.O. box).
          */
-        $fullStreet = $quote->getShippingAddress()->getStreetFull();
+        $shippingAddress = $quote->getShippingAddress();
+        $fullStreet = $shippingAddress->getStreetFull();
         if (stripos($fullStreet, 'postbus') !== false) {
             $helper->log(
                 $helper->__('PostNL COD is not available, because the shipping address is a P.O. box.')
+            );
+            return false;
+        }
+
+        /**
+         * Check that the destination country is allowed.
+         */
+        if (!$this->canUseForCountry($shippingAddress->getCountry())) {
+            $helper->log(
+                $helper->__('PostNL COD is not available, because the shipping destination country is not allowed.')
             );
             return false;
         }
@@ -277,11 +275,27 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     {
         $title = parent::getTitle();
 
+        if (Mage::helper('postnl')->isAdmin()) {
+            $adminSession = Mage::getSingleton('adminhtml/session_quote');
+            if ($adminSession && $adminSession->getStore() !== null) {
+                $store = $adminSession->getStore();
+            } else {
+                $store = Mage::app()->getStore();
+            }
+        } else {
+            $checkoutSession = Mage::getSingleton('checkout/session');
+            if ($checkoutSession && $checkoutSession->getQuote()) {
+                $store = $checkoutSession->getQuote()->getStore();
+            } else {
+                $store = Mage::app()->getStore();
+            }
+        }
+
         /**
          * Get the fee from the config and convert and format it according to the chosen currency and locale.
          */
-        $fee = Mage::getStoreConfig(self::XPATH_COD_FEE, Mage::app()->getStore()->getId());
-        $fee = Mage::app()->getStore()->convertPrice($fee, true, false);
+        $fee = Mage::getStoreConfig(self::XPATH_COD_FEE, $store);
+        $fee = $store->convertPrice($fee, true, false);
 
         /**
          * Replace any parameters in the title with the fee.

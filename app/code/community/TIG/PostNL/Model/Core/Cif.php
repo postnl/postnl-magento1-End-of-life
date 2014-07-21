@@ -532,8 +532,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          */
         throw new TIG_PostNL_Exception(
             Mage::helper('postnl')->__(
-                                  'Unable to match barcode to shippingStatus response: %s',
-                                  var_export($response, true)
+                'Unable to match barcode to shippingStatus response: %s',
+                var_export($response, true)
             ),
             'POSTNL-0063'
         );
@@ -736,8 +736,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         ) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__(
-                                      'Invalid generateLabelsWithoutConfirm response: %s',
-                                      var_export($response, true)
+                    'Invalid generateLabelsWithoutConfirm response: %s',
+                    var_export($response, true)
                 ),
                 'POSTNL-0058'
             );
@@ -757,12 +757,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected function _getMessage($barcode, $extra = array())
     {
         $messageIdString = uniqid(
-                             'postnl_'
-                             . ip2long(Mage::helper('core/http')->getServerAddr())
-                         )
-                         . $this->_getCustomerNumber()
-                         . $barcode
-                         . microtime();
+                'postnl_'
+                . ip2long(Mage::helper('core/http')->getServerAddr())
+            )
+            . $this->_getCustomerNumber()
+            . $barcode
+            . microtime();
 
         $message = array(
             'MessageID'        => md5($messageIdString),
@@ -831,7 +831,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
              * Get the parcel weight and then convert it to grams.
              */
             $parcelWeight = Mage::getStoreConfig(self::XPATH_WEIGHT_PER_PARCEL, $postnlShipment->getStoreId());
-            $parcelWeight = Mage::helper('postnl/cif')->standardizeWeight($parcelWeight, $shipment->getStoreId(), true);
+            $parcelWeight = Mage::helper('postnl')->standardizeWeight($parcelWeight, $shipment->getStoreId(), true);
 
             /**
              * All parcels except for the last one weigh a configured amount. The last parcel weighs the remainder
@@ -867,11 +867,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'DownPartnerID'            => '',
             'ProductCodeDelivery'      => $postnlShipment->getProductCode(),
             'Contacts'                 => array(
-                                           'Contact' => $this->_getContact($shippingAddress, $postnlShipment, $order),
-                                       ),
+                'Contact' => $this->_getContact($shippingAddress, $postnlShipment, $order),
+            ),
             'Dimension'                => array(
-                                           'Weight'  => round($shipmentWeight),
-                                       ),
+                'Weight'  => round($shipmentWeight),
+            ),
             'Reference'                => $this->_getReference($shipment),
             'DeliveryDate'             => $deliveryDate,
         );
@@ -882,10 +882,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         if ($parcelCount > 1) {
             $groups = array(
                 'Group' => $this->_getGroup(
-                               $parcelCount,
-                               $mainBarcode,
-                               $shipmentNumber
-                           ),
+                    $parcelCount,
+                    $mainBarcode,
+                    $shipmentNumber
+                ),
             );
 
             $shipmentData['Groups'] = $groups;
@@ -1087,7 +1087,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'HouseNr'          => $streetData['housenumber'],
             'HouseNrExt'       => $streetData['housenumberExtension'],
             'StreetHouseNrExt' => $streetData['fullStreet'],
-            'Zipcode'          => $address->getPostcode(),
+            'Zipcode'          => str_replace(' ', '', $address->getPostcode()),
             'City'             => $address->getCity(),
             'Region'           => $address->getRegion(),
             'Countrycode'      => $address->getCountry(),
@@ -1203,13 +1203,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $shipment = $postnlShipment->getShipment();
             }
 
-            $value = number_format($postnlShipment->getShipmentBaseGrandTotal(), 2, '.', '');
+            $order = $shipment->getOrder();
+
+            $value = number_format($order->getBaseGrandTotal(), 2, '.', '');
             $amount[] = array(
                 'AccountName'       => $this->_getCodAccountName(),
                 'BIC'               => $this->_getCodBic(),
                 'IBAN'              => $this->_getCodIban(),
                 'AmountType'        => '01', // 01 = COD, 02 = Insured
-                'Currency'          => $shipment->getOrder()->getBaseCurrencyCode(),
+                'Currency'          => $order->getBaseCurrencyCode(),
                 'Reference'         => $this->_getReference($shipment),
                 'TransactionNumber' => '',
                 'Value'             => $value,
@@ -1386,6 +1388,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $content = array();
         $items = $this->_sortCustomsItems($shipment->getAllItems());
 
+        $helper = Mage::helper('postnl');
+
         /**
          * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
@@ -1400,7 +1404,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             /**
              * Calculate the item's weight in kg
              */
-            $itemWeight = Mage::helper('postnl/cif')->standardizeWeight(
+            $itemWeight = $helper->standardizeWeight(
                 $item->getWeight(),
                 $this->getStoreId()
             );
@@ -1472,7 +1476,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
         foreach ($items as $item) {
-            $product = $item->getOrderItem()->getProduct();
+            $product = Mage::getModel('catalog/product')->load($item->getOrderItem()->getProductId());
+            if (!$product) {
+                continue;
+            }
+
             $sortingAttributeValue = $product->getDataUsingMethod($sortingAttribute);
             $sortedItems[$item->getId()] = $sortingAttributeValue;
         }
@@ -1522,9 +1530,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $this->setHSTariffAttribute($hsTariffAttribute);
         }
 
-        $hsTariff = $shipmentItem->getOrderItem()
-                                 ->getProduct()
-                                 ->getDataUsingMethod($hsTariffAttribute);
+        $product = Mage::getModel('catalog/product')->load($shipmentItem->getOrderItem()->getProductId());
+        $hsTariff = $shipmentItem->getDataUsingMethod($hsTariffAttribute);
 
         if (empty($hsTariff)) {
             $hsTariff = '000000';
@@ -1555,9 +1562,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $this->setCountryOfOriginAttribute($countryOfOriginAttribute);
         }
 
-        $countryOfOrigin = $shipmentItem->getOrderItem()
-                                        ->getProduct()
-                                        ->getDataUsingMethod($countryOfOriginAttribute);
+        $product = Mage::getModel('catalog/product')->load($shipmentItem->getOrderItem()->getProductId());
+        $countryOfOrigin = $product->getDataUsingMethod($countryOfOriginAttribute);
 
         if (empty($countryOfOrigin)) {
             $productId = $shipmentItem->getProductId();
@@ -1593,9 +1599,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $this->setCustomsValueAttribute($customsValueAttribute);
         }
 
-        $customsValue = $shipmentItem->getOrderItem()
-                                     ->getProduct()
-                                     ->getDataUsingMethod($customsValueAttribute);
+        $product = Mage::getModel('catalog/product')->load($shipmentItem->getOrderItem()->getProductId());
+        $customsValue = $product->getDataUsingMethod($customsValueAttribute);
 
         if (empty($customsValue)) {
             $productId = $shipmentItem->getProductId();
@@ -1631,9 +1636,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $this->setCustomsDescriptionAttribute($descriptionAttribute);
         }
 
-        $description = $shipmentItem->getOrderItem()
-                                    ->getProduct()
-                                    ->getDataUsingMethod($descriptionAttribute);
+        $product = Mage::getModel('catalog/product')->load($shipmentItem->getOrderItem()->getProductId());
+        $description = $product->getDataUsingMethod($descriptionAttribute);
 
         if (empty($description)) {
             $productId = $shipmentItem->getProductId();
@@ -1917,49 +1921,49 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @throws TIG_PostNL_Exception
      */
-     protected function _getReference($shipment)
-     {
-         $storeId = $this->getStoreId();
-         $referenceType = Mage::getStoreConfig(self::XPATH_SHIPMENT_REFERENCE_TYPE, $storeId);
+    protected function _getReference($shipment)
+    {
+        $storeId = $this->getStoreId();
+        $referenceType = Mage::getStoreConfig(self::XPATH_SHIPMENT_REFERENCE_TYPE, $storeId);
 
-         /**
-          * Parse the reference type
-          */
-         switch ($referenceType) {
-             case '': //no break
-             case 'none':
-                 $reference = '';
-                 break;
-             case 'shipment_increment_id':
-                 $reference = $shipment->getIncrementId();
-                 break;
-             case 'order_increment_id':
-                 $reference = $shipment->getOrder()->getIncrementId();
-                 break;
-             case 'custom':
-                 $reference = Mage::getStoreConfig(self::XPATH_CUSTOM_SHIPMENT_REFERENCE, $storeId);
-                 break;
-             default:
-                 throw new TIG_PostNL_Exception(
-                     Mage::helper('postnl')->__('Invalid reference type requested: %s', $referenceType),
-                     'POSTNL-0043'
-                 );
-         }
+        /**
+         * Parse the reference type
+         */
+        switch ($referenceType) {
+            case '': //no break
+            case 'none':
+                $reference = '';
+                break;
+            case 'shipment_increment_id':
+                $reference = $shipment->getIncrementId();
+                break;
+            case 'order_increment_id':
+                $reference = $shipment->getOrder()->getIncrementId();
+                break;
+            case 'custom':
+                $reference = Mage::getStoreConfig(self::XPATH_CUSTOM_SHIPMENT_REFERENCE, $storeId);
+                break;
+            default:
+                throw new TIG_PostNL_Exception(
+                    Mage::helper('postnl')->__('Invalid reference type requested: %s', $referenceType),
+                    'POSTNL-0043'
+                );
+        }
 
-         /**
-          * For custom references we need to replace several optional variables
-          */
-         if ($referenceType == 'custom') {
-             $store = Mage::getModel('core/store')->load($storeId);
+        /**
+         * For custom references we need to replace several optional variables
+         */
+        if ($referenceType == 'custom') {
+            $store = Mage::getModel('core/store')->load($storeId);
 
-             $reference = str_replace('{{var shipment_increment_id}}', $shipment->getIncrementId(), $reference);
-             $reference = str_replace('{{var order_increment_id}}', $shipment->getOrder()->getIncrementId(), $reference);
+            $reference = str_replace('{{var shipment_increment_id}}', $shipment->getIncrementId(), $reference);
+            $reference = str_replace('{{var order_increment_id}}', $shipment->getOrder()->getIncrementId(), $reference);
 
-             $reference = str_replace('{{var store_frontend_name}}', $store->getFrontendName(), $reference);
-         }
+            $reference = str_replace('{{var store_frontend_name}}', $store->getFrontendName(), $reference);
+        }
 
-         return $reference;
-     }
+        return $reference;
+    }
 
     /**
      * Gets account name for COD shipments.

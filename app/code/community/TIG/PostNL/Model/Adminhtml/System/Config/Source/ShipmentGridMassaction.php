@@ -48,6 +48,10 @@ class TIG_PostNL_Model_Adminhtml_System_Config_Source_ShipmentGridMassAction
         $helper = Mage::helper('postnl');
         $options = array(
             array(
+                'value' => '',
+                'label' => $helper->__('None'),
+            ),
+            array(
                 'value' => 'postnl_print_labels_and_confirm',
                 'label' => $helper->__('Print shipping labels & confirm shipment'),
             ),

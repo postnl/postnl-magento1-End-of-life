@@ -200,6 +200,19 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return $this
+     */
+    public function loadByOrder(Mage_Sales_Model_Order $order)
+    {
+        $orderId = $order->getId();
+
+        $this->load($orderId, 'order_id');
+        return $this;
+    }
+
+    /**
      * Cancels the PostNL order.
      *
      * @return $this

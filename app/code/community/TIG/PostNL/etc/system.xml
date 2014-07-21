@@ -870,10 +870,70 @@
                                 <shipment_reference_type>custom</shipment_reference_type>
                             </depends>
                         </custom_shipment_reference>
+                        <buspakje_header translate="label" module="postnl">
+                            <label>These settings allow you to configure if and how PostNL determines if a shipment is a letter box parcel or a regular package shipment. Letter box parcels have to be able to fit through a mail slot and will be delivered using the regular mail service, rather than PostNL's parcel service.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </buspakje_header>
+                        <use_buspakje translate="label comment" module="postnl">
+                            <label>Use letter box parcels</label>
+                            <comment>If you disable this field all shipments will be considered regular package shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </use_buspakje>
+                        <buspakje_calculation_mode translate="label comment" module="postnl">
+                            <label>Calculation mode</label>
+                            <comment>You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend.</comment>
+                            <tooltip>If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_manualAutomatic</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <use_buspakje>1</use_buspakje>
+                            </depends>
+                        </buspakje_calculation_mode>
+                        <duration_header translate="label" module="postnl">
+                            <label><![CDATA[PostNL delivery options determine the possible delivery dates based on a few settings. It is important that you configure these as accurately as you can. You should try to be conservative with these settings. If you cannot transfer a shipment to PostNL on time each day, customers may not receive their order on the requested date.<br />You can interpret these settings as "If ordered by {cut-off time}, the order will be delivered in {shipping duration} days".]]></label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </duration_header>
+                        <shipping_duration translate="label comment" module="postnl">
+                            <label>Shipping duration</label>
+                            <comment>The number of days shipping will take after a customer finishes their order.</comment>
+                            <source_model>postnl_deliveryoptions/system_config_source_shippingDuration</source_model>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </shipping_duration>
+                        <cutoff_time translate="label comment" module="postnl">
+                            <label>Order cut-off time</label>
+                            <comment>When an order is placed after this time, another day will be added to the shipping duration.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_deliveryoptions/system_config_source_cutOffTime</source_model>
+                            <sort_order>110</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cutoff_time>
                         <grid_header translate="label" module="postnl">
                             <label>These fields allow you to alter the way the order and shipment grids are displayed.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -884,65 +944,89 @@
                             <tooltip>These options will appear in a dropdown field next to the 'create shipments' mass action in the sales > order grid.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </show_grid_options>
+                        <show_buspakje_option translate="label comment tooltip" module="postnl">
+                            <label>Show letter box parcel option in order grid</label>
+                            <comment>This will add the option to mark shipments as being letter box parcels when creating shipments from the order grid.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>140</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <use_buspakje>1</use_buspakje>
+                                <buspakje_calculation_mode>manual</buspakje_calculation_mode>
+                            </depends>
+                        </show_buspakje_option>
                         <shipping_grid_columns_anchor>
                             <frontend_model>postnl_adminhtml/system_config_form_field_anchor</frontend_model>
                             <anchor_name>shipment_grid_columns</anchor_name>
-                            <sort_order>80</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </shipping_grid_columns_anchor>
-                        <show_shipment_type_column translate="label comment" module="postnl">
-                            <label>Show shipment type column in order grid</label>
-                            <comment>This will add a column to the order grid allowing you to identify whether the order is domestic, EU or global.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
+                        <order_grid_columns translate="label comment tooltip" module="postnl">
+                            <label>Optional order grid columns</label>
+                            <comment>Select which optional columns to show in the order grid.</comment>
+                            <tooltip>Selecting too many columns may cause the order grid to no longer fit on your monitor.</tooltip>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>postnl_adminhtml/system_config_source_orderGridColumns</source_model>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </show_shipment_type_column>
+                            <can_be_empty>1</can_be_empty>
+                        </order_grid_columns>
+                        <order_grid_massaction_default translate="label" module="postnl">
+                            <label>Select a default option for the order grid mass action.</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_adminhtml/system_config_source_orderGridMassaction</source_model>
+                            <sort_order>170</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </order_grid_massaction_default>
                         <shipping_grid_columns translate="label comment tooltip" module="postnl">
-                            <label>Optional Shipment grid columns</label>
+                            <label>Optional shipment grid columns</label>
                             <comment>Select which optional columns to show in the shipment grid.</comment>
                             <tooltip>Selecting too many columns may cause the shipment grid to no longer fit on your monitor.</tooltip>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_shipmentGridColumns</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                             <can_be_empty>1</can_be_empty>
                         </shipping_grid_columns>
                         <shipping_grid_massaction_default translate="label" module="postnl">
-                            <label>Select a default option for the shipment grid mass action</label>
+                            <label>Select a default option for the shipment grid mass action.</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_shipmentGridMassaction</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <validate>validate-select</validate>
                         </shipping_grid_massaction_default>
                         <email_header translate="label" module="postnl">
                             <label>These fields are used to configure the track &amp; trace email that may be automatically emailed to customers after a shipment has been confirmed.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
                         </email_header>
                         <send_track_and_trace_email translate="label comment" module="postnl">
                             <label>Automatically send track &amp; trace email to customer</label>
                             <comment>If enabled, a track &amp; trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -953,7 +1037,7 @@
                             <comment>You can customize the track &amp; trace email in system > transactional emails.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_template</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>220</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -964,7 +1048,7 @@
                             <comment>If enabled, you may enter seperate email addresses to which the track &amp; trace email will be sent in addition to the customer.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -974,7 +1058,7 @@
                             <label>Send track &amp; trace email copy to</label>
                             <comment>You can enter multiple email addresses seperated by commas.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>160</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -986,7 +1070,7 @@
                             <label>Track &amp; trace email copy method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_method</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1862,10 +1946,22 @@
                                 </enable_pakjegemak_express>
                             </depends>
                         </default_pge_product_option>
+                        <default_buspakje_product_option translate="label comment" module="postnl">
+                            <label>Default letter box parcel option</label>
+                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to letter box parcel shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </default_buspakje_product_option>
                         <cod_product_options_header translate="label" module="postnl">
                             <label>The following options are only for COD orders.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1877,7 +1973,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1889,7 +1985,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1915,7 +2011,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1927,7 +2023,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2303,8 +2399,8 @@
                                 <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </show_options_for_backorders>
-                        <duration_header translate="label" module="postnl">
-                            <label><![CDATA[PostNL delivery options determine the possible delivery dates based on a few settings. It is important that you configure these as accurately as you can. You should try to be conservative with these settings. If you cannot transfer a shipment to PostNL on time each day, customers may not receive their order on the requested date.<br />You can interpret these settings as "If ordered by {cut-off time}, the order will be delivered in {shipping duration} days".]]></label>
+                        <shipping_duration_header translate="label" module="postnl">
+                            <label>PostNL delivery options allows your customers to choose their delivery date and timeframe, or choose to have their order delivered to a post office, early delivery post office or parcel dispenser. Each of these options can be individually enabled and disabled. In the case of evening- and early delivery, you may charge an additional fee.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2313,12 +2409,13 @@
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                             </depends>
-                        </duration_header>
-                        <shipping_duration translate="label comment" module="postnl">
-                            <label>Shipping duration</label>
-                            <comment>The number of days shipping will take after a customer finishes their order.</comment>
-                            <source_model>postnl_deliveryoptions/system_config_source_shippingDuration</source_model>
+                        </shipping_duration_header>
+                        <delivery_days_number translate="label comment tooltip" module="postnl">
+                            <label>Maximum number of delivery days</label>
+                            <comment>This determines how many days into the future the customer can choose to have their order delivered.</comment>
+                            <tooltip>This value will be added to the earliest possible delivery date. Timeframes will be displayed for all options between the first possible delivery date and this number of days after that.</tooltip>
                             <frontend_type>select</frontend_type>
+                            <source_model>postnl_deliveryoptions/system_config_source_deliveryDaysNumber</source_model>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -2326,51 +2423,13 @@
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                             </depends>
-                        </shipping_duration>
-                        <cutoff_time translate="label comment" module="postnl">
-                            <label>Order cut-off time</label>
-                            <comment>When an order is placed after this time, another day will be added to the shipping duration.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_deliveryoptions/system_config_source_cutOffTime</source_model>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                            </depends>
-                        </cutoff_time>
-                        <delivery_days_number translate="label comment tooltip" module="postnl">
-                            <label>Maximum number of delivery days</label>
-                            <comment>This determines how many days into the future the customer can choose to have their order delivered.</comment>
-                            <tooltip>This value will be added to the earliest possible delivery date. Timeframes will be displayed for all options between the first possible delivery date and this number of days after that.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_deliveryoptions/system_config_source_deliveryDaysNumber</source_model>
-                            <sort_order>100</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                            </depends>
                         </delivery_days_number>
-                        <shipping_duration_header translate="label" module="postnl">
-                            <label>PostNL delivery options allows your customers to choose their delivery date and timeframe, or choose to have their order delivered to a post office, early delivery post office or parcel dispenser. Each of these options can be individually enabled and disabled. In the case of evening- and early delivery, you may charge an additional fee.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>110</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                            </depends>
-                        </shipping_duration_header>
                         <enable_timeframes translate="label comment" module="postnl">
                             <label>Enable timeframes</label>
                             <comment>Timeframes allow customers to specify on which date and at which time they want their order delivered.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2384,7 +2443,7 @@
                             <tooltip>Evening timeframes may not be available in all areas. The PostNL extension will automatically determine whether or not evening delivery is available for a specific area.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2399,7 +2458,7 @@
                             <tooltip>This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for evening timeframes.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2415,7 +2474,7 @@
                             <comment>Whether or not customers may choose to have their order delivered to a nearby post office.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2429,7 +2488,7 @@
                             <tooltip>Not all post offces may support early delivery. You will not be able to use Premium Sorting or Sunday Sorting for these shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2444,7 +2503,7 @@
                             <tooltip>This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2461,7 +2520,7 @@
                             <tooltip>Parcel dispensers are available at certain NS train stations across the Netherlands. Shipments to parcel dispensers must have minimum dimensions of 38x26.5x3.2cm and maximum dimensions of 41x38x64cm.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>180</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2474,7 +2533,7 @@
                             <comment>If enabled, users may use Google Streetview when choosing a post office location.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>190</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2485,7 +2544,7 @@
                         <mijnpakket_notification_header translate="label" module="postnl">
                             <label>You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>200</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2498,7 +2557,7 @@
                             <comment>This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>210</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2511,7 +2570,7 @@
                             <comment>If enabled, customers who do not yet have a MijnPakket account will be shown a link through which they can create a MijnPakket account without having to fully fill in the registration form.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>220</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2525,7 +2584,7 @@
                             <comment>If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>230</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

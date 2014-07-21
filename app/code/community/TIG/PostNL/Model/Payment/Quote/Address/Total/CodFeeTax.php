@@ -69,6 +69,15 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
             return $this;
         }
 
+        /**
+         * First, reset the fee amounts to 0 for this address and the quote.
+         */
+        $address->setPostnlCodFeeTax(0)
+                ->setBasePostnlCodFeeTax(0);
+
+        $quote->setPostnlCodFeeTax(0)
+              ->setBasePostnlCodFeeTax(0);
+
         $items = $address->getAllItems();
         if (!count($items)) {
             return $this;
@@ -82,15 +91,6 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
         if (!count($items)) {
             return $this;
         }
-
-        /**
-         * First, reset the fee amounts to 0 for this address and the quote.
-         */
-        $address->setPostnlCodFeeTax(0)
-                ->setBasePostnlCodFeeTax(0);
-
-        $quote->setPostnlCodFeeTax(0)
-              ->setBasePostnlCodFeeTax(0);
 
         /**
          * Get the tax request and corresponding tax rate.

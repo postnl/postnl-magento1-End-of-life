@@ -152,7 +152,11 @@ class TIG_PostNL_Model_Core_Service
      */
     protected function _prepareDummyInvoice($order, $qtys = array())
     {
-        Mage::getModel('sales/service_order', $order)->updateLocaleNumbers($qtys);
+        $serviceOrder = Mage::getModel('sales/service_order', $order);
+        if (method_exists($serviceOrder, 'updateLocaleNumbers')) {
+            Mage::getModel('sales/service_order', $order)
+                ->updateLocaleNumbers($qtys);
+        }
 
         $convertor = Mage::getModel('sales/convert_order');
 

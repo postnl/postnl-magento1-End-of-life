@@ -89,14 +89,24 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_SHOW_ERROR_DETAILS_IN_FRONTEND = 'postnl/advanced/show_error_details_in_frontend';
 
     /**
-     * XML path to use_globalpack settings.
+     * XML path to use_globalpack setting.
      */
     const XPATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
+
+    /**
+     * Xpath to use_buspakje setting.
+     */
+    const XPATH_USE_BUSPAKJE = 'postnl/cif_labels_and_confirming/use_buspakje';
 
     /**
      * XPATH to allow EPS BE only product option setting.
      */
     const XPATH_ALLOW_EPS_BE_ONLY_OPTION = 'postnl/cif_product_options/allow_eps_be_only_options';
+
+    /**
+     * XML path to weight unit used
+     */
+    const XPATH_WEIGHT_UNIT = 'postnl/cif_labels_and_confirming/weight_unit';
 
     /**
      * Required configuration fields.
@@ -170,6 +180,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         'TIG_PostNL_Payment_Debug.log',
         'TIG_PostNL_Webservices_Debug.log',
         'TIG_PostNL_Webservices_Exception.log',
+    );
+
+    /**
+     * For certain product codes a custom barcode is required.
+     *
+     * @var array
+     */
+    protected $_customBarcodes = array(
+        '2828' => '3STFGG000000000'
     );
 
     /**
@@ -306,6 +325,16 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         $this->_memoryLimit = $memoryLimit;
 
         return $this;
+    }
+
+    /**
+     * get an array of product codes which use a custom barcode.
+     *
+     * @return array
+     */
+    public function getCustomBarcodes()
+    {
+        return $this->_customBarcodes;
     }
 
     /**
@@ -510,6 +539,50 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Checks to see if the module may ship buspakjes.
+     *
+     * @return boolean
+     */
+    public function canUseBuspakje()
+    {
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlCoreCanUseBuspakje()) {
+            return $cache->getPostnlCoreCanUseBuspakje();
+        }
+
+        $isBuspakjeActive = Mage::getStoreConfigFlag(self::XPATH_USE_BUSPAKJE);
+
+        if (!$isBuspakjeActive) {
+            if ($cache) {
+                $cache->setPostnlCoreCanUseBuspakje(false)
+                      ->saveCache();
+            }
+
+            return false;
+        }
+
+        $buspakjeProductOptions = Mage::getModel('postnl_core/system_config_source_buspakjeProductOptions')
+                                      ->getAvailableOptions();
+
+        if (empty($buspakjeProductOptions)) {
+            if ($cache) {
+                $cache->setPostnlCoreCanUseBuspakje(false)
+                      ->saveCache();
+            }
+
+            return false;
+        }
+
+        if ($cache) {
+            $cache->setPostnlCoreCanUseBuspakje(true)
+                  ->saveCache();
+        }
+
+        return true;
+    }
+
+    /**
      * Checks whether the EPS BE only product option is allowed.
      *
      * @param bool|int $storeId
@@ -578,6 +651,184 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                   ->saveExtra($extra);
 
         return true;
+    }
+
+    /**
+     * Determines whether an array of items would fit as a buspakje shipment.
+     *
+     * @param array|Mage_Sales_Model_Resource_Collection_Abstract $items
+     *
+     * @return bool
+     */
+    public function fitsAsBuspakje($items)
+    {
+        $totalQtyRatio = 0;
+        $totalWeight = 0;
+
+        /**
+         * @var Mage_Sales_Model_Order_Item|Mage_Sales_Model_Order_Shipment_Item $item
+         */
+        foreach ($items as $item) {
+            /**
+             * Get either the qty ordered or the qty shipped, depending on whether this is an order or a shipment item.
+             */
+            if ($item instanceof Mage_Sales_Model_Order_Item) {
+                $qty = $item->getQtyOrdered();
+            } elseif ($item instanceof Mage_Sales_Model_Order_Shipment_Item) {
+                $qty = $item->getQty();
+            } else {
+                return false;
+            }
+
+            /**
+             * Get the item's product.
+             *
+             * @var Mage_Catalog_Model_Product $product
+             */
+            $product = Mage::getModel('catalog/product')->load($item->getProductId());
+
+            if (!$product) {
+                return false;
+            }
+
+            /**
+             * The max qty attribute is only available on simple products.
+             */
+            if ($product->getTypeId() != Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
+                continue;
+            }
+
+            /**
+             * Calculate the weight of the item in kilograms.
+             */
+            $weight = $item->getWeight() * $qty;
+            $convertedWeight = $this->standardizeWeight($weight, $item->getStoreId());
+
+            $totalWeight += $convertedWeight;
+
+            /**
+             * Get how many of this product would fit in a buspakje package.
+             */
+            $maxQty = $product->getDataUsingMethod('postnl_max_qty_for_buspakje');
+
+            if (!is_numeric($maxQty)) {
+                return false;
+            }
+
+            /**
+             * Determine the ratio. If 2 products fit, then the ratio is 1/2 = 0.5. If 3 fit, the ratio is 1/3 = 0.33.
+             */
+            $qtyRatio = 1 / $maxQty;
+
+            $totalQtyRatio += $qtyRatio * $qty;
+        }
+
+        /**
+         * If the combined weight of all items is more than 2 kg, this shipment is not a buspakje.
+         */
+        if ($totalWeight > 2) {
+            return false;
+        }
+
+        /**
+         * If the combined qty ratios of the items is more than 1 this is not a buspakje.
+         */
+        if ($totalQtyRatio > 1) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Convert a given weight to kilogram or gram
+     *
+     * @param float $weight The weight to be converted
+     * @param int | null $storeId Store Id used to determine the weight unit that was originally used
+     * @param boolean $toGram Optional parameter to convert to gram instead of kilogram
+     *
+     * @return float
+     */
+    public function standardizeWeight($weight, $storeId = null, $toGram = false)
+    {
+        if (is_null($storeId)) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
+
+        $unitUsed = Mage::getStoreConfig(self::XPATH_WEIGHT_UNIT, $storeId);
+
+        switch ($unitUsed) {
+            case 'tonne':
+                $returnWeight = $weight * 1000;
+                break;
+            case 'kilogram':
+                $returnWeight = $weight * 1;
+                break;
+            case 'hectogram':
+                $returnWeight = $weight * 10;
+                break;
+            case 'gram':
+                $returnWeight = $weight * 0.001;
+                break;
+            case 'carat':
+                $returnWeight = $weight * 0.0002;
+                break;
+            case 'centigram':
+                $returnWeight = $weight * 0.00001;
+                break;
+            case 'milligram':
+                $returnWeight = $weight * 0.000001;
+                break;
+            case 'longton':
+                $returnWeight = $weight * 1016.0469088;
+                break;
+            case 'shortton':
+                $returnWeight = $weight * 907.18474;
+                break;
+            case 'longhundredweight':
+                $returnWeight = $weight * 50.80234544;
+                break;
+            case 'shorthundredweight':
+                $returnWeight = $weight * 45.359237;
+                break;
+            case 'stone':
+                $returnWeight = $weight * 6.35029318;
+                break;
+            case 'pound':
+                $returnWeight = $weight * 0.45359237;
+                break;
+            case 'ounce':
+                $returnWeight = $weight * 0.028349523125;
+                break;
+            case 'grain': //no break
+            case 'troy_grain':
+                $returnWeight = $weight * 0.00006479891;
+                break;
+            case 'troy_pound':
+                $returnWeight = $weight * 0.3732417216;
+                break;
+            case 'troy_ounce':
+                $returnWeight = $weight * 0.0311034768;
+                break;
+            case 'troy_pennyweight':
+                $returnWeight = $weight * 0.00155517384;
+                break;
+            case 'troy_carat':
+                $returnWeight = $weight * 0.00020519654;
+                break;
+            case 'troy_mite':
+                $returnWeight = $weight * 0.00000323994;
+                break;
+            default:
+                $returnWeight = $weight;
+                break;
+        }
+
+        if ($toGram === true) {
+            $returnWeight *= 1000;
+        }
+
+        return $returnWeight;
     }
 
     /**

@@ -183,10 +183,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      * Resulting query:
      * SELECT `main_table`.*,
      *     IF(
-     *         `pakjegemak_address`.`parent_id`, `pakjegemak_address`.`country_id`, `shipping_address`.`country_id`
+     *         `pakjegemak_address`.`parent_id`,
+     *         `pakjegemak_address`.`country_id`,
+     *         `shipping_address`.`country_id`
      *     ) AS `country_id`,
      *     IF(
-     *         `pakjegemak_address`.`parent_id`, `pakjegemak_address`.`postcode`, `shipping_address`.`postcode`
+     *         `pakjegemak_address`.`parent_id`,
+     *         `pakjegemak_address`.`postcode`,
+     *         `shipping_address`.`postcode`
      *     ) AS `postcode`,
      *     `order`.`shipping_method`,
      *     `order`.`shipping_description`,
@@ -216,7 +220,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      *     ON `main_table`.`entity_id`=`postnl_shipment`.`shipment_id`
      * LEFT JOIN `tig_postnl_order` AS `postnl_order`
      *     ON `main_table`.`order_id`=`postnl_order`.`order_id`
-     * ORDER BY created_at DESC LIMIT 20
+     * ORDER BY created_at DESC
+     * LIMIT 20
      *
      * @param TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection $collection
      *
@@ -227,24 +232,33 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         $resource = Mage::getSingleton('core/resource');
 
         /**
-         * Add a conditional SELECT clause for the country_id and postode fields. If the shipment has a PakjeGemak
+         * Add a conditional SELECT clause for the country_id and postcode fields. If the shipment has a PakjeGemak
          * address we need the postcode and country_id from that address. Otherwise we need them from the shipping
          * address.
          */
         $collection->addExpressionFieldToSelect(
             'country_id',
-            'IF(`pakjegemak_address`.`parent_id`, `pakjegemak_address`.`country_id`, `shipping_address`.`country_id`)',
-            'country_id'
-        )->addExpressionFieldToSelect(
+            'IF({{pakjegemak_parent_id}}, {{pakjegemak_country_id}}, {{shipping_country_id}})',
+            array(
+                'pakjegemak_parent_id' => '`pakjegemak_address`.`parent_id`',
+                'pakjegemak_country_id'  => '`pakjegemak_address`.`country_id`',
+                'shipping_country_id'    => '`shipping_address`.`country_id`',
+            )
+        );
+        $collection->addExpressionFieldToSelect(
             'postcode',
-            'IF(`pakjegemak_address`.`parent_id`, `pakjegemak_address`.`postcode`, `shipping_address`.`postcode`)',
-            'postcode'
+            'IF({{pakjegemak_parent_id}}, {{pakjegemak_postcode}}, {{shipping_postcode}})',
+            array(
+                'pakjegemak_parent_id' => '`pakjegemak_address`.`parent_id`',
+                'pakjegemak_postcode'  => '`pakjegemak_address`.`postcode`',
+                'shipping_postcode'    => '`shipping_address`.`postcode`',
+            )
         );
 
         $select = $collection->getSelect();
 
         /**
-         * Join sales_flat_order table
+         * Join sales_flat_order table.
          */
         $select->joinInner(
             array('order' => $resource->getTableName('sales/order')),
@@ -272,7 +286,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         );
 
         /**
-         * Join tig_postnl_shipment table
+         * Join tig_postnl_shipment table.
          */
         $select->joinLeft(
             array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
@@ -292,7 +306,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         );
 
         /**
-         * Join tig_postnl_order table
+         * Join tig_postnl_order table.
          */
         $select->joinLeft(
             array('postnl_order' => $resource->getTableName('postnl_core/order')),
@@ -401,6 +415,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                         'pakketautomaat'      => $helper->__('Parcel Dispenser'),
                         'avond'               => $helper->__('Evening Delivery'),
                         'pakje_gemak_express' => $helper->__('Early Pickup'),
+                        'buspakje'            => $helper->__('Letter Box Parcel'),
                     ),
                 ),
                 $after
@@ -594,7 +609,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         if ($helper->checkIsPostnlActionAllowed('confirm')) {
             $actions[] = array(
                 'caption'   => $helper->__('Confirm'),
-                'url'       => array('base' => 'postnl/adminhtml_shipment/confirm'),
+                'url'       => array('base' => 'postnl_admin/adminhtml_shipment/confirm'),
                 'field'     => 'shipment_id',
                 'is_postnl' => true, //custom flag for renderer
                 'code'      => 'postnl_confirm',
@@ -641,15 +656,29 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
      */
     protected function _getConfirmDateClass($row, $column)
     {
+
+        $origValue = $row->getData($column->getIndex());
+
+        if (!$origValue) {
+            return '';
+        }
+
+        $dateModel = Mage::getModel('core/date');
+
         /**
          * @var TIG_PostNL_Model_Core_Shipment $postnlShipmentClass
          */
+        $origDate            = new DateTime($origValue);
+        $now                 = new DateTime($dateModel->gmtDate());
+        $interval            = $now->diff($origDate);
         $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
 
-        $origValue = $row->getData($column->getIndex());
-        $dateModel = Mage::getModel('core/date');
-
-        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED) {
+        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_CONFIRMED
+            || ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_BUSPAKJE
+                && $interval->d >= 1
+                && $interval->invert
+            )
+        ) {
             return 'grid-severity-notice';
         }
 
@@ -657,23 +686,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             return 'grid-severity-critical';
         }
 
-        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && date('Ymd', $dateModel->gmtTimestamp()) == date('Ymd', strtotime($origValue))
-        ) {
+        if ($interval->d == 0) {
             return 'grid-severity-major';
         }
 
-        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED
-            && $dateModel->gmtTimestamp() > strtotime($origValue)
-        ) {
+        if ($interval->d >= 1 && $interval->invert) {
             return 'grid-severity-critical';
         }
 
-        if ($row->getData('confirm_status') == $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED) {
-            return 'grid-severity-minor';
-        }
-
-        return '';
+        return 'grid-severity-minor';
     }
 
     /**
@@ -706,6 +727,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             case $postnlShipmentClass::CONFIRM_STATUS_UNCONFIRMED:
             case $postnlShipmentClass::CONFIRM_STATUS_CONFIRM_EXPIRED:
                 $class = 'grid-severity-critical';
+                break;
+            case $postnlShipmentClass::CONFIRM_STATUS_BUSPAKJE:
+                $class = 'grid-severity-notice no-display';
                 break;
             default:
                 $class = '';
@@ -839,8 +863,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             /**
              * Get the additional options block for 'label printing' mass actions.
              */
-            $printAdditional = Mage::app()->getLayout()
-                                          ->createBlock('postnl_adminhtml/widget_grid_massaction_labelStartPos');
+            $printAdditional = Mage::app()
+                                   ->getLayout()
+                                   ->createBlock(
+                                       'postnl_adminhtml/widget_grid_massaction_item_additional_labelStartPos'
+                                   );
 
             $printAdditional->setData(
                             array(

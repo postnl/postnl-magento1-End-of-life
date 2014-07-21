@@ -90,7 +90,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
                   ->setBaseValue($baseFee)
                   ->setCode('postnl_cod_fee');
 
-            $parent->addTotalBefore($total, 'shipping');
+            $parent->addTotal($total, 'subtotal_incl');
         }
 
         if ($displayMode === self::DISPLAY_MODE_INCL

@@ -352,7 +352,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $totalWeight += $item->getRowWeight();
         }
 
-        $kilograms = Mage::helper('postnl/cif')->standardizeWeight($totalWeight, $storeId);
+        $kilograms = $this->standardizeWeight($totalWeight, $storeId);
 
         if ($kilograms < 2) {
             return true;

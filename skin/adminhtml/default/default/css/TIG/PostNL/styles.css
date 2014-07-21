@@ -41,3 +41,6 @@ body.no-scroll { overflow:hidden !important; }
 /* Download button */
 button.download span { background-image:url(../../../images/TIG/PostNL/btn_download_icon.png); padding-left:20px; }
 button.download span span { background:none !important; padding:0 !important; }
+
+/* Delivery options info */
+div#postnl_delivery_option_info { border: 1px solid #D6D6D6; margin:10px 0 10px 0; }

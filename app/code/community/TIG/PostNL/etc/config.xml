@@ -114,6 +114,9 @@
             <postnl_payment>
                 <class>TIG_PostNL_Model_Payment</class>
             </postnl_payment>
+            <postnl_admin>
+                <class>TIG_PostNL_Model_Admin</class>
+            </postnl_admin>
             <!-- Resource model definitions per submodule -->
             <postnl_resource>
                 <class>TIG_PostNL_Model_Resource</class>
@@ -169,9 +172,19 @@
             </postnl_read>
         </resources>
         <events>
+            <sales_order_shipment_save_before>
+                <observers>
+                    <!-- Prevents partial shipments from being generated for PostNL COD orders -->
+                    <postnl_cod_prevent_partial_shipment>
+                        <type>model</type>
+                        <class>postnl_payment/observer_cod</class>
+                        <method>preventPartialShipment</method>
+                    </postnl_cod_prevent_partial_shipment>
+                </observers>
+            </sales_order_shipment_save_before>
             <sales_order_shipment_save_after>
                 <observers>
-                    <!-- Creates a postnl shipment entity and generates a barcode through CIF-->
+                    <!-- Creates a postnl shipment entity and generates a barcode through CIF -->
                     <postnl_shipment_generate_barcode>
                         <type>model</type>
                         <class>postnl_core/observer_barcode</class>
@@ -239,6 +252,7 @@
                     <product_attributes>
                         <postnl_shipping_duration/>
                         <postnl_allow_delivery_options/>
+                        <postnl_max_qty_for_buspakje/>
                     </product_attributes>
                 </item>
                 <totals>
@@ -250,6 +264,7 @@
                         <before>tax,grand_total</before>
                         <after>subtotal,discount,shipping</after>
                         <renderer>postnl_payment/checkout_total_codFee</renderer>
+                        <admin_renderer>postnl_adminhtml/sales_order_create_totals_codFee</admin_renderer>
                     </postnl_cod_fee>
                     <postnl_cod_fee_tax>
                         <class>postnl_payment/quote_address_total_codFeeTax</class>
@@ -260,6 +275,9 @@
             </quote>
             <order_invoice>
                 <totals>
+                    <subtotal>
+                        <class>postnl_payment/order_invoice_total_subtotal</class>
+                    </subtotal>
                     <postnl_cod_fee>
                         <class>postnl_payment/order_invoice_total_codFee</class>
                         <after>subtotal,discount,shipping</after>
@@ -691,8 +709,16 @@
                 <weight_unit>gram</weight_unit> <!-- gram -->
                 <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
                 <custom_shipment_reference/>
+                <use_buspakje>1</use_buspakje> <!-- Use buspakje -->
+                <buspakje_calculation_mode>automatic</buspakje_calculation_mode> <!-- Automatically determine if a shipment is a buspakje shipment -->
+                <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
+                <cutoff_time>17:00:00</cutoff_time> <!-- Add an extra shipping day if customers order after 17:00 P.M. -->
+                <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
+                <sunday_cutoff_time/>
                 <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
-                <show_shipment_type_column>1</show_shipment_type_column> <!-- Show the shipment type column -->
+                <show_buspakje_option>1</show_buspakje_option> <!-- Show the option to mark a shipment as being a buspakje -->
+                <order_grid_columns>shipment_type</order_grid_columns> <!-- Show the shipment type column -->
+                <order_grid_massaction_default>postnl_create_shipments</order_grid_massaction_default> <!-- Select the create shipments mass action by default -->
                 <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
                 <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
                 <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
@@ -771,7 +797,7 @@
                 <country>NL</country> <!-- All return addresses must be located in the Netherlands -->
         	</cif_return_address>
         	<cif_product_options>
-        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553</supported_product_options> <!-- all possible options except for EPS BE only -->
+        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2928,2828</supported_product_options> <!-- all possible options except for EPS BE only -->
                 <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->
         		<default_product_option>3085</default_product_option> <!-- standard shipment -->
         		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
@@ -780,6 +806,7 @@
                 <default_evening_product_option>3385</default_evening_product_option> <!-- Deliver to stated address only -->
                 <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- Post Office + signature on delivery -->
                 <default_pge_product_option>3543</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
+                <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
         		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_eu_be_product_option>4952</default_eu_be_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
@@ -813,11 +840,7 @@
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <show_options_for_letter>0</show_options_for_letter> <!-- Do not show delivery options if the order's total weight is less than 2 kg -->
                 <show_options_for_backorders>0</show_options_for_backorders> <!-- Do not show delivery options if the order is not in stock -->
-        	    <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
-        	    <cutoff_time>17:00:00</cutoff_time> <!-- Add an extra shipping day if customers order after 17:00 P.M. -->
-        	    <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
-                <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
-        	    <sunday_cutoff_time/>
+                <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
         	    <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
         	    <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
         	    <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
@@ -1831,6 +1854,26 @@
                 <url/>
                 <type>error</type>
             </POSTNL-0176>
+            <POSTNL-0177>
+                <message>No order found for PostNL shipment #%d.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0177>
+            <POSTNL-0178>
+                <message>Maximum PostNL COD fee amount available to refunds is %s.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0178>
+            <POSTNL-0179>
+                <message>It is not possible to create partial shipments for orders placed using PostNL COD. Please create only full shipments.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0179>
+            <POSTNL-0180>
+                <message>The addTrackingCodeToShipment action is currently unavailable.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0180>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>

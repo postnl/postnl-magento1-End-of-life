@@ -268,7 +268,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     }
                 }
 
-                $data = $this->_configDataObject->getConfigDataValue($path, null, $this->_configData);
+                $inherit = null;
+                $data = $this->_configDataObject->getConfigDataValue($path, $inherit, $this->_configData);
 
                 /**
                  * Because Magento 1.6 and 1.11 retrieved config data in a different manner, we need to provide

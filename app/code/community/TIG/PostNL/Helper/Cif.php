@@ -60,14 +60,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const GLOBAL_BARCODE_TYPE = 'GLOBAL';
 
     /**
-     * XML path to infinite label printiong setting
+     * XML path to infinite label printing setting
      */
     const XPATH_INFINITE_LABEL_PRINTING = 'postnl/advanced/infinite_label_printing';
-
-    /**
-     * XML path to weight unit used
-     */
-    const XPATH_WEIGHT_UNIT = 'postnl/cif_labels_and_confirming/weight_unit';
 
     /**
      * XML path to weight per parcel config setting
@@ -83,13 +78,13 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
 
     /**
-     * Regular expression used to split streetname from housenumber. This regex works well for dutch addresses, but may
-     * fail for international addresses. We strongly recommend using split address lines instead.
+     * Regular expression used to split street name from house number. This regex works well for dutch addresses, but
+     * may fail for international addresses. We strongly recommend using split address lines instead.
      */
     const SPLIT_STREET_REGEX = '#\A(.*?)\s+(\d+[a-zA-Z]{0,1}\s{0,1}[-]{1}\s{0,1}\d*[a-zA-Z]{0,1}|\d+[a-zA-Z-]{0,1}\d*[a-zA-Z]{0,1})#';
 
     /**
-     * Regular expression used to split housenumber and housenumber extension
+     * Regular expression used to split house number and house number extension
      */
     const SPLIT_HOUSENUMBER_REGEX = '#^([\d]+)(.*)#s';
 
@@ -122,6 +117,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'ES',
         'CZ',
         'SE',
+        'GR',
     );
 
     /**
@@ -379,6 +375,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $globalProductCodes = Mage::getSingleton('postnl_core/system_config_source_globalProductOptions');
         return $globalProductCodes->getAvailableOptions($flat);
+    }
+
+    /**
+     * Get an array of buspakje product codes.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getBuspakjeProductCodes($flat = true)
+    {
+        $buspakjeProductCodes = Mage::getSingleton('postnl_core/system_config_source_buspakjeProductOptions');
+        return $buspakjeProductCodes->getAvailableOptions($flat);
     }
 
     /**
@@ -640,6 +649,32 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Check if a given shipment is COD
+     *
+     * @param TIG_PostNL_Model_Core_Shipment|Mage_Sales_Model_Order_Shipment $shipment
+     *
+     * @return boolean
+     *
+     * @see TIG_PostNL_Model_Core_Shipment->isCod();
+     */
+    public function isCodShipment($shipment)
+    {
+        $postnlShipmentClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
+        if ($shipment instanceof $postnlShipmentClass) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
+             */
+            return $shipment->isCod();
+        }
+
+        $tempPostnlShipment = Mage::getModel('postnl_core/shipment');
+        $tempPostnlShipment->setShipment($shipment);
+
+        return $tempPostnlShipment->isCod();
+    }
+
+
+    /**
      * Gets the default product option for a shipment
      *
      * @param Mage_Sales_Model_Order_Shipment
@@ -813,97 +848,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         }
 
         return false;
-    }
-
-    /**
-     * Convert a given weight to kilogram or gram
-     *
-     * @param float $weight The weight to be converted
-     * @param int | null $storeId Store Id used to determine the weight unit that was originally used
-     * @param boolean $toGram Optional parameter to convert to gram instead of kilogram
-     *
-     * @return float
-     */
-    public function standardizeWeight($weight, $storeId = null, $toGram = false)
-    {
-        if (is_null($storeId)) {
-            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        }
-
-        $unitUsed = Mage::getStoreConfig(self::XPATH_WEIGHT_UNIT, $storeId);
-
-        switch ($unitUsed) {
-            case 'tonne':
-                $returnWeight = $weight * 1000;
-                break;
-            case 'kilogram':
-                $returnWeight = $weight * 1;
-                break;
-            case 'hectogram':
-                $returnWeight = $weight * 10;
-                break;
-            case 'gram':
-                $returnWeight = $weight * 0.001;
-                break;
-            case 'carat':
-                $returnWeight = $weight * 0.0002;
-                break;
-            case 'centigram':
-                $returnWeight = $weight * 0.00001;
-                break;
-            case 'milligram':
-                $returnWeight = $weight * 0.000001;
-                break;
-            case 'longton':
-                $returnWeight = $weight * 1016.0469088;
-                break;
-            case 'shortton':
-                $returnWeight = $weight * 907.18474;
-                break;
-            case 'longhundredweight':
-                $returnWeight = $weight * 50.80234544;
-                break;
-            case 'shorthundredweight':
-                $returnWeight = $weight * 45.359237;
-                break;
-            case 'stone':
-                $returnWeight = $weight * 6.35029318;
-                break;
-            case 'pound':
-                $returnWeight = $weight * 0.45359237;
-                break;
-            case 'ounce':
-                $returnWeight = $weight * 0.028349523125;
-                break;
-            case 'grain': //no break
-            case 'troy_grain':
-                $returnWeight = $weight * 0.00006479891;
-                break;
-            case 'troy_pound':
-                $returnWeight = $weight * 0.3732417216;
-                break;
-            case 'troy_ounce':
-                $returnWeight = $weight * 0.0311034768;
-                break;
-            case 'troy_pennyweight':
-                $returnWeight = $weight * 0.00155517384;
-                break;
-            case 'troy_carat':
-                $returnWeight = $weight * 0.00020519654;
-                break;
-            case 'troy_mite':
-                $returnWeight = $weight * 0.00000323994;
-                break;
-            default:
-                $returnWeight = $weight;
-                break;
-        }
-
-        if ($toGram === true) {
-            $returnWeight *= 1000;
-        }
-
-        return $returnWeight;
     }
 
     /**

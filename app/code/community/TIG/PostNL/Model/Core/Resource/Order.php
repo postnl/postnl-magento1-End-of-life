@@ -38,6 +38,9 @@
  */
 class TIG_PostNL_Model_Core_Resource_Order extends Mage_Core_Model_Resource_Db_Abstract
 {
+    /**
+     * Initialize PostNL order model.
+     */
     public function _construct()
     {
         $this->_init('postnl_core/order', 'entity_id');

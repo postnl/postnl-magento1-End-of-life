@@ -51,6 +51,17 @@ $conn = $installer->getConnection();
  **********************************************************************************************************************/
 
 $conn->addColumn($installer->getTable('postnl_core/shipment'),
+    'order_id',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_INTEGER,
+        'length'   => 10,
+        'nullable' => true,
+        'comment'  => 'Order Id',
+        'after'    => 'shipment_id',
+    )
+);
+
+$conn->addColumn($installer->getTable('postnl_core/shipment'),
     'shipment_type',
     array(
         'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
@@ -61,9 +72,35 @@ $conn->addColumn($installer->getTable('postnl_core/shipment'),
     )
 );
 
+$conn->addColumn($installer->getTable('postnl_core/shipment'),
+    'is_buspakje',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+        'nullable' => true,
+        'comment'  => 'Is Buspakje',
+        'after'    => 'is_pakketautomaat',
+    )
+);
+
+$conn->addIndex(
+    $installer->getTable('postnl_core/shipment'),
+    $installer->getIdxName($installer->getTable('postnl_core/shipment'), array('order_id')),
+    'order_id'
+);
+
+$conn->addForeignKey(
+    $installer->getFkName('postnl_core/shipment', 'order_id', 'sales/order', 'entity_id'),
+    $installer->getTable('postnl_core/shipment'),
+    'order_id',
+    $installer->getTable('sales/order'),
+    'entity_id',
+    Varien_Db_Ddl_Table::ACTION_CASCADE, //on delete cascade
+    Varien_Db_Ddl_Table::ACTION_CASCADE //on update cascade
+);
+
 /**
- * Update the PostNL shipment table so that a PostNl shipment is deleted when it's corresponding Magento shipment is
- * deleted. This prevents errors caused by missing ID's.
+ * Update the PostNL shipment table so that a PostNl shipment is deleted when its corresponding Magento shipment is
+ * deleted. This prevents errors caused by missing IDs.
  */
 $conn->addForeignKey(
     $installer->getFkName('postnl_core/shipment', 'shipment_id', 'sales/shipment', 'entity_id'),
@@ -454,5 +491,45 @@ $conn->addColumn(
         'after'    => 'postnl_cod_fee',
     )
 );
+
+/***********************************************************************************************************************
+ * PRODUCT ATTRIBUTES
+ **********************************************************************************************************************/
+
+if (!$installer->getAttribute('catalog_product', 'postnl_max_qty_for_buspakje')) {
+    $installer->addAttribute(
+        'catalog_product',
+        'postnl_max_qty_for_buspakje',
+        array(
+            'backend'                    => 'catalog/product_attribute_backend_boolean',
+            'group'                      => 'General',
+            'sort_order'                 => 110,
+            'frontend'                   => '',
+            'frontend_class'             => 'validate-digits',
+            'default'                    => '0',
+            'label'                      => 'PostNL Max Qty For Letter Box Parcels',
+            'input'                      => 'text',
+            'type'                       => 'int',
+            'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL,
+            'visible'                    => true,
+            'required'                   => false,
+            'searchable'                 => false,
+            'filterable'                 => false,
+            'filterable_in_search'       => false,
+            'unique'                     => false,
+            'comparable'                 => false,
+            'visible_on_front'           => false,
+            'visible_in_advanced_search' => false,
+            'is_html_allowed_on_front'   => false,
+            'used_in_product_listing'    => false,
+            'user_defined'               => false,
+            'apply_to'                   => Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+            'is_configurable'            => false,
+            'used_for_sort_by'           => false,
+            'position'                   => 0,
+            'used_for_promo_rules'       => false,
+        )
+    );
+}
 
 $installer->endSetup();

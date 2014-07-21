@@ -1,0 +1,83 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty $this
+ * @var Mage_Sales_Model_Order_Item $_item
+ */
+?>
+<?php $_salesHelper = Mage::helper('sales'); ?>
+<?php $_item = $this->getItem(); ?>
+<?php $_maxQty = $this->getMaxQtyForBuspakje(); ?>
+<?php if ($_item): ?>
+<table cellspacing="0" class="qty-table">
+    <tr>
+        <td><?php echo $_salesHelper->__('Ordered') ?></td>
+        <td><strong><?php echo $_item->getQtyOrdered()*1 ?></strong></td>
+    </tr>
+    <?php if ((float) $_item->getQtyInvoiced()): ?>
+        <tr>
+            <td><?php echo $_salesHelper->__('Invoiced') ?></td>
+            <td><strong><?php echo $_item->getQtyInvoiced()*1 ?></strong></td>
+        </tr>
+    <?php endif; ?>
+    <?php if ((float) $_item->getQtyShipped()): ?>
+        <tr>
+            <td><?php echo $_salesHelper->__('Shipped') ?></td>
+            <td><strong><?php echo $_item->getQtyShipped()*1 ?></strong></td>
+        </tr>
+    <?php endif; ?>
+    <?php if ((float) $_item->getQtyRefunded()): ?>
+        <tr>
+            <td><?php echo $_salesHelper->__('Refunded') ?></td>
+            <td><strong><?php echo $_item->getQtyRefunded()*1 ?></strong></td>
+        </tr>
+    <?php endif; ?>
+    <?php if ((float) $_item->getQtyCanceled()): ?>
+        <tr>
+            <td><?php echo $_salesHelper->__('Canceled') ?></td>
+            <td><strong><?php echo $_item->getQtyCanceled()*1 ?></strong></td>
+        </tr>
+    <?php endif; ?>
+    <?php if ($_maxQty): ?>
+        <tr style="white-space:nowrap;">
+            <td><?php echo $this->__('Letter box qty') ?></td>
+            <td><strong><?php echo ((float) $_maxQty) * 1 ?></strong></td>
+        </tr>
+    <?php endif; ?>
+</table>
+<?php endif; ?>
