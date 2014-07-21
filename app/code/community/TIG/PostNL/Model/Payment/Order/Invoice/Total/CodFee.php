@@ -54,7 +54,7 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_CodFee extends Mage_Sales_Mod
         $fee     = $order->getPostnlCodFee();
         $baseFee = $order->getBasePostnlCodFee();
 
-        if (!$fee || !$baseFee) {
+        if ($fee < 0.01 || $baseFee < 0.01) {
             return $this;
         }
 
