@@ -39,6 +39,9 @@
 class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
 {
     /**
+     * Updates the PostNL order after the order has been placed. Also copies the PakjeGemak quote address to the order
+     * as an order address or deletes it if it's no longer needed.
+     *
      * @param Varien_Event_Observer $observer
      *
      * @return $this
@@ -146,6 +149,15 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
 
         $order->addAddress($orderAddress)
               ->save();
+
+        /**
+         * This is a fix for the order address missing a parent ID.
+         *
+         * @since v1.3.0
+         */
+        if (!$orderAddress->getParentId()) {
+            $orderAddress->setParentId($order->getId());
+        }
 
         /**
          * This is required for some PSP extensions which will not save the PakjeGemak address otherwise.
