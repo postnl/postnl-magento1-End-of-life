@@ -154,7 +154,8 @@ class TIG_PostNL_Model_Core_Service
     {
         $serviceOrder = Mage::getModel('sales/service_order', $order);
         if (method_exists($serviceOrder, 'updateLocaleNumbers')) {
-            $serviceOrder->updateLocaleNumbers($qtys);
+            Mage::getModel('sales/service_order', $order)
+                ->updateLocaleNumbers($qtys);
         }
 
         $convertor = Mage::getModel('sales/convert_order');
