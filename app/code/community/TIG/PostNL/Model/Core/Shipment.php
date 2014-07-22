@@ -112,6 +112,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setShipmentType(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setOrder(Mage_Sales_Model_Order $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakje(int $value)
+ * @method TIG_PostNL_Model_Core_Shipment setShipmentIncrementId(string $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -130,6 +131,7 @@
  * @method bool                           hasShipmentType()
  * @method bool                           hasOrder()
  * @method bool                           hasMainBarcode()
+ * @method bool                           hasShipmentIncrementId()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -435,6 +437,38 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setOrderId($orderId);
         return $orderId;
+    }
+
+    /**
+     * Gets the increment ID of this shipment's Magento shipment if available.
+     *
+     * @return null|string
+     */
+    public function getShipmentIncrementId()
+    {
+        if ($this->hasShipmentIncrementId()) {
+            return $this->_getData('shipment_increment_id');
+        }
+
+        $shipment = $this->getShipment(false);
+        if (!$shipment || !$shipment->getIncrementId()) {
+            return null;
+        }
+
+        $incrementId = $shipment->getIncrementId();
+
+        $this->setShipmentIncrementId($incrementId);
+        return $incrementId;
+    }
+
+    /**
+     * Alias for TIG_PostNL_Model_Core_Shipment::getShipmentIncrementId().
+     *
+     * @return null|string
+     */
+    public function getIncrementId()
+    {
+        return $this->getShipmentIncrementId();
     }
 
     /**
