@@ -123,7 +123,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
         array(
             'value'        => '3091',
             'label'        => 'COD + Extra cover',
-            'isExtraCover' => false,
+            'isExtraCover' => true,
             'isAvond'      => true,
             'isCod'        => true,
         ),
@@ -137,7 +137,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
         array(
             'value'        => '3097',
             'label'        => 'COD + Extra cover + Return when not home',
-            'isExtraCover' => false,
+            'isExtraCover' => true,
             'isAvond'      => true,
             'isCod'        => true,
         ),

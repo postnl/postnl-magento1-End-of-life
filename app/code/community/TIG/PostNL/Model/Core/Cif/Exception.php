@@ -140,6 +140,18 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
     }
 
     /**
+     * @param string|int $code
+     *
+     * @return $this
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
      * Add an error number to the error numbers array
      *
      * @param int $errorNumber

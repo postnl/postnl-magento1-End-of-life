@@ -187,7 +187,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     /**
      * Do a few checks to see if the template should be rendered before actually rendering it.
      *
-     * @return string | parent::_toHtml()
+     * @return string
      *
      * @see Mage_Adminhtml_Block_Abstract::_toHtml()
      */

@@ -539,11 +539,16 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      *
      * @param SoapFault        $e
      * @param Zend_Soap_Client $client
+     * @param boolean          $throwException
+     *
+     * @return $this
      *
      * @throws TIG_PostNL_Model_Core_Cif_Exception
      */
-    protected function _handleCifException(SoapFault $e, $client = null)
+    protected function _handleCifException(SoapFault $e, $client = null, $throwException = true)
     {
+        $logException = true;
+
         $cifHelper = Mage::helper('postnl/cif');
         $exception = new TIG_PostNL_Model_Core_Cif_Exception($e->getMessage(), null, $e);
 
@@ -590,6 +595,15 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             $errorNumbers = $errorResponse->getElementsByTagNameNS(self::CIF_ERROR_NAMESPACE, 'ErrorNumber');
             if ($errorNumbers) {
                 foreach ($errorNumbers as $errorNumber) {
+                    /**
+                     * Error number 13 means that the shipment was not found by PostNL. This error is very common and
+                     * can be completely valid. To prevent the log files from filling up extremely quickly, we do not
+                     * log this error.
+                     */
+                    if ($errorNumber == '13') {
+                        $logException = false;
+                    }
+
                     $exception->addErrorNumber($errorNumber->nodeValue);
                 }
             }
@@ -603,11 +617,17 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                       ->setResponseXml($responseXML);
         }
 
-        /**
-         * Log the exception and throw it
-         */
-        $cifHelper->logCifException($exception);
+        if ($logException) {
+            /**
+             * Log the exception and throw it.
+             */
+            $cifHelper->logCifException($exception);
+        }
 
-        throw $exception;
+        if ($throwException) {
+            throw $exception;
+        }
+
+        return $this;
     }
 }
