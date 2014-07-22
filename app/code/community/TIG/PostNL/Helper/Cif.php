@@ -60,7 +60,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const GLOBAL_BARCODE_TYPE = 'GLOBAL';
 
     /**
-     * XML path to infinite label printiong setting
+     * XML path to infinite label printing setting
      */
     const XPATH_INFINITE_LABEL_PRINTING = 'postnl/advanced/infinite_label_printing';
 
@@ -78,13 +78,13 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
 
     /**
-     * Regular expression used to split streetname from housenumber. This regex works well for dutch addresses, but may
-     * fail for international addresses. We strongly recommend using split address lines instead.
+     * Regular expression used to split street name from house number. This regex works well for dutch addresses, but
+     * may fail for international addresses. We strongly recommend using split address lines instead.
      */
     const SPLIT_STREET_REGEX = '#\A(.*?)\s+(\d+[a-zA-Z]{0,1}\s{0,1}[-]{1}\s{0,1}\d*[a-zA-Z]{0,1}|\d+[a-zA-Z-]{0,1}\d*[a-zA-Z]{0,1})#';
 
     /**
-     * Regular expression used to split housenumber and housenumber extension
+     * Regular expression used to split house number and house number extension
      */
     const SPLIT_HOUSENUMBER_REGEX = '#^([\d]+)(.*)#s';
 
@@ -117,6 +117,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         'ES',
         'CZ',
         'SE',
+        'GR',
     );
 
     /**

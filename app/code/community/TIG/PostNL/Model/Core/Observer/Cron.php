@@ -60,7 +60,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      * a single shipping label. These files are then destroyed. However, sometimes these files
      * may survive the script if the script has encountered an error. This method will make
      * sure these files will not survive indefinitely, which may lead to the file system
-     * being overburdened or the server running out of harddrive space.
+     * being overburdened or the server running out of hard drive space.
      *
      * @return $this
      *
@@ -110,6 +110,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
          */
         $labelModel = Mage::app()->getConfig()->getModelClassName('postnl_core/label');
         $tempLabelName = $labelModel::TEMP_LABEL_FILENAME;
+
+        $helper->cronLog('Attempting to read temp label files from %s.', $tempLabelsDirectory);
 
         /**
          * Get all temporary label files in the directory
@@ -195,6 +197,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
             $helper->cronLog('Locks directory not found. Exiting cron.');
             return $this;
         }
+
+        $helper->cronLog('Attempting to read lock files from %s.', $locksDirectory);
 
         /**
          * Get all PostNL lock files in the directory

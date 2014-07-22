@@ -383,7 +383,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getPrivateKey()
     {
-        $privateKey = Mage::getStoreConfig(self::XPATH_EXTENSIONCONTROL_PRIVATE_KEY, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $privateKey = Mage::getStoreConfig(
+            self::XPATH_EXTENSIONCONTROL_PRIVATE_KEY,
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
         $privateKey = Mage::helper('core')->decrypt($privateKey);
 
         $privateKey = trim($privateKey);
@@ -435,7 +438,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             array('order' => $resource->getTableName('sales/order')),
             '`main_table`.`order_id`=`order`.`entity_id`',
             array(
-                'shipping_method'      => 'order.shipping_method',
+                'shipping_method' => 'order.shipping_method',
             )
         );
 

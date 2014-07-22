@@ -63,6 +63,23 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_CodFeeTax extends Mage_Sales_
                 ->setTaxAmount($invoice->getTaxAmount() + $feeTax)
                 ->setBaseTaxAmount($invoice->getBaseTaxAmount() + $baseFeeTax);
 
+        $helper = Mage::helper('postnl');
+        if (
+            ($helper->isEnterprise()
+                && (version_compare(Mage::getVersion(), '1.13.1.0', '>=')
+                    || version_compare(Mage::getVersion(), '1.13.0.0', '<')
+                )
+            )
+            || (!$helper->isEnterprise()
+                && (version_compare(Mage::getVersion(), '1.8.1.0', '>=')
+                    || version_compare(Mage::getVersion(), '1.8.0.0', '<')
+                )
+            )
+        ) {
+            $invoice->setGrandTotal($invoice->getGrandTotal() + $feeTax)
+                    ->setBaseGrandTotal($invoice->getBaseGrandTotal() + $baseFeeTax);
+        }
+
         $order->setPostnlCodFeeTaxInvoiced($feeTax)
               ->setBasePostnlCodFeeTaxInvoiced($baseFeeTax);
 
