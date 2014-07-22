@@ -1,37 +1,49 @@
 <?php
 /**
- * Magento Enterprise Edition
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Magento Enterprise Edition License
- * that is bundled with this package in the file LICENSE_EE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://www.magentocommerce.com/license/enterprise-edition
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Magento to newer
- * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @category    Mage
- * @package     Mage_Sales
- * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://www.magentocommerce.com/license/enterprise-edition
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-
-
 class TIG_PostNL_Model_Payment_Order_Invoice_Total_Subtotal extends Mage_Sales_Model_Order_Invoice_Total_Subtotal
 {
     /**
-     * Collect invoice subtotal
+     * Collect invoice subtotal.
      *
      * @param   Mage_Sales_Model_Order_Invoice $invoice
-     * @return  Mage_Sales_Model_Order_Invoice_Total_Subtotal
+     *
+     * @return  $this
      */
     public function collect(Mage_Sales_Model_Order_Invoice $invoice)
     {
@@ -42,6 +54,9 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_Subtotal extends Mage_Sales_M
 
         $order = $invoice->getOrder();
 
+        /**
+         * @var Mage_Sales_Model_Order_Invoice_Item $item
+         */
         foreach ($invoice->getAllItems() as $item) {
             if ($item->getOrderItem()->isDummy()) {
                 continue;
@@ -49,29 +64,45 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_Subtotal extends Mage_Sales_M
 
             $item->calcRowTotal();
 
-            $subtotal       += $item->getRowTotal();
-            $baseSubtotal   += $item->getBaseRowTotal();
-            $subtotalInclTax+= $item->getRowTotalInclTax();
+            $subtotal            += $item->getRowTotal();
+            $baseSubtotal        += $item->getBaseRowTotal();
+            $subtotalInclTax     += $item->getRowTotalInclTax();
             $baseSubtotalInclTax += $item->getBaseRowTotalInclTax();
         }
-        $allowedSubtotal = $order->getSubtotal() - $order->getSubtotalInvoiced();
+
+        $allowedSubtotal     = $order->getSubtotal() - $order->getSubtotalInvoiced();
         $baseAllowedSubtotal = $order->getBaseSubtotal() - $order->getBaseSubtotalInvoiced();
-        $allowedSubtotalInclTax = $allowedSubtotal + $order->getHiddenTaxAmount()
-                + $order->getTaxAmount() - $order->getTaxInvoiced() - $order->getHiddenTaxInvoiced();
-        $baseAllowedSubtotalInclTax = $baseAllowedSubtotal + $order->getBaseHiddenTaxAmount()
-                + $order->getBaseTaxAmount() - $order->getBaseTaxInvoiced() - $order->getBaseHiddenTaxInvoiced();
+
+        $allowedSubtotalInclTax = $allowedSubtotal
+            + $order->getHiddenTaxAmount()
+            + $order->getTaxAmount()
+            - $order->getTaxInvoiced()
+            - $order->getHiddenTaxInvoiced();
+
+        $baseAllowedSubtotalInclTax = $baseAllowedSubtotal
+            + $order->getBaseHiddenTaxAmount()
+            + $order->getBaseTaxAmount()
+            - $order->getBaseTaxInvoiced()
+            - $order->getBaseHiddenTaxInvoiced();
 
         /**
-         * Check if shipping tax calculation is included to current invoice.
+         * Check if shipping tax calculation and PostNL COD fee tax is included to current invoice.
+         *
+         * @var Mage_Sales_Model_Order_Invoice $previousInvoice
          */
         $includeShippingTax = true;
-        $includeCodFee = true;
+        $includeCodFeeTax = true;
         foreach ($invoice->getOrder()->getInvoiceCollection() as $previousInvoice) {
-            if ($previousInvoice->getShippingAmount() && !$previousInvoice->isCanceled()) {
+            if ($previousInvoice->isCanceled()) {
+                continue;
+            }
+
+            if ($previousInvoice->getShippingAmount()) {
                 $includeShippingTax = false;
             }
-            if ($previousInvoice->getPostnlCodFeeTax() && !$previousInvoice->isCanceled()) {
-                $includeCodFee = false;
+
+            if ($previousInvoice->getPostnlCodFeeTax()) {
+                $includeCodFeeTax = false;
             }
         }
 
@@ -83,12 +114,9 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_Subtotal extends Mage_Sales_M
             $baseAllowedSubtotalInclTax += $order->getBaseShippingHiddenTaxAmount();
         }
 
-        if ($includeCodFee) {
+        if ($includeCodFeeTax) {
             $allowedSubtotalInclTax     -= $order->getPostnlCodFeeTax();
             $baseAllowedSubtotalInclTax -= $order->getBasePostnlCodFeeTax();
-        } else {
-            $allowedSubtotalInclTax     += $order->getPostnlCodFeeTax();
-            $baseAllowedSubtotalInclTax += $order->getBasePostnlCodFeeTax();
         }
 
         if ($invoice->isLast()) {
