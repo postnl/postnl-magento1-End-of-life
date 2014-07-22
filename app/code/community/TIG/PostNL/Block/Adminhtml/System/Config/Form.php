@@ -155,7 +155,27 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
             $helperName = $this->_configFields->getAttributeModule($section, $group);
             $fieldsetConfig = array('legend' => Mage::helper($helperName)->__((string)$group->label));
             if (!empty($group->comment)) {
-                $fieldsetConfig['comment'] = Mage::helper($helperName)->__((string)$group->comment);
+                if (!empty($group->comment_url)) {
+                    if (!empty($group->comment_url->base)) {
+                        $baseUrl = (string) $group->comment_url->base;
+                    } else {
+                        $baseUrl = '';
+                    }
+
+                    $params = array();
+                    if (!empty($group->comment_url->params)) {
+                        foreach ($group->comment_url->params->asArray() as $param => $value) {
+                            $params[$param] = $value;
+                        }
+                    }
+
+                    $commentUrl = $this->getUrl($baseUrl, $params);
+
+                    $comment = Mage::helper($helperName)->__((string)$group->comment, $commentUrl);
+                } else {
+                    $comment = Mage::helper($helperName)->__((string)$group->comment);
+                }
+                $fieldsetConfig['comment'] = $comment;
             }
             if (!empty($group->expanded)) {
                 $fieldsetConfig['expanded'] = (bool)$group->expanded;

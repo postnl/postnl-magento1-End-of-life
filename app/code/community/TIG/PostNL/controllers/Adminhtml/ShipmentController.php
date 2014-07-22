@@ -72,6 +72,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
     {
         if (!is_array($warning)) {
             $warning = array(
+                'entity_id'   => null,
                 'code'        => null,
                 'description' => $warning,
             );
@@ -151,6 +152,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $filename = 'PostNL Shipping Labels' . date('YmdHis') . '.pdf';
 
             $this->_preparePdfResponse($filename, $output);
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -222,6 +231,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
              * Confirm the shipment
              */
             $this->_confirmShipment($shipment);
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -358,6 +375,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
 
             $postnlShipment = $this->_getPostnlShipment($shipmentId);
             $postnlShipment->sendTrackAndTraceEmail(true, true);
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -432,6 +457,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
 
             $postnlShipment = $this->_getPostnlShipment($shipmentId);
             $postnlShipment->resetConfirmation(true, true)->save();
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -507,6 +540,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $postnlShipment->deleteLabels()
                            ->setLabelsPrinted(false)
                            ->save();
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -621,6 +662,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                     $helper->logException($e);
                     $this->addWarning(
                         array(
+                            'entity_id'   => $orderId,
                             'code'        => $e->getCode(),
                             'description' => $e->getMessage(),
                         )
@@ -630,6 +672,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                     $helper->logException($e);
                     $this->addWarning(
                         array(
+                            'entity_id'   => $orderId,
                             'code'        => null,
                             'description' => $e->getMessage(),
                         )
@@ -637,6 +680,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                     $errors++;
                 }
             }
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_order/index');
+            return $this;
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -734,10 +785,22 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                 try {
                     $shipmentLabels = $this->_getLabels($shipment, true);
                     $labels = array_merge($labels, $shipmentLabels);
+                } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                    Mage::helper('postnl/cif')->parseCifException($e);
+
+                    $helper->logException($e);
+                    $this->addWarning(
+                        array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
+                            'code'        => $e->getCode(),
+                            'description' => $e->getMessage(),
+                        )
+                    );
                 } catch (TIG_PostNL_Exception $e) {
                     $helper->logException($e);
                     $this->addWarning(
                         array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
                             'description' => $e->getMessage(),
                         )
@@ -746,6 +809,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                     $helper->logException($e);
                     $this->addWarning(
                         array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => null,
                             'description' => $e->getMessage(),
                         )
@@ -858,6 +922,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                     $helper->logException($e);
                     $this->addWarning(
                         array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
                             'description' => $e->getMessage(),
                         )
@@ -866,6 +931,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                     $helper->logException($e);
                     $this->addWarning(
                         array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => null,
                             'description' => $e->getMessage(),
                         )
@@ -904,6 +970,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $fileName = 'PostNL Shipping Labels' . date('YmdHis') . '.pdf';
 
             $this->_preparePdfResponse($fileName, $output);
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -1006,6 +1080,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
 
             /**
              * Create the pdf's and add them to the main pdf object.
+             *
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
              */
             $pdf = new Zend_Pdf();
             foreach ($shipments as $shipment) {
@@ -1028,10 +1104,22 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
 
                     $shipmentLabels = $this->_getLabels($shipment, false);
                     $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
+                } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                    Mage::helper('postnl/cif')->parseCifException($e);
+
+                    $helper->logException($e);
+                    $this->addWarning(
+                        array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
+                            'code'        => $e->getCode(),
+                            'description' => $e->getMessage(),
+                        )
+                    );
                 } catch (TIG_PostNL_Exception $e) {
                     $helper->logException($e);
                     $this->addWarning(
                         array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
                             'description' => $e->getMessage(),
                         )
@@ -1040,6 +1128,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                     $helper->logException($e);
                     $this->addWarning(
                         array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => null,
                             'description' => $e->getMessage(),
                         )
@@ -1123,16 +1212,31 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
             $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
 
             /**
-             * Confirm the shipments
+             * Confirm the shipments.
+             *
+             * @var TIG_PostNL_Model_Core_Shipment $shipment
              */
             $errors = 0;
             foreach ($shipments as $shipment) {
                 try {
                     $this->_confirmShipment($shipment);
+                } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                    Mage::helper('postnl/cif')->parseCifException($e);
+
+                    $helper->logException($e);
+                    $this->addWarning(
+                        array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
+                            'code'        => $e->getCode(),
+                            'description' => $e->getMessage(),
+                        )
+                    );
+                    $errors++;
                 } catch (TIG_PostNL_Exception $e) {
                     $helper->logException($e);
                     $this->addWarning(
                         array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => $e->getCode(),
                             'description' => $e->getMessage(),
                         )
@@ -1142,6 +1246,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                     $helper->logException($e);
                     $this->addWarning(
                         array(
+                            'entity_id'   => $shipment->getShipmentIncrementId(),
                             'code'        => null,
                             'description' => $e->getMessage(),
                         )
@@ -1572,17 +1677,18 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
-                        $shipmentId
+                        $shipment->getIncrementId()
                     ),
                     'POSTNL-0009'
                 );
             } elseif (!$shipment) {
                 $this->addWarning(
                     array(
-                        'code' => 'POSTNL-0009',
+                        'entity_id'   => $shipment->getIncrementId(),
+                        'code'        => 'POSTNL-0009',
                         'description' => $this->__(
                             'This action is not available for shipment #%s, because it was not shipped using PostNL.',
-                            $shipmentId
+                            $shipment->getIncrementId()
                         ),
                     )
                 );
@@ -1734,6 +1840,13 @@ class TIG_PostNL_Adminhtml_ShipmentController extends Mage_Adminhtml_Controller_
                 'warning',
                 $this->__($warning['description'])
             );
+
+            /**
+             * Prepend the warning's entity ID if present.
+             */
+            if (!empty($warning['entity_id'])) {
+                $warningText = $warning['entity_id'] . ': ' . $warningText;
+            }
 
             /**
              * Build the message proper.

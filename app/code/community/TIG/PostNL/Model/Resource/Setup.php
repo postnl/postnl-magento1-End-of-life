@@ -419,7 +419,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         if ($helper->getMemoryLimit() < self::MIN_SERVER_MEMORY) {
             $message = '[POSTNL-0175] '
                 . $helper->__(
-                    'The server\'s memory limit is less than %1$dMB. The PostNL extension requires at least %1$dMB to' .
+                    'The server\'s memory limit is less than %.0fMB. The PostNL extension requires at least %.0fMB to' .
                     ' function properly. Using the PostNL extension on servers with less memory than this may cause' .
                     ' unexpected errors.',
                     self::MIN_SERVER_MEMORY / 1024 / 1024

@@ -1065,6 +1065,67 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Parses a CIF exception. If the last error number is a known error, we replace the message and code with our own.
+     *
+     * @param TIG_PostNL_Model_Core_Cif_Exception &$exception
+     *
+     * @return $this
+     */
+    public function parseCifException(TIG_PostNL_Model_Core_Cif_Exception &$exception)
+    {
+        $errorNumbers = $exception->getErrorNumbers();
+        $errorNumber  = end($errorNumbers);
+
+        $code    = $exception->getCode();
+        $message = $exception->getMessage();
+        switch ($errorNumber) {
+            case '1':
+                $code    = 'POSTNL-0181';
+                $message = $this->__(
+                    'It appears the PostNL username and/or password you have entered is incorrect.'
+                );
+                break;
+            case '2':
+                $code    = 'POSTNL-0182';
+                $message = $this->__(
+                    'Your PostNL account is unfortunately not allowed to perform this action. Please contact PostNL.'
+                );
+                break;
+            case '9':
+                $code    = 'POSTNL-0183';
+                $message = $this->__(
+                    'Unfortunately you have exceeded the maximum amount of PostNL requests you may send each minute.' .
+                    ' Please wait a few minutes and try again. If this problem persists, please contact PostNL.'
+                );
+                break;
+            case '10':
+                $code    = 'POSTNL-0184';
+                $message = $this->__('This PostNL service is currently disabled. Please contact PostNL.');
+                break;
+            case '11':
+                $code    = 'POSTNL-0185';
+                $message = $this->__(
+                    "There was a problem connecting to PostNL's services. This may be due to a timeout. Please wait a " .
+                    'few minutes and try again. If this problem persists, please contact PostNL.'
+                );
+                break;
+            case '19':
+                $code    = 'POSTNL-0186';
+                $message = $this->__(
+                    'Your PostNL customer code appears to be incorrect. Please make sure you have entered the correct' .
+                    ' code.'
+                );
+                break;
+            //no default
+        }
+
+        $exception->setCode($code)
+                  ->setMessage($message);
+
+        return $this;
+    }
+
+    /**
      * Logs a CIF request and response for debug purposes.
      *
      * N.B.: if file logging is enabled, the log will be forced
