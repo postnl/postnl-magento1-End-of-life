@@ -2046,7 +2046,13 @@
                 </cif_product_options>
                 <cod translate="label comment" module="postnl">
                     <label>COD Settings</label>
-                    <comment>Here you can configure the way PostNL COD works. Please note that this requires the PostNL COD payment method to be active.</comment>
+                    <comment><![CDATA[Here you can configure the way PostNL COD works.<br/>Please note that this requires the PostNL COD payment method to be active. You can activate the PostNL COD payment method <a href="%s" target="_blank">here</a>.]]></comment>
+                    <comment_url>
+                        <base>adminhtml/system_config/edit</base>
+                        <params>
+                            <section>payment</section>
+                        </params>
+                    </comment_url>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>1300</sort_order>
                     <show_in_default>1</show_in_default>

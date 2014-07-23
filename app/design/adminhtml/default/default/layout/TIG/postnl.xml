@@ -48,6 +48,7 @@
         </reference>
         <reference name="notifications">
             <block type="postnl/adminhtml_cronNotification" name="postnl_cron_notification" template="TIG/PostNL/cron_notification.phtml"/>
+            <block type="postnl/adminhtml_logNotification" name="postnl_log_notification" template="TIG/PostNL/log_notification.phtml"/>
         </reference>
     </default>
 
@@ -83,6 +84,7 @@
         </reference>
         <reference name="before_body_end">
             <block type="adminhtml/abstract" name="postnl_filter_massaction" template="TIG/PostNL/sales/order/filter_massaction.phtml"/>
+            <block type="adminhtml/abstract" name="postnl_print_label_action" template="TIG/PostNL/sales/order/js.phtml"/>
         </reference>
     </adminhtml_sales_order_index>
 

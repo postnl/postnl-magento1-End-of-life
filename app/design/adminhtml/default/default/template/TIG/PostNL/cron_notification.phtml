@@ -41,8 +41,8 @@
 <?php $_isCronActive = $this->isCronActive(); ?>
 <?php if ($_isCronActive === false):?>
     <div class="notification-global">
-        <strong>[POSTNL-0006] <?php echo $_helper->__('PostNL: It appears that your cron is not working properly.'); ?></strong>
-        <?php echo $_helper->__('PostNL requires the cron to be active in order to function.') ?>
-        <a href="<?php echo Mage::helper('postnl')->getErrorUrl('POSTNL-0006'); ?>" target="blank"><?php echo $_helper->__('Click here for more information from the TiG knowledgebase.') ?></a>
+        <strong>[POSTNL-0006] <?php echo $this->__('PostNL: It appears that your cron is not working properly.'); ?></strong>
+        <?php echo $this->__('PostNL requires the cron to be active in order to function.') ?>
+        <a href="<?php echo $_helper->getErrorUrl('POSTNL-0006'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
     </div>
 <?php endif;?>

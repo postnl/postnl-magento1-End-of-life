@@ -42,7 +42,6 @@
  * @var TIG_PostNL_Helper_Cif $_cifHelper
  */
 ?>
-
 <?php $_cifHelper            = $this->helper('postnl/cif'); ?>
 <?php $_shipment             = $this->getShipment(); ?>
 <?php $_productOptions       = $this->getProductOptions(); ?>
@@ -53,7 +52,6 @@
 <?php $_isCod                = (bool) $_cifHelper->isCodShipment($_shipment);?>
 <?php $_isPakjeGemak         = (bool) $_cifHelper->isPakjeGemakShipment($_shipment);?>
 <?php $_parcelCount          = $this->getParcelCount(); ?>
-
 <div id="postnl_product_options">
     <?php if($_isDutchShipment && !$_isCod && !$_isPakjeGemak): ?>
         <?php $_fitsAsBuspakje = $this->getFitsAsBuspakje(); ?>
@@ -150,7 +148,7 @@
         );
 
         var productOptionsField = $('postnl_product_option');
-        var showExtraCoverField = function() {
+        var toggleExtraCoverField = function() {
             var selectedOption = productOptionsField.options[productOptionsField.selectedIndex];
 
             if (selectedOption.hasClassName('extra_cover')) {
@@ -160,7 +158,7 @@
             }
         };
 
-        productOptionsField.observe('change', showExtraCoverField);
+        productOptionsField.observe('change', toggleExtraCoverField);
 
         $$('.order-totals-bottom div.a-right')[0].insert({
             before: $('postnl_product_options')
@@ -179,7 +177,7 @@
                     $('postnl_product_option_container').show();
                     $('postnl_parcel_count_container').show();
 
-                    showExtraCoverField();
+                    toggleExtraCoverField();
                 }
             };
 
@@ -187,6 +185,8 @@
 
             toggleBuspakjeFields();
         }
+
+        toggleExtraCoverField();
     });
     //]]>
 </script>

@@ -61,7 +61,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
 
         $value    = $row->getData($this->getColumn()->getIndex());
         $origDate = new DateTime($value);
-        $now      = new DateTime(Mage::getModel('core/date')->gmtTimestamp());
+        $now      = new DateTime(Mage::getModel('core/date')->gmtDate('Y-m-d H:i:s'));
 
         $interval = $now->diff($origDate);
 
@@ -77,12 +77,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
          */
         if ($interval->d == 1 && $interval->invert) {
             $confirmDate = new DateTime($value);
-            $today = new DateTime($now);
 
             /**
              * Get the number of days until the shipment should be confirmed
              */
-            $diff = $today->diff($confirmDate)->format('%a');
+            $diff = $now->diff($confirmDate)->format('%a');
 
             /**
              * Check if it should be confirmed tomorrow

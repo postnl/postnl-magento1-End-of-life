@@ -102,6 +102,10 @@
                 <action>Create Parcelware export</action>
                 <post_dispatch>postnl__admin_logging_handler_postnl::postDispatchSaveMassAction</post_dispatch>
             </postnl_admin_adminhtml_shipment_massCreateParcelwareExport>
+            <postnl_admin_adminhtml_shipment_massFullPostnlFlow translate="label" module="postnl">
+                <action>Create shipments, print labels and confirm</action>
+                <post_dispatch>postnl__admin_logging_handler_postnl::postDispatchSaveMassAction</post_dispatch>
+            </postnl_admin_adminhtml_shipment_massFullPostnlFlow>
         </actions>
     </postnl_shipment>
 </logging>

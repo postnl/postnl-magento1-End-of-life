@@ -711,7 +711,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
              */
             $maxQty = $product->getDataUsingMethod('postnl_max_qty_for_buspakje');
 
-            if (!is_numeric($maxQty)) {
+            if (!is_numeric($maxQty) || $maxQty == 0) {
                 return false;
             }
 
@@ -741,7 +741,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Convert a given weight to kilogram or gram
+     * Convert a given weight to kilogram or gram.
      *
      * @param float $weight The weight to be converted
      * @param int | null $storeId Store Id used to determine the weight unit that was originally used

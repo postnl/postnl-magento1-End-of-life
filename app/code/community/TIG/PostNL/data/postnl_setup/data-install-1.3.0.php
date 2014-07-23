@@ -42,12 +42,9 @@
  */
 $installer = $this;
 
-$installer->startSetup();
-
 $installer->generateShippingStatusCronExpr()
           ->generateUpdateStatisticsCronExpr()
           ->expandSupportTab()
           ->installTestPassword()
-          ->installWebshopId();
-
-$installer->endSetup();
+          ->installWebshopId()
+          ->clearConfigCache();

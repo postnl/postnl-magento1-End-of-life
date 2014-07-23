@@ -205,38 +205,45 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         $dbVer = $this->getDbVer();
         $configVer = $this->getConfigVer();
 
-        $this->_checkVersionCompatibility();
-        $this->_checkMemoryRequirement();
-
         if (version_compare($configVer, $dbVer) != self::VERSION_COMPARE_GREATER) {
             return $this;
         }
+
+        $this->_checkVersionCompatibility();
+        $this->_checkMemoryRequirement();
 
         $helper = Mage::helper('postnl');
 
         $inbox = Mage::getModel('postnl_admin/inbox');
         if ($dbVer) {
-            $message = '[POSTNL-0083] ' . $helper->__(
+            $title = '[POSTNL-0083] ' . $helper->__(
                 'PostNL extension has been successfully updated to version v%s.',
                 $configVer
             );
+
             $url = 'http://kb.totalinternetgroup.nl/topic/31921907';
         } else {
-            $message = '[POSTNL-0156] ' . $helper->__(
+            $title = '[POSTNL-0156] ' . $helper->__(
                 'The PostNL extension v%s has been successfully installed.',
                 $configVer
             );
             $url = '';
         }
 
-        $inbox->addNotice($message, $message, $url, true)
+        $message = $helper->__(
+            'You can read the full changelog in the <a href="%s" target="_blank" title="TIG knowledgebase">TIG ' .
+            'knowledgebase</a>.',
+            'http://kb.totalinternetgroup.nl/topic/38584893/'
+        );
+
+        $inbox->addNotice($title, $message, $url, true)
               ->save();
 
         return $this;
     }
 
     /**
-     * Generate a random cron expression for the status update cron for this merchant and store it in the database
+     * Generate a random cron expression for the status update cron for this merchant and store it in the database.
      *
      * @throws TIG_PostNL_Exception
      *
@@ -245,7 +252,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     public function generateShippingStatusCronExpr()
     {
         /**
-         * Generate semi-random values for the cron expression
+         * Generate semi-random values for the cron expression.
          */
         $cronMorningHour   = mt_rand(10, 12);
         $cronMorningHour  += Mage::getModel('core/date')->getGmtOffset('hours');
@@ -260,7 +267,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         $cronExpr = "{$cronMinute} {$cronMorningHour},{$cronAfternoonHour} * * *";
 
         /**
-         * Store the cron expression in core_config_data
+         * Store the cron expression in core_config_data.
          */
         try {
             Mage::getModel('core/config_data')
@@ -352,20 +359,21 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
 
         $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/' . $edition);
         if ($supportedVersions === false) {
-            $message = '[POSTNL-0086] '
-                     . $helper->__(
-                         'The PostNL extension is not compatible with your Magento version! This may cause unexpected '
-                         . 'behaviour.'
-                     );
+            $title = '[POSTNL-0086] '
+                     . $helper->__('The PostNL extension is not compatible with your Magento version!');
+
+            $message = $helper->__(
+                'This may cause unexpected behaviour. You may use the PostNL extension on unsupported versions of ' .
+                'Magento at your own risk.'
+            );
 
             $inbox = Mage::getModel('postnl_admin/inbox');
             $inbox->addCritical(
-                      $message,
-                      $message,
-                      'http://kb.totalinternetgroup.nl/topic/31925577',
-                      true
-                  )
-                  ->save();
+                $title,
+                $message,
+                'http://kb.totalinternetgroup.nl/topic/31925577',
+                true
+            )->save();
 
             Mage::register('postnl_version_compatibility_checked', true);
             return $this;
@@ -378,20 +386,21 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         $installedMagentoVersion = $installedMagentoVersionInfo['major'] . '.' . $installedMagentoVersionInfo['minor'];
 
         if (!in_array($installedMagentoVersion, $supportedVersionArray)) {
-            $message = '[POSTNL-0086] '
-                     . $helper->__(
-                         'The PostNL extension is not compatible with your Magento version! This may cause unexpected '
-                         . 'behaviour.'
-                     );
+            $title = '[POSTNL-0086] '
+                   . $helper->__('The PostNL extension is not compatible with your Magento version!');
+
+            $message = $helper->__(
+                'This may cause unexpected behaviour. You may use the PostNL extension on unsupported versions of ' .
+                'Magento at your own risk.'
+            );
 
             $inbox = Mage::getModel('postnl_admin/inbox');
             $inbox->addCritical(
-                      $message,
-                      $message,
-                      'http://kb.totalinternetgroup.nl/topic/31925577',
-                      true
-                  )
-                  ->save();
+                $title,
+                $message,
+                'http://kb.totalinternetgroup.nl/topic/31925577',
+                true
+            )->save();
 
             Mage::register('postnl_version_compatibility_checked', true);
             return $this;
@@ -417,17 +426,19 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         $helper = Mage::helper('postnl');
 
         if ($helper->getMemoryLimit() < self::MIN_SERVER_MEMORY) {
-            $message = '[POSTNL-0175] '
-                . $helper->__(
-                    'The server\'s memory limit is less than %1$dMB. The PostNL extension requires at least %1$dMB to' .
-                    ' function properly. Using the PostNL extension on servers with less memory than this may cause' .
-                    ' unexpected errors.',
-                    self::MIN_SERVER_MEMORY / 1024 / 1024
-                );
+            $memoryMb = self::MIN_SERVER_MEMORY / 1024 / 1024;
+            $title = '[POSTNL-0175] '
+                   . $helper->__("The server's memory limit is less than %.0fMB.", $memoryMb);
+
+            $message = $helper->__(
+                'The PostNL extension requires at least %.0fMB to function properly. Using the PostNL extension on ' .
+                'servers with less memory than this may cause unexpected errors.',
+                $memoryMb
+            );
 
             $inbox = Mage::getModel('postnl_admin/inbox');
             $inbox->addCritical(
-                $message,
+                $title,
                 $message,
                 '',
                 true
