@@ -37,11 +37,10 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
+/**
+ * @var TIG_PostNL_Model_Resource_Setup $installer
+ */
 $installer = $this;
-
-$installer->startSetup();
 
 $installer->generateShippingStatusCronExpr();
 $installer->generateUpdateStatisticsCronExpr();
-
-$installer->endSetup();

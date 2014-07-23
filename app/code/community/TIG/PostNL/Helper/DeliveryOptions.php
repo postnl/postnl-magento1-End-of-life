@@ -179,6 +179,202 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
+     * Gets an array of info regarding chosen delivery options from a specified entity.
+     *
+     * @param Mage_Core_Model_Abstract $entity
+     *
+     * @return array
+     */
+    public function getDeliveryOptionsInfo(Mage_Core_Model_Abstract $entity)
+    {
+        $quoteId = false;
+        $orderId = false;
+        $postnlOrder = false;
+        $postnlShipment = false;
+
+        /**
+         * Depending on the type of entity we need to load the PostNL order using a different parameter.
+         */
+        if ($entity instanceof TIG_PostNL_Model_Core_Order) {
+            $postnlOrder = $entity;
+        } elseif ($entity instanceof TIG_PostNL_Model_Core_Shipment) {
+            $postnlOrder    = $entity->getPostnlOrder();
+            $postnlShipment = $entity;
+        } elseif ($entity instanceof Mage_Sales_Model_Quote) {
+            $quoteId = $entity->getId();
+        } elseif ($entity instanceof Mage_Sales_Model_Order) {
+            $orderId = $entity->getId();
+        } elseif ($entity instanceof Mage_Sales_Model_Order_Invoice
+            || $entity instanceof Mage_Sales_Model_Order_Creditmemo
+        ) {
+            $orderId = $entity->getOrderId();
+        } elseif ($entity instanceof Mage_Sales_Model_Order_Shipment) {
+            $orderId = $entity->getOrderId();
+
+            $postnlShipment = Mage::getModel('postnl_core/shipment')->load($entity->getId(), 'shipment_id');
+            if (!$postnlShipment->getId()) {
+                $postnlShipment = false;
+            }
+        }
+
+        /**
+         * Load the PostNL order if we don't already have it using either the order or quote ID.
+         */
+        if (!$postnlOrder && $quoteId) {
+            $postnlOrder = Mage::getModel('postnl_core/order')->load($quoteId, 'quote_id');
+        } elseif (!$postnlOrder && $orderId) {
+            $postnlOrder = Mage::getModel('postnl_core/order')->load($orderId, 'order_id');
+        }
+
+        /**
+         * This is the basic, empty array of delivery options info.
+         */
+        $deliveryOptionsInfo = array(
+            'type'                => false,
+            'formatted_type'      => false,
+            'product_code'        => false,
+            'product_option'      => false,
+            'shipment_costs'      => false,
+            'confirm_date'        => false,
+            'delivery_date'       => false,
+            'pakje_gemak_address' => false,
+            'confirm_status'      => false,
+            'shipping_phase'      => false,
+        );
+
+        /**
+         * If we still don't have a PostNL order nor a PostNL shipment, set the type to 'non-postnl' and return the
+         * array with otherwise empty values.
+         */
+        if (!$postnlOrder && !$postnlShipment) {
+            $deliveryOptionsInfo['type'] = 'non-postnl';
+
+            return $deliveryOptionsInfo;
+        }
+
+        /**
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
+        if ($postnlShipment) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
+             */
+            $type = $postnlShipment->getShipmentType();
+        } else {
+            $type = $postnlOrder->getType();
+        }
+
+        $deliveryOptionsInfo['type'] = $type;
+
+        /**
+         * Determine the formatted order type.
+         */
+        switch ($type) {
+            case 'domestic':
+            case 'Overdag':
+                $deliveryOptionsInfo['formatted_type'] = 'Overdag';
+                break;
+            case 'domestic_cod':
+                $deliveryOptionsInfo['formatted_type'] = 'Overdag rembours';
+                break;
+            case 'avond':
+            case 'Avond':
+                $deliveryOptionsInfo['formatted_type'] = 'Avond';
+                break;
+            case 'avond_cod':
+                $deliveryOptionsInfo['formatted_type'] = 'Avond rembours';
+                break;
+            case 'pg':
+            case 'PG':
+                $deliveryOptionsInfo['formatted_type'] = 'PakjeGemak';
+                break;
+            case 'pg_cod':
+                $deliveryOptionsInfo['formatted_type'] = 'PakjeGemak rembours';
+                break;
+            case 'pge':
+            case 'PGE':
+                $deliveryOptionsInfo['formatted_type'] = 'PakjeGemak Express';
+                break;
+            case 'pge_cod':
+                $deliveryOptionsInfo['formatted_type'] = 'PakjeGemak Express rembours';
+                break;
+            case 'pa':
+            case 'PA':
+                $deliveryOptionsInfo['formatted_type'] = 'Pakketautomaat';
+                break;
+            case 'eps':
+                $deliveryOptionsInfo['formatted_type'] = 'EPS';
+                break;
+            case 'globalpack':
+                $deliveryOptionsInfo['formatted_type'] = 'GlobalPack';
+                break;
+            case 'buspakje':
+                $deliveryOptionsInfo['formatted_type'] = 'Buspakje';
+                break;
+            //no default
+        }
+
+        /**
+         * If we have a PostNL shipment, we can get some accurate data from it. Otherwise we need to get it from the
+         * PostNL order.
+         */
+        if ($postnlShipment) {
+            $deliveryOptionsInfo['confirm_status'] = $postnlShipment->getConfirmStatus();
+            $deliveryOptionsInfo['shipping_phase'] = $postnlShipment->getShippingPhase();
+
+            $deliveryDate = $postnlShipment->getDeliveryDate();
+            $confirmDate  = $postnlShipment->getConfirmDate();
+            $productCode  = $postnlShipment->getProductCode();
+        } else {
+            $deliveryDate = $postnlOrder->getDeliveryDate();
+            $confirmDate  = $postnlOrder->getConfirmDate();
+            $productCode  = $postnlOrder->getProductCode();
+        }
+
+        /**
+         * Add the delivery date.
+         */
+        if ($deliveryDate) {
+            $deliveryOptionsInfo['delivery_date'] = $deliveryDate;
+        }
+
+        /**
+         * Add the confirm date.
+         */
+        if ($confirmDate) {
+            $deliveryOptionsInfo['confirm_date'] = $confirmDate;
+        }
+
+        /**
+         * Add the product code.
+         */
+        if ($productCode) {
+            $deliveryOptionsInfo['product_code'] = $productCode;
+        }
+
+        /**
+         * If this was a PakjeGemak order, we need to add the PakjeGemak address.
+         */
+        $pakjeGemakAddress = $postnlOrder->getPakjeGemakAddress();
+        if ($pakjeGemakAddress) {
+            $deliveryOptionsInfo['pakje_gemak_address'] = $pakjeGemakAddress->getData();
+        }
+
+        /**
+         * If the order had any additional fees, we need to add them as well.
+         */
+        $shipmentCosts = $postnlOrder->getShipmentCosts();
+        if ($shipmentCosts) {
+            $deliveryOptionsInfo['shipment_costs'] = $shipmentCosts;
+        }
+
+        /**
+         * Return the full array.
+         */
+        return $deliveryOptionsInfo;
+    }
+
+    /**
      * Get the Shipping date for a specified order date.
      *
      * @param null|string $orderDate
@@ -272,8 +468,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             /**
              * If the product has a specific shipping duration, add it to the array of durations.
              */
-            if ($product->hasPostnlShippingDuration() && $product->getPostnlShippingDuration() !== '') {
-                $durationArray[] = (int) $product->getPostnlShippingDuration();
+            if ($product->hasData('postnl_shipping_duration')
+                && $product->getData('postnl_shipping_duration') !== ''
+            ) {
+                $durationArray[] = (int) $product->getData('postnl_shipping_duration');
             }
         }
 
@@ -766,8 +964,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     array(
                         'code'    => 'POSTNL-0150',
                         'message' => $this->__(
-                                          "The quote's total weight is below the miniumum required to use PostNL delivery options."
-                            ),
+                            "The quote's total weight is below the miniumum required to use PostNL delivery options."
+                        ),
                     )
                 );
                 Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
@@ -801,7 +999,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         foreach ($quote->getAllVisibleItems() as $item) {
             $product = $item->getProduct();
-            if ($product->hasPostnlAllowDeliveryOptions() && !$product->getPostnlAllowDeliveryOptions()) {
+            if ($product->hasData('postnl_allow_delivery_options')
+                && !$product->getData('postnl_allow_delivery_options')
+            ) {
                 $errors = array(
                     array(
                         'code'    => 'POSTNL-0161',

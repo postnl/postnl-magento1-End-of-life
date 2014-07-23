@@ -88,7 +88,6 @@
                 }
                 this.currentItem = item;
                 var fieldName = (item.field ? item.field : this.formFieldName);
-                var fieldsHtml = '';
 
                 if(this.currentItem.confirm && !window.confirm(this.currentItem.confirm)) {
                     return;
