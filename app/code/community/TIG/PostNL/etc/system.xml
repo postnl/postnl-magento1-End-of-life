@@ -880,7 +880,7 @@
                         </buspakje_header>
                         <use_buspakje translate="label comment" module="postnl">
                             <label>Use letter box parcels</label>
-                            <comment>If you disable this field all shipments will be considered regular package shipments.</comment>
+                            <comment><![CDATA[If you disable this field all shipments will be considered regular package shipments.<br/>It is very important that you have correctly configured all products when using letter box parcels. Orders weighing more than <strong>2kg</strong> or are larger than <strong>38 x 26.5 x 3.2 cm</strong> cannot be shipped as letter box parcels.]]></comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>70</sort_order>

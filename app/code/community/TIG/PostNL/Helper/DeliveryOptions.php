@@ -183,7 +183,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @param Mage_Core_Model_Abstract $entity
      *
-     * @return array
+     * @return array|false
      */
     public function getDeliveryOptionsInfo(Mage_Core_Model_Abstract $entity)
     {
@@ -227,10 +227,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
+         * If we still don't have a PostNL order nor a PostNL shipment return false as no info is available.
+         */
+        if (!$postnlOrder && !$postnlShipment) {
+            return false;
+        }
+
+        /**
          * This is the basic, empty array of delivery options info.
          */
         $deliveryOptionsInfo = array(
             'type'                     => false,
+            'shipment_type'            => false,
             'formatted_type'           => false,
             'product_code'             => false,
             'product_option'           => false,
@@ -242,16 +250,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             'shipping_phase'           => false,
             'formatted_shipping_phase' => false,
         );
-
-        /**
-         * If we still don't have a PostNL order nor a PostNL shipment, set the type to 'non-postnl' and return the
-         * array with otherwise empty values.
-         */
-        if (!$postnlOrder && !$postnlShipment) {
-            $deliveryOptionsInfo['type'] = 'non-postnl';
-
-            return $deliveryOptionsInfo;
-        }
 
         /**
          * If this was a PakjeGemak order, we need to add the PakjeGemak address.
@@ -280,6 +278,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
              */
             $type = $postnlShipment->getShipmentType();
+            $deliveryOptionsInfo['shipment_type'] = $type;
 
             /**
              * Confirm status and shipping phase are only known if the supplied entity was a shipment.
@@ -306,6 +305,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $productCode  = $postnlShipment->getProductCode();
         } else {
             $type = $postnlOrder->getType();
+            $deliveryOptionsInfo['type'] = $type;
 
             $deliveryDate = $postnlOrder->getDeliveryDate();
             $confirmDate  = $postnlOrder->getConfirmDate();
@@ -339,8 +339,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $deliveryOptionsInfo['product_option'] = $allProductOptions[$productCode];
             }
         }
-
-        $deliveryOptionsInfo['type'] = $type;
 
         /**
          * Determine the formatted order type.
@@ -542,14 +540,27 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Gets the shipping duration for the specified quote.
      *
-     * @param Mage_Sales_Model_Quote $quote
+     * @param bool|Mage_Sales_Model_Quote $quote
      *
-     * @return int
+     * @return int|bool
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getShippingDuration(Mage_Sales_Model_Quote $quote)
+    public function getShippingDuration(Mage_Sales_Model_Quote $quote = null)
     {
+        /**
+         * If no quote was specified, try to load the quote.
+         */
+        if (!$quote && $this->isAdmin()) {
+            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
+        } elseif(!$quote) {
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+        }
+
+        if (!$quote) {
+            return false;
+        }
+
         $storeId = $quote->getStoreId();
 
         /**
