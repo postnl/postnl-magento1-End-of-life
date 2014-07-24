@@ -518,7 +518,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $now       = new DateTime($dateModel->gmtDate());
 
         if (!$origValue) {
-            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getShippingDate(
+            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(
                 $row->getCreatedAt(),
                 $row->getStoreId()
             );

@@ -1,0 +1,127 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<div id="print_label_spinner" class="waiting-notification" style="display:none;">
+    <div class="content">
+        <img src="<?php echo $this->getSkinUrl('images/ajax-loader-tr.gif') ?>" alt="spinner" />
+        <p><?php echo Mage::helper('postnl')->__('Your shipping label(s) are being prepared.'); ?></p>
+        <p><?php echo Mage::helper('postnl')->__('This may take a minute. The page will refresh once this is done.'); ?></p>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    document.observe('dom:loaded', function() {
+        Object.extend(sales_order_grid_massactionJsObject, {
+            apply: function() {
+                if(varienStringArray.count(this.checkedString) == 0) {
+                    alert(this.errorText);
+                    return;
+                }
+
+                var item = this.getSelectedItem();
+                if(!item) {
+                    this.validator.validate();
+                    return;
+                }
+                this.currentItem = item;
+                var fieldName = (item.field ? item.field : this.formFieldName);
+                var fieldsHtml = '';
+
+                if(this.currentItem.confirm && !window.confirm(this.currentItem.confirm)) {
+                    return;
+                }
+
+                this.formHiddens.update('');
+                new Insertion.Bottom(this.formHiddens, this.fieldTemplate.evaluate({name: fieldName, value: this.checkedString}));
+                new Insertion.Bottom(this.formHiddens, this.fieldTemplate.evaluate({name: 'massaction_prepare_key', value: fieldName}));
+
+                if(!this.validator.validate()) {
+                    return;
+                }
+
+                if(this.useAjax && item.url) {
+                    new Ajax.Request(item.url, {
+                        'method': 'post',
+                        'parameters': this.form.serialize(true),
+                        'onComplete': this.onMassactionComplete.bind(this)
+                    });
+                } else if(item.url) {
+                    if (item.id == 'postnl_print_packing_slip'
+                        || item.id == 'postnl_create_shipment_print_label_and_confirm'
+                    ) {
+                        var windowName = 'printWindow' + (new Date()).getTime();
+                        var printWindow = window.open('', windowName);
+
+                        Event.observe(printWindow, 'unload', function() {
+                            Event.stopObserving(printWindow);
+                            window.location.reload();
+                        });
+                        this.form.setAttribute('target', windowName);
+                    } else {
+                        this.form.setAttribute('target', '');
+                    }
+
+                    this.form.action = item.url;
+                    this.form.submit();
+
+                    if (typeof printWindow != 'undefined') {
+                        $$('body')[0].addClassName('no-scroll').scrollTo();
+                        $('print_label_spinner').show();
+                        printWindow.focus();
+                    }
+                }
+            }
+        });
+    });
+    printLabel = function(url) {
+        $$('body')[0].addClassName('no-scroll').scrollTo();
+        $('print_label_spinner').show();
+        var printWindow = window.open(url);
+        Event.observe(printWindow, 'unload', function() {
+            Event.stopObserving(printWindow);
+            window.location.reload();
+        });
+
+        return false;
+    };
+
+    sales_order_grid_massactionJsObject.onSelectChange();
+    //]]>
+</script>
