@@ -38,3 +38,5 @@ input.postnl-validate-empty.input-text { border-color:#f00 !important; }
 
 /* PostNL specific fields */
 button.postnl-button { width:280px; margin-right:5px; }
+#row_postnl_cif_labels_and_confirming_cutoff_time label { margin: 0 10px; }
+#row_postnl_cif_labels_and_confirming_cutoff_time select { width:50px !important; }

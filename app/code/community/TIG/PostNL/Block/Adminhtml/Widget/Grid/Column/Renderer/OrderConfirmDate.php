@@ -66,7 +66,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
          * order could be shipped.
          */
         if (!$value) {
-            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getShippingDate(
+            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(
                 $row->getCreatedAt(),
                 $row->getStoreId()
             );

@@ -645,6 +645,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Returns the formatted shipping phase of the current shipment.
+     *
+     * @return null|string
+     */
+    public function getFormattedShippingPhase()
+    {
+        $shippingPhase = $this->getShippingPhase();
+        if (!$shippingPhase) {
+            return null;
+        }
+
+        $shippingPhases = $this->getHelper('cif')->getShippingPhases();
+        if (array_key_exists($shippingPhase, $shippingPhases)) {
+            return $shippingPhases[$shippingPhase];
+        }
+
+        return null;
+    }
+
+    /**
      * gets all shipping labels associated with this shipment
      *
      * @return array Array of TIG_PostNL_Model_Core_Shipment_Label objects
@@ -1153,7 +1173,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Helper_DeliveryOptions $helper
          */
         $helper = $this->getHelper('deliveryOptions');
-        $deliveryDate = $helper->getShippingDate($this->getOrder()->getCreatedAt(), $this->getStoreId());
+        $deliveryDate = $helper->getDeliveryDate($this->getOrder()->getCreatedAt(), $this->getStoreId());
 
         if ($deliveryDate) {
             return $deliveryDate;
