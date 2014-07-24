@@ -77,6 +77,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $shippingCountry = $order->getShippingAddress()->getCountryId();
         if ($shippingCountry != 'NL' || !in_array($shippingMethod, $postnlShippingMethods)) {
             $this->_removePakjeGemakAddress($order);
+
             $postnlOrder->delete();
             return $this;
         }
@@ -88,10 +89,45 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             return $this;
         }
 
-        $postnlOrder->setOrderId($order->getId())
+        /**
+         * Update the order's shipment costs. If the order type is PGE or Avond, this will be a fee as configured in
+         * system > config. Otherwise it will be set to 0.
+         */
+        $fee = 0;
+        $type = $postnlOrder->getType();
+        if ($type == 'PGE' || $type == 'Avond') {
+            /**
+             * Check whether the shipping prices are entered with or without tax.
+             */
+            $includingTax = false;
+            if (Mage::getSingleton('tax/config')->shippingPriceIncludesTax()) {
+                $includingTax = true;
+            }
+
+            /**
+             * Calculate the correct fee based on the order type.
+             */
+            $type = $postnlOrder->getType();
+            if ($type == 'PGE') {
+                $fee = Mage::helper('postnl/deliveryOptions')
+                           ->getExpressFee(false, $includingTax, false);
+            } elseif ($type == 'Avond') {
+                $fee = Mage::helper('postnl/deliveryOptions')
+                           ->getEveningFee(false, $includingTax, false);
+            }
+        }
+
+        /**
+         * Update the PostNL order.
+         */
+        $postnlOrder->setShipmentCosts($fee)
+                    ->setOrderId($order->getId())
                     ->setIsActive(false)
                     ->save();
 
+        /**
+         * Copy the PakjeGemak address to the order if this was a PakjeGemak order.
+         */
         if ($postnlOrder->getIsPakjeGemak() || $postnlOrder->getIsPakketautomaat()) {
             $this->copyPakjeGemakAddressToOrder($order);
         }

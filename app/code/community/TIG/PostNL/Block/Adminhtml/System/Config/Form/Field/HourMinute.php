@@ -124,7 +124,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
                . '<label for="'
                . $element->getHtmlId()
                . '_minute">'
-               . $this->__('minute')
+               . $this->__('minutes')
                . '</label>'
                . $element->getAfterElementHtml();
 

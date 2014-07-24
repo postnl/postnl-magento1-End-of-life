@@ -83,6 +83,7 @@
  * @method int|null                       getShipmentId
  * @method int                            getLabelsPrinted()
  * @method bool|int                       getIsPakketautomaat()
+ * @method bool                           getIsBuspakjeShipment()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -113,6 +114,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setOrder(Mage_Sales_Model_Order $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakje(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setShipmentIncrementId(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsBuspakjeShipment(bool $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -132,6 +134,7 @@
  * @method bool                           hasOrder()
  * @method bool                           hasMainBarcode()
  * @method bool                           hasShipmentIncrementId()
+ * @method bool                           hasIsBuspakjeShipment()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -626,6 +629,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return 'pa';
         }
 
+        if ($this->isBuspakjeShipment()) {
+            return 'buspakje';
+        }
+
         if ($this->isDutchShipment()) {
             return 'domestic';
         }
@@ -866,6 +873,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $storeId = $this->getStoreId();
 
         $shipmentType = $this->getShipmentType();
+
         $xpath = false;
         switch ($shipmentType) {
             case 'domestic_cod':
@@ -1194,7 +1202,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $isBuspakje = $this->_getData('is_buspakje');
 
-        if (!is_null($isBuspakje) && false) {
+        if (!is_null($isBuspakje)) {
             return $isBuspakje;
         }
 
@@ -1700,6 +1708,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * Check if this shipment is a buspakje shipment.
+     *
+     * @return boolean
+     */
+    public function isBuspakjeShipment()
+    {
+        if ($this->hasIsBuspakjeShipment()) {
+            return $this->getIsBuspakjeShipment();
+        }
+
+        $isBuspakje = $this->getIsBuspakje();
+
+        $this->setIsBuspakjeShipment($isBuspakje);
+        return $isBuspakje;
     }
 
     /**
@@ -2988,6 +3013,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _getIsBuspakje()
     {
+        if (!$this->isDutchShipment()
+            || $this->isPakketautomaatShipment()
+            || $this->isPakjeGemakShipment()
+            || $this->isCod()
+        ) {
+            return false;
+        }
+
+        if (!$this->getHelper()->canUseBuspakje()) {
+            return false;
+        }
+
         $shipmentItems = $this->getShipment()
                               ->getItemsCollection();
 
@@ -3011,7 +3048,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected function _getProductCode()
     {
         /**
-         * Product options were set manually by the user
+         * Product options were set manually by the user.
          */
         if (Mage::registry('postnl_product_option')) {
             $productCode = Mage::registry('postnl_product_option');
@@ -3026,7 +3063,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * Use default options
+         * Use default options.
          */
         $productCode = $this->getDefaultProductCode();
 
