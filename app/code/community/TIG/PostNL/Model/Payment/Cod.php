@@ -76,7 +76,7 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
      */
     protected $_isGateway                   = false;
     protected $_canOrder                    = false;
-    protected $_canAuthorize                = false;
+    protected $_canAuthorize                = true;
     protected $_canCapture                  = false;
     protected $_canCapturePartial           = false;
     protected $_canCaptureOnce              = false;
@@ -85,12 +85,12 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
     protected $_canVoid                     = false;
     protected $_canUseInternal              = true;
     protected $_canUseCheckout              = true;
-    protected $_canUseForMultishipping      = true;
+    protected $_canUseForMultishipping      = false;
     protected $_isInitializeNeeded          = false;
     protected $_canFetchTransactionInfo     = false;
     protected $_canReviewPayment            = false;
     protected $_canCreateBillingAgreement   = false;
-    protected $_canManageRecurringProfiles  = true;
+    protected $_canManageRecurringProfiles  = false;
 
     /**
      * Get instructions text from config.
