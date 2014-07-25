@@ -182,10 +182,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * Gets an array of info regarding chosen delivery options from a specified entity.
      *
      * @param Mage_Core_Model_Abstract $entity
+     * @param boolean                  $asVarienObject
      *
      * @return array|false
      */
-    public function getDeliveryOptionsInfo(Mage_Core_Model_Abstract $entity)
+    public function getDeliveryOptionsInfo(Mage_Core_Model_Abstract $entity, $asVarienObject = true)
     {
         $quoteId        = false;
         $orderId        = false;
@@ -388,8 +389,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             //no default
         }
 
+        if ($asVarienObject) {
+            $deliveryOptionsInfo = new Varien_Object($deliveryOptionsInfo);
+        }
+
         /**
-         * Return the full array.
+         * Return the data.
          */
         return $deliveryOptionsInfo;
     }

@@ -3498,18 +3498,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->getOrderId();
         }
 
-        /**
-         * If this shipment is new, set it's created at date to the current timestamp.
-         */
-        if (!$this->getId()) {
-            $this->setCreatedAt($currentTimestamp);
-        }
-
-        /**
-         * Always update the updated at timestamp to the current timestamp.
-         */
-        $this->setUpdatedAt($currentTimestamp);
-
         return parent::_beforeSave();
     }
 }
