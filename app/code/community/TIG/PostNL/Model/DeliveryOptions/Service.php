@@ -138,8 +138,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
         $shippingDuration = $this->getShippingDuration($deliveryDay);
         $confirmDate = $deliveryDate->sub(new DateInterval("P{$shippingDuration}D"));
+        $confirmDate = $confirmDate->format('Y-m-d');
 
-        $this->setConfirmDate($confirmDate->format('Y-m-d'));
+        $this->setConfirmDate($confirmDate);
         return $confirmDate;
     }
 

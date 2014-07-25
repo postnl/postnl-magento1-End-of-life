@@ -44,3 +44,6 @@ button.download span span { background:none !important; padding:0 !important; }
 
 /* Delivery options info */
 div#postnl_delivery_option_info { border: 1px solid #D6D6D6; margin:10px 0 10px 0; }
+
+/* Shipping options */
+div#postnl_is_buspakje_container p { display: inline-block; }
