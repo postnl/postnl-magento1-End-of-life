@@ -510,6 +510,12 @@
                 </observers>
             </core_block_abstract_to_html_before>
         </events>
+        <secure_url>
+            <postnl_checkout>/postnl/checkout</postnl_checkout>
+            <postnl_addressvalidation>/postnl/addressValidation</postnl_addressvalidation>
+            <postnl_deliveryoptions>/postnl/deliveryOptions</postnl_deliveryoptions>
+            <postnl_mijnpakket>/postnl/mijnpakket</postnl_mijnpakket>
+        </secure_url>
 		<layout>
             <updates>
                 <postnl>
@@ -647,7 +653,7 @@
                 <title>PostNL Rembours (+%s)</title> <!-- PostNL Cash on Delivery -->
                 <fee>17.45</fee> <!-- Charge an additional fee of 17.45 EUR for the use of PostNL COD. This is the amount PostNL charges for using COD -->
                 <fee_label>PostNL rembourstoeslag</fee_label> <!-- PostNL COD fee -->
-                <order_status>pending</order_status> <!-- Pending status -->
+                <order_status>processing</order_status> <!-- Pending status -->
                 <allowspecific>1</allowspecific> <!-- Allow only specific countries -->
                 <specificcountry>NL</specificcountry> <!-- Allow only NL -->
                 <instructions/>
@@ -657,6 +663,7 @@
                 <sort_order>1000</sort_order> <!-- 1000 -->
                 <model>postnl_payment/cod</model> <!-- TIG_PostNL_Model_Payment_Cod -->
                 <group>postnl</group> <!-- PostNL Payment Methods -->
+                <payment_action>authorize</payment_action> <!-- Use the 'authorize' payment action -->
             </postnl_cod>
         </payment>
         <carriers>
