@@ -110,11 +110,13 @@ class TIG_PostNL_Block_Adminhtml_CronNotification extends TIG_PostNL_Block_Admin
          * Check if the last execution time was more than an hour ago.
          * If no crontask has been executed in an hour it's likely that something is wrong.
          */
-        $currentTimestamp       = Mage::getModel('core/date')->gmtTimestamp();
-        $oneHourAgoTimestamp    = strtotime('-1 hour', $currentTimestamp);
-        $lastExecutionTimestamp = strtotime($lastExecutionTime);
+        $currentTime = new DateTime();
+        $currentTime->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
 
-        if ($lastExecutionTimestamp < $oneHourAgoTimestamp) {
+        $oneHourAgo        = $currentTime->sub(new DateInterval('PT1H'));
+        $lastExecutionTime = new DateTime($lastExecutionTime);
+
+        if ($lastExecutionTime < $oneHourAgo) {
             return false;
         }
 

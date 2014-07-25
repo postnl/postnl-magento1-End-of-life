@@ -294,8 +294,8 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
          */
         $dob = $shippingAddress->getDob();
         if ($dob) {
-            $dob = date('d-m-Y', strtotime($dob));
-            $params['birthDate'] = $dob;
+            $dob = new DateTime($dob);
+            $params['birthDate'] = $dob->format('d-m-Y');
         }
 
         /**

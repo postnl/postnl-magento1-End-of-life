@@ -651,7 +651,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          *
          * date('l') returns the full textual representation of the day of the week (Sunday through Saturday).
          */
-        $weekDay = date('l', strtotime($deliveryDate));
+        $deliveryDate = new DateTime($deliveryDate);
+        $weekDay = $deliveryDate->format('l');
 
         foreach ($locations as &$location) {
             /**

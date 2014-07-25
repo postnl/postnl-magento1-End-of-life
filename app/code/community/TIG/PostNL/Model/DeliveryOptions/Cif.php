@@ -155,14 +155,15 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
         $maximumNumberOfDeliveryDays--;
 
-        $endDate = date('d-m-Y', strtotime("+{$maximumNumberOfDeliveryDays} days", strtotime($startDate)));
+        $endDate = new DateTime($startDate);
+        $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));
 
         $soapParams = array(
             'Timeframe' => array(
                 'PostalCode'  => $data['postcode'],
                 'HouseNumber' => $data['housenumber'],
                 'StartDate'   => $startDate,
-                'EndDate'     => $endDate,
+                'EndDate'     => $endDate->format('d-m-Y'),
             ),
             'Message' => $this->_getMessage('')
         );

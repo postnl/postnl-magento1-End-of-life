@@ -105,28 +105,33 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee
                     $baseFee = $this->_getCodFeeExclTax($baseFee, $order);
                 }
 
+                $orderFee = $order->getPostnlCodFee();
+                $orderFeeRefunded = $order->getPostnlCodFeeRefunded();
+                $orderBaseFee = $order->getBasePostnlCodFee();
+                $orderBaseFeeRefunded = $order->getBasePostnlCodFeeRefunded();
+
                 /**
                  * If the total amount refunded exceeds the available fee amount, we have a rounding error. Modify the
                  * fee amounts accordingly.
                  */
-                $totalBaseFee = $baseFee - $order->getBasePostnlCodFee() - $order->getBasePostnlCodFeeRefunded();
+                $totalBaseFee = $baseFee - $orderBaseFee - $orderBaseFeeRefunded;
                 if ($totalBaseFee < 0.0001 && $totalBaseFee > -0.0001) {
-                    $baseFee = $order->getBasePostnlCodFee() - $order->getBasePostnlCodFeeRefunded();
+                    $baseFee = $orderBaseFee - $orderBaseFeeRefunded;
                 }
 
                 $fee = $baseFee * $order->getBaseToOrderRate();
 
-                $totalFee = $fee - $order->getPostnlCodFee() - $order->getPostnlCodFeeRefunded();
+                $totalFee = $fee - $orderFee - $orderFeeRefunded;
                 if ($totalFee < 0.0001 && $totalFee > -0.0001) {
-                    $fee = $order->getPostnlCodFee() - $order->getPostnlCodFeeRefunded();
+                    $fee = $orderFee - $orderFeeRefunded;
                 }
 
-                if (round($order->getBasePostnlCodFeeRefunded() + $baseFee, 4) > $order->getBasePostnlCodFee()) {
+                if (round($orderBaseFeeRefunded + $baseFee, 4) > $orderBaseFee) {
                     throw new TIG_PostNL_Exception(
                         Mage::helper('postnl')->__(
                             'Maximum PostNL COD fee amount available to refunds is %s.',
                             $order->formatPriceTxt(
-                                $order->getBasePostnlCodFee() - $order->getBasePostnlCodFeeRefunded()
+                                $orderBaseFee - $orderBaseFeeRefunded
                             )
                         ),
                         'POSTNL-0178'
@@ -141,8 +146,8 @@ class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee
                            ->setGrandTotal($creditmemo->getGrandTotal() + $fee)
                            ->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $baseFee);
 
-                $order->setPostnlCodFeeRefunded($order->getPostnlCodFeeRefunded() + $fee)
-                      ->setBasePostnlCodFeeRefunded($order->getBasePostnlCodFeeRefunded() + $baseFee);
+                $order->setPostnlCodFeeRefunded($orderFeeRefunded + $fee)
+                      ->setBasePostnlCodFeeRefunded($orderBaseFeeRefunded + $baseFee);
 
                 return $this;
             }

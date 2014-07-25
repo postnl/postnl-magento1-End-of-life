@@ -855,8 +855,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          */
         $deliveryDate = $postnlShipment->getDeliveryDate();
         if ($deliveryDate) {
-            $deliveryTime = strtotime($deliveryDate);
-            $deliveryDate = date('d-m-Y H:i:s', $deliveryTime);
+            $deliveryTime = new DateTime($deliveryDate);
+            $deliveryDate = $deliveryTime->format('Y-m-d H:i:s');
         }
 
         $shipmentData = array(

@@ -534,10 +534,12 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
             return $this;
         }
 
+        $dob = new DateTime($dob);
+
         /**
          * Update the customer with the DOB and save
          */
-        $customer->setDob(strtotime($dob))
+        $customer->setDob($dob->getTimestamp())
                  ->save();
 
         return $this;
