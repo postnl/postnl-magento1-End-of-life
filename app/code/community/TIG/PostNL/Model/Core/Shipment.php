@@ -571,15 +571,17 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Get the current shipment's type.
      *
+     * @param boolean $checkBuspakje
+     *
      * @return string
      */
-    public function getShipmentType()
+    public function getShipmentType($checkBuspakje = true)
     {
         if ($this->hasShipmentType()) {
             return $this->_getData('shipment_type');
         }
 
-        $shipmentType = $this->_getShipmentType();
+        $shipmentType = $this->_getShipmentType($checkBuspakje);
 
         $this->setShipmentType($shipmentType);
         return $shipmentType;
@@ -589,11 +591,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Determines the current shipment's shipment type based on several attributes, including shipping destination and
      * payment method.
      *
+     * @param boolean $checkBuspakje
+     *
      * @return string
      *
      * @throws TIG_PostNL_Exception
      */
-    protected function _getShipmentType()
+    protected function _getShipmentType($checkBuspakje = true)
     {
         if ($this->isCod()) {
             if ($this->isPgeShipment()) {
@@ -629,7 +633,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return 'pa';
         }
 
-        if ($this->isBuspakjeShipment()) {
+        if ($checkBuspakje && $this->isBuspakjeShipment()) {
             return 'buspakje';
         }
 
@@ -1100,16 +1104,17 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Gets allowed product options for the current shipment.
      *
      * @param boolean $flat
+     * @param boolean $checkBuspakje
      *
      * @return array
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getAllowedProductOptions($flat = true)
+    public function getAllowedProductOptions($flat = true, $checkBuspakje = false)
     {
         $cifHelper = $this->getHelper('cif');
 
-        $shipmentType = $this->getShipmentType();
+        $shipmentType = $this->getShipmentType($checkBuspakje);
         switch ($shipmentType) {
             case 'domestic':
                 $allowedProductCodes = $cifHelper->getStandardProductCodes($flat);
@@ -3058,7 +3063,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             }
 
             $this->_checkProductCodeAllowed($productCode);
-
             return $productCode;
         }
 
@@ -3079,7 +3083,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _extractProductcodeForType($codes)
     {
-        $shipmentType = $this->getShipmentType();
+        $shipmentType = $this->getShipmentType(false);
 
         /**
          * If this is a domestic shipment and the shipment has been marked as 'buspakje', update the shipment type. If

@@ -673,7 +673,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
              * Get either the qty ordered or the qty shipped, depending on whether this is an order or a shipment item.
              */
             if ($item instanceof Mage_Sales_Model_Order_Item) {
-                $qty = $item->getQtyOrdered();
+                if ($item->getParentItemId()) {
+                    $qty = $item->getParentItem()->getQtyOrdered();
+                } else {
+                    $qty = $item->getQtyOrdered();
+                }
             } elseif ($item instanceof Mage_Sales_Model_Order_Shipment_Item) {
                 $qty = $item->getQty();
             } else {
