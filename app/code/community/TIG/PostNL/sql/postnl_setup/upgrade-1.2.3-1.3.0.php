@@ -116,6 +116,26 @@ $conn->addForeignKey(
  * POSTNL ORDER
  **********************************************************************************************************************/
 
+$conn->addColumn($installer->getTable('postnl_core/order'),
+    'created_at',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
+        'nullable' => true,
+        'comment'  => 'Created At',
+        'after'    => 'quote_id',
+    )
+);
+
+$conn->addColumn($installer->getTable('postnl_core/order'),
+    'updated_at',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
+        'nullable' => true,
+        'comment'  => 'Updated At',
+        'after'    => 'created_at',
+    )
+);
+
 /**
  * Modify the shipment_costs column so it conforms to Magento's standard format for storing costs.
  */
