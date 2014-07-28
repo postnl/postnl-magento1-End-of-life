@@ -151,6 +151,20 @@ $conn->modifyColumn(
     )
 );
 
+/**
+ * Update the PostNL order table so that a PostNL order is deleted when its corresponding Magento order is deleted. This
+ * prevents errors caused by missing IDs.
+ */
+$conn->addForeignKey(
+    $installer->getFkName('postnl_core/order', 'order_id', 'sales/order', 'entity_id'),
+    $installer->getTable('postnl_core/order'),
+    'order_id',
+    $installer->getTable('sales/order'),
+    'entity_id',
+    Varien_Db_Ddl_Table::ACTION_CASCADE, //on delete cascade
+    Varien_Db_Ddl_Table::ACTION_CASCADE //on update cascade
+);
+
 /***********************************************************************************************************************
  * ORDER
  **********************************************************************************************************************/

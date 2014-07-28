@@ -371,17 +371,33 @@
     </admin>
 
     <adminhtml>
+		<layout>
+            <updates>
+                <postnl>
+                    <file>TIG/postnl.xml</file>
+                </postnl>
+        	</updates>
+		</layout>
+        <translate>
+            <modules>
+                <TIG_PostNL>
+                    <files>
+                        <default>TIG_PostNL.csv</default>
+                    </files>
+                </TIG_PostNL>
+            </modules>
+        </translate>
 		<events>
 			<adminhtml_block_html_before>
 			    <observers>
 			   		<!-- Adds a massaction the grid that allows merchants to create shipments for selected orders-->
-				    <postnl_adminhtml_ordergrid>
+                    <postnl_adminhtml_ordergrid>
 					    <type>singleton</type>
 					    <class>postnl_adminhtml/observer_orderGrid</class>
 					    <method>modifyGrid</method>
 				    </postnl_adminhtml_ordergrid>
-					<!-- Adds new columns to the shipment grid and allows these columns to be filtered and sorted properly -->
-					<postnl_adminhtml_shipmentgrid>
+                    <!-- Adds new columns to the shipment grid and allows these columns to be filtered and sorted properly -->
+                    <postnl_adminhtml_shipmentgrid>
 						<type>singleton</type>
 						<class>postnl_adminhtml/observer_shipmentGrid</class>
 						<method>modifyGrid</method>
@@ -455,6 +471,24 @@
                 </observers>
             </controller_action_layout_render_before_adminhtml_system_config_edit>
 		</events>
+    </adminhtml>
+
+    <frontend>
+        <secure_url>
+            <postnl_checkout>/postnl/checkout</postnl_checkout>
+            <postnl_addressvalidation>/postnl/addressValidation</postnl_addressvalidation>
+            <postnl_deliveryoptions>/postnl/deliveryOptions</postnl_deliveryoptions>
+            <postnl_mijnpakket>/postnl/mijnpakket</postnl_mijnpakket>
+        </secure_url>
+        <routers>
+            <postnl>
+                <use>standard</use>
+                <args>
+                    <module>TIG_PostNL</module>
+                    <frontName>postnl</frontName>
+                </args>
+            </postnl>
+        </routers>
 		<layout>
             <updates>
                 <postnl>
@@ -471,9 +505,6 @@
                 </TIG_PostNL>
             </modules>
         </translate>
-    </adminhtml>
-
-    <frontend>
         <events>
             <core_block_abstract_to_html_before>
                 <observers>
@@ -510,37 +541,6 @@
                 </observers>
             </core_block_abstract_to_html_before>
         </events>
-        <secure_url>
-            <postnl_checkout>/postnl/checkout</postnl_checkout>
-            <postnl_addressvalidation>/postnl/addressValidation</postnl_addressvalidation>
-            <postnl_deliveryoptions>/postnl/deliveryOptions</postnl_deliveryoptions>
-            <postnl_mijnpakket>/postnl/mijnpakket</postnl_mijnpakket>
-        </secure_url>
-		<layout>
-            <updates>
-                <postnl>
-                    <file>TIG/postnl.xml</file>
-                </postnl>
-        	</updates>
-		</layout>
-        <translate>
-            <modules>
-                <TIG_PostNL>
-                    <files>
-                        <default>TIG_PostNL.csv</default>
-                    </files>
-                </TIG_PostNL>
-            </modules>
-        </translate>
-        <routers>
-            <postnl>
-                <use>standard</use>
-                <args>
-                    <module>TIG_PostNL</module>
-                    <frontName>postnl</frontName>
-                </args>
-            </postnl>
-        </routers>
     </frontend>
 
     <crontab>
