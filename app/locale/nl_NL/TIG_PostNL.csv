@@ -1053,3 +1053,8 @@ TIG_PostNL::minutes,minuten
 TIG_PostNL::Delivery date:,Bezorgdatum:
 TIG_PostNL::(evening),(avond)
 TIG_PostNL::(from 8:30 A.M.),(vanaf 8:30)
+PostNL Max Qty For Letter Box Parcels,PostNL max. hoeveelheid voor buspakje
+PostNL Allow Delivery Options,PostNL sta bezorgopties toe
+PostNL Shipping Duration,PostNL overkomstduur
+A shipment will only be considered a letter box parcel if the purchased qty of this product does not exceed this amount.,Een zending zal enkel als buspakje verwerkt worden indien het bestelde aantal van dir product niet deze waarde overschreidt.
+"TIG_PostNL::PostNL - Create shipments, print labels and confirm","PostNL - Maak zendingen aan, print labels en meld voor"

@@ -3033,7 +3033,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $shipmentItems = $this->getShipment()
                               ->getItemsCollection();
 
-        if (!$this->getHelper()->fitsAsBuspakje($shipmentItems)) {
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Item $item
+         */
+        $orderItems = array();
+        foreach ($shipmentItems as $item) {
+            $orderItem = $item->getOrderItem();
+
+            if ($orderItem->getChildrenItems()) {
+                $orderItems = array_merge($orderItems, $orderItem->getChildrenItems());
+                continue;
+            }
+
+            $orderItems[] = $orderItem;
+        }
+
+        if (!$this->getHelper()->fitsAsBuspakje($orderItems)) {
             return false;
         }
 

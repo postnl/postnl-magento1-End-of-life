@@ -298,7 +298,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         $memoryLimit = ini_get('memory_limit');
         if (preg_match('/^(\d+)(.)$/', $memoryLimit, $matches)) {
-            if (!isset($matches[2])) {
+            if (!isset($matches[1])) {
+                $memoryLimit = (int) $memoryLimit;
+            } elseif (!isset($matches[2])) {
                 $memoryLimit = $matches[1];
             } elseif ($matches[2] == 'G' || $matches[2] == 'g') {
                 $memoryLimit = $matches[1] * 1024 * 1024 * 1024;

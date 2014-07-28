@@ -550,18 +550,38 @@ $conn->addColumn(
  * PRODUCT ATTRIBUTES
  **********************************************************************************************************************/
 
+$entityType    = Mage_Catalog_Model_Product::ENTITY;
+
+$attributesToMove = array(
+    'postnl_allow_delivery_options',
+    'postnl_shipping_duration',
+);
+
+$attributeSets = $installer->getAllAttributeSetIds($entityType);
+foreach ($attributesToMove as $attributeCode) {
+    foreach ($attributeSets as $attributeSet) {
+        $installer->addAttributeGroup($entityType, $attributeSet, 'PostNL', 1000);
+
+        $attributeGroupId = $installer->getAttributeGroupId($entityType, $attributeSet, 'PostNL');
+
+        $installer->addAttributeToGroup($entityType, $attributeSet, $attributeGroupId, $attributeCode);
+    }
+}
+
 if (!$installer->getAttribute('catalog_product', 'postnl_max_qty_for_buspakje')) {
     $installer->addAttribute(
         'catalog_product',
         'postnl_max_qty_for_buspakje',
         array(
             'backend'                    => 'catalog/product_attribute_backend_boolean',
-            'group'                      => 'General',
+            'group'                      => 'PostNL',
             'sort_order'                 => 110,
             'frontend'                   => '',
             'frontend_class'             => 'validate-digits',
             'default'                    => '0',
             'label'                      => 'PostNL Max Qty For Letter Box Parcels',
+            'note'                       => 'A shipment will only be considered a letter box parcel if the purchased ' .
+                                            'qty of this product does not exceed this amount.',
             'input'                      => 'text',
             'type'                       => 'int',
             'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL,
