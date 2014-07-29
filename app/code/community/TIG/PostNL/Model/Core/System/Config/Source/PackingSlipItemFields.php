@@ -36,57 +36,43 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+class TIG_PostNL_Model_Core_System_Config_Source_PackingSlipItemFields
+{
+    /**
+     * Returns an option array for all supported fields for the packing slip item columns.
+     *
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        $helper = Mage::helper('postnl');
+        $labelSizes = array(
+            array(
+                'value' => 'name',
+                'label' => $helper->__('Name')
+            ),
+            array(
+                'value' => 'sku',
+                'label' => $helper->__('Sku')
+            ),
+            array(
+                'value' => 'price',
+                'label' => $helper->__('Price')
+            ),
+            array(
+                'value' => 'qty',
+                'label' => $helper->__('Qty')
+            ),
+            array(
+                'value' => 'tax',
+                'label' => $helper->__('Vat')
+            ),
+            array(
+                'value' => 'subtotal',
+                'label' => $helper->__('Subtotal')
+            ),
+        );
 
-/**
- * @var TIG_PostNL_Model_Resource_Setup $installer
- */
-$installer = $this;
-
-/**
- * Several new ACL roles have been added.
- */
-$newConfigAclResources = array(
-    'admin/system/config/postnl/download_logs',
-);
-$configRequiredResources = array(
-    'admin/system/',
-    'admin/system/config',
-    'admin/system/config/postnl',
-);
-
-$newPostnLAclResources = array(
-    'admin/postnl/shipment/actions/print_label/print_packing_slips',
-);
-$postnlRequiredResources = array(
-    'admin/postnl',
-    'admin/postnl/shipment',
-    'admin/postnl/shipment/actions',
-    'admin/postnl/shipment/actions/print_label',
-);
-
-/**
- * These settings have moved.
- */
-$settingsToMove = array(
-    'postnl/delivery_options/shipping_duration'    => 'postnl/cif_labels_and_confirming/shipping_duration',
-    'postnl/delivery_options/cutoff_time'          => 'postnl/cif_labels_and_confirming/cutoff_time',
-    'postnl/delivery_options/allow_sunday_sorting' => 'postnl/cif_labels_and_confirming/allow_sunday_sorting',
-    'postnl/delivery_options/sunday_cutoff_time'   => 'postnl/cif_labels_and_confirming/sunday_cutoff_time',
-);
-
-foreach ($settingsToMove as $oldXpath => $newXpath) {
-    $installer->moveConfigSetting($oldXpath, $newXpath, true);
+        return $labelSizes;
+    }
 }
-
-/**
- * In this new version we need to fill the new 'order_id' and 'shipment_type' columns. We also need to add several new
- * ACL rules and add 2 new support product codes for 'buspakje' shipments.
- */
-$installer->setOrderId()
-          ->setShipmentType()
-          ->setIsBuspakje()
-          ->addAclRules($newConfigAclResources, $configRequiredResources)
-          ->addAclRules($newPostnLAclResources, $postnlRequiredResources)
-          ->addSupportedProductCode(array('2828', '2928'))
-          ->installPackingSlipItemColumns()
-          ->clearConfigCache();

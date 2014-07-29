@@ -73,6 +73,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
 
     /**
+     *
+     */
+    const XPATH_PACKING_SLIP_ITEM_COLUMNS = 'postnl/packing_slip/item_columns';
+
+    /**
      * Minimum server memory required by the PostNL extension in bytes.
      */
     const MIN_SERVER_MEMORY = 268435456; //256MB
@@ -652,7 +657,13 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         /**
          * Finally, try to move the config setting for the default scope.
          */
-        $this->moveConfigSettingForScope($fromXpath, $toXpath, 'default', 0, $removeOldValue);
+        $this->moveConfigSettingForScope(
+            $fromXpath,
+            $toXpath,
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID,
+            $removeOldValue
+        );
 
         return $this;
     }
@@ -742,7 +753,12 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         /**
          * Save the supported product codes.
          */
-        Mage::getConfig()->saveConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $newCodes, 'default', 0);
+        Mage::getConfig()->saveConfig(
+            self::XPATH_SUPPORTED_PRODUCT_OPTIONS,
+            $newCodes,
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
 
         return $this;
     }
@@ -906,6 +922,68 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
                 ->setResources($resources)
                 ->saveRel();
         }
+
+        return $this;
+    }
+
+    /**
+     * Installs the default value for the PostNL packing slip 'item_columns' configuration setting.
+     *
+     * @return $this
+     */
+    public function installPackingSlipItemColumns()
+    {
+        $itemColumns = array (
+            'postnl_packing_slip_item_column_0' =>
+                array (
+                    'field'    => 'name',
+                    'title'    => 'Name',
+                    'width'    => '255',
+                    'position' => '10',
+                ),
+            'postnl_packing_slip_item_column_1' =>
+                array (
+                    'field'    => 'sku',
+                    'title'    => 'Sku',
+                    'width'    => '90',
+                    'position' => '20',
+                ),
+            'postnl_packing_slip_item_column_2' =>
+                array (
+                    'field'    => 'price',
+                    'title'    => 'Price',
+                    'width'    => '70',
+                    'position' => '30',
+                ),
+            'postnl_packing_slip_item_column_3' =>
+                array (
+                    'field'    => 'qty',
+                    'title'    => 'Qty',
+                    'width'    => '60',
+                    'position' => '40',
+                ),
+            'postnl_packing_slip_item_column_4' =>
+                array (
+                    'field'    => 'tax',
+                    'title'    => 'VAT',
+                    'width'    => '80',
+                    'position' => '50',
+                ),
+            'postnl_packing_slip_item_column_5' =>
+                array (
+                    'field' => 'subtotal',
+                    'title' => 'Subtotal',
+                    'width' => '40',
+                    'position' => '60',
+                ),
+        );
+
+        Mage::getConfig()->saveConfig(
+            self::XPATH_PACKING_SLIP_ITEM_COLUMNS,
+            serialize($itemColumns),
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
 
         return $this;
     }
