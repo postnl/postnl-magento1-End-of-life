@@ -1024,7 +1024,7 @@ TIG_PostNL::If you disable this field all shipments will be considered regular p
 TIG_PostNL::Manual,Handmatig
 TIG_PostNL::Automatic,Automatisch
 TIG_PostNL::This shipment will probably fit as a letter box parcel.,Deze zending past waarschijnlijk door de brievenbus.
-TIG_PostNL::This shipment will most likely not fit as a letter box parcel.,Deze zending zal waarschijnlijk niet door de brievenbus passen.
+TIG_PostNL::This shipment will probably not fit as a letter box parcel.,Deze zending zal waarschijnlijk niet door de brievenbus passen.
 TIG_PostNL::Letter box qty,Buspakje hoeveelheid
 TIG_PostNL::No Confirmation Required,Geen Voormelding Nodig
 TIG_PostNL::The following options are only for COD orders.,De volgende opties zijn enkel van toepassing op rembours bestellingen.
@@ -1058,3 +1058,10 @@ PostNL Allow Delivery Options,PostNL sta bezorgopties toe
 PostNL Shipping Duration,PostNL overkomstduur
 A shipment will only be considered a letter box parcel if the purchased qty of this product does not exceed this amount.,Een zending zal enkel als buspakje verwerkt worden indien het bestelde aantal van dir product niet deze waarde overschreidt.
 "TIG_PostNL::PostNL - Create shipments, print labels and confirm","PostNL - Maak zendingen aan, print labels en meld voor"
+"TIG_PostNL::You have chosen a value for the '%s' field that is not supported. Please select a option that you have selected in the '%s' field, otherwise you may not be able to send shipments of this type.",U heeft een waarde gekozen voor het '%s' veld dat niet ondersteunt wordt. Selecteer s.v.p. een optie die geslecteerd is in het '%s' veld. Anders is het niet mogelij om zendingen te versturen van dit type.
+TIG_PostNL::Use configuration value,Gebruik configuratie waarde
+TIG_PostNL::Item columns,Item kolommen
+TIG_PostNL::You can specify which item columns you would like to show on your packing slip pdf. We recommend you experiment with these settings before using them in a production environment. It may be diffcult to predict the outcome of these settings without trying them out by printing a PostNL packing slip.,U kunt aangeven welke item kolommen u wilt tonen op de pakbon. Wij raden aan dat u met deze instellingen experimenteerd alvorens ze te gebruiken in een productie omgeving. Het kan lastig zijn om het resultaat van deze instellingen te voorspellen zonder ze eerst uit te proberen door een pakbon te printen.
+TIG_PostNL::Width,Breedte
+TIG_PostNL::Position,Positie
+TIG_PostNL::Add column,Voeg kolom toe

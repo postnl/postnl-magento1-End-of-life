@@ -35,6 +35,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method array                                                       getItemColumns()
+ * @method TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default setItemColumns(array $value)
  */
 class TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default extends Mage_Sales_Model_Order_Pdf_Items_Abstract
 {
@@ -46,51 +49,47 @@ class TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default extends Mage_S
         /**
          * @var Mage_Sales_Model_Order_Invoice_Item $item
          */
-        $order     = $this->getOrder();
-        $item      = $this->getItem();
-        $pdf       = $this->getPdf();
-        $page      = $this->getPage();
+        $item    = $this->getItem();
+        $pdf     = $this->getPdf();
+        $page    = $this->getPage();
+        $columns = $this->getItemColumns();
 
         $lines = array(
-            array(
-                array(
-                    'text'      => Mage::helper('core/string')->str_split($item->getName(), 60, true, true),
-                    'feed'      => 20,
-                    'align'     => 'left',
-                    'font_size' => 8,
-                ),
-                array(
-                    'text'      => Mage::helper('core/string')->str_split($this->getSku($item), 25),
-                    'feed'      => 275,
-                    'align'     => 'right',
-                    'font_size' => 8,
-                ),
-                array(
-                    'text'      => $order->formatPriceTxt($item->getPrice()),
-                    'feed'      => 370,
-                    'align'     => 'right',
-                    'font_size' => 8,
-                ),
-                array(
-                    'text'      => $item->getQty() * 1,
-                    'feed'      => 435,
-                    'align'     => 'right',
-                    'font_size' => 8
-                ),
-                array(
-                    'text'      => $order->formatPriceTxt($item->getTaxAmount()),
-                    'feed'      => 500,
-                    'align'     => 'right',
-                    'font_size' => 8,
-                ),
-                array(
-                    'text'      => $order->formatPriceTxt($item->getRowTotalInclTax()),
-                    'feed'      => 578,
-                    'align'     => 'right',
-                    'font_size' => 8,
-                ),
-            ),
+            array()
         );
+
+        $i = 0;
+        $feed = 20;
+        $previousFeed = 0;
+        $nameFeed = 20;
+        foreach ($columns as $column) {
+            if ($i > 0) {
+                $align = 'right';
+            } else {
+                $align = 'left';
+            }
+
+            $feed += $previousFeed;
+            $previousFeed = $column['width'];
+
+            /**
+             * We need the feed of the name column later to add custom options.
+             */
+            if ($column['field'] == 'name') {
+                $nameFeed = $feed;
+            }
+
+            $value = $this->_getValue($item, $column['field']);
+
+            $lines[0][] = array(
+                'text'      => $value,
+                'feed'      => $feed,
+                'align'     => $align,
+                'font_size' => 8,
+            );
+
+            $i++;
+        }
 
         // Custom options
         $options = $this->getItemOptions();
@@ -110,7 +109,7 @@ class TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default extends Mage_S
                 $lines[][] = array(
                     'text'      => Mage::helper('core/string')->str_split(strip_tags($optionText), 120, true, true),
                     'font'      => 'italic',
-                    'feed'      => 20,
+                    'feed'      => $nameFeed,
                     'font_size' => 7,
                     'shift'     => -8,
                 );
@@ -124,5 +123,42 @@ class TIG_PostNL_Model_Core_Packingslip_Pdf_Items_Invoice_Default extends Mage_S
 
         $page = $pdf->drawLineBlocks($page, array($lineBlock), array('table_header' => true));
         $this->setPage($page);
+    }
+
+    /**
+     * Gets the formatted value for a specified field.
+     *
+     * @param Mage_Sales_Model_Order_Invoice_Item $item
+     * @param string                              $field
+     *
+     * @return string
+     */
+    protected function _getValue(Mage_Sales_Model_Order_Invoice_Item $item, $field)
+    {
+        switch ($field) {
+            case 'name':
+                $value = Mage::helper('core/string')->str_split($item->getName(), 60, true, true);
+                break;
+            case 'sku':
+                $value = Mage::helper('core/string')->str_split($this->getSku($item), 25);
+                break;
+            case 'price':
+                $value = $this->getOrder()->formatPriceTxt($item->getPrice());
+                break;
+            case 'qty':
+                $value = $item->getQty() * 1;
+                break;
+            case 'tax':
+                $value = $this->getOrder()->formatPriceTxt($item->getTaxAmount());
+                break;
+            case 'subtotal':
+                $value = $this->getOrder()->formatPriceTxt($item->getRowTotalInclTax());
+                break;
+            default:
+                $value = '';
+                break;
+        }
+
+        return $value;
     }
 }
