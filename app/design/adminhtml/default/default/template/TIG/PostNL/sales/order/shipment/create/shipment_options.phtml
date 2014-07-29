@@ -62,7 +62,7 @@
                     <?php if ($_fitsAsBuspakje): ?>
                         <?php echo $this->__('This shipment will probably fit as a letter box parcel.'); ?>
                     <?php else: ?>
-                        <?php echo $this->__('This shipment will most likely not fit as a letter box parcel.'); ?>
+                        <?php echo $this->__('This shipment will probably not fit as a letter box parcel.'); ?>
                     <?php endif; ?>
                 </div>
             </div>
@@ -196,6 +196,17 @@
         }
 
         toggleExtraCoverField();
+
+        <?php if (isset($_buspakjeCalcMode) && $_buspakjeCalcMode == 'automatic'): ?>
+            var showBuspakjeToggle = function() {
+                alert('test');
+                $('postnl_is_buspakje_container').show();
+
+                $$('#ship_items_container table input').invoke('stopObserving','change', showBuspakjeToggle);
+            };
+
+            $$('#ship_items_container table input').invoke('observe','change', showBuspakjeToggle);
+        <?php endif; ?>
     });
     //]]>
 </script>
