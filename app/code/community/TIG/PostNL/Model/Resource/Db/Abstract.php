@@ -36,13 +36,26 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Resource_Order extends TIG_PostNL_Model_Resource_Db_Abstract
+abstract class TIG_PostNL_Model_Resource_Db_Abstract extends Mage_Core_Model_Resource_Db_Abstract
 {
     /**
-     * Initialize PostNL order model.
+     * Prepare data for save.
+     *
+     * @param Mage_Core_Model_Abstract $object
+     *
+     * @return array
      */
-    public function _construct()
+    protected function _prepareDataForSave(Mage_Core_Model_Abstract $object)
     {
-        $this->_init('postnl_core/order', 'entity_id');
+        $currentTime = Varien_Date::now();
+        if ((!$object->getId() || $object->isObjectNew()) && !$object->getCreatedAt()) {
+            $object->setCreatedAt($currentTime);
+        }
+
+        $object->setUpdatedAt($currentTime);
+
+        $data = parent::_prepareDataForSave($object);
+
+        return $data;
     }
 }

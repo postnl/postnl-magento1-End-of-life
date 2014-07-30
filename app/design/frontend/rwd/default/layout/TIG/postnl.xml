@@ -57,6 +57,7 @@
     <sales_order_view>
         <reference name="content">
             <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+            <block type="core/template" name="delivery_options_info" template="TIG/PostNL/delivery_options/sales/order/delivery_options_info.phtml"/>
         </reference>
         <reference name="order_totals">
             <block type="postnl/payment_sales_order_totals_codFee" before="tax" name="postnl_cod_fee" />

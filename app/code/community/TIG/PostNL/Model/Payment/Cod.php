@@ -75,22 +75,90 @@ class TIG_PostNL_Model_Payment_Cod extends Mage_Payment_Model_Method_Abstract
      * @var boolean
      */
     protected $_isGateway                   = false;
+
+    /**
+     * @var boolean
+     */
     protected $_canOrder                    = false;
-    protected $_canAuthorize                = false;
+
+    /**
+     * @var boolean
+     */
+    protected $_canAuthorize                = true;
+
+    /**
+     * @var boolean
+     */
     protected $_canCapture                  = false;
+
+    /**
+     * @var boolean
+     */
     protected $_canCapturePartial           = false;
+
+    /**
+     * @var boolean
+     */
     protected $_canCaptureOnce              = false;
+
+    /**
+     * @var boolean
+     */
     protected $_canRefund                   = false;
+
+    /**
+     * @var boolean
+     */
     protected $_canRefundInvoicePartial     = false;
+
+    /**
+     * @var boolean
+     */
     protected $_canVoid                     = false;
+
+    /**
+     * @var boolean
+     */
     protected $_canUseInternal              = true;
+
+    /**
+     * @var boolean
+     */
     protected $_canUseCheckout              = true;
-    protected $_canUseForMultishipping      = true;
+
+    /**
+     * @var boolean
+     */
+    protected $_canUseForMultishipping      = false;
+
+    /**
+     * @var boolean
+     */
     protected $_isInitializeNeeded          = false;
+
+    /**
+     * @var boolean
+     */
     protected $_canFetchTransactionInfo     = false;
+
+    /**
+     * @var boolean
+     */
     protected $_canReviewPayment            = false;
+
+    /**
+     * @var boolean
+     */
     protected $_canCreateBillingAgreement   = false;
-    protected $_canManageRecurringProfiles  = true;
+
+    /**
+     * @var boolean
+     */
+    protected $_canManageRecurringProfiles  = false;
+
+    /**
+     * @var boolean
+     */
 
     /**
      * Get instructions text from config.

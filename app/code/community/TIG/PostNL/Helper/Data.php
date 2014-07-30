@@ -298,7 +298,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         $memoryLimit = ini_get('memory_limit');
         if (preg_match('/^(\d+)(.)$/', $memoryLimit, $matches)) {
-            if (!isset($matches[2])) {
+            if (!isset($matches[1])) {
+                $memoryLimit = (int) $memoryLimit;
+            } elseif (!isset($matches[2])) {
                 $memoryLimit = $matches[1];
             } elseif ($matches[2] == 'G' || $matches[2] == 'g') {
                 $memoryLimit = $matches[1] * 1024 * 1024 * 1024;
@@ -673,7 +675,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
              * Get either the qty ordered or the qty shipped, depending on whether this is an order or a shipment item.
              */
             if ($item instanceof Mage_Sales_Model_Order_Item) {
-                $qty = $item->getQtyOrdered();
+                if ($item->getParentItemId()) {
+                    $qty = $item->getParentItem()->getQtyOrdered();
+                } else {
+                    $qty = $item->getQtyOrdered();
+                }
             } elseif ($item instanceof Mage_Sales_Model_Order_Shipment_Item) {
                 $qty = $item->getQty();
             } else {

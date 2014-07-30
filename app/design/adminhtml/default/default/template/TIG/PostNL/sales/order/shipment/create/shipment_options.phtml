@@ -55,21 +55,25 @@
 <div id="postnl_product_options">
     <?php if($_isDutchShipment && !$_isCod && !$_isPakjeGemak): ?>
         <?php $_fitsAsBuspakje = $this->getFitsAsBuspakje(); ?>
-        <p id="postnl_is_buspakje_container">
+        <?php $_buspakjeCalcMode = $this->getBuspakjeCalcMode(); ?>
+        <div id="postnl_is_buspakje_container" <?php if ($_buspakjeCalcMode == 'automatic'): ?>style="display:none;"<?php endif; ?>>
             <div class="field-tooltip">
                 <div>
                     <?php if ($_fitsAsBuspakje): ?>
                         <?php echo $this->__('This shipment will probably fit as a letter box parcel.'); ?>
                     <?php else: ?>
-                        <?php echo $this->__('This shipment will most likely not fit as a letter box parcel.'); ?>
+                        <?php echo $this->__('This shipment will probably not fit as a letter box parcel.'); ?>
                     <?php endif; ?>
                 </div>
             </div>
-            <label class="normal" for="postnl_is_buspakje">
-                <?php echo $this->__('Is letter box parcel'); ?>
-            </label>
-            <input type="checkbox" name="postnl[is_buspakje]" id="postnl_is_buspakje" value="1" <?php if ($_fitsAsBuspakje): ?>checked="checked"<?php endif; ?>/>
-        </p>
+            <p>
+                <label class="normal" for="postnl_is_buspakje_checkbox">
+                    <?php echo $this->__('Is letter box parcel'); ?>
+                </label>
+                <input type="checkbox" id="postnl_is_buspakje_checkbox" value="" <?php if ($_fitsAsBuspakje): ?>checked="checked"<?php endif; ?>/>
+                <input type="hidden" name="postnl[is_buspakje]" id="postnl_is_buspakje" value="<?php if ($_fitsAsBuspakje): ?>1<?php else: ?>0<?php endif; ?>" />
+            </p>
+        </div>
         <?php $_buspakjeProductOptions = $this->getBuspakjeProductOptions(); ?>
         <p id="postnl_buspakje_product_option_container" style="display:none;">
             <label class="normal" for="postnl_buspakje_product_option"><?php echo $this->__('PostNL Shipping Options'); ?></label>
@@ -164,15 +168,20 @@
             before: $('postnl_product_options')
         });
 
-        var isBuspakjeCheckbox = $('postnl_is_buspakje');
+        var isBuspakjeField    = $('postnl_is_buspakje');
+        var isBuspakjeCheckbox = $('postnl_is_buspakje_checkbox');
         if (isBuspakjeCheckbox) {
             var toggleBuspakjeFields = function() {
                 if (isBuspakjeCheckbox.checked) {
+                    isBuspakjeField.setValue(1);
+
                     $('postnl_buspakje_product_option_container').show();
                     $('postnl_product_option_container').hide();
                     $('postnl_parcel_count_container').hide();
                     $('postnl_extra_cover_container').hide();
                 } else {
+                    isBuspakjeField.setValue(0);
+
                     $('postnl_buspakje_product_option_container').hide();
                     $('postnl_product_option_container').show();
                     $('postnl_parcel_count_container').show();
@@ -187,6 +196,17 @@
         }
 
         toggleExtraCoverField();
+
+        <?php if (isset($_buspakjeCalcMode) && $_buspakjeCalcMode == 'automatic'): ?>
+            var showBuspakjeToggle = function() {
+                alert('test');
+                $('postnl_is_buspakje_container').show();
+
+                $$('#ship_items_container table input').invoke('stopObserving','change', showBuspakjeToggle);
+            };
+
+            $$('#ship_items_container table input').invoke('observe','change', showBuspakjeToggle);
+        <?php endif; ?>
     });
     //]]>
 </script>

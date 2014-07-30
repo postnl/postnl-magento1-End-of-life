@@ -182,14 +182,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * Gets an array of info regarding chosen delivery options from a specified entity.
      *
      * @param Mage_Core_Model_Abstract $entity
+     * @param boolean                  $asVarienObject
      *
-     * @return array
+     * @return array|false
      */
-    public function getDeliveryOptionsInfo(Mage_Core_Model_Abstract $entity)
+    public function getDeliveryOptionsInfo(Mage_Core_Model_Abstract $entity, $asVarienObject = true)
     {
-        $quoteId = false;
-        $orderId = false;
-        $postnlOrder = false;
+        $quoteId        = false;
+        $orderId        = false;
+        $postnlOrder    = false;
         $postnlShipment = false;
 
         /**
@@ -227,32 +228,50 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
-         * This is the basic, empty array of delivery options info.
-         */
-        $deliveryOptionsInfo = array(
-            'type'                => false,
-            'formatted_type'      => false,
-            'product_code'        => false,
-            'product_option'      => false,
-            'shipment_costs'      => false,
-            'confirm_date'        => false,
-            'delivery_date'       => false,
-            'pakje_gemak_address' => false,
-            'confirm_status'      => false,
-            'shipping_phase'      => false,
-        );
-
-        /**
-         * If we still don't have a PostNL order nor a PostNL shipment, set the type to 'non-postnl' and return the
-         * array with otherwise empty values.
+         * If we still don't have a PostNL order nor a PostNL shipment return false as no info is available.
          */
         if (!$postnlOrder && !$postnlShipment) {
-            $deliveryOptionsInfo['type'] = 'non-postnl';
-
-            return $deliveryOptionsInfo;
+            return false;
         }
 
         /**
+         * This is the basic, empty array of delivery options info.
+         */
+        $deliveryOptionsInfo = array(
+            'type'                     => false,
+            'shipment_type'            => false,
+            'formatted_type'           => false,
+            'product_code'             => false,
+            'product_option'           => false,
+            'shipment_costs'           => false,
+            'confirm_date'             => false,
+            'delivery_date'            => false,
+            'pakje_gemak_address'      => false,
+            'confirm_status'           => false,
+            'shipping_phase'           => false,
+            'formatted_shipping_phase' => false,
+        );
+
+        /**
+         * If this was a PakjeGemak order, we need to add the PakjeGemak address.
+         */
+        $pakjeGemakAddress = $postnlOrder->getPakjeGemakAddress();
+        if ($pakjeGemakAddress) {
+            $deliveryOptionsInfo['pakje_gemak_address'] = $pakjeGemakAddress->getData();
+        }
+
+        /**
+         * If the order had any additional fees, we need to add them as well.
+         */
+        $shipmentCosts = $postnlOrder->getShipmentCosts();
+        if ($shipmentCosts) {
+            $deliveryOptionsInfo['shipment_costs'] = $shipmentCosts;
+        }
+
+        /**
+         * If we have a PostNL shipment, we can get some accurate data from it. Otherwise we need to get it from the
+         * PostNL order.
+         *
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
         if ($postnlShipment) {
@@ -260,11 +279,67 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
              * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
              */
             $type = $postnlShipment->getShipmentType();
+            $deliveryOptionsInfo['shipment_type'] = $type;
+
+            /**
+             * Confirm status and shipping phase are only known if the supplied entity was a shipment.
+             */
+            $confirmStatus = $postnlShipment->getConfirmStatus();
+            $shippingPhase = $postnlShipment->getShippingPhase();
+
+            if ($confirmStatus) {
+                $deliveryOptionsInfo['confirm_status'] = $confirmStatus;
+            }
+
+            if ($shippingPhase) {
+                /**
+                 * Get the string representation of the shipping phase.
+                 */
+                $formattedShippingPhase = $postnlShipment->getFormattedShippingPhase();
+
+                $deliveryOptionsInfo['shipping_phase']           = $shippingPhase;
+                $deliveryOptionsInfo['formatted_shipping_phase'] = $formattedShippingPhase;
+            }
+
+            $deliveryDate = $postnlShipment->getDeliveryDate();
+            $confirmDate  = $postnlShipment->getConfirmDate();
+            $productCode  = $postnlShipment->getProductCode();
         } else {
             $type = $postnlOrder->getType();
+            $deliveryOptionsInfo['type'] = $type;
+
+            $deliveryDate = $postnlOrder->getDeliveryDate();
+            $confirmDate  = $postnlOrder->getConfirmDate();
+            $productCode  = $postnlOrder->getProductCode();
         }
 
-        $deliveryOptionsInfo['type'] = $type;
+        /**
+         * Add the delivery date.
+         */
+        if ($deliveryDate) {
+            $deliveryOptionsInfo['delivery_date'] = $deliveryDate;
+        }
+
+        /**
+         * Add the confirm date.
+         */
+        if ($confirmDate) {
+            $deliveryOptionsInfo['confirm_date'] = $confirmDate;
+        }
+
+        /**
+         * Add the product code.
+         */
+        if ($productCode) {
+            $deliveryOptionsInfo['product_code'] = $productCode;
+
+            $allProductOptions = Mage::getModel('postnl_core/system_config_source_allProductOptions')
+                                     ->getOptions(array(), true);
+
+            if (array_key_exists($productCode, $allProductOptions)) {
+                $deliveryOptionsInfo['product_option'] = $allProductOptions[$productCode];
+            }
+        }
 
         /**
          * Determine the formatted order type.
@@ -314,68 +389,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             //no default
         }
 
-        /**
-         * If we have a PostNL shipment, we can get some accurate data from it. Otherwise we need to get it from the
-         * PostNL order.
-         */
-        if ($postnlShipment) {
-            $deliveryOptionsInfo['confirm_status'] = $postnlShipment->getConfirmStatus();
-            $deliveryOptionsInfo['shipping_phase'] = $postnlShipment->getShippingPhase();
-
-            $deliveryDate = $postnlShipment->getDeliveryDate();
-            $confirmDate  = $postnlShipment->getConfirmDate();
-            $productCode  = $postnlShipment->getProductCode();
-        } else {
-            $deliveryDate = $postnlOrder->getDeliveryDate();
-            $confirmDate  = $postnlOrder->getConfirmDate();
-            $productCode  = $postnlOrder->getProductCode();
+        if ($asVarienObject) {
+            $deliveryOptionsInfo = new Varien_Object($deliveryOptionsInfo);
         }
 
         /**
-         * Add the delivery date.
-         */
-        if ($deliveryDate) {
-            $deliveryOptionsInfo['delivery_date'] = $deliveryDate;
-        }
-
-        /**
-         * Add the confirm date.
-         */
-        if ($confirmDate) {
-            $deliveryOptionsInfo['confirm_date'] = $confirmDate;
-        }
-
-        /**
-         * Add the product code.
-         */
-        if ($productCode) {
-            $deliveryOptionsInfo['product_code'] = $productCode;
-        }
-
-        /**
-         * If this was a PakjeGemak order, we need to add the PakjeGemak address.
-         */
-        $pakjeGemakAddress = $postnlOrder->getPakjeGemakAddress();
-        if ($pakjeGemakAddress) {
-            $deliveryOptionsInfo['pakje_gemak_address'] = $pakjeGemakAddress->getData();
-        }
-
-        /**
-         * If the order had any additional fees, we need to add them as well.
-         */
-        $shipmentCosts = $postnlOrder->getShipmentCosts();
-        if ($shipmentCosts) {
-            $deliveryOptionsInfo['shipment_costs'] = $shipmentCosts;
-        }
-
-        /**
-         * Return the full array.
+         * Return the data.
          */
         return $deliveryOptionsInfo;
     }
 
     /**
-     * Get the Shipping date for a specified order date.
+     * Get the delivery date for a specified order date.
      *
      * @param null|string $orderDate
      * @param null|int    $storeId
@@ -383,40 +408,45 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return bool|string|int
      */
-    public function getShippingDate($orderDate = null, $storeId = null, $asDays = false)
+    public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false)
     {
-        if ($orderDate === null) {
-            $orderDate = date('Y-m-d');
+        if (!$orderDate) {
+            $orderDate = new DateTime(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
         }
 
         if ($storeId === null) {
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        if (is_string($orderDate)) {
+            $orderDate = new DateTime($orderDate);
+        }
+
         /**
          * Get the base shipping duration for this order.
          */
         $shippingDuration = Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
-        $deliveryTime = strtotime("+{$shippingDuration} days", strtotime($orderDate));
+        $deliveryTime = clone $orderDate;
+        $deliveryTime->add(new DateInterval("P{$shippingDuration}D"));
 
         /**
          * Get the cut-off time. This is formatted as H:i:s.
          */
         $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
-        $orderTime = date('Hi00', Mage::getModel('core/date')->timestamp());
+        $orderTime = $orderDate->format('His');
 
         /**
          * Check if the current time (as His) is greater than the cut-off time.
          */
         if ($orderTime > str_replace(':', '', $cutOffTime)) {
-            $deliveryTime = strtotime('+1 day', $deliveryTime);
+            $deliveryTime->add(new DateInterval('P1D'));
             $shippingDuration++;
         }
 
         /**
          * Get the delivery day (1-7).
          */
-        $deliveryDay = date('N', $deliveryTime);
+        $deliveryDay = $deliveryTime->format('N');
 
         /**
          * If the delivery day is a monday, we need to make sure that sunday sorting is allowed. Otherwise delivery on a
@@ -425,7 +455,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
             $sundayCutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
             if ($orderTime <= str_replace(':', '', $sundayCutOffTime)) {
-                $deliveryTime = strtotime('+1 day', $deliveryTime);
+                $deliveryTime->add(new DateInterval('P1D'));
                 $shippingDuration++;
             }
         }
@@ -434,21 +464,108 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return $shippingDuration;
         }
 
-        $deliveryDate = date('Y-m-d', $deliveryTime);
+        $deliveryDate = $deliveryTime->format('Y-m-d');
         return $deliveryDate;
+    }
+
+    /**
+     * Get the first possible delivery date as determined by PostNL.
+     *
+     * @param string                      $postcode A valid Dutch postcode (4 numbers and 2 letters).
+     * @param bool|Mage_Sales_Model_Quote $quote
+     * @param bool                        $throwException
+     *
+     * @return bool|string
+     *
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     */
+    public function getPostcodeDeliveryDate($postcode, $quote = false, $throwException = false)
+    {
+        /**
+         * Parse the postcode so it is fully uppercase and contains no spaces.
+         */
+        $postcode = str_replace(' ', '', strtoupper($postcode));
+
+        /**
+         * Validate the postcode.
+         */
+        $validator = new Zend_Validate_PostCode('nl_NL');
+        $isValid = $validator->isValid($postcode);
+        if (!$isValid && $throwException) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid postcode supplied for GetDeliveryDate request: %s Postcodes may only contain 4 numbers '
+                    . 'and 2 letters.',
+                    $postcode
+                ),
+                'POSTNL-0131'
+            );
+        } elseif (!$isValid) {
+            return false;
+        }
+
+        /**
+         * If no quote was specified, try to load the quote.
+         */
+        if (!$quote && $this->isAdmin()) {
+            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
+        } elseif(!$quote) {
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+        }
+
+        if (!$quote) {
+            return false;
+        }
+
+        /**
+         * Send a SOAP request to PostNL to get the earliest possible delivery date.
+         */
+        try {
+            $cif      = Mage::getModel('postnl_deliveryoptions/cif');
+            $response = $cif->setStoreId(Mage::app()->getStore()->getId())
+                            ->getDeliveryDate($postcode, $quote);
+        } catch(Exception $e) {
+            $this->logException($e);
+
+            if ($this->_canShowErrorDetails()) {
+                $this->addExceptionSessionMessage('core/session', $e);
+            }
+
+            if ($throwException) {
+                throw $e;
+            }
+
+            return false;
+        }
+
+        return $response;
     }
 
     /**
      * Gets the shipping duration for the specified quote.
      *
-     * @param Mage_Sales_Model_Quote $quote
+     * @param bool|Mage_Sales_Model_Quote $quote
      *
-     * @return int
+     * @return int|bool
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getShippingDuration(Mage_Sales_Model_Quote $quote)
+    public function getShippingDuration(Mage_Sales_Model_Quote $quote = null)
     {
+        /**
+         * If no quote was specified, try to load the quote.
+         */
+        if (!$quote && $this->isAdmin()) {
+            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
+        } elseif(!$quote) {
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+        }
+
+        if (!$quote) {
+            return false;
+        }
+
         $storeId = $quote->getStoreId();
 
         /**
@@ -539,7 +656,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          *
          * date('l') returns the full textual representation of the day of the week (Sunday through Saturday).
          */
-        $weekDay = date('l', strtotime($deliveryDate));
+        $deliveryDate = new DateTime($deliveryDate);
+        $weekDay = $deliveryDate->format('l');
 
         foreach ($locations as &$location) {
             /**

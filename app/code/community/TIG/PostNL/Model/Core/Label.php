@@ -519,7 +519,10 @@ class TIG_PostNL_Model_Core_Label extends Varien_Object
 
         $pdf->insertTemplate($tempPackingslip, 0, 0);
 
-        if ($label->getLabelType() == 'Label') {
+        if ($label->getLabelType() == 'Label'
+            || $label->getLabelType() == 'BusPakje'
+            || $label->getLabelType() == 'BusPakjeExtra'
+        ) {
             $pdf->Rotate(90);
             $pdf->insertTemplate($tempLabel, $this->pix2pt(-1037), $this->pix2pt(413), $this->pix2pt(538));
             $pdf->Rotate(0);

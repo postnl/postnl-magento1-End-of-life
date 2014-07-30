@@ -37,7 +37,11 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_Core_PackingSlip setStoreId(int $value)
+ * @method TIG_PostNL_Model_Core_PackingSlip setItemColumns(array $value)
+ *
  * @method int                               getStoreId()
+ *
+ * @method boolean                           hasItemColumns()
  */
 class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstract
 {
@@ -45,6 +49,11 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
      * Xpath to packing slip configuration settings.
      */
     const XPATH_PACKING_SLIP_SETTINGS = 'postnl/packing_slip';
+
+    /**
+     * Xpath to the 'item_columns' configuration setting.
+     */
+    const XPATH_ITEM_COLUMNS = 'postnl/packing_slip/item_columns';
 
     /**
      * The height of a page's top and bottom margins.
@@ -168,6 +177,31 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     }
 
     /**
+     * Gets the configured item columns sorted by position.
+     *
+     * @return mixed
+     */
+    public function getItemColumns()
+    {
+        if ($this->hasItemColumns()) {
+            return $this->_getData('item_columns');
+        }
+
+        $columns = Mage::getStoreConfig(self::XPATH_ITEM_COLUMNS, $this->getStoreId());
+        $columns = unserialize($columns);
+
+        $position = array();
+        foreach ($columns as $key => $row) {
+            $position[$key] = $row['position'];
+        }
+
+        array_multisort($position, SORT_ASC, $columns);
+
+        $this->setItemColumns($columns);
+        return $columns;
+    }
+
+    /**
      * Constructor.
      *
      * @return void
@@ -224,7 +258,11 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         if (
             !$this->getConfig('show_label')
             || $this->y < 421
-            || ($firstLabel->getLabelType() != 'Label' && $firstLabel->getLabelType() != 'Label-combi')
+            || ($firstLabel->getLabelType() != 'Label'
+                && $firstLabel->getLabelType() != 'Label-combi'
+                && $firstLabel->getLabelType() != 'BusPakje'
+                && $firstLabel->getLabelType() != 'BusPakjeExtra'
+            )
         ) {
             foreach($pdf->pages as $page) {
                 $mainPdf->pages[] = clone $page;
@@ -722,7 +760,9 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         $shippingMethod = $order->getShippingDescription();
 
         $font = $this->_setFontRegular($page, 8);
-        $text = strip_tags(trim($shippingMethod)) . ' - ' . $order->formatPriceTxt($order->getShippingAmount());
+        $text = strip_tags(trim($shippingMethod))
+              . ' - '
+              . $order->formatPriceTxt($order->getShippingAmount() + $order->getShippingTaxAmount());
         $x = 584 - $this->widthForStringUsingFontSize($text, $font, 8);
         $page->drawText($text, $x, $top, 'UTF-8');
 
@@ -969,55 +1009,35 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         $page->setFillColor(new Zend_Pdf_Color_GrayScale(0));
         $page->setLineColor(new Zend_Pdf_Color_GrayScale(0));
 
-        /**
-         * Add table columns.
-         */
+        $columns = $this->getItemColumns();
+
         $lines = array(
-            array(
-                array(
-                    'text'      => $this->getHelper()->__('Products'),
-                    'feed'      => 20,
-                    'font'      => 'bold',
-                    'align'     => 'left',
-                    'font_size' => 8,
-                ),
-                array(
-                    'text'      => $this->getHelper()->__('SKU'),
-                    'feed'      => 275,
-                    'font'      => 'bold',
-                    'align'     => 'right',
-                    'font_size' => 8,
-                ),
-                array(
-                    'text'      => $this->getHelper()->__('Price'),
-                    'feed'      => 365,
-                    'font'      => 'bold',
-                    'align'     => 'right',
-                    'font_size' => 8,
-                ),
-                array(
-                    'text'      => $this->getHelper()->__('Qty'),
-                    'feed'      => 435,
-                    'font'      => 'bold',
-                    'align'     => 'right',
-                    'font_size' => 8,
-                ),
-                array(
-                    'text'      => $this->getHelper()->__('VAT'),
-                    'feed'      => 495,
-                    'font'      => 'bold',
-                    'align'     => 'right',
-                    'font_size' => 8,
-                ),
-                array(
-                    'text'      => $this->getHelper()->__('Subtotal'),
-                    'feed'      => 575,
-                    'font'      => 'bold',
-                    'align'     => 'right',
-                    'font_size' => 8,
-                ),
-            ),
+            array()
         );
+
+        $i = 0;
+        $feed = 20;
+        $previousFeed = 0;
+        foreach ($columns as $column) {
+            if ($i > 0) {
+                $align = 'right';
+            } else {
+                $align = 'left';
+            }
+
+            $feed += $previousFeed;
+            $previousFeed = $column['width'];
+
+            $lines[0][] = array(
+                'text'      => $this->getHelper()->__($column['title']),
+                'feed'      => $feed,
+                'font'      => 'bold',
+                'align'     => $align,
+                'font_size' => 8,
+            );
+
+            $i++;
+        }
 
         $lineBlock = array(
             'lines'  => $lines,
@@ -1026,6 +1046,29 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
 
         $this->drawLineBlocks($page, array($lineBlock), array('table_header' => true));
         $page->setFillColor(new Zend_Pdf_Color_GrayScale(0));
+
+        return $this;
+    }
+
+    /**
+     * Render item
+     *
+     * @param Varien_Object $item
+     * @param Zend_Pdf_Page $page
+     * @param Mage_Sales_Model_Order $order
+     * @param Mage_Sales_Model_Order_Pdf_Items_Abstract $renderer
+     *
+     * @return Mage_Sales_Model_Order_Pdf_Abstract
+     */
+    public function renderItem(Varien_Object $item, Zend_Pdf_Page $page, Mage_Sales_Model_Order $order, $renderer)
+    {
+        $renderer->setOrder($order)
+                 ->setItem($item)
+                 ->setPdf($this)
+                 ->setPage($page)
+                 ->setItemColumns($this->getItemColumns())
+                 ->setRenderedModel($this)
+                 ->draw();
 
         return $this;
     }

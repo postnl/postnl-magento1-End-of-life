@@ -36,76 +36,43 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_DeliveryOptions_System_Config_Source_ShippingDuration
+class TIG_PostNL_Model_Core_System_Config_Source_PackingSlipItemFields
 {
     /**
-     * Gets an option array for possible shipping durations.
+     * Returns an option array for all supported fields for the packing slip item columns.
      *
      * @return array
      */
     public function toOptionArray()
     {
         $helper = Mage::helper('postnl');
-
-        $options = array(
+        $labelSizes = array(
             array(
-                'value' => 1,
-                'label' => '1 ' . $helper->__('day'),
+                'value' => 'name',
+                'label' => $helper->__('Name')
             ),
             array(
-                'value' => 2,
-                'label' => '2 ' . $helper->__('days'),
+                'value' => 'sku',
+                'label' => $helper->__('Sku')
             ),
             array(
-                'value' => 3,
-                'label' => '3 ' . $helper->__('days'),
+                'value' => 'price',
+                'label' => $helper->__('Price')
             ),
             array(
-                'value' => 4,
-                'label' => '4 ' . $helper->__('days'),
+                'value' => 'qty',
+                'label' => $helper->__('Qty')
             ),
             array(
-                'value' => 5,
-                'label' => '5 ' . $helper->__('days'),
+                'value' => 'tax',
+                'label' => $helper->__('Vat')
             ),
             array(
-                'value' => 6,
-                'label' => '6 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 7,
-                'label' => '7 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 8,
-                'label' => '8 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 9,
-                'label' => '9 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 10,
-                'label' => '10 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 11,
-                'label' => '11 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 12,
-                'label' => '12 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 13,
-                'label' => '13 ' . $helper->__('days'),
-            ),
-            array(
-                'value' => 14,
-                'label' => '14 ' . $helper->__('days'),
+                'value' => 'subtotal',
+                'label' => $helper->__('Subtotal')
             ),
         );
 
-        return $options;
+        return $labelSizes;
     }
 }

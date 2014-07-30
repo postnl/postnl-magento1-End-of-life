@@ -36,13 +36,22 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Resource_Order extends TIG_PostNL_Model_Resource_Db_Abstract
+class TIG_PostNL_Model_Core_System_Config_Backend_HourMinute extends Mage_Core_Model_Config_Data
 {
     /**
-     * Initialize PostNL order model.
+     * @return Mage_Core_Model_Abstract
      */
-    public function _construct()
+    protected function _beforeSave()
     {
-        $this->_init('postnl_core/order', 'entity_id');
+        /**
+         * The value is an array with the selected hour and minute. We need to implode this so it conforms to the H:i:s
+         * format.
+         */
+        $value = $this->getValue();
+        $value = implode(':', $value) . ':00';
+
+        $this->setValue($value);
+
+        return parent::_beforeSave();
     }
 }
