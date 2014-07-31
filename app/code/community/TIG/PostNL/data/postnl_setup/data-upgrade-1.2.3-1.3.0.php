@@ -88,4 +88,5 @@ $installer->setOrderId()
           ->addAclRules($newConfigAclResources, $configRequiredResources)
           ->addAclRules($newPostnLAclResources, $postnlRequiredResources)
           ->addSupportedProductCode(array('2828', '2928'))
+          ->installPackingSlipItemColumns()
           ->clearConfigCache();

@@ -49,6 +49,11 @@
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions extends TIG_PostNL_Block_Adminhtml_Template
 {
     /**
+     * Xpath to the buspakje calculation mode setting.
+     */
+    const XPATH_BUSPAKJE_CALC_MODE = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
+
+    /**
      * @var string
      */
     protected $_eventPrefix = 'postnl_adminhtml_sales_order_shipment_create_shipmentoptions';
@@ -177,11 +182,31 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     public function getFitsAsBuspakje()
     {
         $shipment = $this->getShipment();
-        $items = $shipment->getItemsCollection();
+        $items = $shipment->getAllItems();
 
-        $fits = Mage::helper('postnl')->fitsAsBuspakje($items);
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Item $item
+         */
+        $orderItems = array();
+        foreach ($items as $item) {
+            $orderItems[] = $item->getOrderItem();
+        }
+
+        $fits = Mage::helper('postnl')->fitsAsBuspakje($orderItems);
 
         return $fits;
+    }
+
+    /**
+     * Gets the configured calculation mode for buspakje shipments.
+     *
+     * @return mixed
+     */
+    public function getBuspakjeCalcMode()
+    {
+        $calcMode = Mage::getStoreConfig(self::XPATH_BUSPAKJE_CALC_MODE, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $calcMode;
     }
 
     /**

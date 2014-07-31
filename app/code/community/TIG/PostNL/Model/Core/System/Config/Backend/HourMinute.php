@@ -36,11 +36,22 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+class TIG_PostNL_Model_Core_System_Config_Backend_HourMinute extends Mage_Core_Model_Config_Data
+{
+    /**
+     * @return Mage_Core_Model_Abstract
+     */
+    protected function _beforeSave()
+    {
+        /**
+         * The value is an array with the selected hour and minute. We need to implode this so it conforms to the H:i:s
+         * format.
+         */
+        $value = $this->getValue();
+        $value = implode(':', $value) . ':00';
 
-/**
- * @var TIG_PostNL_Model_Resource_Setup $installer
- */
-$installer = $this;
+        $this->setValue($value);
 
-$installer->generateShippingStatusCronExpr();
-$installer->generateUpdateStatisticsCronExpr();
+        return parent::_beforeSave();
+    }
+}

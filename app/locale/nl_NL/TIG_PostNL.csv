@@ -220,7 +220,7 @@ TIG_PostNL::The shipments were successfully created.,De zending is succesvol aan
 TIG_PostNL::Please select one or more shipments.,Selecteer a.u.b. een of meer zendingen
 TIG_PostNL::You can print a maximum of 200 labels at once.,U kunt maximaal 200 labels printen
 TIG_PostNL::The shipments have been confirmed successfully.,De zendingen zijn succesvol voorgemeld.
-TIG_PostNL::Order #%s cannot be shipped at this time.,Order #%s kan niet worden verzonden
+TIG_PostNL::Order #%s cannot be shipped at this time.,Order #%s kan op dit moment niet verzonden worden.
 TIG_PostNL::PostNL replied with the following warning(s):,PostNL geeft de volgende waarschuwing(en):
 TIG_PostNL::Error code %s:,Foutcode %s:
 TIG_PostNL::An error occurred whilst processing your request:,Een fout is opgetreden tijdensn het verwerken van uw aanvraag
@@ -391,7 +391,7 @@ TIG_PostNL::Shipment #%s cannot be confirmed at this time.,Zending #%s kan momen
 "TIG_PostNL::Shipment #%s could not be confirmed, because for EU shipments you may only confirm a shipment after it's labels have been printed.","Zending #%s kan niet voorgemeld worden, omdat Europese zendingen pas voorgemeld mogen worden nadat de labels geprint zijn."
 TIG_PostNL::Show error details in the frontend,Toon error details in de frontend
 "TIG_PostNL::If set to 'yes', error details will be shown in the frontend when an error occurs. Error details include the error code as well as a link to the TiG knowledgebase article concerning the error. This is useful for debugging purposes, but should be disabled in a production environment.","Indien deze instelling op 'ja' staat, zullen ook in de frontend bij de meeste errors een foutcode en link naar de TiG knowledgebase getoond worden. Dit is nuttig wanneer u de extensie moet debuggen, echter zou nooit aan mogen staan in een productie omgeving."
-TIG_PostNL::The PostNL extension is not compatible with your Magento version! This may cause unexpected behaviour.,De PostNL extensie is niet compatibel met uw Magento versie! Dit kan onverwachtte problemen veroorzaken.
+TIG_PostNL::The PostNL extension is not compatible with your Magento version!,De PostNL extensie is niet compatibel met uw Magento versie!
 TIG_PostNL::Invalid Magento edition detected: %s,Ongeldige Magento editie gedetecteerd: %s
 TIG_PostNL::Invalid rate type requested: %s,Ongeldige tarief optie gevraagd: %s
 "TIG_PostNL::These settings are intended for advanced users only! If you're not 100% sure what you're doing, please do not touch these settings.","Deze instellingen zijn enkel bedoeld voor geavanceerde gebruikers! Indien u niet geheel zeker bent van wat u doet, pas deze instellingen dan niet aan."
@@ -974,7 +974,7 @@ TIG_PostNL::Download PostNL log files,Download PostNL log bestanden
 TIG_PostNL::No valid log files were found.,Geen valide log bestanden gevonden.
 TIG_PostNL::Log %s is too large (%.2fMB) and was skipped.,Log %s is te groot (%.2fMB) en is daarom overgeslagen.
 TIG_PostNL::The total size of all log files exceeds the maximum size allowed.,De totale grootte van alle log bestanden hoger dan de maximum toegestane grootte.
-TIG_PostNL::The server's memory limit is less than %1$dMB. The PostNL extension requires at least %1$dMB to function properly. Using the PostNL extension on servers with less memory than this may cause unexpected errors.,Het geheugen limiet van de server is minder dan %1$dMB. De PostNL extensie vereist minimaal %1$dMB geheugen om correctte functioneren. Gebruik maken van de PostNL extensie op servers met minder geheugen kan leiden tot onverwachtte foutmeldingen.
+TIG_PostNL::The server's memory limit is less than %.0fMB.,Het geheugen limiet van de server is minder dan %.0fMB.
 TIG_PostNL::The following shipments or orders could not be processed:,De volgende zendingen of bestellingen konden niet verwerkt worden:
 TIG_PostNL::Unfortunately no shipments could be processed. Please check the error messages for more details.,Helaas konden er geen zendingen verwerkt worden. Controleer de foutmeldingen voor meer informatie.
 TIG_PostNL::None of the shipments could be created. Please check the error messages for more details.,Geen van de zendingen konden aangemaakt worden. Controleer de errormeldingen voor meer informatie.
@@ -1019,20 +1019,49 @@ TIG_PostNL::Calculation mode,Berekeningsmodus
 TIG_PostNL::You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend.,U kunt de PostNL extensie automatisch laten bepalen of een zending door de brievenbus past of u kunt dit handmatig aangeven wanneer u zendingen aanmaakt.
 TIG_PostNL::If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.,"Indien deze instelling op 'automatisch' staat, zal de extensie de 'Gewicht' en 'PostNL Max Hoeveelheid voor Buspakjes' productattributen gebruiken om te bepalen of een zending door de brievenbus past. U kunt dit altijd overschrijven door zelf aan te geven of een zending een buspakje is wanneer u handmatig een zending aanmaakt."
 TIG_PostNL::Use letter box parcels,Gebruik buspakjes
-TIG_PostNL::If you disable this field all shipments will be considered regular package shipments.,"Indien u deze instelling uit zet, zullen alle zendingen beschouwd worden als reguliere pakketzendingen."
+TIG_PostNL::If you disable this field all shipments will be considered regular package shipments.<br/>It is very important that you have correctly configured all products when using letter box parcels. Orders weighing more than <strong>2kg</strong> or are larger than <strong>38 x 26.5 x 3.2 cm</strong> cannot be shipped as letter box parcels.,"Indien u deze instelling uit zet, zullen alle zendingen beschouwd worden als reguliere pakketzendingen.<br/>Het is zeer belangrijk dat u alle producten correct geconfigureerd heeft als u gebruik wilt maken van buspakjes. Bestellingen die meer wegen dan <strong>2kg</strong> of groter zijn dan <strong>38 x 26,5 x 3,2 cm</strong> kunnen niet verstuurd worden als buspakjes."
 "TIG_PostNL::These settings allow you to configure if and how PostNL determines if a shipment is a letter box parcel or a regular package shipment. Letter box parcels have to be able to fit through a mail slot and will be delivered using the regular mail service, rather than PostNL's parcel service.",Met deze instellingen kunt u aangeven of en hoe PostNL bepaalt of een zending een buspakje of een reguliere pakketzending is. Buspakjes moeten door de brievenbus passen en zullen bezorgd worden met de postdienst in plaats van de pakketbezorging van PostNL.
 TIG_PostNL::Manual,Handmatig
 TIG_PostNL::Automatic,Automatisch
 TIG_PostNL::This shipment will probably fit as a letter box parcel.,Deze zending past waarschijnlijk door de brievenbus.
-TIG_PostNL::This shipment will most likely not fit as a letter box parcel.,Deze zending zal waarschijnlijk niet door de brievenbus passen.
+TIG_PostNL::This shipment will probably not fit as a letter box parcel.,Deze zending zal waarschijnlijk niet door de brievenbus passen.
 TIG_PostNL::Letter box qty,Buspakje hoeveelheid
 TIG_PostNL::No Confirmation Required,Geen Voormelding Nodig
 TIG_PostNL::The following options are only for COD orders.,De volgende opties zijn enkel van toepassing op rembours bestellingen.
 TIG_PostNL::Default COD shipping option,Standaard rembours verzendoptie
 TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic COD shipments.,Deze instelling kan overschreven worden door handmatig een zending aan te maken. Deze instelling is enkel van toepassing op binnenlandse rembours zendingen.
 TIG_PostNL::Default evening COD delivery shipping option,Standaard avondbezorging rembours verzendoptie
-TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.,Deze instelling kan worden overschreven door handmatig zendingen aan te maken. Deze instelling is enkel van toepassing op postkantoor rembours zendingen.
+TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op avondbezorging rembours zendingen.
 TIG_PostNL::Default 'deliver at the Post Office' COD option,Standaard 'afhalen op postkantoor' rembours optie
-TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office COD shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op extra vroeg ophalen op het postkantoor rembours zendingen.
+TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office COD shipments.,Deze instelling kan worden overschreven door handmatig zendingen aan te maken. Deze instelling is enkel van toepassing op postkantoor rembours zendingen.
 TIG_PostNL::Default early post office pickup COD option,Standaard extra vroeg ophalen rembours optie
-TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office COD shipments.,Deze instelling kan worden overschreven door handmatig zendingen aan te maken. Deze instelling is enkel van toepassing op postkantoor rembours zendingen.
+TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office COD shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op extra vroeg ophalen op het postkantoor rembours zendingen.
+TIG_PostNL::It appears the PostNL username and/or password you have entered is incorrect.,Uw PostNL gebruikersnaam en/of wachtwoord is niet correct.
+TIG_PostNL::Your PostNL account is unfortunately not allowed to perform this action. Please contact PostNL.,Uw PostNL account heeft helaas niet de benodigde rechten om deze actie uit te voeren. Neem s.v.p. contact op met PostNL.
+"TIG_PostNL::Unfortunately you have exceeded the maximum amount of PostNL requests you may send each minute. Please wait a few minutes and try again. If this problem persists, please contact PostNL.","U heeft helaas het maximale aantal PostNL acties per minuut overschreden. Wacht s.v.p. enkele minuten en probeer het dan opnieuw. Indien dit probleem zich blijft voordoen, neem dan contact op met PostNL."
+TIG_PostNL::This PostNL service is currently disabled. Please contact PostNL.,Deze PostNL dienst is momenteel uitgeschakeld. Neem s.v.p. contact op met PostNL.
+"TIG_PostNL::There was a problem connecting to PostNL's services. This may be due to a timeout. Please wait a few minutes and try again. If this problem persists, please contact PostNL.","Er is een probleem opgetreden met de verbdining met PostNL. Dit kan komen door een time-out in de verbinding. Wacht enkele minuten en probeer het dan opnieuw. Indien dit probleem zich blijft voordoen, neem dan contact op met PostNL."
+TIG_PostNL::Your PostNL customer code appears to be incorrect. Please make sure you have entered the correct code.,Uw PostNL klantcode is niet correct. Controleer s.v.p. of u uw klantcode correct heeft ingevuld.
+TIG_PostNL::The total size of all PostNL logs exceeds %.0fMB!,De totale bestandsgrootte van alle PostNL log bestanden is meer dan %.0fMB!
+TIG_PostNL::We recommend you disable logging and remove these log files.,Wij raden aan dat u loggen uitzet en deze log bestanden verwijdert.
+"TIG_PostNL::Create shipments, print labels and confirm","Maak zendingen aan, print verzendlabels en meld voor"
+TIG_PostNL::The PostNL extension requires at least %.0fMB to function properly. Using the PostNL extension on servers with less memory than this may cause unexpected errors., De PostNL extensie vereist minimaal %.0fMB geheugen om correct te functioneren. Gebruik maken van de PostNL extensie op servers met minder geheugen kan leiden tot onverwachtte foutmeldingen.
+TIG_PostNL::This may cause unexpected behaviour. You may use the PostNL extension on unsupported versions of Magento at your own risk.,Dit kan onverwachtte problemen veroorzaken. Het gebruik van de PostNL extensie op niet ondersteunde versies van Magento is op eigen risico.
+"TIG_PostNL::You can read the full changelog in the <a href=""%s"" target=""_blank"" title=""TIG knowledgebase"">TIG knowledgebase</a>.","U kunt het volledige changelog nalezen in de <a href=""%s"" target=""_blank"" title=""TIG knowledgebase"">TIG knowledgebase</a>."
+TIG_PostNL::hour,uur
+TIG_PostNL::minutes,minuten
+TIG_PostNL::Delivery date:,Bezorgdatum:
+TIG_PostNL::(evening),(avond)
+TIG_PostNL::(from 8:30 A.M.),(vanaf 8:30)
+PostNL Max Qty For Letter Box Parcels,PostNL max. hoeveelheid voor buspakje
+PostNL Allow Delivery Options,PostNL sta bezorgopties toe
+PostNL Shipping Duration,PostNL overkomstduur
+A shipment will only be considered a letter box parcel if the purchased qty of this product does not exceed this amount.,Een zending zal enkel als buspakje verwerkt worden indien het bestelde aantal van dir product niet deze waarde overschreidt.
+"TIG_PostNL::PostNL - Create shipments, print labels and confirm","PostNL - Maak zendingen aan, print labels en meld voor"
+"TIG_PostNL::You have chosen a value for the '%s' field that is not supported. Please select a option that you have selected in the '%s' field, otherwise you may not be able to send shipments of this type.",U heeft een waarde gekozen voor het '%s' veld dat niet ondersteunt wordt. Selecteer s.v.p. een optie die geslecteerd is in het '%s' veld. Anders is het niet mogelij om zendingen te versturen van dit type.
+TIG_PostNL::Use configuration value,Gebruik configuratie waarde
+TIG_PostNL::Item columns,Item kolommen
+TIG_PostNL::You can specify which item columns you would like to show on your packing slip pdf. We recommend you experiment with these settings before using them in a production environment. It may be diffcult to predict the outcome of these settings without trying them out by printing a PostNL packing slip.,U kunt aangeven welke item kolommen u wilt tonen op de pakbon. Wij raden aan dat u met deze instellingen experimenteerd alvorens ze te gebruiken in een productie omgeving. Het kan lastig zijn om het resultaat van deze instellingen te voorspellen zonder ze eerst uit te proberen door een pakbon te printen.
+TIG_PostNL::Width,Breedte
+TIG_PostNL::Position,Positie
+TIG_PostNL::Add column,Voeg kolom toe

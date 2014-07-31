@@ -596,7 +596,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * gets the numeric shipment type for this shipment.
+     * Gets the numeric shipment type for this shipment.
      *
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
      *

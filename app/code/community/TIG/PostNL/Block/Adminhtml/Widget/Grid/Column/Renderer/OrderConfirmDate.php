@@ -66,33 +66,35 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
          * order could be shipped.
          */
         if (!$value) {
-            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getShippingDate(
+            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(
                 $row->getCreatedAt(),
                 $row->getStoreId()
             );
-            $value = date('Y-m-d H:i:s', strtotime('-1 day', strtotime($deliveryDate)));
+
+            $deliveryDate = new DateTime($deliveryDate);
+            $value = $deliveryDate->sub(new DateInterval('P1D'));
+        } else {
+            $value = new DateTime($value);
         }
 
-        $now = date('Ymd', Mage::getModel('core/date')->gmtTimestamp());
+        $now = new DateTime();
+        $now->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
 
         /**
          * Check if the shipment should be confirmed today
          */
-        if ($now == date('Ymd', strtotime($value))) {
+        if ($now->diff($value)->d == 0) {
             return Mage::helper('postnl')->__('Today');
         }
 
         /**
          * Check if the shipment should be confirmed somewhere in the future
          */
-        if ($now < date('Ymd', strtotime($value))) {
-            $confirmDate = new DateTime($value);
-            $today = new DateTime($now);
-
+        if ($now->diff($value)->d > 0 && !$now->diff($value)->invert) {
             /**
              * Get the number of days until the shipment should be confirmed
              */
-            $diff = $today->diff($confirmDate)->format('%a');
+            $diff = $now->diff($value)->format('%a');
 
             /**
              * Check if it should be confirmed tomorrow
@@ -115,6 +117,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
          * Finally, simply render the date
          */
         $format = $this->_getFormat();
+        $value = $value->format('Y-m-d H:i:s');
         try {
             if($this->getColumn()->getGmtoffset()) {
                 $data = Mage::app()->getLocale()

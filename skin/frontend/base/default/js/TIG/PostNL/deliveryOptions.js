@@ -42,7 +42,7 @@
 if (typeof Translator == 'undefined' && typeof Translate === 'function') {
     Translator = new Translate();
 } else if (typeof Translator == 'undefined') {
-    var Translate = new Class.create();
+    var Translate = Class.create();
     Translate.prototype = {
         initialize : function() {},
 
@@ -60,7 +60,7 @@ if (typeof Translator == 'undefined' && typeof Translate === 'function') {
  * Uses AJAX to communicate with PostNL and retrieve possible delivery options. This class also manages all available
  * options.
  */
-var PostnlDeliveryOptions = new Class.create();
+var PostnlDeliveryOptions = Class.create();
 PostnlDeliveryOptions.prototype = {
     isActive                 : false,
 
@@ -102,6 +102,96 @@ PostnlDeliveryOptions.prototype = {
     locationsRequest         : false,
     saveOptionCostsRequest   : false,
     savePaPhoneNumberRequest : false,
+
+    /**
+     * Constructor method.
+     *
+     * @constructor
+     *
+     * @param {{}}      params
+     * @param {{}}      options
+     * @param {boolean} debug
+     *
+     * @returns {void}
+     */
+    initialize : function(params, options, debug) {
+        if (!params.saveUrl
+            || !params.timeframesUrl
+            || !params.locationsUrl
+            || !params.locationsInAreaUrl
+            || !params.postcode
+            || !params.housenumber
+            || !params.deliveryDate
+            || !params.imageBaseUrl
+            || !params.fullAddress
+        ) {
+            throw 'Missing parameters.';
+        }
+
+        this.reset();
+
+        this.saveUrl            = params.saveUrl;
+        this.timeframesUrl      = params.timeframesUrl;
+        this.locationsUrl       = params.locationsUrl;
+        this.locationsInAreaUrl = params.locationsInAreaUrl;
+        this.postcode           = params.postcode;
+        this.housenumber        = params.housenumber;
+        this.deliveryDate       = params.deliveryDate;
+        this.imageBaseUrl       = params.imageBaseUrl;
+        this.fullAddress        = params.fullAddress;
+
+        this.options = Object.extend({
+            isOsc                  : false,
+            oscSaveButton          : 'close_options_popup_btn',
+            oscOptionsPopup        : 'postnl_delivery_options',
+            disableCufon           : false,
+            allowTimeframes        : true,
+            allowEveningTimeframes : false,
+            allowPg                : true,
+            allowPge               : false,
+            allowPa                : true,
+            taxDisplayType         : 1,
+            eveningFeeIncl         : 0,
+            eveningFeeExcl         : 0,
+            expressFeeIncl         : 0,
+            expressFeeExcl         : 0,
+            eveningFeeText         : '',
+            expressFeeText         : '',
+            allowStreetview        : true,
+            scrollbarContainer     : 'scrollbar_content',
+            scrollbarTrack         : 'scrollbar_track',
+            loaderDiv              : 'initial_loader',
+            locationsLoader        : 'locations_loader',
+            searchField            : 'search_field',
+            searchErrorDiv         : 'search_error_message',
+            optionsContainer       : 'postnl_delivery_options',
+            pgLocationContainer    : 'pglocation',
+            pgeLocationContainer   : 'pgelocation',
+            paLocationContainer    : 'palocation',
+            timeframesContainer    : 'timeframes',
+            addPhoneContainer      : 'postnl_add_phonenumber',
+            currencySymbol         : '€',
+            shippingMethodName     : 's_method_postnl_flatrate',
+            postnlShippingMethods  : [
+                's_method_postnl_tablerate', 's_method_postnl_flatrate'
+            ]
+        }, options || {});
+
+        this.debug = debug;
+
+        var weekdays = new Array(7);
+        weekdays[0] = Translator.translate('Su');
+        weekdays[1] = Translator.translate('Mo');
+        weekdays[2] = Translator.translate('Tu');
+        weekdays[3] = Translator.translate('We');
+        weekdays[4] = Translator.translate('Th');
+        weekdays[5] = Translator.translate('Fr');
+        weekdays[6] = Translator.translate('Sa');
+
+        this.weekdays = weekdays;
+
+        this.registerObservers();
+    },
 
     /******************************
      *                            *
@@ -333,96 +423,6 @@ PostnlDeliveryOptions.prototype = {
         }
 
         return imageName;
-    },
-
-    /**
-     * Constructor method.
-     *
-     * @constructor
-     *
-     * @param {{}}      params
-     * @param {{}}      options
-     * @param {boolean} debug
-     *
-     * @returns {void}
-     */
-    initialize : function(params, options, debug) {
-        if (!params.saveUrl
-            || !params.timeframesUrl
-            || !params.locationsUrl
-            || !params.locationsInAreaUrl
-            || !params.postcode
-            || !params.housenumber
-            || !params.deliveryDate
-            || !params.imageBaseUrl
-            || !params.fullAddress
-        ) {
-            throw 'Missing parameters.';
-        }
-
-        this.reset();
-
-        this.saveUrl            = params.saveUrl;
-        this.timeframesUrl      = params.timeframesUrl;
-        this.locationsUrl       = params.locationsUrl;
-        this.locationsInAreaUrl = params.locationsInAreaUrl;
-        this.postcode           = params.postcode;
-        this.housenumber        = params.housenumber;
-        this.deliveryDate       = params.deliveryDate;
-        this.imageBaseUrl       = params.imageBaseUrl;
-        this.fullAddress        = params.fullAddress;
-
-        this.options = Object.extend({
-            isOsc                  : false,
-            oscSaveButton          : 'close_options_popup_btn',
-            oscOptionsPopup        : 'postnl_delivery_options',
-            disableCufon           : false,
-            allowTimeframes        : true,
-            allowEveningTimeframes : false,
-            allowPg                : true,
-            allowPge               : false,
-            allowPa                : true,
-            taxDisplayType         : 1,
-            eveningFeeIncl         : 0,
-            eveningFeeExcl         : 0,
-            expressFeeIncl         : 0,
-            expressFeeExcl         : 0,
-            eveningFeeText         : '',
-            expressFeeText         : '',
-            allowStreetview        : true,
-            scrollbarContainer     : 'scrollbar_content',
-            scrollbarTrack         : 'scrollbar_track',
-            loaderDiv              : 'initial_loader',
-            locationsLoader        : 'locations_loader',
-            searchField            : 'search_field',
-            searchErrorDiv         : 'search_error_message',
-            optionsContainer       : 'postnl_delivery_options',
-            pgLocationContainer    : 'pglocation',
-            pgeLocationContainer   : 'pgelocation',
-            paLocationContainer    : 'palocation',
-            timeframesContainer    : 'timeframes',
-            addPhoneContainer      : 'postnl_add_phonenumber',
-            currencySymbol         : '€',
-            shippingMethodName     : 's_method_postnl_flatrate',
-            postnlShippingMethods  : [
-                's_method_postnl_tablerate', 's_method_postnl_flatrate'
-            ]
-        }, options || {});
-
-        this.debug = debug;
-
-        var weekdays = new Array(7);
-        weekdays[0] = Translator.translate('Su');
-        weekdays[1] = Translator.translate('Mo');
-        weekdays[2] = Translator.translate('Tu');
-        weekdays[3] = Translator.translate('We');
-        weekdays[4] = Translator.translate('Th');
-        weekdays[5] = Translator.translate('Fr');
-        weekdays[6] = Translator.translate('Sa');
-
-        this.weekdays = weekdays;
-
-        this.registerObservers();
     },
 
     /**
@@ -1317,7 +1317,7 @@ PostnlDeliveryOptions.prototype = {
         }
 
         if (!this.getSelectedOption()) {
-            return false;
+            this.selectTimeframe(this.timeframes[0].getElement());
         }
 
         if (this.debug) {
@@ -1603,6 +1603,60 @@ PostnlDeliveryOptions.Map = new Class.create({
 
     filterEarly                   : false,
     filterEvening                 : false,
+
+    /**
+     * Constructor method.
+     * Creates the google maps object and triggers an initial address search based on the user's chosen shipping
+     * address.
+     *
+     * @constructor
+     *
+     * @param {string} fullAddress
+     * @param {PostnlDeliveryOptions} deliveryOptions
+     * @param {boolean} debug
+     *
+     * @returns {void}
+     */
+    initialize : function(fullAddress, deliveryOptions, debug) {
+        if (typeof google.maps == 'undefined') {
+            throw 'Google maps is required.';
+        }
+
+        this.deliveryOptions = deliveryOptions;
+        this.fullAddress = fullAddress;
+        this.debug = debug;
+
+        var mapOptions = this.getMapOptions();
+
+        this.map = new google.maps.Map($('map-div'), mapOptions);
+
+        this.scrollbar = new Control.ScrollBar(
+            this.getOptions().scrollbarContainer,
+            this.getOptions().scrollbarTrack
+        );
+
+        this.searchAndPanToAddress(this.getFullAddress(), true, false);
+
+        /**
+         * Add autocomplete functionality to the address search field. Results will be located in the Netherlands and
+         * may contain only addresses.
+         */
+        this.autocomplete = new google.maps.places.Autocomplete(
+            $('search_field'),
+            {
+                componentRestrictions : {
+                    country : 'nl'
+                },
+                types : [
+                    'establishment',
+                    'geocode'
+                ]
+            }
+        );
+        this.autocomplete.bindTo('bounds', this.map);
+
+        this.registerObservers();
+    },
 
     /******************************
      *                            *
@@ -1911,60 +1965,6 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         return $('postnl_add_location');
-    },
-
-    /**
-     * Constructor method.
-     * Creates the google maps object and triggers an initial address search based on the user's chosen shipping
-     * address.
-     *
-     * @constructor
-     *
-     * @param {string} fullAddress
-     * @param {PostnlDeliveryOptions} deliveryOptions
-     * @param {boolean} debug
-     *
-     * @returns {void}
-     */
-    initialize : function(fullAddress, deliveryOptions, debug) {
-        if (typeof google.maps == 'undefined') {
-            throw 'Google maps is required.';
-        }
-
-        this.deliveryOptions = deliveryOptions;
-        this.fullAddress = fullAddress;
-        this.debug = debug;
-
-        var mapOptions = this.getMapOptions();
-
-        this.map = new google.maps.Map($('map-div'), mapOptions);
-
-        this.scrollbar = new Control.ScrollBar(
-            this.getOptions().scrollbarContainer,
-            this.getOptions().scrollbarTrack
-        );
-
-        this.searchAndPanToAddress(this.getFullAddress(), true, false);
-
-        /**
-         * Add autocomplete functionality to the address search field. Results will be located in the Netherlands and
-         * may contain only addresses.
-         */
-        this.autocomplete = new google.maps.places.Autocomplete(
-            $('search_field'),
-            {
-                componentRestrictions : {
-                    country : 'nl'
-                },
-                types : [
-                    'establishment',
-                    'geocode'
-                ]
-            }
-        );
-        this.autocomplete.bindTo('bounds', this.map);
-
-        this.registerObservers();
     },
 
     /**
@@ -3546,6 +3546,37 @@ PostnlDeliveryOptions.Location = new Class.create({
 
     oldCenter         : false,
 
+    /**
+     * Constructor method.
+     *
+     * @constructor
+     *
+     * @param {object}                location        The PostNL location JSON object returned by PostNL's webservices
+     *                                                associated with this location.
+     * @param {PostnlDeliveryOptions} deliveryOptions The current deliveryOptions object with which this location is
+     *                                                associated.
+     * @param {Array}                 type            An array of PostNL location types. possible options include PE,
+     *                                                PGE and PA.
+     *
+     * @returns {void}
+     */
+    initialize : function(location, deliveryOptions, type) {
+        this.address           = location.Address;
+        this.distance          = location.Distance;
+        this.latitude          = location.Latitude;
+        this.longitude         = location.Longitude;
+        this.name              = location.Name;
+        this.phoneNumber       = location.PhoneNumber;
+        this.openingHours      = location.OpeningHours;
+        this.locationCode      = location.LocationCode.replace(/\s+/g, ''); //remove whitespace from the location code
+        this.date              = deliveryOptions.getDeliveryDate();
+        this.isEveningLocation = location.isEvening;
+
+        this.deliveryOptions   = deliveryOptions;
+
+        this.type = type;
+    },
+
     /******************************
      *                            *
      *  GETTER AND SETTER METHODS *
@@ -3694,37 +3725,6 @@ PostnlDeliveryOptions.Location = new Class.create({
 
     getMap : function() {
         return this.getDeliveryOptions().getDeliveryOptionsMap();
-    },
-
-    /**
-     * Constructor method.
-     *
-     * @constructor
-     *
-     * @param {object}                location        The PostNL location JSON object returned by PostNL's webservices
-     *                                                associated with this location.
-     * @param {PostnlDeliveryOptions} deliveryOptions The current deliveryOptions object with which this location is
-     *                                                associated.
-     * @param {Array}                 type            An array of PostNL location types. possible options include PE,
-     *                                                PGE and PA.
-     *
-     * @returns {void}
-     */
-    initialize : function(location, deliveryOptions, type) {
-        this.address           = location.Address;
-        this.distance          = location.Distance;
-        this.latitude          = location.Latitude;
-        this.longitude         = location.Longitude;
-        this.name              = location.Name;
-        this.phoneNumber       = location.PhoneNumber;
-        this.openingHours      = location.OpeningHours;
-        this.locationCode      = location.LocationCode.replace(/\s+/g, ''); //remove whitespace from the location code
-        this.date              = deliveryOptions.getDeliveryDate();
-        this.isEveningLocation = location.isEvening;
-
-        this.deliveryOptions   = deliveryOptions;
-
-        this.type = type;
     },
 
     /**
@@ -4501,6 +4501,29 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     timeframeIndex  : 0,
     deliveryOptions : null,
 
+    /**
+     * Constructor method.
+     *
+     * @constructor
+     *
+     * @param {string}                date
+     * @param {object}                timeframe
+     * @param {number}                timeframeIndex
+     * @param {PostnlDeliveryOptions} deliveryOptions
+     *
+     * @returns {void}
+     */
+    initialize : function(date, timeframe, timeframeIndex, deliveryOptions) {
+        this.date = date;
+        this.from = timeframe.From;
+        this.to   = timeframe.To;
+        this.type = timeframe.TimeframeType;
+
+        this.timeframeIndex = timeframeIndex;
+
+        this.deliveryOptions = deliveryOptions;
+    },
+
     /******************************
      *                            *
      *  GETTER AND SETTER METHODS *
@@ -4543,29 +4566,6 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
 
     getOptions : function() {
         return this.getDeliveryOptions().getOptions();
-    },
-
-    /**
-     * Constructor method.
-     *
-     * @constructor
-     *
-     * @param {string}                date
-     * @param {object}                timeframe
-     * @param {number}                timeframeIndex
-     * @param {PostnlDeliveryOptions} deliveryOptions
-     *
-     * @returns {void}
-     */
-    initialize : function(date, timeframe, timeframeIndex, deliveryOptions) {
-        this.date = date;
-        this.from = timeframe.From;
-        this.to   = timeframe.To;
-        this.type = timeframe.TimeframeType;
-
-        this.timeframeIndex = timeframeIndex;
-
-        this.deliveryOptions = deliveryOptions;
     },
 
     /**

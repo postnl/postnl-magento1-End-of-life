@@ -36,11 +36,36 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
+class TIG_PostNL_Model_Core_System_Config_Source_HourMinute
+{
+    /**
+     * Gets an option array for possible hours and minutes.
+     *
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        $options = array(
+            'hour'   => array(),
+            'minute' => array(),
+        );
 
-/**
- * @var TIG_PostNL_Model_Resource_Setup $installer
- */
-$installer = $this;
+        for ($i = 0; $i < 24; $i++) {
+            $number = sprintf("%02d", $i);
+            $options['hour'][] = array(
+                'value' => $number,
+                'label' => $number,
+            );
+        }
 
-$installer->generateShippingStatusCronExpr();
-$installer->generateUpdateStatisticsCronExpr();
+        for ($i = 0; $i < 12; $i++) {
+            $number = sprintf("%02d", $i * 5);
+            $options['minute'][] = array(
+                'value' => $number,
+                'label' => $number,
+            );
+        }
+
+        return $options;
+    }
+}

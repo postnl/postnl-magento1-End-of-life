@@ -133,13 +133,12 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             return $this->_getData('confirm_date');
         }
 
-        $deliveryDate = strtotime($deliveryDate);
-        $deliveryDay = date('N');
+        $deliveryDate = new DateTime($deliveryDate);
+        $deliveryDay = $deliveryDate->format('N');
 
         $shippingDuration = $this->getShippingDuration($deliveryDay);
-        $confirmDate = strtotime("-{$shippingDuration} days", $deliveryDate);
-
-        $confirmDate = date('Y-m-d', $confirmDate);
+        $confirmDate = $deliveryDate->sub(new DateInterval("P{$shippingDuration}D"));
+        $confirmDate = $confirmDate->format('Y-m-d');
 
         $this->setConfirmDate($confirmDate);
         return $confirmDate;

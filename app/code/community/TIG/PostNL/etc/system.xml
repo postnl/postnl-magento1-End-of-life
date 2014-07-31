@@ -177,7 +177,7 @@
                             <label>New order status</label>
                             <comment>Newly placed orders will have this status.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_order_status_new</source_model>
+                            <source_model>adminhtml/system_config_source_order_status_processing</source_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -880,7 +880,7 @@
                         </buspakje_header>
                         <use_buspakje translate="label comment" module="postnl">
                             <label>Use letter box parcels</label>
-                            <comment>If you disable this field all shipments will be considered regular package shipments.</comment>
+                            <comment><![CDATA[If you disable this field all shipments will be considered regular package shipments.<br/>It is very important that you have correctly configured all products when using letter box parcels. Orders weighing more than <strong>2kg</strong> or are larger than <strong>38 x 26.5 x 3.2 cm</strong> cannot be shipped as letter box parcels.]]></comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>70</sort_order>
@@ -913,7 +913,7 @@
                         <shipping_duration translate="label comment" module="postnl">
                             <label>Shipping duration</label>
                             <comment>The number of days shipping will take after a customer finishes their order.</comment>
-                            <source_model>postnl_deliveryoptions/system_config_source_shippingDuration</source_model>
+                            <source_model>postnl_core/system_config_source_shippingDuration</source_model>
                             <frontend_type>select</frontend_type>
                             <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
@@ -923,8 +923,9 @@
                         <cutoff_time translate="label comment" module="postnl">
                             <label>Order cut-off time</label>
                             <comment>When an order is placed after this time, another day will be added to the shipping duration.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_deliveryoptions/system_config_source_cutOffTime</source_model>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_hourMinute</frontend_model>
+                            <source_model>postnl_core/system_config_source_hourMinute</source_model>
+                            <backend_model>postnl_core/system_config_backend_hourMinute</backend_model>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -1216,11 +1217,21 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                         </show_shipping_date>
+                        <item_columns translate="label comment" module="postnl">
+                            <label>Item columns</label>
+                            <comment>You can specify which item columns you would like to show on your packing slip pdf. We recommend you experiment with these settings before using them in a production environment. It may be diffcult to predict the outcome of these settings without trying them out by printing a PostNL packing slip.</comment>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_packingSlipItemColumns</frontend_model>
+                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+                            <sort_order>130</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </item_columns>
                         <show_totals translate="label" module="postnl">
                             <label>Show shipment totals</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1230,7 +1241,7 @@
                             <label>Show shipment comment</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1241,7 +1252,7 @@
                             <comment>You can choose to show a static, pre-configured message or you can show the last visible comment added to the shipment on the shipment detail page.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_commentType</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1253,7 +1264,7 @@
                         <comment_text translate="label" module="postnl">
                             <label>Comment text</label>
                             <frontend_type>textarea</frontend_type>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1268,7 +1279,7 @@
                             <comment>If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>

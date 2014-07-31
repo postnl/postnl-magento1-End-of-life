@@ -113,10 +113,64 @@ $conn->addForeignKey(
 );
 
 /***********************************************************************************************************************
+ * POSTNL ORDER
+ **********************************************************************************************************************/
+
+$conn->addColumn($installer->getTable('postnl_core/order'),
+    'created_at',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
+        'nullable' => true,
+        'comment'  => 'Created At',
+        'after'    => 'quote_id',
+    )
+);
+
+$conn->addColumn($installer->getTable('postnl_core/order'),
+    'updated_at',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
+        'nullable' => true,
+        'comment'  => 'Updated At',
+        'after'    => 'created_at',
+    )
+);
+
+/**
+ * Modify the shipment_costs column so it conforms to Magento's standard format for storing costs.
+ */
+$conn->modifyColumn(
+    $installer->getTable('postnl_core/order'),
+    'shipment_costs',
+    array(
+        'type'     => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'length'   => '12,4',
+        'nullable' => true,
+        'default'  => 0,
+        'comment'  => 'Shipment Costs',
+    )
+);
+
+/**
+ * Update the PostNL order table so that a PostNL order is deleted when its corresponding Magento order is deleted. This
+ * prevents errors caused by missing IDs.
+ */
+$conn->addForeignKey(
+    $installer->getFkName('postnl_core/order', 'order_id', 'sales/order', 'entity_id'),
+    $installer->getTable('postnl_core/order'),
+    'order_id',
+    $installer->getTable('sales/order'),
+    'entity_id',
+    Varien_Db_Ddl_Table::ACTION_CASCADE, //on delete cascade
+    Varien_Db_Ddl_Table::ACTION_CASCADE //on update cascade
+);
+
+/***********************************************************************************************************************
  * ORDER
  **********************************************************************************************************************/
+
 /**
- * Add PostNL COD fee columns to sales/order
+ * Add PostNL COD fee columns to sales/order.
  */
 $salesOrderTable = $installer->getTable('sales/order');
 $conn->addColumn(
@@ -269,7 +323,7 @@ $conn->addColumn(
  **********************************************************************************************************************/
 
 /**
- * Add PostNL COD fee columns to sales/order_invoice
+ * Add PostNL COD fee columns to sales/order_invoice.
  */
 $salesInvoiceTable = $installer->getTable('sales/invoice');
 $conn->addColumn(
@@ -326,7 +380,7 @@ $conn->addColumn(
  **********************************************************************************************************************/
 
 /**
- * Add PostNL COD fee columns to sales/quote
+ * Add PostNL COD fee columns to sales/quote.
  */
 $salesQuoteTable = $installer->getTable('sales/quote');
 $conn->addColumn(
@@ -383,7 +437,7 @@ $conn->addColumn(
  **********************************************************************************************************************/
 
 /**
- * Add PostNL COD fee columns to sales/quote_address
+ * Add PostNL COD fee columns to sales/quote_address.
  */
 $salesQuoteAddressTable = $installer->getTable('sales/quote_address');
 $conn->addColumn(
@@ -440,7 +494,7 @@ $conn->addColumn(
  **********************************************************************************************************************/
 
 /**
- * Add PostNL COD fee columns to sales/creditmemo
+ * Add PostNL COD fee columns to sales/creditmemo.
  */
 $salesCreditmemoTable = $installer->getTable('sales/creditmemo');
 $conn->addColumn(
@@ -496,18 +550,38 @@ $conn->addColumn(
  * PRODUCT ATTRIBUTES
  **********************************************************************************************************************/
 
+$entityType    = Mage_Catalog_Model_Product::ENTITY;
+
+$attributesToMove = array(
+    'postnl_allow_delivery_options',
+    'postnl_shipping_duration',
+);
+
+$attributeSets = $installer->getAllAttributeSetIds($entityType);
+foreach ($attributesToMove as $attributeCode) {
+    foreach ($attributeSets as $attributeSet) {
+        $installer->addAttributeGroup($entityType, $attributeSet, 'PostNL', 1000);
+
+        $attributeGroupId = $installer->getAttributeGroupId($entityType, $attributeSet, 'PostNL');
+
+        $installer->addAttributeToGroup($entityType, $attributeSet, $attributeGroupId, $attributeCode);
+    }
+}
+
 if (!$installer->getAttribute('catalog_product', 'postnl_max_qty_for_buspakje')) {
     $installer->addAttribute(
         'catalog_product',
         'postnl_max_qty_for_buspakje',
         array(
             'backend'                    => 'catalog/product_attribute_backend_boolean',
-            'group'                      => 'General',
+            'group'                      => 'PostNL',
             'sort_order'                 => 110,
             'frontend'                   => '',
             'frontend_class'             => 'validate-digits',
             'default'                    => '0',
             'label'                      => 'PostNL Max Qty For Letter Box Parcels',
+            'note'                       => 'A shipment will only be considered a letter box parcel if the purchased ' .
+                                            'qty of this product does not exceed this amount.',
             'input'                      => 'text',
             'type'                       => 'int',
             'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL,

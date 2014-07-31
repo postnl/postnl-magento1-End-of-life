@@ -39,9 +39,14 @@
 class TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty extends Mage_Adminhtml_Block_Sales_Items_Column_Qty
 {
     /**
+     * The original template used by Magento.
+     */
+    const DEFAULT_TEMPLATE = 'sales/order/shipment/create/items/renderer/default.phtml';
+
+    /**
      * Gets the maximum qty allowed for buspakje.
      *
-     * @return boolean|int|string
+     * @return int|string
      */
     public function getMaxQtyForBuspakje()
     {
@@ -49,13 +54,27 @@ class TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty extends Mage_Adminhtml_B
          * @var Mage_Sales_Model_Order_Item $item
          */
         $item = $this->getItem();
-        $product = $item->getProduct();
+        $maxQty = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+            $item->getProductId(),
+            'postnl_max_qty_for_buspakje',
+            $item->getStoreId()
+        );
 
-        if (!$product->hasData('postnl_max_qty_for_buspakje')) {
-            return false;
+        return $maxQty;
+    }
+
+    /**
+     * Before rendering the template, check that the PostNl extension is active. If not, use the default Magento
+     * template.
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        if (!Mage::helper('postnl')->isEnabled($this->getItem()->getStoreId())) {
+            $this->setTemplate(self::DEFAULT_TEMPLATE);
         }
 
-        $maxQty = $product->getDataUsingMethod('postnl_max_qty_for_buspakje');
-        return $maxQty;
+        return parent::_toHtml();
     }
 }

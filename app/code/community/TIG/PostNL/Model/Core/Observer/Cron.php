@@ -454,8 +454,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
              * Check if the shipment was confirmed more than a day ago
              */
             $confirmedAt = strtotime($postnlShipment->getConfirmedAt());
+            $yesterday = new DateTime();
+            $yesterday->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+                      ->sub(new DateInterval('P1D'));
+
             $now = Mage::getModel('core/date')->gmtTimestamp();
-            $yesterday = strtotime('-1 day', $now);
+            $yesterday = $yesterday->getTimestamp();
 
             if ($confirmedAt > $yesterday) {
                 return $this;
@@ -506,8 +510,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
             self::XPATH_CONFIRM_EXPIRE_DAYS,
             Mage_Core_Model_App::ADMIN_STORE_ID
         );
-        $expireTimestamp = strtotime("-{$confirmationExpireDays} days", Mage::getModel('core/date')->gmtTimestamp());
-        $expireDate = date('Y-m-d H:i:s', $expireTimestamp);
+
+        $expireTimestamp = new DateTime();
+        $expireTimestamp->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+                        ->sub(new DateInterval("P{$confirmationExpireDays}D"));
+
+        $expireDate = $expireTimestamp->format('Y-m-d H:i:s');
 
         $helper->cronLog("All confirmation placed before {$expireDate} will be expired.");
 
@@ -612,8 +620,11 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
 
-        $twentyMinutesAgo = strtotime("-20 minutes", Mage::getModel('core/date')->gmtTimestamp());
-        $twentyMinutesAgo = date('Y-m-d H:i:s', $twentyMinutesAgo);
+        $twentyMinutesAgo = new DateTime();
+        $twentyMinutesAgo->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+                         ->sub(new DateInterval('PT20M'));
+
+        $twentyMinutesAgo = $twentyMinutesAgo->format('Y-m-d H:i:s');
 
         $helper->cronLog("Track and trace email will be sent for all shipments that were confirmed on or before " .
             "{$twentyMinutesAgo}.");

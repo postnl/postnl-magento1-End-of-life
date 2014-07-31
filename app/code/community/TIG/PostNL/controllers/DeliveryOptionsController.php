@@ -1032,8 +1032,10 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
         } else {
-            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
-            $deliveryDate = date('d-m-Y', $tomorrow);
+            $deliveryDate = new DateTime();
+            $deliveryDate->setTimestamp(Mage::getModel('core/date')->timestamp())
+                         ->add(new DateInterval('P1D'));
+            $deliveryDate = $deliveryDate->format('d-m-Y');
         }
 
         $data = array(
@@ -1089,8 +1091,10 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
         } else {
-            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
-            $deliveryDate = date('d-m-Y', $tomorrow);
+            $deliveryDate = new DateTime();
+            $deliveryDate->setTimestamp(Mage::getModel('core/date')->timestamp())
+                         ->add(new DateInterval('P1D'));
+            $deliveryDate = $deliveryDate->format('d-m-Y');
         }
 
         /**
@@ -1217,8 +1221,10 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
         } else {
-            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
-            $deliveryDate = date('d-m-Y', $tomorrow);
+            $deliveryDate = new DateTime();
+            $deliveryDate->setTimestamp(Mage::getModel('core/date')->timestamp())
+                         ->add(new DateInterval('P1D'));
+            $deliveryDate = $deliveryDate->format('d-m-Y');
         }
 
         $data = array(

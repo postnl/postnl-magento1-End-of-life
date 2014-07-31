@@ -84,6 +84,7 @@
         </reference>
         <reference name="before_body_end">
             <block type="adminhtml/abstract" name="postnl_filter_massaction" template="TIG/PostNL/sales/order/filter_massaction.phtml"/>
+            <block type="adminhtml/abstract" name="postnl_print_label_action" template="TIG/PostNL/sales/order/js.phtml"/>
         </reference>
     </adminhtml_sales_order_index>
 

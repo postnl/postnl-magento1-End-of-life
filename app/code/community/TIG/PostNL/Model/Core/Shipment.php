@@ -83,6 +83,7 @@
  * @method int|null                       getShipmentId
  * @method int                            getLabelsPrinted()
  * @method bool|int                       getIsPakketautomaat()
+ * @method bool                           getIsBuspakjeShipment()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -113,6 +114,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setOrder(Mage_Sales_Model_Order $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakje(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setShipmentIncrementId(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setIsBuspakjeShipment(bool $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -132,6 +134,7 @@
  * @method bool                           hasOrder()
  * @method bool                           hasMainBarcode()
  * @method bool                           hasShipmentIncrementId()
+ * @method bool                           hasIsBuspakjeShipment()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -568,15 +571,17 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Get the current shipment's type.
      *
+     * @param boolean $checkBuspakje
+     *
      * @return string
      */
-    public function getShipmentType()
+    public function getShipmentType($checkBuspakje = true)
     {
         if ($this->hasShipmentType()) {
             return $this->_getData('shipment_type');
         }
 
-        $shipmentType = $this->_getShipmentType();
+        $shipmentType = $this->_getShipmentType($checkBuspakje);
 
         $this->setShipmentType($shipmentType);
         return $shipmentType;
@@ -586,11 +591,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Determines the current shipment's shipment type based on several attributes, including shipping destination and
      * payment method.
      *
+     * @param boolean $checkBuspakje
+     *
      * @return string
      *
      * @throws TIG_PostNL_Exception
      */
-    protected function _getShipmentType()
+    protected function _getShipmentType($checkBuspakje = true)
     {
         if ($this->isCod()) {
             if ($this->isPgeShipment()) {
@@ -626,6 +633,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return 'pa';
         }
 
+        if ($checkBuspakje && $this->isBuspakjeShipment()) {
+            return 'buspakje';
+        }
+
         if ($this->isDutchShipment()) {
             return 'domestic';
         }
@@ -642,6 +653,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $this->getHelper()->__('No valid shipment type found for shipment #%s.', $this->getId()),
             'POSTNL-0167'
         );
+    }
+
+    /**
+     * Returns the formatted shipping phase of the current shipment.
+     *
+     * @return null|string
+     */
+    public function getFormattedShippingPhase()
+    {
+        $shippingPhase = $this->getShippingPhase();
+        if (!$shippingPhase) {
+            return null;
+        }
+
+        $shippingPhases = $this->getHelper('cif')->getShippingPhases();
+        if (array_key_exists($shippingPhase, $shippingPhases)) {
+            return $shippingPhases[$shippingPhase];
+        }
+
+        return null;
     }
 
     /**
@@ -846,6 +877,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $storeId = $this->getStoreId();
 
         $shipmentType = $this->getShipmentType();
+
         $xpath = false;
         switch ($shipmentType) {
             case 'domestic_cod':
@@ -1072,16 +1104,17 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Gets allowed product options for the current shipment.
      *
      * @param boolean $flat
+     * @param boolean $checkBuspakje
      *
      * @return array
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getAllowedProductOptions($flat = true)
+    public function getAllowedProductOptions($flat = true, $checkBuspakje = false)
     {
         $cifHelper = $this->getHelper('cif');
 
-        $shipmentType = $this->getShipmentType();
+        $shipmentType = $this->getShipmentType($checkBuspakje);
         switch ($shipmentType) {
             case 'domestic':
                 $allowedProductCodes = $cifHelper->getStandardProductCodes($flat);
@@ -1153,7 +1186,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Helper_DeliveryOptions $helper
          */
         $helper = $this->getHelper('deliveryOptions');
-        $deliveryDate = $helper->getShippingDate($this->getOrder()->getCreatedAt(), $this->getStoreId());
+        $deliveryDate = $helper->getDeliveryDate($this->getOrder()->getCreatedAt(), $this->getStoreId());
 
         if ($deliveryDate) {
             return $deliveryDate;
@@ -1174,7 +1207,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         $isBuspakje = $this->_getData('is_buspakje');
 
-        if (!is_null($isBuspakje) && false) {
+        if (!is_null($isBuspakje)) {
             return $isBuspakje;
         }
 
@@ -1330,9 +1363,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $postnlOrder = $this->getPostnlOrder();
         if ($postnlOrder && $postnlOrder->getConfirmDate()) {
-            $confirmDate = strtotime($postnlOrder->getConfirmDate());
+            $confirmDate = new DateTime($postnlOrder->getConfirmDate());
 
-            $this->setData('confirm_date', $confirmDate);
+            $this->setData('confirm_date', $confirmDate->getTimestamp());
             return $this;
         }
 
@@ -1354,8 +1387,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Calculate the confirm based on the delivery date.
          */
-        $deliveryTimeStamp = strtotime($deliveryDate);
-        $confirmDate = strtotime('-1 day', $deliveryTimeStamp);
+        $deliveryDate = new DateTime($deliveryDate);
+        $confirmDate = $deliveryDate->sub(new DateInterval('P1D'))->getTimestamp();
 
         $this->setData('confirm_date', $confirmDate);
         return $this;
@@ -1680,6 +1713,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * Check if this shipment is a buspakje shipment.
+     *
+     * @return boolean
+     */
+    public function isBuspakjeShipment()
+    {
+        if ($this->hasIsBuspakjeShipment()) {
+            return $this->getIsBuspakjeShipment();
+        }
+
+        $isBuspakje = $this->getIsBuspakje();
+
+        $this->setIsBuspakjeShipment($isBuspakje);
+        return $isBuspakje;
     }
 
     /**
@@ -2968,10 +3018,37 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _getIsBuspakje()
     {
+        if (!$this->isDutchShipment()
+            || $this->isPakketautomaatShipment()
+            || $this->isPakjeGemakShipment()
+            || $this->isCod()
+        ) {
+            return false;
+        }
+
+        if (!$this->getHelper()->canUseBuspakje()) {
+            return false;
+        }
+
         $shipmentItems = $this->getShipment()
                               ->getItemsCollection();
 
-        if (!$this->getHelper()->fitsAsBuspakje($shipmentItems)) {
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Item $item
+         */
+        $orderItems = array();
+        foreach ($shipmentItems as $item) {
+            $orderItem = $item->getOrderItem();
+
+            if ($orderItem->getChildrenItems()) {
+                $orderItems = array_merge($orderItems, $orderItem->getChildrenItems());
+                continue;
+            }
+
+            $orderItems[] = $orderItem;
+        }
+
+        if (!$this->getHelper()->fitsAsBuspakje($orderItems)) {
             return false;
         }
 
@@ -2991,7 +3068,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     protected function _getProductCode()
     {
         /**
-         * Product options were set manually by the user
+         * Product options were set manually by the user.
          */
         if (Mage::registry('postnl_product_option')) {
             $productCode = Mage::registry('postnl_product_option');
@@ -3001,12 +3078,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             }
 
             $this->_checkProductCodeAllowed($productCode);
-
             return $productCode;
         }
 
         /**
-         * Use default options
+         * Use default options.
          */
         $productCode = $this->getDefaultProductCode();
 
@@ -3022,7 +3098,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     protected function _extractProductcodeForType($codes)
     {
-        $shipmentType = $this->getShipmentType();
+        $shipmentType = $this->getShipmentType(false);
 
         /**
          * If this is a domestic shipment and the shipment has been marked as 'buspakje', update the shipment type. If
@@ -3436,18 +3512,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (!$this->_getData('order_id')) {
             $this->getOrderId();
         }
-
-        /**
-         * If this shipment is new, set it's created at date to the current timestamp.
-         */
-        if (!$this->getId()) {
-            $this->setCreatedAt($currentTimestamp);
-        }
-
-        /**
-         * Always update the updated at timestamp to the current timestamp.
-         */
-        $this->setUpdatedAt($currentTimestamp);
 
         return parent::_beforeSave();
     }

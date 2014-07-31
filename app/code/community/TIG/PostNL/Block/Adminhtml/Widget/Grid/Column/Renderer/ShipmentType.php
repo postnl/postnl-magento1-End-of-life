@@ -40,9 +40,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
 {
     /**
-     * Additional column names used
+     * Additional column names used.
      */
-    const SHIPPING_METHOD_COLUMN      = 'shipping_method';
+    const SHIPPING_METHOD_COLUMN = 'shipping_method';
+    const PRODUCT_CODE_COLUMN    = 'product_code';
 
     /**
      * Renders the column value as a shipment type value (Domestic, EPS or GlobalPack)
@@ -125,6 +126,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
                 break;
             case 'buspakje':
                 $label = $helper->__('Letter Box Parcel');
+
+                if ($row->getData(self::PRODUCT_CODE_COLUMN) == '2928') {
+                    $comment = $helper->__('Extra');
+                }
                 break;
         }
 

@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_DeliveryOptions_System_Config_Source_CutOffTime
+class TIG_PostNL_Model_Core_System_Config_Source_CutOffTime
 {
     /**
      * Gets an option array for possible cut-off times.
