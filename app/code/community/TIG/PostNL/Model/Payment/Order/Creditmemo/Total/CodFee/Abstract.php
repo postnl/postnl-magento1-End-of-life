@@ -155,10 +155,10 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
     /**
      * Get the fee tax based on the shipping address and tax rate.
      *
-     * @param Mage_Sales_Model_Quote_Address $address
-     * @param float                          $taxRate
-     * @param float|null                     $fee
-     * @param boolean                        $isInclTax
+     * @param Mage_Customer_Model_Address_Abstract $address
+     * @param float                                $taxRate
+     * @param float|null                           $fee
+     * @param boolean                              $isInclTax
      *
      * @return float
      */
@@ -183,10 +183,10 @@ abstract class TIG_PostNL_Model_Payment_Order_Creditmemo_Total_CodFee_Abstract
     /**
      * Get the base fee tax based on the shipping address and tax rate.
      *
-     * @param Mage_Sales_Model_Quote_Address $address
-     * @param float                          $taxRate
-     * @param float|null                     $fee
-     * @param boolean                        $isInclTax
+     * @param Mage_Customer_Model_Address_Abstract $address
+     * @param float                                $taxRate
+     * @param float|null                           $fee
+     * @param boolean                              $isInclTax
      *
      * @return float
      */

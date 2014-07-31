@@ -78,9 +78,9 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_CodFee extends Mage_Sales_Model_O
              * Get the amount excl. tax and format it.
              */
             $amount = $this->getAmount();
-            $amount = $this->getOrder()->formatPriceTxt($amount);
+            $formattedAmount = $this->getOrder()->formatPriceTxt($amount);
             if ($this->getAmountPrefix()) {
-                $amount = $this->getAmountPrefix() . $amount;
+                $formattedAmount = $this->getAmountPrefix() . $formattedAmount;
             }
 
             /**
@@ -96,7 +96,7 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_CodFee extends Mage_Sales_Model_O
              * Add the total amount.
              */
             $totals[] = array(
-                'amount'    => $amount,
+                'amount'    => $formattedAmount,
                 'label'     => $label,
                 'font_size' => $fontSize
             );
@@ -110,9 +110,9 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_CodFee extends Mage_Sales_Model_O
              * Get the amount incl. tax and format it.
              */
             $amount = $this->getAmount() + $this->getSource()->getPostnlCodFeeTax();
-            $amount = $this->getOrder()->formatPriceTxt($amount);
+            $formattedAmount = $this->getOrder()->formatPriceTxt($amount);
             if ($this->getAmountPrefix()) {
-                $amount = $this->getAmountPrefix() . $amount;
+                $formattedAmount = $this->getAmountPrefix() . $formattedAmount;
             }
 
             /**
@@ -128,7 +128,7 @@ class TIG_PostNL_Model_Payment_Order_Pdf_Total_CodFee extends Mage_Sales_Model_O
              * Add the total amount.
              */
             $totals[] = array(
-                'amount'    => $amount,
+                'amount'    => $formattedAmount,
                 'label'     => $label,
                 'font_size' => $fontSize
             );

@@ -355,6 +355,8 @@ PostnlDeliveryOptions.prototype = {
 
     setPaPhoneCheckPassed : function(passed) {
         this.paPhoneCheckPassed = passed;
+
+        return this;
     },
 
     getDeliveryOptionsMap : function() {
