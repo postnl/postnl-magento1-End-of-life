@@ -47,17 +47,30 @@ class TIG_PostNL_Model_Payment_Order_Invoice_Total_CodFee extends Mage_Sales_Mod
     {
         $order = $invoice->getOrder();
 
+        /**
+         * The COD fee is always added to the first invoice, so if this order already has invoices, we don't have to add
+         * anything.
+         */
         if ($order->hasInvoices()) {
             return $this;
         }
 
+        /**
+         * Get the COD fee amounts.
+         */
         $fee     = $order->getPostnlCodFee();
         $baseFee = $order->getBasePostnlCodFee();
 
+        /**
+         * If no COD fee is set, there is nothing to add/
+         */
         if ($fee < 0.01 || $baseFee < 0.01) {
             return $this;
         }
 
+        /**
+         * Add the COD fee amounts to the invoice and update the amounts for the order.
+         */
         $grandTotal = $invoice->getGrandTotal();
         $baseGrandTotal = $invoice->getBaseGrandTotal();
 
