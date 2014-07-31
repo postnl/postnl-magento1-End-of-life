@@ -944,7 +944,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
             'postnl_packing_slip_item_column_1' =>
                 array (
                     'field'    => 'sku',
-                    'title'    => 'Sku',
+                    'title'    => 'SKU',
                     'width'    => '90',
                     'position' => '20',
                 ),
@@ -971,9 +971,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
                 ),
             'postnl_packing_slip_item_column_5' =>
                 array (
-                    'field' => 'subtotal',
-                    'title' => 'Subtotal',
-                    'width' => '40',
+                    'field'    => 'subtotal',
+                    'title'    => 'Subtotal',
+                    'width'    => '40',
                     'position' => '60',
                 ),
         );

@@ -47,4 +47,5 @@ $installer->generateShippingStatusCronExpr()
           ->expandSupportTab()
           ->installTestPassword()
           ->installWebshopId()
+          ->installPackingSlipItemColumns()
           ->clearConfigCache();

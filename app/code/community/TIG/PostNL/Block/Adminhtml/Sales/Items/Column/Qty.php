@@ -41,7 +41,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty extends Mage_Adminhtml_B
     /**
      * The original template used by Magento.
      */
-    const DEFAULT_TEMPLATE = 'adminhtml/sales_items_renderer_default';
+    const DEFAULT_TEMPLATE = 'sales/order/shipment/create/items/renderer/default.phtml';
 
     /**
      * Gets the maximum qty allowed for buspakje.
