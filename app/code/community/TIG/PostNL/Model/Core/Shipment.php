@@ -115,6 +115,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakje(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setShipmentIncrementId(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakjeShipment(bool $value)
+ * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -135,6 +136,7 @@
  * @method bool                           hasMainBarcode()
  * @method bool                           hasShipmentIncrementId()
  * @method bool                           hasIsBuspakjeShipment()
+ * @method bool                           hasDefaultProductCode()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -870,10 +872,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets the default product code for this shipment from the module's configuration.
      *
+     * @throws TIG_PostNL_Exception
+     *
      * @return string
      */
     public function getDefaultProductCode()
     {
+        if ($this->hasDefaultProductCode()) {
+            return $this->_getData('default_product_code');
+        }
+
         $storeId = $this->getStoreId();
 
         $shipmentType = $this->getShipmentType();
@@ -950,8 +958,50 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * standard default option
          */
         $productCode = Mage::getStoreConfig($xpath, $storeId);
+
+        /**
+         * If no default product code was found, try to use another product code that is available.
+         */
+        if (!$productCode) {
+            $availableProductCodes = $this->getAllowedProductCodes();
+
+            /**
+             * If no other product codes are available for this shipment type, throw an error.
+             */
+            if (empty($availableProductCodes)) {
+                throw new TIG_PostNL_Exception(
+                    $this->getHelper()->__(
+                        "No default product options are available for this shipment. Please check that you have " .
+                        "correctly configured the available product options in the PostNL extension's configuration."
+                    ),
+                    'POSTNL-0188'
+                );
+            }
+
+            $productCode = current($availableProductCodes);
+
+            /**
+             * Add a warning message indicating that another product code was used and that the merchant should probably
+             * check their configuration.
+             *
+             * @var TIG_PostNL_Helper_Data $helper
+             */
+            $helper = $this->getHelper();
+            $helper->addSessionMessage(
+                'adminhtml',
+                'POSTNL-0189',
+                'warning',
+                $helper->__(
+                    "The default product option was not available for this shipment, so another product option was " .
+                    "chosen. Please check if the default product options are configured correctly in the PostNL " .
+                    "extension's configuration."
+                )
+            );
+        }
+
         $this->_checkProductCodeAllowed($productCode);
 
+        $this->setDefaultProductCode($productCode);
         return $productCode;
     }
 
