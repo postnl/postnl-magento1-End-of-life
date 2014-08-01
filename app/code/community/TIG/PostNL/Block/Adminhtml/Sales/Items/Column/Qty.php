@@ -44,6 +44,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty extends Mage_Adminhtml_B
     const DEFAULT_TEMPLATE = 'sales/items/column/qty.phtml';
 
     /**
+     * Attribute code used to determine how many of this product would fit in a letter box parcel.
+     */
+    const MAX_QTY_ATTRIBUTE_CODE = 'postnl_max_qty_for_buspakje';
+
+    /**
      * Gets the maximum qty allowed for buspakje.
      *
      * @return int|string
@@ -54,13 +59,37 @@ class TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty extends Mage_Adminhtml_B
          * @var Mage_Sales_Model_Order_Item $item
          */
         $item = $this->getItem();
-        $maxQty = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
-            $item->getProductId(),
-            'postnl_max_qty_for_buspakje',
-            $item->getStoreId()
-        );
 
-        return $maxQty;
+        $childrenItems = $item->getChildrenItems();
+        if (!$childrenItems) {
+            $maxQty = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+                $item->getProductId(),
+                self::MAX_QTY_ATTRIBUTE_CODE,
+                $item->getStoreId()
+            );
+
+            return (int) $maxQty;
+        }
+
+        $maxQty = false;
+        /**
+         * @var Mage_Sales_Model_Order_Item $childItem
+         */
+        foreach ($childrenItems as $childItem) {
+            $maxChildQty = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+                $childItem->getProductId(),
+                self::MAX_QTY_ATTRIBUTE_CODE,
+                $childItem->getStoreId()
+            );
+
+            if ($maxQty ===  false
+                || $maxChildQty < $maxQty
+            ) {
+                $maxQty = $maxChildQty;
+            }
+        }
+
+        return (int) $maxQty;
     }
 
     /**
