@@ -124,7 +124,13 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
 
         $shipment = $this->getShipment();
 
-        $productOption = Mage::helper('postnl/cif')->getDefaultProductOptionForShipment($shipment);
+        try {
+            $productOption = Mage::helper('postnl/cif')->getDefaultProductOptionForShipment($shipment);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
+            $productOption = '';
+        }
 
         $this->setDefaultProductOption($productOption);
         return $productOption;
