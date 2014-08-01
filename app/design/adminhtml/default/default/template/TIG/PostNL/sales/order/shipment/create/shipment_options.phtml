@@ -53,7 +53,7 @@
 <?php $_isPakjeGemak         = (bool) $_cifHelper->isPakjeGemakShipment($_shipment);?>
 <?php $_parcelCount          = $this->getParcelCount(); ?>
 <div id="postnl_product_options">
-    <?php if($_isDutchShipment && !$_isCod && !$_isPakjeGemak): ?>
+    <?php if(Mage::helper('postnl')->canUseBuspakje() && $_isDutchShipment && !$_isCod && !$_isPakjeGemak): ?>
         <?php $_fitsAsBuspakje = $this->getFitsAsBuspakje(); ?>
         <?php $_buspakjeCalcMode = $this->getBuspakjeCalcMode(); ?>
         <div id="postnl_is_buspakje_container" <?php if ($_buspakjeCalcMode == 'automatic'): ?>style="display:none;"<?php endif; ?>>
@@ -199,7 +199,6 @@
 
         <?php if (isset($_buspakjeCalcMode) && $_buspakjeCalcMode == 'automatic'): ?>
             var showBuspakjeToggle = function() {
-                alert('test');
                 $('postnl_is_buspakje_container').show();
 
                 $$('#ship_items_container table input').invoke('stopObserving','change', showBuspakjeToggle);
