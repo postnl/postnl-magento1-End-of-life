@@ -234,7 +234,7 @@ class TIG_PostNL_Model_Core_Service
             if (!$createDummyInvoice && !$item->getOrderItem()->canInvoice()) {
                 throw new TIG_PostNL_Exception(
                     Mage::helper('postnl')->__('Order item #%s could not be invoiced.', $item->getOrderItemId()),
-                    'POSTNL-0162'
+                    'POSTNL-0163'
                 );
             }
 

@@ -225,6 +225,7 @@ div.pac-container { z-index:5000; width:380px !important; }
 #palocation .location-name.overflow-protect,
 .pa-location .location-name.overflow-protect { max-width:251px !important; }
 body.noscroll { overflow:hidden; }
+.no-display { display:none !important; }
 
 /* Clears */
 .location-list:after,
