@@ -805,7 +805,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $item->getStoreId()
             );
 
-            if ($poLocationsAllowed === '0') {
+            if (!is_null($poLocationsAllowed) && !$poLocationsAllowed) {
                 return false;
             }
         }
@@ -869,8 +869,16 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return boolean
      */
-    public function canUsePakketAutomaat()
+    public function canUsePakketAutomaat($checkQuote = true)
     {
+        if ($checkQuote) {
+            $canUseForQuote = $this->canUsePakketAutomaatForQuote();
+
+            if (!$canUseForQuote) {
+                return false;
+            }
+        }
+
         $cache = $this->getCache();
 
         if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakketAutomaat()) {
@@ -887,7 +895,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Checks if 'pakket automaat' is available.
+     * Checks if 'pakketautomaat' is available.
      *
      * @return boolean
      */
@@ -909,6 +917,37 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return $allowed;
+    }
+
+    /**
+     * Check if 'pakketautomaat' is allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUsePakketAutomaatForQuote()
+    {
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return true;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Quote_item $item
+         */
+        $quoteItems = $quote->getAllItems();
+        foreach ($quoteItems as $item) {
+            $pakketautomaatAllowed = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_allow_pakketautomaat',
+                $item->getStoreId()
+            );
+
+            if (!is_null($pakketautomaatAllowed) && !$pakketautomaatAllowed) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -968,7 +1007,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $item->getStoreId()
             );
 
-            if ($timeframesAllowed === '0') {
+            if (!is_null($timeframesAllowed) && !$timeframesAllowed) {
                 return false;
             }
         }
@@ -977,7 +1016,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Checks if evening timeframes are available.
+     * Checks if evening time frames are available.
      *
      * @return boolean
      */

@@ -255,6 +255,7 @@
                         <postnl_max_qty_for_buspakje/>
                         <postnl_allow_po_locations/>
                         <postnl_allow_timeframes/>
+                        <postnl_allow_pakketautomaat/>
                     </product_attributes>
                 </item>
                 <totals>

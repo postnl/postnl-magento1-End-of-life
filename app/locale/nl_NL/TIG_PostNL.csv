@@ -9,7 +9,7 @@ TIG_PostNL::Title,Titel
 TIG_PostNL::Type,Type
 TIG_PostNL::Ship to Applicable Countries,Verzend naar beschikbare landen
 TIG_PostNL::Ship to Specific Countries,Verzend naar specifieke landen
-TIG_PostNL::Show Method if Not Applicable,Toon methode indien niet beschikbaar
+TIG_PostNL::mogelij,Toon methode indien niet beschikbaar
 TIG_PostNL::Displayed Error Message,Getoonde foutmelding indien niet beschikbaar
 TIG_PostNL::Condition,Voorwaarde
 TIG_PostNL::Include Virtual Products in Price Calculation,Neem de virtuele producten mee in de prijsberekening
@@ -46,7 +46,7 @@ TIG_PostNL::Contact Email,Contact e-mailadres
 TIG_PostNL::Confirming & Label Printing Settings,Voormelden & Label printen Instellingen
 TIG_PostNL::Mode,Modus
 TIG_PostNL::Label size,Label formaat
-TIG_PostNL::This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4.,Deze instelling geldt alleen voor meerdere Nederlandse en EPS labels. GlobalPack labels wordt altijd in A4 geprint.
+TIG_PostNL::This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4.,Deze instelling geldt voor Nederlandse en Europese labels. Labels voor buiten de EU worden altijd op A4 formaat geprint.
 TIG_PostNL::Maximum weight per parcel,Maximum gewicht per pakje
 "TIG_PostNL::Determine the maximum weight of each parcel. If a shipment's total weight exceeds this, the shipment will be spread out over multiple parcels.","Bepaal het maximale gewicht per pakje. Als het totaalgewicht teveel is, wordt de zending gesplitst in meerdere pakketjes."
 TIG_PostNL::Weight unit,Gewichtseenheid
@@ -1058,10 +1058,17 @@ PostNL Allow Delivery Options,PostNL sta bezorgopties toe
 PostNL Shipping Duration,PostNL overkomstduur
 A shipment will only be considered a letter box parcel if the purchased qty of this product does not exceed this amount.,Een zending zal enkel als buspakje verwerkt worden indien het bestelde aantal van dir product niet deze waarde overschreidt.
 "TIG_PostNL::PostNL - Create shipments, print labels and confirm","PostNL - Maak zendingen aan, print labels en meld voor"
-"TIG_PostNL::You have chosen a value for the '%s' field that is not supported. Please select a option that you have selected in the '%s' field, otherwise you may not be able to send shipments of this type.",U heeft een waarde gekozen voor het '%s' veld dat niet ondersteunt wordt. Selecteer s.v.p. een optie die geslecteerd is in het '%s' veld. Anders is het niet mogelij om zendingen te versturen van dit type.
+"TIG_PostNL::You have chosen a value for the '%s' field that is not supported. Please select a option that you have selected in the '%s' field, otherwise you may not be able to send shipments of this type.",U heeft een waarde gekozen voor het '%s' veld dat niet ondersteunt wordt. Selecteer s.v.p. een optie die geslecteerd is in het '%s' veld. Anders is het niet mogelijk om zendingen te versturen van dit type.
 TIG_PostNL::Use configuration value,Gebruik configuratie waarde
 TIG_PostNL::Item columns,Item kolommen
 TIG_PostNL::You can specify which item columns you would like to show on your packing slip pdf. We recommend you experiment with these settings before using them in a production environment. It may be diffcult to predict the outcome of these settings without trying them out by printing a PostNL packing slip.,U kunt aangeven welke item kolommen u wilt tonen op de pakbon. Wij raden aan dat u met deze instellingen experimenteerd alvorens ze te gebruiken in een productie omgeving. Het kan lastig zijn om het resultaat van deze instellingen te voorspellen zonder ze eerst uit te proberen door een pakbon te printen.
 TIG_PostNL::Width,Breedte
 TIG_PostNL::Position,Positie
 TIG_PostNL::Add column,Voeg kolom toe
+TIG_PostNL::No default product options are available for this shipment. Please check that you have correctly configured the available product options in the PostNL extension's configuration.,Er is geen default product optie beschikbaar voor deze zending. Controleer s.v.p. of u de beschikbare product opties correct heeft geconfigureerd in de configuratie van de PostNL extensie.
+"TIG_PostNL::The default product option was not available for this shipment, so another product option was chosen. Please check if the default product options are configured correctly in the PostNL extension's configuration.",De default product optie was niet beschikbaar voor deze zending. Er is een andere product optie gebruikt die wel beschikbaar is. Controleer s.v.p. of de beschikbare product opties correct geconfigureerd zijn in de configuratie van de PostNL extensie.
+TIG_PostNL::PostNL shipping methods,PostNL verzendmethodes
+TIG_PostNL::Please select the shipping methods that will be considered to be 'PostNL' by this extension. Orders placed using one of these shipping methods may be processed using the PostNL extension.,"Selecteer alle verzendmethodes die door de extensie beschouwd zullen worden als zijnde 'PostNL'. Bestellingen die met deze verzendmethodes geplaatst worden, zullen verwerkt worden door de PostNL extensie."
+PostNL Delivery Options - Allow Parcel Dispensers,PostNL bezorgopties - sta pakketautomaten toe
+PostNL Delivery Options - Allow Time Frames,PostNL bezorgopties - sta tijdvensters toe
+PostNL Delivery Options - Allow Post Office Locations,PostNL bezorgopties - sta postkantoor locaties toe
