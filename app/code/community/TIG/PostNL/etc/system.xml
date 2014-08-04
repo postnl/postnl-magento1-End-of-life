@@ -3579,8 +3579,8 @@
                             <validate>validate-select</validate>
                         </show_error_details_in_frontend>
                         <postnl_shipping_methods translate="label comment" module="postnl">
-                            <label>PostNL Shipping Methods</label>
-                            <comment>Please select the shipping methods that will be considered to be 'PostNL' by this extension. Orders placed using one of these shipping methods may be processed using the PostNl extension.</comment>
+                            <label>PostNL shipping methods</label>
+                            <comment>Please select the shipping methods that will be considered to be 'PostNL' by this extension. Orders placed using one of these shipping methods may be processed using the PostNL extension.</comment>
                             <frontend_type>multiselect</frontend_type>
                             <can_be_empty>0</can_be_empty>
                             <source_model>postnl_core/system_config_source_shippingMethods</source_model>

@@ -738,8 +738,16 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return boolean
      */
-    public function canUsePakjeGemak($storeId = false)
+    public function canUsePakjeGemak($storeId = false, $checkQuote = true)
     {
+        if ($checkQuote) {
+            $canUseForQuote = $this->canUsePakjeGemakForQuote();
+
+            if (!$canUseForQuote) {
+                return false;
+            }
+        }
+
         $cache = $this->getCache();
 
         if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakjeGemak()) {
@@ -772,6 +780,37 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $allowed = parent::canUsePakjeGemak($storeId);
 
         return $allowed;
+    }
+
+    /**
+     * Check if PakjeGemak is allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUsePakjeGemakForQuote()
+    {
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return true;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Quote_item $item
+         */
+        $quoteItems = $quote->getAllItems();
+        foreach ($quoteItems as $item) {
+            $poLocationsAllowed = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_allow_po_locations',
+                $item->getStoreId()
+            );
+
+            if (!is_null($poLocationsAllowed) && !$poLocationsAllowed) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -830,8 +869,16 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return boolean
      */
-    public function canUsePakketAutomaat()
+    public function canUsePakketAutomaat($checkQuote = true)
     {
+        if ($checkQuote) {
+            $canUseForQuote = $this->canUsePakketAutomaatForQuote();
+
+            if (!$canUseForQuote) {
+                return false;
+            }
+        }
+
         $cache = $this->getCache();
 
         if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakketAutomaat()) {
@@ -848,7 +895,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Checks if 'pakket automaat' is available.
+     * Checks if 'pakketautomaat' is available.
      *
      * @return boolean
      */
@@ -873,12 +920,53 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
+     * Check if 'pakketautomaat' is allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUsePakketAutomaatForQuote()
+    {
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return true;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Quote_item $item
+         */
+        $quoteItems = $quote->getAllItems();
+        foreach ($quoteItems as $item) {
+            $pakketautomaatAllowed = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_allow_pakketautomaat',
+                $item->getStoreId()
+            );
+
+            if (!is_null($pakketautomaatAllowed) && !$pakketautomaatAllowed) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Checks if timeframes are available.
+     *
+     * @param boolean $checkQuote
      *
      * @return boolean
      */
-    public function canUseTimeframes()
+    public function canUseTimeframes($checkQuote = true)
     {
+        if ($checkQuote) {
+            $canUseForQuote = $this->canUseTimeframesForQuote();
+
+            if (!$canUseForQuote) {
+                return false;
+            }
+        }
+
         $cache = $this->getCache();
 
         if ($cache && $cache->hasPostnlDeliveryOptionsCanUseTimeframes()) {
@@ -897,7 +985,38 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Checks if evening timeframes are available.
+     * Check if time frames are allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUseTimeframesForQuote()
+    {
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return true;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Quote_item $item
+         */
+        $quoteItems = $quote->getAllItems();
+        foreach ($quoteItems as $item) {
+            $timeframesAllowed = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_allow_timeframes',
+                $item->getStoreId()
+            );
+
+            if (!is_null($timeframesAllowed) && !$timeframesAllowed) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if evening time frames are available.
      *
      * @return boolean
      */

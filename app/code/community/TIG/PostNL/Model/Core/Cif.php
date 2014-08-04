@@ -353,7 +353,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * the CIF service is up and running. This is not meant to be used to generate an actual barcode for a shipment.
      * Use the generateBarcode method for that.
      *
-     * The generateBarcode CIF call was chosena s it is the simplest CIF function available.
+     * The generateBarcode CIF call was chosen as it is the simplest CIF function available.
      *
      * @param array $data Array containing all data required for the request.
      *
@@ -619,13 +619,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @return array
      *
      */
-    public function generateLabels(
-        TIG_PostnL_Model_Core_Shipment $postnlShipment,
-        $barcode,
-        $mainBarcode = false,
-        $shipmentNumber = false,
-        $printerType = 'GraphicFile|PDF'
-    ) {
+    public function generateLabels(TIG_PostnL_Model_Core_Shipment $postnlShipment, $barcode, $mainBarcode = false,
+                                   $shipmentNumber = false, $printerType = 'GraphicFile|PDF')
+    {
         $shipment = $postnlShipment->getShipment();
 
         $availablePrinterTypes = $this->_printerTypes;
@@ -816,10 +812,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                     $barcode, $mainBarcode = false, $shipmentNumber = false)
     {
         $shipment        = $postnlShipment->getShipment();
+        $shippingAddress = $postnlShipment->getShippingAddress();
         $order           = $shipment->getOrder();
-        $shippingAddress = $shipment->getShippingAddress();
 
-        $parcelCount = $postnlShipment->getParcelCount();
+        $parcelCount    = $postnlShipment->getParcelCount();
         $shipmentWeight = $postnlShipment->getTotalWeight(true, true);
 
         /**
@@ -1230,8 +1226,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @return array
      */
-    protected function _getContact($address, TIG_PostNL_Model_Core_Shipment $postnlShipment,
-                                   Mage_Sales_Model_Order $order)
+    protected function _getContact($address, $postnlShipment, $order)
     {
         $smsNr = $this->_getMobilePhoneNumber($postnlShipment);
 

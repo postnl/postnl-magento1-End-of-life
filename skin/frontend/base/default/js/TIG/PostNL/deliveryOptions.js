@@ -591,7 +591,16 @@ PostnlDeliveryOptions.prototype = {
 
         this.deliveryOptionsMap = new PostnlDeliveryOptions.Map(this.getFullAddress(), this, this.debug);
 
-        this.getTimeframes(this.getPostcode(), this.getHousenumber(), this.getDeliveryDate());
+        if (this.isTimeframesAllowed()) {
+            this.getTimeframes(this.getPostcode(), this.getHousenumber(), this.getDeliveryDate());
+        } else {
+            if (this.debug) {
+                console.info('Showing default timeframe.');
+            }
+            this.showDefaultTimeframe()
+                .setParsedTimeframes(true)
+                .hideSpinner();
+        }
         this.getLocations(this.getPostcode(), this.getHousenumber(), this.getDeliveryDate());
 
         return this;
@@ -3866,7 +3875,12 @@ PostnlDeliveryOptions.Location = new Class.create({
         optionHtml += '<div class="bkg">';
         optionHtml += '<div class="bkg">';
         optionHtml += '<div class="content">';
-        optionHtml += '<span class="option-dd">';
+
+        var spanClass = 'option-dd';
+        if (!this.getDeliveryOptions().isTimeframesAllowed()) {
+            spanClass += ' no-display';
+        }
+        optionHtml += '<span class="' + spanClass + '">';
 
         /**
          * Only the first element will display the delivery date.
@@ -4571,7 +4585,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
     },
 
     /**
-     * Render this timeframe as a new html element.
+     * Render this time frame as a new html element.
      *
      * @param {string}  parent The parent element's ID to which we will attach this element.
      * @param {boolean} forceDate
@@ -4586,10 +4600,15 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         html += '<div class="bkg">';
         html += '<div class="bkg">';
         html += '<div class="content">';
-        html += '<span class="option-dd">';
+
+        var spanClass = 'option-dd';
+        if (!this.getDeliveryOptions().isTimeframesAllowed()) {
+            spanClass += ' no-display';
+        }
+        html += '<span class="' + spanClass + '">';
 
         /**
-         * Add the day of the week on which this timeframe is available.
+         * Add the day of the week on which this time frame is available.
          */
         html += this.getWeekdayHtml(forceDate);
 

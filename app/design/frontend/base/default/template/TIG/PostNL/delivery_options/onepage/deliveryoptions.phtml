@@ -49,7 +49,12 @@
 <?php $_housenumber             = $_streetData['housenumber']; ?>
 
 <?php $_canUsePakjeGemak        = $this->canUsePakjeGemak(); ?>
-<?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
+
+<?php $_canUsePakjeGemakExpress = false; ?>
+<?php if ($_canUsePakjeGemak): ?>
+    <?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
+<?php endif; ?>
+
 <?php $_canUsePakketAutomaat    = $this->canUsePakketAutomaat(); ?>
 
 <?php $_canAddLocation = true; ?>

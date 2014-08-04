@@ -253,6 +253,9 @@
                         <postnl_shipping_duration/>
                         <postnl_allow_delivery_options/>
                         <postnl_max_qty_for_buspakje/>
+                        <postnl_allow_po_locations/>
+                        <postnl_allow_timeframes/>
+                        <postnl_allow_pakketautomaat/>
                     </product_attributes>
                 </item>
                 <totals>
@@ -955,7 +958,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>dev</postnl>
+            <postnl>beta</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->

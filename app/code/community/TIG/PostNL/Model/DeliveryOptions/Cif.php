@@ -421,10 +421,10 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $helper = Mage::helper('postnl/deliveryOptions');
         if ($helper->canUsePakjeGemak()) {
             $deliveryOptions[] = self::PAKJEGEMAK_DELIVERY_OPTION;
-        }
 
-        if ($helper->canUsePakjeGemakExpress()) {
-            $deliveryOptions[] = self::PAKJEGEMAK_EXPRESS_DELIVERY_OPTION;
+            if ($helper->canUsePakjeGemakExpress()) {
+                $deliveryOptions[] = self::PAKJEGEMAK_EXPRESS_DELIVERY_OPTION;
+            }
         }
 
         if ($helper->canUsePakketAutomaat()) {

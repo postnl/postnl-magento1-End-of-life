@@ -550,17 +550,16 @@ $conn->addColumn(
  * PRODUCT ATTRIBUTES
  **********************************************************************************************************************/
 
-$entityType    = Mage_Catalog_Model_Product::ENTITY;
+$entityType = Mage_Catalog_Model_Product::ENTITY;
 
 $attributesToMove = array(
-    'postnl_allow_delivery_options',
     'postnl_shipping_duration',
 );
 
 $attributeSets = $installer->getAllAttributeSetIds($entityType);
 foreach ($attributesToMove as $attributeCode) {
     foreach ($attributeSets as $attributeSet) {
-        $installer->addAttributeGroup($entityType, $attributeSet, 'PostNL', 1000);
+        $installer->addAttributeGroup($entityType, $attributeSet, 'PostNL', 40);
 
         $attributeGroupId = $installer->getAttributeGroupId($entityType, $attributeSet, 'PostNL');
 
@@ -568,14 +567,168 @@ foreach ($attributesToMove as $attributeCode) {
     }
 }
 
+$applyTo = array(
+    Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+    Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
+    Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+    Mage_Catalog_Model_Product_Type::TYPE_BUNDLE,
+);
+
+if (!$installer->getAttribute('catalog_product', 'postnl_allow_delivery_options')) {
+    $installer->addAttribute(
+        'catalog_product',
+        'postnl_allow_delivery_options',
+        array(
+            'backend'                    => 'catalog/product_attribute_backend_boolean',
+            'group'                      => 'PostNL',
+            'sort_order'                 => 110,
+            'frontend'                   => '',
+            'class'                      => '',
+            'default'                    => '1',
+            'label'                      => 'PostNL Allow Delivery Options',
+            'input'                      => 'select',
+            'type'                       => 'int',
+            'source'                     => 'eav/entity_attribute_source_boolean',
+            'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+            'visible'                    => true,
+            'required'                   => false,
+            'searchable'                 => false,
+            'filterable'                 => false,
+            'filterable_in_search'       => false,
+            'unique'                     => false,
+            'comparable'                 => false,
+            'visible_on_front'           => false,
+            'visible_in_advanced_search' => false,
+            'is_html_allowed_on_front'   => false,
+            'used_in_product_listing'    => false,
+            'user_defined'               => false,
+            'is_configurable'            => false,
+            'used_for_sort_by'           => false,
+            'position'                   => 0,
+            'used_for_promo_rules'       => false,
+            'apply_to'                   => implode(',', $applyTo),
+        )
+    );
+}
+
+if (!$installer->getAttribute('catalog_product', 'postnl_allow_timeframes')) {
+    $installer->addAttribute(
+        'catalog_product',
+        'postnl_allow_timeframes',
+        array(
+            'backend'                    => 'catalog/product_attribute_backend_boolean',
+            'group'                      => 'PostNL',
+            'sort_order'                 => 120,
+            'frontend'                   => '',
+            'frontend_class'             => '',
+            'default'                    => '1',
+            'label'                      => 'PostNL Delivery Options - Allow Time Frames',
+            'input'                      => 'select',
+            'type'                       => 'int',
+            'source'                     => 'eav/entity_attribute_source_boolean',
+            'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+            'visible'                    => true,
+            'required'                   => false,
+            'searchable'                 => false,
+            'filterable'                 => false,
+            'filterable_in_search'       => false,
+            'unique'                     => false,
+            'comparable'                 => false,
+            'visible_on_front'           => false,
+            'visible_in_advanced_search' => false,
+            'is_html_allowed_on_front'   => false,
+            'used_in_product_listing'    => false,
+            'user_defined'               => false,
+            'apply_to'                   => implode(',', $applyTo),
+            'is_configurable'            => false,
+            'used_for_sort_by'           => false,
+            'position'                   => 0,
+            'used_for_promo_rules'       => false,
+        )
+    );
+}
+
+if (!$installer->getAttribute('catalog_product', 'postnl_allow_po_locations')) {
+    $installer->addAttribute(
+        'catalog_product',
+        'postnl_allow_po_locations',
+        array(
+            'backend'                    => 'catalog/product_attribute_backend_boolean',
+            'group'                      => 'PostNL',
+            'sort_order'                 => 130,
+            'frontend'                   => '',
+            'frontend_class'             => '',
+            'default'                    => '1',
+            'label'                      => 'PostNL Delivery Options - Allow Post Office Locations',
+            'input'                      => 'select',
+            'type'                       => 'int',
+            'source'                     => 'eav/entity_attribute_source_boolean',
+            'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+            'visible'                    => true,
+            'required'                   => false,
+            'searchable'                 => false,
+            'filterable'                 => false,
+            'filterable_in_search'       => false,
+            'unique'                     => false,
+            'comparable'                 => false,
+            'visible_on_front'           => false,
+            'visible_in_advanced_search' => false,
+            'is_html_allowed_on_front'   => false,
+            'used_in_product_listing'    => false,
+            'user_defined'               => false,
+            'apply_to'                   => implode(',', $applyTo),
+            'is_configurable'            => false,
+            'used_for_sort_by'           => false,
+            'position'                   => 0,
+            'used_for_promo_rules'       => false,
+        )
+    );
+}
+
+if (!$installer->getAttribute('catalog_product', 'postnl_allow_pakketautomaat')) {
+    $installer->addAttribute(
+        'catalog_product',
+        'postnl_allow_pakketautomaat',
+        array(
+            'backend'                    => 'catalog/product_attribute_backend_boolean',
+            'group'                      => 'PostNL',
+            'sort_order'                 => 140,
+            'frontend'                   => '',
+            'frontend_class'             => '',
+            'default'                    => '1',
+            'label'                      => 'PostNL Delivery Options - Allow Parcel Dispensers',
+            'input'                      => 'select',
+            'type'                       => 'int',
+            'source'                     => 'eav/entity_attribute_source_boolean',
+            'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+            'visible'                    => true,
+            'required'                   => false,
+            'searchable'                 => false,
+            'filterable'                 => false,
+            'filterable_in_search'       => false,
+            'unique'                     => false,
+            'comparable'                 => false,
+            'visible_on_front'           => false,
+            'visible_in_advanced_search' => false,
+            'is_html_allowed_on_front'   => false,
+            'used_in_product_listing'    => false,
+            'user_defined'               => false,
+            'apply_to'                   => implode(',', $applyTo),
+            'is_configurable'            => false,
+            'used_for_sort_by'           => false,
+            'position'                   => 0,
+            'used_for_promo_rules'       => false,
+        )
+    );
+}
+
 if (!$installer->getAttribute('catalog_product', 'postnl_max_qty_for_buspakje')) {
     $installer->addAttribute(
         'catalog_product',
         'postnl_max_qty_for_buspakje',
         array(
-            'backend'                    => 'catalog/product_attribute_backend_boolean',
             'group'                      => 'PostNL',
-            'sort_order'                 => 110,
+            'sort_order'                 => 150,
             'frontend'                   => '',
             'frontend_class'             => 'validate-digits',
             'default'                    => '0',
@@ -583,8 +736,8 @@ if (!$installer->getAttribute('catalog_product', 'postnl_max_qty_for_buspakje'))
             'note'                       => 'A shipment will only be considered a letter box parcel if the purchased ' .
                                             'qty of this product does not exceed this amount.',
             'input'                      => 'text',
-            'type'                       => 'int',
-            'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL,
+            'type'                       => 'varchar',
+            'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
             'visible'                    => true,
             'required'                   => false,
             'searchable'                 => false,
