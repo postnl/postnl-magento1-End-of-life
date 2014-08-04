@@ -699,6 +699,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * TIG_PostNL_Model_Core_Shipment::getDefaultProductCode() which is more precise.
      *
      * @return array
+     *
+     * @deprecated v1.3.0
      */
     public function getDefaultProductOptions()
     {

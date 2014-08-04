@@ -659,13 +659,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Determines whether an array of items would fit as a buspakje shipment.
      *
      * @param array|Mage_Sales_Model_Resource_Collection_Abstract $items
+     * @param boolean                                             $registerReason
      *
-     * @return bool
+     * @return boolean
      */
-    public function fitsAsBuspakje($items)
+    public function fitsAsBuspakje($items, $registerReason = false)
     {
         $totalQtyRatio = 0;
         $totalWeight = 0;
+
+        if ($registerReason) {
+            Mage::unregister('postnl_reason_not_buspakje');
+        }
 
         /**
          * @var Mage_Sales_Model_Order_Item|Mage_Sales_Model_Order_Shipment_Item $item
@@ -683,6 +688,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             } elseif ($item instanceof Mage_Sales_Model_Order_Shipment_Item) {
                 $qty = $item->getQty();
             } else {
+                if ($registerReason) {
+                    Mage::register('postnl_reason_not_buspakje', 'missing_qty');
+                }
                 return false;
             }
 
@@ -694,6 +702,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $product = Mage::getModel('catalog/product')->load($item->getProductId());
 
             if (!$product) {
+                if ($registerReason) {
+                    Mage::register('postnl_reason_not_buspakje', 'missing_product');
+                }
                 return false;
             }
 
@@ -718,6 +729,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $maxQty = $product->getDataUsingMethod('postnl_max_qty_for_buspakje');
 
             if (!is_numeric($maxQty) || $maxQty == 0) {
+                if ($registerReason) {
+                    Mage::register('postnl_reason_not_buspakje', 'invalid_max_qty');
+                }
                 return false;
             }
 
@@ -733,6 +747,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If the combined weight of all items is more than 2 kg, this shipment is not a buspakje.
          */
         if ($totalWeight > 2) {
+            if ($registerReason) {
+                Mage::register('postnl_reason_not_buspakje', 'weight');
+            }
             return false;
         }
 
@@ -740,6 +757,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If the combined qty ratios of the items is more than 1 this is not a buspakje.
          */
         if ($totalQtyRatio > 1) {
+            if ($registerReason) {
+                Mage::register('postnl_reason_not_buspakje', 'qty_ratio');
+            }
             return false;
         }
 

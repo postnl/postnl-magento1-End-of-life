@@ -116,4 +116,20 @@ $installer->setOrderId()
           ->installPackingSlipItemColumns()
           ->updateAttributeValues($simpleAttributesData, array(Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
           ->updateAttributeValues($attributesData, $productTypes)
+          ->moveConfigSetting(
+              'postnl/delivery_options/shipping_duration',
+              'postnl/cif_labels_and_confirming/shipping_duration'
+          )
+          ->moveConfigSetting(
+              'postnl/delivery_options/cutoff_time',
+              'postnl/cif_labels_and_confirming/cutoff_time'
+          )
+          ->moveConfigSetting(
+              'postnl/delivery_options/allow_sunday_sorting',
+              'postnl/cif_labels_and_confirming/allow_sunday_sorting'
+          )
+          ->moveConfigSetting(
+              'postnl/delivery_options/sunday_cutoff_time', 
+              'postnl/cif_labels_and_confirming/sunday_cutoff_time'
+          )
           ->clearConfigCache();
