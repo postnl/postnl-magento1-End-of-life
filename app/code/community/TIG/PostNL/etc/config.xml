@@ -720,7 +720,7 @@
                 <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
                 <custom_shipment_reference/>
                 <use_buspakje>1</use_buspakje> <!-- Use buspakje -->
-                <buspakje_calculation_mode>automatic</buspakje_calculation_mode> <!-- Automatically determine if a shipment is a buspakje shipment -->
+                <buspakje_calculation_mode>manual</buspakje_calculation_mode> <!-- Manually determine if a shipment is a buspakje shipment -->
                 <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
                 <cutoff_time>17:00:00</cutoff_time> <!-- Add an extra shipping day if customers order after 17:00 P.M. -->
                 <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
