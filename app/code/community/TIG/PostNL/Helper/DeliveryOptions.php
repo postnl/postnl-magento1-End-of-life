@@ -738,8 +738,16 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return boolean
      */
-    public function canUsePakjeGemak($storeId = false)
+    public function canUsePakjeGemak($storeId = false, $checkQuote = true)
     {
+        if ($checkQuote) {
+            $canUseForQuote = $this->canUsePakjeGemakForQuote();
+
+            if (!$canUseForQuote) {
+                return false;
+            }
+        }
+
         $cache = $this->getCache();
 
         if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakjeGemak()) {
@@ -772,6 +780,37 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $allowed = parent::canUsePakjeGemak($storeId);
 
         return $allowed;
+    }
+
+    /**
+     * Check if PakjeGemak is allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUsePakjeGemakForQuote()
+    {
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return true;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Quote_item $item
+         */
+        $quoteItems = $quote->getAllItems();
+        foreach ($quoteItems as $item) {
+            $poLocationsAllowed = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_allow_po_locations',
+                $item->getStoreId()
+            );
+
+            if ($poLocationsAllowed === '0') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -875,10 +914,20 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     /**
      * Checks if timeframes are available.
      *
+     * @param boolean $checkQuote
+     *
      * @return boolean
      */
-    public function canUseTimeframes()
+    public function canUseTimeframes($checkQuote = true)
     {
+        if ($checkQuote) {
+            $canUseForQuote = $this->canUseTimeframesForQuote();
+
+            if (!$canUseForQuote) {
+                return false;
+            }
+        }
+
         $cache = $this->getCache();
 
         if ($cache && $cache->hasPostnlDeliveryOptionsCanUseTimeframes()) {
@@ -894,6 +943,37 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                   ->saveCache();
         }
         return $allowed;
+    }
+
+    /**
+     * Check if time frames are allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUseTimeframesForQuote()
+    {
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return true;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Quote_item $item
+         */
+        $quoteItems = $quote->getAllItems();
+        foreach ($quoteItems as $item) {
+            $timeframesAllowed = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_allow_timeframes',
+                $item->getStoreId()
+            );
+
+            if ($timeframesAllowed === '0') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

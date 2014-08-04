@@ -79,8 +79,31 @@ foreach ($settingsToMove as $oldXpath => $newXpath) {
 }
 
 /**
+ * This attribute needs to be updated for simple products.
+ */
+$simpleAttributesData = array(
+    'postnl_max_qty_for_buspakje' => 0,
+);
+
+/**
+ * These attributes need to be updated for the product types specified below.
+ */
+$attributesData = array(
+    'postnl_allow_po_locations'   => 1,
+    'postnl_allow_timeframes'     => 1,
+);
+
+$productTypes = array(
+    Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+    Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
+    Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+    Mage_Catalog_Model_Product_Type::TYPE_BUNDLE,
+);
+
+/**
  * In this new version we need to fill the new 'order_id' and 'shipment_type' columns. We also need to add several new
- * ACL rules and add 2 new support product codes for 'buspakje' shipments.
+ * ACL rules and add 2 new support product codes for 'buspakje' shipments and update several attribute values for
+ * existing products.
  */
 $installer->setOrderId()
           ->setShipmentType()
@@ -89,4 +112,6 @@ $installer->setOrderId()
           ->addAclRules($newPostnLAclResources, $postnlRequiredResources)
           ->addSupportedProductCode(array('2828', '2928'))
           ->installPackingSlipItemColumns()
+          ->updateAttributeValues($simpleAttributesData, array(Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
+          ->updateAttributeValues($attributesData, $productTypes)
           ->clearConfigCache();

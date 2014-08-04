@@ -987,4 +987,33 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
 
         return $this;
     }
+
+    /**
+     * Updates attribute data for all existing products of specific types.
+     *
+     * @param array $attributesData
+     * @param array $productTypes
+     *
+     * @return $this
+     */
+    public function updateAttributeValues($attributesData, $productTypes)
+    {
+        if (!is_array($productTypes)) {
+            $productTypes = array($productTypes);
+        }
+
+        $productCollection = Mage::getResourceModel('catalog/product_collection')
+                                 ->addStoreFilter(Mage_Core_Model_App::ADMIN_STORE_ID)
+                                 ->addFieldToFilter(
+                                     'type_id',
+                                     array(
+                                         'in' => $productTypes
+                                     )
+                                 );
+
+        Mage::getSingleton('catalog/product_action')
+            ->updateAttributes($productCollection->getAllIds(), $attributesData, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $this;
+    }
 }

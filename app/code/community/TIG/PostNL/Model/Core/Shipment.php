@@ -116,6 +116,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setShipmentIncrementId(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakjeShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setLabels(array $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -265,6 +266,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * @var array
      */
     protected $_customBarcodes;
+
+    /**
+     * Flag to prevent this shipment from being saved.
+     *
+     * @var bool
+     */
+    protected $_preventSaving = false;
 
     /**
      * Initialize the shipment
@@ -684,6 +692,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getLabels()
     {
+        if ($this->hasLabels()) {
+            return $this->_getData('labels');
+        }
+
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
 
@@ -697,6 +709,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $labels = $labelCollection->getItems();
+
+        $this->setLabels($labels);
         return $labels;
     }
 
@@ -1267,6 +1281,16 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $isBuspakje;
     }
 
+    /**
+     * Getter for the '_preventSaving' class variable.
+     *
+     * @return bool
+     */
+    public function getPreventSaving()
+    {
+        return $this->_preventSaving;
+    }
+
     /*******************************************************************************************************************
      * SETTER METHODS
      ******************************************************************************************************************/
@@ -1467,6 +1491,20 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    /**
+     * Setter for the '_preventSaving' class variable.
+     *
+     * @param boolean $value
+     *
+     * @return $this
+     */
+    public function setPreventSaving($value)
+    {
+        $this->_preventSaving = (bool) $value;
+
+        return $this;
+    }
+
     /*******************************************************************************************************************
      * HAS- METHODS
      ******************************************************************************************************************/
@@ -1478,6 +1516,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function hasLabels()
     {
+        if ($this->_getData('labels')) {
+            return true;
+        }
+
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
 
@@ -2230,7 +2272,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         Mage::dispatchEvent('postnl_shipment_generatelabel_before', array('shipment' => $this));
 
-        $parcelCount = $this->getparcelCount();
+        $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
             $parcelCount = $this->_calculateParcelCount();
         }
@@ -2924,6 +2966,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                     ->setLabel(base64_encode($label->Content))
                     ->setLabelType($labelType);
 
+        $labels = $this->getLabels();
+        $labels[] = $postnlLabel;
+        $this->setLabels($labels);
+
         $this->_addLabelToSave($postnlLabel);
 
         return $this;
@@ -3564,5 +3610,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return parent::_beforeSave();
+    }
+
+    /**
+     * Check if saving this shipment is allowed before actually saving the object.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     */
+    public function save()
+    {
+        if ($this->getPreventSaving()) {
+            return $this;
+        }
+
+        return parent::save();
     }
 }
