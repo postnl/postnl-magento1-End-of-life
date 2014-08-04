@@ -692,7 +692,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function getLabels()
     {
-        if ($this->hasLabels()) {
+        if ($this->hasLabels(false)) {
             return $this->_getData('labels');
         }
 
@@ -1512,12 +1512,18 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Check if the shipment has any associated labels
      *
+     * @param boolean $checkCollection
+     *
      * @return boolean
      */
-    public function hasLabels()
+    public function hasLabels($checkCollection = true)
     {
         if ($this->_getData('labels')) {
             return true;
+        }
+
+        if (!$checkCollection) {
+            return false;
         }
 
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
@@ -1837,7 +1843,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var Mage_Sales_Model_Order_Payment $payment
          */
         $payment = Mage::getModel('sales/order_payment')
-                        ->load($this->getShipment()->getOrderId(), 'parent_id');
+                       ->load($this->getShipment()->getOrderId(), 'parent_id');
         $paymentMethod = $payment->getMethod();
 
         if (in_array($paymentMethod, $codPaymentMethods)) {

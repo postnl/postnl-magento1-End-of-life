@@ -1841,7 +1841,7 @@
                 <type>error</type>
             </POSTNL-0171>
             <POSTNL-0172>
-                <message>No log valid files were found.</message>
+                <message>No valid log files were found.</message>
                 <url/>
                 <type>error</type>
             </POSTNL-0172>

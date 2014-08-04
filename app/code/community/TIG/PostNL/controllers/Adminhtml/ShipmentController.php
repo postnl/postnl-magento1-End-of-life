@@ -1255,7 +1255,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                                 'Approaching memory limit for this operation. Please select fewer shipments and try ' .
                                 'again.'
                             ),
-                            'POSTNL-170'
+                            'POSTNL-0170'
                         );
                     }
 
