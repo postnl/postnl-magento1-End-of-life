@@ -43,7 +43,7 @@
 $installer = $this;
 
 /**
- * Several new ACL roles have been added.
+ * A new ACL role has been added for the config page.
  */
 $newConfigAclResources = array(
     'admin/system/config/postnl/download_logs',
@@ -54,6 +54,9 @@ $configRequiredResources = array(
     'admin/system/config/postnl',
 );
 
+/**
+ * A new ACl role has also been added for printing packing slips.
+ */
 $newPostnLAclResources = array(
     'admin/postnl/shipment/actions/print_label/print_packing_slips',
 );
@@ -63,20 +66,6 @@ $postnlRequiredResources = array(
     'admin/postnl/shipment/actions',
     'admin/postnl/shipment/actions/print_label',
 );
-
-/**
- * These settings have moved.
- */
-$settingsToMove = array(
-    'postnl/delivery_options/shipping_duration'    => 'postnl/cif_labels_and_confirming/shipping_duration',
-    'postnl/delivery_options/cutoff_time'          => 'postnl/cif_labels_and_confirming/cutoff_time',
-    'postnl/delivery_options/allow_sunday_sorting' => 'postnl/cif_labels_and_confirming/allow_sunday_sorting',
-    'postnl/delivery_options/sunday_cutoff_time'   => 'postnl/cif_labels_and_confirming/sunday_cutoff_time',
-);
-
-foreach ($settingsToMove as $oldXpath => $newXpath) {
-    $installer->moveConfigSetting($oldXpath, $newXpath, true);
-}
 
 /**
  * This attribute needs to be updated for simple products.
@@ -89,12 +78,16 @@ $simpleAttributesData = array(
  * These attributes need to be updated for the product types specified below.
  */
 $attributesData = array(
-    'postnl_allow_po_locations'     => 1,
+    'postnl_allow_pakje_gemak'      => 1,
+    'postnl_allow_delivery_days'    => 1,
     'postnl_allow_timeframes'       => 1,
     'postnl_allow_pakketautomaat'   => 1,
     'postnl_allow_delivery_options' => 1,
 );
 
+/**
+ * The attributes need to be updated for these product types.
+ */
 $productTypes = array(
     Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
     Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
@@ -105,7 +98,8 @@ $productTypes = array(
 /**
  * In this new version we need to fill the new 'order_id' and 'shipment_type' columns. We also need to add several new
  * ACL rules and add 2 new support product codes for 'buspakje' shipments and update several attribute values for
- * existing products.
+ * existing products. We've also moved several config settings, so we need to copy the previous settings there.
+ * Otherwise the existing configuration will be lost.
  */
 $installer->setOrderId()
           ->setShipmentType()
@@ -118,18 +112,22 @@ $installer->setOrderId()
           ->updateAttributeValues($attributesData, $productTypes)
           ->moveConfigSetting(
               'postnl/delivery_options/shipping_duration',
-              'postnl/cif_labels_and_confirming/shipping_duration'
+              'postnl/cif_labels_and_confirming/shipping_duration',
+              true
           )
           ->moveConfigSetting(
               'postnl/delivery_options/cutoff_time',
-              'postnl/cif_labels_and_confirming/cutoff_time'
+              'postnl/cif_labels_and_confirming/cutoff_time',
+              true
           )
           ->moveConfigSetting(
               'postnl/delivery_options/allow_sunday_sorting',
-              'postnl/cif_labels_and_confirming/allow_sunday_sorting'
+              'postnl/cif_labels_and_confirming/allow_sunday_sorting',
+              true
           )
           ->moveConfigSetting(
-              'postnl/delivery_options/sunday_cutoff_time', 
-              'postnl/cif_labels_and_confirming/sunday_cutoff_time'
+              'postnl/delivery_options/sunday_cutoff_time',
+              'postnl/cif_labels_and_confirming/sunday_cutoff_time',
+              true
           )
           ->clearConfigCache();

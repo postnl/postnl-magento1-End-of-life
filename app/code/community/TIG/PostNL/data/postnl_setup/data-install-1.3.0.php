@@ -51,7 +51,8 @@ $simpleAttributesData = array(
  * These attributes need to be updated for the product types specified below.
  */
 $attributesData = array(
-    'postnl_allow_po_locations'     => 1,
+    'postnl_allow_pakje_gemak'      => 1,
+    'postnl_allow_delivery_days'    => 1,
     'postnl_allow_timeframes'       => 1,
     'postnl_allow_pakketautomaat'   => 1,
     'postnl_allow_delivery_options' => 1,

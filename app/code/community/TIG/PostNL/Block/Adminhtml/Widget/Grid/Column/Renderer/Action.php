@@ -123,7 +123,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
         /**
          * If this is a PostNL action, but this shipment was not shipped using PosTNL, skip it
          */
-        if (array_key_exists('is_postnl', $action)
+        if (isset($action['is_postnl'])
             && $action['is_postnl']
             && !in_array($shippingMethod, $postnlShippingMethods)
         ) {
@@ -181,7 +181,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
          * If this shipment uses a custom barcode it does not need to be confirmed.
          */
         $customBarcodeProductCodes = $helper->getCustomBarcodes();
-        if (array_key_exists($productCode, $customBarcodeProductCodes)) {
+        if (isset($customBarcodeProductCodes[$productCode])) {
             $message = $helper->__('This shipment does not need to be confirmed.');
             $action = $this->_disableAction($action, $message);
 

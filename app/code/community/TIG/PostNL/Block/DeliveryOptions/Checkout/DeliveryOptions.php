@@ -411,7 +411,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
-     * Checks whether Pakket Automaat locations are allowed.
+     * Checks whether Pakketautomaat locations are allowed.
      *
      * @return boolean
      */
@@ -422,7 +422,18 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
-     * Checks whether timeframes are allowed.
+     * Checks whether delivery days are allowed.
+     *
+     * @return boolean
+     */
+    public function canUseDeliveryDays()
+    {
+        $canUseDeliveryDays = Mage::helper('postnl/deliveryOptions')->canUseDeliveryDays();
+        return $canUseDeliveryDays;
+    }
+
+    /**
+     * Checks whether time frames are allowed.
      *
      * @return boolean
      */
@@ -433,7 +444,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
-     * Checks whether evening timeframes are allowed.
+     * Checks whether evening time frames are allowed.
      *
      * @return boolean
      */

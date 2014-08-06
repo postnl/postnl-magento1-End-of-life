@@ -109,6 +109,16 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_WEIGHT_UNIT = 'postnl/cif_labels_and_confirming/weight_unit';
 
     /**
+     * Xpath to the buspakje calculation mode setting.
+     */
+    const XPATH_BUSPAKJE_CALC_MODE = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
+
+    /**
+     * Minimum PHP version required by this extension.
+     */
+    const MIN_PHP_VERSION = '5.3.0';
+
+    /**
      * Required configuration fields.
      *
      * @var array
@@ -656,6 +666,24 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Gets the currently configured buspakje calculation mode.
+     *
+     * @param null|int|string $storeId
+     *
+     * @return string
+     */
+    public function getBuspakjeCalculationMode($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $calculationMode = Mage::getStoreConfig(self::XPATH_BUSPAKJE_CALC_MODE, $storeId);
+
+        return $calculationMode;
+    }
+
+    /**
      * Determines whether an array of items would fit as a buspakje shipment.
      *
      * @param array|Mage_Sales_Model_Resource_Collection_Abstract $items
@@ -685,7 +713,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 } else {
                     $qty = $item->getQtyOrdered();
                 }
-            } elseif ($item instanceof Mage_Sales_Model_Order_Shipment_Item) {
+            } elseif ($item instanceof Mage_Sales_Model_Order_Shipment_Item
+                || $item instanceof Mage_Sales_Model_Quote_Item
+            ) {
                 $qty = $item->getQty();
             } else {
                 if ($registerReason) {
@@ -695,23 +725,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             }
 
             /**
-             * Get the item's product.
-             *
-             * @var Mage_Catalog_Model_Product $product
-             */
-            $product = Mage::getModel('catalog/product')->load($item->getProductId());
-
-            if (!$product) {
-                if ($registerReason) {
-                    Mage::register('postnl_reason_not_buspakje', 'missing_product');
-                }
-                return false;
-            }
-
-            /**
              * The max qty attribute is only available on simple products.
              */
-            if ($product->getTypeId() != Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
+            if ($item->getProductType() != Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
                 continue;
             }
 
@@ -726,9 +742,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             /**
              * Get how many of this product would fit in a buspakje package.
              */
-            $maxQty = $product->getDataUsingMethod('postnl_max_qty_for_buspakje');
+            $maxQty = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_max_qty_for_buspakje',
+                $item->getStoreId()
+            );
 
-            if (!is_numeric($maxQty) || $maxQty == 0) {
+            if (!is_numeric($maxQty) || !$maxQty) {
                 if ($registerReason) {
                     Mage::register('postnl_reason_not_buspakje', 'invalid_max_qty');
                 }
@@ -1015,7 +1035,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $cache = $this->getCache();
         }
 
-        if ($cache && $cache->hasPostnlCoreIsEnabled()) {
+        if ($cache && $cache->hasPostnlCorestatibled()) {
             return $cache->getPostnlCoreIsEnabled();
         }
 
@@ -1040,6 +1060,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     protected function _isEnabled($storeId, $forceTestMode, $ignoreCache)
     {
+        if (version_compare(phpversion(), self::MIN_PHP_VERSION, '<')) {
+            return false;
+        }
+
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
@@ -1492,6 +1516,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isLoggingEnabled()
     {
+        if (version_compare(phpversion(), self::MIN_PHP_VERSION, '<')) {
+            return false;
+        }
+
         $debugMode = $this->getDebugMode();
         if ($debugMode > 1) {
             return true;
@@ -1507,6 +1535,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isExceptionLoggingEnabled()
     {
+        if (version_compare(phpversion(), self::MIN_PHP_VERSION, '<')) {
+            return false;
+        }
+
         $debugMode = $this->getDebugMode();
         if ($debugMode > 0) {
             return true;

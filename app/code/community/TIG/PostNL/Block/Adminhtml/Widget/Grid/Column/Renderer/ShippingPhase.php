@@ -60,7 +60,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingPhase
 
         $labels = array();
         foreach ($values as $value) {
-            if (array_key_exists($value, $shippingPhases)) {
+            if (isset($shippingPhases[$value])) {
                 $labels[] = $helper->__($shippingPhases[$value]);
             }
         }
