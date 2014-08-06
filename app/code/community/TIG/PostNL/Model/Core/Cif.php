@@ -1526,7 +1526,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         $product = Mage::getModel('catalog/product')->load($shipmentItem->getOrderItem()->getProductId());
-        $hsTariff = $shipmentItem->getDataUsingMethod($hsTariffAttribute);
+        $hsTariff = $product->getDataUsingMethod($hsTariffAttribute);
 
         if (empty($hsTariff)) {
             $hsTariff = '000000';
@@ -1830,7 +1830,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Get the doorcode field from an address if enabled
+     * Get the door code field from an address if enabled
      *
      * @param Mage_Sales_Model_Order_Address $address
      *
@@ -1847,7 +1847,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         /**
-         * Attempt to get the doorcode through the magic getter instead
+         * Attempt to get the door code through the magic getter instead
          */
         /** @noinspection PhpUndefinedMethodInspection */
         $doorcode = $address->getDoorcode();

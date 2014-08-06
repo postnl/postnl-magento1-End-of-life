@@ -62,7 +62,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty extends Mage_Adminhtml_B
 
         $childrenItems = $item->getChildrenItems();
         if (!$childrenItems) {
-            $maxQty = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+            $maxQty = Mage::getResourceModel('postnl/catalog_product')->getAttributeRawValue(
                 $item->getProductId(),
                 self::MAX_QTY_ATTRIBUTE_CODE,
                 $item->getStoreId()
@@ -76,13 +76,13 @@ class TIG_PostNL_Block_Adminhtml_Sales_Items_Column_Qty extends Mage_Adminhtml_B
          * @var Mage_Sales_Model_Order_Item $childItem
          */
         foreach ($childrenItems as $childItem) {
-            $maxChildQty = Mage::getResourceModel('catalog/product')->getAttributeRawValue(
+            $maxChildQty = Mage::getResourceModel('postnl/catalog_product')->getAttributeRawValue(
                 $childItem->getProductId(),
                 self::MAX_QTY_ATTRIBUTE_CODE,
                 $childItem->getStoreId()
             );
 
-            if ($maxQty ===  false
+            if ($maxQty === false
                 || $maxChildQty < $maxQty
             ) {
                 $maxQty = $maxChildQty;

@@ -145,6 +145,7 @@ PostnlDeliveryOptions.prototype = {
             oscSaveButton          : 'close_options_popup_btn',
             oscOptionsPopup        : 'postnl_delivery_options',
             disableCufon           : false,
+            allowDeliveryDays      : true,
             allowTimeframes        : true,
             allowEveningTimeframes : false,
             allowPg                : true,
@@ -560,6 +561,15 @@ PostnlDeliveryOptions.prototype = {
     },
 
     /**
+     * Check if delivery days are allowed.
+     *
+     * @returns {boolean}
+     */
+    isDeliveryDaysAllowed : function() {
+        return this.getOptions().allowDeliveryDays !== false;
+    },
+
+    /**
      * Check if timeframes are allowed.
      *
      * @returns {boolean}
@@ -591,7 +601,7 @@ PostnlDeliveryOptions.prototype = {
 
         this.deliveryOptionsMap = new PostnlDeliveryOptions.Map(this.getFullAddress(), this, this.debug);
 
-        if (this.isTimeframesAllowed()) {
+        if (this.isDeliveryDaysAllowed()) {
             this.getTimeframes(this.getPostcode(), this.getHousenumber(), this.getDeliveryDate());
         } else {
             if (this.debug) {
@@ -725,7 +735,7 @@ PostnlDeliveryOptions.prototype = {
         var parsedTimeframes = [];
 
         for(var n = 0, o = 0, l = timeframes.length; n < l; n++) {
-            if (o >= 1 && this.isTimeframesAllowed() === false) {
+            if (o >= 1 && this.isDeliveryDaysAllowed() === false) {
                 break;
             }
 
@@ -3877,7 +3887,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         optionHtml += '<div class="content">';
 
         var spanClass = 'option-dd';
-        if (!this.getDeliveryOptions().isTimeframesAllowed()) {
+        if (!this.getDeliveryOptions().isDeliveryDaysAllowed()) {
             spanClass += ' no-display';
         }
         optionHtml += '<span class="' + spanClass + '">';
@@ -4602,7 +4612,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         html += '<div class="content">';
 
         var spanClass = 'option-dd';
-        if (!this.getDeliveryOptions().isTimeframesAllowed()) {
+        if (!this.getDeliveryOptions().isDeliveryDaysAllowed()) {
             spanClass += ' no-display';
         }
         html += '<span class="' + spanClass + '">';
@@ -4614,10 +4624,17 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
 
         html += '</span>';
         html += '<span class="option-radio"></span>';
+
+        var openingHours = '';
+        if (!this.getDeliveryOptions().isTimeframesAllowed()) {
+            openingHours += '09:00 - 18:00';
+        } else {
+            openingHours += this.getFrom().substring(0, 5)
+                          + ' - '
+                          + this.getTo().substring(0, 5);
+        }
         html += '<span class="option-time">'
-              + this.getFrom().substring(0, 5)
-              + ' - '
-              + this.getTo().substring(0, 5)
+              + openingHours
               + '</span>';
 
         /**

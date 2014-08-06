@@ -933,51 +933,51 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
      */
     public function installPackingSlipItemColumns()
     {
+        /**
+         * These are the default item columns that need to be added.
+         */
         $itemColumns = array (
-            'postnl_packing_slip_item_column_0' =>
-                array (
-                    'field'    => 'name',
-                    'title'    => 'Name',
-                    'width'    => '255',
-                    'position' => '10',
-                ),
-            'postnl_packing_slip_item_column_1' =>
-                array (
-                    'field'    => 'sku',
-                    'title'    => 'SKU',
-                    'width'    => '90',
-                    'position' => '20',
-                ),
-            'postnl_packing_slip_item_column_2' =>
-                array (
-                    'field'    => 'price',
-                    'title'    => 'Price',
-                    'width'    => '70',
-                    'position' => '30',
-                ),
-            'postnl_packing_slip_item_column_3' =>
-                array (
-                    'field'    => 'qty',
-                    'title'    => 'Qty',
-                    'width'    => '60',
-                    'position' => '40',
-                ),
-            'postnl_packing_slip_item_column_4' =>
-                array (
-                    'field'    => 'tax',
-                    'title'    => 'VAT',
-                    'width'    => '80',
-                    'position' => '50',
-                ),
-            'postnl_packing_slip_item_column_5' =>
-                array (
-                    'field'    => 'subtotal',
-                    'title'    => 'Subtotal',
-                    'width'    => '40',
-                    'position' => '60',
-                ),
+            'postnl_packing_slip_item_column_0' => array (
+                'field'    => 'name',
+                'title'    => 'Name',
+                'width'    => '255',
+                'position' => '10',
+            ),
+            'postnl_packing_slip_item_column_1' => array (
+                'field'    => 'sku',
+                'title'    => 'SKU',
+                'width'    => '90',
+                'position' => '20',
+            ),
+            'postnl_packing_slip_item_column_2' => array (
+                'field'    => 'price',
+                'title'    => 'Price',
+                'width'    => '70',
+                'position' => '30',
+            ),
+            'postnl_packing_slip_item_column_3' => array (
+                'field'    => 'qty',
+                'title'    => 'Qty',
+                'width'    => '60',
+                'position' => '40',
+            ),
+            'postnl_packing_slip_item_column_4' => array (
+                'field'    => 'tax',
+                'title'    => 'VAT',
+                'width'    => '80',
+                'position' => '50',
+            ),
+            'postnl_packing_slip_item_column_5' => array (
+                'field'    => 'subtotal',
+                'title'    => 'Subtotal',
+                'width'    => '40',
+                'position' => '60',
+            ),
         );
 
+        /**
+         * Save the columns as a serialized array.
+         */
         Mage::getConfig()->saveConfig(
             self::XPATH_PACKING_SLIP_ITEM_COLUMNS,
             serialize($itemColumns),
@@ -991,8 +991,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     /**
      * Updates attribute data for all existing products of specific types.
      *
-     * @param array $attributesData
-     * @param array $productTypes
+     * @param array $attributesData An array of attribute data as $attributeCode => $value.
+     * @param array $productTypes   An array of product types for which these attributes need to be updated.
      *
      * @return $this
      */
@@ -1002,6 +1002,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
             $productTypes = array($productTypes);
         }
 
+        /**
+         * Get all products which are of the specified types.
+         */
         $productCollection = Mage::getResourceModel('catalog/product_collection')
                                  ->addStoreFilter(Mage_Core_Model_App::ADMIN_STORE_ID)
                                  ->addFieldToFilter(
@@ -1011,6 +1014,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
                                      )
                                  );
 
+        /**
+         * Update the attributes of these products.
+         */
         Mage::getSingleton('catalog/product_action')
             ->updateAttributes($productCollection->getAllIds(), $attributesData, Mage_Core_Model_App::ADMIN_STORE_ID);
 

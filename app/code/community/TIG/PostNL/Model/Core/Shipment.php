@@ -325,7 +325,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param boolean $throwException
      *
-     * @return Mage_Sales_Model_Order
+     * @return Mage_Sales_Model_Order|null
      *
      * @throws TIG_PostNL_Exception
      */
@@ -335,12 +335,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this->_getData('order');
         }
 
+        /**
+         * Get the order ID belonging to this PostNL shipment. If no order ID is found, attempt to get it from the
+         * Magento shipment.
+         */
         $orderId = $this->getOrderId();
+        if (!$orderId) {
+            $orderId = $this->getShipment()->getOrderId();
+        }
+
         if (!$orderId && $throwException) {
             throw new TIG_PostNL_Exception(
                 $this->getHelper()->__('No order found for PostNL shipment #%d.', $this->getId()),
                 'POSTNL-0177'
             );
+        } elseif (!$orderId) {
+            return null;
         }
 
         /**
@@ -363,8 +373,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this->_getData('shipping_address');
         }
 
-        $shipmentId = $this->getShipmentId();
-        if (!$shipmentId && !$this->getShipment(false)) {
+        if (!$this->getShipment(false)) {
             return null;
         }
 
@@ -385,15 +394,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this->_getData('pakje_gemak_address');
         }
 
-        $shipmentId = $this->getShipmentId();
-        if (!$shipmentId && !$this->getShipment(false)) {
+        $order = $this->getOrder(false);
+        if (!$order) {
             return null;
         }
 
         /**
          * @var Mage_Sales_Model_Order_Address $address
          */
-        $addresses = $this->getShipment()->getOrder()->getAddressesCollection();
+        $addresses = $order->getAddressesCollection();
         foreach ($addresses as $address) {
             if ($address->getAddressType() == self::ADDRESS_TYPE_PAKJEGEMAK) {
                 $this->setPakjeGemakAddress($address);
