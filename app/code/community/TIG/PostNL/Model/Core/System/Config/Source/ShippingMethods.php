@@ -87,6 +87,13 @@ class TIG_PostNL_Model_Core_System_Config_Source_ShippingMethods
         return $methods;
     }
 
+    /**
+     * Get all options as a flat array.
+     *
+     * @param bool $isActiveOnlyFlag
+     *
+     * @return array
+     */
     public function toArray($isActiveOnlyFlag = false)
     {
         $methods = array();

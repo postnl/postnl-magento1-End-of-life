@@ -1087,3 +1087,7 @@ TIG_PostNL::Show post office locations for letter box parcels.,Toon postkantoorl
 TIG_PostNL::If the customer chooses to have an order delivered to a post office location the order may no longer be shipped as a letter box parcel.,Indien de klant kiest voor ophalen op een postkantoorlocatie zal de bestelling als een pakket verzonden moeten worden.
 TIG_PostNL::Show parcel dispenser locations for letter box parcels,Toon pakketautomaten voor buspakje bestellingen
 TIG_PostNL::If the customer chooses to have an order delivered to a parcel dispenser the order may no longer be shipped as a letter box parcel.,Indien de klant kiest voor ophalen bij een pakketautomaat zal de bestelling als een pakket verzonden moeten worden.
+TIG_PostNL::Allow for letter box parcels,Toestaan voor buspakje bestellingen
+TIG_PostNL::This option is only applicable when using letter box parcels and the letter box parcel calculation mode is set to 'automatic'.,Deze instelling is enkel van toepassing op buspakje bestellingen wanneer de buspakje berekeningsmodus op 'automatisch' staat.
+"TIG_PostNL::Letter box parcels cannot be shipped using COD. If an order is a letter box parcel and the customer chooses to pay using PostNL COD, the order will be shipped as a regular parcel instead.",Buspakjes kunnen niet verzonden worden met rembours. Indien een bestelling als buspakje verzonden kan worden en de klant kiest voor rembours zal de bestelling als pakket verstuurd moeten worden.
+"TIG_PostNL::possibly letter box parcel",mogelijk buspakje

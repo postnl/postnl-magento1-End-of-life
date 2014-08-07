@@ -3185,7 +3185,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $productCode = Mage::registry('postnl_product_option');
 
             if (is_array($productCode)) {
-                $productCode = $this->_extractProductcodeForType($productCode);
+                $productCode = $this->_extractProductCodeForType($productCode);
             }
 
             $this->_checkProductCodeAllowed($productCode);
@@ -3207,7 +3207,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @return string
      */
-    protected function _extractProductcodeForType($codes)
+    protected function _extractProductCodeForType($codes)
     {
         $shipmentType = $this->getShipmentType(false);
 

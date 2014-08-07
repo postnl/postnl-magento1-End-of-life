@@ -58,6 +58,11 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
      */
     protected $_totalCode;
 
+    /**
+     * Constructor method.
+     *
+     * Sets several class variables.
+     */
     public function __construct()
     {
         $this->setCode($this->_totalCode);
