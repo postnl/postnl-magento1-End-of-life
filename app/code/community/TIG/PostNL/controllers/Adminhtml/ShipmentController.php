@@ -949,16 +949,26 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
         $orderIds = $this->_getOrderIds();
 
         /**
-         * Register the requested product option to use the default option and check if the shipment is a letter box
-         * parcel.
+         * If the buspakje calculation mode is set to 'automatic', we should check if each order could be a buspakje.
+         * Otherwise all shipments will be marked as regular package shipments.
+         */
+        if (Mage::helper('postnl/deliveryOptions')->getBuspakjeCalculationMode() == 'automatic') {
+            $isBuspakje = -1;
+        } else {
+            $isBuspakje = 0;
+        }
+
+        /**
+         * Register the requested product option to use the default option and whether to check if the shipment could be
+         * a buspakje shipment.
          */
         Mage::unregister('postnl_product_option');
         Mage::register(
-            'postnl_product_options',
-                array(
-                    'use_default' => 1,
-                    'is_buspakje' => -1,
-                )
+            'postnl_product_option',
+            array(
+                'use_default' => 1,
+                'is_buspakje' => $isBuspakje,
+            )
         );
 
         /**
@@ -1174,8 +1184,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $shipmentIds = $this->_getShipmentIds();
 
             /**
-             * Validate the number of labels to be printed. Every shipment has at least 1 label. So if we have more than 200
-             * shipments we can stop the process right here.
+             * Validate the number of labels to be printed. Every shipment has at least 1 label. So if we have more than
+             * 200 shipments we can stop the process right here.
              *
              * @var $labelClassName TIG_PostNL_Model_Core_Label
              */
@@ -1454,8 +1464,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                 if (empty($shipmentIds)) {
                     throw new TIG_PostNL_Exception(
                         $this->__(
-                            'None of the orders you have selected have any associated shipments. Please choose at least ' .
-                            'one order that has a shipment.'
+                            'None of the orders you have selected have any associated shipments. Please choose at ' .
+                            'least one order that has a shipment.'
                         ),
                         'POSTNL-0171'
                     );
