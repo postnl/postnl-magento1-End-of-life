@@ -255,7 +255,7 @@ if (!$conn->tableColumnExists($salesOrderTable, 'base_postnl_cod_fee_tax')) {
     );
 }
 
-if (!$conn->tableColumnExists($salesOrderTable, 'updated_at')) {
+if (!$conn->tableColumnExists($salesOrderTable, 'base_postnl_cod_fee_tax_invoiced')) {
     $conn->addColumn(
         $salesOrderTable,
         'base_postnl_cod_fee_tax_invoiced',
