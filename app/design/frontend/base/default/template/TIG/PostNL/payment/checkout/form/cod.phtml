@@ -35,9 +35,9 @@
  *
  * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
-
-/**
+ *
+ * @var TIG_PosTNL_Block_Payment_Form_Cod $this
+ *
  * @see Mage_Payment_Block_Form_Cashondelivery
  */
 ?>
@@ -79,17 +79,29 @@
         function() {
             var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
             var chosenDeliveryOptions = window.deliveryOptions;
-            if (postnlCodPaymentMethod
-                && chosenDeliveryOptions
-                && chosenDeliveryOptions.selectedType == 'PA'
-            ) {
-                postnlCodPaymentMethod.disabled = true;
-                postnlCodPaymentMethod.up().hide();
 
-                var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
-                if (postnlCodPaymentForm) {
-                    postnlCodPaymentForm.up().hide();
+            if (postnlCodPaymentMethod && chosenDeliveryOptions) {
+                if (chosenDeliveryOptions.selectedType == 'PA') {
+                    postnlCodPaymentMethod.disabled = true;
+                    postnlCodPaymentMethod.up().hide();
+
+                    var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
+                    if (postnlCodPaymentForm) {
+                        postnlCodPaymentForm.up().hide();
+                    }
                 }
+
+                <?php if (!$this->canShowForBuspakje()): ?>
+                    if (chosenDeliveryOptions.selectedType == 'Overdag') {
+                        postnlCodPaymentMethod.disabled = true;
+                        postnlCodPaymentMethod.up().hide();
+
+                        var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
+                        if (postnlCodPaymentForm) {
+                            postnlCodPaymentForm.up().hide();
+                        }
+                    }
+                <?php endif; ?>
             }
         }
     );

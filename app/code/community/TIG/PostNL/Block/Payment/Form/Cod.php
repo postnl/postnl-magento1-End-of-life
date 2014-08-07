@@ -39,6 +39,11 @@
 class TIG_PostNL_Block_Payment_Form_Cod extends Mage_Payment_Block_Form
 {
     /**
+     * Xpath to the 'allow_for_buspakje' configuration setting.
+     */
+    const XPATH_ALLOW_FOR_BUSPAKJE = 'payment/postnl_cod/allow_for_buspakje';
+
+    /**
      * @var string
      */
     protected $_eventPrefix = 'postnl_payment_form_cod';
@@ -64,6 +69,41 @@ class TIG_PostNL_Block_Payment_Form_Cod extends Mage_Payment_Block_Form
             $this->_instructions = $this->getMethod()->getInstructions();
         }
         return $this->_instructions;
+    }
+
+    /**
+     * Check if the PostNL COD payment method may be shown for letter box parcel orders.
+     *
+     * @return boolean
+     */
+    public function canShowForBuspakje()
+    {
+        /**
+         * Check the configuration setting.
+         */
+        $showForBuspakje = Mage::getStoreConfigFlag(self::XPATH_ALLOW_FOR_BUSPAKJE, Mage::app()->getStore()->getId());
+        if ($showForBuspakje) {
+            return true;
+        }
+
+        /**
+         * Check if the buspakje calculation mode is set to automatic.
+         */
+        $helper = Mage::helper('postnl');
+        $calculationMode = $helper->getBuspakjeCalculationMode();
+        if ($calculationMode != 'automatic') {
+            return true;
+        }
+
+        /**
+         * Check if the current quote fits as a letter box parcel.
+         */
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        if (!$helper->fitsAsBuspakje($quote->getAllItems())) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

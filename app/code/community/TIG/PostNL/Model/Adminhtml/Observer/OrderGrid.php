@@ -175,6 +175,16 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      *         ORDER BY `postnl_shipment`.`created_at` DESC
      *         SEPARATOR ","
      *     ) AS `shipping_phase`,
+     *     group_concat(
+     *         `postnl_shipment`.`shipment_type`
+     *         ORDER BY `postnl_shipment`.`created_at` DESC
+     *         SEPARATOR ","
+     *     ) AS `shipment_type`,
+     *     group_concat(
+     *         `postnl_shipment`.`product_code`
+     *         ORDER BY `postnl_shipment`.`created_at` DESC
+     *         SEPARATOR ","
+     *     ) AS `product_code`,
      *     IF(
      *         `postnl_shipment`.`confirm_date`,
      *         `postnl_shipment`.`confirm_date`,
@@ -278,6 +288,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 ),
                 'shipping_phase' => new Zend_Db_Expr(
                     'group_concat(`postnl_shipment`.`shipping_phase` ORDER BY `postnl_shipment`.`created_at` DESC ' .
+                    'SEPARATOR ",")'
+                ),
+                'shipment_type' => new Zend_Db_Expr(
+                    'group_concat(`postnl_shipment`.`shipment_type` ORDER BY `postnl_shipment`.`created_at` DESC ' .
+                    'SEPARATOR ",")'
+                ),
+                'product_code' => new Zend_Db_Expr(
+                    'group_concat(`postnl_shipment`.`product_code` ORDER BY `postnl_shipment`.`created_at` DESC ' .
                     'SEPARATOR ",")'
                 ),
             )

@@ -37,7 +37,7 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderType
-    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
+    extends TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
 {
     /**
      * Additional column names used
@@ -77,6 +77,28 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderType
         $value = $row->getData($column->getIndex());
         if (is_null($value) || $value === '') {
             return '';
+        }
+
+        /**
+         * If this row has any corresponding shipments, the shipment_type column will be filled. Use the parent rendered
+         * to render this column instead, as it will be more accurate.
+         */
+        if ($row->getData('shipment_type')) {
+            $types = explode(',', $row->getData('shipment_type'));
+            $productCodes = explode(',', $row->getData('product_code'));
+            $renderedValues = array();
+            foreach ($types as $key => $type) {
+                $rowDummy = new Varien_Object(
+                    array(
+                        'shipping_method' => $shippingMethod,
+                        'country_id' => $type,
+                        'product_code' => $productCodes[$key],
+                    )
+                );
+                $renderedValues[] = parent::render($rowDummy);
+            }
+
+            return implode('<br />', $renderedValues);
         }
 
         $isCod = $this->_isCod($row);
@@ -122,7 +144,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderType
         if ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
             $label = $helper->__('Parcel Dispenser');
 
-            $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='pakketautomaat'>{$label}</b>";
+            $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='pakketautomaat'>{$label}" .
+                             "</b>";
 
             return $renderedValue;
         }
@@ -159,6 +182,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderType
 
             if ($isCod) {
                 $renderedValue .= '<br /><em>' . $helper->__('COD') . '</em>';
+            } else {
+                $orderItems = Mage::getResourceModel('sales/order_item_collection')->setOrderFilter($row->getId());
+                if (Mage::helper('postnl/deliveryOptions')->fitsAsBuspakje($orderItems)) {
+                    $renderedValue .= '<br /><em>(' . $helper->__('possibly letter box parcel') . ')</em>';
+                }
             }
 
             return $renderedValue;
@@ -204,44 +232,5 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderType
         }
 
         return $isCod;
-    }
-
-    /**
-     * Renders the <col> element of the column. Added check for $this->getColumn()->getDisplay() == 'none' that causes
-     * the entire element to be hidden.
-     *
-     * @return string
-     *
-     * @see Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract::renderProperty()
-     */
-    public function renderProperty()
-    {
-        /**
-         * @var Mage_Adminhtml_Block_Widget_Grid_Column $column
-         */
-        $column = $this->getColumn();
-
-        $out = '';
-        if ($column->hasData('display')) {
-            $out .= " style='display:{$column->getDisplay()};'";
-        }
-
-        $width = $this->_defaultWidth;
-
-        if ($column->hasData('width')) {
-            $customWidth = $column->getData('width');
-            if ((null === $customWidth) || (preg_match('/^[0-9]+%?$/', $customWidth))) {
-                $width = $customWidth;
-            }
-            elseif (preg_match('/^([0-9]+)px$/', $customWidth, $matches)) {
-                $width = (int)$matches[1];
-            }
-        }
-
-        if (null !== $width) {
-            $out .= ' width="' . $width . '"';
-        }
-
-        return $out;
     }
 }

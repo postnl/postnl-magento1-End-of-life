@@ -38,8 +38,14 @@
  */
 class TIG_PostNL_Model_Core_Shipment_Process extends Mage_Index_Model_Process
 {
+    /**
+     * @var bool
+     */
     protected $_own = false;
 
+    /**
+     * @var null|boolean
+     */
     protected $_isLocked = null;
 
     /**
