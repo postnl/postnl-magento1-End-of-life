@@ -75,7 +75,7 @@ class TIG_PostNL_Block_DeliveryOptions_Js extends TIG_PostNL_Block_DeliveryOptio
      */
     protected function _toHtml()
     {
-        if (Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
+        if (!Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
             return '';
         }
 
