@@ -713,10 +713,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 } else {
                     $qty = $item->getQtyOrdered();
                 }
-            } elseif ($item instanceof Mage_Sales_Model_Order_Shipment_Item
-                || $item instanceof Mage_Sales_Model_Quote_Item
-            ) {
+            } elseif ($item instanceof Mage_Sales_Model_Order_Shipment_Item) {
                 $qty = $item->getQty();
+            } elseif($item instanceof Mage_Sales_Model_Quote_Item) {
+                if ($item->getParentItemId()) {
+                    $qty = $item->getParentItem()->getQty();
+                } else {
+                    $qty = $item->getQty();
+                }
             } else {
                 if ($registerReason) {
                     Mage::register('postnl_reason_not_buspakje', 'missing_qty');
@@ -930,6 +934,15 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'download_logs':
                 $aclPath = 'system/config/postnl/download_logs';
                 break;
+            case 'print_packing_slips':
+                $aclPath = 'postnl/shipment/actions/print_label/print_packing_slips';
+                break;
+            case 'convert_to_buspakje':
+                $aclPath = 'postnl/shipment/actions/convert/to_buspakje';
+                break;
+            case 'convert_to_package':
+                $aclPath = 'postnl/shipment/actions/convert/to_package';
+                break;
             case 'confirm': //no break
             case 'print_label': //no break
             case 'reset_confirmation': //no break
@@ -937,9 +950,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'create_parcelware_export': //no break
             case 'send_track_and_trace':
                 $aclPath = 'postnl/shipment/actions/' . $action;
-                break;
-            case 'print_packing_slips':
-                $aclPath = 'postnl/shipment/actions/print_label/print_packing_slips';
                 break;
             default:
                 $aclPath = false;

@@ -105,6 +105,20 @@
                                                 <title>Delete Shipping Labels</title>
                                                 <sort_order>70</sort_order>
                                             </delete_labels>
+                                            <convert translate="title" module="postnl">
+                                                <title>Convert</title>
+                                                <sort_order>80</sort_order>
+                                                <children>
+                                                    <to_buspakje translate="title" module="postnl">
+                                                        <title>To Letter Box Parcel</title>
+                                                        <sort_order>10</sort_order>
+                                                    </to_buspakje>
+                                                    <to_package translate="title" module="postnl">
+                                                        <title>To Package</title>
+                                                        <sort_order>20</sort_order>
+                                                    </to_package>
+                                                </children>
+                                            </convert>
                                         </children>
                                     </actions>
                                 </children>

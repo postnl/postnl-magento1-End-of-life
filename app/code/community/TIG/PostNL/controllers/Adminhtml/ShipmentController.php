@@ -526,6 +526,196 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
     }
 
     /**
+     * Convert a shipment to a buspakje shipment.
+     *
+     * @return $this
+     */
+    public function convertToBuspakjeAction()
+    {
+        $helper = Mage::helper('postnl');
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        if (!$this->_checkIsAllowed(array('convert_to_buspakje', 'delete_labels'))) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+
+        /**
+         * If no shipment was selected, cause an error
+         */
+        if (is_null($shipmentId)) {
+            $helper->addSessionMessage('adminhtml/session', null, 'error',
+                $this->__('Shipment not found.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        try {
+            /**
+             * Load the shipment and check if it exists and is valid.
+             *
+             * @var Mage_Sales_Model_Order_Shipment $shipment
+             */
+            $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'This action is not available for shipment #%s, because it was not shipped using PostNL.',
+                        $shipmentId
+                    ),
+                    'POSTNL-0009'
+                );
+            }
+
+            $postnlShipment = $this->_getPostnlShipment($shipmentId);
+
+            if ($postnlShipment->isConfirmed()) {
+                if (!$this->_checkIsAllowed(array('convert_to_buspakje', 'delete_labels'))) {
+                    $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                        $this->__('The current user is not allowed to perform this action.')
+                    );
+
+                    $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+                    return $this;
+                }
+
+                $postnlShipment->resetConfirmation(true, true)->save();
+            }
+            $postnlShipment->convertToBuspakje()->save();
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (TIG_PostNL_Exception $e) {
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (Exception $e) {
+            $helper->logException($e);
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
+                $this->__('An error occurred while processing this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        $helper->addSessionMessage('adminhtml/session', null, 'success',
+            $this->__('The shipment has been converted to a letter box parcel.')
+        );
+
+        $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+        return $this;
+    }
+
+    /**
+     * Convert a shipment to a package shipment.
+     *
+     * @return $this
+     */
+    public function convertToPackageAction()
+    {
+        $helper = Mage::helper('postnl');
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        if (!$this->_checkIsAllowed(array('convert_to_package', 'delete_labels'))) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+
+        /**
+         * If no shipment was selected, cause an error
+         */
+        if (is_null($shipmentId)) {
+            $helper->addSessionMessage('adminhtml/session', null, 'error',
+                $this->__('Shipment not found.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        try {
+            /**
+             * Load the shipment and check if it exists and is valid.
+             *
+             * @var Mage_Sales_Model_Order_Shipment $shipment
+             */
+            $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'This action is not available for shipment #%s, because it was not shipped using PostNL.',
+                        $shipmentId
+                    ),
+                    'POSTNL-0009'
+                );
+            }
+
+            $postnlShipment = $this->_getPostnlShipment($shipmentId);
+
+            if ($postnlShipment->isConfirmed()) {
+                if (!$this->_checkIsAllowed(array('convert_to_buspakje', 'delete_labels'))) {
+                    $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                        $this->__('The current user is not allowed to perform this action.')
+                    );
+
+                    $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+                    return $this;
+                }
+
+                $postnlShipment->resetConfirmation(true, true)->save();
+            }
+            $postnlShipment->convertToPackage()->save();
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (TIG_PostNL_Exception $e) {
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (Exception $e) {
+            $helper->logException($e);
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
+                $this->__('An error occurred while processing this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        $helper->addSessionMessage('adminhtml/session', null, 'success',
+            $this->__('The shipment has been converted to a package.')
+        );
+
+        $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+        return $this;
+    }
+
+    /**
      * Refreshes the status history grid after a filter or sorting request
      *
      * @return $this

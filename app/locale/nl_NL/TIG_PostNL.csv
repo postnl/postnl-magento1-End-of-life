@@ -1090,4 +1090,13 @@ TIG_PostNL::If the customer chooses to have an order delivered to a parcel dispe
 TIG_PostNL::Allow for letter box parcels,Toestaan voor buspakje bestellingen
 TIG_PostNL::This option is only applicable when using letter box parcels and the letter box parcel calculation mode is set to 'automatic'.,Deze instelling is enkel van toepassing op buspakje bestellingen wanneer de buspakje berekeningsmodus op 'automatisch' staat.
 "TIG_PostNL::Letter box parcels cannot be shipped using COD. If an order is a letter box parcel and the customer chooses to pay using PostNL COD, the order will be shipped as a regular parcel instead.",Buspakjes kunnen niet verzonden worden met rembours. Indien een bestelling als buspakje verzonden kan worden en de klant kiest voor rembours zal de bestelling als pakket verstuurd moeten worden.
-"TIG_PostNL::possibly letter box parcel",mogelijk buspakje
+"TIG_PostNL::This action is not available for order #%s, because it was not placed using PostNL.","Deze actie is niet beschikbaar voor order #%s, omdat deze niet geplaatst is met PostNL."
+TIG_PostNL::Convert,Omzetten
+TIG_PostNL::To Letter Box Parcel,Naar Buspakje
+TIG_PostNL::To Package,Naar Pakket
+TIG_PostNL::The shipment has been converted to a package.,De zending is omgezet naar een pakket.
+TIG_PostNL::The shipment has been converted to a letter box parcel.,De zending is omgezet naar een buspakje.
+TIG_PostNL::Are you sure you wish to convert this shipment to a letter box parcel? You will need to confirm this shipment with PostNL again before you can send it. This action will remove all barcodes and labels associated with this shipment. You can not undo this action.,Weet u zeker dat u deze zending wilt omzetten naar een buspakje zending? U zult de zending opnieuw moeten voormelden bij PostNL alvorens u de zending kunt versturen. Deze actie zal alle verzendlabels en barcodes van deze zending verwijderen. U kunt deze actie niet ongedaan maken.
+TIG_PostNL::Are you sure you wish to convert this shipment to a package? You will need to confirm this shipment with PostNL again before you can send it. This action will remove all barcodes and labels associated with this shipment. You can not undo this action.,Weet u zeker dat u deze zending wilt omzetten naar een pakket zending? U zult de zending opnieuw moeten voormelden bij PostNL alvorens u de zending kunt versturen. Deze actie zal alle verzendlabels en barcodes van deze zending verwijderen. U kunt deze actie niet ongedaan maken.
+TIG_PostNL::PostNL - Convert to Letter Box Parcel,PostNL - Omzetten naar Buspakje
+TIG_PostNL::PostNL - Convert to Package,PostNL - Omzetten naar Pakket

@@ -174,8 +174,11 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderType
             $label = $helper->__('Domestic');
             $type  = 'domestic';
 
+            $deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions');
             if ($isCod) {
                 $type .= '_cod';
+            } elseif ($deliveryOptionsHelper->getBuspakjeCalculationMode()) {
+
             }
 
             $renderedValue = "<b id='postnl-shipmenttype-{$row->getId()}' data-product-type='{$type}'>{$label}</b>";

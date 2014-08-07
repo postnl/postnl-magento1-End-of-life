@@ -171,6 +171,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const SHIPPING_PHASE_NOT_APPLICABLE = '99';
 
     /**
+     * Possible shipment types.
+     */
+    const SHIPMENT_TYPE_DOMESTIC     = 'domestic';
+    const SHIPMENT_TYPE_DOMESTIC_COD = 'domestic_cod';
+    const SHIPMENT_TYPE_AVOND        = 'avond';
+    const SHIPMENT_TYPE_AVOND_COD    = 'avond_cod';
+    const SHIPMENT_TYPE_PG           = 'pg';
+    const SHIPMENT_TYPE_PG_COD       = 'pg_cod';
+    const SHIPMENT_TYPE_PGE          = 'pge';
+    const SHIPMENT_TYPE_PGE_COD      = 'pge_cod';
+    const SHIPMENT_TYPE_PA           = 'pa';
+    const SHIPMENT_TYPE_EPS          = 'eps';
+    const SHIPMENT_TYPE_GLOBALPACK   = 'globalpack';
+    const SHIPMENT_TYPE_BUSPAKJE     = 'buspakje';
+
+    /**
      * Xpaths to default product options settings.
      */
     const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
@@ -498,7 +514,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      *
      * @param string $type
      *
-     * @return mixed
+     * @return TIG_PosTNL_Helper_Data|TIG_PosTNL_Helper_Cif|TIG_PosTNL_Helper_Carrier|TIG_PosTNL_Helper_DeliveryOptions
+     *         |TIG_PosTNL_Helper_AddressValidation|TIG_PosTNL_Helper_Checkout|TIG_PosTNL_Helper_Mijnpakket
+     *         |TIG_PosTNL_Helper_Parcelware|TIG_PosTNL_Helper_Payment|TIG_PosTNL_Helper_Webservices
      */
     public function getHelper($type = 'data')
     {
@@ -620,52 +638,52 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     {
         if ($this->isCod()) {
             if ($this->isPgeShipment()) {
-                return 'pge_cod';
+                return self::SHIPMENT_TYPE_PGE_COD;
             }
 
             if ($this->isAvondShipment()) {
-                return 'avond_cod';
+                return self::SHIPMENT_TYPE_AVOND_COD;
             }
 
             if ($this->isPakjeGemakShipment()) {
-                return 'pg_cod';
+                return self::SHIPMENT_TYPE_PG_COD;
             }
 
             if ($this->isDutchShipment()) {
-                return 'domestic_cod';
+                return self::SHIPMENT_TYPE_DOMESTIC_COD;
             }
         }
 
         if ($this->isPgeShipment()) {
-            return 'pge';
+            return self::SHIPMENT_TYPE_PGE;
         }
 
         if ($this->isAvondShipment()) {
-            return 'avond';
+            return self::SHIPMENT_TYPE_AVOND;
         }
 
         if ($this->isPakjeGemakShipment()) {
-            return 'pg';
+            return self::SHIPMENT_TYPE_PG;
         }
 
         if ($this->isPakketautomaatShipment()) {
-            return 'pa';
+            return self::SHIPMENT_TYPE_PA;
         }
 
         if ($checkBuspakje && $this->isBuspakjeShipment()) {
-            return 'buspakje';
+            return self::SHIPMENT_TYPE_BUSPAKJE;
         }
 
         if ($this->isDutchShipment()) {
-            return 'domestic';
+            return self::SHIPMENT_TYPE_DOMESTIC;
         }
 
         if ($this->isEuShipment()) {
-            return 'eps';
+            return self::SHIPMENT_TYPE_EPS;
         }
 
         if ($this->isGlobalShipment() && $this->getHelper('cif')->isGlobalAllowed()) {
-            return 'globalpack';
+            return self::SHIPMENT_TYPE_GLOBALPACK;
         }
 
         throw new TIG_PostNL_Exception(
@@ -911,31 +929,31 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $xpath = false;
         switch ($shipmentType) {
-            case 'domestic_cod':
+            case self::SHIPMENT_TYPE_DOMESTIC_COD:
                 $xpath = self::XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION;
                 break;
-            case 'avond':
+            case self::SHIPMENT_TYPE_AVOND:
                 $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
                 break;
-            case 'avond_cod':
+            case self::SHIPMENT_TYPE_AVOND_COD:
                 $xpath = self::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION;
                 break;
-            case 'pg':
+            case self::SHIPMENT_TYPE_PG:
                 $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION;
                 break;
-            case 'pg_cod':
+            case self::SHIPMENT_TYPE_PG_COD:
                 $xpath = self::XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION;
                 break;
-            case 'pge':
+            case self::SHIPMENT_TYPE_PGE:
                 $xpath = self::XPATH_DEFAULT_PGE_PRODUCT_OPTION;
                 break;
-            case 'pge_cod':
+            case self::SHIPMENT_TYPE_PGE_COD:
                 $xpath = self::XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION;
                 break;
-            case 'pa':
+            case self::SHIPMENT_TYPE_PA:
                 $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
                 break;
-            case 'eps':
+            case self::SHIPMENT_TYPE_EPS:
                 if ($this->getHelper()->canUseEpsBEOnlyOption($this->getStoreId())
                     && $this->getShippingAddress()->getCountryId() == 'BE'
                 ) {
@@ -944,10 +962,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                     $xpath = self::XPATH_DEFAULT_EU_PRODUCT_OPTION;
                 }
                 break;
-            case 'globalpack':
+            case self::SHIPMENT_TYPE_GLOBALPACK:
                 $xpath = self::XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION;
                 break;
-            case 'buspakje':
+            case self::SHIPMENT_TYPE_BUSPAKJE:
                 $xpath = self::XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION;
                 break;
             //no default
@@ -1189,40 +1207,40 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $shipmentType = $this->getShipmentType($checkBuspakje);
         switch ($shipmentType) {
-            case 'domestic':
+            case self::SHIPMENT_TYPE_DOMESTIC:
                 $allowedProductCodes = $cifHelper->getStandardProductCodes($flat);
                 break;
-            case 'domestic_cod':
+            case self::SHIPMENT_TYPE_DOMESTIC_COD:
                 $allowedProductCodes = $cifHelper->getStandardCodProductCodes($flat);
                 break;
-            case 'avond':
+            case self::SHIPMENT_TYPE_AVOND:
                 $allowedProductCodes = $cifHelper->getAvondProductCodes($flat);
                 break;
-            case 'avond_cod':
+            case self::SHIPMENT_TYPE_AVOND_COD:
                 $allowedProductCodes = $cifHelper->getAvondCodProductCodes($flat);
                 break;
-            case 'pg':
+            case self::SHIPMENT_TYPE_PG:
                 $allowedProductCodes = $cifHelper->getPakjeGemakProductCodes($flat);
                 break;
-            case 'pg_cod':
+            case self::SHIPMENT_TYPE_PG_COD:
                 $allowedProductCodes = $cifHelper->getPakjeGemakCodProductCodes($flat);
                 break;
-            case 'pge':
+            case self::SHIPMENT_TYPE_PGE:
                 $allowedProductCodes = $cifHelper->getPgeProductCodes($flat);
                 break;
-            case 'pge_cod':
+            case self::SHIPMENT_TYPE_PGE_COD:
                 $allowedProductCodes = $cifHelper->getPgeCodProductCodes($flat);
                 break;
-            case 'pa':
+            case self::SHIPMENT_TYPE_PA:
                 $allowedProductCodes = $cifHelper->getPakketautomaatProductCodes($flat);
                 break;
-            case 'eps':
+            case self::SHIPMENT_TYPE_EPS:
                 $allowedProductCodes = $cifHelper->getEuProductCodes($flat);
                 break;
-            case 'globalpack':
+            case self::SHIPMENT_TYPE_GLOBALPACK:
                 $allowedProductCodes = $cifHelper->getGlobalProductCodes($flat);
                 break;
-            case 'buspakje':
+            case self::SHIPMENT_TYPE_BUSPAKJE:
                 $allowedProductCodes = $cifHelper->getBuspakjeProductCodes($flat);
                 break;
             default:
@@ -2124,6 +2142,62 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
             || $shippingPhase == self::SHIPPING_PHASE_SORTING
         ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the current shipment can be converted to a buspakje shipment.
+     *
+     * @return bool
+     */
+    public function canConvertShipmentToBuspakje()
+    {
+        $shipmentType = $this->getShipmentType();
+        if ($shipmentType != self::SHIPMENT_TYPE_DOMESTIC) {
+            return false;
+        }
+
+        $shippingPhase = $this->getShippingPhase();
+        if ($shippingPhase == self::SHIPPING_PHASE_COLLECTION
+            || $shippingPhase == self::SHIPPING_PHASE_DELIVERED
+            || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
+            || $shippingPhase == self::SHIPPING_PHASE_SORTING
+        ) {
+            return false;
+        }
+
+        if (!$this->getHelper()->canUseBuspakje()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the current shipment can be converted to a package shipment.
+     *
+     * @return bool
+     */
+    public function canConvertShipmentToPackage()
+    {
+        $shipmentType = $this->getShipmentType();
+        if ($shipmentType != self::SHIPMENT_TYPE_BUSPAKJE) {
+            return false;
+        }
+
+        $shippingPhase = $this->getShippingPhase();
+        if ($shippingPhase == self::SHIPPING_PHASE_COLLECTION
+            || $shippingPhase == self::SHIPPING_PHASE_DELIVERED
+            || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
+            || $shippingPhase == self::SHIPPING_PHASE_SORTING
+        ) {
+            return false;
+        }
+
+        if (!$this->getHelper()->canUseStandard()) {
             return false;
         }
 
@@ -3216,12 +3290,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * no buspakje field was entered or the field has a value of -1, automatically determine whether this shipment
          * is a buspakje shipment.
          */
-        if ($shipmentType == 'domestic'
+        if ($shipmentType == self::SHIPMENT_TYPE_DOMESTIC
             && array_key_exists('is_buspakje', $codes)
             && $codes['is_buspakje'] == '1'
         ) {
             $isBuspakje = true;
-        } elseif ($shipmentType == 'domestic'
+        } elseif ($shipmentType == self::SHIPMENT_TYPE_DOMESTIC
             && (!array_key_exists('is_buspakje', $codes)
                 || $codes['is_buspakje'] == '-1'
             )
@@ -3236,8 +3310,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $this->setIsBuspakje($isBuspakje);
         if ($isBuspakje) {
-            $shipmentType = 'buspakje';
-            $this->setShipmentType('buspakje');
+            $shipmentType = self::SHIPMENT_TYPE_BUSPAKJE;
+            $this->setShipmentType($shipmentType);
         }
 
         /**
@@ -3420,6 +3494,67 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $parcelCount = ceil($weight / $weightPerParcel);
 
         return $parcelCount;
+    }
+
+    /*******************************************************************************************************************
+     * CONVERSION METHODS
+     ******************************************************************************************************************/
+
+    /**
+     * Converts this shipment to a buspakje shipment.
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function convertToBuspakje()
+    {
+        if (!$this->canConvertShipmentToBuspakje()) {
+            throw new TIG_PostNL_Exception(
+                $this->getHelper()->__('The convertToBuspakje action is currently unavailable.'),
+                'POSTNL-0191'
+            );
+        }
+
+        $this->_prepareForConversion()
+             ->setShipmentType(self::SHIPMENT_TYPE_BUSPAKJE)
+             ->setProductCode($this->_getProductCode())
+             ->setIsBuspakje(true);
+
+        return $this;
+    }
+
+    public function convertToPackage()
+    {
+        if (!$this->canConvertShipmentToPackage()) {
+            throw new TIG_PostNL_Exception(
+                $this->getHelper()->__('The convertToPackage action is currently unavailable.'),
+                'POSTNL-0192'
+            );
+        }
+
+        $this->_prepareForConversion()
+             ->setShipmentType(self::SHIPMENT_TYPE_DOMESTIC)
+             ->setProductCode($this->_getProductCode())
+             ->setIsBuspakje(false);
+
+        return $this;
+    }
+
+    /**
+     * Prepares this shipment for conversion to a different product code or shipment type.
+     *
+     * @return $this
+     */
+    protected function _prepareForConversion()
+    {
+        $this->deleteBarcodes()
+             ->deleteLabels()
+             ->deleteShipmentTracks()
+             ->deleteStatusHistory()
+             ->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
+
+        return $this;
     }
 
     /*******************************************************************************************************************
