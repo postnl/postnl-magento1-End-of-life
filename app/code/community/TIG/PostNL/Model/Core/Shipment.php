@@ -3245,8 +3245,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      ******************************************************************************************************************/
 
     /**
-     * Gets the product code for this shipment. If specific options have been selected
-     * those will be used. Otherwise the default options will be used from system/config
+     * Gets the product code for this shipment. If specific options have been selected those will be used. Otherwise the
+     * default options will be used from system/config
      *
      * @return int
      */
@@ -3263,6 +3263,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             }
 
             $this->_checkProductCodeAllowed($productCode);
+
             return $productCode;
         }
 
@@ -3524,6 +3525,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return $this;
     }
 
+    /**
+     * Converts this shipment to a package shipment.
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     */
     public function convertToPackage()
     {
         if (!$this->canConvertShipmentToPackage()) {
