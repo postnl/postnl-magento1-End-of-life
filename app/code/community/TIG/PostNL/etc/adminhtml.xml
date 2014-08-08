@@ -117,6 +117,10 @@
                                                         <title>To Package</title>
                                                         <sort_order>20</sort_order>
                                                     </to_package>
+                                                    <change_product_code translate="title" module="postnl">
+                                                        <title>Change Product Option</title>
+                                                        <sort_order>30</sort_order>
+                                                    </change_product_code>
                                                 </children>
                                             </convert>
                                         </children>
