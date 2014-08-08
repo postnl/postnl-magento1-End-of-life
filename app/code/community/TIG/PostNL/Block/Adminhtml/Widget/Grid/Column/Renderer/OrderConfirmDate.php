@@ -78,7 +78,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             $value = new DateTime($value);
         }
 
-        echo $value->format('D d-m-Y');
         $now = new DateTime();
         $now->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
 
