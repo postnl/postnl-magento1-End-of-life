@@ -117,6 +117,10 @@
                          + '<select id="postnl_product_option" class="select required-entry" name="product_option">';
 
                     <?php foreach($_productOptions as $_option): ?>
+                        <?php if ($_option['value'] == $_postnlShipment->getProductCode()): ?>
+                            <?php continue; ?>
+                        <?php endif; ?>
+
                         <?php if (isset($_option['isBelgiumOnly']) && $_isBelgium === false): ?>
                             <?php continue; ?>
                         <?php endif; ?>
@@ -161,9 +165,10 @@
                         showEffect      : Element.show,
                         id              : "extra-options-dialog",
                         buttonClass     : "form-button",
-                        okLabel         : "<?php echo $_helper->__('Submit'); ?>",
+                        okLabel         : "<?php echo $_helper->__('Save'); ?>",
                         ok              : this.okDialogWindow.bind(this),
                         cancel          : this.closeDialogWindow.bind(this),
+                        cancelLabel     : "<?php echo $_helper->__('Cancel'); ?>",
                         onClose         : this.closeDialogWindow.bind(this)
                     });
                 },

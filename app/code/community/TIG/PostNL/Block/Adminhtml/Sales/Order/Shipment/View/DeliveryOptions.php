@@ -36,10 +36,8 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
- * @method boolean hasShipment()
  * @method boolean hasPostnlShipment()
  *
- * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setShipment(Mage_Sales_Model_Order_Shipment $value)
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setPostnlShipment(TIG_PostNL_Model_Core_Shipment $value)
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setIsCod(boolean $value)
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setSubType(string $value)
@@ -47,7 +45,8 @@
  * @method boolean getIsCod()
  * @method string  getSubType()
  */
-class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions extends TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions
+class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
+    extends TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions
 {
     /**
      * @var string
@@ -171,6 +170,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions exten
             case $postnlShipment::SHIPMENT_TYPE_GLOBALPACK:
                 $shipmentType = $this->__('GlobalPack');
                 break;
+            case $postnlShipment::SHIPMENT_TYPE_BUSPAKJE:
+                $shipmentType = $this->__('Letter Box Parcel');
+                break;
         }
 
         return $shipmentType;
@@ -204,6 +206,13 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions exten
     public function canChangeProductCode()
     {
         $postnlShipment = $this->getPostnlShipment();
+
+        /**
+         * Check if the current user is allowed to perform this action.
+         */
+        if (!Mage::helper('postnl')->checkIsPostnlActionAllowed(array('change_product_code'))) {
+            return false;
+        }
 
         return $postnlShipment->canChangeProductCode();
     }

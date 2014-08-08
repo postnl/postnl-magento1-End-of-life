@@ -575,7 +575,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $postnlShipment = $this->_getPostnlShipment($shipmentId);
 
             if ($postnlShipment->isConfirmed()) {
-                if (!$this->_checkIsAllowed(array('convert_to_buspakje', 'delete_labels'))) {
+                if (!$this->_checkIsAllowed(array('reset_confirmation'))) {
                     $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                         $this->__('The current user is not allowed to perform this action.')
                     );
@@ -669,7 +669,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $postnlShipment = $this->_getPostnlShipment($shipmentId);
 
             if ($postnlShipment->isConfirmed()) {
-                if (!$this->_checkIsAllowed(array('convert_to_buspakje', 'delete_labels'))) {
+                if (!$this->_checkIsAllowed(array('reset_confirmation'))) {
                     $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
                         $this->__('The current user is not allowed to perform this action.')
                     );
@@ -722,14 +722,14 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
     {
         $helper = Mage::helper('postnl');
         $shipmentId = $this->getRequest()->getParam('shipment_id');
-//        if (!$this->_checkIsAllowed(array('convert_to_package', 'delete_labels'))) {
-//            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
-//                $this->__('The current user is not allowed to perform this action.')
-//            );
-//
-//            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
-//            return $this;
-//        }
+        if (!$this->_checkIsAllowed(array('change_product_code'))) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
 
         /**
          * If no shipment was selected, cause an error
@@ -777,8 +777,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
 
             $productOption = $this->getRequest()->getParam('product_option');
 
-            $postnlShipment->checkProductCodeAllowed($productOption);
-            $postnlShipment->setProductCode($productOption)->save();
+            $postnlShipment->changeProductCode($productOption)->save();
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
             Mage::helper('postnl/cif')->parseCifException($e);
 
@@ -804,7 +803,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
         }
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
-            $this->__("The shipment's product code has been changed succesfully.")
+            $this->__("The shipment's product option has been changed succesfully.")
         );
 
         $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));

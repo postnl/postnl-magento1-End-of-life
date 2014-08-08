@@ -3424,20 +3424,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Public alias for _checkProductCodeAllowed().
-     *
-     * @param $productCode
-     *
-     * @return bool
-     *
-     * @throws TIG_PostNL_Exception
-     */
-    public function checkProductCodeAllowed($productCode)
-    {
-        return $this->_checkProductCodeAllowed($productCode);
-    }
-
-    /**
      * Checks if a given product code is allowed for the current shipments. Throws an exception if not.
      *
      * @param string $productCode
@@ -3660,6 +3646,31 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
              ->deleteShipmentTracks()
              ->deleteStatusHistory()
              ->setConfirmStatus(self::CONFIRM_STATUS_UNCONFIRMED);
+
+        return $this;
+    }
+
+    /**
+     * Changes the current shipment's product code.
+     *
+     * @param string $productCode
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function changeProductCode($productCode)
+    {
+        if (!$this->canChangeProductCode()) {
+            throw new TIG_PostNL_Exception(
+                $this->getHelper()->__('The changeProductCode action is currently unavailable.'),
+                'POSTNL-0193'
+            );
+        }
+
+        $this->_checkProductCodeAllowed($productCode);
+
+        $this->setProductCode($productCode);
 
         return $this;
     }
