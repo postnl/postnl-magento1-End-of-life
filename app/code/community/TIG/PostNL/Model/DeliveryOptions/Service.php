@@ -136,7 +136,11 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $deliveryDate = new DateTime($deliveryDate);
         $deliveryDay = $deliveryDate->format('N');
 
-        $shippingDuration = $this->getShippingDuration($deliveryDay);
+        $shippingDuration = 1;
+        if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
+            $shippingDuration++;
+        }
+
         $confirmDate = $deliveryDate->sub(new DateInterval("P{$shippingDuration}D"));
         $confirmDate = $confirmDate->format('Y-m-d');
 

@@ -35,16 +35,42 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
-
-/**
+ *
  * @var TIG_PostNL_Model_Resource_Setup $installer
  */
 $installer = $this;
+
+/**
+ * This attribute needs to be updated for simple products.
+ */
+$simpleAttributesData = array(
+    'postnl_max_qty_for_buspakje' => 0,
+);
+
+/**
+ * These attributes need to be updated for the product types specified below.
+ */
+$attributesData = array(
+    'postnl_allow_pakje_gemak'      => 1,
+    'postnl_allow_delivery_days'    => 1,
+    'postnl_allow_timeframes'       => 1,
+    'postnl_allow_pakketautomaat'   => 1,
+    'postnl_allow_delivery_options' => 1,
+);
+
+$productTypes = array(
+    Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+    Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
+    Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+    Mage_Catalog_Model_Product_Type::TYPE_BUNDLE,
+);
 
 $installer->generateShippingStatusCronExpr()
           ->generateUpdateStatisticsCronExpr()
           ->expandSupportTab()
           ->installTestPassword()
           ->installWebshopId()
+          ->installPackingSlipItemColumns()
+          ->updateAttributeValues($simpleAttributesData, array(Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
+          ->updateAttributeValues($attributesData, $productTypes)
           ->clearConfigCache();

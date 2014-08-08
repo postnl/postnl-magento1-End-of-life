@@ -43,7 +43,7 @@
 $installer = $this;
 
 /**
- * Several new ACL roles have been added.
+ * A new ACL role has been added for the config page.
  */
 $newConfigAclResources = array(
     'admin/system/config/postnl/download_logs',
@@ -52,8 +52,15 @@ $configRequiredResources = array(
     'admin/system/',
     'admin/system/config',
     'admin/system/config/postnl',
+    'admin/system/config/convert',
+    'admin/system/config/convert/to_buspakje',
+    'admin/system/config/convert/to_package',
+    'admin/system/config/convert/change_product_code',
 );
 
+/**
+ * A new ACl role has also been added for printing packing slips.
+ */
 $newPostnLAclResources = array(
     'admin/postnl/shipment/actions/print_label/print_packing_slips',
 );
@@ -65,28 +72,79 @@ $postnlRequiredResources = array(
 );
 
 /**
- * These settings have moved.
+ * This attribute needs to be updated for simple products.
  */
-$settingsToMove = array(
-    'postnl/delivery_options/shipping_duration'    => 'postnl/cif_labels_and_confirming/shipping_duration',
-    'postnl/delivery_options/cutoff_time'          => 'postnl/cif_labels_and_confirming/cutoff_time',
-    'postnl/delivery_options/allow_sunday_sorting' => 'postnl/cif_labels_and_confirming/allow_sunday_sorting',
-    'postnl/delivery_options/sunday_cutoff_time'   => 'postnl/cif_labels_and_confirming/sunday_cutoff_time',
+$simpleAttributesData = array(
+    'postnl_max_qty_for_buspakje' => 0,
 );
 
-foreach ($settingsToMove as $oldXpath => $newXpath) {
-    $installer->moveConfigSetting($oldXpath, $newXpath, true);
-}
+/**
+ * These attributes need to be updated for the product types specified below.
+ */
+$attributesData = array(
+    'postnl_allow_pakje_gemak'      => 1,
+    'postnl_allow_delivery_days'    => 1,
+    'postnl_allow_timeframes'       => 1,
+    'postnl_allow_pakketautomaat'   => 1,
+    'postnl_allow_delivery_options' => 1,
+);
+
+/**
+ * The attributes need to be updated for these product types.
+ */
+$productTypes = array(
+    Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+    Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
+    Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+    Mage_Catalog_Model_Product_Type::TYPE_BUNDLE,
+);
 
 /**
  * In this new version we need to fill the new 'order_id' and 'shipment_type' columns. We also need to add several new
- * ACL rules and add 2 new support product codes for 'buspakje' shipments.
+ * ACL rules and add several new support product codes for 'buspakje' and COD shipments, and update several attribute
+ * values for existing products. We've also moved several config settings, so we need to copy the previous settings
+ * there. Otherwise the existing configuration will be lost.
  */
 $installer->setOrderId()
           ->setShipmentType()
           ->setIsBuspakje()
           ->addAclRules($newConfigAclResources, $configRequiredResources)
           ->addAclRules($newPostnLAclResources, $postnlRequiredResources)
-          ->addSupportedProductCode(array('2828', '2928'))
+          ->addSupportedProductCode(
+              array(
+                  '2828',
+                  '2928',
+                  '3086',
+                  '3091',
+                  '3093',
+                  '3097',
+                  '3535',
+                  '3545',
+                  '3536',
+                  '3546'
+              )
+          )
           ->installPackingSlipItemColumns()
+          ->updateAttributeValues($simpleAttributesData, array(Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
+          ->updateAttributeValues($attributesData, $productTypes)
+          ->moveConfigSetting(
+              'postnl/delivery_options/shipping_duration',
+              'postnl/cif_labels_and_confirming/shipping_duration',
+              true
+          )
+          ->moveConfigSetting(
+              'postnl/delivery_options/cutoff_time',
+              'postnl/cif_labels_and_confirming/cutoff_time',
+              true
+          )
+          ->moveConfigSetting(
+              'postnl/delivery_options/allow_sunday_sorting',
+              'postnl/cif_labels_and_confirming/allow_sunday_sorting',
+              true
+          )
+          ->moveConfigSetting(
+              'postnl/delivery_options/sunday_cutoff_time',
+              'postnl/cif_labels_and_confirming/sunday_cutoff_time',
+              true
+          )
           ->clearConfigCache();

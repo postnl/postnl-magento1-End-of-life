@@ -109,6 +109,16 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_WEIGHT_UNIT = 'postnl/cif_labels_and_confirming/weight_unit';
 
     /**
+     * Xpath to the buspakje calculation mode setting.
+     */
+    const XPATH_BUSPAKJE_CALC_MODE = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
+
+    /**
+     * Minimum PHP version required by this extension.
+     */
+    const MIN_PHP_VERSION = '5.3.0';
+
+    /**
      * Required configuration fields.
      *
      * @var array
@@ -656,16 +666,39 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Gets the currently configured buspakje calculation mode.
+     *
+     * @param null|int|string $storeId
+     *
+     * @return string
+     */
+    public function getBuspakjeCalculationMode($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $calculationMode = Mage::getStoreConfig(self::XPATH_BUSPAKJE_CALC_MODE, $storeId);
+
+        return $calculationMode;
+    }
+
+    /**
      * Determines whether an array of items would fit as a buspakje shipment.
      *
      * @param array|Mage_Sales_Model_Resource_Collection_Abstract $items
+     * @param boolean                                             $registerReason
      *
-     * @return bool
+     * @return boolean
      */
-    public function fitsAsBuspakje($items)
+    public function fitsAsBuspakje($items, $registerReason = false)
     {
         $totalQtyRatio = 0;
         $totalWeight = 0;
+
+        if ($registerReason) {
+            Mage::unregister('postnl_reason_not_buspakje');
+        }
 
         /**
          * @var Mage_Sales_Model_Order_Item|Mage_Sales_Model_Order_Shipment_Item $item
@@ -682,25 +715,23 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
                 }
             } elseif ($item instanceof Mage_Sales_Model_Order_Shipment_Item) {
                 $qty = $item->getQty();
+            } elseif($item instanceof Mage_Sales_Model_Quote_Item) {
+                if ($item->getParentItemId()) {
+                    $qty = $item->getParentItem()->getQty();
+                } else {
+                    $qty = $item->getQty();
+                }
             } else {
-                return false;
-            }
-
-            /**
-             * Get the item's product.
-             *
-             * @var Mage_Catalog_Model_Product $product
-             */
-            $product = Mage::getModel('catalog/product')->load($item->getProductId());
-
-            if (!$product) {
+                if ($registerReason) {
+                    Mage::register('postnl_reason_not_buspakje', 'missing_qty');
+                }
                 return false;
             }
 
             /**
              * The max qty attribute is only available on simple products.
              */
-            if ($product->getTypeId() != Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
+            if ($item->getProductType() != Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
                 continue;
             }
 
@@ -715,9 +746,16 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             /**
              * Get how many of this product would fit in a buspakje package.
              */
-            $maxQty = $product->getDataUsingMethod('postnl_max_qty_for_buspakje');
+            $maxQty = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_max_qty_for_buspakje',
+                $item->getStoreId()
+            );
 
-            if (!is_numeric($maxQty) || $maxQty == 0) {
+            if (!is_numeric($maxQty) || !$maxQty) {
+                if ($registerReason) {
+                    Mage::register('postnl_reason_not_buspakje', 'invalid_max_qty');
+                }
                 return false;
             }
 
@@ -733,6 +771,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If the combined weight of all items is more than 2 kg, this shipment is not a buspakje.
          */
         if ($totalWeight > 2) {
+            if ($registerReason) {
+                Mage::register('postnl_reason_not_buspakje', 'weight');
+            }
             return false;
         }
 
@@ -740,6 +781,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If the combined qty ratios of the items is more than 1 this is not a buspakje.
          */
         if ($totalQtyRatio > 1) {
+            if ($registerReason) {
+                Mage::register('postnl_reason_not_buspakje', 'qty_ratio');
+            }
             return false;
         }
 
@@ -890,6 +934,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'download_logs':
                 $aclPath = 'system/config/postnl/download_logs';
                 break;
+            case 'print_packing_slips':
+                $aclPath = 'postnl/shipment/actions/print_label/print_packing_slips';
+                break;
+            case 'convert_to_buspakje':
+                $aclPath = 'postnl/shipment/actions/convert/to_buspakje';
+                break;
+            case 'convert_to_package':
+                $aclPath = 'postnl/shipment/actions/convert/to_package';
+                break;
+            case 'change_product_code':
+                $aclPath = 'postnl/shipment/actions/convert/change_product_code';
+                break;
             case 'confirm': //no break
             case 'print_label': //no break
             case 'reset_confirmation': //no break
@@ -897,9 +953,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'create_parcelware_export': //no break
             case 'send_track_and_trace':
                 $aclPath = 'postnl/shipment/actions/' . $action;
-                break;
-            case 'print_packing_slips':
-                $aclPath = 'postnl/shipment/actions/print_label/print_packing_slips';
                 break;
             default:
                 $aclPath = false;
@@ -995,7 +1048,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $cache = $this->getCache();
         }
 
-        if ($cache && $cache->hasPostnlCoreIsEnabled()) {
+        if ($cache && $cache->hasPostnlCorestatibled()) {
             return $cache->getPostnlCoreIsEnabled();
         }
 
@@ -1020,6 +1073,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     protected function _isEnabled($storeId, $forceTestMode, $ignoreCache)
     {
+        if (version_compare(phpversion(), self::MIN_PHP_VERSION, '<')) {
+            return false;
+        }
+
         if ($storeId === false) {
             $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
         }
@@ -1472,6 +1529,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isLoggingEnabled()
     {
+        if (version_compare(phpversion(), self::MIN_PHP_VERSION, '<')) {
+            return false;
+        }
+
         $debugMode = $this->getDebugMode();
         if ($debugMode > 1) {
             return true;
@@ -1487,6 +1548,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function isExceptionLoggingEnabled()
     {
+        if (version_compare(phpversion(), self::MIN_PHP_VERSION, '<')) {
+            return false;
+        }
+
         $debugMode = $this->getDebugMode();
         if ($debugMode > 0) {
             return true;

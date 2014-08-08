@@ -429,11 +429,11 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             } elseif (!$shipment) {
                 $this->addWarning(
                     array(
-                        'entity_id'   => $shipment->getIncrementId(),
+                        'entity_id'   => $shipmentId,
                         'code'        => 'POSTNL-0009',
                         'description' => $this->__(
                             'This action is not available for shipment #%s, because it was not shipped using PostNL.',
-                            $shipment->getIncrementId()
+                            $shipmentId
                         ),
                     )
                 );
@@ -491,7 +491,10 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
     }
 
     /**
-     * @param $filename
+     * Output the specified string as a pdf.
+     *
+     * @param string $filename
+     * @param string $output
      *
      * @return $this
      * @throws Zend_Controller_Response_Exception

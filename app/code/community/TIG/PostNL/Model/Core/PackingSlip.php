@@ -252,10 +252,12 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         /**
          * @var TIG_PostNL_Model_Core_Shipment_Label $firstLabel
          */
-        $labels = $labelModel->sortLabels($labels);
+        $labels     = $labelModel->sortLabels($labels);
         $firstLabel = current($labels);
 
-        if (
+        if (!$firstLabel) {
+            return $pdf;
+        } elseif (
             !$this->getConfig('show_label')
             || $this->y < 421
             || ($firstLabel->getLabelType() != 'Label'

@@ -37,5 +37,12 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
-<?php $_filePath = $this->getThemeCssFile(); ?>
-<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl($_filePath); ?>" media="all"/>
+<?php $_helper = $this->helper('postnl'); ?>
+<script type="text/javascript">
+    //<![CDATA[
+    var postnlMassActionFilter;
+    document.observe('dom:loaded', function() {
+        postnlMassActionFilter =  new PostnlMassActionFilter(sales_shipment_grid_massactionJsObject);
+    });
+    //]]>
+</script>

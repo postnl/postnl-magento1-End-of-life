@@ -304,7 +304,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $helper->addSessionMessage('adminhtml/session', null, 'error',
                 $this->__('Shipment not found.')
             );
-            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            $this->_redirect('adminhtml/sales_shipment/index');
             return $this;
         }
 
@@ -386,7 +386,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $helper->addSessionMessage('adminhtml/session', null, 'error',
                 $this->__('Shipment not found.')
             );
-            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            $this->_redirect('adminhtml/sales_shipment/index');
             return $this;
         }
 
@@ -467,7 +467,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $helper->addSessionMessage('adminhtml/session', null, 'error',
                 $this->__('Shipment not found.')
             );
-            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            $this->_redirect('adminhtml/sales_shipment/index');
             return $this;
         }
 
@@ -519,6 +519,291 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
             $this->__("The shipment's shipping labels have been deleted.")
+        );
+
+        $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+        return $this;
+    }
+
+    /**
+     * Convert a shipment to a buspakje shipment.
+     *
+     * @return $this
+     */
+    public function convertToBuspakjeAction()
+    {
+        $helper = Mage::helper('postnl');
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        if (!$this->_checkIsAllowed(array('convert_to_buspakje', 'delete_labels'))) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        /**
+         * If no shipment was selected, cause an error
+         */
+        if (is_null($shipmentId)) {
+            $helper->addSessionMessage('adminhtml/session', null, 'error',
+                $this->__('Shipment not found.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        try {
+            /**
+             * Load the shipment and check if it exists and is valid.
+             *
+             * @var Mage_Sales_Model_Order_Shipment $shipment
+             */
+            $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'This action is not available for shipment #%s, because it was not shipped using PostNL.',
+                        $shipmentId
+                    ),
+                    'POSTNL-0009'
+                );
+            }
+
+            $postnlShipment = $this->_getPostnlShipment($shipmentId);
+
+            if ($postnlShipment->isConfirmed()) {
+                if (!$this->_checkIsAllowed(array('reset_confirmation'))) {
+                    $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                        $this->__('The current user is not allowed to perform this action.')
+                    );
+
+                    $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+                    return $this;
+                }
+
+                $postnlShipment->resetConfirmation(true, true)->save();
+            }
+            $postnlShipment->convertToBuspakje()->save();
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (TIG_PostNL_Exception $e) {
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (Exception $e) {
+            $helper->logException($e);
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
+                $this->__('An error occurred while processing this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        $helper->addSessionMessage('adminhtml/session', null, 'success',
+            $this->__('The shipment has been converted to a letter box parcel.')
+        );
+
+        $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+        return $this;
+    }
+
+    /**
+     * Convert a shipment to a package shipment.
+     *
+     * @return $this
+     */
+    public function convertToPackageAction()
+    {
+        $helper = Mage::helper('postnl');
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        if (!$this->_checkIsAllowed(array('convert_to_package', 'delete_labels'))) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        /**
+         * If no shipment was selected, cause an error
+         */
+        if (is_null($shipmentId)) {
+            $helper->addSessionMessage('adminhtml/session', null, 'error',
+                $this->__('Shipment not found.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        try {
+            /**
+             * Load the shipment and check if it exists and is valid.
+             *
+             * @var Mage_Sales_Model_Order_Shipment $shipment
+             */
+            $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'This action is not available for shipment #%s, because it was not shipped using PostNL.',
+                        $shipmentId
+                    ),
+                    'POSTNL-0009'
+                );
+            }
+
+            $postnlShipment = $this->_getPostnlShipment($shipmentId);
+
+            if ($postnlShipment->isConfirmed()) {
+                if (!$this->_checkIsAllowed(array('reset_confirmation'))) {
+                    $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                        $this->__('The current user is not allowed to perform this action.')
+                    );
+
+                    $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+                    return $this;
+                }
+
+                $postnlShipment->resetConfirmation(true, true)->save();
+            }
+            $postnlShipment->convertToPackage()->save();
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (TIG_PostNL_Exception $e) {
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (Exception $e) {
+            $helper->logException($e);
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
+                $this->__('An error occurred while processing this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        $helper->addSessionMessage('adminhtml/session', null, 'success',
+            $this->__('The shipment has been converted to a package.')
+        );
+
+        $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+        return $this;
+    }
+
+    /**
+     * Convert a shipment to a package shipment.
+     *
+     * @return $this
+     */
+    public function changeProductCodeAction()
+    {
+        $helper = Mage::helper('postnl');
+        $shipmentId = $this->getRequest()->getParam('shipment_id');
+        if (!$this->_checkIsAllowed(array('change_product_code'))) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        /**
+         * If no shipment was selected, cause an error
+         */
+        if (is_null($shipmentId)) {
+            $helper->addSessionMessage('adminhtml/session', null, 'error',
+                $this->__('Shipment not found.')
+            );
+            $this->_redirect('adminhtml/sales_shipment/index');
+            return $this;
+        }
+
+        try {
+            /**
+             * Load the shipment and check if it exists and is valid.
+             *
+             * @var Mage_Sales_Model_Order_Shipment $shipment
+             */
+            $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
+            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+                throw new TIG_PostNL_Exception(
+                    $this->__(
+                        'This action is not available for shipment #%s, because it was not shipped using PostNL.',
+                        $shipmentId
+                    ),
+                    'POSTNL-0009'
+                );
+            }
+
+            $postnlShipment = $this->_getPostnlShipment($shipmentId);
+
+            if ($postnlShipment->hasLabels()) {
+                if (!$this->_checkIsAllowed(array('delete_labels'))) {
+                    $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                        $this->__('The current user is not allowed to perform this action.')
+                    );
+
+                    $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+                    return $this;
+                }
+
+                $postnlShipment->deleteLabels();
+            }
+
+            $productOption = $this->getRequest()->getParam('product_option');
+
+            $postnlShipment->changeProductCode($productOption)->save();
+        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+            Mage::helper('postnl/cif')->parseCifException($e);
+
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (TIG_PostNL_Exception $e) {
+            $helper->logException($e);
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        } catch (Exception $e) {
+            $helper->logException($e);
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
+                $this->__('An error occurred while processing this action.')
+            );
+
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
+            return $this;
+        }
+
+        $helper->addSessionMessage('adminhtml/session', null, 'success',
+            $this->__("The shipment's product option has been changed succesfully.")
         );
 
         $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
@@ -714,153 +999,10 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
         }
 
         try {
-            $orderIds = $this->_getOrderIds();
-
             /**
-             * Create the shipments.
+             * Perform the full process for all selected orders.
              */
-            $errors = 0;
-            $shipmentIds = array();
-            foreach ($orderIds as $orderId) {
-                try {
-                    $shipmentIds[] = $this->_createShipment($orderId);
-                } catch (TIG_PostNL_Exception $e) {
-                    $helper->logException($e);
-                    $this->addWarning(
-                        array(
-                            'entity_id'   => Mage::getResourceModel('sales/order')->getIncrementId($orderId),
-                            'code'        => $e->getCode(),
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                    $errors++;
-                } catch (Exception $e) {
-                    $helper->logException($e);
-                    $this->addWarning(
-                        array(
-                            'entity_id'   => Mage::getResourceModel('sales/order')->getIncrementId($orderId),
-                            'code'        => null,
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                    $errors++;
-                }
-            }
-
-            /**
-             * Add either a success or failure message and redirect the user accordingly.
-             */
-            if ($errors < count($orderIds)) {
-                $helper->addSessionMessage(
-                    'adminhtml/session', null, 'success',
-                    $this->__('The shipments were successfully created.')
-                );
-            } else {
-                $helper->addSessionMessage(
-                    'adminhtml/session', null, 'error',
-                    $this->__(
-                        'None of the shipments could be created. Please check the error messages for more details.'
-                    )
-                );
-
-                /**
-                 * Check for warnings.
-                 */
-                $this->_checkForWarnings();
-
-                $this->_redirect('adminhtml/sales_order/index');
-                return $this;
-            }
-
-            /**
-             * Validate the number of labels to be printed. Every shipment has at least 1 label. So if we have more than
-             * 200 shipments we can stop the process right here.
-             *
-             * @var $labelClassName TIG_PostNL_Model_Core_Label
-             */
-            $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
-            if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
-                && !Mage::helper('postnl/cif')->allowInfinitePrinting()
-            ) {
-                throw new TIG_PostNL_Exception(
-                    $this->__('You can print a maximum of 200 labels at once.'),
-                    'POSTNL-0014'
-                );
-            }
-
-            /**
-             * Load the shipments and check if they are valid
-             */
-            $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
-
-            /**
-             * Get the labels from CIF.
-             *
-             * @var TIG_PostNL_Model_Core_Shipment $shipment
-             */
-            $labels = array();
-            foreach ($shipments as $shipment) {
-                try {
-                    $shipmentLabels = $this->_getLabels($shipment, true);
-                    $labels = array_merge($labels, $shipmentLabels);
-                } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-                    Mage::helper('postnl/cif')->parseCifException($e);
-
-                    $helper->logException($e);
-                    $this->addWarning(
-                        array(
-                            'entity_id'   => $shipment->getShipmentIncrementId(),
-                            'code'        => $e->getCode(),
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                } catch (TIG_PostNL_Exception $e) {
-                    $helper->logException($e);
-                    $this->addWarning(
-                        array(
-                            'entity_id'   => $shipment->getShipmentIncrementId(),
-                            'code'        => $e->getCode(),
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                } catch (Exception $e) {
-                    $helper->logException($e);
-                    $this->addWarning(
-                        array(
-                            'entity_id'   => $shipment->getShipmentIncrementId(),
-                            'code'        => null,
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                }
-            }
-
-            /**
-             * Check for warnings.
-             */
-            $this->_checkForWarnings();
-
-            if (!$labels) {
-                $helper->addSessionMessage('adminhtml/session', null, 'error',
-                    $this->__(
-                        'Unfortunately no shipments could be processed. Please check the error messages for more ' .
-                        'details.'
-                    )
-                );
-
-                $this->_redirect('adminhtml/sales_order/index');
-                return $this;
-            }
-
-            /**
-             * The label wills be base64 encoded strings. Convert these to a single pdf.
-             */
-            $label  = Mage::getModel('postnl_core/label');
-            $output = $label->createPdf($labels);
-
-            $filename = 'PostNL Shipping Labels' . date('YmdHis') . '.pdf';
-
-            $this->_preparePdfResponse($filename, $output);
+            $this->_fullPostnlFlow();
         } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
             Mage::helper('postnl/cif')->parseCifException($e);
 
@@ -889,6 +1031,230 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
     }
 
     /**
+     * Create the shipments, confirm them and print their shipping labels.
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _fullPostnlFlow()
+    {
+        $helper = Mage::helper('postnl');
+
+        $orderIds = $this->_getOrderIds();
+
+        /**
+         * If the buspakje calculation mode is set to 'automatic', we should check if each order could be a buspakje.
+         * Otherwise all shipments will be marked as regular package shipments.
+         */
+        if (Mage::helper('postnl/deliveryOptions')->getBuspakjeCalculationMode() == 'automatic') {
+            $isBuspakje = -1;
+        } else {
+            $isBuspakje = 0;
+        }
+
+        /**
+         * Register the requested product option to use the default option and whether to check if the shipment could be
+         * a buspakje shipment.
+         */
+        Mage::unregister('postnl_product_option');
+        Mage::register(
+            'postnl_product_option',
+            array(
+                'use_default' => 1,
+                'is_buspakje' => $isBuspakje,
+            )
+        );
+
+        /**
+         * Create the shipments.
+         */
+        $errors = 0;
+        $shipmentIds = array();
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        foreach ($orderIds as $orderId) {
+            try {
+                /**
+                 * @var Mage_Sales_Model_Order $order
+                 */
+                $order = Mage::getModel('sales/order')->load($orderId);
+                $shippingMethod = $order->getShippingMethod();
+
+                /**
+                 * Check that the order was placed using PostNL.
+                 */
+                if (!in_array($shippingMethod, $postnlShippingMethods)) {
+                    $this->addWarning(
+                        array(
+                            'entity_id'   => $order->getIncrementId(),
+                            'code'        => 'POSTNL-0009',
+                            'description' => $this->__(
+                                'This action is not available for order #%s, because it was not placed using PostNL.',
+                                $order->getIncrementId()
+                            ),
+                        )
+                    );
+
+                    $errors++;
+                    continue;
+                }
+
+                $shipmentIds[] = $this->_createShipment($orderId);
+            } catch (TIG_PostNL_Exception $e) {
+                /**
+                 * If any shipments already exist, get their IDs so they can be processed.
+                 */
+                $shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection');
+                $shipmentCollection->addFieldToSelect('entity_id')
+                                   ->addFieldToFilter('order_id', $orderId);
+
+                if ($shipmentCollection->getSize() > 0) {
+                    $shipmentIds = array_merge($shipmentCollection->getColumnValues('entity_id'), $shipmentIds);
+                } else {
+                    /**
+                     * If no shipments exist, add a warning message indicating the process failed for this order.
+                     */
+                    $helper->logException($e);
+                    $this->addWarning(
+                         array(
+                             'entity_id'   => Mage::getResourceModel('sales/order')->getIncrementId($orderId),
+                             'code'        => $e->getCode(),
+                             'description' => $e->getMessage(),
+                         )
+                    );
+                    $errors++;
+                }
+            } catch (Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                     array(
+                         'entity_id'   => Mage::getResourceModel('sales/order')->getIncrementId($orderId),
+                         'code'        => null,
+                         'description' => $e->getMessage(),
+                     )
+                );
+                $errors++;
+            }
+        }
+
+        /**
+         * Add either a success or failure message and redirect the user accordingly.
+         */
+        if ($errors < count($orderIds)) {
+            $helper->addSessionMessage(
+            'adminhtml/session', null, 'success',
+            $this->__('The shipments were successfully created.')
+            );
+        } else {
+            $helper->addSessionMessage(
+                'adminhtml/session',
+                null,
+                'error',
+                $this->__('None of the shipments could be created. Please check the error messages for more details.')
+            );
+
+            /**
+             * Check for warnings.
+             */
+            $this->_checkForWarnings();
+
+            $this->_redirect('adminhtml/sales_order/index');
+            return $this;
+        }
+
+        /**
+         * Validate the number of labels to be printed. Every shipment has at least 1 label. So if we have more than
+         * 200 shipments we can stop the process right here.
+         *
+         * @var $labelClassName TIG_PostNL_Model_Core_Label
+         */
+        $labelClassName = Mage::getConfig()->getModelClassName('postnl_core/label');
+        if(count($shipmentIds) > $labelClassName::MAX_LABEL_COUNT
+            && !Mage::helper('postnl/cif')->allowInfinitePrinting()
+        ) {
+            throw new TIG_PostNL_Exception(
+                $this->__('You can print a maximum of 200 labels at once.'),
+                'POSTNL-0014'
+            );
+        }
+
+        /**
+         * Load the shipments and check if they are valid
+         */
+        $shipments = $this->_loadAndCheckShipments($shipmentIds, true, false);
+
+        /**
+         * Get the labels from CIF.
+         *
+         * @var TIG_PostNL_Model_Core_Shipment $shipment
+         */
+        $labels = array();
+        foreach ($shipments as $shipment) {
+            try {
+                $shipmentLabels = $this->_getLabels($shipment, true);
+                $labels = array_merge($labels, $shipmentLabels);
+            } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                Mage::helper('postnl/cif')->parseCifException($e);
+
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (TIG_PostNL_Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => null,
+                        'description' => $e->getMessage(),
+                    )
+                );
+            }
+        }
+
+        /**
+         * Check for warnings.
+         */
+        $this->_checkForWarnings();
+
+        if (!$labels) {
+            $helper->addSessionMessage('adminhtml/session', null, 'error',
+                $this->__(
+                    'Unfortunately no shipments could be processed. Please check the error messages for more ' .
+                    'details.'
+                )
+            );
+
+            $this->_redirect('adminhtml/sales_order/index');
+            return $this;
+        }
+
+        /**
+         * The label wills be base64 encoded strings. Convert these to a single pdf.
+         */
+        $label  = Mage::getModel('postnl_core/label');
+        $output = $label->createPdf($labels);
+
+        $filename = 'PostNL Shipping Labels' . date('YmdHis') . '.pdf';
+
+        $this->_preparePdfResponse($filename, $output);
+        return $this;
+    }
+
+    /**
      * Prints shipping labels and confirms selected shipments.
      *
      * Please note that if you use a different label than the default 'GraphicFile|PDF' you must overload the
@@ -913,8 +1279,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $shipmentIds = $this->_getShipmentIds();
 
             /**
-             * Validate the number of labels to be printed. Every shipment has at least 1 label. So if we have more than 200
-             * shipments we can stop the process right here.
+             * Validate the number of labels to be printed. Every shipment has at least 1 label. So if we have more than
+             * 200 shipments we can stop the process right here.
              *
              * @var $labelClassName TIG_PostNL_Model_Core_Label
              */
@@ -1193,8 +1559,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                 if (empty($shipmentIds)) {
                     throw new TIG_PostNL_Exception(
                         $this->__(
-                            'None of the orders you have selected have any associated shipments. Please choose at least ' .
-                            'one order that has a shipment.'
+                            'None of the orders you have selected have any associated shipments. Please choose at ' .
+                            'least one order that has a shipment.'
                         ),
                         'POSTNL-0171'
                     );
@@ -1255,7 +1621,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                                 'Approaching memory limit for this operation. Please select fewer shipments and try ' .
                                 'again.'
                             ),
-                            'POSTNL-170'
+                            'POSTNL-0170'
                         );
                     }
 

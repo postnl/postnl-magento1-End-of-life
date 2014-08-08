@@ -253,6 +253,9 @@
                         <postnl_shipping_duration/>
                         <postnl_allow_delivery_options/>
                         <postnl_max_qty_for_buspakje/>
+                        <postnl_allow_po_locations/>
+                        <postnl_allow_timeframes/>
+                        <postnl_allow_pakketautomaat/>
                     </product_attributes>
                 </item>
                 <totals>
@@ -660,6 +663,7 @@
                 <min_order_total/>
                 <max_order_total>2000</max_order_total> <!-- PostNL COD is only available for orders whose base grand total amount is less than 2000 EUR -->
                 <allow_for_non_postnl>0</allow_for_non_postnl> <!-- Only show this payment method if the order is being shipped using PostNL -->
+                <allow_for_buspakje>0</allow_for_buspakje> <!-- Do not show this payment method if the order is shipped as a letter box parcel -->
                 <sort_order>1000</sort_order> <!-- 1000 -->
                 <model>postnl_payment/cod</model> <!-- TIG_PostNL_Model_Payment_Cod -->
                 <group>postnl</group> <!-- PostNL Payment Methods -->
@@ -717,7 +721,7 @@
                 <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
                 <custom_shipment_reference/>
                 <use_buspakje>1</use_buspakje> <!-- Use buspakje -->
-                <buspakje_calculation_mode>automatic</buspakje_calculation_mode> <!-- Automatically determine if a shipment is a buspakje shipment -->
+                <buspakje_calculation_mode>manual</buspakje_calculation_mode> <!-- Manually determine if a shipment is a buspakje shipment -->
                 <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
                 <cutoff_time>17:00:00</cutoff_time> <!-- Add an extra shipping day if customers order after 17:00 P.M. -->
                 <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
@@ -829,6 +833,7 @@
                 <iban/>
                 <bic/>
                 <auto_invoice>1</auto_invoice> <!-- Enable auto-invoice -->
+                <allow_cod_for_buspakje>0</allow_cod_for_buspakje> <!-- Disable COD for letter box parcels -->
             </cod>
         	<cif_globalpack_settings>
         	    <customs_license_number/>
@@ -849,7 +854,8 @@
                 <show_options_for_letter>0</show_options_for_letter> <!-- Do not show delivery options if the order's total weight is less than 2 kg -->
                 <show_options_for_backorders>0</show_options_for_backorders> <!-- Do not show delivery options if the order is not in stock -->
                 <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
-        	    <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
+        	    <enable_delivery_days>1</enable_delivery_days> <!-- Delivery days are allowed -->
+                <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
         	    <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
         	    <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
         	    <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
@@ -857,6 +863,11 @@
         	    <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
         	    <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
                 <allow_streetview>1</allow_streetview> <!-- Google streetview is allowed. -->
+                <show_options_for_buspakje>0</show_options_for_buspakje> <!-- Do not show delivery options if the order is a letter box parcel -->
+                <show_all_options_for_buspakje>0</show_all_options_for_buspakje> <!-- Do not show all delivery options for letter box parcel orders -->
+                <enable_delivery_days_for_buspakje>1</enable_delivery_days_for_buspakje> <!-- Show delivery days for letter box parcel orders -->
+                <enable_pakjegemak_for_buspakje>0</enable_pakjegemak_for_buspakje> <!-- Do not show post office locations for letter box parcel orders -->
+                <enable_pakketautomaat_for_buspakje>0</enable_pakketautomaat_for_buspakje> <!-- Do not show parcel dispenser locations for letter box parcel orders -->
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
                 <show_mijnpakket_app_link>1</show_mijnpakket_app_link> <!-- Show the MijnPakket app link -->
@@ -955,7 +966,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>dev</postnl>
+            <postnl>beta</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->
@@ -1779,7 +1790,7 @@
             </POSTNL-0159>
             <POSTNL-0160>
                 <message>A required configuration value is missing: %s.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/94860156</url>
                 <type>error</type>
             </POSTNL-0160>
             <POSTNL-0161>
@@ -1789,134 +1800,164 @@
             </POSTNL-0161>
             <POSTNL-0162>
                 <message>Cannot create an invoice without products.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/94861626</url>
                 <type>error</type>
             </POSTNL-0162>
             <POSTNL-0163>
                 <message>Order item #%s could not be invoiced.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93711773</url>
                 <type>error</type>
             </POSTNL-0163>
             <POSTNL-0164>
                 <message>Unable to create an invoice for this shipment due to the order missing.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93711923</url>
                 <type>error</type>
             </POSTNL-0164>
             <POSTNL-0165>
                 <message>Unable to create an invoice for this shipment because the order cannot be invoiced.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93712093</url>
                 <type>error</type>
             </POSTNL-0165>
             <POSTNL-0166>
                 <message>An error occurred while creating an invoice for this shipment.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93712203</url>
                 <type>error</type>
             </POSTNL-0166>
             <POSTNL-0167>
                 <message>No valid shipment type found for shipment #%s</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93727133</url>
                 <type>error</type>
             </POSTNL-0167>
             <POSTNL-0168>
                 <message>No valid order available for packing slip.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93727223</url>
                 <type>error</type>
             </POSTNL-0168>
             <POSTNL-0169>
                 <message>Invalid label type supplied for packing slip label pdf: %s.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93727383</url>
                 <type>error</type>
             </POSTNL-0169>
             <POSTNL-0170>
                 <message>Approaching memory limit for this operation. Please select fewer shipments and try again.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/95141016</url>
                 <type>error</type>
             </POSTNL-0170>
             <POSTNL-0171>
                 <message>None of the orders you have selected have any associated shipments. Please choose at least one order that has a shipment.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/95141286</url>
                 <type>error</type>
             </POSTNL-0171>
             <POSTNL-0172>
-                <message>No log valid files were found.</message>
-                <url/>
+                <message>No valid log files were found.</message>
+                <url>http://kb.totalinternetgroup.nl/topic/95141546</url>
                 <type>error</type>
             </POSTNL-0172>
             <POSTNL-0173>
                 <message>Log %s is too large and was skipped.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93991283</url>
                 <type>warning</type>
             </POSTNL-0173>
             <POSTNL-0174>
                 <message>The total size of all log files exceeds the maximum size allowed.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93991313</url>
                 <type>error</type>
             </POSTNL-0174>
             <POSTNL-0175>
                 <message>The server's memory limit is less than %.0fMB. The PostNL extension requires at least %.0fMB to function properly. Using the PostNL extension on servers with less memory than this may cause unexpected errors.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/95141856</url>
                 <type>warning</type>
             </POSTNL-0175>
             <POSTNL-0176>
                 <message>No shipment found for PostNL shipment #%d.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/95141986</url>
                 <type>error</type>
             </POSTNL-0176>
             <POSTNL-0177>
                 <message>No order found for PostNL shipment #%d.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/95142026</url>
                 <type>error</type>
             </POSTNL-0177>
             <POSTNL-0178>
                 <message>Maximum PostNL COD fee amount available to refunds is %s.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/95142066</url>
                 <type>error</type>
             </POSTNL-0178>
             <POSTNL-0179>
                 <message>It is not possible to create partial shipments for orders placed using PostNL COD. Please create only full shipments.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93991833</url>
                 <type>error</type>
             </POSTNL-0179>
             <POSTNL-0180>
                 <message>The addTrackingCodeToShipment action is currently unavailable.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/95142106</url>
                 <type>error</type>
             </POSTNL-0180>
             <POSTNL-0181>
                 <message>It appears the PostNL username and/or password you have entered is incorrect.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/95142216</url>
                 <type>error</type>
             </POSTNL-0181>
             <POSTNL-0182>
                 <message>Your PostNL account is unfortunately not allowed to perform this action. Please contact PostNL.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93992103</url>
                 <type>error</type>
             </POSTNL-0182>
             <POSTNL-0183>
                 <message>Unfortunately you have exceeded the maximum amount of PostNL requests you may send each minute. Please wait a few minutes and try again. If this problem persists, please contact PostNL.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93992233</url>
                 <type>error</type>
             </POSTNL-0183>
             <POSTNL-0184>
                 <message>This PostNL service is currently disabled. Please contact PostNL.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93992253</url>
                 <type>error</type>
             </POSTNL-0184>
             <POSTNL-0185>
                 <message>There was a problem connecting to PostNL's services. This may be due to a timeout. Please wait a few minutes and try again. If this problem persists, please contact PostNL.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/93992303</url>
                 <type>error</type>
             </POSTNL-0185>
             <POSTNL-0186>
                 <message>Your PostNL customer code appears to be incorrect. Please make sure you have entered the correct code.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/95142616</url>
                 <type>error</type>
             </POSTNL-0186>
             <POSTNL-0187>
                 <message>The total size of all PostNL logs exceeds the maximum recommended size.</message>
-                <url/>
+                <url>http://kb.totalinternetgroup.nl/topic/95142626</url>
                 <type>warning</type>
             </POSTNL-0187>
+            <POSTNL-0188>
+                <message>No default product options are available for this shipment. Please check that you have correctly configured the available product options in the PostNL extension's configuration.</message>
+                <url>http://kb.totalinternetgroup.nl/topic/95142666</url>
+                <type>error</type>
+            </POSTNL-0188>
+            <POSTNL-0189>
+                <message>The default product option was not available for this shipment, so another product option was chosen. Please check if the default product options are configured correctly in the PostNL extension's configuration.</message>
+                <url>http://kb.totalinternetgroup.nl/topic/95142726</url>
+                <type>warning</type>
+            </POSTNL-0189>
+            <POSTNL-0190>
+                <message>Delivery options are not allowed for letter box parcel orders.</message>
+                <url>http://kb.totalinternetgroup.nl/topic/95142726</url>
+                <type>error</type>
+            </POSTNL-0190>
+            <POSTNL-0191>
+                <message>The convertToBuspakje action is currently unavailable.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0191>
+            <POSTNL-0192>
+                <message>The convertToPackage action is currently unavailable.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0192>
+            <POSTNL-0193>
+                <message>The changeProductCode action is currently unavailable.</message>
+                <url/>
+                <type>error</type>
+            </POSTNL-0193>
 
             <!-- These error codes are generated by CIF, not by this extension -->
             <LIRS_0>

@@ -61,6 +61,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
 
         $value = $row->getData($this->getColumn()->getIndex());
 
+
         /**
          * If we have no value, then no delivery date was chosen by the customer. In this case we can calculate when the
          * order could be shipped.

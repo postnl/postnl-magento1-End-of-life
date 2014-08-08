@@ -124,9 +124,42 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
 
         $shipment = $this->getShipment();
 
-        $productOption = Mage::helper('postnl/cif')->getDefaultProductOptionForShipment($shipment);
+        try {
+            $productOption = Mage::helper('postnl/cif')->getDefaultProductOptionForShipment($shipment);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
+            $productOption = '';
+        }
 
         $this->setDefaultProductOption($productOption);
+        return $productOption;
+    }
+
+    /**
+     * Get the default product option for the current shipment.
+     *
+     * @return string
+     */
+    public function getDefaultBuspakjeOption()
+    {
+        if ($this->hasDefaultBuspakjeOption()) {
+            return $this->_getData('default_buspakje_option');
+        }
+
+        $postnlShipment = Mage::getModel('postnl_core/shipment')
+                        ->setShipmentType('buspakje')
+                        ->setStoreId($this->getShipment()->getStoreId());
+
+        try {
+            $productOption = $postnlShipment->getDefaultProductCode();
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
+            $productOption = '';
+        }
+
+        $this->setDefaultBuspakjeOption($productOption);
         return $productOption;
     }
 
@@ -189,10 +222,10 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
          */
         $orderItems = array();
         foreach ($items as $item) {
-            $orderItems[] = $item->getOrderItem();
+            $orderItems[] = $item->getOrderItem()->setQtyOrdered($item->getQty());
         }
 
-        $fits = Mage::helper('postnl')->fitsAsBuspakje($orderItems);
+        $fits = Mage::helper('postnl')->fitsAsBuspakje($orderItems, true);
 
         return $fits;
     }

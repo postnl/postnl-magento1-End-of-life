@@ -315,6 +315,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     /**
      * Get an array of PakjeGemak Express product codes.
      *
+     * @param boolean $flat
+     *
      * @return array
      */
     public function getPgeProductCodes($flat = true)
@@ -699,6 +701,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
      * TIG_PostNL_Model_Core_Shipment::getDefaultProductCode() which is more precise.
      *
      * @return array
+     *
+     * @deprecated v1.3.0
      */
     public function getDefaultProductOptions()
     {

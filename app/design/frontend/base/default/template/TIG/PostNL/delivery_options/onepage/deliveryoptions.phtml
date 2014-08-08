@@ -49,7 +49,12 @@
 <?php $_housenumber             = $_streetData['housenumber']; ?>
 
 <?php $_canUsePakjeGemak        = $this->canUsePakjeGemak(); ?>
-<?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
+
+<?php $_canUsePakjeGemakExpress = false; ?>
+<?php if ($_canUsePakjeGemak): ?>
+    <?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
+<?php endif; ?>
+
 <?php $_canUsePakketAutomaat    = $this->canUsePakketAutomaat(); ?>
 
 <?php $_canAddLocation = true; ?>
@@ -136,6 +141,7 @@
         allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
         allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
         allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
+        allowDeliveryDays      : <?php echo $this->canUseDeliveryDays()      ? 'true' : 'false'; ?>,
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
         allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
         allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
