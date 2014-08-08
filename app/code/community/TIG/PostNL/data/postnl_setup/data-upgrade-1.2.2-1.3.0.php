@@ -52,6 +52,10 @@ $configRequiredResources = array(
     'admin/system/',
     'admin/system/config',
     'admin/system/config/postnl',
+    'admin/system/config/convert',
+    'admin/system/config/convert/to_buspakje',
+    'admin/system/config/convert/to_package',
+    'admin/system/config/convert/change_product_code',
 );
 
 /**
@@ -97,16 +101,29 @@ $productTypes = array(
 
 /**
  * In this new version we need to fill the new 'order_id' and 'shipment_type' columns. We also need to add several new
- * ACL rules and add 2 new support product codes for 'buspakje' shipments and update several attribute values for
- * existing products. We've also moved several config settings, so we need to copy the previous settings there.
- * Otherwise the existing configuration will be lost.
+ * ACL rules and add several new support product codes for 'buspakje' and COD shipments, and update several attribute
+ * values for existing products. We've also moved several config settings, so we need to copy the previous settings
+ * there. Otherwise the existing configuration will be lost.
  */
 $installer->setOrderId()
           ->setShipmentType()
           ->setIsBuspakje()
           ->addAclRules($newConfigAclResources, $configRequiredResources)
           ->addAclRules($newPostnLAclResources, $postnlRequiredResources)
-          ->addSupportedProductCode(array('2828', '2928'))
+          ->addSupportedProductCode(
+              array(
+                  '2828',
+                  '2928',
+                  '3086',
+                  '3091',
+                  '3093',
+                  '3097',
+                  '3535',
+                  '3545',
+                  '3536',
+                  '3546'
+              )
+          )
           ->installPackingSlipItemColumns()
           ->updateAttributeValues($simpleAttributesData, array(Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
           ->updateAttributeValues($attributesData, $productTypes)

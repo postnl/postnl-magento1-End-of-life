@@ -850,7 +850,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'postnl_domestic_options' => array(
                     'name'   => 'product_options[domestic_options]',
                     'type'   => 'select',
-                    'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
                         array(
@@ -864,7 +863,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'postnl_avond_options' => array(
                     'name'   => 'product_options[avond_options]',
                     'type'   => 'select',
-                    'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
                         array(
@@ -878,7 +876,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'postnl_pg_options' => array(
                     'name'   => 'product_options[pg_options]',
                     'type'   => 'select',
-                    'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
                         array(
@@ -907,7 +904,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'postnl_eps_options' => array(
                     'name'   => 'product_options[eps_options]',
                     'type'   => 'select',
-                    'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
                         array(
@@ -920,7 +916,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'postnl_globalpack_options' => array(
                     'name'   => 'product_options[globalpack_options]',
                     'type'   => 'select',
-                    'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
                         array(
@@ -933,7 +928,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'postnl_domestic_cod_options' => array(
                     'name'   => 'product_options[domestic_cod_options]',
                     'type'   => 'select',
-                    'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
                         array(
@@ -947,7 +941,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'postnl_avond_cod_options' => array(
                     'name'   => 'product_options[avond_cod_options]',
                     'type'   => 'select',
-                    'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
                         array(
@@ -962,7 +955,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'postnl_pg_cod_options' => array(
                     'name'   => 'product_options[pg_cod_options]',
                     'type'   => 'select',
-                    'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
                         array(
@@ -976,7 +968,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'postnl_pge_cod_options' => array(
                     'name'   => 'product_options[pge_cod_options]',
                     'type'   => 'select',
-                    'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
                         array(
@@ -991,7 +982,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'postnl_pa_options' => array(
                     'name'   => 'product_options[pa_options]',
                     'type'   => 'select',
-                    'class'  => 'required-entry',
                     'label'  => $helper->__('Product options'),
                     'values' => $optionsModel->getOptions(
                         array(

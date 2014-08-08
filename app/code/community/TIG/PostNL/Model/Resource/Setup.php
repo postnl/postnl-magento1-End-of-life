@@ -629,6 +629,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     public function moveConfigSetting($fromXpath, $toXpath, $removeOldValue = true)
     {
         /**
+         * Get the current default value.
+         */
+        $defaultValue = Mage::getConfig()->getNode($fromXpath, 'default');
+
+        /**
          * First loop through all stores.
          *
          * @var Mage_Core_Model_Store $store
@@ -638,7 +643,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         foreach ($stores as $store) {
             $scopeId = $store->getId();
 
-            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
+            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue, $defaultValue);
         }
 
         /**
@@ -651,7 +656,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         foreach ($websites as $website) {
             $scopeId = $website->getId();
 
-            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
+            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue, $defaultValue);
         }
 
         /**
@@ -680,11 +685,19 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
      * @return $this
      */
     public function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
-                                                 $removeOldValue = true)
+                                             $removeOldValue = true, $defaultValue = false)
     {
         $config = Mage::getConfig();
 
-        $node = $config->getNode($fromXpath, $scope, $scopeId);
+        if ($scope == 'store') {
+            $scopeCode = Mage::app()->getStore($scopeId)->getCode();
+        } elseif ($scope == 'website') {
+            $scopeCode = Mage::app()->getWebsite($scopeId)->getCode();
+        } else {
+            $scopeCode = null;
+        }
+
+        $node = $config->getNode($fromXpath, $scope, $scopeCode);
 
         /**
          * If the node is not set for the default scope, there is nothing left to do.
@@ -697,6 +710,10 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
          * Get the string representation of the value.
          */
         $currentValue = $node->__toString();
+
+        if ($defaultValue !== false && $currentValue == $defaultValue) {
+            return $this;
+        }
 
         /**
          * Save the value to the new xpath for the scope from which we got the old value.
