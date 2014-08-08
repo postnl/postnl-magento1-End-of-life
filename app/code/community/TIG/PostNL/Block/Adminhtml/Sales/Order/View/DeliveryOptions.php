@@ -47,8 +47,13 @@
  * @method boolean getIsCod()
  * @method string  getSubType()
  */
-class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends Mage_Adminhtml_Block_Abstract
+class TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions extends TIG_PostNL_Block_Adminhtml_Template
 {
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_sales_order_view_deliveryoptions';
+
     /**
      * @var string
      */

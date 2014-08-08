@@ -83,6 +83,16 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     const XPATH_LABEL_SIZE = 'postnl/cif_labels_and_confirming/label_size';
 
     /**
+     * XML path to show_buspakje_options setting.
+     */
+    const XPATH_SHOW_BUSPAKJE_OPTION = 'postnl/cif_labels_and_confirming/show_buspakje_option';
+
+    /**
+     * XML path to buspakje_calculation_mode setting.
+     */
+    const XPATH_BUSPAKJE_CALCULATION_MODE = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
+
+    /**
      * Gets an array of optional columns to display
      *
      * @return array
