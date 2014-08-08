@@ -2029,7 +2029,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * Check if the result of this method has been cached in the registry.
          */
-        if (Mage::registry($registryKey)) {
+        if (Mage::registry($registryKey) !== null) {
             return Mage::registry($registryKey);
         }
 

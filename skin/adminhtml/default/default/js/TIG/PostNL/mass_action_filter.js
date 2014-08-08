@@ -37,15 +37,18 @@
  */
 PostnlMassActionFilter = Class.create();
 PostnlMassActionFilter.prototype = {
-    filteredTypes      : [],
+    filteredTypes : [],
 
-    massactionObject   : false,
+    massactionObject : false,
 
     isDefaultCheckbox  : false,
     isBuspakjeCheckbox : false,
     isBuspakjeField    : false,
 
-    isDefaultChecked   : false,
+    isDefaultChecked : false,
+
+    _hasDefaultCheckbox    : null,
+    _hasIsBuspakjeCheckbox : null,
 
     initialize : function(massActionObject) {
         this.massactionObject = massActionObject;
@@ -82,7 +85,7 @@ PostnlMassActionFilter.prototype = {
     },
 
     registerObservers : function() {
-        $('sales_order_grid_massaction-select').observe('change', this.init.bind(this));
+        this.massactionObject.select.observe('change', this.init.bind(this));
 
         document.observe('postnl:massaction_checkbox_change', this.filterOptions.bind(this));
         document.observe('postnl:massaction_grid_reload', this.init.bind(this));
@@ -113,8 +116,24 @@ PostnlMassActionFilter.prototype = {
         this.isDefaultCheckbox = false;
         this.isBuspakjeCheckbox = false;
         this.isBuspakjeField = false;
+        this._hasDefaultCheckbox = null;
+        this._hasIsBuspakjeCheckbox = null;
 
         return this;
+    },
+
+    hasIsDefaultCheckbox : function() {
+        if (this._hasDefaultCheckbox != null) {
+            return this._hasDefaultCheckbox;
+        }
+
+        if ($('postnl_use_default_checkbox')) {
+            this._hasDefaultCheckbox = true;
+            return true;
+        }
+
+        this._hasDefaultCheckbox = false;
+        return false;
     },
 
     getIsDefaultCheckbox : function() {
@@ -123,9 +142,26 @@ PostnlMassActionFilter.prototype = {
         }
 
         var defaultCheckbox = $('postnl_use_default_checkbox');
+        if (!defaultCheckbox) {
+            defaultCheckbox = new Element('input');
+        }
 
         this.isDefaultCheckbox = defaultCheckbox;
         return defaultCheckbox;
+    },
+
+    hasIsBuspakjeCheckbox : function() {
+        if (this._hasIsBuspakjeCheckbox != null) {
+            return this._hasIsBuspakjeCheckbox;
+        }
+
+        if ($('postnl_is_buspakje_checkbox')) {
+            this._hasIsBuspakjeCheckbox = true;
+            return true;
+        }
+
+        this._hasIsBuspakjeCheckbox = false;
+        return false;
     },
 
     getIsBuspakjeCheckbox : function() {
@@ -183,6 +219,10 @@ PostnlMassActionFilter.prototype = {
     isDefaultCheckboxChecked : function() {
         var defaultCheckbox = this.getIsDefaultCheckbox();
 
+        if (!this.hasIsDefaultCheckbox()) {
+            return false;
+        }
+
         if (defaultCheckbox.checked) {
             return true;
         }
@@ -192,6 +232,10 @@ PostnlMassActionFilter.prototype = {
 
     isBuspakjeCheckboxChecked : function() {
         var buspakjeCheckbox = this.getIsBuspakjeCheckbox();
+
+        if (!this.hasIsBuspakjeCheckbox()) {
+            return false;
+        }
 
         if (buspakjeCheckbox.checked) {
             return true;
@@ -219,7 +263,7 @@ PostnlMassActionFilter.prototype = {
     },
 
     hideOptions : function() {
-        $$('#sales_order_grid_massaction-form-additional select').each(function(element) {
+        this.massactionObject.formAdditional.select('select').each(function(element) {
             element.up().hide();
         });
 
@@ -256,7 +300,7 @@ PostnlMassActionFilter.prototype = {
         this.getIsDefaultCheckbox().disabled = false;
         this.getIsDefaultCheckbox().checked = this.isDefaultChecked;
 
-        if (filteredType == 'domestic' || filteredType == 'buspakje') {
+        if (filteredType == 'domestic') {
             this.getIsBuspakjeField().setValue(this.isBuspakjeCheckboxChecked() ? 1 : '');
             this.showIsBuspakjeContainer();
         } else {

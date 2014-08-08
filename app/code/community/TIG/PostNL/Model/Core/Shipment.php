@@ -117,6 +117,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakjeShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabels(array $value)
+ * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -138,6 +139,7 @@
  * @method bool                           hasShipmentIncrementId()
  * @method bool                           hasIsBuspakjeShipment()
  * @method bool                           hasDefaultProductCode()
+ * @method bool                           hasProductOption()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -603,6 +605,41 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setProductCode($productCode);
         return $productCode;
+    }
+
+    /**
+     * Get the product option linked to this shipment's product code.
+     *
+     * @return string|null
+     */
+    public function getProductOption()
+    {
+        if ($this->hasProductOption()) {
+            return $this->_getData('product_option');
+        }
+
+        /**
+         * Get this shipment's product code.
+         */
+        $productCode = $this->getProductCode();
+        if (!$productCode) {
+            return null;
+        }
+
+        /**
+         * Get all product options.
+         */
+        $productOptions = Mage::getModel('postnl_core/system_config_source_allProductOptions')
+                              ->getOptions(array(), true);
+
+        if (isset($productOptions[$productCode])) {
+            $productOption = $productOptions[$productCode];
+        } else {
+            $productOption = $productCode;
+        }
+
+        $this->setProductOption($productOption);
+        return $productOption;
     }
 
     /**
@@ -2204,6 +2241,54 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return true;
     }
 
+    /**
+     * Checks if the current shipment's product code may be changed.
+     *
+     * @param boolean $checkAvailableProductOptions
+     *
+     * @return boolean
+     */
+    public function canChangeProductCode($checkAvailableProductOptions = true)
+    {
+        if ($this->isConfirmed()) {
+            return false;
+        }
+
+        $shippingPhase = $this->getShippingPhase();
+        if ($shippingPhase == self::SHIPPING_PHASE_COLLECTION
+            || $shippingPhase == self::SHIPPING_PHASE_DELIVERED
+            || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
+            || $shippingPhase == self::SHIPPING_PHASE_SORTING
+        ) {
+            return false;
+        }
+
+        if (!$checkAvailableProductOptions) {
+            return true;
+        }
+
+        /**
+         * Get all available product options and this shipment's current product code.
+         */
+        $availableProductOptions = $this->getAllowedProductOptions();
+        $productCode = $this->getProductCode();
+
+        if (count($availableProductOptions) === 1 && isset($availableProductOptions[$productCode])) {
+            /**
+             * If only 1 product option is available and it's the same as the current product code, then we can't change
+             * it.
+             */
+            return false;
+        } elseif (count($availableProductOptions)) {
+            /**
+             * If there are any available product options, then we can change it.
+             */
+            return true;
+        }
+
+        return false;
+    }
+
     /*******************************************************************************************************************
      * SHIPMENT LOCKING AND UNLOCKING FUNCTIONS
      ******************************************************************************************************************/
@@ -3339,6 +3424,20 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Public alias for _checkProductCodeAllowed().
+     *
+     * @param $productCode
+     *
+     * @return bool
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function checkProductCodeAllowed($productCode)
+    {
+        return $this->_checkProductCodeAllowed($productCode);
+    }
+
+    /**
      * Checks if a given product code is allowed for the current shipments. Throws an exception if not.
      *
      * @param string $productCode
@@ -3689,7 +3788,30 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /*******************************************************************************************************************
-     * BEFORE AND AFTER SAVE METHODS
+     * LOADING METHODS
+     ******************************************************************************************************************/
+
+    /**
+     * Loads this shipment by a Magento shipment.
+     *
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     *
+     * @return $this
+     */
+    public function loadByShipment(Mage_Sales_Model_Order_Shipment $shipment)
+    {
+        $shipmentId = $shipment->getId();
+
+        if (!$shipmentId) {
+            return $this;
+        }
+
+        $this->load($shipmentId, 'shipment_id');
+        return $this;
+    }
+
+    /*******************************************************************************************************************
+     * SAVING METHODS
      ******************************************************************************************************************/
 
     /**
