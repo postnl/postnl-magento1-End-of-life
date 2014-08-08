@@ -61,6 +61,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
 
         $value = $row->getData($this->getColumn()->getIndex());
 
+
         /**
          * If we have no value, then no delivery date was chosen by the customer. In this case we can calculate when the
          * order could be shipped.
@@ -77,6 +78,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             $value = new DateTime($value);
         }
 
+        echo $value->format('D d-m-Y');
         $now = new DateTime();
         $now->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
 

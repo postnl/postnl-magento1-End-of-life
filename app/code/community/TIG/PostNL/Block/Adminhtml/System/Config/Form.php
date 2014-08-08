@@ -312,6 +312,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                  */
                 $isBelowMinimumVersion = version_compare($version, $minimumVersion, '<');
 
+                /**
+                 * If the current version is below the minimum version or if we have no data, use the old method of
+                 * getting config data.
+                 */
                 if (!$data && $isBelowMinimumVersion === true) {
                     if (isset($this->_configData[$path])) {
                         $data = $this->_configData[$path];
