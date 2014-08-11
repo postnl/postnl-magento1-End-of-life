@@ -392,7 +392,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $deliveryOptionsInfo['formatted_type'] = 'GlobalPack';
                 break;
             case 'buspakje':
-                $deliveryOptionsInfo['formatted_type'] = 'Buspakje';
+                $deliveryOptionsInfo['formatted_type'] = 'Brievenbuspakje';
                 break;
             //no default
         }

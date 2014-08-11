@@ -2586,7 +2586,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         Mage::dispatchEvent('postnl_shipment_confirm_before', array('shipment' => $this));
 
-        $parcelCount = $this->getparcelCount();
+        $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
             $parcelCount = $this->_calculateParcelCount();
         }
@@ -2709,7 +2709,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         Mage::dispatchEvent('postnl_shipment_confirm_before', array('shipment' => $this));
         Mage::dispatchEvent('postnl_shipment_confirmandgeneratelabel_before', array('shipment' => $this));
 
-        $parcelCount = $this->getparcelCount();
+        $parcelCount = $this->getParcelCount();
         if (!$parcelCount) {
             $parcelCount = $this->_calculateParcelCount();
         }
@@ -3724,6 +3724,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     public function deleteShipmentTracks()
     {
         $shipment = $this->getShipment();
+
+        if (!$shipment) {
+            return $this;
+        }
 
         /**
          * @var Mage_Sales_Model_Order_Shipment_Track $track
