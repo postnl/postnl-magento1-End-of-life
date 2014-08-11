@@ -179,6 +179,11 @@
         checkout.gotoSection('shipping');
     });
 
+    document.stopObserving('postnl:selectOptionSaved');
+    document.observe('postnl:selectOptionSaved', function() {
+        checkout.reloadProgressBlock('shipping_method');
+    });
+
     /**
      * Preload images.
      *

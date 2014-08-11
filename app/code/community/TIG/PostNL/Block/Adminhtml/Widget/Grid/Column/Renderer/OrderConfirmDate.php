@@ -40,7 +40,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Date
 {
     /**
-     * Additional column name used
+     * Additional column name used.
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
 
@@ -60,7 +60,6 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
         }
 
         $value = $row->getData($this->getColumn()->getIndex());
-
 
         /**
          * If we have no value, then no delivery date was chosen by the customer. In this case we can calculate when the
@@ -82,25 +81,36 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
         $now->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
 
         /**
-         * Check if the shipment should be confirmed today
-         */
-        if ($now->diff($value)->d == 0) {
-            return Mage::helper('postnl')->__('Today');
-        }
-
-        /**
          * Check if the shipment should be confirmed somewhere in the future
          */
-        if ($now->diff($value)->d > 0 && !$now->diff($value)->invert) {
+        $diff = $now->diff($value);
+        if (
+            (($diff->days > 0 || $diff->h > 0) && !$diff->invert)
+            || ($diff->days == 0 || $diff->h < 24) && $diff->invert
+        ) {
             /**
              * Get the number of days until the shipment should be confirmed
              */
-            $diff = $now->diff($value)->format('%a');
+            $diffDays = $diff->format('%a');
+
+            /**
+             * If the difference is more than X days exactly, add a day.
+             */
+            if (($diff->h > 0 || $diff->i > 0 || $diff->s > 0) && !$diff->invert) {
+                $diffDays++;
+            }
+
+            /**
+             * Check if the shipment should be confirmed today
+             */
+            if ($diffDays == 0) {
+                return Mage::helper('postnl')->__('Today');
+            }
 
             /**
              * Check if it should be confirmed tomorrow
              */
-            if ($diff == 1) {
+            if ($diffDays == 1) {
                 $renderedValue = Mage::helper('postnl')->__('Tomorrow');
 
                 return $renderedValue;
@@ -109,7 +119,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             /**
              * Render the number of days before the shipment should be confirmed
              */
-            $renderedValue = Mage::helper('postnl')->__('%s days from now', $diff);
+            $renderedValue = Mage::helper('postnl')->__('%s days from now', $diffDays);
 
             return $renderedValue;
         }

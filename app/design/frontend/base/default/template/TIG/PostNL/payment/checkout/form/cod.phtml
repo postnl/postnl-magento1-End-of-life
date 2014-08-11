@@ -54,7 +54,9 @@
 <script type="text/javascript">
     //<![CDATA[
     payment.init = function () {
-        this.beforeInit();
+        if (this.beforeInit) {
+            this.beforeInit();
+        }
         var elements = Form.getElements(this.form);
         if ($(this.form)) {
             $(this.form).observe('submit', function(event){this.save();Event.stop(event);}.bind(this));
@@ -78,6 +80,7 @@
         '<?php echo $_methodCode; ?>',
         function() {
             var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
+            var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
             var chosenDeliveryOptions = window.deliveryOptions;
 
             if (postnlCodPaymentMethod && chosenDeliveryOptions) {
@@ -85,7 +88,6 @@
                     postnlCodPaymentMethod.disabled = true;
                     postnlCodPaymentMethod.up().hide();
 
-                    var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
                     if (postnlCodPaymentForm) {
                         postnlCodPaymentForm.up().hide();
                     }
@@ -96,7 +98,6 @@
                         postnlCodPaymentMethod.disabled = true;
                         postnlCodPaymentMethod.up().hide();
 
-                        var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
                         if (postnlCodPaymentForm) {
                             postnlCodPaymentForm.up().hide();
                         }
@@ -105,5 +106,54 @@
             }
         }
     );
+
+    var deliveryOptions = window.deliveryOptions;
+    if (deliveryOptions && deliveryOptions.options.isOsc) {
+        var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
+        var postnlCodPaymentMethodContainer = $('container_payment_method_<?php echo $_methodCode; ?>');
+
+        var togglePostnlCod = function() {
+            if (deliveryOptions.selectedType == 'Overdag' || deliveryOptions.selectedType == 'PA') {
+
+                if (postnlCodPaymentMethod.checked) {
+                    postnlCodPaymentMethod.checked = false;
+
+                    var selected = false;
+                    $$('#checkout-payment-method-load input').each(function(element) {
+                        if (selected) {
+                            return;
+                        }
+
+                        if (element.visible()) {
+                            element.checked = true;
+                            payment.switchMethod(element.getValue());
+
+                            selected = true;
+                        }
+                    });
+                }
+
+                postnlCodPaymentMethod.disabled = true;
+                postnlCodPaymentMethod.up().hide();
+
+                if (postnlCodPaymentMethodContainer) {
+                    postnlCodPaymentMethodContainer.hide();
+                }
+            } else {
+                postnlCodPaymentMethod.disabled = false;
+                postnlCodPaymentMethod.up().show();
+
+                if (postnlCodPaymentMethod.checked && postnlCodPaymentMethodContainer) {
+                    postnlCodPaymentMethodContainer.show();
+                }
+            }
+        };
+
+        document.stopObserving('postnl:selectTimeframe');
+        document.observe('postnl:selectTimeframe', togglePostnlCod);
+
+        document.stopObserving('postnl:selectLocation');
+        document.observe('postnl:selectLocation', togglePostnlCod);
+    }
     //]]>
 </script>

@@ -307,7 +307,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     }
 
     /**
-     * Calls a CIF method
+     * Calls a CIF method.
      *
      * @param string         $wsdlType   Which wsdl to use
      * @param callable       $method     The method that will be called
@@ -326,6 +326,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
              */
             $client = $this->getSoapClient($wsdlType);
 
+            /**
+             * Check if the requested SOAP method is callable.
+             */
             if (!is_callable(array($client, $method))) {
                 throw new TIG_PostNL_Exception(
                     Mage::helper('postnl')->__('The specified method "%s" is not callable.', $method),
@@ -334,18 +337,18 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             }
 
             /**
-             * Add SOAP header
+             * Add SOAP header,
              */
             $header = $this->_getSoapHeader();
             $client->addSoapInputHeader($header, true); //permanent header
 
             /**
-             * Call the SOAP method
+             * Call the SOAP method,
              */
             $response = $client->$method($soapParams);
 
             /**
-             * Process any warnings that may have occurred
+             * Process any warnings that may have occurred,
              */
             $this->_processWarnings($client);
 
@@ -353,7 +356,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             return $response;
         } catch(SoapFault $e) {
             /**
-             * Only Soap exceptions are caught. Other exceptions must be caught by the caller
+             * Only Soap exceptions are caught. Other exceptions must be caught by the caller,
              *
              * @throws TIG_PostNL_Exception
              */
@@ -387,8 +390,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
 
         /**
-         * Check which wsdl file we need for each wsdl type
-         * Als get the wsdl version to get
+         * Check which wsdl file we need for each wsdl type and get the configured WSDl version to use.
          */
         $wsdlType = strtolower($wsdlType);
         switch ($wsdlType) {
@@ -432,7 +434,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         /**
-         * Check if we need the live or the sandbox wsdl
+         * Check if we need the live or the sandbox wsdl.
          */
         if ($this->isTestMode()) {
             $wsdlUrl = self::TEST_WSDL_BASE_URL;
@@ -441,7 +443,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         /**
-         * Format the final wsdl URL
+         * Format the final wsdl URL.
          */
         $wsdlUrl .= $wsdlFileName
                   . '/'
