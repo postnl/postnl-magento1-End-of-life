@@ -52,6 +52,19 @@ document.observe('dom:loaded', function() {
             checkEmpty(eventElement);
         });
     });
+
+    $$('.postnl-validate-empty-group').each(function(element) {
+        element.observe('change', function(event) {
+            var eventElement = Event.element(event);
+            checkEmptyGroup(eventElement);
+        });
+
+        element.observe('keyup', function(event) {
+            var eventElement = Event.element(event);
+            checkEmptyGroup(eventElement);
+        });
+        checkEmptyGroup(element);
+    });
 });
 
 function checkEmpty(eventElement) {
@@ -62,5 +75,50 @@ function checkEmpty(eventElement) {
 
     if (!eventElement.value.empty() && eventElement.hasClassName('postnl-validate-empty')) {
         eventElement.removeClassName('postnl-validate-empty');
+    }
+}
+
+function checkEmptyGroup(eventElement) {
+    var groupRegex = /^postnl-validate-group-(-?\w+)$/;
+
+    var result = false;
+    $w(eventElement.className).each(
+        function(name) {
+            if (result) {
+                return;
+            }
+
+            var group = groupRegex.exec(name);
+            if (group && group[1]) {
+                result = group[1];
+            }
+        }
+    );
+
+    var empty = true;
+    var elements = $$('.postnl-validate-empty-group.postnl-validate-group-' + result);
+    elements.each(
+        function(element) {
+            if (!empty) {
+                return;
+            }
+
+            empty = element.value.empty();
+            console.log(empty);
+        }
+    );
+
+    if (empty) {
+        elements.each(
+            function(element) {
+                element.addClassName('postnl-validate-empty');
+            }
+        );
+    } else {
+        elements.each(
+            function(element) {
+                element.removeClassName('postnl-validate-empty');
+            }
+        );
     }
 }
