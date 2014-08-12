@@ -1623,7 +1623,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <validate>postnl-validate-empty</validate>
+                            <validate>postnl-validate-empty-group postnl-validate-group-sender_address</validate>
                         </lastname>
                         <company translate="label" module="postnl">
                             <label>Company</label>
@@ -1632,7 +1632,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <validate>postnl-validate-empty</validate>
+                            <validate>postnl-validate-empty-group postnl-validate-group-sender_address</validate>
                         </company>
                         <department translate="label" module="postnl">
                             <label>Department</label>
