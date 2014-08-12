@@ -63,12 +63,28 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     /**
      * XML paths for setting statistics
      */
-    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
-    const XPATH_SPLIT_STREET              = 'postnl/cif_address/split_street';
-    const XPATH_CHECKOUT_ACTIVE           = 'postnl/checkout/active';
-    const XPATH_CHECKOUT_WEBSHOP_ID       = 'postnl/cif/webshop_id';
-    const XPATH_CONTACT_NAME              = 'postnl/cif/contact_name';
-    const XPATH_CUSTOMER_NUMBER           = 'postnl/cif/customer_number';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS       = 'postnl/cif_product_options/supported_product_options';
+    const XPATH_SPLIT_STREET                    = 'postnl/cif_address/split_street';
+    const XPATH_CHECKOUT_ACTIVE                 = 'postnl/checkout/active';
+    const XPATH_CHECKOUT_WEBSHOP_ID             = 'postnl/cif/webshop_id';
+    const XPATH_CONTACT_NAME                    = 'postnl/cif/contact_name';
+    const XPATH_CUSTOMER_NUMBER                 = 'postnl/cif/customer_number';
+    const XPATH_DELIVERY_OPTIONS_ACTIVE         = 'postnl/delivery_options/delivery_options_active';
+    const XPATH_ENABLE_DELIVERY_DAYS            = 'postnl/delivery_options/enable_delivery_days';
+    const XPATH_ENABLE_TIMEFRAMES               = 'postnl/delivery_options/enable_timeframes';
+    const XPATH_ENABLE_EVENING_TIMEFRAMES       = 'postnl/delivery_options/enable_evening_timeframes';
+    const XPATH_ENABLE_PAKJEGEMAK               = 'postnl/delivery_options/enable_pakjegemak';
+    const XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS = 'postnl/delivery_options/enable_pakketautomaat_locations';
+    const XPATH_ENABLE_PAKJEGEMAK_EXPRESS       = 'postnl/delivery_options/enable_pakjegemak_express';
+    const XPATH_USE_BUSPAKJE                    = 'postnl/cif_labels_and_confirming/use_buspakje';
+    const XPATH_BUSPAKJE_CALCULATION_MODE       = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
+    const XPATH_COD_ACTIVE                      = 'payment/postnl_cod/active';
+    const XPATH_MIJNPAKKET_LOGIN_ACTIVE         = 'postnl/delivery_options/mijnpakket_login_active';
+    const XPATH_USE_POSTCODE_CHECK              = 'postnl/cif_address/use_postcode_check';
+    const XPATH_PARCELWARE_EXPORT_ACTIVE        = 'postnl/parcelware_export/active';
+    const XPATH_SEND_TRACK_AND_TRACE_EMAIL      = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
+    const XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE  = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
+    const XPATH_SHOW_LABEL                      = 'postnl/packing_slip/show_label';
 
     /**
      * XML path to extension activation setting
@@ -297,17 +313,46 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             }
 
             $websites[] = array(
-                'websiteId'         => $website->getId(),
-                'hostName'          => $this->_getHostName($website),
-                'amountOfShipments' => $this->_getAmountOfShipments($website),
-                'merchantName'      => $this->_getMerchantName($website),
-                'lastOrderDate'     => $this->_getLastOrderDate($website),
-                'settings'          => array(
-                    'globalShipping'          => $this->_getUsesGlobalShipping($website),
-                    'splitAddress'            => $this->_getUsesSplitAddress($website),
-                    'postnlCheckout'          => $this->_getUsesPostnlCheckout($website),
-                    'postnlCheckoutWebshopId' => $this->_getCheckoutWebshopId($website),
-                    'customerNumber'          => $this->_getCustomerNumber($website),
+                'websiteId'                 => $website->getId(),
+                'hostName'                  => $this->_getHostName($website),
+                'amountOfShipments'         => $this->_getAmountOfShipments($website),
+                'amountOfShipmentsStandard' => $this->_getAmountOfShipments($website, array('domestic')),
+                'amountOfShipmentsPg'       => $this->_getAmountOfShipments($website, array('pg')),
+                'amountOfShipmentsPa'       => $this->_getAmountOfShipments($website, array('pa')),
+                'amountOfShipmentsPge'      => $this->_getAmountOfShipments($website, array('pge')),
+                'amountOfShipmentsAvond'    => $this->_getAmountOfShipments($website, array('avond')),
+                'amountOfShipmentsCod'      => $this->_getAmountOfShipments(
+                    $website,
+                    array(
+                        'domestic_cod',
+                        'pg_cod',
+                        'pge_cod'
+                    )
+                ),
+                'amountOfShipmentsBuspakje' => $this->_getAmountOfShipments($website, array('buspakje')),
+                'merchantName'              => $this->_getMerchantName($website),
+                'lastOrderDate'             => $this->_getLastOrderDate($website),
+                'settings'                  => array(
+                    'globalShipping'                 => $this->_getUsesGlobalShipping($website),
+                    'splitAddress'                   => $this->_getUsesSplitAddress($website),
+                    'postnlCheckout'                 => $this->_getUsesPostnlCheckout($website),
+                    'postnlCheckoutWebshopId'        => $this->_getCheckoutWebshopId($website),
+                    'customerNumber'                 => $this->_getCustomerNumber($website),
+                    'useDeliveryOptions'             => $this->_getUseDeliveryOptions($website),
+                    'useDeliveryDays'                => $this->_getUseDeliveryDays($website),
+                    'useTimeframes'                  => $this->_getUseTimeframes($website),
+                    'useAvond'                       => $this->_getUseAvond($website),
+                    'usePg'                          => $this->_getUsePg($website),
+                    'usePa'                          => $this->_getUsePa($website),
+                    'usePge'                         => $this->_getUsePge($website),
+                    'modeBuspakje'                   => $this->_getBuspakjeCalcMode($website),
+                    'cod'                            => $this->_getCod($website),
+                    'useMijnpakketLog'               => $this->_getUseMijnPakketLogin($website),
+                    'usePostcodeCheck'               => $this->_getUsePostcodeCheck($website),
+                    'useParcelwareExport'            => $this->_getUseParcelwareExport($website),
+                    'automaticallySendTrackAndTrace' => $this->_getUseSendTrackAndTrace($website),
+                    'modifiedTrackAndTrace'          => $this->_getUseModifiedTrackAndTrace($website),
+                    'showShippingLabelOnPackingSlip' => $this->_getShowShippingLabelOnPackingSlip($website),
                 ),
             );
         }
@@ -398,10 +443,31 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      * Get the number of PostNL shipments a specified website has sent
      *
      * @param Mage_Core_Model_Website $website
+     * @param array|boolean           $shipmentTypes
      *
      * @return int
      */
-    protected function _getAmountOfShipments($website)
+    protected function _getAmountOfShipments($website, $shipmentTypes = false)
+    {
+        if ($shipmentTypes !== false && !is_array($shipmentTypes)) {
+            $shipmentTypes = array($shipmentTypes);
+        }
+
+        $shipmentCollection = $this->_getShipmentCollection($website, $shipmentTypes);
+
+        $amountOfShipments = $shipmentCollection->getSize();
+        return $amountOfShipments;
+    }
+
+    /**
+     * Gets the shipment collection for a specified website.
+     *
+     * @param Mage_Core_Model_Website $website
+     * @param boolean|array           $shipmentTypes
+     *
+     * @return Mage_Sales_Model_Resource_Order_Shipment_Collection
+     */
+    protected function _getShipmentCollection($website, $shipmentTypes = false)
     {
         /**
          * Get a list of all storeIds associated with this website
@@ -442,11 +508,24 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             )
         );
 
+        if ($shipmentTypes) {
+            $select->joinLeft(
+                array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
+                '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
+                array(
+                    'shipment_type'          => 'postnl_shipment.shipment_type',
+                )
+            );
+        }
+
         $shipmentCollection->addFieldToFilter('`shipping_method`', array('in' => $postnlShippingMethods))
                            ->addFieldToFilter('`main_table`.`store_id`', array('in' => $storeIds));
 
-        $amountOfShipments = $shipmentCollection->getSize();
-        return $amountOfShipments;
+        if ($shipmentTypes) {
+            $shipmentCollection->addFieldToFilter('`shipment_type`', array('in', $shipmentTypes));
+        }
+
+        return $shipmentCollection;
     }
 
     /**
@@ -614,5 +693,223 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $webshopId = $website->getConfig(self::XPATH_CUSTOMER_NUMBER);
 
         return $webshopId;
+    }
+
+    /**
+     * Gets whether delivery options are used.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUseDeliveryOptions($website)
+    {
+        $useDeliveryoptions = (bool) $website->getConfig(self::XPATH_DELIVERY_OPTIONS_ACTIVE);
+
+        return $useDeliveryoptions;
+    }
+
+    /**
+     * Gets whether delivery days are used.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUseDeliveryDays($website)
+    {
+        $useDeliveryDays = (bool) $website->getConfig(self::XPATH_ENABLE_DELIVERY_DAYS);
+
+        return $useDeliveryDays;
+    }
+
+    /**
+     * Gets whether time frames are used.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUseTimeframes($website)
+    {
+        $useTimeframes = (bool) $website->getConfig(self::XPATH_ENABLE_TIMEFRAMES);
+
+        return $useTimeframes;
+    }
+
+    /**
+     * Gets whether evening delivery is used.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUseAvond($website)
+    {
+        $useAvond = (bool) $website->getConfig(self::XPATH_ENABLE_EVENING_TIMEFRAMES);
+
+        return $useAvond;
+    }
+
+    /**
+     * Gets whether PG is used.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUsePg($website)
+    {
+        $usePg = (bool) $website->getConfig(self::XPATH_ENABLE_PAKJEGEMAK);
+
+        return $usePg;
+    }
+
+    /**
+     * Gets whether PA is used.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUsePa($website)
+    {
+        $usePa = (bool) $website->getConfig(self::XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS);
+
+        return $usePa;
+    }
+
+    /**
+     * Gets whether PGE is used.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUsePge($website)
+    {
+        $usePge = (bool) $website->getConfig(self::XPATH_ENABLE_PAKJEGEMAK_EXPRESS);
+
+        return $usePge;
+    }
+
+    /**
+     * Gets the buspakje calculation mode.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return string
+     */
+    protected function _getBuspakjeCalcMode($website)
+    {
+        $useBuspakje = (bool) $website->getConfig(self::XPATH_USE_BUSPAKJE);
+        if (!$useBuspakje) {
+            return 'off';
+        }
+
+        $buspakjeCalcMode = $website->getConfig(self::XPATH_BUSPAKJE_CALCULATION_MODE);
+
+        return $buspakjeCalcMode;
+    }
+
+    /**
+     * Gets whether PostNL COD is used.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getCod($website)
+    {
+        $cod = (bool) $website->getConfig(self::XPATH_COD_ACTIVE);
+
+        return $cod;
+    }
+
+    /**
+     * Gets whether MijnPakket login is used.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUseMijnPakketLogin($website)
+    {
+        $useMijnPakketLogin = (bool) $website->getConfig(self::XPATH_MIJNPAKKET_LOGIN_ACTIVE);
+
+        return $useMijnPakketLogin;
+    }
+
+    /**
+     * Gets whether postcode check is active.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUsePostcodeCheck($website)
+    {
+        $usePostcodeCheck = (bool) $website->getConfig(self::XPATH_USE_POSTCODE_CHECK);
+
+        return $usePostcodeCheck;
+    }
+
+    /**
+     * Gets whether parcelware export is active.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUseParcelwareExport($website)
+    {
+        $useParcelwareExport = (bool) $website->getConfig(self::XPATH_PARCELWARE_EXPORT_ACTIVE);
+
+        return $useParcelwareExport;
+    }
+
+    /**
+     * Gets whether the track&trace email is sent automatically.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUseSendTrackAndTrace($website)
+    {
+        $useSendTrackAndTrace = (bool) $website->getConfig(self::XPATH_SEND_TRACK_AND_TRACE_EMAIL);
+
+        return $useSendTrackAndTrace;
+    }
+
+    /**
+     * Gets whether a modified track&trace email template is used.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getUseModifiedTrackAndTrace($website)
+    {
+        $template = $website->getConfig(self::XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE);
+        if ($template != 'postnl_cif_labels_and_confirming_track_and_trace_email_template') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets whether the packing slip includes the PostNl shipping label.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return boolean
+     */
+    protected function _getShowShippingLabelOnPackingSlip($website)
+    {
+        $showShippingLabel = (bool) $website->getConfig(self::XPATH_SHOW_LABEL);
+
+        return $showShippingLabel;
     }
 }
