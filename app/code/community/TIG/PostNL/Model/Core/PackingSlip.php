@@ -1053,6 +1053,41 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
     }
 
     /**
+     * Draw Item process
+     *
+     * @param  Varien_Object|Mage_Sales_Model_Order_Shipment_item $item
+     * @param  Zend_Pdf_Page                                      $page
+     * @param  Mage_Sales_Model_Order                             $order
+     * @return Zend_Pdf_Page
+     */
+    protected function _drawItem(Varien_Object $item, Zend_Pdf_Page $page, Mage_Sales_Model_Order $order)
+    {
+        $orderItem = $item->getOrderItem();
+        $type = $orderItem->getProductType();
+        $renderer = $this->_getRenderer($type);
+
+        $this->renderItem($item, $page, $order, $renderer);
+
+        $transportObject = new Varien_Object(array('renderer_type_list' => array()));
+        Mage::dispatchEvent(
+            'pdf_item_draw_after',
+            array(
+                'transport_object' => $transportObject,
+                'entity_item'      => $item
+            )
+        );
+
+        foreach ($transportObject->getData('renderer_type_list') as $type) {
+            $renderer = $this->_getRenderer($type);
+            if ($renderer) {
+                $this->renderItem($orderItem, $page, $order, $renderer);
+            }
+        }
+
+        return $renderer->getPage();
+    }
+
+    /**
      * Render item
      *
      * @param Varien_Object $item

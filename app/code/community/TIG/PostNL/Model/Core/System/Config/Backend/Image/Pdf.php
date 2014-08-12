@@ -74,6 +74,7 @@ class TIG_PostNL_Model_Core_System_Config_Backend_Image_Pdf extends Mage_Adminht
          */
         $image = new Varien_Image($file);
         $image->keepAspectRatio(true);
+        $image->keepTransparency(true);
 
         /**
          * Check the image's size and resize the image if necessary.

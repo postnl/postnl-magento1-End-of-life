@@ -504,6 +504,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Alias for TIG_PostNL_Model_Core_Shipment::getShipmentIncrementId().
      *
+     * This method is not used internally. It is only provided for other developers who are used to calling
+     * getIncrementId() directly.
+     *
      * @return null|string
      */
     public function getIncrementId()
@@ -750,7 +753,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * gets all shipping labels associated with this shipment
+     * Gets all shipping labels associated with this shipment
      *
      * @return array Array of TIG_PostNL_Model_Core_Shipment_Label objects
      */
