@@ -245,11 +245,14 @@ class TIG_PostNL_MijnpakketController extends Mage_Core_Controller_Front_Action
                 . var_export($result, true)
             );
 
-            if (isset($result['message'][0])) {
-                $message = $result['message'][0];
+            if (isset($result['message'])) {
+                $message = $result['message'];
             } else {
                 $message = $this->__('An unknown error has occurred.');
             }
+
+            $this->getCheckoutSession()->setPostnlMijnpakketData(false);
+
             throw new TIG_PostNL_Exception($message);
         }
 

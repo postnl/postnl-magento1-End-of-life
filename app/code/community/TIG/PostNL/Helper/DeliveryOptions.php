@@ -35,6 +35,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @todo Cache the available delivery options in the checkout session. That way we only recalculate them if the quote
+ *       has changed.
  */
 class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 {
@@ -49,25 +52,33 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_PAKJEGEMAK               = 'postnl/delivery_options/enable_pakjegemak';
     const XPATH_ENABLE_PAKJEGEMAK_EXPRESS       = 'postnl/delivery_options/enable_pakjegemak_express';
     const XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS = 'postnl/delivery_options/enable_pakketautomaat_locations';
+    const XPATH_ENABLE_DELIVERY_DAYS            = 'postnl/delivery_options/enable_delivery_days';
     const XPATH_ENABLE_TIMEFRAMES               = 'postnl/delivery_options/enable_timeframes';
     const XPATH_ENABLE_EVENING_TIMEFRAMES       = 'postnl/delivery_options/enable_evening_timeframes';
 
     /**
      * Xpaths to various business rule settings.
      */
-    const XPATH_SHOW_OPTIONS_FOR_LETTER     = 'postnl/delivery_options/show_options_for_letter';
-    const XPATH_SHOW_OPTIONS_FOR_BACKORDERS = 'postnl/delivery_options/show_options_for_backorders';
-    const XPATH_ALLOW_SUNDAY_SORTING        = 'postnl/delivery_options/allow_sunday_sorting';
+    const XPATH_SHOW_OPTIONS_FOR_BACKORDERS        = 'postnl/delivery_options/show_options_for_backorders';
+    const XPATH_ALLOW_SUNDAY_SORTING               = 'postnl/cif_labels_and_confirming/allow_sunday_sorting';
+    const XPATH_SHOW_OPTIONS_FOR_BUSPAKJE          = 'postnl/delivery_options/show_options_for_buspakje';
+    const XPATH_SHOW_ALL_OPTIONS_FOR_BUSPAKJE      = 'postnl/delivery_options/show_all_options_for_buspakje';
+    const XPATH_ENABLE_DELIVERY_DAYS_FOR_BUSPAKJE  = 'postnl/delivery_options/enable_delivery_days_for_buspakje';
+    const XPATH_ENABLE_PAKJEGEMAK_FOR_BUSPAKJE     = 'postnl/delivery_options/enable_pakjegemak_for_buspakje';
+    const XPATH_ENABLE_PAKKETAUTOMAAT_FOR_BUSPAKJE = 'postnl/delivery_options/enable_pakketautomaat_for_buspakje';
 
     /**
      * Xpaths to extra fee config settings.
      */
     const XPATH_EVENING_TIMEFRAME_FEE  = 'postnl/delivery_options/evening_timeframe_fee';
     const XPATH_PAKJEGEMAK_EXPRESS_FEE = 'postnl/delivery_options/pakjegemak_express_fee';
+
     /**
      * Xpath for shipping duration setting.
      */
-    const XPATH_SHIPPING_DURATION = 'postnl/delivery_options/shipping_duration';
+    const XPATH_SHIPPING_DURATION  = 'postnl/cif_labels_and_confirming/shipping_duration';
+    const XPATH_CUTOFF_TIME        = 'postnl/cif_labels_and_confirming/cutoff_time';
+    const XPATH_SUNDAY_CUTOFF_TIME = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
 
     /**
      * The time we consider to be the start of the evening.
@@ -114,20 +125,32 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Get the fee charged for evening timeframes.
+     * Get the fee charged for evening time frames.
      *
      * @param boolean $formatted
      * @param boolean $includingTax
+     * @param boolean $convert
      *
      * @return float
      */
-    public function getEveningFee($formatted = false, $includingTax = true)
+    public function getEveningFee($formatted = false, $includingTax = true, $convert = true)
     {
         $storeId = Mage::app()->getStore()->getId();
 
         $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
 
-        $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted);
+        $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted, false);
+
+        if ($price > 2) {
+            $price = 0;
+        }
+
+        if ($convert) {
+            $quote = $this->getQuote();
+            $store = $quote->getStore();
+
+            $price = $store->convertPrice($price, $formatted, false);
+        }
 
         return $price;
     }
@@ -137,61 +160,420 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @param boolean $formatted
      * @param boolean $includingTax
+     * @param boolean $convert
      *
      * @return float
      */
-    public function getExpressFee($formatted = false, $includingTax = true)
+    public function getExpressFee($formatted = false, $includingTax = true, $convert = true)
     {
         $storeId = Mage::app()->getStore()->getId();
 
         $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
 
-        $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted);
+        $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted, false);
+
+        if ($price > 2) {
+            $price = 0;
+        }
+
+        if ($convert) {
+            $quote = $this->getQuote();
+            $store = $quote->getStore();
+
+            $price = $store->convertPrice($price, $formatted, false);
+        }
 
         return $price;
     }
 
     /**
-     * Get the Shipping date for a specified order date.
+     * Gets an array of info regarding chosen delivery options from a specified entity.
+     *
+     * @param Mage_Core_Model_Abstract $entity
+     * @param boolean                  $asVarienObject
+     *
+     * @return array|false
+     */
+    public function getDeliveryOptionsInfo(Mage_Core_Model_Abstract $entity, $asVarienObject = true)
+    {
+        $quoteId        = false;
+        $orderId        = false;
+        $postnlOrder    = false;
+        $postnlShipment = false;
+
+        /**
+         * Depending on the type of entity we need to load the PostNL order using a different parameter.
+         */
+        if ($entity instanceof TIG_PostNL_Model_Core_Order) {
+            $postnlOrder = $entity;
+        } elseif ($entity instanceof TIG_PostNL_Model_Core_Shipment) {
+            $postnlOrder    = $entity->getPostnlOrder();
+            $postnlShipment = $entity;
+        } elseif ($entity instanceof Mage_Sales_Model_Quote) {
+            $quoteId = $entity->getId();
+        } elseif ($entity instanceof Mage_Sales_Model_Order) {
+            $orderId = $entity->getId();
+        } elseif ($entity instanceof Mage_Sales_Model_Order_Invoice
+            || $entity instanceof Mage_Sales_Model_Order_Creditmemo
+        ) {
+            $orderId = $entity->getOrderId();
+        } elseif ($entity instanceof Mage_Sales_Model_Order_Shipment) {
+            $orderId = $entity->getOrderId();
+
+            $postnlShipment = Mage::getModel('postnl_core/shipment')->load($entity->getId(), 'shipment_id');
+            if (!$postnlShipment->getId()) {
+                $postnlShipment = false;
+            }
+        }
+
+        /**
+         * Load the PostNL order if we don't already have it using either the order or quote ID.
+         */
+        if (!$postnlOrder && $quoteId) {
+            $postnlOrder = Mage::getModel('postnl_core/order')->load($quoteId, 'quote_id');
+        } elseif (!$postnlOrder && $orderId) {
+            $postnlOrder = Mage::getModel('postnl_core/order')->load($orderId, 'order_id');
+        }
+
+        /**
+         * If we still don't have a PostNL order nor a PostNL shipment return false as no info is available.
+         */
+        if (!$postnlOrder && !$postnlShipment) {
+            return false;
+        }
+
+        /**
+         * This is the basic, empty array of delivery options info.
+         */
+        $deliveryOptionsInfo = array(
+            'type'                     => false,
+            'shipment_type'            => false,
+            'formatted_type'           => false,
+            'product_code'             => false,
+            'product_option'           => false,
+            'shipment_costs'           => false,
+            'confirm_date'             => false,
+            'delivery_date'            => false,
+            'pakje_gemak_address'      => false,
+            'confirm_status'           => false,
+            'shipping_phase'           => false,
+            'formatted_shipping_phase' => false,
+        );
+
+        /**
+         * If this was a PakjeGemak order, we need to add the PakjeGemak address.
+         */
+        $pakjeGemakAddress = $postnlOrder->getPakjeGemakAddress();
+        if ($pakjeGemakAddress) {
+            $deliveryOptionsInfo['pakje_gemak_address'] = $pakjeGemakAddress->getData();
+        }
+
+        /**
+         * If the order had any additional fees, we need to add them as well.
+         */
+        $shipmentCosts = $postnlOrder->getShipmentCosts();
+        if ($shipmentCosts) {
+            $deliveryOptionsInfo['shipment_costs'] = $shipmentCosts;
+        }
+
+        /**
+         * If we have a PostNL shipment, we can get some accurate data from it. Otherwise we need to get it from the
+         * PostNL order.
+         *
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
+        if ($postnlShipment) {
+            /**
+             * @var TIG_PostNL_Model_Core_Shipment $postnlShipment
+             */
+            $type = $postnlShipment->getShipmentType();
+            $deliveryOptionsInfo['shipment_type'] = $type;
+
+            /**
+             * Confirm status and shipping phase are only known if the supplied entity was a shipment.
+             */
+            $confirmStatus = $postnlShipment->getConfirmStatus();
+            $shippingPhase = $postnlShipment->getShippingPhase();
+
+            if ($confirmStatus) {
+                $deliveryOptionsInfo['confirm_status'] = $confirmStatus;
+            }
+
+            if ($shippingPhase) {
+                /**
+                 * Get the string representation of the shipping phase.
+                 */
+                $formattedShippingPhase = $postnlShipment->getFormattedShippingPhase();
+
+                $deliveryOptionsInfo['shipping_phase']           = $shippingPhase;
+                $deliveryOptionsInfo['formatted_shipping_phase'] = $formattedShippingPhase;
+            }
+
+            $deliveryDate = $postnlShipment->getDeliveryDate();
+            $confirmDate  = $postnlShipment->getConfirmDate();
+            $productCode  = $postnlShipment->getProductCode();
+        } else {
+            $type = $postnlOrder->getType();
+            $deliveryOptionsInfo['type'] = $type;
+
+            $deliveryDate = $postnlOrder->getDeliveryDate();
+            $confirmDate  = $postnlOrder->getConfirmDate();
+            $productCode  = $postnlOrder->getProductCode();
+        }
+
+        /**
+         * Add the delivery date.
+         */
+        if ($deliveryDate) {
+            $deliveryOptionsInfo['delivery_date'] = $deliveryDate;
+        }
+
+        /**
+         * Add the confirm date.
+         */
+        if ($confirmDate) {
+            $deliveryOptionsInfo['confirm_date'] = $confirmDate;
+        }
+
+        /**
+         * Add the product code.
+         */
+        if ($productCode) {
+            $deliveryOptionsInfo['product_code'] = $productCode;
+
+            $allProductOptions = Mage::getModel('postnl_core/system_config_source_allProductOptions')
+                                     ->getOptions(array(), true);
+
+            if (array_key_exists($productCode, $allProductOptions)) {
+                $deliveryOptionsInfo['product_option'] = $allProductOptions[$productCode];
+            }
+        }
+
+        /**
+         * Determine the formatted order type.
+         */
+        switch ($type) {
+            case 'domestic':
+            case 'Overdag':
+                $deliveryOptionsInfo['formatted_type'] = 'Overdag';
+                break;
+            case 'domestic_cod':
+                $deliveryOptionsInfo['formatted_type'] = 'Overdag rembours';
+                break;
+            case 'avond':
+            case 'Avond':
+                $deliveryOptionsInfo['formatted_type'] = 'Avond';
+                break;
+            case 'avond_cod':
+                $deliveryOptionsInfo['formatted_type'] = 'Avond rembours';
+                break;
+            case 'pg':
+            case 'PG':
+                $deliveryOptionsInfo['formatted_type'] = 'PakjeGemak';
+                break;
+            case 'pg_cod':
+                $deliveryOptionsInfo['formatted_type'] = 'PakjeGemak rembours';
+                break;
+            case 'pge':
+            case 'PGE':
+                $deliveryOptionsInfo['formatted_type'] = 'PakjeGemak Express';
+                break;
+            case 'pge_cod':
+                $deliveryOptionsInfo['formatted_type'] = 'PakjeGemak Express rembours';
+                break;
+            case 'pa':
+            case 'PA':
+                $deliveryOptionsInfo['formatted_type'] = 'Pakketautomaat';
+                break;
+            case 'eps':
+                $deliveryOptionsInfo['formatted_type'] = 'EPS';
+                break;
+            case 'globalpack':
+                $deliveryOptionsInfo['formatted_type'] = 'GlobalPack';
+                break;
+            case 'buspakje':
+                $deliveryOptionsInfo['formatted_type'] = 'Brievenbuspakje';
+                break;
+            //no default
+        }
+
+        if ($asVarienObject) {
+            $deliveryOptionsInfo = new Varien_Object($deliveryOptionsInfo);
+        }
+
+        /**
+         * Return the data.
+         */
+        return $deliveryOptionsInfo;
+    }
+
+    /**
+     * Get the delivery date for a specified order date.
      *
      * @param null|string $orderDate
      * @param null|int    $storeId
+     * @param boolean     $asDays
      *
-     * @return bool|string
+     * @return bool|string|int
      */
-    public function getShippingDate($orderDate = null, $storeId = null)
+    public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false)
     {
-        if ($orderDate === null) {
-            $orderDate = date('Y-m-d');
+        if (!$orderDate) {
+            $orderDate = new DateTime(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
         }
 
         if ($storeId === null) {
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $shippingDuration = Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
-        $deliveryTime = strtotime("+{$shippingDuration} days", strtotime($orderDate));
-        $deliveryDay = date('N', $deliveryTime);
-
-        if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
-            $deliveryTime = strtotime('+1 day', $deliveryTime);
+        if (is_string($orderDate)) {
+            $orderDate = new DateTime($orderDate);
         }
 
-        $deliveryDate = date('Y-m-d', $deliveryTime);
+        /**
+         * Get the base shipping duration for this order.
+         */
+        $shippingDuration = Mage::getStoreConfig(self::XPATH_SHIPPING_DURATION, $storeId);
+        $deliveryTime = clone $orderDate;
+        $deliveryTime->add(new DateInterval("P{$shippingDuration}D"));
+
+        /**
+         * Get the cut-off time. This is formatted as H:i:s.
+         */
+        $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
+        $orderTime = $orderDate->format('His');
+
+        /**
+         * Check if the current time (as His) is greater than the cut-off time.
+         */
+        if ($orderTime > str_replace(':', '', $cutOffTime)) {
+            $deliveryTime->add(new DateInterval('P1D'));
+            $shippingDuration++;
+        }
+
+        /**
+         * Get the delivery day (1-7).
+         */
+        $deliveryDay = $deliveryTime->format('N');
+
+        /**
+         * If the delivery day is a monday, we need to make sure that sunday sorting is allowed. Otherwise delivery on a
+         * monday is not possible.
+         */
+        if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
+            $sundayCutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
+            if ($orderTime <= str_replace(':', '', $sundayCutOffTime)) {
+                $deliveryTime->add(new DateInterval('P1D'));
+                $shippingDuration++;
+            }
+        }
+
+        if ($asDays) {
+            return $shippingDuration;
+        }
+
+        $deliveryDate = $deliveryTime->format('Y-m-d');
         return $deliveryDate;
+    }
+
+    /**
+     * Get the first possible delivery date as determined by PostNL.
+     *
+     * @param string                      $postcode A valid Dutch postcode (4 numbers and 2 letters).
+     * @param bool|Mage_Sales_Model_Quote $quote
+     * @param bool                        $throwException
+     *
+     * @return bool|string
+     *
+     * @throws Exception
+     * @throws TIG_PostNL_Exception
+     */
+    public function getPostcodeDeliveryDate($postcode, $quote = false, $throwException = false)
+    {
+        /**
+         * Parse the postcode so it is fully uppercase and contains no spaces.
+         */
+        $postcode = str_replace(' ', '', strtoupper($postcode));
+
+        /**
+         * Validate the postcode.
+         */
+        $validator = new Zend_Validate_PostCode('nl_NL');
+        $isValid = $validator->isValid($postcode);
+        if (!$isValid && $throwException) {
+            throw new TIG_PostNL_Exception(
+                $this->__(
+                    'Invalid postcode supplied for GetDeliveryDate request: %s Postcodes may only contain 4 numbers '
+                    . 'and 2 letters.',
+                    $postcode
+                ),
+                'POSTNL-0131'
+            );
+        } elseif (!$isValid) {
+            return false;
+        }
+
+        /**
+         * If no quote was specified, try to load the quote.
+         */
+        if (!$quote && $this->isAdmin()) {
+            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
+        } elseif(!$quote) {
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+        }
+
+        if (!$quote) {
+            return false;
+        }
+
+        /**
+         * Send a SOAP request to PostNL to get the earliest possible delivery date.
+         */
+        try {
+            $cif      = Mage::getModel('postnl_deliveryoptions/cif');
+            $response = $cif->setStoreId(Mage::app()->getStore()->getId())
+                            ->getDeliveryDate($postcode, $quote);
+        } catch(Exception $e) {
+            $this->logException($e);
+
+            if ($this->_canShowErrorDetails()) {
+                $this->addExceptionSessionMessage('core/session', $e);
+            }
+
+            if ($throwException) {
+                throw $e;
+            }
+
+            return false;
+        }
+
+        return $response;
     }
 
     /**
      * Gets the shipping duration for the specified quote.
      *
-     * @param Mage_Sales_Model_Quote $quote
+     * @param bool|Mage_Sales_Model_Quote $quote
      *
-     * @return int
+     * @return int|bool
      *
      * @throws TIG_PostNL_Exception
      */
-    public function getShippingDuration(Mage_Sales_Model_Quote $quote)
+    public function getShippingDuration(Mage_Sales_Model_Quote $quote = null)
     {
+        /**
+         * If no quote was specified, try to load the quote.
+         */
+        if (!$quote && $this->isAdmin()) {
+            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
+        } elseif(!$quote) {
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+        }
+
+        if (!$quote) {
+            return false;
+        }
+
         $storeId = $quote->getStoreId();
 
         /**
@@ -211,8 +593,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             /**
              * If the product has a specific shipping duration, add it to the array of durations.
              */
-            if ($product->hasPostnlShippingDuration() && $product->getPostnlShippingDuration() !== '') {
-                $durationArray[] = (int) $product->getPostnlShippingDuration();
+            if ($product->hasData('postnl_shipping_duration')
+                && $product->getData('postnl_shipping_duration') !== ''
+            ) {
+                $durationArray[] = (int) $product->getData('postnl_shipping_duration');
             }
         }
 
@@ -244,20 +628,24 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param float   $price
      * @param boolean $includingTax
      * @param boolean $formatted
+     * @param boolean $convert
      *
      * @return float
      *
      * @see Mage_Checkout_Block_Onepage_Shipping_Method_Available::getShippingPrice()
      */
-    public function getPriceWithTax($price, $includingTax, $formatted = false)
+    public function getPriceWithTax($price, $includingTax, $formatted = false, $convert = true)
     {
         $quote = $this->getQuote();
         $store = $quote->getStore();
 
         $shippingPrice  = Mage::helper('tax')->getShippingPrice($price, $includingTax, $quote->getShippingAddress());
-        $convertedPrice = $store->convertPrice($shippingPrice, $formatted, false);
 
-        return $convertedPrice;
+        if ($convert) {
+            $shippingPrice = $store->convertPrice($shippingPrice, $formatted, false);
+        }
+
+        return $shippingPrice;
     }
 
     /**
@@ -276,7 +664,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          *
          * date('l') returns the full textual representation of the day of the week (Sunday through Saturday).
          */
-        $weekDay = date('l', strtotime($deliveryDate));
+        $deliveryDate = new DateTime($deliveryDate);
+        $weekDay = $deliveryDate->format('l');
 
         foreach ($locations as &$location) {
             /**
@@ -354,24 +743,125 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * Checks if PakjeGemak is available.
      *
      * @param boolean $storeId
+     * @param boolean $checkQuote
      *
      * @return boolean
      */
-    public function canUsePakjeGemak($storeId = false)
+    public function canUsePakjeGemak($storeId = false, $checkQuote = true)
     {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_use_pakje_gemak';
+
+        $quote = $this->getQuote();
+        if ($quote) {
+            $registryKey .= '_' . $quote->getId();
+        }
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        if ($checkQuote) {
+            /**
+             * Check if these options are allowed for this specific quote.
+             */
+            $canUseForQuote = $this->canUsePakjeGemakForQuote();
+
+            if (!$canUseForQuote) {
+                Mage::register($registryKey, false);
+                return false;
+            }
+        }
+
         $cache = $this->getCache();
 
         if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakjeGemak()) {
-            return $cache->getPostnlDeliveryOptionsCanUsePakjeGemak();
+            /**
+             * Check if the result of this method has been cached in the PostNL cache.
+             */
+            $allowed = $cache->getPostnlDeliveryOptionsCanUsePakjeGemak();
+
+            Mage::register($registryKey, $allowed);
+            return $allowed;
         }
 
         $allowed = $this->_canUsePakjeGemak();
 
         if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
             $cache->setPostnlDeliveryOptionsCanUsePakjeGemak($allowed)
                   ->saveCache();
         }
+
+        Mage::register($registryKey, $allowed);
         return $allowed;
+    }
+
+    /**
+     * Check if PakjeGemak is allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUsePakjeGemakForQuote()
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return true;
+        }
+
+        $registryKey = 'can_use_pakje_gemak_for_quote_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
+         * these options are available for letter box parcel orders.
+         */
+        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+            && !$this->canShowPakjeGemakForBuspakje($quote)
+        ) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * Check if any products in the quote have explicitly disabled PakjeGemak locations.
+         *
+         * @var Mage_Sales_Model_Quote_item $item
+         */
+        $quoteItems = $quote->getAllItems();
+        foreach ($quoteItems as $item) {
+            $poLocationsAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_allow_pakje_gemak',
+                $item->getStoreId()
+            );
+
+            if (!is_null($poLocationsAllowed) && !$poLocationsAllowed) {
+                Mage::register($registryKey, false);
+                return false;
+            }
+        }
+
+        Mage::register($registryKey, true);
+        return true;
     }
 
     /**
@@ -383,11 +873,17 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     {
         $storeId = Mage::app()->getStore()->getId();
 
+        /**
+         * Check if PakjeGemak has ben enabled in the configuration.
+         */
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK, $storeId);
         if (!$enabled) {
             return false;
         }
 
+        /**
+         * The parent canUsePakjeGemak() method will check if any PakjeGemak product options are available.
+         */
         $allowed = parent::canUsePakjeGemak($storeId);
 
         return $allowed;
@@ -400,18 +896,55 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function canUsePakjeGemakExpress()
     {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_use_pakje_gemak_express';
+
+        $quote = $this->getQuote();
+        if ($quote) {
+            $registryKey .= '_' . $quote->getId();
+        }
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If PakjeGemak is not allowed, neither is PakjeGemak Express.
+         */
+        if (!$this->canUsePakjeGemak()) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
         $cache = $this->getCache();
 
         if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakjeGemakExpress()) {
-            return $cache->getPostnlDeliveryOptionsCanUsePakjeGemakExpress();
+            /**
+             * Check if the result of this method has been cached in the PostNL cache.
+             */
+            $allowed = $cache->getPostnlDeliveryOptionsCanUsePakjeGemakExpress();
+
+            Mage::register($registryKey, $allowed);
+            return $allowed;
         }
 
         $allowed = $this->_canUsePakjeGemakExpress();
 
         if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
             $cache->setPostnlDeliveryOptionsCanUsePakjeGemakExpress($allowed)
                   ->saveCache();
         }
+
+        Mage::register($registryKey, $allowed);
         return $allowed;
     }
 
@@ -424,15 +957,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     {
         $storeId = Mage::app()->getStore()->getId();
 
-        if (!$this->canUsePakjeGemak($storeId)) {
-            return false;
-        }
-
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_PAKJEGEMAK_EXPRESS, $storeId);
         if (!$enabled) {
             return false;
         }
 
+        /**
+         * Check if any PGE product options are available.
+         */
         $pgeOptions = Mage::getModel('postnl_core/system_config_source_pakjeGemakProductOptions')
                           ->getAvailablePgeOptions($storeId);
 
@@ -445,29 +977,131 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Checks if 'pakket automaat' is available.
+     * Checks if 'pakketautomaat' is available.
+     *
+     * @param boolean $checkQuote
      *
      * @return boolean
      */
-    public function canUsePakketAutomaat()
+    public function canUsePakketAutomaat($checkQuote = true)
     {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_use_pakketautomaat';
+
+        $quote = $this->getQuote();
+        if ($quote) {
+            $registryKey .= '_' . $quote->getId();
+        }
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        if ($checkQuote) {
+            /**
+             * Check if these options are allowed for this specific quote.
+             */
+            $canUseForQuote = $this->canUsePakketAutomaatForQuote();
+
+            if (!$canUseForQuote) {
+                Mage::register($registryKey, false);
+                return false;
+            }
+        }
+
         $cache = $this->getCache();
 
         if ($cache && $cache->hasPostnlDeliveryOptionsCanUsePakketAutomaat()) {
-            return $cache->getPostnlDeliveryOptionsCanUsePakketAutomaat();
+            /**
+             * Check if the result of this method has been cached in the PostNL cache.
+             */
+            $allowed = $cache->getPostnlDeliveryOptionsCanUsePakketAutomaat();
+
+            Mage::register($registryKey, $allowed);
+            return $allowed;
         }
 
         $allowed = $this->_canUsePakketAutomaat();
 
         if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
             $cache->setPostnlDeliveryOptionsCanUsePakketAutomaat($allowed)
                   ->saveCache();
         }
+
+        Mage::register($registryKey, $allowed);
         return $allowed;
     }
 
     /**
-     * Checks if 'pakket automaat' is available.
+     * Check if 'pakketautomaat' is allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUsePakketAutomaatForQuote()
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return true;
+        }
+
+        $registryKey = 'can_use_pakketautomaat_for_quote_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
+         * these options are available for letter box parcel orders.
+         */
+        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+            && !$this->canShowPakketAutomaatForBuspakje($quote)
+        ) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * Check if any product in the quote has explicitly disabled pakketautomaat.
+         *
+         * @var Mage_Sales_Model_Quote_item $item
+         */
+        $quoteItems = $quote->getAllItems();
+        foreach ($quoteItems as $item) {
+            $pakketautomaatAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_allow_pakketautomaat',
+                $item->getStoreId()
+            );
+
+            if ($pakketautomaatAllowed === '0') {
+                Mage::register($registryKey, false);
+                return false;
+            }
+        }
+
+        Mage::register($registryKey, true);
+        return true;
+    }
+
+    /**
+     * Checks if 'pakketautomaat' is available.
      *
      * @return boolean
      */
@@ -480,8 +1114,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
+        /**
+         * Check if any pakketautomaat product options are available.
+         */
         $pakketautomaatOptions = Mage::getModel('postnl_core/system_config_source_pakketautomaatProductOptions')
-                                     ->getAvailableOptions($storeId);
+                                     ->getAvailableOptions();
 
         $allowed = false;
         if (!empty($pakketautomaatOptions)) {
@@ -492,63 +1129,326 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Checks if timeframes are available.
+     * Checks if delivery days are available.
      *
-     * @return boolean
+     * @param bool $checkQuote
+     *
+     * @return bool
      */
-    public function canUseTimeframes()
+    public function canUseDeliveryDays($checkQuote = true)
     {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_use_delivery_days';
+
+        $quote = $this->getQuote();
+        if ($quote) {
+            $registryKey .= '_' . $quote->getId();
+        }
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        if ($checkQuote) {
+            /**
+             * Check if these options are allowed for this specific quote.
+             */
+            $canUseForQuote = $this->canUseDeliveryDaysForQuote();
+
+            if (!$canUseForQuote) {
+                Mage::register($registryKey, false);
+                return false;
+            }
+        }
+
         $cache = $this->getCache();
 
-        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseTimeframes()) {
-            return $cache->getPostnlDeliveryOptionsCanUseTimeframes();
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseDeliveryDays()) {
+            /**
+             * Check if the result of this method has been cached in the PostNL cache.
+             */
+            $allowed = $cache->getPostnlDeliveryOptionsCanUseDeliveryDays();
+
+            Mage::register($registryKey, $allowed);
+            return $allowed;
         }
 
         $storeId = Mage::app()->getStore()->getId();
 
-        $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_TIMEFRAMES, $storeId);
+        $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_DELIVERY_DAYS, $storeId);
 
         if ($cache) {
-            $cache->setPostnlDeliveryOptionsCanUseTimeframes($allowed)
+            /**
+             * Save the result in the PostNL cache.
+             */
+            $cache->setPostnlDeliveryOptionsCanUseDeliveryDays($allowed)
                   ->saveCache();
         }
+
+        Mage::register($registryKey, $allowed);
         return $allowed;
     }
 
     /**
-     * Checks if evening timeframes are available.
+     * Check if delivery days are allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUseDeliveryDaysForQuote()
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return true;
+        }
+
+        $registryKey = 'can_use_delivery_days_for_quote_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
+         * these options are available for letter box parcel orders.
+         */
+        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+            && !$this->canShowDeliveryDaysForBuspakje($quote)
+        ) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Quote_item $item
+         */
+        $quoteItems = $quote->getAllItems();
+        foreach ($quoteItems as $item) {
+            $deliveryDaysAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_allow_delivery_days',
+                $item->getStoreId()
+            );
+
+            if ($deliveryDaysAllowed === '0') {
+                Mage::register($registryKey, false);
+                return false;
+            }
+        }
+
+        Mage::register($registryKey, true);
+        return true;
+    }
+
+    /**
+     * Checks if time frames are available.
+     *
+     * @param boolean $checkQuote
+     *
+     * @return boolean
+     */
+    public function canUseTimeframes($checkQuote = true)
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_use_timeframes';
+
+        $quote = $this->getQuote();
+        if ($quote) {
+            $registryKey .= '_' . $quote->getId();
+        }
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        if (!$this->canUseDeliveryDays()) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        if ($checkQuote) {
+            /**
+             * Check if these options are allowed for this specific quote.
+             */
+            $canUseForQuote = $this->canUseTimeframesForQuote();
+
+            if (!$canUseForQuote) {
+                Mage::register($registryKey, false);
+                return false;
+            }
+        }
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasPostnlDeliveryOptionsCanUseTimeframes()) {
+            /**
+             * Check if the result of this method has been cached in the PostNL cache.
+             */
+            $allowed = $cache->getPostnlDeliveryOptionsCanUseTimeframes();
+
+            Mage::register($registryKey, $allowed);
+            return $allowed;
+        }
+
+        if ($quote) {
+            $storeId = $quote->getStoreId();
+        } else {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $allowed = Mage::getStoreConfigFlag(self::XPATH_ENABLE_TIMEFRAMES, $storeId);
+
+        if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
+            $cache->setPostnlDeliveryOptionsCanUseTimeframes($allowed)
+                  ->saveCache();
+        }
+
+        Mage::register($registryKey, $allowed);
+        return $allowed;
+    }
+
+    /**
+     * Check if time frames are allowed for the current quote.
+     *
+     * @return bool
+     */
+    public function canUseTimeframesForQuote()
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $quote = $this->getQuote();
+        if (!$quote) {
+            return true;
+        }
+
+        $registryKey = 'can_use_timeframes_for_quote_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
+         * these options are available for letter box parcel orders.
+         */
+        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+            && !$this->canShowAllDeliveryOptionsForBuspakje($quote)
+        ) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Quote_item $item
+         */
+        $quoteItems = $quote->getAllItems();
+        foreach ($quoteItems as $item) {
+            $timeframesAllowed = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                $item->getProductId(),
+                'postnl_allow_timeframes',
+                $item->getStoreId()
+            );
+
+            if ($timeframesAllowed === '0') {
+                Mage::register($registryKey, false);
+                return false;
+            }
+        }
+
+        Mage::register($registryKey, true);
+        return true;
+    }
+
+    /**
+     * Checks if evening time frames are available.
      *
      * @return boolean
      */
     public function canUseEveningTimeframes()
     {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_use_evening_timeframes';
+
+        $quote = $this->getQuote();
+        if ($quote) {
+            $registryKey .= '_' . $quote->getId();
+        }
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        if (!$this->canUseTimeframes()) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
         $cache = $this->getCache();
 
         if ($cache && $cache->hasPostnlDeliveryOptionsCanUseEveningTimeframes()) {
-            return $cache->getPostnlDeliveryOptionsCanUseEveningTimeframes();
+            /**
+             * Check if the result of this method has been cached in the PostNL cache.
+             */
+            $allowed = $cache->getPostnlDeliveryOptionsCanUseEveningTimeframes();
+
+            Mage::register($registryKey, $allowed);
+            return $allowed;
         }
 
         $allowed = $this->_canUseEveningTimeframes();
 
         if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
             $cache->setPostnlDeliveryOptionsCanUseEveningTimeframes($allowed)
                   ->saveCache();
         }
+
+        Mage::register($registryKey, $allowed);
         return $allowed;
     }
 
     /**
-     * Checks if evening timeframes are available.
+     * Checks if evening time frames are available.
      *
      * @return boolean
      */
     protected function _canUseEveningTimeframes()
     {
         $storeId = Mage::app()->getStore()->getId();
-
-        if (!$this->canUseTimeframes()) {
-            return false;
-        }
 
         $enabled = Mage::getStoreConfigFlag(self::XPATH_ENABLE_EVENING_TIMEFRAMES, $storeId);
         if (!$enabled) {
@@ -584,6 +1484,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $allowed = Mage::getStoreConfigFlag(self::XPATH_ALLOW_SUNDAY_SORTING, $storeId);
 
         if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
             $cache->setPostnlDeliveryOptionsCanUseSundaySorting($allowed)
                   ->saveCache();
         }
@@ -600,11 +1503,18 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function canUseDeliveryOptions($quote = false)
     {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
         $registryKey = 'can_use_delivery_options';
         if ($quote && $quote->getId()) {
             $registryKey .= '_quote_id_' . $quote->getId();
         }
 
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
         if (Mage::registry($registryKey) !== null) {
             return Mage::registry($registryKey);
         }
@@ -613,36 +1523,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $deliveryOptionsEnabled = $this->isDeliveryOptionsEnabled();
         if (!$deliveryOptionsEnabled) {
-            Mage::register($registryKey, false);
-            return false;
-        }
-
-        /**
-         * PostNL delivery options cannot be used for virtual orders
-         */
-        if ($quote && $quote->isVirtual()) {
-            $errors = array(
-                array(
-                    'code'    => 'POSTNL-0104',
-                    'message' => $this->__('The quote is virtual.'),
-                )
-            );
-            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
-            Mage::register($registryKey, false);
-            return false;
-        }
-
-        /**
-         * Check if the quote has a valid minimum amount
-         */
-        if ($quote && !$quote->validateMinimumAmount()) {
-            $errors = array(
-                array(
-                    'code'    => 'POSTNL-0105',
-                    'message' => $this->__("The quote's grand total is below the minimum amount required."),
-                )
-            );
-            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
             Mage::register($registryKey, false);
             return false;
         }
@@ -672,29 +1552,69 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return true;
         }
 
-        $storeId = $quote->getStoreId();
+        $canUseDeliveryOptionsForQuote = $this->canUseDeliveryOptionsForQuote($quote);
+
+        Mage::register($registryKey, $canUseDeliveryOptionsForQuote);
+        return $canUseDeliveryOptionsForQuote;
+    }
+
+    /**
+     * Check if delivery options are allowed for the specified quote.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     */
+    public function canUseDeliveryOptionsForQuote(Mage_Sales_Model_Quote $quote)
+    {
+        Mage::unregister('postnl_delivery_options_can_use_delivery_options_errors');
 
         /**
-         * Check if PostNL delivery options may be used for 'letter' orders and if not, if the quote could fit in an
-         * envelope.
+         * PostNL delivery options cannot be used for virtual orders
          */
-        $showDeliveryOptionsForLetters = Mage::getStoreConfigFlag(self::XPATH_SHOW_OPTIONS_FOR_LETTER, $storeId);
-        if (!$showDeliveryOptionsForLetters) {
-            $isLetterQuote = $this->quoteIsLetter($quote, $storeId);
-            if ($isLetterQuote) {
-                $errors = array(
-                    array(
-                        'code'    => 'POSTNL-0150',
-                        'message' => $this->__(
-                            "The quote's total weight is below the miniumum required to use PostNL delivery options."
-                        ),
-                    )
-                );
-                Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
-                Mage::register($registryKey, false);
-                return false;
-            }
+        if ($quote->isVirtual()) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0104',
+                    'message' => $this->__('The quote is virtual.'),
+                )
+            );
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+            return false;
         }
+
+        /**
+         * Check if the quote has a valid minimum amount
+         */
+        if (!$quote->validateMinimumAmount()) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0105',
+                    'message' => $this->__("The quote's grand total is below the minimum amount required."),
+                )
+            );
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+            return false;
+        }
+
+        /**
+         * Check if the current quote is a letter box parcel order and if so, if delivery options are allowed for letter
+         * box parcel orders.
+         */
+        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+            && !$this->canShowDeliveryOptionsForBuspakje($quote)
+        ) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0190',
+                    'message' => $this->__('Delivery options are not allowed for letter box parcel orders.'),
+                )
+            );
+            Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+            return false;
+        }
+
+        $storeId = $quote->getStoreId();
 
         /**
          * Check if PostNL delivery options may be used for out-og-stock orders and if not, whether the quote has any
@@ -711,12 +1631,35 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                     )
                 );
                 Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
-                Mage::register($registryKey, false);
                 return false;
             }
         }
 
-        Mage::register($registryKey, true);
+        /**
+         * Check if the quote contains a product for which delivery options are not allowed.
+         *
+         * @var Mage_Sales_Model_Quote_Item $item
+         */
+        foreach ($quote->getAllVisibleItems() as $item) {
+            $productId = $item->getProductId();
+            $allowDeliveryOptions = Mage::getResourceSingleton('postnl/catalog_product')->getAttributeRawValue(
+                $productId,
+                'postnl_allow_delivery_options',
+                $item->getStoreId()
+            );
+
+            if ($allowDeliveryOptions === '0') {
+                $errors = array(
+                    array(
+                        'code'    => 'POSTNL-0161',
+                        'message' => $this->__('Delivery options are not allowed for product #%s.', $productId),
+                    )
+                );
+                Mage::register('postnl_delivery_options_can_use_delivery_options_errors', $errors);
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -729,16 +1672,312 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function canUseDeliveryOptionsForCountry(Mage_Sales_Model_Quote $quote)
     {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_use_delivery_options_for_country_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If no shipping address is available, we have nothing to check and delivery options will not be allowed.
+         */
         $shippingAddress = $quote->getShippingAddress();
         if (!$shippingAddress) {
+            Mage::register($registryKey, false);
             return false;
         }
 
+        /**
+         * Delivery options are only available when shipping to the Netherlands.
+         */
         if ($shippingAddress->getCountry() != 'NL') {
+            Mage::register($registryKey, false);
             return false;
         }
 
+        Mage::register($registryKey, true);
         return true;
+    }
+
+    /**
+     * Checks if the buspakje-specific configuration is applicable to the current quote.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     */
+    public function isBuspakjeConfigApplicableToQuote(Mage_Sales_Model_Quote $quote)
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'is_buspakje_config_applicable_to_quote_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If the buspakje calculation mode is set to 'manual', no further checks are required as the regular delivery
+         * option rules will apply.
+         */
+        if ($this->getBuspakjeCalculationMode() != 'automatic') {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * Check if the current quote would fit as a letter box parcel.
+         */
+        $quoteItems = $quote->getAllItems();
+
+        $fits = $this->fitsAsBuspakje($quoteItems);
+
+        Mage::register($registryKey, $fits);
+        return $fits;
+    }
+
+    /**
+     * Checks if delivery options are disabled for letter box parcel orders.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     */
+    public function canShowDeliveryOptionsForBuspakje(Mage_Sales_Model_Quote $quote)
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_show_options_for_buspakje_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * Check if showing delivery options for letter box parcel orders is allowed in the configuration.
+         */
+        $showDeliveryOptions = Mage::getStoreConfigFlag(
+            self::XPATH_SHOW_OPTIONS_FOR_BUSPAKJE,
+            $quote->getStoreId()
+        );
+
+        Mage::register($registryKey, $showDeliveryOptions);
+        return $showDeliveryOptions;
+    }
+
+    /**
+     * Checks whether all delivery options are allowed for letter box parcel orders.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     */
+    public function canShowAllDeliveryOptionsForBuspakje(Mage_Sales_Model_Quote $quote)
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_show_all_options_for_buspakje_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If we can't show any delivery options for letter box parcels, return false.
+         */
+        if (!$this->canShowDeliveryOptionsForBuspakje($quote)) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * Check if showing all delivery options is allowed in the configuration.
+         */
+        $canShowAllOptions = Mage::getStoreConfigFlag(
+            self::XPATH_SHOW_ALL_OPTIONS_FOR_BUSPAKJE,
+            $quote->getStoreId()
+        );
+
+        Mage::register($registryKey, $canShowAllOptions);
+        return $canShowAllOptions;
+    }
+
+    /**
+     * Determine whether delivery days are allowed for letter box parcel orders.This method will return true if the
+     * buspakje calculation mode is set to manual, the order isn't a letter box parcel order or if all delivery options
+     * are allowed for letter box parcel orders.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     */
+    public function canShowDeliveryDaysForBuspakje(Mage_Sales_Model_Quote $quote)
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_show_delivery_days_for_buspakje_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If we can't show any delivery options for letter box parcels, return false.
+         */
+        if (!$this->canShowDeliveryOptionsForBuspakje($quote)) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * If all delivery options are allowed for letter box parcels, return true.
+         */
+        if ($this->canShowAllDeliveryOptionsForBuspakje($quote)) {
+            Mage::register($registryKey, true);
+            return true;
+        }
+
+        /**
+         * Check the configuration to see if delivery days are allowed for letter box parcels.
+         */
+        $deliveryDaysEnabledForBuspakje = Mage::getStoreConfigFlag(
+            self::XPATH_ENABLE_DELIVERY_DAYS_FOR_BUSPAKJE,
+            $quote->getStoreId()
+        );
+
+        Mage::register($registryKey, $deliveryDaysEnabledForBuspakje);
+        return $deliveryDaysEnabledForBuspakje;
+    }
+
+    /**
+     * Determine whether PakjeGemak locations (including parcel dispensers) are allowed for letter box parcel orders.
+     * This method will return true if the buspakje calculation mode is set to manual, the order isn't a letter box
+     * parcel order or if all delivery options are allowed for letter box parcel orders.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     */
+    public function canShowPakjeGemakForBuspakje(Mage_Sales_Model_Quote $quote)
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_show_pakje_gemak_for_buspakje_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If we can't show any delivery options for letter box parcels, return false.
+         */
+        if (!$this->canShowDeliveryOptionsForBuspakje($quote)) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * If all delivery options are allowed for letter box parcels, return true.
+         */
+        if ($this->canShowAllDeliveryOptionsForBuspakje($quote)) {
+            Mage::register($registryKey, true);
+            return true;
+        }
+
+        /**
+         * Check the configuration to see if PakjeGemak is allowed for letter box parcels.
+         */
+        $pakjeGemakEnabledForBuspakje = Mage::getStoreConfigFlag(
+            self::XPATH_ENABLE_PAKJEGEMAK_FOR_BUSPAKJE,
+            $quote->getStoreId()
+        );
+
+        Mage::register($registryKey, $pakjeGemakEnabledForBuspakje);
+        return $pakjeGemakEnabledForBuspakje;
+    }
+
+    /**
+     * Determine whether PakjeGemak locations (including parcel dispensers) are allowed for letter box parcel orders.
+     * This method will return true if the buspakje calculation mode is set to manual, the order isn't a letter box
+     * parcel order or if all delivery options are allowed for letter box parcel orders.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     */
+    public function canShowPakketAutomaatForBuspakje(Mage_Sales_Model_Quote $quote)
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_show_pakketautomaat_for_buspakje_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * If we can't show any delivery options for letter box parcels, return false.
+         */
+        if (!$this->canShowDeliveryOptionsForBuspakje($quote)) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * If all delivery options are allowed for letter box parcels, return true.
+         */
+        if ($this->canShowAllDeliveryOptionsForBuspakje($quote)) {
+            Mage::register($registryKey, true);
+            return true;
+        }
+
+        /**
+         * Check the configuration to see if 'pakketautomaat' is allowed for letter box parcels.
+         */
+        $pakketautomaatEnabledForBuspakje = Mage::getStoreConfigFlag(
+            self::XPATH_ENABLE_PAKKETAUTOMAAT_FOR_BUSPAKJE,
+            $quote->getStoreId()
+        );
+
+        Mage::register($registryKey, $pakketautomaatEnabledForBuspakje);
+        return $pakketautomaatEnabledForBuspakje;
     }
 
     /**
@@ -750,6 +1989,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function isTestMode($storeId = false)
     {
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
         if (Mage::registry('delivery_options_test_mode') !== null) {
             return Mage::registry('delivery_options_test_mode');
         }
@@ -758,7 +2000,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $testMode = Mage::getStoreConfigFlag(self::XML_PATH_TEST_MODE, $storeId);
+        $testMode = Mage::getStoreConfigFlag(self::XPATH_TEST_MODE, $storeId);
 
         Mage::register('delivery_options_test_mode', $testMode);
         return $testMode;
@@ -773,19 +2015,50 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function isDeliveryOptionsEnabled($storeId = null)
     {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'is_delivery_options_enabled';
+
+        $quote = $this->getQuote();
+        if ($quote) {
+            $registryKey .= '_' . $quote->getId();
+        }
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
         $cache = $this->getCache();
 
         if ($cache && $cache->hasPostnlDeliveryOptionsIsEnabled()) {
-            return $cache->getPostnlDeliveryOptionsIsEnabled();
+            /**
+             * Check if the result of this method has been cached in the PostNL cache.
+             */
+            $allowed = $cache->getPostnlDeliveryOptionsIsEnabled();
+
+            Mage::register($registryKey, $allowed);
+            return $allowed;
         }
 
+        /**
+         * Calculate if the delivery options are enabled.
+         */
         $isEnabled = $this->_isDeliveryOptionsEnabled($storeId);
 
         if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
             $cache->setPostnlDeliveryOptionsIsEnabled($isEnabled)
                   ->saveCache();
         }
 
+        Mage::register($registryKey, $isEnabled);
         return $isEnabled;
     }
 
@@ -804,6 +2077,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         Mage::unregister('postnl_delivery_options_is_enabled_errors');
 
+        /**
+         * Check if the PostNL extension is enabled.
+         */
         $isPostnlEnabled = $this->isEnabled($storeId);
         if ($isPostnlEnabled === false) {
             $errors = array(
@@ -816,6 +2092,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             return false;
         }
 
+        /**
+         * Check if delivery options have been enabled in the config.
+         */
         $isDeliveryOptionsActive = $this->isDeliveryOptionsActive($storeId);
         if (!$isDeliveryOptionsActive) {
             $errors = array(

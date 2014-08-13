@@ -92,7 +92,7 @@ class TIG_PostNL_Block_Core_JsTranslate extends TIG_PostNL_Block_Core_Template
     /**
      * @param null|Varien_Simplexml_Config $config
      *
-     * @return TIG_PostNL_Block_Core_JsTranslate
+     * @return $this
      */
     public function setConfig($config)
     {

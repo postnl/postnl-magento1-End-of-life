@@ -41,7 +41,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     /**
      * XML path of show_summary_page setting
      */
-    const XML_PATH_SHOW_SUMMARY_PAGE = 'postnl/checkout/show_summary_page';
+    const XPATH_SHOW_SUMMARY_PAGE = 'postnl/checkout/show_summary_page';
 
     /**
      * Order class variable
@@ -66,7 +66,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      *
      * @param Mage_Sales_Model_Order $order
      *
-     * @return TIG_PostNL_CheckoutController
+     * @return $this
      */
     public function setOrder($order)
     {
@@ -77,7 +77,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     /**
      * Checks if the PostNL webservice is available for the current account
      *
-     * @return TIG_PostNL_CheckoutController
+     * @return $this
      */
     public function pingAction()
     {
@@ -127,7 +127,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     /**
      * Prepares a new PostNL Checkout Order
      *
-     * @return TIG_PostNL_CheckoutController
+     * @return $this
      */
     public function prepareOrderAction()
     {
@@ -224,7 +224,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     /**
      * Shows a summary of the PostNL Checkout order before the user confirms it
      *
-     * @return TIG_PostNL_CheckoutController
+     * @return $this
      */
     public function summaryAction()
     {
@@ -243,7 +243,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         /**
          * Check if showing the checkout summary page is allowed
          */
-        $showSummarypage = Mage::getStoreConfigFlag(self::XML_PATH_SHOW_SUMMARY_PAGE);
+        $showSummarypage = Mage::getStoreConfigFlag(self::XPATH_SHOW_SUMMARY_PAGE);
         if (!$showSummarypage) {
             $this->_redirect('checkout/cart');
             return $this;
@@ -316,7 +316,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     /**
      * Finishes the checkout process and asks the payment method to finish the transaction
      *
-     * @return TIG_PostNL_CheckoutController
+     * @return $this
      */
     public function finishCheckoutAction()
     {
@@ -455,7 +455,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     /**
      * Cancels the checkout and disables the PostNL order
      *
-     * @return TIG_PostNL_CheckoutController
+     * @return $this
      */
     public function cancelAction()
     {
@@ -485,7 +485,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      * @param StdClass $orderDetails
      * @param Mage_Sales_Model_Order $order
      *
-     * @return TIG_PostNL_CheckoutController
+     * @return $this
      */
     protected function _parseCommunicationOptions($orderDetails, $order)
     {
@@ -514,7 +514,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
      * @param StdClass $option
      * @param Mage_Sales_Model_Order $order
      *
-     * @return TIG_PostNL_CheckoutController
+     * @return $this
      */
     protected function _processCommunicationOption($option, $order)
     {

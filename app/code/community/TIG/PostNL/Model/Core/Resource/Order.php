@@ -36,8 +36,11 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Resource_Order extends Mage_Core_Model_Resource_Db_Abstract
+class TIG_PostNL_Model_Core_Resource_Order extends TIG_PostNL_Model_Resource_Db_Abstract
 {
+    /**
+     * Initialize PostNL order model.
+     */
     public function _construct()
     {
         $this->_init('postnl_core/order', 'entity_id');

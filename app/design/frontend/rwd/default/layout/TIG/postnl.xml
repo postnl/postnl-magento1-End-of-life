@@ -52,11 +52,15 @@
         </reference>
     </default>
 
-    <!-- PAKJE GEMAK ADDRESS -->
+    <!-- PAKJE GEMAK ADDRESS & POSTNL COD FEE -->
 
     <sales_order_view>
         <reference name="content">
             <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+            <block type="core/template" name="delivery_options_info" template="TIG/PostNL/delivery_options/sales/order/delivery_options_info.phtml"/>
+        </reference>
+        <reference name="order_totals">
+            <block type="postnl/payment_sales_order_totals_codFee" before="tax" name="postnl_cod_fee" />
         </reference>
     </sales_order_view>
 
@@ -64,11 +68,17 @@
         <reference name="content">
             <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
         </reference>
+        <reference name="invoice_totals">
+            <block type="postnl/payment_sales_order_invoice_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
     </sales_order_invoice>
 
     <sales_order_creditmemo>
         <reference name="content">
             <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+        </reference>
+        <reference name="creditmemo_totals">
+            <block type="postnl/payment_sales_order_creditmemo_totals_codFee" before="tax" name="postnl_cod_fee" />
         </reference>
     </sales_order_creditmemo>
 
@@ -214,13 +224,21 @@
         </reference>
     </checkout_onepage_shippingmethod>
 
+    <checkout_onepage_progress_shipping_method>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>TIG/PostNL/delivery_options/onepage/progress/shipping_method.phtml</template>
+            </action>
+        </reference>
+    </checkout_onepage_progress_shipping_method>
+
     <!-- MIJNPAKKET ACCOUNTNOTIFICATION -->
 
     <checkout_onepage_success>
         <reference name="head">
             <action method="addCss"><stylesheet>css/TIG/PostNL/mijnpakket.css</stylesheet></action>
         </reference>
-        <reference name="checkout.success">
+        <reference name="content">
             <block type="postnl_mijnpakket/accountNotification" name="postnl_mijnpakket_account_notification" template="TIG/PostNL/mijnpakket/account_notification.phtml"/>
         </reference>
         <reference name="before_body_end">
@@ -283,5 +301,43 @@
             </block>
         </reference>
     </onestepcheckout_ajax_save_billing>
+
+    <!-- POSTNL COD FEE -->
+
+    <sales_order_print>
+        <reference name="order_totals">
+            <block type="postnl/payment_sales_order_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_order_print>
+
+    <sales_order_printinvoice>
+        <reference name="invoice_totals">
+            <block type="postnl/payment_sales_order_invoice_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_order_printinvoice>
+
+    <sales_order_printcreditmemo>
+        <reference name="creditmemo_totals">
+            <block type="postnl/payment_sales_order_creditmemo_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_order_printcreditmemo>
+
+    <sales_email_order_items>
+        <reference name="order_totals">
+            <block type="postnl/payment_sales_order_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_email_order_items>
+
+    <sales_email_order_invoice_items>
+        <reference name="invoice_totals">
+            <block type="postnl/payment_sales_order_invoice_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_email_order_invoice_items>
+
+    <sales_email_order_creditmemo_items>
+        <reference name="creditmemo_totals">
+            <block type="postnl/payment_sales_order_creditmemo_totals_codFee" before="tax" name="postnl_cod_fee" />
+        </reference>
+    </sales_email_order_creditmemo_items>
 
 </layout>

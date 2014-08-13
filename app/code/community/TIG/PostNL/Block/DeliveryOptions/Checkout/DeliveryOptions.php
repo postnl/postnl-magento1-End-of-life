@@ -73,7 +73,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      *
      * @param Mage_Sales_Model_Quote_Address|null $shippingAddress
      *
-     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions
+     * @return $this
      */
     public function setShippingAddress($shippingAddress)
     {
@@ -212,8 +212,13 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
 
-            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
-            $deliveryDate = date('d-m-Y', $tomorrow);
+            $shippingDuration = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(null, null, true);
+
+            $nextDeliveryDay = new DateTime();
+            $nextDeliveryDay->setTimestamp(Mage::getModel('core/date')->timestamp());
+            $nextDeliveryDay->add(new DateInterval("P{$shippingDuration}D"));
+
+            $deliveryDate = $nextDeliveryDay->format('d-m-Y');
         }
 
         $this->setDeliveryDate($deliveryDate);
@@ -225,7 +230,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      *
      * @param string $deliveryDate
      *
-     * @return TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions
+     * @return $this
      */
     public function setDeliveryDate($deliveryDate)
     {
@@ -278,13 +283,6 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
                 break;
             default:
                 return 0;
-        }
-
-        /**
-         * If no fee is entered or an invalid value was entered, return an empty string.
-         */
-        if (!$fee || $fee > 2 || $fee < 0) {
-            return 0;
         }
 
         return $fee;
@@ -413,7 +411,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
-     * Checks whether Pakket Automaat locations are allowed.
+     * Checks whether Pakketautomaat locations are allowed.
      *
      * @return boolean
      */
@@ -424,7 +422,18 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
-     * Checks whether timeframes are allowed.
+     * Checks whether delivery days are allowed.
+     *
+     * @return boolean
+     */
+    public function canUseDeliveryDays()
+    {
+        $canUseDeliveryDays = Mage::helper('postnl/deliveryOptions')->canUseDeliveryDays();
+        return $canUseDeliveryDays;
+    }
+
+    /**
+     * Checks whether time frames are allowed.
      *
      * @return boolean
      */
@@ -435,7 +444,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
-     * Checks whether evening timeframes are allowed.
+     * Checks whether evening time frames are allowed.
      *
      * @return boolean
      */
@@ -486,6 +495,33 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         }
 
         return false;
+    }
+
+    /**
+     * Get whether this order is a buspakje order.
+     *
+     * @return bool
+     */
+    public function getIsBuspakje()
+    {
+        /**
+         * Check if the buspakje calculation mode is set to automatic.
+         */
+        $helper = Mage::helper('postnl');
+        $calculationMode = $helper->getBuspakjeCalculationMode();
+        if ($calculationMode != 'automatic') {
+            return false;
+        }
+
+        /**
+         * Check if the current quote fits as a letter box parcel.
+         */
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        if (!$helper->fitsAsBuspakje($quote->getAllItems())) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

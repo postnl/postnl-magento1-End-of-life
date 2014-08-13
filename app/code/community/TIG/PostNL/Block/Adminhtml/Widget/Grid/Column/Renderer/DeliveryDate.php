@@ -67,7 +67,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
          */
         if (!$value) {
             $confirmDate  = $row->getData(self::CONFIRM_DATE_COLUMN);
-            $deliveryDate = date('Y-m-d H:i:s', strtotime($confirmDate . ' + 1 day'));
+            $confirmDate = new DateTime($confirmDate);
+            $confirmDate->add(new DateInterval('P1D'));
+
+            $deliveryDate = $confirmDate->format('Y-m-d H:i:s');
 
             $row->setData($this->getColumn()->getIndex(), $deliveryDate);
         }

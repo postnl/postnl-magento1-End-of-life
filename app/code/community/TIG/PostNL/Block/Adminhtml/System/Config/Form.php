@@ -44,8 +44,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
     /**
      * For Magento versions below these versions we need to execute some special backwards compatibility code.
      */
-    const MINIMUM_VERSION_COMPATIBILITY            = '1.7.0.0';
-    const MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY = '1.12.0.0';
+    const MINIMUM_VERSION_COMPATIBILITY            = '1.7.0.1';
+    const MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY = '1.12.0.1';
 
     /**
      * Gets the fieldset parameter from the GET superglobal if available.
@@ -67,16 +67,17 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
     /**
      * Creates the system > config > edit form for the PostNL section.
      *
-     * Due to the way the form is initialized, each fieldset is initialized with it's fields in order. Due to this order a field
-     * can only depend on a field that is in the same fieldset or in a fieldset that is already initialized. An example:
-     * We have fieldset_a containing field_a. We also have fieldset_b containing field_b. If field_a depends on field_b, this
-     * is not possible. When field_a is initialized, fieldset_b and therefore field_b, will not yet have been initialized and
-     * will not be available.
+     * Due to the way the form is initialized, each fieldset is initialized with it's fields in order. Due to this order
+     * a field can only depend on a field that is in the same fieldset or in a fieldset that is already initialized. An
+     * example: We have fieldset_a containing field_a. We also have fieldset_b containing field_b. If field_a depends on
+     * field_b, this is not possible. When field_a is initialized, fieldset_b and therefore field_b, will not yet have
+     * been initialized and will not be available.
      *
-     * We have split the initialization of fieldsets and fields. This way Magento will first initialize all fieldsets and then
-     * init all fields. So when field_a is initialized, fieldset_b is already available and the dependency will work.
+     * We have split the initialization of fieldsets and fields. This way Magento will first initialize all fieldsets
+     * and then init all fields. So when field_a is initialized, fieldset_b is already available and the dependency will
+     * work.
      *
-     * @return TIG_PostNL_Block_Adminhtml_System_Config_Form
+     * @return $this
      */
     public function initForm()
     {
@@ -154,7 +155,27 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
             $helperName = $this->_configFields->getAttributeModule($section, $group);
             $fieldsetConfig = array('legend' => Mage::helper($helperName)->__((string)$group->label));
             if (!empty($group->comment)) {
-                $fieldsetConfig['comment'] = Mage::helper($helperName)->__((string)$group->comment);
+                if (!empty($group->comment_url)) {
+                    if (!empty($group->comment_url->base)) {
+                        $baseUrl = (string) $group->comment_url->base;
+                    } else {
+                        $baseUrl = '';
+                    }
+
+                    $params = array();
+                    if (!empty($group->comment_url->params)) {
+                        foreach ($group->comment_url->params->asArray() as $param => $value) {
+                            $params[$param] = $value;
+                        }
+                    }
+
+                    $commentUrl = $this->getUrl($baseUrl, $params);
+
+                    $comment = Mage::helper($helperName)->__((string)$group->comment, $commentUrl);
+                } else {
+                    $comment = Mage::helper($helperName)->__((string)$group->comment);
+                }
+                $fieldsetConfig['comment'] = $comment;
             }
             if (!empty($group->expanded)) {
                 $fieldsetConfig['expanded'] = (bool)$group->expanded;
@@ -206,7 +227,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
     /**
      * Init fieldset fields. Copied from EE1.13 Mage_Adminhtml_Block_System_Config_Form::initFields to allow for
-     * cross-fieldset dependencies in CE 1.6. Only made a small change to core code for backwards compatibility.
+     * cross-fieldset dependencies in CE 1.6 and 1.7.0.0, and EE 1.11 and 1.12.0.0. Only made a small change to core
+     * code for backwards compatibility.
      *
      * @param Varien_Data_Form_Element_Fieldset $fieldset
      * @param Varien_Simplexml_Element          $group
@@ -266,6 +288,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     }
                 }
 
+                $inherit = null;
                 $data = $this->_configDataObject->getConfigDataValue($path, $inherit, $this->_configData);
 
                 /**
@@ -289,6 +312,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                  */
                 $isBelowMinimumVersion = version_compare($version, $minimumVersion, '<');
 
+                /**
+                 * If the current version is below the minimum version or if we have no data, use the old method of
+                 * getting config data.
+                 */
                 if (!$data && $isBelowMinimumVersion === true) {
                     if (isset($this->_configData[$path])) {
                         $data = $this->_configData[$path];
