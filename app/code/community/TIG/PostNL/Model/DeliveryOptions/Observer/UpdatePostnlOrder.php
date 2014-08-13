@@ -67,7 +67,6 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         /**
          * Get all shipping methods that are considered to be PostNL.
          */
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $shippingMethod = $order->getShippingMethod();
 
         /**
@@ -75,7 +74,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * addresses that may have been saved and delete the PostNL order.
          */
         $shippingCountry = $order->getShippingAddress()->getCountryId();
-        if ($shippingCountry != 'NL' || !in_array($shippingMethod, $postnlShippingMethods)) {
+        if ($shippingCountry != 'NL' || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
             $this->_removePakjeGemakAddress($order);
 
             $postnlOrder->delete();

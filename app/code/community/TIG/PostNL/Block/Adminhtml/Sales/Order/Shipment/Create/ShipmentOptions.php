@@ -258,8 +258,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
 
         $shipment = $this->getShipment();
 
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-        if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
             return '';
         }
 

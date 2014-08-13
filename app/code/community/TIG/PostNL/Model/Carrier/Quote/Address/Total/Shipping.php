@@ -60,14 +60,13 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
         }
 
         $method = $address->getShippingMethod();
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
 
         /**
          * If the shipping method is not PostNL, load the regular shipping total model to process the total. We can't
          * just return the parent, because another extension might rewrite the regular total model. This way the rewrite
          * is only ignored for PostNL shipments at a slight cost to performance (roughly 0.0005s).
          */
-        if (!in_array($method, $postnlShippingMethods)) {
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($method)) {
             return Mage::getModel('sales/quote_address_total_shipping')->collect($address);
         }
 
