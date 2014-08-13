@@ -2081,16 +2081,35 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
     /**
      * Checks if the current shipment is eligible for a complete shipping status update.
-     * For now the same conditions apply as a regular status update. This may change in a future update of the
-     * extension.
      *
      * @return boolean
-     *
-     * @see TIG_PostNL_Model_Core_Shipment::canUpdateShippingStatus()
      */
     public function canUpdateCompleteShippingStatus()
     {
-        return $this->canUpdateShippingStatus();
+        if ($this->isLocked()) {
+            return false;
+        }
+
+        if (self::CONFIRM_STATUS_CONFIRMED != $this->getConfirmStatus()) {
+            return false;
+        }
+
+        if (!$this->getLabelsPrinted()) {
+            return false;
+        }
+
+        if (!$this->getMainBarcode()) {
+            return false;
+        }
+
+        $customBarcodes = $this->getCustomBarcodes();
+        $productCode    = $this->getProductCode();
+
+        if (array_key_exists($productCode, $customBarcodes)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

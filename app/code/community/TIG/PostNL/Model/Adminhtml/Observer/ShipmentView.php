@@ -83,11 +83,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         }
 
         /**
-         * Check if the current shipment was placed with PostNL
+         * Check if the current shipment was placed with PostNL.
+         *
+         * @var Mage_Sales_Model_Order_Shipment $shipment
          */
         $shipment = Mage::registry('current_shipment');
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-        if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
             return $this;
         }
 

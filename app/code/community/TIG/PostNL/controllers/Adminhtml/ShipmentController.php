@@ -75,8 +75,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -169,8 +168,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -315,8 +313,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -397,8 +394,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -478,8 +474,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -561,8 +556,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -655,8 +649,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -749,8 +742,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = Mage::getModel('sales/order_shipment')->load($shipmentId);
-            $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-            if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+            if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
@@ -1071,7 +1063,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
          */
         $errors = 0;
         $shipmentIds = array();
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $carrierHelper = Mage::helper('postnl/carrier');
         foreach ($orderIds as $orderId) {
             try {
                 /**
@@ -1083,7 +1075,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                 /**
                  * Check that the order was placed using PostNL.
                  */
-                if (!in_array($shippingMethod, $postnlShippingMethods)) {
+                if (!$carrierHelper->isPostnlShippingMethod($shippingMethod)) {
                     $this->addWarning(
                         array(
                             'entity_id'   => $order->getIncrementId(),

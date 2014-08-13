@@ -50,8 +50,8 @@
 <?php else: ?>
     <?php $_deliveryOptionsShown = false; ?>
     <?php $_canUseDeliveryOptions = false; ?>
-    <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
     <?php $_store = $this->getQuote()->getStore(); ?>
+    <?php $_carrierHelper = Mage::helper('postnl/carrier'); ?>
 
     <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote())
         && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
@@ -66,7 +66,7 @@
                     <?php $_isPostnl = false; ?>
                     <?php if (!$_deliveryOptionsShown
                         && $_canUseDeliveryOptions
-                        && in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
+                        && $_carrierHelper->isPostnlShippingMethod($_rate->getCode())): ?>
                         <?php $_isPostnl = true; ?>
                     <?php endif; ?>
 
@@ -108,7 +108,7 @@
                         <?php $_isPostnl = false; ?>
                         <?php if (!$_deliveryOptionsShown
                             && $_canUseDeliveryOptions
-                            && in_array($_rate->getCode(), $_postnlShippingMethods)): ?>
+                            && $_carrierHelper->isPostnlShippingMethod($_rate->getCode())): ?>
                             <?php $_isPostnl = true; ?>
                         <?php endif; ?>
 
