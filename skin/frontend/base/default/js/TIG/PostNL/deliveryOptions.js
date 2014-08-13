@@ -151,6 +151,7 @@ PostnlDeliveryOptions.prototype = {
             allowPg                : true,
             allowPge               : false,
             allowPa                : true,
+            isBuspakje             : false,
             taxDisplayType         : 1,
             eveningFeeIncl         : 0,
             eveningFeeExcl         : 0,
@@ -362,6 +363,10 @@ PostnlDeliveryOptions.prototype = {
 
     getDeliveryOptionsMap : function() {
         return this.deliveryOptionsMap;
+    },
+
+    getIsBuspakje : function() {
+        return this.options.isBuspakje;
     },
 
     /*
@@ -1099,6 +1104,7 @@ PostnlDeliveryOptions.prototype = {
                     console.log('Timeframe selected:', timeframe);
                 }
 
+                document.fire('postnl:selectTimeframe');
                 timeframe.select();
             } else {
                 timeframe.unSelect();
@@ -1163,6 +1169,8 @@ PostnlDeliveryOptions.prototype = {
                     if (location.getMarker() != selectedMarker) {
                         this.getDeliveryOptionsMap().selectMarker(location.getMarker(), true, true);
                     }
+
+                    document.fire('postnl:selectLocation');
 
                     if (this.debug) {
                         console.log('Delivery location selected:', location);
@@ -4625,15 +4633,20 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         html += '</span>';
         html += '<span class="option-radio"></span>';
 
+        spanClass = 'option-time';
         var openingHours = '';
-        if (!this.getDeliveryOptions().isTimeframesAllowed()) {
+        if (!this.getDeliveryOptions().isTimeframesAllowed() && this.getDeliveryOptions().getIsBuspakje()) {
+            spanClass    += ' no-timeframe-buspakje';
+            openingHours += Translator.translate('Fits through the mailbox');
+        } else if (!this.getDeliveryOptions().isTimeframesAllowed()) {
+            spanClass    += ' no-timeframe-buspakje';
             openingHours += '09:00 - 18:00';
         } else {
             openingHours += this.getFrom().substring(0, 5)
                           + ' - '
                           + this.getTo().substring(0, 5);
         }
-        html += '<span class="option-time">'
+        html += '<span class="' + spanClass + '">'
               + openingHours
               + '</span>';
 

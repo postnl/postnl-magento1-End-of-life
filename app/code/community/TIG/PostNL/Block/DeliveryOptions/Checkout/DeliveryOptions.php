@@ -498,6 +498,33 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Get whether this order is a buspakje order.
+     *
+     * @return bool
+     */
+    public function getIsBuspakje()
+    {
+        /**
+         * Check if the buspakje calculation mode is set to automatic.
+         */
+        $helper = Mage::helper('postnl');
+        $calculationMode = $helper->getBuspakjeCalculationMode();
+        if ($calculationMode != 'automatic') {
+            return false;
+        }
+
+        /**
+         * Check if the current quote fits as a letter box parcel.
+         */
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        if (!$helper->fitsAsBuspakje($quote->getAllItems())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Checks if debug mode is allowed. Debug mode is enabled if the PostNl extension's debug mode is set to 'full'.
      *
      * @return bool

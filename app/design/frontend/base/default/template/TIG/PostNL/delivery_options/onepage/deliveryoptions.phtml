@@ -146,6 +146,7 @@
         allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
         allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
         disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
+        isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,
         shippingMethodName     : '<?php echo $this->getMethodName()          ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
         currencySymbol         : '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(); ?>'
     };
@@ -153,7 +154,11 @@
     try {
         deliveryOptions = new PostnlDeliveryOptions(params, options, postnlDebugMode);
     } catch(e) {
-        console.log(e);
+        $('initial_loader').hide();
+        $('postnl_delivery_options').hide();
+        $('postnl_delivery_options').up().hide();
+        $('postnl_pickup').hide();
+        console.error(e);
     }
 
     if (typeof deliveryOptions != 'undefined') {
@@ -161,11 +166,11 @@
             deliveryOptions.showOptions();
             window.deliveryOptions = deliveryOptions;
         } catch(e) {
-            console.log(e);
             $('initial_loader').hide();
             $('postnl_delivery_options').show();
             $('postnl_pickup').hide();
             deliveryOptions.showDefaultTimeframe();
+            console.error(e);
         }
     } else {
         $('initial_loader').hide();
@@ -177,6 +182,11 @@
     changeAddressLink.stopObserving('click');
     changeAddressLink.observe('click', function() {
         checkout.gotoSection('shipping');
+    });
+
+    document.stopObserving('postnl:selectOptionSaved');
+    document.observe('postnl:selectOptionSaved', function() {
+        checkout.reloadProgressBlock('shipping_method');
     });
 
     /**

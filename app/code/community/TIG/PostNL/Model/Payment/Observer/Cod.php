@@ -149,6 +149,10 @@ class TIG_PostNL_Model_Payment_Observer_Cod
          * @var Mage_Sales_Model_Order_Item $item
          */
         foreach ($order->getAllItems() as $item) {
+            if ($item->getParentItemId()) {
+                continue;
+            }
+
             $orderQty += $item->getQtyOrdered();
         }
 

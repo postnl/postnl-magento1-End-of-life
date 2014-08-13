@@ -66,42 +66,53 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
         $interval = $now->diff($origDate);
 
         /**
-         * Check if the shipment should be confirmed today
+         * Check if the shipment should be confirmed somewhere in the future.
          */
-        if ($interval->d == 0) {
-            return Mage::helper('postnl')->__('Today');
-        }
-
-        /**
-         * Check if the shipment should be confirmed somewhere in the future
-         */
-        if ($interval->d == 1 && $interval->invert) {
+        if (
+            (($interval->days > 0 || $interval->h > 0) && !$interval->invert)
+            || ($interval->days == 0 || $interval->h < 24) && $interval->invert
+        ) {
             $confirmDate = new DateTime($value);
+            $diff = $now->diff($confirmDate);
 
             /**
-             * Get the number of days until the shipment should be confirmed
+             * Get the number of days until the shipment should be confirmed.
              */
-            $diff = $now->diff($confirmDate)->format('%a');
+            $diffDays = $diff->format('%a');
 
             /**
-             * Check if it should be confirmed tomorrow
+             * If the difference is more than X days exactly, add a day.
              */
-            if ($diff == 1) {
+            if (($diff->h > 0 || $diff->i > 0 || $diff->s > 0) && !$diff->invert) {
+                $diffDays++;
+            }
+
+            /**
+             * Check if the shipment should be confirmed today.
+             */
+            if ($diffDays == 0) {
+                return Mage::helper('postnl')->__('Today');
+            }
+
+            /**
+             * Check if it should be confirmed tomorrow.
+             */
+            if ($diffDays == 1) {
                 $renderedValue = Mage::helper('postnl')->__('Tomorrow');
 
                 return $renderedValue;
             }
 
             /**
-             * Render the number of days before the shipment should be confirmed
+             * Render the number of days before the shipment should be confirmed.
              */
-            $renderedValue = Mage::helper('postnl')->__('%s days from now', $diff);
+            $renderedValue = Mage::helper('postnl')->__('%s days from now', $diffDays);
 
             return $renderedValue;
         }
 
         /**
-         * Finally, simply render the date
+         * Finally, simply render the date.
          */
         return parent::render($row);
     }

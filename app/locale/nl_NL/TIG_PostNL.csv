@@ -60,7 +60,7 @@ TIG_PostNL::Show product options in order grid,Toon productopties in het bestell
 "TIG_PostNL::This will add a product options field to the create shipments mass action in the order grid. If disabled, default options will be used.","Dit zal een extra optie toevoegen aan de 'maak zendingen aan' bulk actie in het bestellingen overzicht. Indien uitgeschakeld, zullen de standaard instellingen altijd gebruikt worden bij het bepalen van de productoptie van de zendingen."
 TIG_PostNL::Optional shipment grid columns,Optionele kolommen voor verzendoverzicht
 TIG_PostNL::Select which optional columns to show in the shipment grid.,Selecteer welke optionele kolommen in het verzendoverzicht getoond moeten worden
-TIG_PostNL::Select a default option for the shipment grid mass action.,Selecteer een standaard waarde voor de massa actie voor de het zendingenoverzicht.
+TIG_PostNL::Select a default option for the shipment grid mass action.,Selecteer een standaardwaarde voor de massa-actie voor het zendingenoverzicht.
 TIG_PostNL::These fields are used to configure the track & trace email that may be automatically emailed to customers after a shipment has been confirmed.,Deze velden worden gebruikt om de track & trace e-mail te configureren. Deze e-mail wordt automatisch naar uw klanten verstuurd wanneer een zending wordt voorgemeld.
 TIG_PostNL::Automatically send track & trace email to customer,Stuur de track & trace e-mail automatisch naar de klant
 "TIG_PostNL::If enabled, a track & trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.","Indien geactiveerd, wordt er ongeveer 20 minuten na de zending voormelding een track & trace e-mail naar de klant gestuurd."
@@ -791,7 +791,7 @@ TIG_PostNL::Send Track & Trace Email,Verstuur Track & Trace E-mail
 TIG_PostNL::Change Confirmation,Voormelding Wijzigen
 TIG_PostNL::Delete Shipping Labels,Verzendlabels Verwijderen
 TIG_PostNL::The current user is not allowed to perform this action.,De huidige gebruiker heeft geen toegang tot deze actie.
-TIG_PostNL::Actions,Acties
+Actions,Acties
 TIG_PostNL::Default evening delivery shipping option,Standaard avondbezorging verzendoptie
 TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op avondzendingen.
 TIG_PostNL::Default early post office pickup option,Standaard extra vroeg ophalen optie
@@ -970,7 +970,7 @@ TIG_PostNL::Pre-configured message,Voorgeconfigureerd bericht
 TIG_PostNL::Last shipment comment,Laatste zending opmerking
 TIG_PostNL::None of the orders you have selected have any associated shipments. Please choose at least one order that has a shipment.,"Geen van de bestellingen die u heeft geselecteerd, bevat een zending. Kies s.v.p. tenminste één bestelling die een zending bevat."
 TIG_PostNL::Print packing slips,Print pakbonnen
-TIG_PostNL::Download PostNL log files,Download PostNL log bestanden
+Download PostNL log files,Download PostNL log bestanden
 TIG_PostNL::No valid log files were found.,Geen valide log bestanden gevonden.
 TIG_PostNL::Log %s is too large (%.2fMB) and was skipped.,Log %s is te groot (%.2fMB) en is daarom overgeslagen.
 TIG_PostNL::The total size of all log files exceeds the maximum size allowed.,De totale grootte van alle log bestanden hoger dan de maximum toegestane grootte.
@@ -1002,30 +1002,30 @@ TIG_PostNL::Shipping phase,Verzendfase
 TIG_PostNL::No order found for PostNL shipment #%d.,Geen bestelling gevonden voor PostNL zending #%d.
 TIG_PostNL::Select a default option for the order grid mass action.,Selecteer een standaard waarde voor de massa actie voor het bestellingsoverzicht.
 TIG_PostNL::No shipments found,Geen zendingen gevonden
-TIG_PostNL::Letter box parcel options,Buspakje opties
-TIG_PostNL::Default letter box parcel option,Standaard buspakje optie
-TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to letter box parcel shipments.,Deze instelling kan worden overschreven door handmatig zendingen aan te maken. Deze instelling is enkel van toepassing op buspakje zendingen.
-TIG_PostNL::Is letter box parcel,Is buspakje
+TIG_PostNL::Letter box parcel options,Brievenbuspakje opties
+TIG_PostNL::Default letter box parcel option,Standaard brievenbuspakje optie
+TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to letter box parcel shipments.,Deze instelling kan worden overschreven door handmatig zendingen aan te maken. Deze instelling is enkel van toepassing op brievenbuspakje zendingen.
+TIG_PostNL::Is letter box parcel,Is brievenbuspakje
 TIG_PostNL::Use default option,Gebruik standaardwaarde
-TIG_PostNL::Letter Box Parcel,Buspakje
-TIG_PostNL::Letter Box Parcel Extra,Buspakje Extra
+TIG_PostNL::Letter Box Parcel,Brievenbuspakje
+TIG_PostNL::Letter Box Parcel Extra,Brievenbuspakje Extra
 TIG_PostNL::It is not possible to create partial shipments for orders placed using PostNL COD. Please create only full shipments.,Het is niet mogelijk om deelzendingen aan te maken voor bestellingen die geplaatst zijn met PostNL rembours. Maak s.v.p. enkel volledige zendingen aan.
 TIG_PostNL::The given value must be a multiple of 500.,De opgegeven waarde moet een veelvoud van 500 zijn.
 TIG_PostNL::The addTrackingCodeToShipment action is currently unavailable.,De addTrackingCodeToShipment actie is momenteel niet beschikbaar.
 TIG_PostNL::This shipment does not need to be confirmed.,Deze zending hoeft niet voorgemeld te worden.
-TIG_PostNL::Show letter box parcel option in order grid,Toon buspakje optie in het besteloverzicht
-TIG_PostNL::This will add the option to mark shipments as being letter box parcels when creating shipments from the order grid.,Dit voegt de optie toe om bestellingen te markeren als buspakjes wanneer u zendingen aanmaakt vanuit het besteloverzicht.
+TIG_PostNL::Show letter box parcel option in order grid,Toon brievenbuspakje optie in het besteloverzicht
+TIG_PostNL::This will add the option to mark shipments as being letter box parcels when creating shipments from the order grid.,Dit voegt de optie toe om bestellingen te markeren als brievenbuspakjes wanneer u zendingen aanmaakt vanuit het besteloverzicht.
 TIG_PostNL::Calculation mode,Berekeningsmodus
 TIG_PostNL::You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend.,U kunt de PostNL extensie automatisch laten bepalen of een zending door de brievenbus past of u kunt dit handmatig aangeven wanneer u zendingen aanmaakt.
-TIG_PostNL::If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.,"Indien deze instelling op 'automatisch' staat, zal de extensie de 'Gewicht' en 'PostNL Max Hoeveelheid voor Buspakjes' productattributen gebruiken om te bepalen of een zending door de brievenbus past. U kunt dit altijd overschrijven door zelf aan te geven of een zending een buspakje is wanneer u handmatig een zending aanmaakt."
-TIG_PostNL::Use letter box parcels,Gebruik buspakjes
-TIG_PostNL::If you disable this field all shipments will be considered regular package shipments.<br/>It is very important that you have correctly configured all products when using letter box parcels. Orders weighing more than <strong>2kg</strong> or are larger than <strong>38 x 26.5 x 3.2 cm</strong> cannot be shipped as letter box parcels.,"Indien u deze instelling uit zet, zullen alle zendingen beschouwd worden als reguliere pakketzendingen.<br/>Het is zeer belangrijk dat u alle producten correct geconfigureerd heeft als u gebruik wilt maken van buspakjes. Bestellingen die meer wegen dan <strong>2kg</strong> of groter zijn dan <strong>38 x 26,5 x 3,2 cm</strong> kunnen niet verstuurd worden als buspakjes."
-"TIG_PostNL::These settings allow you to configure if and how PostNL determines if a shipment is a letter box parcel or a regular package shipment. Letter box parcels have to be able to fit through a mail slot and will be delivered using the regular mail service, rather than PostNL's parcel service.",Met deze instellingen kunt u aangeven of en hoe PostNL bepaalt of een zending een buspakje of een reguliere pakketzending is. Buspakjes moeten door de brievenbus passen en zullen bezorgd worden met de postdienst in plaats van de pakketbezorging van PostNL.
+TIG_PostNL::If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.,"Indien deze instelling op 'automatisch' staat, zal de extensie de 'Gewicht' en 'PostNL Max Hoeveelheid voor Brievenbuspakjes' productattributen gebruiken om te bepalen of een zending door de brievenbus past. U kunt dit altijd overschrijven door zelf aan te geven of een zending een brievenbuspakje is wanneer u handmatig een zending aanmaakt."
+TIG_PostNL::Use letter box parcels,Gebruik brievenbuspakjes
+TIG_PostNL::If you disable this field all shipments will be considered regular package shipments.<br/>It is very important that you have correctly configured all products when using letter box parcels. Orders weighing more than <strong>2kg</strong> or are larger than <strong>38 x 26.5 x 3.2 cm</strong> cannot be shipped as letter box parcels.,"Indien u deze instelling uit zet, zullen alle zendingen beschouwd worden als reguliere pakketzendingen.<br/>Het is zeer belangrijk dat u alle producten correct geconfigureerd heeft als u gebruik wilt maken van brievenbuspakjes. Bestellingen die meer wegen dan <strong>2kg</strong> of groter zijn dan <strong>38 x 26,5 x 3,2 cm</strong> kunnen niet verstuurd worden als brievenbuspakjes."
+"TIG_PostNL::These settings allow you to configure if and how PostNL determines if a shipment is a letter box parcel or a regular package shipment. Letter box parcels have to be able to fit through a mail slot and will be delivered using the regular mail service, rather than PostNL's parcel service.",Met deze instellingen kunt u aangeven of en hoe PostNL bepaalt of een zending een brievenbuspakje of een reguliere pakketzending is. Brievenbuspakjes moeten door de brievenbus passen en zullen bezorgd worden met de postdienst in plaats van de pakketbezorging van PostNL.
 TIG_PostNL::Manual,Handmatig
 TIG_PostNL::Automatic,Automatisch
 TIG_PostNL::This shipment will probably fit as a letter box parcel.,Deze zending past waarschijnlijk door de brievenbus.
 TIG_PostNL::This shipment will probably not fit as a letter box parcel.,Deze zending zal waarschijnlijk niet door de brievenbus passen.
-TIG_PostNL::Letter box qty,Buspakje hoeveelheid
+TIG_PostNL::Letter box qty,Brievenbuspakje hoeveelheid
 TIG_PostNL::No Confirmation Required,Geen Voormelding Nodig
 TIG_PostNL::The following options are only for COD orders.,De volgende opties zijn enkel van toepassing op rembours bestellingen.
 TIG_PostNL::Default COD shipping option,Standaard rembours verzendoptie
@@ -1053,10 +1053,10 @@ TIG_PostNL::minutes,minuten
 TIG_PostNL::Delivery date:,Bezorgdatum:
 TIG_PostNL::(evening),(avond)
 TIG_PostNL::(from 8:30 A.M.),(vanaf 8:30)
-PostNL Max Qty For Letter Box Parcels,PostNL max. hoeveelheid voor buspakje
+PostNL Max Qty For Letter Box Parcels,PostNL max. hoeveelheid voor brievenbuspakje
 PostNL Allow Delivery Options,PostNL sta bezorgopties toe
 PostNL Shipping Duration,PostNL overkomstduur
-A shipment will only be considered a letter box parcel if the purchased qty of this product does not exceed this amount.,Een zending zal enkel als buspakje verwerkt worden indien het bestelde aantal van dir product niet deze waarde overschreidt.
+A shipment will only be considered a letter box parcel if the purchased qty of this product does not exceed this amount.,Een zending zal enkel als brievenbuspakje verwerkt worden indien het bestelde aantal van di product niet deze waarde overschreidt.
 "TIG_PostNL::PostNL - Create shipments, print labels and confirm","PostNL - Maak zendingen aan, print labels en meld voor"
 "TIG_PostNL::You have chosen a value for the '%s' field that is not supported. Please select a option that you have selected in the '%s' field, otherwise you may not be able to send shipments of this type.",U heeft een waarde gekozen voor het '%s' veld dat niet ondersteunt wordt. Selecteer s.v.p. een optie die geslecteerd is in het '%s' veld. Anders is het niet mogelijk om zendingen te versturen van dit type.
 TIG_PostNL::Use configuration value,Gebruik configuratie waarde
@@ -1077,30 +1077,30 @@ PostNL Delivery Options - Allow Post Office Locations,PostNL bezorgopties - sta 
 PostNL Delivery Options - Allow Delivery Days,PostNL bezorgopties - sta bezorgdagen toe
 TIG_PostNL::Enable delivery days,Activeer bezorgdagen
 TIG_PostNL::Delivery days allow customers to choose on which date they want their order delivered.,Bezorgdagen maken het mogelijk voor klanten om te kiezen op welke dag ze hun bestellingen willen laten bezorgen.
-TIG_PostNL::These settings are only applicable to orders which fit as a letter box parcel.,Deze instellingen zijn enkel van toepassing op bestellingen die als buspakje verzonden kunnen worden.
-TIG_PostNL::Show PostNL delivery options for letter box parcel orders,Toon PostNL bezorgopties voor buspakje bestellingen
-"TIG_PostNL::If a customer chooses a delivery option, that order may not be shipped as a letter box parcel. Only shipments to a regular Dutch address may be shipped as letter box parcels. If you disable this setting delivery options will automatically be disabled when an order would fit as a letter box parcel. Enable this option if you always want to show delivery options to customers even when that means an order might not be shipped as a letter box parcel.","Indien een consument voor een bezorgoptie kiest, kan de bestelling niet verzonden worden als buspakje. Enkel zendingen naar een Nederlands huisadres zonder rembours of avondbezorging mogen verzonden worden als buspakje. Indien u deze instelling uitzet, worden bezorgopties enkel getoond voor pakketzendingen. Het aanzetten van deze instelling zorgt ervoor dat consumenten altijd kunnen kiezen uit de beschikbare bezorgopties, ook als dat ertoe leidt dat een zending als pakket verstuurd moet worden."
-TIG_PostNL::Show all delivery options for letter box parcel orders,Toon alle bezorgopties voor buspakje bestellingen
-"TIG_PostNL::If set to 'yes' the same delivery options will be shown for letter box parcel orders as for regular orders. Please note that if the customer chooses a delivery option, the order may no longer be shipped as a letter box parcel.","Indien deze instelling aan staat, zullen dezelfde bezorgopties getoond worden voor buspakjebestellingen als voor pakketbestellingen. N.B. indien een klant voor een bezorgoptie kiest, kan de bestelling niet langer als buspakje verzonden worden."
-TIG_PostNL::Show delivery days for letter box parcel orders.,Toon bezorgdagen voor buspakje bestellingen
-TIG_PostNL::Show post office locations for letter box parcels.,Toon postkantoorlocaties voor buspakje bestellingen
+TIG_PostNL::These settings are only applicable to orders which fit as a letter box parcel.,Deze instellingen zijn enkel van toepassing op bestellingen die als brievenbuspakje verzonden kunnen worden.
+TIG_PostNL::Show PostNL delivery options for letter box parcel orders,Toon PostNL bezorgopties voor brievenbuspakje bestellingen
+"TIG_PostNL::If a customer chooses a delivery option, that order may not be shipped as a letter box parcel. Only shipments to a regular Dutch address may be shipped as letter box parcels. If you disable this setting delivery options will automatically be disabled when an order would fit as a letter box parcel. Enable this option if you always want to show delivery options to customers even when that means an order might not be shipped as a letter box parcel.","Indien een consument voor een bezorgoptie kiest, kan de bestelling niet verzonden worden als brievenbuspakje. Enkel zendingen naar een Nederlands huisadres zonder rembours of avondbezorging mogen verzonden worden als brievenbuspakje. Indien u deze instelling uitzet, worden bezorgopties enkel getoond voor pakketzendingen. Het aanzetten van deze instelling zorgt ervoor dat consumenten altijd kunnen kiezen uit de beschikbare bezorgopties, ook als dat ertoe leidt dat een zending als pakket verstuurd moet worden."
+TIG_PostNL::Show all delivery options for letter box parcel orders,Toon alle bezorgopties voor brievenbuspakje bestellingen
+"TIG_PostNL::If set to 'yes' the same delivery options will be shown for letter box parcel orders as for regular orders. Please note that if the customer chooses a delivery option, the order may no longer be shipped as a letter box parcel.","Indien deze instelling aan staat, zullen dezelfde bezorgopties getoond worden voor brievenbuspakjebestellingen als voor pakketbestellingen. N.B. indien een klant voor een bezorgoptie kiest, kan de bestelling niet langer als brievenbuspakje verzonden worden."
+TIG_PostNL::Show delivery days for letter box parcel orders.,Toon bezorgdagen voor brievenbuspakje bestellingen
+TIG_PostNL::Show post office locations for letter box parcels.,Toon postkantoorlocaties voor brievenbuspakje bestellingen
 TIG_PostNL::If the customer chooses to have an order delivered to a post office location the order may no longer be shipped as a letter box parcel.,Indien de klant kiest voor ophalen op een postkantoorlocatie zal de bestelling als een pakket verzonden moeten worden.
-TIG_PostNL::Show parcel dispenser locations for letter box parcels,Toon pakketautomaten voor buspakje bestellingen
+TIG_PostNL::Show parcel dispenser locations for letter box parcels,Toon pakketautomaten voor brievenbuspakje bestellingen
 TIG_PostNL::If the customer chooses to have an order delivered to a parcel dispenser the order may no longer be shipped as a letter box parcel.,Indien de klant kiest voor ophalen bij een pakketautomaat zal de bestelling als een pakket verzonden moeten worden.
-TIG_PostNL::Allow for letter box parcels,Toestaan voor buspakje bestellingen
-TIG_PostNL::This option is only applicable when using letter box parcels and the letter box parcel calculation mode is set to 'automatic'.,Deze instelling is enkel van toepassing op buspakje bestellingen wanneer de buspakje berekeningsmodus op 'automatisch' staat.
-"TIG_PostNL::Letter box parcels cannot be shipped using COD. If an order is a letter box parcel and the customer chooses to pay using PostNL COD, the order will be shipped as a regular parcel instead.",Buspakjes kunnen niet verzonden worden met rembours. Indien een bestelling als buspakje verzonden kan worden en de klant kiest voor rembours zal de bestelling als pakket verstuurd moeten worden.
+TIG_PostNL::Allow for letter box parcels,Toestaan voor brievenbuspakje bestellingen
+TIG_PostNL::This option is only applicable when using letter box parcels and the letter box parcel calculation mode is set to 'automatic'.,Deze instelling is enkel van toepassing op brievenbuspakje bestellingen wanneer de brievenbuspakje berekeningsmodus op 'automatisch' staat.
+"TIG_PostNL::Letter box parcels cannot be shipped using COD. If an order is a letter box parcel and the customer chooses to pay using PostNL COD, the order will be shipped as a regular parcel instead.",Brievenbuspakjes kunnen niet verzonden worden met rembours. Indien een bestelling als brievenbuspakje verzonden kan worden en de klant kiest voor rembours zal de bestelling als pakket verstuurd moeten worden.
 "TIG_PostNL::This action is not available for order #%s, because it was not placed using PostNL.","Deze actie is niet beschikbaar voor order #%s, omdat deze niet geplaatst is met PostNL."
 TIG_PostNL::Convert,Omzetten
-TIG_PostNL::To Letter Box Parcel,Naar Buspakje
+TIG_PostNL::To Letter Box Parcel,Naar Brievenbuspakje
 TIG_PostNL::To Package,Naar Pakket
 TIG_PostNL::The shipment has been converted to a package.,De zending is omgezet naar een pakket.
-TIG_PostNL::The shipment has been converted to a letter box parcel.,De zending is omgezet naar een buspakje.
-TIG_PostNL::Are you sure you wish to convert this shipment to a letter box parcel? You will need to confirm this shipment with PostNL again before you can send it. This action will remove all barcodes and labels associated with this shipment. You can not undo this action.,Weet u zeker dat u deze zending wilt omzetten naar een buspakje zending? U zult de zending opnieuw moeten voormelden bij PostNL alvorens u de zending kunt versturen. Deze actie zal alle verzendlabels en barcodes van deze zending verwijderen. U kunt deze actie niet ongedaan maken.
+TIG_PostNL::The shipment has been converted to a letter box parcel.,De zending is omgezet naar een brievenbuspakje.
+TIG_PostNL::Are you sure you wish to convert this shipment to a letter box parcel? You will need to confirm this shipment with PostNL again before you can send it. This action will remove all barcodes and labels associated with this shipment. You can not undo this action.,Weet u zeker dat u deze zending wilt omzetten naar een brievenbuspakje zending? U zult de zending opnieuw moeten voormelden bij PostNL alvorens u de zending kunt versturen. Deze actie zal alle verzendlabels en barcodes van deze zending verwijderen. U kunt deze actie niet ongedaan maken.
 TIG_PostNL::Are you sure you wish to convert this shipment to a package? You will need to confirm this shipment with PostNL again before you can send it. This action will remove all barcodes and labels associated with this shipment. You can not undo this action.,Weet u zeker dat u deze zending wilt omzetten naar een pakket zending? U zult de zending opnieuw moeten voormelden bij PostNL alvorens u de zending kunt versturen. Deze actie zal alle verzendlabels en barcodes van deze zending verwijderen. U kunt deze actie niet ongedaan maken.
-TIG_PostNL::PostNL - Convert to Letter Box Parcel,PostNL - Omzetten naar Buspakje
+TIG_PostNL::PostNL - Convert to Letter Box Parcel,PostNL - Omzetten naar Brievenbuspakje
 TIG_PostNL::PostNL - Convert to Package,PostNL - Omzetten naar Pakket
-TIG_PostNL::possibly letter box parcel,mogelijk buspakje
+TIG_PostNL::possibly letter box parcel,mogelijk brievenbuspakje
 TIG_PostNL::Expected delivery date,Verwachtte bezorgdatum
 TIG_PostNL::Change,Wijzigen
 TIG_PostNL::Change Product Option,Wijzig Productoptie
@@ -1108,3 +1108,17 @@ TIG_PostNL::Please choose a product option.,Kies s.v.p. een productoptie
 TIG_PostNL::Submit,Verzenden
 TIG_PostNL::Cancel,Annuleer
 TIG_PostNL::The shipment's product option has been changed succesfully.,De productoptie is succesvol gewijzigd.
+Shipment,Zending
+Complete Status History,Volledige Statusgeschiedenis
+Confirm,Voormelden
+Print Shipping Label,Print Verzendlabel
+Print Packing Slip,Print Pakbonnen
+Create Parcelware Export,Parcelware Export Aanmaken
+Send Track &amp; Trace Email,Verstuur Track & Trace E-mail
+Change Confirmation,Voormelding Wijzigen
+Delete Shipping Labels,Verwijder Verzendlabels
+Convert,Omzetten
+To Letter Box Parcel,Naar Pakket
+To Package,Naar Brievenbuspakje
+Change Product Option,Wijzig Productoptie
+TIG_PostNL::Fits through the mailbox,Past door de brievenbus

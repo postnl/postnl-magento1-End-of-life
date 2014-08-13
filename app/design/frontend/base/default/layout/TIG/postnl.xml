@@ -217,6 +217,14 @@
         </reference>
     </checkout_onepage_shippingmethod>
 
+    <checkout_onepage_progress_shipping_method>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>TIG/PostNL/delivery_options/onepage/progress/shipping_method.phtml</template>
+            </action>
+        </reference>
+    </checkout_onepage_progress_shipping_method>
+
     <!-- MIJNPAKKET ACCOUNTNOTIFICATION -->
 
     <checkout_onepage_success>
