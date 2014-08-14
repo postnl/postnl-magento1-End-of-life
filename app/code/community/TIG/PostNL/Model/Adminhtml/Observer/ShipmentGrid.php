@@ -653,6 +653,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
 
         $class = $this->_getConfirmDateClass($row, $column);
 
+        if (!empty($class) && empty($value)) {
+            $class = '';
+        }
+
         return '<span class="'.$class.'"><span>'.$value.'</span></span>';
     }
 
@@ -745,6 +749,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 $class = '';
                 break;
         }
+
+        if (!empty($class) && empty($value)) {
+            $class = '';
+        }
+
         return '<span class="'.$class.'"><span>'.$value.'</span></span>';
     }
 
@@ -778,6 +787,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 $class = '';
                 break;
         }
+
+        if (!empty($class) && empty($value)) {
+            $class = '';
+        }
+
         return '<span class="'.$class.'"><span>'.$value.'</span></span>';
     }
 
@@ -821,6 +835,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                 $class = '';
                 break;
         }
+
+        if (!empty($class) && empty($value)) {
+            $class = '';
+        }
+
         return '<span class="'.$class.'"><span>'.$value.'</span></span>';
     }
 
@@ -880,10 +899,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
                                    );
 
             $printAdditional->setData(
-                            array(
-                                'name'   => 'print_start_pos',
-                                'label'  => $helper->__('Choose printing start position'),
-                            )
+                array(
+                    'name'   => 'print_start_pos',
+                    'label'  => $helper->__('Choose printing start position'),
+                )
             );
 
             /**
