@@ -144,13 +144,6 @@
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
     /**
-     * Prefix of model events names.
-     *
-     * @var string
-     */
-    protected $_eventPrefix = 'postnl_shipment';
-
-    /**
      * Carrier code used by postnl.
      */
     const POSTNL_CARRIER_CODE = 'postnl';
@@ -245,6 +238,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Newly added 'pakje_gemak' address type.
      */
     const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
+
+    /**
+     * Prefix of model events names.
+     *
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_shipment';
 
     /**
      * Array of product codes that have extra cover.
