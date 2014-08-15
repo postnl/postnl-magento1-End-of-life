@@ -584,7 +584,7 @@ TIG_PostNL::No status history available.,Geen status geschiedenis informatie bes
 TIG_PostNL::PostNL - Create Parcelware export,PostNL - Maak Parcelware export
 TIG_PostNL::Exported to Parcelware,Geëxporteerd naar Parcelware
 TIG_PostNL::Parcelware Export Settings,Parcelware Export Instellingen
-TIG_PostNL::This is where you can configure your Parcelware export.,Hier kunt u uw Parcelware export voorkeuren opgeven.
+"TIG_PostNL::This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href=""http://kb.totalinternetgroup.nl/topic/94906903"" target=""_blank"" title=""More info"">here</a>.","Hier kunt u uw Parcelware export voorkeuren opgeven. U kunt <a href=""http://kb.totalinternetgroup.nl/topic/94906903"" target=""_blank"" title=""Meer informatie"">hier</a> meer informatie vinden over het configureren van deze instellingen."
 TIG_PostNL::Enable Parcelware export,Activeer Parcelware export
 TIG_PostNL::Parcelware export is disabled. Activate Parcelware export in order to edit these settings. Please note that you can only activate Parcelware export from the global level.,Parcelware export is gedeactiveerd. Activeer Parcelware export om deze instellingen te kunnen aanpassen. Houd er rekening mee dat Parcelware export enkel vanuit op globaal niveau kunt activeren.
 TIG_PostNL::Automatically confirm exported shipments,Geëxporteerde zendingen automatisch voormelden
@@ -784,7 +784,6 @@ TIG_PostNL::Early Pickup options,Extra Vroeg Ophalen opties
 TIG_PostNL::Default shipment type,Standaard verzendtype
 TIG_PostNL::Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.,"Selecteer een standaard GlobalPack verzendtype. Wanneer u GlobalPack zendingen aanmaakt, kunt u ook een ander verzendtype specificeren."
 TIG_PostNL::Confirm,Voormelden
-TIG_PostNL::Print Shipping Label,Print Verzendlabel
 TIG_PostNL::Complete Status History,Volledige Status Geschiedenis
 TIG_PostNL::Create Parcelware Export,Parcelware Export Aanmaken
 TIG_PostNL::Send Track & Trace Email,Verstuur Track & Trace E-mail
@@ -798,7 +797,6 @@ TIG_PostNL::Default early post office pickup option,Standaard extra vroeg ophale
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.,Deze instelling kan overschreven worden door handmatig zendingen aan te maken. Deze optie is enkel van toepassing op extra vroeg ophalen op het postkantoor zendingen.
 TIG_PostNL::Default shipment type,Standaard zending type
 TIG_PostNL::Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.,Selecteer het standaard GlobalPack zending type. U kunt dit ook aangeven op het moment dat u een GlobalPack zending aanmaakt.
-TIG_PostNL::Shipment,Verzending
 TIG_PostNL::PostNL,PostNL
 TIG_PostNL::The PostNL extension v%s has been successfully installed.,De PostNL extensie v%s is succesvol geïnstalleerd.
 TIG_PostNL::Print label,Verzendlabel printen
@@ -937,7 +935,6 @@ TIG_PostNL::Shipping method,Verzendmethode
 TIG_PostNL::Ship order on,Verzend pakket op
 TIG_PostNL::Packing slip,Pakbon
 TIG_PostNL::Order,Bestelling
-TIG_PostNL::Shipment,Zending
 TIG_PostNL::Post office address,Postkantooradres
 TIG_PostNL::Invalid label type supplied for packing slip label pdf: %s.,Ongeldig label type opgegeven voor pakbon label pdf: %s.
 TIG_PostNL::Approaching memory limit for this operation. Please select fewer shipments and try again.,Geheugen limiet bereikt. Selecteer s.v.p. minder zendingen en probeer het opnieuw.
