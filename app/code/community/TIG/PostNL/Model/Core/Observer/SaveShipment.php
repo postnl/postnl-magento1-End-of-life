@@ -59,20 +59,35 @@ class TIG_PostNL_Model_Core_Observer_SaveShipment
         }
 
         /**
-         * retrieve and register the chosen option, if any.
+         * Retrieve and register the chosen option, if any.
          *
          * @var Mage_Core_Controller_Varien_Front $controller
          */
-        $controller = $observer->getControllerAction();
-        $productOption = $controller->getRequest()->getParam('postnl');
+        $controller      = $observer->getControllerAction();
+        $shippingOptions = $controller->getRequest()->getParam('postnl');
 
-        if ($productOption && isset($productOption['product_option'])) {
-            Mage::register('postnl_product_option', $productOption['product_option']);
-            unset($productOption['product_option']);
+        if (isset($shippingOptions['is_buspakje']) && $shippingOptions['is_buspakje'] == '1') {
+            /**
+             * Add the full data array to the registry. The PostNL shipment model will parse this and extract the
+             * buspakje option if it's valid.
+             */
+            Mage::register('postnl_product_option', $shippingOptions);
+
+            unset($shippingOptions['buspakje_options'], $shippingOptions['product_option']);
+        } elseif (isset($shippingOptions['product_option'])) {
+            /**
+             * Add the chosen shipping option. The PosTNL shipment model will check if it's valid.
+             */
+            Mage::register('postnl_product_option', $shippingOptions['product_option']);
+
+            unset($shippingOptions['buspakje_options'], $shippingOptions['product_option']);
         }
 
-        if ($productOption && !empty($productOption)) {
-            Mage::register('postnl_additional_options', $productOption);
+        /**
+         * Add the remaining data as additional options.
+         */
+        if ($shippingOptions && !empty($shippingOptions)) {
+            Mage::register('postnl_additional_options', $shippingOptions);
         }
 
         return $this;

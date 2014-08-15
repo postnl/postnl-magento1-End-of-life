@@ -39,16 +39,15 @@
 class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Action
 {
     /**
-     * Base XML path of config settings that will be checked
+     * Base XML path of config settings that will be checked.
      */
     const XML_BASE_PATH = 'postnl/cif';
 
     /**
-     * XML path to password
+     * XML paths to passwords.
      */
-    const XML_PATH_LIVE_PASSWORD = 'postnl/cif/live_password';
-
-    const XML_PATH_TEST_PASSWORD = 'postnl/cif/test_password';
+    const XPATH_LIVE_PASSWORD = 'postnl/cif/live_password';
+    const XPATH_TEST_PASSWORD = 'postnl/cif/test_password';
 
     /**
      * @var boolean
@@ -198,9 +197,9 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
     {
         $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
 
-        $xpath = self::XML_PATH_LIVE_PASSWORD;
+        $xpath = self::XPATH_LIVE_PASSWORD;
         if ($this->_isTestMode) {
-            $xpath = self::XML_PATH_TEST_PASSWORD;
+            $xpath = self::XPATH_TEST_PASSWORD;
         }
 
         $websiteCode = $this->getRequest()->getParam('website');
@@ -242,6 +241,61 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
         $content = $gridBlock->getCsvFile();
 
         $this->_prepareDownloadResponse($fileName, $content);
+
+        return $this;
+    }
+
+    /**
+     * Download all PostNL log files as a zip file.
+     *
+     * @return $this
+     */
+    public function downloadLogsAction()
+    {
+        $helper = Mage::helper('postnl');
+
+        if (!$helper->checkIsPostnlActionAllowed('download_logs')) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0155', 'error',
+                $this->__('The current user is not allowed to perform this action.')
+            );
+
+            $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+            return $this;
+        }
+
+        /**
+         * Get a zip file containing all valid PostNL logs.
+         */
+        try {
+            $zip = Mage::getModel('postnl_adminhtml/support_logs')
+                       ->downloadLogs();
+        } catch (TIG_PostNL_Exception $e) {
+            $helper->addExceptionSessionMessage('adminhtml/session', $e);
+
+            $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+            return $this;
+        } catch (Exception $e) {
+            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
+                $this->__('An error occurred while processing this action.')
+            );
+
+            $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+            return $this;
+        }
+
+        $zipName = explode(DS, $zip);
+        $zipName = end($zipName);
+
+        /**
+         * Offer the zip file as a download response. The 'rm' key will cause Magento to remove the zip file from the
+         * server after it's finished.
+         */
+        $content = array(
+            'type'  => 'filename',
+            'value' => $zip,
+            'rm'    => true,
+        );
+        $this->_prepareDownloadResponse($zipName, $content);
 
         return $this;
     }

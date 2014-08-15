@@ -48,17 +48,24 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShippingPhase
      */
     public function render(Varien_Object $row)
     {
-        $value = $row->getData($this->getColumn()->getIndex());
+        $values = $row->getData($this->getColumn()->getIndex());
 
-        if (empty($value)) {
+        if (empty($values)) {
             return '';
         }
 
+        $helper         = Mage::helper('postnl');
+        $values         = explode(',', $values);
         $shippingPhases = Mage::helper('postnl/cif')->getShippingPhases();
-        if (array_key_exists($value, $shippingPhases)) {
-            $value = $shippingPhases[$value];
-        }
 
-        return Mage::helper('postnl')->__($value);
+        $labels = array();
+        foreach ($values as $value) {
+            if (isset($shippingPhases[$value])) {
+                $labels[] = $helper->__($shippingPhases[$value]);
+            }
+        }
+        $labels = implode(',', $labels);
+
+        return $labels;
     }
 }

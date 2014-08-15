@@ -39,6 +39,9 @@
 class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
 {
     /**
+     * Updates the PostNL order after the order has been placed. Also copies the PakjeGemak quote address to the order
+     * as an order address or deletes it if it's no longer needed.
+     *
      * @param Varien_Event_Observer $observer
      *
      * @return $this
@@ -55,20 +58,6 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $order = $observer->getOrder();
 
         /**
-         * Check if this order was placed using PostNL.
-         */
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-        $shippingMethod = $order->getShippingMethod();
-
-        /**
-         * If this order was not placed with PostNL, remove any PakjeGemak addresses that may have been saved.
-         */
-        if (!in_array($shippingMethod, $postnlShippingMethods)) {
-            $this->_removePakjeGemakAddress($order);
-            return $this;
-        }
-
-        /**
          * Get the PostNL order associated with this order.
          *
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
@@ -76,12 +65,18 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         $postnlOrder = Mage::getModel('postnl_core/order')->load($order->getQuoteId(), 'quote_id');
 
         /**
-         * If this order is not being shipped to the Netherlands, remove any PakjeGemak addresses that may have been
-         * saved and delete the PostNL order.
+         * Get all shipping methods that are considered to be PostNL.
+         */
+        $shippingMethod = $order->getShippingMethod();
+
+        /**
+         * If this order is not being shipped to the Netherlands or was not placed using PostNL, remove any PakjeGemak
+         * addresses that may have been saved and delete the PostNL order.
          */
         $shippingCountry = $order->getShippingAddress()->getCountryId();
-        if ($shippingCountry != 'NL') {
+        if ($shippingCountry != 'NL' || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
             $this->_removePakjeGemakAddress($order);
+
             $postnlOrder->delete();
             return $this;
         }
@@ -93,10 +88,45 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             return $this;
         }
 
-        $postnlOrder->setOrderId($order->getId())
+        /**
+         * Update the order's shipment costs. If the order type is PGE or Avond, this will be a fee as configured in
+         * system > config. Otherwise it will be set to 0.
+         */
+        $fee = 0;
+        $type = $postnlOrder->getType();
+        if ($type == 'PGE' || $type == 'Avond') {
+            /**
+             * Check whether the shipping prices are entered with or without tax.
+             */
+            $includingTax = false;
+            if (Mage::getSingleton('tax/config')->shippingPriceIncludesTax()) {
+                $includingTax = true;
+            }
+
+            /**
+             * Calculate the correct fee based on the order type.
+             */
+            $type = $postnlOrder->getType();
+            if ($type == 'PGE') {
+                $fee = Mage::helper('postnl/deliveryOptions')
+                           ->getExpressFee(false, $includingTax, false);
+            } elseif ($type == 'Avond') {
+                $fee = Mage::helper('postnl/deliveryOptions')
+                           ->getEveningFee(false, $includingTax, false);
+            }
+        }
+
+        /**
+         * Update the PostNL order.
+         */
+        $postnlOrder->setShipmentCosts($fee)
+                    ->setOrderId($order->getId())
                     ->setIsActive(false)
                     ->save();
 
+        /**
+         * Copy the PakjeGemak address to the order if this was a PakjeGemak order.
+         */
         if ($postnlOrder->getIsPakjeGemak() || $postnlOrder->getIsPakketautomaat()) {
             $this->copyPakjeGemakAddressToOrder($order);
         }
@@ -117,6 +147,14 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * @var Mage_Sales_Model_Quote $quote
          */
         $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
+        if (!$quote || !$quote->getId()) {
+            $quote = $order->getQuote();
+        }
+
+        if (!$quote || !$quote->getId()) {
+            return $this;
+        }
+
         $quoteAddresses = $quote->getAllAddresses();
 
         /**
@@ -146,6 +184,15 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
 
         $order->addAddress($orderAddress)
               ->save();
+
+        /**
+         * This is a fix for the order address missing a parent ID.
+         *
+         * @since v1.3.0
+         */
+        if (!$orderAddress->getParentId()) {
+            $orderAddress->setParentId($order->getId());
+        }
 
         /**
          * This is required for some PSP extensions which will not save the PakjeGemak address otherwise.

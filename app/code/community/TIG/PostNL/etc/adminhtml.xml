@@ -50,6 +50,12 @@
 									<postnl translate="title" module="postnl">
 										<title>PostNL</title>
 										<sort_order>330</sort_order>
+                                        <children>
+                                            <download_logs translate="title" module="postnl">
+                                                <title>Download PostNL log files</title>
+                                                <sort_order>10</sort_order>
+                                            </download_logs>
+                                        </children>
 									</postnl>
 								</children>
 							</config>
@@ -76,6 +82,12 @@
                                             <print_label translate="title" module="postnl">
                                                 <title>Print Shipping Label</title>
                                                 <sort_order>20</sort_order>
+                                                <children>
+                                                    <print_packing_slips translate="title" module="postnl">
+                                                        <title>Print Packing Slip</title>
+                                                        <sort_order>10</sort_order>
+                                                    </print_packing_slips>
+                                                </children>
                                             </print_label>
                                             <create_parcelware_export translate="title" module="postnl">
                                                 <title>Create Parcelware Export</title>
@@ -93,6 +105,24 @@
                                                 <title>Delete Shipping Labels</title>
                                                 <sort_order>70</sort_order>
                                             </delete_labels>
+                                            <convert translate="title" module="postnl">
+                                                <title>Convert</title>
+                                                <sort_order>80</sort_order>
+                                                <children>
+                                                    <to_buspakje translate="title" module="postnl">
+                                                        <title>To Letter Box Parcel</title>
+                                                        <sort_order>10</sort_order>
+                                                    </to_buspakje>
+                                                    <to_package translate="title" module="postnl">
+                                                        <title>To Package</title>
+                                                        <sort_order>20</sort_order>
+                                                    </to_package>
+                                                    <change_product_code translate="title" module="postnl">
+                                                        <title>Change Product Option</title>
+                                                        <sort_order>30</sort_order>
+                                                    </change_product_code>
+                                                </children>
+                                            </convert>
                                         </children>
                                     </actions>
                                 </children>

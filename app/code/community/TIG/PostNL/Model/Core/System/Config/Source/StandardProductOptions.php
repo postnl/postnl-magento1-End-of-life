@@ -37,101 +37,120 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
+    extends TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstract
 {
     /**
-     * XML path to supported options configuration setting
+     * @var array
      */
-    const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+    protected $_options = array(
+        array(
+            'value'        => '3085',
+            'label'        => 'Standard shipment',
+            'isExtraCover' => false,
+            'isAvond'      => false,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3087',
+            'label'        => 'Extra Cover',
+            'isExtraCover' => true,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3094',
+            'label'        => 'Extra cover + Return when not home',
+            'isExtraCover' => true,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3189',
+            'label'        => 'Signature on delivery',
+            'isExtraCover' => false,
+            'isAvond'      => false,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3089',
+            'label'        => 'Signature on delivery + Delivery to stated address only',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3389',
+            'label'        => 'Signature on delivery + Return when not home',
+            'isExtraCover' => false,
+            'isAvond'      => false,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3096',
+            'label'        => 'Signature on delivery + Deliver to stated address only + Return when not home',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3090',
+            'label'        => 'Delivery to neighbour + Return when not home',
+            'isExtraCover' => false,
+            'isAvond'      => false,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3385',
+            'label'        => 'Deliver to stated address only',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3390',
+            'label'        => 'Deliver to stated address only + Return when not home',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3086',
+            'label'        => 'COD',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => true,
+        ),
+        array(
+            'value'        => '3091',
+            'label'        => 'COD + Extra cover',
+            'isExtraCover' => true,
+            'isAvond'      => true,
+            'isCod'        => true,
+        ),
+        array(
+            'value'        => '3093',
+            'label'        => 'COD + Return when not home',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => true,
+        ),
+        array(
+            'value'        => '3097',
+            'label'        => 'COD + Extra cover + Return when not home',
+            'isExtraCover' => true,
+            'isAvond'      => true,
+            'isCod'        => true,
+        ),
+    );
 
     /**
-     * Returns an option array for all possible PostNL product options
+     * Gets an array of possible standard delivery product options.
      *
      * @return array
-     *
-     * @todo implement COD
      */
     public function toOptionArray()
     {
-        $helper = Mage::helper('postnl');
-        $availableOptions = array(
-            array(
-                'value' => '3085',
-                'label' => $helper->__('Standard shipment'),
-            ),
-            /**
-             * These are not currently implemented
-             *
-             * @todo implement these options
-             */
-            /*array(
-                'value'   => '3086',
-                'label'   => $helper->__('COD'),
-                'isAvond' => true,
-            ),
-            array(
-                'value'   => '3091',
-                'label'   => $helper->__('COD + Extra cover'),
-                'isAvond' => true,
-            ),
-            array(
-                'value'   => '3093',
-                'label'   => $helper->__('COD + Return when not home'),
-                'isAvond' => true,
-            ),
-            array(
-                'value'   => '3097',
-                'label'   => $helper->__('COD + Extra cover + Return when not home'),
-                'isAvond' => true,
-            ),*/
-            array(
-                'value'        => '3087',
-                'label'        => $helper->__('Extra Cover'),
-                'isExtraCover' => true,
-                'isAvond'      => true,
-            ),
-            array(
-                'value'        => '3094',
-                'label'        => $helper->__('Extra cover + Return when not home'),
-                'isExtraCover' => true,
-                'isAvond'      => true,
-            ),
-            array(
-                'value' => '3189',
-                'label' => $helper->__('Signature on delivery'),
-            ),
-            array(
-                'value'   => '3089',
-                'label'   => $helper->__('Signature on delivery + Delivery to stated address only'),
-                'isAvond' => true,
-            ),
-            array(
-                'value' => '3389',
-                'label' => $helper->__('Signature on delivery + Return when not home'),
-            ),
-            array(
-                'value'   => '3096',
-                'label'   => $helper->__(
-                                 'Signature on delivery + Deliver to stated address only + Return when not home'
-                             ),
-                'isAvond' => true,
-            ),
-            array(
-                'value' => '3090',
-                'label' => $helper->__('Delivery to neighbour + Return when not home'),
-            ),
-            array(
-                'value'   => '3385',
-                'label'   => $helper->__('Deliver to stated address only'),
-                'isAvond' => true,
-            ),
-            array(
-                'value'   => '3390',
-                'label'   => $helper->__('Deliver to stated address only + Return when not home'),
-                'isAvond' => true,
-            ),
-        );
-
-        return $availableOptions;
+        return $this->getOptions(array('isCod' => false));
     }
 
     /**
@@ -143,89 +162,66 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     public function getAvondOptions($asFlatArray = false)
     {
-        $options = $this->toOptionArray();
+        return $this->getOptions(array('isAvond' => true, 'isCod' => false), $asFlatArray);
+    }
 
-        $avondOptions = array();
-        foreach ($options as $option) {
-            if (!isset($option['isAvond']) || !$option['isAvond']) {
-                continue;
-            }
-
-            if ($asFlatArray) {
-                $avondOptions[] = $option;
-            }
-
-            $avondOptions[$option['value']] = $option['label'];
-        }
-
-        return $avondOptions;
+    /**
+     * Gets an array of possible evening delivery product options.
+     *
+     * @param boolean $asFlatArray
+     *
+     * @return array
+     */
+    public function getAvondCodOptions($asFlatArray = false)
+    {
+        return $this->getOptions(array('isAvond' => true, 'isCod' => true), $asFlatArray);
     }
 
     /**
      * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
      *
-     * @param boolean|int $storeId
-     * @param boolean     $codesOnly
-     * @param boolean     $isAvond
+     * @param boolean $flat
      *
      * @return array
      */
-    public function getAvailableOptions($storeId = false, $codesOnly = false, $isAvond = false)
+    public function getAvailableOptions($flat = false)
     {
-        if ($storeId === false) {
-            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        }
-
-        if (!$isAvond) {
-            $options = $this->toOptionArray();
-        } else {
-            $options = $this->getAvondOptions(true);
-        }
-
-        /**
-         * Get a list of all possible options
-         */
-        $availableOptions = array();
-
-        /**
-         * Get the list of supported product options from the shop's configuration
-         */
-        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
-        $supportedOptionsArray = explode(',', $supportedOptions);
-
-        /**
-         * Check each standard option to see if it's supprted
-         */
-        foreach ($options as $option) {
-            if (!is_array($option) || !array_key_exists('value', $option)) {
-                continue;
-            }
-
-            if (!in_array($option['value'], $supportedOptionsArray)) {
-                continue;
-            }
-
-            if ($codesOnly === true) {
-                $availableOptions[] = $option['value'];
-                continue;
-            }
-
-            $availableOptions[] = $option;
-        }
-
-        return $availableOptions;
+        return $this->getOptions(array('isCod' => false), $flat, true);
     }
 
     /**
-     * Alias for getAvailableOptions() with $isAvond === true.
+     * Alias for getAvailableOptions() with $cod = true.
      *
-     * @param bool $storeId
-     * @param bool $codesOnly
+     * @param boolean $flat
      *
      * @return array
      */
-    public function getAvailableAvondOptions($storeId = false, $codesOnly = false)
+    public function getAvailableCodOptions($flat = false)
     {
-        return $this->getAvailableOptions($storeId, $codesOnly, true);
+        return $this->getOptions(array('isCod' => true), $flat, true);
+    }
+
+    /**
+     * Get available avond options.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableAvondOptions($flat = false)
+    {
+        return $this->getOptions(array('isAvond' => true, 'isCod' => false), $flat, true);
+    }
+
+    /**
+     * Get available avond options that are also COD.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableAvondCodOptions($flat = false)
+    {
+        return $this->getOptions(array('isAvond' => true, 'isCod' => true), $flat, true);
     }
 }

@@ -46,7 +46,8 @@
 <script type="text/javascript" src="<?php echo $_checkoutPremiumJsUrl; ?>"></script>
 <script type="text/javascript">
     //<![CDATA[
-    var pingUrl = '<?php echo $this->getUrl('postnl/checkout/ping'); ?>';
+    var postnlcheckoutWidget;
+    var pingUrl = '<?php echo $this->getUrl('postnl/checkout/ping', array('_secure' => true)); ?>';
     window.startPostnlCheckoutPing = function() {
         if (typeof pingUrl == 'undefined') {
             return false;
@@ -71,7 +72,7 @@
         });
 
         postnlcheckoutWidget = new PostNLCheckout(
-            '<?php echo $this->getUrl('postnl/checkout/prepareOrder'); ?>',
+            '<?php echo $this->getUrl('postnl/checkout/prepareOrder', array('_secure' => true)); ?>',
             '<?php echo $_continueUrl; ?>',
             <?php echo $_environment; ?>
         );

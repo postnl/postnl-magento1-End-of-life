@@ -40,4 +40,6 @@ ul.mijnpakket-usp { list-style:disc inside; }
 #mijnpakket_app li a { display:block; width:134px; height:45px; background-image:url(../../../images/TIG/PostNL/mijnpakket/app_buttons.png); text-indent:-999em; float:left; margin:1em 1em 0 0; }
 #mijnpakket_app #apple_store a { background-position:0 0; }
 #mijnpakket_app #google_play a { background-position:0 100%; }
+
+.app-links:after { content:"."; display:block; width:0; height:0; line-height:0; overflow:hidden; clear:both; }
 /* ======================================================================================= */

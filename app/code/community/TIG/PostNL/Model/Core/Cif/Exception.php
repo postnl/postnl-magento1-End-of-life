@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -73,7 +73,7 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
      *
      * @param $xml
      *
-     * @return TIG_PostNL_Model_Core_Cif_Exception
+     * @return $this
      */
     public function setRequestXml($xml)
     {
@@ -86,7 +86,7 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
      * Set $_responseXml to specified value
      *
      * @param $xml
-     * @return TIG_PostNL_Model_Core_Cif_Exception
+     * @return $this
      */
     public function setResponseXml($xml)
     {
@@ -100,7 +100,7 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
      *
      * @param array $errorNumbers
      *
-     * @return TIG_PostNL_Model_Core_Cif_Exception
+     * @return $this
      */
     public function setErrorNumbers($errorNumbers)
     {
@@ -140,11 +140,23 @@ class TIG_PostNL_Model_Core_Cif_Exception extends TIG_PostNL_Exception
     }
 
     /**
+     * @param string|int $code
+     *
+     * @return $this
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
      * Add an error number to the error numbers array
      *
      * @param int $errorNumber
      *
-     * @return TIG_PostNL_Model_Core_Cif_Exception
+     * @return $this
      */
     public function addErrorNumber($errorNumber)
     {

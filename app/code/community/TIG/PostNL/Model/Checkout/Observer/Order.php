@@ -43,7 +43,7 @@ class TIG_PostNL_Model_Checkout_Observer_Order
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_Checkout_Observer_Order
+     * @return $this
      *
      * @event order_cancel_after
      *

@@ -54,10 +54,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
      */
     public function render(Varien_Object $row)
     {
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!in_array($shippingMethod, $postnlShippingMethods)) {
-            return parent::render($row);
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+            return '';
         }
 
         $value = $row->getData($this->getColumn()->getIndex());
@@ -67,7 +66,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_DeliveryDate
          */
         if (!$value) {
             $confirmDate  = $row->getData(self::CONFIRM_DATE_COLUMN);
-            $deliveryDate = date('Y-m-d H:i:s', strtotime($confirmDate . ' + 1 day'));
+            $confirmDate = new DateTime($confirmDate);
+            $confirmDate->add(new DateInterval('P1D'));
+
+            $deliveryDate = $confirmDate->format('Y-m-d H:i:s');
 
             $row->setData($this->getColumn()->getIndex(), $deliveryDate);
         }

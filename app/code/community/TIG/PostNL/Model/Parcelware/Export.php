@@ -44,9 +44,9 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     /**
      * XML paths to Parcelware references
      */
-    const XML_PATH_CONTRACT_REF_NR = 'postnl/parcelware_export/contract_ref_nr';
-    const XML_PATH_CONTRACT_NAME   = 'postnl/parcelware_export/contract_name';
-    const XML_PATH_SENDER_REF_NR   = 'postnl/parcelware_export/sender_ref_nr';
+    const XPATH_CONTRACT_REF_NR = 'postnl/parcelware_export/contract_ref_nr';
+    const XPATH_CONTRACT_NAME   = 'postnl/parcelware_export/contract_name';
+    const XPATH_SENDER_REF_NR   = 'postnl/parcelware_export/sender_ref_nr';
 
     /**
      * @var Mage_Core_Model_Resource_Transaction|void
@@ -362,7 +362,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             'Street'        => $streetData['streetname'],
             'HouseNr'       => $streetData['housenumber'],
             'HouseNrExt'    => $streetData['housenumberExtension'],
-            'Zipcode'       => $address->getPostcode(),
+            'Zipcode'       => str_replace(' ', '', $address->getPostcode()),
             'City'          => $address->getCity(),
             'Countrycode'   => $address->getCountryId(),
             'CustomerEmail' => $address->getEmail(),
@@ -411,7 +411,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             'PG_Street'      => $streetData['streetname'],
             'PG_HouseNr'     => $streetData['housenumber'],
             'PG_HouseNrExt'  => $streetData['housenumberExtension'],
-            'PG_Zipcode'     => $pakjeGemakAddress->getPostcode(),
+            'PG_Zipcode'     => str_replace(' ', '', $pakjeGemakAddress->getPostcode()),
             'PG_City'        => $pakjeGemakAddress->getCity(),
             'PG_Countrycode' => $pakjeGemakAddress->getCountryId(),
         );
@@ -552,6 +552,8 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
         $itemCount = 0;
         $items = $this->_sortCustomsItems($shipment->getAllItems());
 
+        $helper = Mage::helper('postnl');
+
         /**
          * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
@@ -566,7 +568,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
             /**
              * Calculate the item's weight in kg
              */
-            $itemWeight = Mage::helper('postnl/cif')->standardizeWeight(
+            $itemWeight = $helper->standardizeWeight(
                 $item->getWeight(),
                 $this->getStoreId()
             );
@@ -594,7 +596,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * gets the numeric shipment type for this shipment.
+     * Gets the numeric shipment type for this shipment.
      *
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
      *
@@ -727,7 +729,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getContractReference()
     {
-        $contractReference = Mage::getStoreConfig(self::XML_PATH_CONTRACT_REF_NR, $this->getStoreId());
+        $contractReference = Mage::getStoreConfig(self::XPATH_CONTRACT_REF_NR, $this->getStoreId());
 
         return $contractReference;
     }
@@ -739,7 +741,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getContractName()
     {
-        $contractName = Mage::getStoreConfig(self::XML_PATH_CONTRACT_NAME, $this->getStoreId());
+        $contractName = Mage::getStoreConfig(self::XPATH_CONTRACT_NAME, $this->getStoreId());
 
         return $contractName;
     }
@@ -751,7 +753,7 @@ class TIG_PostNL_Model_Parcelware_Export extends TIG_PostNL_Model_Core_Cif
      */
     protected function _getSenderReference()
     {
-        $senderReference = Mage::getStoreConfig(self::XML_PATH_SENDER_REF_NR, $this->getStoreId());
+        $senderReference = Mage::getStoreConfig(self::XPATH_SENDER_REF_NR, $this->getStoreId());
 
         return $senderReference;
     }

@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_Action
@@ -46,7 +46,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
     /**
      * @param TIG_PostNL_Model_AddressValidation_Cendris $cendrisModel
      *
-     * @return TIG_PostNL_AddressValidationController
+     * @return $this
      */
     public function setCendrisModel($cendrisModel)
     {
@@ -73,9 +73,10 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
     }
 
     /**
-     * Validates and enriches a postcode/housenumber combination. This will result in the address's city and streetname if valid.
+     * Validates and enriches a postcode/house number combination. This will result in the address's city and street
+     * name if valid.
      *
-     * @return TIG_PostNL_AddressValidationController
+     * @return $this
      */
     public function postcodeCheckAction()
     {
@@ -105,6 +106,13 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
 
         $postcode    = $data['postcode'];
         $housenumber = $data['housenumber'];
+
+        /**
+         * Remove spaces from house number and postcode fields.
+         */
+        $postcode    = str_replace(' ', '', $postcode);
+        $postcode    = strtoupper($postcode);
+        $housenumber = trim($housenumber);
 
         /**
          * Validate the parameters.
@@ -139,13 +147,13 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
         }
 
         /**
-         * Get the city and streetname from the response
+         * Get the city and street name from the response
          */
         $city       = $result->woonplaats;
         $streetname = $result->straatnaam;
 
         /**
-         * Add the resulting city and streetname to an array and JSON encode it
+         * Add the resulting city and street name to an array and JSON encode it
          */
         $responseArray = array(
             'city'       => $city,
@@ -165,7 +173,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
     }
 
     /**
-     * Validates a postcode and housenumber.
+     * Validates a postcode and house number.
      *
      * @param string $postcode
      * @param int    $housenumber
@@ -175,14 +183,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
     public function validatePostcode($postcode, $housenumber)
     {
         /**
-         * Remove spaces from housenumber and postcode fields.
-         */
-        $postcode    = str_replace(' ', '', $postcode);
-        $postcode    = strtoupper($postcode);
-        $housenumber = trim($housenumber);
-
-        /**
-         * Get validation classes for the postcode and housenumber values
+         * Get validation classes for the postcode and house number values
          */
         $postcodeValidator    = new Zend_Validate_PostCode('nl_NL');
         $housenumberValidator = new Zend_Validate_Digits();
@@ -210,7 +211,7 @@ class TIG_PostNL_AddressValidationController extends Mage_Core_Controller_Front_
     {
         /**
          * Make sure the required data is present.
-         * If not, it means the supplied housenumber and postcode combination could not be found.
+         * If not, it means the supplied house number and postcode combination could not be found.
          */
         if (!isset($result->woonplaats)
             || !$result->woonplaats

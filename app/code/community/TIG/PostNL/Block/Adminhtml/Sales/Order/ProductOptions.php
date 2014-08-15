@@ -104,7 +104,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_ProductOptions extends TIG_PostNL_B
     /**
      * Check if the PostNL module is enabled before rendering
      *
-     * @return string | parent::_toHtml()
+     * @return string|parent::_toHtml()
      *
      * @see Mage_Adminhtml_Block_Abstract::_toHtml()
      */

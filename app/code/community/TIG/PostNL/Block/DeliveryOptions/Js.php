@@ -67,4 +67,18 @@ class TIG_PostNL_Block_DeliveryOptions_Js extends TIG_PostNL_Block_DeliveryOptio
         $this->setApiKey($apiKey);
         return $apiKey;
     }
+
+    /**
+     * Render the template if allowed.
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        if (!Mage::helper('postnl/deliveryOptions')->isDeliveryOptionsEnabled()) {
+            return '';
+        }
+
+        return parent::_toHtml();
+    }
 }

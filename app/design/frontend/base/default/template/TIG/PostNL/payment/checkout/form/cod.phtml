@@ -1,0 +1,159 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PosTNL_Block_Payment_Form_Cod $this
+ *
+ * @see Mage_Payment_Block_Form_Cashondelivery
+ */
+?>
+<?php $_methodCode = $this->getMethodCode(); ?>
+<?php if ($this->getInstructions()): ?>
+    <ul class="form-list checkout-agreements" id="payment_form_<?php echo $_methodCode; ?>" style="display:none;">
+        <li>
+            <div class="<?php echo $_methodCode; ?>-instructions-content agreement-content">
+                <?php echo nl2br($this->getInstructions()); ?>
+            </div>
+        </li>
+    </ul>
+<?php endif; ?>
+<script type="text/javascript">
+    //<![CDATA[
+    payment.init = function () {
+        if (this.beforeInit) {
+            this.beforeInit();
+        }
+        var elements = Form.getElements(this.form);
+        if ($(this.form)) {
+            $(this.form).observe('submit', function(event){this.save();Event.stop(event);}.bind(this));
+        }
+        var method = null;
+        for (var i=0; i<elements.length; i++) {
+            if (elements[i].name=='payment[method]') {
+                if (elements[i].checked) {
+                    method = elements[i].value;
+                }
+            } else {
+                elements[i].disabled = true;
+            }
+            elements[i].setAttribute('autocomplete','off');
+        }
+        if (method) this.switchMethod(method);
+        this.afterInit();
+    }.bind(payment);
+
+    payment.addAfterInitFunction(
+        '<?php echo $_methodCode; ?>',
+        function() {
+            var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
+            var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
+            var chosenDeliveryOptions = window.deliveryOptions;
+
+            if (postnlCodPaymentMethod && chosenDeliveryOptions) {
+                if (chosenDeliveryOptions.selectedType == 'PA') {
+                    postnlCodPaymentMethod.disabled = true;
+                    postnlCodPaymentMethod.up().hide();
+
+                    if (postnlCodPaymentForm) {
+                        postnlCodPaymentForm.up().hide();
+                    }
+                }
+
+                <?php if (!$this->canShowForBuspakje()): ?>
+                    if (chosenDeliveryOptions.selectedType == 'Overdag') {
+                        postnlCodPaymentMethod.disabled = true;
+                        postnlCodPaymentMethod.up().hide();
+
+                        if (postnlCodPaymentForm) {
+                            postnlCodPaymentForm.up().hide();
+                        }
+                    }
+                <?php endif; ?>
+            }
+        }
+    );
+
+    var deliveryOptions = window.deliveryOptions;
+    if (deliveryOptions && deliveryOptions.options.isOsc) {
+        var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
+        var postnlCodPaymentMethodContainer = $('container_payment_method_<?php echo $_methodCode; ?>');
+
+        var togglePostnlCod = function() {
+            if (deliveryOptions.selectedType == 'Overdag' || deliveryOptions.selectedType == 'PA') {
+
+                if (postnlCodPaymentMethod.checked) {
+                    postnlCodPaymentMethod.checked = false;
+
+                    var selected = false;
+                    $$('#checkout-payment-method-load input').each(function(element) {
+                        if (selected) {
+                            return;
+                        }
+
+                        if (element.visible()) {
+                            element.checked = true;
+                            payment.switchMethod(element.getValue());
+
+                            selected = true;
+                        }
+                    });
+                }
+
+                postnlCodPaymentMethod.disabled = true;
+                postnlCodPaymentMethod.up().hide();
+
+                if (postnlCodPaymentMethodContainer) {
+                    postnlCodPaymentMethodContainer.hide();
+                }
+            } else {
+                postnlCodPaymentMethod.disabled = false;
+                postnlCodPaymentMethod.up().show();
+
+                if (postnlCodPaymentMethod.checked && postnlCodPaymentMethodContainer) {
+                    postnlCodPaymentMethodContainer.show();
+                }
+            }
+        };
+
+        document.stopObserving('postnl:selectTimeframe');
+        document.observe('postnl:selectTimeframe', togglePostnlCod);
+
+        document.stopObserving('postnl:selectLocation');
+        document.observe('postnl:selectLocation', togglePostnlCod);
+    }
+    //]]>
+</script>

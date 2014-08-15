@@ -97,7 +97,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * @param array $validTypes
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function setValidTypes($validTypes)
     {
@@ -129,7 +129,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * @param boolean $canUse
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function setCanUseDeliveryOptions($canUse)
     {
@@ -168,7 +168,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * @param TIG_PostNL_Model_DeliveryOptions_Service $service
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function setService(TIG_PostNL_Model_DeliveryOptions_Service $service)
     {
@@ -180,7 +180,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Save Extra costs associated with a selected option.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function saveOptionCostsAction()
     {
@@ -229,7 +229,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Saves a mobile phonenumber for parceldispenser orders.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function savePhoneNumberAction()
     {
@@ -274,7 +274,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Saves the selected shipment option.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function saveSelectedOptionAction()
     {
@@ -322,7 +322,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Get possible evening delivery time frames based on an earliest possible delivery date.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function getDeliveryTimeframesAction()
     {
@@ -393,7 +393,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Get the nearest post office locations based on either a postcode or a longitude and latitude.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function getNearestLocationsAction()
     {
@@ -473,7 +473,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     /**
      * Get all locations in a given area.
      *
-     * @return TIG_PostNL_DeliveryOptionsController
+     * @return $this
      */
     public function getLocationsInAreaAction()
     {
@@ -825,7 +825,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $countryCode = $address['Countrycode'];
         $street      = $address['Street'];
         $houseNumber = $address['HouseNr'];
-        $postcode    = $address['Zipcode'];
+        $postcode    = str_replace(' ', '', $address['Zipcode']);
         $name        = $address['Name'];
 
         $countryCodes = Mage::getResourceModel('directory/country_collection')->getColumnValues('iso2_code');
@@ -1032,8 +1032,10 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
         } else {
-            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
-            $deliveryDate = date('d-m-Y', $tomorrow);
+            $deliveryDate = new DateTime();
+            $deliveryDate->setTimestamp(Mage::getModel('core/date')->timestamp())
+                         ->add(new DateInterval('P1D'));
+            $deliveryDate = $deliveryDate->format('d-m-Y');
         }
 
         $data = array(
@@ -1089,8 +1091,10 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
         } else {
-            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
-            $deliveryDate = date('d-m-Y', $tomorrow);
+            $deliveryDate = new DateTime();
+            $deliveryDate->setTimestamp(Mage::getModel('core/date')->timestamp())
+                         ->add(new DateInterval('P1D'));
+            $deliveryDate = $deliveryDate->format('d-m-Y');
         }
 
         /**
@@ -1098,7 +1102,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
          */
         if (array_key_exists('postcode', $postData)) {
             $postcode = $postData['postcode'];
-            $postcode = strtoupper($postcode);
+            $postcode = strtoupper(str_replace(' ', '', $postcode));
 
             $validator = new Zend_Validate_PostCode('nl_NL');
             if (!$validator->isValid($postcode)) {
@@ -1217,8 +1221,10 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
                 );
             }
         } else {
-            $tomorrow = strtotime('tomorrow', Mage::getModel('core/date')->timestamp());
-            $deliveryDate = date('d-m-Y', $tomorrow);
+            $deliveryDate = new DateTime();
+            $deliveryDate->setTimestamp(Mage::getModel('core/date')->timestamp())
+                         ->add(new DateInterval('P1D'));
+            $deliveryDate = $deliveryDate->format('d-m-Y');
         }
 
         $data = array(

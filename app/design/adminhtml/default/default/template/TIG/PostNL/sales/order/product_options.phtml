@@ -61,16 +61,19 @@
                     massActionSelect = $('sales_order_grid_massaction-select');
                     selectedMassAction = massActionSelect[massActionSelect.selectedIndex];
                     if (selectedMassAction.value == 'create_shipments') {
-                        productOptionSelect = $('product_options')
-                        if (!productOptionSelect) {
-                            extraCoverDialog.open();
-                            return;
-                        }
-                        selectedProductOption = productOptionSelect[productOptionSelect.selectedIndex];
+                        var filteredTypes = window.filteredTypes;
+                        if (filteredTypes.length === 1) {
+                            var productOptionSelect = $('postnl_' + filteredTypes[0] + '_options');
+                            if (!productOptionSelect) {
+                                extraCoverDialog.open();
+                                return;
+                            }
+                            selectedProductOption = productOptionSelect[productOptionSelect.selectedIndex];
 
-                        if (productOptions.indexOf(selectedProductOption.value) > -1) {
-                            extraCoverDialog.open();
-                            return;
+                            if (productOptions.indexOf(selectedProductOption.value) > -1) {
+                                extraCoverDialog.open();
+                                return;
+                            }
                         }
                     }
                 }
@@ -85,7 +88,6 @@
                 }
                 this.currentItem = item;
                 var fieldName = (item.field ? item.field : this.formFieldName);
-                var fieldsHtml = '';
 
                 if(this.currentItem.confirm && !window.confirm(this.currentItem.confirm)) {
                     return;
@@ -136,7 +138,7 @@
                 } else {
                     content += "<p>"
                             +  "<label for='extra_cover_value'><?php echo $_helper->__('Extra cover amount (in increments of 500)'); ?></label>"
-                            +  "<input id='extra_cover_value' type='text' name='extra_cover_value' class='input-text required-entry validate-increment-500 validate-not-negative-number' value='0'/>"
+                            +  "<input id='extra_cover_value' type='text' name='extra_cover_value' class='input-text required-entry validate-increment-500 validate-not-negative-number' value='500'/>"
                             +  "</p>";
                 }
 

@@ -7,7 +7,8 @@ a.postnl-message {color:#EA7601 !important; text-decoration:underline;}
 .module-message.info { background:#e6eef8 url(../../../images/TIG/PostNL/glyph_info.gif) 9px 9px no-repeat; border-color:#264697; }
 .module-message.warning { background:#fff7bd url(../../../images/TIG/PostNL/glyph_warning.gif) 9px 9px no-repeat; border-color:#c68c05; }
 .module-message.error { background:#fdece4 url(../../../images/TIG/PostNL/glyph_error.gif) 9px 9px no-repeat; border-color:#c63625; }
-.module-message ul.postnl-errors {list-style:disc inside; }
+.module-message ul.postnl-errors,
+.postnl-warning li {list-style:disc inside; }
 
 /* Waiting notification */
 .waiting-notification { width:100%; height:999em; position:absolute; top:83px; left:0; background:rgba(255, 255, 255, .7); }
@@ -36,3 +37,13 @@ body.no-scroll { overflow:hidden !important; }
 .postnl-tooltip > div:before { position:absolute; top:-5px; left:0; content:''; width:325px; height:5px; overflow:hidden; background:url(../../../images/TIG/PostNL/bkg_tooltip.png) no-repeat 0 0; }
 .postnl-tooltip > div:after { position:absolute; bottom:-14px; left:-1px; content:''; width:325px; height:14px; overflow:hidden; background:url(../../../images/TIG/PostNL/bkg_tooltip.png) no-repeat -325px 0; }
 .postnl-tooltip:hover > div { opacity:1; width:301px; visibility:visible; bottom:30px;}
+
+/* Download button */
+button.download span { background-image:url(../../../images/TIG/PostNL/btn_download_icon.png); padding-left:20px; }
+button.download span span { background:none !important; padding:0 !important; }
+
+/* Delivery options info */
+div#postnl_delivery_option_info { border: 1px solid #D6D6D6; margin:10px 0 10px 0; }
+
+/* Shipping options */
+div#postnl_is_buspakje_container p { display: inline-block; }

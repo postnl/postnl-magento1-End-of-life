@@ -48,6 +48,20 @@
 <?php $_deliveryDate  = $this->getDeliveryDate(); ?>
 <?php $_streetData    = $this->getStreetData(); ?>
 <?php $_housenumber   = $_streetData['housenumber']; ?>
+
+<?php $_canUsePakjeGemak        = $this->canUsePakjeGemak(); ?>
+
+<?php $_canUsePakjeGemakExpress = false; ?>
+<?php if ($_canUsePakjeGemak): ?>
+    <?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
+<?php endif; ?>
+
+<?php $_canUsePakketAutomaat    = $this->canUsePakketAutomaat(); ?>
+
+<?php $_canAddLocation = true; ?>
+<?php if (!$_canUsePakjeGemak && !$_canUsePakjeGemakExpress && !$_canUsePakketAutomaat): ?>
+    <?php $_canAddLocation = false; ?>
+<?php endif; ?>
 <div id="osc_initial_loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_add_moment" style="display:none;">
     <ul class="option-list">
@@ -94,7 +108,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div id="postnl_pickup" class="col-2">
+                    <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
                         <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
                         <ul class="option-list" id="pgelocation"></ul>
                         <ul class="option-list" id="pglocation"></ul>
@@ -217,7 +231,7 @@
     function startDeliveryOptions(postcode, housenumber, fullAddress) {
         var options;
         var params;
-        var debug = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
+        var postnlDebugMode = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
 
         params = {
             saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
@@ -242,19 +256,21 @@
             expressFeeExcl         : <?php echo $this->getFee('express', false); ?>,
             eveningFeeText         : '<?php echo $this->getFeeText('evening', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             expressFeeText         : '<?php echo $this->getFeeText('express', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
-            allowPg                : <?php echo $this->canUsePakjeGemak()        ? 'true' : 'false'; ?>,
-            allowPge               : <?php echo $this->canUsePakjeGemakExpress() ? 'true' : 'false'; ?>,
-            allowPa                : <?php echo $this->canUsePakketAutomaat()    ? 'true' : 'false'; ?>,
+            allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
+            allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
+            allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
+            allowDeliveryDays      : <?php echo $this->canUseDeliveryDays()      ? 'true' : 'false'; ?>,
             allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
             allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
             allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
             disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
+            isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,
             shippingMethodName     : '<?php echo $this->getMethodName()          ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
             optionsContainer       : 'osc_scrollbar_container'
         };
 
         try {
-            deliveryOptions = new PostnlDeliveryOptions(params, options, debug);
+            deliveryOptions = new PostnlDeliveryOptions(params, options, postnlDebugMode);
             window.deliveryOptions = deliveryOptions;
         } catch(e) {
             console.error(e);

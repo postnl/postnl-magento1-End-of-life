@@ -35,9 +35,24 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean hasShipment()
+ * @method boolean hasProductOptions()
+ * @method boolean hasBuspakjeProductOptions()
+ * @method boolean hasDefaultProductOption()
+ *
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setShipment(Mage_Sales_Model_Order_Shipment $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setProductOptions(array $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setDefaultProductOption(string $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions setBuspakjeProductOptions(array $value)
  */
 class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions extends TIG_PostNL_Block_Adminhtml_Template
 {
+    /**
+     * Xpath to the buspakje calculation mode setting.
+     */
+    const XPATH_BUSPAKJE_CALC_MODE = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
+
     /**
      * @var string
      */
@@ -46,12 +61,12 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     /**
      * Get current shipment
      *
-     * @return Mage_Sales_Model_Order_Shipment
+     * @return Mage_Sales_Model_Order_Shipment.
      */
     public function getShipment()
     {
-        if ($this->getData('shipment')) {
-            return $this->getData('shipment');
+        if ($this->hasShipment()) {
+            return $this->_getData('shipment');
         }
 
         $shipment = Mage::registry('current_shipment');
@@ -61,14 +76,14 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
-     * Get available product options for the current shipment
+     * Get available product options for the current shipment.
      *
      * @return array
      */
     public function getProductOptions()
     {
-        if ($this->getData('product_options')) {
-            return $this->getData('product_options');
+        if ($this->hasProductOptions()) {
+            return $this->_getData('product_options');
         }
 
         $shipment = $this->getShipment();
@@ -80,26 +95,76 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
-     * Get the default product option for the current shipment
+     * Gets all allowed buspakje product options.
+     *
+     * @return array
+     */
+    public function getBuspakjeProductOptions()
+    {
+        if ($this->hasBuspakjeProductOptions()) {
+            return $this->getData('buspakje_product_options');
+        }
+
+        $productOptions = Mage::helper('postnl/cif')->getBuspakjeProductCodes(false);
+
+        $this->setBuspakjeProductOptions($productOptions);
+        return $productOptions;
+    }
+
+    /**
+     * Get the default product option for the current shipment.
      *
      * @return string
      */
     public function getDefaultProductOption()
     {
-        if ($this->getData('default_product_option')) {
-            return $this->getData('default_product_option');
+        if ($this->hasDefaultProductOption()) {
+            return $this->_getData('default_product_option');
         }
 
         $shipment = $this->getShipment();
 
-        $productOption = Mage::helper('postnl/cif')->getDefaultProductOptionForShipment($shipment);
+        try {
+            $productOption = Mage::helper('postnl/cif')->getDefaultProductOptionForShipment($shipment);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
+            $productOption = '';
+        }
 
         $this->setDefaultProductOption($productOption);
         return $productOption;
     }
 
     /**
-     * Gets an array of shipment types for use with GlobalPack shipments
+     * Get the default product option for the current shipment.
+     *
+     * @return string
+     */
+    public function getDefaultBuspakjeOption()
+    {
+        if ($this->hasDefaultBuspakjeOption()) {
+            return $this->_getData('default_buspakje_option');
+        }
+
+        $postnlShipment = Mage::getModel('postnl_core/shipment')
+                        ->setShipmentType('buspakje')
+                        ->setStoreId($this->getShipment()->getStoreId());
+
+        try {
+            $productOption = $postnlShipment->getDefaultProductCode();
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+
+            $productOption = '';
+        }
+
+        $this->setDefaultBuspakjeOption($productOption);
+        return $productOption;
+    }
+
+    /**
+     * Gets an array of shipment types for use with GlobalPack shipments.
      *
      * @return array
      */
@@ -111,7 +176,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
-     * Check if the current shipment is belgian
+     * Check if the current shipment is belgian.
      *
      * @return boolean
      */
@@ -126,7 +191,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     }
 
     /**
-     * Gets the number of parcels in this shipment based on it's weight
+     * Gets the number of parcels in this shipment based on it's weight.
      *
      * @return int
      */
@@ -134,14 +199,53 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     {
         $shipment = $this->getShipment();
 
-        $parcelCount = Mage::helper('postnl/cif')->getParcelCount($shipment);
+        $parcelCount = (int) Mage::helper('postnl/cif')->getParcelCount($shipment);
+        if ($parcelCount < 1) {
+            $parcelCount = 1;
+        }
+
         return $parcelCount;
     }
 
     /**
-     * Do a few checks to see if the template should be rendered before actually rendering it
+     * Check whether the current shipment would fit as a buspakje.
      *
-     * @return string | parent::_toHtml()
+     * @return bool
+     */
+    public function getFitsAsBuspakje()
+    {
+        $shipment = $this->getShipment();
+        $items = $shipment->getAllItems();
+
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Item $item
+         */
+        $orderItems = array();
+        foreach ($items as $item) {
+            $orderItems[] = $item->getOrderItem()->setQtyOrdered($item->getQty());
+        }
+
+        $fits = Mage::helper('postnl')->fitsAsBuspakje($orderItems, true);
+
+        return $fits;
+    }
+
+    /**
+     * Gets the configured calculation mode for buspakje shipments.
+     *
+     * @return mixed
+     */
+    public function getBuspakjeCalcMode()
+    {
+        $calcMode = Mage::getStoreConfig(self::XPATH_BUSPAKJE_CALC_MODE, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $calcMode;
+    }
+
+    /**
+     * Do a few checks to see if the template should be rendered before actually rendering it.
+     *
+     * @return string
      *
      * @see Mage_Adminhtml_Block_Abstract::_toHtml()
      */
@@ -154,8 +258,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
 
         $shipment = $this->getShipment();
 
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-        if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
             return '';
         }
 
