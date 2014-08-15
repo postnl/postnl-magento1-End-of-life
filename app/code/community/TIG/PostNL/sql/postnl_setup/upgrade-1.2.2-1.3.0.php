@@ -875,8 +875,8 @@ if (!$installer->getAttribute('catalog_product', 'postnl_max_qty_for_buspakje'))
             'frontend_class'             => 'validate-digits',
             'default'                    => '0',
             'label'                      => 'PostNL Max Qty For Letter Box Parcels',
-            'note'                       => 'A shipment will only be considered a letter box parcel if the purchased ' .
-                                            'qty of this product does not exceed this amount.',
+            'note'                       => 'Een zending zal enkel als brievenbuspakje verwerkt worden indien het ' .
+                                            'bestelde aantal van dit product niet deze waarde overschrijdt.',
             'input'                      => 'text',
             'type'                       => 'varchar',
             'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,

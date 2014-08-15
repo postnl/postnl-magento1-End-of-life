@@ -4637,7 +4637,7 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         var openingHours = '';
         if (!this.getDeliveryOptions().isTimeframesAllowed() && this.getDeliveryOptions().getIsBuspakje()) {
             spanClass    += ' no-timeframe-buspakje';
-            openingHours += Translator.translate('Fits through the mailbox');
+            openingHours += Translator.translate('Fits through the mailslot');
         } else if (!this.getDeliveryOptions().isTimeframesAllowed()) {
             spanClass    += ' no-timeframe-buspakje';
             openingHours += '09:00 - 18:00';
