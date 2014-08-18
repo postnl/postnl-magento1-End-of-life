@@ -83,7 +83,10 @@
                         'onComplete': this.onMassactionComplete.bind(this)
                     });
                 } else if(item.url) {
-                    if (item.id == 'postnl_print_labels_and_confirm' || item.id == 'postnl_print_labels') {
+                    if (item.id == 'postnl_print_labels_and_confirm'
+                        || item.id == 'postnl_print_labels'
+                        || item.id == 'postnl_print_packing_slips'
+                    ) {
                         var windowName = 'printWindow' + (new Date()).getTime();
                         var printWindow = window.open('', windowName);
 

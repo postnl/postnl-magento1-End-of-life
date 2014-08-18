@@ -51,10 +51,10 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     /**
      * Config options used by the getDeliveryDate service.
      */
-    const XPATH_SHIPPING_DURATION    = 'postnl/delivery_options/shipping_duration';
-    const XPATH_CUTOFF_TIME          = 'postnl/delivery_options/cutoff_time';
-    const XPATH_ALLOW_SUNDAY_SORTING = 'postnl/delivery_options/allow_sunday_sorting';
-    const XPATH_SUNDAY_CUTOFF_TIME   = 'postnl/delivery_options/sunday_cutoff_time';
+    const XPATH_SHIPPING_DURATION    = 'postnl/cif_labels_and_confirming/shipping_duration';
+    const XPATH_CUTOFF_TIME          = 'postnl/cif_labels_and_confirming/cutoff_time';
+    const XPATH_ALLOW_SUNDAY_SORTING = 'postnl/cif_labels_and_confirming/allow_sunday_sorting';
+    const XPATH_SUNDAY_CUTOFF_TIME   = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
     const XPATH_DELIVERY_DAYS_NUMBER = 'postnl/delivery_options/delivery_days_number';
 
     /**
@@ -92,7 +92,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
             );
         }
 
-        $shippingDuration = Mage::helper('postnl/deliveryoptions')->getShippingDuration($quote);
+        $shippingDuration = Mage::helper('postnl/deliveryOptions')->getShippingDuration($quote);
 
         $soapParams = array(
             'GetDeliveryDate' => array(
@@ -155,14 +155,15 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $maximumNumberOfDeliveryDays = (int) Mage::getStoreConfig(self::XPATH_DELIVERY_DAYS_NUMBER, $storeId);
         $maximumNumberOfDeliveryDays--;
 
-        $endDate = date('d-m-Y', strtotime("+{$maximumNumberOfDeliveryDays} days", strtotime($startDate)));
+        $endDate = new DateTime($startDate);
+        $endDate->add(new DateInterval("P{$maximumNumberOfDeliveryDays}D"));
 
         $soapParams = array(
             'Timeframe' => array(
                 'PostalCode'  => $data['postcode'],
                 'HouseNumber' => $data['housenumber'],
                 'StartDate'   => $startDate,
-                'EndDate'     => $endDate,
+                'EndDate'     => $endDate->format('d-m-Y'),
             ),
             'Message' => $this->_getMessage('')
         );
@@ -420,10 +421,10 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $helper = Mage::helper('postnl/deliveryOptions');
         if ($helper->canUsePakjeGemak()) {
             $deliveryOptions[] = self::PAKJEGEMAK_DELIVERY_OPTION;
-        }
 
-        if ($helper->canUsePakjeGemakExpress()) {
-            $deliveryOptions[] = self::PAKJEGEMAK_EXPRESS_DELIVERY_OPTION;
+            if ($helper->canUsePakjeGemakExpress()) {
+                $deliveryOptions[] = self::PAKJEGEMAK_EXPRESS_DELIVERY_OPTION;
+            }
         }
 
         if ($helper->canUsePakketAutomaat()) {

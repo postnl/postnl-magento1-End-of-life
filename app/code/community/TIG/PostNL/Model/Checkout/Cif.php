@@ -43,33 +43,33 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Webshop ID config option path
      */
-    const XML_PATH_WEBSHOP_ID = 'postnl/cif/webshop_id';
+    const XPATH_WEBSHOP_ID = 'postnl/cif/webshop_id';
 
     /**
      * XML paths for various options
      */
-    const XML_PATH_NEWSLETTER_SUBSCRIPTION = 'postnl/checkout/newsletter_subscription';
-    const XML_PATH_REMARK                  = 'postnl/checkout/remark';
-    const XML_PATH_CONTACT_URL             = 'postnl/checkout/contact_url';
-    const XML_PATH_ALLOW_RETAIL_LOCATION   = 'postnl/checkout/allow_retail_location';
-    const XML_PATH_ALLOW_FOREIGN_ADDRESS   = 'postnl/checkout/allow_foreign_address';
-    const XML_PATH_ALLOW_PRICE_OVERVIEW    = 'postnl/checkout/allow_price_overview';
-    const XML_PATH_AGREE_CONDITIONS        = 'postnl/checkout/agree_conditions';
-    const XML_PATH_SERVICE_URL             = 'postnl/checkout/service_url';
-    const XML_PATH_USE_MOBILE              = 'postnl/checkout/use_mobile';
-    const XML_PATH_USE_DOB                 = 'postnl/checkout/use_dob';
+    const XPATH_NEWSLETTER_SUBSCRIPTION = 'postnl/checkout/newsletter_subscription';
+    const XPATH_REMARK                  = 'postnl/checkout/remark';
+    const XPATH_CONTACT_URL             = 'postnl/checkout/contact_url';
+    const XPATH_ALLOW_RETAIL_LOCATION   = 'postnl/checkout/allow_retail_location';
+    const XPATH_ALLOW_FOREIGN_ADDRESS   = 'postnl/checkout/allow_foreign_address';
+    const XPATH_ALLOW_PRICE_OVERVIEW    = 'postnl/checkout/allow_price_overview';
+    const XPATH_AGREE_CONDITIONS        = 'postnl/checkout/agree_conditions';
+    const XPATH_SERVICE_URL             = 'postnl/checkout/service_url';
+    const XPATH_USE_MOBILE              = 'postnl/checkout/use_mobile';
+    const XPATH_USE_DOB                 = 'postnl/checkout/use_dob';
 
     /**
      * XML path to available payment methods.
      * N.B. missing last part so it will return an array of settings.
      */
-    const XML_PATH_CHECKOUT_PAYMENT_METHODS = 'postnl/checkout_payment_methods';
+    const XPATH_CHECKOUT_PAYMENT_METHODS = 'postnl/checkout_payment_methods';
 
     /**
      * XML paths for shipment reference info
      */
-    const XML_PATH_SHIPMENT_REFERENCE_TYPE   = 'postnl/cif_labels_and_confirming/shipment_reference_type';
-    const XML_PATH_CUSTOM_SHIPMENT_REFERENCE = 'postnl/cif_labels_and_confirming/custom_shipment_reference';
+    const XPATH_SHIPMENT_REFERENCE_TYPE   = 'postnl/cif_labels_and_confirming/shipment_reference_type';
+    const XPATH_CUSTOM_SHIPMENT_REFERENCE = 'postnl/cif_labels_and_confirming/custom_shipment_reference';
 
     /**
      * Check if the module is set to test mode
@@ -371,7 +371,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Get all payment method configuration options as well as an array of all payment method supported by PostNL
          */
-        $paymentMethods = Mage::getStoreConfig(self::XML_PATH_CHECKOUT_PAYMENT_METHODS, $storeId);
+        $paymentMethods = Mage::getStoreConfig(self::XPATH_CHECKOUT_PAYMENT_METHODS, $storeId);
         $postnlPaymentMethods = Mage::helper('postnl/checkout')->getCheckoutPaymentMethods();
 
         $allowedMethods = array();
@@ -404,14 +404,14 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         $communicationOptions = array();
 
-        $newsletterSubscription = Mage::getStoreConfigFlag(self::XML_PATH_NEWSLETTER_SUBSCRIPTION, $storeId);
+        $newsletterSubscription = Mage::getStoreConfigFlag(self::XPATH_NEWSLETTER_SUBSCRIPTION, $storeId);
         if ($newsletterSubscription) {
             $communicationOptions[] = array(
                 'Code' => 'NEWS',
             );
         }
 
-        $remark = Mage::getStoreConfigFlag(self::XML_PATH_REMARK, $storeId);
+        $remark = Mage::getStoreConfigFlag(self::XPATH_REMARK, $storeId);
         if ($remark) {
             $communicationOptions[] = array(
                 'Code' => 'REMARK',
@@ -456,12 +456,12 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 'BirthDate' => 'False',
             );
 
-        $useMobile = Mage::getStoreConfigFlag(self::XML_PATH_USE_MOBILE, $storeId);
+        $useMobile = Mage::getStoreConfigFlag(self::XPATH_USE_MOBILE, $storeId);
         if ($useMobile) {
             $optional['MobileNumber'] = 'True';
         }
 
-        $useDob = Mage::getStoreConfigFlag(self::XML_PATH_USE_DOB, $storeId);
+        $useDob = Mage::getStoreConfigFlag(self::XPATH_USE_DOB, $storeId);
         if ($useDob) {
             $optional['BirthDate'] = 'True';
         }
@@ -478,7 +478,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
 
-        $contactUrl = Mage::getStoreConfig(self::XML_PATH_CONTACT_URL, $storeId);
+        $contactUrl = Mage::getStoreConfig(self::XPATH_CONTACT_URL, $storeId);
         if (!$contactUrl) {
             return false;
         }
@@ -624,7 +624,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      protected function _getReference($shipment)
      {
          $storeId = $this->getStoreId();
-         $referenceType = Mage::getStoreConfig(self::XML_PATH_SHIPMENT_REFERENCE_TYPE, $storeId);
+         $referenceType = Mage::getStoreConfig(self::XPATH_SHIPMENT_REFERENCE_TYPE, $storeId);
 
          /**
           * Parse the reference type
@@ -641,7 +641,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                  $reference = $shipment->getOrder()->getIncrementId();
                  break;
              case 'custom':
-                 $reference = Mage::getStoreConfig(self::XML_PATH_CUSTOM_SHIPMENT_REFERENCE, $storeId);
+                 $reference = Mage::getStoreConfig(self::XPATH_CUSTOM_SHIPMENT_REFERENCE, $storeId);
                  break;
              default:
                  throw new TIG_PostNL_Exception(
@@ -680,7 +680,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $parcelCount = $postnlShipment->getParcelCount();
 
         $parcelData = array();
-        $postcode = $shipment->getShippingAddress()->getPostcode();
+        $postcode = str_replace(' ', '', $shipment->getShippingAddress()->getPostcode());
         for ($i = 0; $i < $parcelCount; $i++) {
             $parcelData[] = array(
                 'Barcode'  => $postnlShipment->getBarcode($i),
@@ -702,10 +702,10 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         $restrictions = array();
 
-        $retailLocation  = Mage::getStoreConfigFlag(self::XML_PATH_ALLOW_RETAIL_LOCATION, $storeId);
-        $foreignAddress  = Mage::getStoreConfigFlag(self::XML_PATH_ALLOW_FOREIGN_ADDRESS, $storeId);
-        $priceOverview   = Mage::getStoreConfigFlag(self::XML_PATH_ALLOW_PRICE_OVERVIEW, $storeId);
-        $agreeConditions = Mage::getStoreConfigFlag(self::XML_PATH_AGREE_CONDITIONS, $storeId);
+        $retailLocation  = Mage::getStoreConfigFlag(self::XPATH_ALLOW_RETAIL_LOCATION, $storeId);
+        $foreignAddress  = Mage::getStoreConfigFlag(self::XPATH_ALLOW_FOREIGN_ADDRESS, $storeId);
+        $priceOverview   = Mage::getStoreConfigFlag(self::XPATH_ALLOW_PRICE_OVERVIEW, $storeId);
+        $agreeConditions = Mage::getStoreConfigFlag(self::XPATH_AGREE_CONDITIONS, $storeId);
 
         /**
          * If the module cannot use PakjeGemak, retail locations are not allowed in PostNL Checkout
@@ -753,7 +753,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
 
-        $serviceUrl = Mage::getStoreConfig(self::XML_PATH_SERVICE_URL, $storeId);
+        $serviceUrl = Mage::getStoreConfig(self::XPATH_SERVICE_URL, $storeId);
         if (!$serviceUrl) {
             return false;
         }
@@ -811,7 +811,7 @@ class TIG_PostNL_Model_Checkout_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     {
         $storeId = $this->getStoreId();
 
-        $webshopId = Mage::getStoreConfig(self::XML_PATH_WEBSHOP_ID, $storeId);
+        $webshopId = Mage::getStoreConfig(self::XPATH_WEBSHOP_ID, $storeId);
         $webshopId = Mage::helper('core')->decrypt($webshopId);
 
         $webshop = array(

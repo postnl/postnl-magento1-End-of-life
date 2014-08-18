@@ -93,7 +93,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_AddressValidation_Observer_Onepage
+     * @return $this
      *
      * @event core_block_abstract_to_html_before
      *
@@ -137,7 +137,7 @@ class TIG_PostNL_Model_AddressValidation_Observer_Onepage extends Varien_Object
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_AddressValidation_Observer_Onepage
+     * @return $this
      *
      * @event core_block_abstract_to_html_before
      *

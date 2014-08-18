@@ -35,9 +35,7 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
-
-/**
+ *
  * General exception class for TIG_PostNL extension
  *
  * @see Mage_Core_Exception
@@ -60,7 +58,7 @@ class TIG_PostNL_Exception extends Mage_Core_Exception
         parent::__construct($message, 0, $previous);
 
         /**
-         * Replace the code with the actual, non-integer code
+         * Replace the code with the actual, non-integer code.
          */
         if ($code !== 0) {
             $code = (string) $code;
@@ -69,7 +67,7 @@ class TIG_PostNL_Exception extends Mage_Core_Exception
     }
 
     /**
-     * Custom __toString method that includes the error code, if preset.
+     * Custom __toString method that includes the error code, if present.
      *
      * @return string
      *
@@ -87,7 +85,7 @@ class TIG_PostNL_Exception extends Mage_Core_Exception
 
         $code = $this->getCode();
         if ($code !== 0 && !empty($code)) {
-            $string .= " and code: '"
+            $string .= " and code '"
                      . $this->getCode()
                      . "'";
         }

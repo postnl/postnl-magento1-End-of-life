@@ -50,7 +50,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
+     * @return $this
      *
      * @event adminhtml_block_html_before
      *
@@ -83,11 +83,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         }
 
         /**
-         * Check if the current shipment was placed with PostNL
+         * Check if the current shipment was placed with PostNL.
+         *
+         * @var Mage_Sales_Model_Order_Shipment $shipment
          */
         $shipment = Mage::registry('current_shipment');
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-        if (!in_array($shipment->getOrder()->getShippingMethod(), $postnlShippingMethods)) {
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shipment->getOrder()->getShippingMethod())) {
             return $this;
         }
 
@@ -122,6 +123,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         $deleteLabelsAllowed      = $helper->checkIsPostnlActionAllowed('delete_labels');
         $resetConfirmAllowed      = $helper->checkIsPostnlActionAllowed(array('reset_confirmation', 'delete_labels'));
         $sendTrackAndTraceAllowed = $helper->checkIsPostnlActionAllowed('send_track_and_trace');
+        $convertToBuspakjeAllowed = $helper->checkIsPostnlActionAllowed('convert_to_buspakje');
+        $convertToPackageAllowed  = $helper->checkIsPostnlActionAllowed('convert_to_package');
 
         /**
          * Add a button to print this shipment's shipping labels
@@ -147,15 +150,74 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
                 . ' and labels associated with this shipment. You can not undo this action.'
             );
 
-            $block->addButton('reset_confirmation', array(
-                'label'   => $helper->__('PostNL - Change Confirmation'),
-                'onclick' => "deleteConfirm('"
-                    . $resetWarningMessage
-                    . "', '"
-                    . $resetConfirmationUrl
-                    . "')",
-                'class'   => 'delete',
-            ));
+            $block->addButton(
+                'reset_confirmation',
+                array(
+                    'label'   => $helper->__('PostNL - Change Confirmation'),
+                    'onclick' => "deleteConfirm('"
+                        . $resetWarningMessage
+                        . "', '"
+                        . $resetConfirmationUrl
+                        . "')",
+                    'class'   => 'delete',
+                )
+            );
+        }
+
+        if ($postnlShipment->canConvertShipmentToBuspakje() && $convertToBuspakjeAllowed
+            && (!$postnlShipment->isConfirmed()
+                || ($postnlShipment->canResetConfirmation()
+                    && $resetConfirmAllowed
+                )
+            )
+        ) {
+            $convertToBuspakjeUrl = $this->getConvertToBuspakjeUrl($shipment->getId());
+            $convertToBuspakjeMessage = $helper->__(
+                'Are you sure you wish to convert this shipment to a letter box parcel? You will need to confirm this' .
+                ' shipment with PostNL again before you can send it. This action will remove all barcodes and labels ' .
+                'associated with this shipment. You can not undo this action.'
+            );
+
+            $block->addButton(
+                'convert_to_buspakje',
+                array(
+                    'label'   => $helper->__('PostNL - Convert to Letter Box Parcel'),
+                    'onclick' => "deleteConfirm('"
+                        . $convertToBuspakjeMessage
+                        . "', '"
+                        . $convertToBuspakjeUrl
+                        . "')",
+                    'class'   => 'btn-reset',
+                )
+            );
+        }
+
+        if ($postnlShipment->canConvertShipmentToPackage() && $convertToPackageAllowed
+            && (!$postnlShipment->isConfirmed()
+                || ($postnlShipment->canResetConfirmation()
+                    && $resetConfirmAllowed
+                )
+            )
+        ) {
+            $convertToPackageUrl = $this->getConvertToPackageUrl($shipment->getId());
+            $convertToPackageMessage = $helper->__(
+                'Are you sure you wish to convert this shipment to a package? You will need to confirm this shipment ' .
+                'with PostNL again before you can send it. This action will remove all barcodes and labels associated' .
+                ' with this shipment. You can not undo this action.'
+            );
+
+            $block->addButton(
+                'convert_to_package',
+                array(
+                    'label'   => $helper->__('PostNL - Convert to Package'),
+                    'onclick' => "deleteConfirm('"
+                        . $convertToPackageMessage
+                        . "', '"
+                        . $convertToPackageUrl
+                        . "')",
+                    'class'   => 'btn-reset',
+                )
+            );
         }
 
         /**
@@ -164,46 +226,60 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         if ($postnlShipment->isConfirmed() && $sendTrackAndTraceAllowed) {
             $resendTrackAndTraceUrl = $this->getResendTrackAndTraceUrl($shipment->getId());
 
-            $block->updateButton('save', 'label', $helper->__('PostNL - Send Tracking Information'));
-            $block->updateButton('save', 'onclick',
+            $block->updateButton(
+                'save',
+                'label',
+                $helper->__('PostNL - Send Tracking Information')
+            );
+            $block->updateButton(
+                'save',
+                'onclick',
                 "deleteConfirm('"
                 . $helper->__('Are you sure you want to send PostNL tracking information to the customer?')
                 . "', '" . $resendTrackAndTraceUrl . "')"
             );
         }
 
-        /**
-         * Add a button to remove any stored shipping labels for this shipment.
-         */
-        if ($postnlShipment->hasLabels() && !$postnlShipment->isConfirmed() && $deleteLabelsAllowed) {
-            $removeLabelsUrl = $this->getRemoveLabelsUrl($shipment->getId());
-            $removeLabelsWarningMessage = $helper->__(
-                "Are you sure that you wish to remove this shipment\'s shipping label? You will need to print a new "
-                . "shipping label before you can send this shipment."
-            );
+        if (!$postnlShipment->isConfirmed()) {
+            /**
+             * Add a button to remove any stored shipping labels for this shipment.
+             */
+            if ($postnlShipment->hasLabels() && $deleteLabelsAllowed) {
+                $removeLabelsUrl            = $this->getRemoveLabelsUrl($shipment->getId());
+                $removeLabelsWarningMessage = $helper->__(
+                    "Are you sure that you wish to remove this shipment\'s shipping label? You will need to print a new "
+                    . "shipping label before you can send this shipment."
+                );
 
-            $block->addButton('remove_shipping_labels', array(
-                'label'   => $helper->__('PostNL - Remove Shipping Label'),
-                'onclick' => "deleteConfirm('"
-                    . $removeLabelsWarningMessage
-                    . "', '"
-                    . $removeLabelsUrl
-                    . "')",
-                'class'   => 'delete',
-            ));
-        }
+                $block->addButton(
+                    'remove_shipping_labels',
+                    array(
+                        'label'   => $helper->__('PostNL - Remove Shipping Label'),
+                        'onclick' => "deleteConfirm('"
+                            . $removeLabelsWarningMessage
+                            . "', '"
+                            . $removeLabelsUrl
+                            . "')",
+                        'class'   => 'delete',
+                    )
+                );
+            }
 
-        /**
-         * Add a button to confirm this shipment.
-         */
-        if (!$postnlShipment->isConfirmed() && $confirmAllowed) {
-            $confirmUrl = $this->getConfirmUrl($shipment->getId());
+            /**
+             * Add a button to confirm this shipment.
+             */
+            if ($postnlShipment->canConfirm() && $confirmAllowed) {
+                $confirmUrl = $this->getConfirmUrl($shipment->getId());
 
-            $block->addButton('confirm_shipment', array(
-                'label'   => $helper->__('PostNL - Confirm Shipment'),
-                'onclick' => "setLocation('{$confirmUrl}')",
-                'class'   => 'save',
-            ));
+                $block->addButton(
+                    'confirm_shipment',
+                    array(
+                        'label'   => $helper->__('PostNL - Confirm Shipment'),
+                        'onclick' => "setLocation('{$confirmUrl}')",
+                        'class'   => 'save',
+                    )
+                );
+            }
         }
 
         return $this;
@@ -288,6 +364,46 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     {
         $url = Mage::helper('adminhtml')->getUrl(
             'postnl_admin/adminhtml_shipment/confirm',
+            array(
+                'shipment_id'    => $shipmentId,
+                'return_to_view' => true,
+            )
+        );
+
+        return $url;
+    }
+
+    /**
+     * Get adminhtml url for PostNL convert_to_buspakje shipment action
+     *
+     * @param int $shipmentId The ID of the current shipment
+     *
+     * @return string
+     */
+    public function getConvertToBuspakjeUrl($shipmentId)
+    {
+        $url = Mage::helper('adminhtml')->getUrl(
+            'postnl_admin/adminhtml_shipment/convertToBuspakje',
+            array(
+                'shipment_id'    => $shipmentId,
+                'return_to_view' => true,
+            )
+        );
+
+        return $url;
+    }
+
+    /**
+     * Get adminhtml url for PostNL convert_to_package shipment action
+     *
+     * @param int $shipmentId The ID of the current shipment
+     *
+     * @return string
+     */
+    public function getConvertToPackageUrl($shipmentId)
+    {
+        $url = Mage::helper('adminhtml')->getUrl(
+            'postnl_admin/adminhtml_shipment/convertToPackage',
             array(
                 'shipment_id'    => $shipmentId,
                 'return_to_view' => true,

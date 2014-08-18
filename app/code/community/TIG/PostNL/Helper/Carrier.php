@@ -33,7 +33,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
@@ -61,18 +61,26 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     /**
      * XML path to rate type setting
      */
-    const XML_PATH_RATE_TYPE = 'carriers/postnl/rate_type';
+    const XPATH_RATE_TYPE = 'carriers/postnl/rate_type';
+
+    /**
+     * Xpath to the 'postnl_shipping_methods' setting.
+     */
+    const XPATH_POSTNL_SHIPPING_METHODS = 'postnl/advanced/postnl_shipping_methods';
 
     /**
      * Array of possible PostNL shipping methods
      *
      * @var array
      */
-    protected $_postnlShippingMethods = array(
-        'postnl_postnl',    //deprecated
-        'postnl_flatrate',
-        'postnl_tablerate',
-    );
+    protected $_postnlShippingMethods;
+
+    /**
+     * Array of shipping methods that have already been checked for whether they're PostNL.
+     *
+     * @var array
+     */
+    protected $_matchedMethods = array();
 
     /**
      * Gets an array of possible PostNL shipping methods
@@ -81,8 +89,64 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      */
     public function getPostnlShippingMethods()
     {
-        $shippingMethods = $this->_postnlShippingMethods;
+        if ($this->_postnlShippingMethods) {
+            return $this->_postnlShippingMethods;
+        }
+
+        $shippingMethods = Mage::getStoreConfig(self::XPATH_POSTNL_SHIPPING_METHODS, Mage::app()->getStore()->getId());
+        $shippingMethods = explode(',', $shippingMethods);
+
+        $this->setPostnlShippingMethods($shippingMethods);
         return $shippingMethods;
+    }
+
+    /**
+     * @param array $postnlShippingMethods
+     *
+     * @return $this
+     */
+    public function setPostnlShippingMethods($postnlShippingMethods)
+    {
+        $this->_postnlShippingMethods = $postnlShippingMethods;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMatchedMethods()
+    {
+        return $this->_matchedMethods;
+    }
+
+    /**
+     * @param array $matchedMethods
+     *
+     * @return $this
+     */
+    public function setMatchedMethods($matchedMethods)
+    {
+        $this->_matchedMethods = $matchedMethods;
+
+        return $this;
+    }
+
+    /**
+     * Adds a matched method to the matched methods array.
+     *
+     * @param string  $method
+     * @param boolean $value
+     *
+     * @return $this
+     */
+    public function addMatchedMethod($method, $value)
+    {
+        $matchedMethods = $this->getMatchedMethods();
+        $matchedMethods[$method] = $value;
+
+        $this->setMatchedMethods($matchedMethods);
+        return $this;
     }
 
     /**
@@ -117,7 +181,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $rateType = Mage::getStoreConfig(self::XML_PATH_RATE_TYPE, $storeId);
+        $rateType = Mage::getStoreConfig(self::XPATH_RATE_TYPE, $storeId);
 
         $carrier = self::POSTNL_CARRIER;
         switch ($rateType) {
@@ -136,6 +200,48 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
 
         Mage::register('current_postnl_shipping_method', $shippingMethod);
         return $shippingMethod;
+    }
+
+    /**
+     * Checks if a specified shipping method is a PostNL shipping method.
+     *
+     * @param $shippingMethod
+     *
+     * @return bool
+     */
+    public function isPostnlShippingMethod($shippingMethod)
+    {
+        /**
+         * Check if we've matched this shipping method before.
+         */
+        $matchedMethods = $this->getMatchedMethods();
+        if (isset($matchedMethods[$shippingMethod])) {
+            return $matchedMethods[$shippingMethod];
+        }
+
+        /**
+         * Check if the shipping method exists in the configured array of supported methods.
+         */
+        $postnlShippingMethods = $this->getPostnlShippingMethods();
+        if (in_array($shippingMethod, $postnlShippingMethods)) {
+            $this->addMatchedMethod($shippingMethod, true);
+            return true;
+        }
+
+        /**
+         * Some shipping methods add suffixes to the method code.
+         */
+        foreach ($postnlShippingMethods as $postnlShippingMethod) {
+            $regex = "/^({$postnlShippingMethod})(_?\d*)$/";
+
+            if (preg_match($regex, $shippingMethod) === 1) {
+                $this->addMatchedMethod($shippingMethod, true);
+                return true;
+            }
+        }
+
+        $this->addMatchedMethod($shippingMethod, false);
+        return false;
     }
 
     /**
@@ -159,7 +265,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
 
         if (is_object($destination) && $destination instanceof Varien_Object) {
             $countryCode = $destination->getCountry();
-            $postcode    = $destination->getPostcode();
+            $postcode    = str_replace(' ', '', $destination->getPostcode());
         }
 
         /**

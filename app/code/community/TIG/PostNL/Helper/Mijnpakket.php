@@ -39,14 +39,35 @@
 class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
 {
     /**
-     * Xpath to 'mijnpakket_login_active' setting.
+     * Xpaths to MijnPakket settings.
      */
     const XPATH_MIJNPAKKET_LOGIN_ACTIVE = 'postnl/delivery_options/mijnpakket_login_active';
+    const XPATH_MIJNPAKKET_NOTIFICATION = 'postnl/delivery_options/mijnpakket_notification';
 
     /**
      * Log filename to log all non-specific PostNL debug messages.
      */
     const POSTNL_DEBUG_LOG_FILE = 'TIG_PostNL_MijnPakket_Debug.log';
+
+    /**
+     * Get initials based on a firstname.
+     *
+     * @param string $firstName
+     *
+     * @return string
+     */
+    public function getInitials($firstName)
+    {
+        $nameParts = preg_split("/\s+/", $firstName);
+
+        $initials = '';
+        foreach ($nameParts as $name) {
+            $initials .= substr($name, 0, 1) . '.';
+        }
+
+        $initials = strtoupper($initials);
+        return $initials;
+    }
 
     /**
      * Check whether MijnPakket login is active.
@@ -95,22 +116,29 @@ class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Get initials based on a firstname.
+     * Check if the MijnPakket notification may be shown.
      *
-     * @param string $firstName
-     *
-     * @return string
+     * @return bool
      */
-    public function getInitials($firstName)
+    public function canShowMijnpakketNotification()
     {
-        $nameParts = preg_split("/\s+/", $firstName);
-
-        $initials = '';
-        foreach ($nameParts as $name) {
-            $initials .= substr($name, 0, 1) . '.';
+        $cache = $this->getCache();
+        if ($cache && $cache->hasPostnlMijnpakketCanShowNotification()) {
+            return $cache->getPostnlMijnpakketCanShowNotification();
         }
 
-        $initials = strtoupper($initials);
-        return $initials;
+        if (!Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions()) {
+            return false;
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+        $canShowNotification = Mage::getStoreConfigFlag(self::XPATH_MIJNPAKKET_NOTIFICATION, $storeId);
+
+        if ($cache) {
+            $cache->setPostnlMijnpakketCanShowNotification($canShowNotification)
+                  ->saveCache();
+        }
+
+        return $canShowNotification;
     }
 }

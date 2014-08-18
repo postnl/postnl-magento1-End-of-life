@@ -41,7 +41,7 @@
 <script type="text/javascript">
 //<![CDATA[
     Validation.add('postnl-validate-postcode', '<?php echo $_helper->__('Please enter a valid postcode. A valid postcode contains 4 numbers and 2 letters without spaces, for example: 1000XX.'); ?>', {
-        pattern : new RegExp("^[1-9][0-9]{3}[\s]?[A-Za-z]{2}$", "i")
+        pattern : /^[1-9][0-9]{3}[\s]*[a-zA-Z]{2}$/i
     });
 
     Validation.add('postnl-validate-housenumber', '<?php echo $_helper->__('Please enter a valid housenumber. Housenumbers may only contain digits.'); ?>', {

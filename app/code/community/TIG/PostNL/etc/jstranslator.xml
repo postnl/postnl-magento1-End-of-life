@@ -39,7 +39,6 @@
  */
 -->
 <jstranslator>
-    <!-- deliveryOptions.js -->
     <more_info translate="message" module="postnl">
         <message>More Info</message>
     </more_info>
@@ -115,4 +114,7 @@
     <open_24_7 translate="message" module="postnl">
         <message>Open 24/7</message>
     </open_24_7>
+    <fits_through_the_mailslot translate="message" module="postnl">
+        <message>Fits through the mailslot</message>
+    </fits_through_the_mailslot>
 </jstranslator>

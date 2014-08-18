@@ -38,35 +38,41 @@
  *
  * Class TIG_PostNL_Model_Core_Order
  *
- * @method string getConfirmDate()
- * @method TIG_PostNL_Model_Core_Order setConfirmDate(string $value)
- * @method int getIsActive()
- * @method TIG_PostNL_Model_Core_Order setIsActive(int $value)
- * @method string getToken()
- * @method TIG_PostNL_Model_Core_Order setToken(string $value)
- * @method string getShipmentCosts()
- * @method TIG_PostNL_Model_Core_Order setShipmentCosts(string $value)
- * @method string getProductCode()
- * @method TIG_PostNL_Model_Core_Order setProductCode(string $value)
- * @method int getIsPakjeGemak()
- * @method TIG_PostNL_Model_Core_Order setIsPakjeGemak(int $value)
- * @method int getIsCanceled()
- * @method TIG_PostNL_Model_Core_Order setIsCanceled(int $value)
- * @method string getDeliveryDate()
- * @method TIG_PostNL_Model_Core_Order setDeliveryDate(string $value)
- * @method int getQuoteId()
- * @method TIG_PostNL_Model_Core_Order setQuoteId(int $value)
- * @method string getType()
- * @method TIG_PostNL_Model_Core_Order setType(string $value)
- * @method int getOrderId()
- * @method TIG_PostNL_Model_Core_Order setOrderId(int $value)
- * @method int getEntityId()
- * @method string getMobilePhoneNumber()
+ * @method string                      getConfirmDate()
+ * @method int                         getIsActive()
+ * @method string                      getToken()
+ * @method string                      getShipmentCosts()
+ * @method string                      getProductCode()
+ * @method int                         getIsPakjeGemak()
+ * @method int                         getIsCanceled()
+ * @method string                      getDeliveryDate()
+ * @method int                         getQuoteId()
+ * @method string                      getType()
+ * @method int                         getOrderId()
+ * @method int                         getEntityId()
+ * @method string                      getMobilePhoneNumber()
+ * @method int                         getIsPakketautomaat()
+ *
+ * @method TIG_PostNL_Model_Core_Order setIsPakketautomaat(int $value)
  * @method TIG_PostNL_Model_Core_Order setEntityId(int $value)
  * @method TIG_PostNL_Model_Core_Order setOrder(Mage_Sales_Model_Order $value)
  * @method TIG_PostNL_Model_Core_Order setQuote(Mage_Sales_Model_Quote $value)
- * @method int getIsPakketautomaat()
- * @method TIG_PostNL_Model_Core_Order setIsPakketautomaat(int $value)
+ * @method TIG_PostNL_Model_Core_Order setOrderId(int $value)
+ * @method TIG_PostNL_Model_Core_Order setType(string $value)
+ * @method TIG_PostNL_Model_Core_Order setQuoteId(int $value)
+ * @method TIG_PostNL_Model_Core_Order setDeliveryDate(string $value)
+ * @method TIG_PostNL_Model_Core_Order setIsCanceled(int $value)
+ * @method TIG_PostNL_Model_Core_Order setIsPakjeGemak(int $value)
+ * @method TIG_PostNL_Model_Core_Order setProductCode(string $value)
+ * @method TIG_PostNL_Model_Core_Order setShipmentCosts(string $value)
+ * @method TIG_PostNL_Model_Core_Order setToken(string $value)
+ * @method TIG_PostNL_Model_Core_Order setIsActive(int $value)
+ * @method TIG_PostNL_Model_Core_Order setConfirmDate(string $value)
+ * @method TIG_PostNL_Model_Core_Order setPakjeGemakAddress(mixed $value)
+ *
+ * @method boolean                     hasOrderId()
+ * @method boolean                     hasQuoteId()
+ * @method boolean                     hasPakjeGemakAddress()
  */
 class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
 {
@@ -196,6 +202,65 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
         }
 
         $this->setData('mobile_phone_number', $parsedPhoneNumber);
+        return $this;
+    }
+
+    /**
+     * Gets a pakje_gemak address from either the order or the quote associated with this PostNL order.
+     *
+     * @return bool|Mage_Sales_Model_Order_Address|Mage_Sales_Model_Quote_Address
+     */
+    public function getPakjeGemakAddress()
+    {
+        if ($this->hasPakjeGemakAddress()) {
+            return $this->_getData('pakje_gemak_address');
+        }
+
+        $type = $this->getType();
+        if ($type != 'PG' && $type != 'PGE' && $type != 'PA') {
+            $this->setPakjeGemakAddress(false);
+
+            return false;
+        }
+
+        if ($this->hasOrderId()) {
+            $order     = $this->getOrder();
+            $addresses = $order->getAddressesCollection();
+        } elseif ($this->hasQuoteId()) {
+            $quote     = $this->getQuote();
+            $addresses = $quote->getAddressesCollection();
+        } else {
+            $this->setPakjeGemakAddress(false);
+
+            return false;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Order_Address|Mage_Sales_Model_Quote_Address $address
+         */
+        foreach ($addresses as $address) {
+            if ($address->getAddressType() == 'pakje_gemak' ) {
+                $this->setPakjeGemakAddress($address);
+
+                return $address;
+            }
+        }
+
+        $this->setPakjeGemakAddress(false);
+
+        return false;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return $this
+     */
+    public function loadByOrder(Mage_Sales_Model_Order $order)
+    {
+        $orderId = $order->getId();
+
+        $this->load($orderId, 'order_id');
         return $this;
     }
 
