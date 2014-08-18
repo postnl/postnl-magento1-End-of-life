@@ -1,0 +1,86 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ */
+?>
+<?php /** @var TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions $this */ ?>
+<?php $_helper = Mage::helper('postnl'); ?>
+
+<?php $_postnlOrder = $this->getPostnlOrder(); ?>
+<?php if ($_postnlOrder->getId() && $_postnlOrder->getType()): ?>
+    <div class="hor-scroll" id="postnl_delivery_option_info">
+        <table cellspacing="0" class="form-list">
+            <tr>
+                <td class="label"><label><?php echo $this->__('Delivery option'); ?></label></td>
+                <td class="value">
+                    <strong><?php echo $this->getShipmentType(); ?></strong>
+                    <?php $_subType = $this->getShipmentSubType(); ?>
+                    <?php if ($_subType): ?>
+                        <br/>
+                        <span>
+                            <em><?php echo $_subType; ?></em>
+                        </span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><label><?php echo $this->__('Requested delivery date'); ?></label></td>
+                <td class="value"><strong><?php echo $this->formatDate($_postnlOrder->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        //<![CDATA[
+        var shippingFieldset = $$('.box-right fieldset')[1];
+
+        shippingFieldset.insert({
+            bottom: $('postnl_delivery_option_info')
+        });
+
+        var shippingTrackingLink = $$('.box-right fieldset a#linkId');
+
+        if (shippingTrackingLink) {
+            shippingFieldset.insert({
+                bottom: shippingTrackingLink[0]
+            });
+            shippingFieldset.down('br').remove();
+        }
+        //]]>
+    </script>
+<?php endif; ?>

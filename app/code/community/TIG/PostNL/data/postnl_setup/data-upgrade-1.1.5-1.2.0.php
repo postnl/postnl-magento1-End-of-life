@@ -49,12 +49,38 @@ $settingsToReset = array(
     'cif_version_checkout',
 );
 
+$newAclResources = array(
+    'admin/postnl',
+    'admin/postnl/shipment',
+    'admin/postnl/shipment/complete_status',
+    'admin/postnl/shipment/actions',
+    'admin/postnl/shipment/actions/confirm',
+    'admin/postnl/shipment/actions/print_label',
+    'admin/postnl/shipment/actions/create_parcelware_export',
+    'admin/postnl/shipment/actions/send_track_and_trace',
+    'admin/postnl/shipment/actions/reset_confirmation',
+    'admin/postnl/shipment/actions/delete_labels',
+);
+
+$requiredAclResources = array(
+    'admin/sales',
+    'admin/sales/order',
+    'admin/sales/order/actions',
+    'admin/sales/order/actions/ship',
+    'admin/sales/shipment',
+);
+
 /**
  * When upgrading from v1.1.x we need to reset the webservice versions used to default, add a new product option and
  * move a config setting. If you're installing the extension for the first time, all of this will be handled by the
  * default settings in config.xml.
+ *
+ * We also added several new ACL resources. Before this was handled solely by Magento's existing ACL resources. To
+ * prevent merchants from being unable to process shipments as before, we need to add the new resources to the existing
+ * admin roles.
  */
 $installer->resetWebserviceVersions($settingsToReset)
           ->addSupportedProductCode('3553')
           ->moveConfigSetting('postnl/cif_labels_and_confirming/mode', 'postnl/cif/mode', true)
+          ->addAclRules($newAclResources, $requiredAclResources)
           ->clearConfigCache();

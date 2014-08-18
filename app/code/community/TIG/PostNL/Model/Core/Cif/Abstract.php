@@ -307,7 +307,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     }
 
     /**
-     * Calls a CIF method
+     * Calls a CIF method.
      *
      * @param string         $wsdlType   Which wsdl to use
      * @param callable       $method     The method that will be called
@@ -326,6 +326,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
              */
             $client = $this->getSoapClient($wsdlType);
 
+            /**
+             * Check if the requested SOAP method is callable.
+             */
             if (!is_callable(array($client, $method))) {
                 throw new TIG_PostNL_Exception(
                     Mage::helper('postnl')->__('The specified method "%s" is not callable.', $method),
@@ -334,18 +337,18 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             }
 
             /**
-             * Add SOAP header
+             * Add SOAP header,
              */
             $header = $this->_getSoapHeader();
             $client->addSoapInputHeader($header, true); //permanent header
 
             /**
-             * Call the SOAP method
+             * Call the SOAP method,
              */
             $response = $client->$method($soapParams);
 
             /**
-             * Process any warnings that may have occurred
+             * Process any warnings that may have occurred,
              */
             $this->_processWarnings($client);
 
@@ -353,7 +356,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             return $response;
         } catch(SoapFault $e) {
             /**
-             * Only Soap exceptions are caught. Other exceptions must be caught by the caller
+             * Only Soap exceptions are caught. Other exceptions must be caught by the caller,
              *
              * @throws TIG_PostNL_Exception
              */
@@ -387,8 +390,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $adminStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
 
         /**
-         * Check which wsdl file we need for each wsdl type
-         * Als get the wsdl version to get
+         * Check which wsdl file we need for each wsdl type and get the configured WSDl version to use.
          */
         $wsdlType = strtolower($wsdlType);
         switch ($wsdlType) {
@@ -432,7 +434,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         /**
-         * Check if we need the live or the sandbox wsdl
+         * Check if we need the live or the sandbox wsdl.
          */
         if ($this->isTestMode()) {
             $wsdlUrl = self::TEST_WSDL_BASE_URL;
@@ -441,7 +443,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         }
 
         /**
-         * Format the final wsdl URL
+         * Format the final wsdl URL.
          */
         $wsdlUrl .= $wsdlFileName
                   . '/'
@@ -479,7 +481,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      *
      * @param Zend_Soap_Client $client
      *
-     * @return TIG_PostNL_Model_Core_Cif_Abstract
+     * @return $this
      */
     protected function _processWarnings($client)
     {
@@ -539,11 +541,16 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
      *
      * @param SoapFault        $e
      * @param Zend_Soap_Client $client
+     * @param boolean          $throwException
+     *
+     * @return $this
      *
      * @throws TIG_PostNL_Model_Core_Cif_Exception
      */
-    protected function _handleCifException(SoapFault $e, $client = null)
+    protected function _handleCifException(SoapFault $e, $client = null, $throwException = true)
     {
+        $logException = true;
+
         $cifHelper = Mage::helper('postnl/cif');
         $exception = new TIG_PostNL_Model_Core_Cif_Exception($e->getMessage(), null, $e);
 
@@ -590,7 +597,17 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             $errorNumbers = $errorResponse->getElementsByTagNameNS(self::CIF_ERROR_NAMESPACE, 'ErrorNumber');
             if ($errorNumbers) {
                 foreach ($errorNumbers as $errorNumber) {
-                    $exception->addErrorNumber($errorNumber->nodeValue);
+                    /**
+                     * Error number 13 means that the shipment was not found by PostNL. This error is very common and
+                     * can be completely valid. To prevent the log files from filling up extremely quickly, we do not
+                     * log this error.
+                     */
+                    $value = $errorNumber->nodeValue;
+                    if ($value == '13') {
+                        $logException = false;
+                    }
+
+                    $exception->addErrorNumber($value);
                 }
             }
         }
@@ -603,11 +620,17 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                       ->setResponseXml($responseXML);
         }
 
-        /**
-         * Log the exception and throw it
-         */
-        $cifHelper->logCifException($exception);
+        if ($logException) {
+            /**
+             * Log the exception and throw it.
+             */
+            $cifHelper->logCifException($exception);
+        }
 
-        throw $exception;
+        if ($throwException) {
+            throw $exception;
+        }
+
+        return $this;
     }
 }

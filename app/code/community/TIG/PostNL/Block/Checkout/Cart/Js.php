@@ -57,12 +57,12 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends TIG_PostNL_Block_Core_Template
     /**
      * XML path for webshop ID setting
      */
-    const XML_PATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
+    const XPATH_PUBLIC_WEBSHOP_ID = 'postnl/cif/public_webshop_id';
 
     /**
      * XML path of show_summary_page setting
      */
-    const XML_PATH_SHOW_SUMMARY_PAGE = 'postnl/checkout/show_summary_page';
+    const XPATH_SHOW_SUMMARY_PAGE = 'postnl/checkout/show_summary_page';
 
     /**
      * URLs of the primary PostNL Checkout JS files for test and live mode
@@ -73,7 +73,7 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends TIG_PostNL_Block_Core_Template
     const LIVE_CHECKOUT_PREMIUM_JS_URL = 'https://mijnpakket.postnl.nl/Checkout2/CheckoutPremium.js';
 
     /**
-     * Possible Checkout environments
+     * Possible PostNL Checkout environments
      */
     const TEST_ENVIRONMENT = 'PostNL_OP_Checkout.environment_sandbox';
     const LIVE_ENVIRONMENT = 'PostNL_OP_Checkout.environment_production';
@@ -91,7 +91,7 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends TIG_PostNL_Block_Core_Template
 
         $storeId = Mage::app()->getStore()->getId();
 
-        $webshopId = Mage::getStoreConfig(self::XML_PATH_PUBLIC_WEBSHOP_ID, $storeId);
+        $webshopId = Mage::getStoreConfig(self::XPATH_PUBLIC_WEBSHOP_ID, $storeId);
 
         $this->setWebshopId($webshopId);
         return $webshopId;
@@ -187,7 +187,7 @@ class TIG_PostNL_Block_Checkout_Cart_Js extends TIG_PostNL_Block_Core_Template
         }
 
         $storeId = Mage::app()->getStore()->getId();
-        $showConfirmPage = Mage::getStoreConfigFlag(self::XML_PATH_SHOW_SUMMARY_PAGE, $storeId);
+        $showConfirmPage = Mage::getStoreConfigFlag(self::XPATH_SHOW_SUMMARY_PAGE, $storeId);
         if ($showConfirmPage) {
             $url = $this->getUrl('postnl/checkout/summary');
 

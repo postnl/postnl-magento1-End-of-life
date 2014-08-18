@@ -45,7 +45,7 @@ class TIG_PostNL_Model_Checkout_Observer_Shipment
      *
      * @param Varien_Event_Observer $observer
      *
-     * @return TIG_PostNL_Model_Core_Observer_Barcode
+     * @return $this
      *
      * @event postnl_shipment_confirm_after
      *

@@ -45,7 +45,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
     /**
      * XML path to 'is_activated' flag
      */
-    const XML_PATH_IS_ACTIVATED = 'postnl/general/is_activated';
+    const XPATH_IS_ACTIVATED = 'postnl/general/is_activated';
 
     /**
      * Gets the element's html. In this case: a button redirecting the user to the extensionControl controller
@@ -58,7 +58,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
     {
         $this->setElement($element);
 
-        $isActivated = Mage::getStoreConfig(self::XML_PATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $isActivated = Mage::getStoreConfig(self::XPATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($isActivated === '1') {
             $label = $this->__('Finish activation');
         } else {

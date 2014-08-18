@@ -41,24 +41,24 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     /**
      * XML path to checkout on/off switch
      */
-    const XML_PATH_CHECKOUT_ACTIVE = 'postnl/checkout/active';
+    const XPATH_CHECKOUT_ACTIVE = 'postnl/checkout/active';
 
     /**
      * XML path to all PostNL Checkout payment methods.
      * N.B. last part of the XML path is missing.
      */
-    const XML_PATH_CHECKOUT_PAYMENT_METHOD = 'postnl/checkout_payment_methods';
+    const XPATH_CHECKOUT_PAYMENT_METHOD = 'postnl/checkout_payment_methods';
 
     /**
      * XML path to test / live mode setting
      */
-    const XML_PATH_TEST_MODE = 'postnl/cif/mode';
+    const XPATH_TEST_MODE = 'postnl/cif/mode';
 
     /**
      * XML path for config options used to determine whether or not PostNL Checkout is available
      */
-    const XML_PATH_SHOW_CHECKOUT_FOR_LETTER     = 'postnl/checkout/show_checkout_for_letter';
-    const XML_PATH_SHOW_CHECKOUT_FOR_BACKORDERS = 'postnl/checkout/show_checkout_for_backorders';
+    const XPATH_SHOW_CHECKOUT_FOR_LETTER     = 'postnl/checkout/show_checkout_for_letter';
+    const XPATH_SHOW_CHECKOUT_FOR_BACKORDERS = 'postnl/checkout/show_checkout_for_backorders';
 
     /**
      * Log filename to log all non-specific PostNL debug messages
@@ -266,7 +266,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         /**
          * Check if PostNL Checkout may be used for 'letter' orders and if not, if the quote could fit in an envelope
          */
-        $showCheckoutForLetters = Mage::getStoreConfigFlag(self::XML_PATH_SHOW_CHECKOUT_FOR_LETTER, $storeId);
+        $showCheckoutForLetters = Mage::getStoreConfigFlag(self::XPATH_SHOW_CHECKOUT_FOR_LETTER, $storeId);
         if (!$showCheckoutForLetters) {
             $isLetterQuote = $this->quoteIsLetter($quote, $storeId);
             if ($isLetterQuote) {
@@ -287,7 +287,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         /**
          * Check if PostNL Checkout may be used for out-og-stock orders and if not, whether the quote has any such products
          */
-        $showCheckoutForBackorders = Mage::getStoreConfigFlag(self::XML_PATH_SHOW_CHECKOUT_FOR_BACKORDERS, $storeId);
+        $showCheckoutForBackorders = Mage::getStoreConfigFlag(self::XPATH_SHOW_CHECKOUT_FOR_BACKORDERS, $storeId);
         if (!$showCheckoutForBackorders) {
             $containsOutOfStockItems = $this->quoteHasOutOfStockItems($quote);
             if ($containsOutOfStockItems) {
@@ -352,7 +352,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $totalWeight += $item->getRowWeight();
         }
 
-        $kilograms = Mage::helper('postnl/cif')->standardizeWeight($totalWeight, $storeId);
+        $kilograms = $this->standardizeWeight($totalWeight, $storeId);
 
         if ($kilograms < 2) {
             return true;
@@ -399,7 +399,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $isActive = Mage::getStoreConfigFlag(self::XML_PATH_CHECKOUT_ACTIVE, $storeId);
+        $isActive = Mage::getStoreConfigFlag(self::XPATH_CHECKOUT_ACTIVE, $storeId);
         return $isActive;
     }
 
@@ -531,7 +531,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
          * Go through each supported payment method. At least one of them must be activated.
          */
         $paymentMethods = $this->getCheckoutPaymentMethods();
-        $paymentMethodSettings = Mage::getStoreConfig(self::XML_PATH_CHECKOUT_PAYMENT_METHOD, $storeId);
+        $paymentMethodSettings = Mage::getStoreConfig(self::XPATH_CHECKOUT_PAYMENT_METHOD, $storeId);
         foreach ($paymentMethods as $methodCode => $method) {
             if (array_key_exists($methodCode, $paymentMethodSettings)
                 && $paymentMethodSettings[$methodCode] === '1'

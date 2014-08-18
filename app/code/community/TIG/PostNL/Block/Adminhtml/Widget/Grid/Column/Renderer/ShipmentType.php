@@ -37,16 +37,8 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
-    extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Text
+    extends TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
 {
-    /**
-     * Additional column names used
-     */
-    const SHIPPING_METHOD_COLUMN      = 'shipping_method';
-    const IS_PAKJE_GEMAK_COLUMN       = 'is_pakje_gemak';
-    const IS_PAKKETAUTOMAAT_COLUMN    = 'is_pakketautomaat';
-    const DELIVERY_OPTION_TYPE_COLUMN = 'delivery_option_type';
-
     /**
      * Renders the column value as a shipment type value (Domestic, EPS or GlobalPack)
      *
@@ -62,11 +54,10 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
         $column = $this->getColumn();
 
         /**
-         * The shipment was not shipped using PostNL
+         * The shipment was not shipped using PostNL.
          */
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
             return '';
         }
 
@@ -78,119 +69,8 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ShipmentType
             return '';
         }
 
-        $helper = Mage::helper('postnl/cif');
-
-        $optionType = $row->getData(self::DELIVERY_OPTION_TYPE_COLUMN);
-        if ($optionType == 'Avond') {
-            $label   = $helper->__('Domestic');
-            $comment = $helper->__('Evening Delivery');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>avond</div><b>{$label}"
-                . "</b><br /><em>{$comment}</em>";
-
-            return $renderedValue;
-        }
-
-        if ($optionType == 'PGE') {
-            $label   = $helper->__('Post Office');
-            $comment = $helper->__('Early Pickup');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak_express"
-                . "</div><b>{$label}</b><br /><em>{$comment}</em>";
-
-            return $renderedValue;
-        }
-
-        if ($row->getData(self::IS_PAKKETAUTOMAAT_COLUMN)) {
-            $label = $helper->__('Parcel Dispenser');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakketautomaat</div><b>"
-                . "{$label}</b>";
-
-            return $renderedValue;
-        }
-
-        if ($row->getData(self::IS_PAKJE_GEMAK_COLUMN)) {
-            $label = $helper->__('Post Office');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>pakje_gemak</div><b>"
-                . "{$label}</b>";
-
-            return $renderedValue;
-        }
-
-        /**
-         * Check if this order is domestic.
-         */
-        if ($value == 'NL') {
-            $label = $helper->__('Domestic');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>standard</div><b>"
-                . "{$label}</b>";
-
-            return $renderedValue;
-        }
-
-        /**
-         * Check if this order's shipping address is in an EU country.
-         */
-        $euCountries = $helper->getEuCountries();
-        if (in_array($value, $euCountries)) {
-            $label = $helper->__('EPS');
-
-            $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>eps</div><b>{$label}"
-                . "</b>";
-
-            return $renderedValue;
-        }
-
-        /**
-         * If none of the above apply, it's an international order.
-         */
-        $label = $helper->__('GlobalPack');
-
-        $renderedValue = "<div id='postnl-shipmenttype-{$row->getId()}' class='no-display'>global_pack</div><b>{$label}"
-            . "</b>";
+        $renderedValue = $this->getShipmentTypeRenderedValue($value, $row);
 
         return $renderedValue;
-    }
-
-    /**
-     * Renders the <col> element of the column. Added check for $this->getColumn()->getDisplay() == 'none' that causes
-     * the entire element to be hidden.
-     *
-     * @return string
-     *
-     * @see Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Abstract::renderProperty()
-     */
-    public function renderProperty()
-    {
-        /**
-         * @var Mage_Adminhtml_Block_Widget_Grid_Column $column
-         */
-        $column = $this->getColumn();
-
-        $out = '';
-        if ($column->hasData('display')) {
-            $out .= " style='display:{$column->getDisplay()};'";
-        }
-
-        $width = $this->_defaultWidth;
-
-        if ($column->hasData('width')) {
-            $customWidth = $column->getData('width');
-            if ((null === $customWidth) || (preg_match('/^[0-9]+%?$/', $customWidth))) {
-                $width = $customWidth;
-            }
-            elseif (preg_match('/^([0-9]+)px$/', $customWidth, $matches)) {
-                $width = (int)$matches[1];
-            }
-        }
-
-        if (null !== $width) {
-            $out .= ' width="' . $width . '"';
-        }
-
-        return $out;
     }
 }

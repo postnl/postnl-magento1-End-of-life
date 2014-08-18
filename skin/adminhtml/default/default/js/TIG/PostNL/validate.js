@@ -32,16 +32,11 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
  */
 document.observe('dom:loaded', function() {
     $$('.postnl-validate-empty').each(function(element) {
-        if (!element.value.empty()) {
-            element.removeClassName('postnl-validate-empty');
-        }
-
         element.observe('change', function(event) {
             var eventElement = Event.element(event);
             checkEmpty(eventElement);
@@ -51,16 +46,75 @@ document.observe('dom:loaded', function() {
             var eventElement = Event.element(event);
             checkEmpty(eventElement);
         });
+
+        checkEmpty(element);
+    });
+
+    $$('.postnl-validate-empty-group').each(function(element) {
+        element.observe('change', function(event) {
+            var eventElement = Event.element(event);
+            checkEmptyGroup(eventElement);
+        });
+
+        element.observe('keyup', function(event) {
+            var eventElement = Event.element(event);
+            checkEmptyGroup(eventElement);
+        });
+
+        checkEmptyGroup(element);
     });
 });
 
 function checkEmpty(eventElement) {
-    if (eventElement.value.empty() && !eventElement.hasClassName('postnl-validate-empty')) {
-        eventElement.addClassName('postnl-validate-empty');
+    if (eventElement.value.empty()) {
+        eventElement.addClassName('postnl-validate-empty-failed');
         return;
     }
 
-    if (!eventElement.value.empty() && eventElement.hasClassName('postnl-validate-empty')) {
-        eventElement.removeClassName('postnl-validate-empty');
+    eventElement.removeClassName('postnl-validate-empty-failed');
+}
+
+function checkEmptyGroup(eventElement) {
+    var groupRegex = /^postnl-validate-group-(-?\w+)$/;
+
+    var result = false;
+    $w(eventElement.className).each(
+        function(name) {
+            if (result) {
+                return;
+            }
+
+            var group = groupRegex.exec(name);
+            if (group && group[1]) {
+                result = group[1];
+            }
+        }
+    );
+
+    var empty = true;
+    var elements = $$('.postnl-validate-empty-group.postnl-validate-group-' + result);
+    elements.each(
+        function(element) {
+            if (!empty) {
+                return;
+            }
+
+            empty = element.value.empty();
+            console.log(empty);
+        }
+    );
+
+    if (empty) {
+        elements.each(
+            function(element) {
+                element.addClassName('postnl-validate-empty-failed');
+            }
+        );
+    } else {
+        elements.each(
+            function(element) {
+                element.removeClassName('postnl-validate-empty-failed');
+            }
+        );
     }
 }

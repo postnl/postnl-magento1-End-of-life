@@ -67,7 +67,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory ext
     /**
      * Get the basic collection for this grid
      *
-     * @return TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_Tab_StatusHistory
+     * @return $this
      *
      * @see Mage_Adminhtml_Block_Widget_Grid::_prepareCollection
      */

@@ -34,7 +34,9 @@
 .content-header h3 { background:transparent url(../../../images/TIG/PostNL/logo_postnl.png) 0 0 no-repeat !important; height:25px; padding-left:31px; line-height:24px; }
 
 /* Required Inputs */
-input.postnl-validate-empty.input-text { border-color:#f00 !important; }
+input.postnl-validate-empty-failed.input-text { border-color:#f00 !important; }
 
 /* PostNL specific fields */
 button.postnl-button { width:280px; margin-right:5px; }
+#row_postnl_cif_labels_and_confirming_cutoff_time td.value label { margin: 0 10px; }
+#row_postnl_cif_labels_and_confirming_cutoff_time td.value select { width:50px !important; }

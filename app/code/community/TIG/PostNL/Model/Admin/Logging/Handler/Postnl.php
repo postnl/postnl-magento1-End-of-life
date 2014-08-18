@@ -50,13 +50,17 @@ class TIG_PostNL_Model_Admin_Logging_Handler_Postnl extends Enterprise_Logging_M
     {
         $request = Mage::app()->getRequest();
         if ($request->getParam('shipment_ids')) {
-            $eventModel->setInfo($request->getParam('shipment_ids'));
+            $eventModel->setInfo(
+                Mage::helper('enterprise_logging')->implodeValues($request->getParam('shipment_ids'))
+            );
 
             return true;
         }
 
         if ($request->getParam('order_ids')) {
-            $eventModel->setInfo($request->getParam('order_ids'));
+            $eventModel->setInfo(
+                Mage::helper('enterprise_logging')->implodeValues($request->getParam('order_ids'))
+            );
 
             return true;
         }

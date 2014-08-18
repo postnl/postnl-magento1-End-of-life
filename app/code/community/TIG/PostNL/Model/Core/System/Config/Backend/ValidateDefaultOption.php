@@ -94,18 +94,18 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ValidateDefaultOption extends 
         /**
          * Search for the label of the current field and translate it.
          */
-        $label = $sections->$pathParts[0]->groups->$pathParts[1]->fields->$pathParts[2]->label;
+        $label = (string) $sections->$pathParts[0]->groups->$pathParts[1]->fields->$pathParts[2]->label;
         $label = $helper->__($label);
 
         /**
          * Get the translated label of the supported options field.
          */
-        $supportedOptionsLabel =(string) $sections->postnl
-                                                  ->groups
-                                                  ->cif_product_options
-                                                  ->fields
-                                                  ->supported_product_options
-                                                  ->label;
+        $supportedOptionsLabel = (string) $sections->postnl
+                                                   ->groups
+                                                   ->cif_product_options
+                                                   ->fields
+                                                   ->supported_product_options
+                                                   ->label;
         $supportedOptionsLabel = $helper->__($supportedOptionsLabel);
 
         /**
@@ -131,9 +131,9 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ValidateDefaultOption extends 
         /**
          * Set this field's value to null, as it's selected option is invalid.
          */
-        $this->setValue(null);
+        $this->setValue(false);
 
-        return true;
+        return false;
     }
 
     /**

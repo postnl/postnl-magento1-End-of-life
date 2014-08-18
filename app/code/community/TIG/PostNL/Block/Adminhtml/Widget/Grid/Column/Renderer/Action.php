@@ -40,15 +40,16 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
     extends Mage_Adminhtml_Block_Widget_Grid_Column_Renderer_Action
 {
     /**
-     * Additional column names used
+     * Additional column names used.
      */
     const SHIPPING_METHOD_COLUMN = 'shipping_method';
     const COUNTRY_ID_COLUMN      = 'country_id';
     const LABELS_PRINTED_COLUMN  = 'labels_printed';
     const CONFIRM_STATUS_COLUMN  = 'confirm_status';
+    const PRODUCT_CODE_COLUMN    = 'product_code';
 
     /**
-     * Renders column
+     * Render column.
      *
      * @param Varien_Object $row
      *
@@ -117,14 +118,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
     {
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
 
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-
         /**
          * If this is a PostNL action, but this shipment was not shipped using PosTNL, skip it
          */
-        if (array_key_exists('is_postnl', $action)
+        if (isset($action['is_postnl'])
             && $action['is_postnl']
-            && !in_array($shippingMethod, $postnlShippingMethods)
+            && !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
         ) {
             unset($action['is_postnl']);
             return false;
@@ -150,6 +149,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
         $euCountries   = $helper->getEuCountries();
         $countryId     = $row->getData(self::COUNTRY_ID_COLUMN);
         $confirmStatus = $row->getData(self::CONFIRM_STATUS_COLUMN);
+        $productCode   = $row->getData(self::PRODUCT_CODE_COLUMN);
 
         /**
          * If the shipment is confirmed, we can't confirm it again.
@@ -170,6 +170,17 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
             && !$row->getData(self::LABELS_PRINTED_COLUMN)
         ){
             $message = $helper->__("You must first print a shipping label for this shipment.");
+            $action = $this->_disableAction($action, $message);
+
+            return $action;
+        }
+
+        /**
+         * If this shipment uses a custom barcode it does not need to be confirmed.
+         */
+        $customBarcodeProductCodes = $helper->getCustomBarcodes();
+        if (isset($customBarcodeProductCodes[$productCode])) {
+            $message = $helper->__('This shipment does not need to be confirmed.');
             $action = $this->_disableAction($action, $message);
 
             return $action;
