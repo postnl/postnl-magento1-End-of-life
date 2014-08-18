@@ -1047,7 +1047,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $cache = $this->getCache();
         }
 
-        if ($cache && $cache->hasPostnlCorestatibled()) {
+        if ($cache && $cache->hasPostnlCoreIsEnabled()) {
             return $cache->getPostnlCoreIsEnabled();
         }
 
