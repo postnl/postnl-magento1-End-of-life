@@ -338,7 +338,6 @@ TIG_PostNL::PostNL extension has been successfully updated to version v%s.,PostN
 TIG_PostNL::Test,Test
 TIG_PostNL::Live,Live
 TIG_PostNL::Your shipment has been shipped on %s. Click %s to track your shipment.,Your shipment has been shipped on %s. Click %s to track your shipment.
-TIG_PostNL::Quick reference guide,Quick reference guide
 TIG_PostNL::You currently do not use split street lines.,You currently do not use split street lines.
 "TIG_PostNL::Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support.","Not using split street lines may cause errors in shipment processing as PostNL cannot support every possible address syntax. We strongly recommend using split street lines to avoid problems when using PostNL shipping. For more information, please contact PostNL support."
 TIG_PostNL::You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.,You have configured the extension for test mode only. You still must enter a live username and password before you may use the extension for real shipments.
@@ -457,34 +456,6 @@ TIG_PostNL::Before you proceed to use this extension it is very important that y
 "TIG_PostNL::You should make sure that each product you intend to ship using PostNL has a maximum size of 175 x 78 x 58 cm and weighs less than 30 kg. The shipment will only be invoiced after the weigh-in at the PostNL sorting centre. If you wish to ship an order that weighs over 30 kg, you will have to split it into separate parcels that each weigh less than 30 kg. To do this you may create multiple shipments for a single order or you may use the extension's multi-colli functionality.","You should make sure that each product you intend to ship using PostNL has a maximum size of 175 x 78 x 58 cm and weighs less than 30 kg. The shipment will only be invoiced after the weigh-in at the PostNL sorting centre. If you wish to ship an order that weighs over 30 kg, you will have to split it into separate parcels that each weigh less than 30 kg. To do this you may create multiple shipments for a single order or you may use the extension's multi-colli functionality."
 "TIG_PostNL::Make sure the PostNL shipping method is configured under system > config > shipping methods > PostNL. Only shipments made using this shipping method will be able to use PostNL's services. You may choose to charge either a flat rate or a table rate-based shipping fee. In the case of the latter, the table rates you have added under the Table Rate shipping method will be used. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.","Make sure the PostNL shipping method is configured under system > config > shipping methods > PostNL. Only shipments made using this shipping method will be able to use PostNL's services. You may choose to charge either a flat rate or a table rate-based shipping fee. In the case of the latter, the table rates you have added under the Table Rate shipping method will be used. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>."
 "TIG_PostNL::You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.","You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>."
-TIG_PostNL::Register the extension for use,Register the extension for use
-TIG_PostNL::Open the 'General Settings' tab and enter your email address.,Open the 'General Settings' tab and enter your email address.
-TIG_PostNL::Press the 'Activate the extension' button. You will now recieve an email at the address you specified containing 2 secure keys.,Press the 'Activate the extension' button. You will now recieve an email at the address you specified containing 2 secure keys.
-TIG_PostNL::Copy the keys and enter them in the 'Unique-' and 'Private key' fields that are now available.,Copy the keys and enter them in the 'Unique-' and 'Private key' fields that are now available.
-TIG_PostNL::Press the 'Finish activation' button.,Press the 'Finish activation' button.
-TIG_PostNL::Set the 'Active' field to 'Yes' and save the configuration. Your extension is now registered.,Set the 'Active' field to 'Yes' and save the configuration. Your extension is now registered.
-TIG_PostNL::Configure your PostNL account,Configure your PostNL account
-"TIG_PostNL::Make sure you have your PostNL account info with you. You will need the following info: username & password, customer number, customer code, and BLS code. You need to enter these in the 'Account Settings' tab.","Make sure you have your PostNL account info with you. You will need the following info: username & password, customer number, customer code, and BLS code. You need to enter these in the 'Account Settings' tab."
-"TIG_PostNL::First enter your username and password. Depending on the status of your account, you may either enter the 'test' or 'live' version of these fields. Please note: if you do not enter the 'live' fields, you will only be able to create test shipments.","First enter your username and password. Depending on the status of your account, you may either enter the 'test' or 'live' version of these fields. Please note: if you do not enter the 'live' fields, you will only be able to create test shipments."
-"TIG_PostNL::Next enter your customer number, customer code and BLS code. If you are unsure about which information to enter here, please contact PostNL.","Next enter your customer number, customer code and BLS code. If you are unsure about which information to enter here, please contact PostNL."
-TIG_PostNL::Enter a sender and return address,Enter a sender and return address
-"TIG_PostNL::You have to enter the address to which PostNL may return shipments that could not be delivered. The sender address is mandatory. You may also enter a separate, optional return address.","You have to enter the address to which PostNL may return shipments that could not be delivered. The sender address is mandatory. You may also enter a separate, optional return address."
-"TIG_PostNL::Go to the 'Sender Address' tab and enter your address. If you enter a company name, it will be printed on the shipping label. Otherwise, your name will be printed.","Go to the 'Sender Address' tab and enter your address. If you enter a company name, it will be printed on the shipping label. Otherwise, your name will be printed."
-"TIG_PostNL::You may now choose to enter a separate return address. If you choose to do so, this address will be printed on the shipping labels, rather than your sender address.","You may now choose to enter a separate return address. If you choose to do so, this address will be printed on the shipping labels, rather than your sender address."
-"TIG_PostNL::In order to enter a separare return address, go to the 'Return Address' tab and switch the 'Use the sender address as the return adress' settng to 'no'. New fields will now appear for you to enter your return address.","In order to enter a separare return address, go to the 'Return Address' tab and switch the 'Use the sender address as the return adress' settng to 'no'. New fields will now appear for you to enter your return address."
-"TIG_PostNL::Configure your address settings, your confirming & label printing preferences and your preferred product options","Configure your address settings, your confirming & label printing preferences and your preferred product options"
-"TIG_PostNL::Go to the 'Address Settings' tab and configure this section based on which fields you use in your checkout process. If this does not precisely match your checkout process, orders may not be shipped to the correct address.","Go to the 'Address Settings' tab and configure this section based on which fields you use in your checkout process. If this does not precisely match your checkout process, orders may not be shipped to the correct address."
-TIG_PostNL::Go to the 'Confirming & Label Printing Settings' tab and change your preferences. You may want to tweak these and then test them repeatedly before deciding on a final configuration.,Go to the 'Confirming & Label Printing Settings' tab and change your preferences. You may want to tweak these and then test them repeatedly before deciding on a final configuration.
-"TIG_PostNL::Go to the 'Product Options' tab and select your supported and preferred product options. If you have questions regarding each product option and which would be most suitable to you, please contact PostNL.","Go to the 'Product Options' tab and select your supported and preferred product options. If you have questions regarding each product option and which would be most suitable to you, please contact PostNL."
-TIG_PostNL::Configure your GlobalPack settings,Configure your GlobalPack settings
-"TIG_PostNL::If you wish to send orders to outside the EU, you need to configure your GlobalPack settings.","If you wish to send orders to outside the EU, you need to configure your GlobalPack settings."
-TIG_PostNL::Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.,Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.
-"TIG_PostNL::Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office.","Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office."
-TIG_PostNL::Configure your PostNL Checkout settings,Configure your PostNL Checkout settings
-"TIG_PostNL::If you wish to use PostNL Checkout in your webshop, you need to configure your PostNL Checkout settings.","If you wish to use PostNL Checkout in your webshop, you need to configure your PostNL Checkout settings."
-TIG_PostNL::Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.,Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.
-TIG_PostNL::Go to the 'PostNL Checkout' tab and specify your preferences.,Go to the 'PostNL Checkout' tab and specify your preferences.
-"TIG_PostNL::Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected.","Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected."
 "TIG_PostNL::If you wish to use this extension on an unsupported Magento version or edition, or in combination with an unsupported 3rd party extension, we cannot guarantee the PostNL extension will function as expected. For questions please contact the Total Internet Group servicedesk.","If you wish to use this extension on an unsupported Magento version or edition, or in combination with an unsupported 3rd party extension, we cannot guarantee the PostNL extension will function as expected. For questions please contact the Total Internet Group servicedesk."
 "TIG_PostNL::The extension is developed by Total Internet Group, commissioned by PostNL. Depending on the nature of the issue or question you should contact either PostNL or Total Internet Group.","The extension is developed by Total Internet Group, commissioned by PostNL. Depending on the nature of the issue or question you should contact either PostNL or Total Internet Group."
 TIG_PostNL::PostNL account information and PostNL services,PostNL account information and PostNL services
@@ -546,7 +517,6 @@ TIG_PostNL::Receive notifications from PostNL regarding updates and promotions,R
 "TIG_PostNL::Leave empty to allow an infinite amount of parcels per shipment.<br/>If this value is empty or exceeds 200, you need to set 'Allow infinite label printing' to yes in order to be able to print the shipment's labels.","Leave empty to allow an infinite amount of parcels per shipment.<br/>If this value is empty or exceeds 200, you need to set 'Allow infinite label printing' to yes in order to be able to print the shipment's labels."
 TIG_PostNL::Allow test mode,Allow test mode
 TIG_PostNL::If enabled new fields will appear allowing you to configure the extension for test mode.,If enabled new fields will appear allowing you to configure the extension for test mode.
-TIG_PostNL::By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.,By default the extension will always function in 'live' mode. If you are a developer you may be interested in using test (sandbox) mode instead.
 TIG_PostNL::Restore default values,Restore default values
 TIG_PostNL::You can customize the track & trace email in system > transactional emails.,You can customize the track & trace email in system > transactional emails.
 "TIG_PostNL::If you do not use split street lines and you wish to ship to outside the EU, there is a strong possibility that PostNL will be unable to properly parse the address. This may result in the shipment being refused or it may even lead to the shipment being delivered at the wrong address!","If you do not use split street lines and you wish to ship to outside the EU, there is a strong possibility that PostNL will be unable to properly parse the address. This may result in the shipment being refused or it may even lead to the shipment being delivered at the wrong address!"
@@ -579,7 +549,7 @@ TIG_PostNL::No status history available.,No status history available.
 TIG_PostNL::PostNL - Create Parcelware export,PostNL - Create Parcelware export
 TIG_PostNL::Exported to Parcelware,Exported to Parcelware
 TIG_PostNL::Parcelware Export Settings,Parcelware Export Settings
-TIG_PostNL::This is where you can configure your Parcelware export.,This is where you can configure your Parcelware export.
+"TIG_PostNL::This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href=""http://kb.totalinternetgroup.nl/topic/94906903"" target=""_blank"" title=""More info"">here</a>.","This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href=""http://kb.totalinternetgroup.nl/topic/94906903"" target=""_blank"" title=""More info"">here</a>."
 TIG_PostNL::Enable Parcelware export,Enable Parcelware export
 TIG_PostNL::Parcelware export is disabled. Activate Parcelware export in order to edit these settings. Please note that you can only activate Parcelware export from the global level.,Parcelware export is disabled. Activate Parcelware export in order to edit these settings. Please note that you can only activate Parcelware export from the global level.
 TIG_PostNL::Automatically confirm exported shipments,Automatically confirm exported shipments
@@ -687,7 +657,7 @@ TIG_PostNL::Weekend cut-off time,Weekend cut-off time
 "TIG_PostNL::When an order is placed after this time on sunday, another day will be added to the shipping duration.","When an order is placed after this time on sunday, another day will be added to the shipping duration."
 "TIG_PostNL::PostNL delivery options allows your customers to choose their delivery date and timeframe, or choose to have their order delivered to a post office, early delivery post office or parcel dispenser. Each of these options can be individually enabled and disabled. In the case of evening- and early delivery, you may charge an additional fee.","PostNL delivery options allows your customers to choose their delivery date and timeframe, or choose to have their order delivered to a post office, early delivery post office or parcel dispenser. Each of these options can be individually enabled and disabled. In the case of evening- and early delivery, you may charge an additional fee."
 TIG_PostNL::Enable timeframes,Enable timeframes
-TIG_PostNL::Timeframes allow customers to specify on which date and at which time they want their order delivered.,Timeframes allow customers to specify on which date and at which time they want their order delivered.
+TIG_PostNL::Time frames allow customers to specify at which time they want their order delivered.,Time frames allow customers to specify at which time they want their order delivered.
 TIG_PostNL::Enable evening delivery,Enable evening delivery
 TIG_PostNL::Whether or not customers may pick an evening timeframe.,Whether or not customers may pick an evening timeframe.
 TIG_PostNL::Evening timeframes may not be available in all areas. The PostNL extension will automatically determine whether or not evening delivery is available for a specific area.,Evening timeframes may not be available in all areas. The PostNL extension will automatically determine whether or not evening delivery is available for a specific area.
@@ -786,14 +756,13 @@ TIG_PostNL::Send Track & Trace Email,Send Track & Trace Email
 TIG_PostNL::Change Confirmation,Change Confirmation
 TIG_PostNL::Delete Shipping Labels,Delete Shipping Labels
 TIG_PostNL::The current user is not allowed to perform this action.,The current user is not allowed to perform this action.
-TIG_PostNL::Actions,Actions
+Actions,Actions
 TIG_PostNL::Default evening delivery shipping option,Default evening delivery shipping option
 TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.,This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.
 TIG_PostNL::Default early post office pickup option,Default early post office pickup option
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.,This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.
 TIG_PostNL::Default shipment type,Default shipment type
 TIG_PostNL::Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.,Please select the default GlobalPack shipment type. You can also specify this manually when creating GlobalPack shipments.
-TIG_PostNL::Shipment,Shipment
 TIG_PostNL::PostNL,PostNL
 TIG_PostNL::The PostNL extension v%s has been successfully installed.,The PostNL extension v%s has been successfully installed.
 TIG_PostNL::Print label,Print label
@@ -932,12 +901,11 @@ TIG_PostNL::Shipping method,Shipping method
 TIG_PostNL::Ship order on,Ship order on
 TIG_PostNL::Packing slip,Packing slip
 TIG_PostNL::Order,Order
-TIG_PostNL::Shipment,Shipment
 TIG_PostNL::Post office address,Post office address
 TIG_PostNL::Invalid label type supplied for packing slip label pdf: %s.,Invalid label type supplied for packing slip label pdf: %s.
 TIG_PostNL::Approaching memory limit for this operation. Please select fewer shipments and try again.,Approaching memory limit for this operation. Please select fewer shipments and try again.
 TIG_PostNL::Packing Slip Settings,Packing Slip Settings
-TIG_PostNL::Here you can configure which elements you would like to show on the PostNL packing slip.,Here you can configure which elements you would like to show on the PostNL packing slip.
+"TIG_PostNL::Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href=""http://kb.totalinternetgroup.nl/topic/95885953"" target=""_blank"" title=""More info"">here</a>.","Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href=""http://kb.totalinternetgroup.nl/topic/95885953"" target=""_blank"" title=""More info"">here</a>."
 TIG_PostNL::Logo for packing slips,Logo for packing slips
 TIG_PostNL::The image will automatically be resized to fit the maximum dimensions of 900x100px.,The image will automatically be resized to fit the maximum dimensions of 900x100px.
 TIG_PostNL::Show webshop information,Show webshop information
@@ -965,7 +933,7 @@ TIG_PostNL::Pre-configured message,Pre-configured message
 TIG_PostNL::Last shipment comment,Last shipment comment
 TIG_PostNL::None of the orders you have selected have any associated shipments. Please choose at least one order that has a shipment.,None of the orders you have selected have any associated shipments. Please choose at least one order that has a shipment.
 TIG_PostNL::Print packing slips,Print packing slips
-TIG_PostNL::Download PostNL log files,Download PostNL log files
+Download PostNL log files,Download PostNL log files
 TIG_PostNL::No valid log files were found.,No valid log files were found.
 TIG_PostNL::Log %s is too large (%.2fMB) and was skipped.,Log %s is too large (%.2fMB) and was skipped.
 TIG_PostNL::The total size of all log files exceeds the maximum size allowed.,The total size of all log files exceeds the maximum size allowed.
@@ -1064,6 +1032,56 @@ TIG_PostNL::No default product options are available for this shipment. Please c
 "TIG_PostNL::The default product option was not available for this shipment, so another product option was chosen. Please check if the default product options are configured correctly in the PostNL extension's configuration.","The default product option was not available for this shipment, so another product option was chosen. Please check if the default product options are configured correctly in the PostNL extension's configuration."
 TIG_PostNL::PostNL shipping methods,PostNL shipping methods
 TIG_PostNL::Please select the shipping methods that will be considered to be 'PostNL' by this extension. Orders placed using one of these shipping methods may be processed using the PostNL extension.,Please select the shipping methods that will be considered to be 'PostNL' by this extension. Orders placed using one of these shipping methods may be processed using the PostNL extension.
-TIG_PostNL::PostNL Delivery Options - Allow Parcel Dispensers,PostNL Delivery Options - Allow Parcel Dispensers
-TIG_PostNL::PostNL Delivery Options - Allow Time Frames,PostNL Delivery Options - Allow Time Frames
-TIG_PostNL::PostNL Delivery Options - Allow Post Office Locations,PostNL Delivery Options - Allow Post Office Locations
+PostNL Delivery Options - Allow Parcel Dispensers,PostNL Delivery Options - Allow Parcel Dispensers
+PostNL Delivery Options - Allow Time Frames,PostNL Delivery Options - Allow Time Frames
+PostNL Delivery Options - Allow Post Office Locations,PostNL Delivery Options - Allow Post Office Locations
+"TIG_PostNL::This shipment will probably not fit as a letter box parcel, because the purchased products do not fit.","This shipment will probably not fit as a letter box parcel, because the purchased products do not fit."
+"TIG_PostNL::This shipment will probably not fit as a letter box parcel, because the purchased products are too heavy.","This shipment will probably not fit as a letter box parcel, because the purchased products are too heavy."
+PostNL Delivery Options - Allow Delivery Days,PostNL Delivery Options - Allow Delivery Days
+TIG_PostNL::Enable delivery days,Enable delivery days
+TIG_PostNL::Delivery days allow customers to choose on which date they want their order delivered.,Delivery days allow customers to choose on which date they want their order delivered.
+TIG_PostNL::These settings are only applicable to orders which fit as a letter box parcel.,These settings are only applicable to orders which fit as a letter box parcel.
+TIG_PostNL::Show PostNL delivery options for letter box parcel orders,Show PostNL delivery options for letter box parcel orders
+"TIG_PostNL::If a customer chooses a delivery option, that order may not be shipped as a letter box parcel. Only shipments to a regular Dutch address may be shipped as letter box parcels. If you disable this setting delivery options will automatically be disabled when an order would fit as a letter box parcel. Enable this option if you always want to show delivery options to customers even when that means an order might not be shipped as a letter box parcel.","If a customer chooses a delivery option, that order may not be shipped as a letter box parcel. Only shipments to a regular Dutch address may be shipped as letter box parcels. If you disable this setting delivery options will automatically be disabled when an order would fit as a letter box parcel. Enable this option if you always want to show delivery options to customers even when that means an order might not be shipped as a letter box parcel."
+TIG_PostNL::Show all delivery options for letter box parcel orders,Show all delivery options for letter box parcel orders
+"TIG_PostNL::If set to 'yes' the same delivery options will be shown for letter box parcel orders as for regular orders. Please note that if the customer chooses a delivery option, the order may no longer be shipped as a letter box parcel.","If set to 'yes' the same delivery options will be shown for letter box parcel orders as for regular orders. Please note that if the customer chooses a delivery option, the order may no longer be shipped as a letter box parcel."
+TIG_PostNL::Show delivery days for letter box parcel orders.,Show delivery days for letter box parcel orders.
+TIG_PostNL::Show post office locations for letter box parcels.,Show post office locations for letter box parcels.
+TIG_PostNL::If the customer chooses to have an order delivered to a post office location the order may no longer be shipped as a letter box parcel.,If the customer chooses to have an order delivered to a post office location the order may no longer be shipped as a letter box parcel.
+TIG_PostNL::Show parcel dispenser locations for letter box parcels,Show parcel dispenser locations for letter box parcels
+TIG_PostNL::If the customer chooses to have an order delivered to a parcel dispenser the order may no longer be shipped as a letter box parcel.,If the customer chooses to have an order delivered to a parcel dispenser the order may no longer be shipped as a letter box parcel.
+TIG_PostNL::Allow for letter box parcels,Allow for letter box parcels
+TIG_PostNL::This option is only applicable when using letter box parcels and the letter box parcel calculation mode is set to 'automatic'.,This option is only applicable when using letter box parcels and the letter box parcel calculation mode is set to 'automatic'.
+"TIG_PostNL::Letter box parcels cannot be shipped using COD. If an order is a letter box parcel and the customer chooses to pay using PostNL COD, the order will be shipped as a regular parcel instead.","Letter box parcels cannot be shipped using COD. If an order is a letter box parcel and the customer chooses to pay using PostNL COD, the order will be shipped as a regular parcel instead."
+"TIG_PostNL::This action is not available for order #%s, because it was not placed using PostNL.","This action is not available for order #%s, because it was not placed using PostNL."
+TIG_PostNL::Convert,Convert
+TIG_PostNL::To Letter Box Parcel,To Letter Box Parcel
+TIG_PostNL::To Package,To Package
+TIG_PostNL::The shipment has been converted to a package.,The shipment has been converted to a package.
+TIG_PostNL::The shipment has been converted to a letter box parcel.,The shipment has been converted to a letter box parcel.
+TIG_PostNL::Are you sure you wish to convert this shipment to a letter box parcel? You will need to confirm this shipment with PostNL again before you can send it. This action will remove all barcodes and labels associated with this shipment. You can not undo this action.,Are you sure you wish to convert this shipment to a letter box parcel? You will need to confirm this shipment with PostNL again before you can send it. This action will remove all barcodes and labels associated with this shipment. You can not undo this action.
+TIG_PostNL::Are you sure you wish to convert this shipment to a package? You will need to confirm this shipment with PostNL again before you can send it. This action will remove all barcodes and labels associated with this shipment. You can not undo this action.,Are you sure you wish to convert this shipment to a package? You will need to confirm this shipment with PostNL again before you can send it. This action will remove all barcodes and labels associated with this shipment. You can not undo this action.
+TIG_PostNL::PostNL - Convert to Letter Box Parcel,PostNL - Convert to Letter Box Parcel
+TIG_PostNL::PostNL - Convert to Package,PostNL - Convert to Package
+TIG_PostNL::possibly letter box parcel,possibly letter box parcel
+TIG_PostNL::Expected delivery date,Expected delivery date
+TIG_PostNL::Change,Change
+TIG_PostNL::Change Product Option,Change Product Option
+TIG_PostNL::Please choose a product option.,Please choose a product option.
+TIG_PostNL::Submit,Submit
+TIG_PostNL::Cancel,Cancel
+TIG_PostNL::The shipment's product option has been changed succesfully.,The shipment's product option has been changed succesfully.
+Shipment,Shipment
+Complete Status History,Complete Status History
+Confirm,Confirm
+Print Shipping Label,Print Shipping Label
+Print Packing Slip,Print Packing Slip
+Create Parcelware Export,Create Parcelware Export
+Send Track &amp; Trace Email,Send Track &amp; Trace Email
+Change Confirmation,Change Confirmation
+Delete Shipping Labels,Delete Shipping Labels
+Convert,Convert
+To Letter Box Parcel,To Letter Box Parcel
+To Package,To Package
+Change Product Option,Change Product Option
+TIG_PostNL::Fits through the mailslot,Fits through the mailslot
