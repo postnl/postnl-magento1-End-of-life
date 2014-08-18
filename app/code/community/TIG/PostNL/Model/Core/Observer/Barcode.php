@@ -66,14 +66,13 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         /**
          * Check if this shipment was placed using PostNL.
          */
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $shippingMethod = $shipment->getOrder()->getShippingMethod();
 
         /**
          * If this shipment's order was not placed with PostNL, remove any PakjeGemak addresses that may have been
          * saved.
          */
-        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
             return $this;
         }
 
@@ -121,9 +120,9 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         $postnlShipment->save();
 
         /**
-         * Barcode generation needs to be tried separately. This functionality may throw a valid exception
-         * in which case it needs to be tried again later without preventing the shipment from being
-         * created. This may happen when CIF is overburdened.
+         * Barcode generation needs to be tried separately. This functionality may throw a valid exceptionin which case
+         * it needs to be tried again later without preventing the shipment from being created. This may happen when CIF
+         * is overburdened.
          */
         try {
             $postnlShipment->saveAdditionalShippingOptions();

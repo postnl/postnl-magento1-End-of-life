@@ -34,7 +34,6 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
  */
 document.observe('dom:loaded', function() {
     $$('.postnl-validate-empty').each(function(element) {

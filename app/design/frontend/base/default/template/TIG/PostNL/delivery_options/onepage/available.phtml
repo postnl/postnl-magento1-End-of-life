@@ -53,10 +53,10 @@
 <?php else: ?>
     <dl class="sp-methods">
         <?php $shippingCodePrice = array(); ?>
-        <?php $_postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods(); ?>
         <?php $_store = $this->getQuote()->getStore(); ?>
         <?php $_deliveryOptionsShown = false; ?>
         <?php $_sole = count($_shippingRateGroups) == 1; ?>
+        <?php $_carrierHelper = Mage::helper('postnl/carrier'); ?>
         <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
             <dt><?php echo $this->escapeHtml($this->getCarrierName($code)) ?></dt>
             <dd>
@@ -101,7 +101,7 @@
                                 <?php $_canUseDeliveryOptions = true; ?>
                             <?php endif; ?>
                             <?php if ($_canUseDeliveryOptions
-                                && in_array($_rate->getCode(), $_postnlShippingMethods)
+                                && $_carrierHelper->isPostnlShippingMethod($_rate->getCode())
                                 && $this->getChild('postnl.delivery.options')
                             ): ?>
                                 <div class="postnl-container">

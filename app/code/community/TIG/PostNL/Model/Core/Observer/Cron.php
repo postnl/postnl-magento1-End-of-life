@@ -56,11 +56,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Method to destroy temporary label files that have been stored for too long.
      *
-     * By default the PostNL module creates temporary label files in order to merge them into
-     * a single shipping label. These files are then destroyed. However, sometimes these files
-     * may survive the script if the script has encountered an error. This method will make
-     * sure these files will not survive indefinitely, which may lead to the file system
-     * being overburdened or the server running out of hard drive space.
+     * By default the PostNL module creates temporary label files in order to merge them into a single shipping label.
+     * These files are then destroyed. However, sometimes these files may survive the script if the script has
+     * encountered an error. This method will make sure these files will not survive indefinitely, which may lead to the
+     * file system being overburdened or the server running out of hard drive space.
      *
      * @return $this
      *
@@ -282,7 +281,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Get all postnl shipments without a barcode
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
-        $postnlShipmentCollection->addFieldToFilter('main_barcode', array('null' => true));
+        $postnlShipmentCollection->addFieldToFilter('main_barcode', array('null' => true))
+                                 ->addFieldToFilter('shipment_id', array('notnull' => true));
 
         if ($postnlShipmentCollection->getSize() < 1) {
             $helper->cronLog('No valid shipments found. Exiting cron.');
@@ -293,6 +293,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $counter = 1000;
         foreach ($postnlShipmentCollection as $postnlShipment) {
+            if (!$postnlShipment->getShipment(false)) {
+                continue;
+            }
+
             /**
              * Process a maximum of 1000 shipments (to prevent Cif from being overburdened).
              * Only successful requests count towards this number
@@ -366,6 +370,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                      array(
                                          array('neq' => $deliveredStatus),
                                          array('null' => true)
+                                     )
+                                 )
+                                 ->addFieldToFilter(
+                                     'shipment_id',
+                                     array(
+                                         'notnull' => true
                                      )
                                  );
 
@@ -541,6 +551,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                          array('lt' => $expireDate),
                                          array('null' => true)
                                      )
+                                 )
+                                 ->addFieldToFilter(
+                                     'shipment_id',
+                                     array(
+                                         'notnull' => true
+                                     )
                                  );
 
         /**
@@ -561,6 +577,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
              * Attempt to reset the shipment to a pre-confirmed status
              */
             try{
+                if (!$postnlShipment->getShipment(false)) {
+                    continue;
+                }
+
                 $helper->cronLog("Expiring confirmation of shipment #{$postnlShipment->getId()}");
                 $postnlShipment->resetConfirmation()
                                ->setConfirmStatus($postnlShipment::CONFIRM_STATUS_CONFIRM_EXPIRED);
@@ -655,6 +675,9 @@ class TIG_PostNL_Model_Core_Observer_Cron
          *         )
          *     )
          * )
+         * AND (
+         *     shipment_id IS NOT NULL
+         * )
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter(
@@ -675,6 +698,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                         array('null' => true),
                                         array('eq' => '0')
                                     )
+                                 )
+                                 ->addFieldToFilter(
+                                     'shipment_id',
+                                     array(
+                                         'notnull' => true
+                                     )
                                  );
 
         /**
@@ -691,6 +720,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Send the track and trace email for all shipments
          */
         foreach ($postnlShipmentCollection as $postnlShipment) {
+            if (!$postnlShipment->getShipment(false)) {
+                continue;
+            }
+
             /**
              * Check if sending the email is allowed for this shipment
              */

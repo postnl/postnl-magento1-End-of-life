@@ -602,11 +602,12 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                      * can be completely valid. To prevent the log files from filling up extremely quickly, we do not
                      * log this error.
                      */
-                    if ($errorNumber == '13') {
+                    $value = $errorNumber->nodeValue;
+                    if ($value == '13') {
                         $logException = false;
                     }
 
-                    $exception->addErrorNumber($errorNumber->nodeValue);
+                    $exception->addErrorNumber($value);
                 }
             }
         }
