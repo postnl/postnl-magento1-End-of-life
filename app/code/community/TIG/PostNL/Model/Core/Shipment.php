@@ -658,6 +658,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this->_getData('shipment_type');
         }
 
+        if (!$this->getShipment(false)) {
+            return null;
+        }
+
         $shipmentType = $this->_getShipmentType($checkBuspakje);
 
         $this->setShipmentType($shipmentType);
@@ -915,11 +919,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $locale = Mage::getStoreConfig('general/locale/code', $this->getStoreId());
         $lang = substr($locale, 0, 2);
 
+        $url = '';
         $pakjeGemakAddress = $this->getPakjeGemakAddress();
         if ($pakjeGemakAddress) {
             $url = $helper->getBarcodeUrl($barcode, $pakjeGemakAddress, $lang, $forceNl);
         } else {
-            $url = $helper->getBarcodeUrl($barcode, $this->getShippingAddress(), $lang, $forceNl);
+            $shippingAddress = $this->getShippingAddress();
+            if ($shippingAddress) {
+                $url = $helper->getBarcodeUrl($barcode, $shippingAddress, $lang, $forceNl);
+            }
         }
 
         $this->setBarcodeUrl($url);
@@ -994,8 +1002,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
                 break;
             case self::SHIPMENT_TYPE_EPS:
+                $shippingAddress = $this->getShippingAddress();
                 if ($this->getHelper()->canUseEpsBEOnlyOption($this->getStoreId())
-                    && $this->getShippingAddress()->getCountryId() == 'BE'
+                    && $shippingAddress
+                    && $shippingAddress->getCountryId() == 'BE'
                 ) {
                     $xpath = self::XPATH_DEFAULT_EU_BE_PRODUCT_OPTION;
                 } else {
@@ -1699,7 +1709,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return true;
         }
 
-        $shippingDestination = $this->getShippingAddress()->getCountryId();
+        $shippingAddress = $this->getShippingAddress();
+        if (!$shippingAddress) {
+            return false;
+        }
+
+        $shippingDestination = $shippingAddress->getCountryId();
 
         if ($shippingDestination == 'NL') {
             return true;
@@ -1719,7 +1734,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return true;
         }
 
-        $shippingDestination = $this->getShippingAddress()->getCountryId();
+        $shippingAddress = $this->getShippingAddress();
+        if (!$shippingAddress) {
+            return false;
+        }
+
+        $shippingDestination = $shippingAddress->getCountryId();
 
         /**
          * @var TIG_PostNL_Helper_Cif $helper
@@ -1807,7 +1827,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Check if the currrent shipment is a PakjeGemak shipment.
+     * Check if the current shipment is a PakjeGemak shipment.
      *
      * @return boolean
      */
@@ -3483,8 +3503,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Check if the destination country of this shipment is allowed.
          */
-        $destination = $this->getShippingAddress()->getCountryId();
-        if (!in_array($destination, $allowedCountries)) {
+        $shippingAddress = $this->getShippingAddress();
+        if (!$shippingAddress
+            || !in_array($shippingAddress->getCountryId(), $allowedCountries)
+        ) {
             throw new TIG_PostNL_Exception(
                 $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
                 'POSTNL-0078'
