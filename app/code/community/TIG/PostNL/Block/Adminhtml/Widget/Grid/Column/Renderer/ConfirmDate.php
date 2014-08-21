@@ -69,7 +69,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
          */
         if (
             (($interval->days > 0 || $interval->h > 0) && !$interval->invert)
-            || ($interval->days == 0 || $interval->h < 24) && $interval->invert
+            || ($interval->days == 0 && $interval->h < 24) && $interval->invert
         ) {
             $confirmDate = new DateTime($value);
             $diff = $now->diff($confirmDate);

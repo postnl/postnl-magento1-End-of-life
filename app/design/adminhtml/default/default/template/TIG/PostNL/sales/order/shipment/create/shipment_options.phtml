@@ -181,8 +181,9 @@
             before: $('postnl_product_options')
         });
 
-        var isBuspakjeField    = $('postnl_is_buspakje');
-        var isBuspakjeCheckbox = $('postnl_is_buspakje_checkbox');
+        var isBuspakjeField      = $('postnl_is_buspakje');
+        var isBuspakjeCheckbox   = $('postnl_is_buspakje_checkbox');
+        var parcelCountContainer = $('postnl_parcel_count_container');
         if (isBuspakjeCheckbox) {
             var toggleBuspakjeFields = function() {
                 if (isBuspakjeCheckbox.checked) {
@@ -190,14 +191,14 @@
 
                     $('postnl_buspakje_product_option_container').show();
                     $('postnl_product_option_container').hide();
-                    $('postnl_parcel_count_container').hide();
                     $('postnl_extra_cover_container').hide();
+                    parcelCountContainer.hide();
                 } else {
                     isBuspakjeField.setValue(0);
 
                     $('postnl_buspakje_product_option_container').hide();
                     $('postnl_product_option_container').show();
-                    $('postnl_parcel_count_container').show();
+                    parcelCountContainer.show();
 
                     toggleExtraCoverField();
                 }
@@ -206,6 +207,8 @@
             isBuspakjeCheckbox.observe('click', toggleBuspakjeFields);
 
             toggleBuspakjeFields();
+        } else if (parcelCountContainer) {
+            parcelCountContainer.show();
         }
 
         toggleExtraCoverField();

@@ -2178,7 +2178,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * if this shipment uses a custom barcode we can't send the track and trace email, because custom barcodes can't
+         * If this shipment uses a custom barcode we can't send the track and trace email, because custom barcodes can't
          * be tracked.
          */
         if ($this->hasCustomBarcode()) {
