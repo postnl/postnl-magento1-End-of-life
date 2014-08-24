@@ -216,7 +216,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
      *
      * @param Mage_Sales_Model_Order_Shipment $shipment
      *
-     * @return Mage_Adminhtml_Sales_Order_ShipmentController
+     * @return $this
      */
     protected function _saveShipment($shipment)
     {

@@ -62,7 +62,11 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Invoice_Totals_CodFee
          * @var  Mage_Adminhtml_Block_Sales_Order_Invoice_Totals $parent
          */
         $parent  = $this->getParentBlock();
-        $invoice = $parent->getInvoice();
+        $invoice = $this->getInvoice();
+
+        if (!$invoice) {
+            return $this;
+        }
 
         $fee     = $invoice->getPostnlCodFee();
         $baseFee = $invoice->getBasePostnlCodFee();
