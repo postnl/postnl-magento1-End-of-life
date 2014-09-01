@@ -76,6 +76,13 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     protected $_postnlShippingMethods;
 
     /**
+     * Array of shipping methods that have already been checked for whether they're PostNL.
+     *
+     * @var array
+     */
+    protected $_matchedMethods = array();
+
+    /**
      * Gets an array of possible PostNL shipping methods
      *
      * @return array
@@ -102,6 +109,43 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     {
         $this->_postnlShippingMethods = $postnlShippingMethods;
 
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMatchedMethods()
+    {
+        return $this->_matchedMethods;
+    }
+
+    /**
+     * @param array $matchedMethods
+     *
+     * @return $this
+     */
+    public function setMatchedMethods($matchedMethods)
+    {
+        $this->_matchedMethods = $matchedMethods;
+
+        return $this;
+    }
+
+    /**
+     * Adds a matched method to the matched methods array.
+     *
+     * @param string  $method
+     * @param boolean $value
+     *
+     * @return $this
+     */
+    public function addMatchedMethod($method, $value)
+    {
+        $matchedMethods = $this->getMatchedMethods();
+        $matchedMethods[$method] = $value;
+
+        $this->setMatchedMethods($matchedMethods);
         return $this;
     }
 
@@ -156,6 +200,48 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
 
         Mage::register('current_postnl_shipping_method', $shippingMethod);
         return $shippingMethod;
+    }
+
+    /**
+     * Checks if a specified shipping method is a PostNL shipping method.
+     *
+     * @param $shippingMethod
+     *
+     * @return bool
+     */
+    public function isPostnlShippingMethod($shippingMethod)
+    {
+        /**
+         * Check if we've matched this shipping method before.
+         */
+        $matchedMethods = $this->getMatchedMethods();
+        if (isset($matchedMethods[$shippingMethod])) {
+            return $matchedMethods[$shippingMethod];
+        }
+
+        /**
+         * Check if the shipping method exists in the configured array of supported methods.
+         */
+        $postnlShippingMethods = $this->getPostnlShippingMethods();
+        if (in_array($shippingMethod, $postnlShippingMethods)) {
+            $this->addMatchedMethod($shippingMethod, true);
+            return true;
+        }
+
+        /**
+         * Some shipping methods add suffixes to the method code.
+         */
+        foreach ($postnlShippingMethods as $postnlShippingMethod) {
+            $regex = "/^({$postnlShippingMethod})(_?\d*)$/";
+
+            if (preg_match($regex, $shippingMethod) === 1) {
+                $this->addMatchedMethod($shippingMethod, true);
+                return true;
+            }
+        }
+
+        $this->addMatchedMethod($shippingMethod, false);
+        return false;
     }
 
     /**

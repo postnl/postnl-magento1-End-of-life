@@ -487,8 +487,6 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
 
         $resource = Mage::getSingleton('core/resource');
 
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-
         /**
          * Get the shipment collection
          */
@@ -518,7 +516,20 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             );
         }
 
-        $shipmentCollection->addFieldToFilter('`shipping_method`', array('in' => $postnlShippingMethods))
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+        $postnlShippingMethodsRegex = '';
+        foreach ($postnlShippingMethods as $method) {
+            if ($postnlShippingMethodsRegex) {
+                $postnlShippingMethodsRegex .= '|';
+            } else {
+                $postnlShippingMethodsRegex .= '^';
+            }
+
+            $postnlShippingMethodsRegex .= "({$method})(_{0,1}[0-9]*)";
+        }
+
+        $postnlShippingMethodsRegex .= '$';
+        $shipmentCollection->addFieldToFilter('`order`.`shipping_method`', array('regexp' => $postnlShippingMethodsRegex))
                            ->addFieldToFilter('`main_table`.`store_id`', array('in' => $storeIds));
 
         if ($shipmentTypes) {

@@ -61,11 +61,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_SystemConfig
         $contentBlocks = Mage::getSingleton('core/layout')->getBlock('content')->getChild();
 
         /**
-         * @var Mage_Core_Block_Abstract $block
+         * @var Mage_Core_Block_Abstract                $block
+         * @var Mage_Adminhtml_Block_System_Config_Edit $configEditBlock
          */
         foreach ($contentBlocks as $block) {
             if ($block instanceof Mage_Adminhtml_Block_System_Config_Edit) {
                 $configEditBlock = $block;
+                break;
             }
         }
 
@@ -82,6 +84,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_SystemConfig
         $onClickUrl = $configEditBlock->getUrl('postnl_admin/adminhtml_config/downloadLogs');
         $onClick = "setLocation('{$onClickUrl}')";
 
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Button $button
+         */
         $button = $configEditBlock->getLayout()->createBlock('adminhtml/widget_button');
         $button->setData(
             array(

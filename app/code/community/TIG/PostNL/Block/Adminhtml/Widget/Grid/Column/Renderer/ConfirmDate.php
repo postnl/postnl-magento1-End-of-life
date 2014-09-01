@@ -53,10 +53,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
      */
     public function render(Varien_Object $row)
     {
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!in_array($shippingMethod, $postnlShippingMethods)) {
-            return parent::render($row);
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+            return '';
         }
 
         $value    = $row->getData($this->getColumn()->getIndex());
@@ -70,7 +69,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_ConfirmDate
          */
         if (
             (($interval->days > 0 || $interval->h > 0) && !$interval->invert)
-            || ($interval->days == 0 || $interval->h < 24) && $interval->invert
+            || ($interval->days == 0 && $interval->h < 24) && $interval->invert
         ) {
             $confirmDate = new DateTime($value);
             $diff = $now->diff($confirmDate);

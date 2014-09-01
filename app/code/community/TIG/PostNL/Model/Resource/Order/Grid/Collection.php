@@ -69,7 +69,7 @@ class TIG_PostNL_Model_Resource_Order_Grid_Collection extends Mage_Sales_Model_R
     /**
      * Fix for getSize not re-counting the number of records in a collection after clear() had been called
      *
-     * @return Varien_Data_Collection
+     * @return $this
      */
     public function clear()
     {
@@ -86,7 +86,7 @@ class TIG_PostNL_Model_Resource_Order_Grid_Collection extends Mage_Sales_Model_R
      *
      * @param Varien_db_Select $select
      *
-     * @return TIG_PostNL_Model_Resource_Order_Shipment_Grid_Collection
+     * @return $this
      */
     public function setSelect($select)
     {

@@ -1165,10 +1165,22 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $filterCond = $cond['eq'];
 
         /**
-         * First filter out all non-postnl orders
+         * First filter out all non-postnl orders.
          */
         $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-        $collection->addFieldToFilter('order.shipping_method', array('in' => $postnlShippingMethods));
+        $postnlShippingMethodsRegex = '';
+        foreach ($postnlShippingMethods as $method) {
+            if ($postnlShippingMethodsRegex) {
+                $postnlShippingMethodsRegex .= '|';
+            } else {
+                $postnlShippingMethodsRegex .= '^';
+            }
+
+            $postnlShippingMethodsRegex .= "({$method})(_{0,1}[0-9]*)";
+        }
+
+        $postnlShippingMethodsRegex .= '$';
+        $collection->addFieldToFilter('order.shipping_method', array('regexp' => $postnlShippingMethodsRegex));
 
         /**
          * If the filter condition is PakjeGemak Express, filter out all non-PakjeGemak Express orders
@@ -1192,7 +1204,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * If the filter condition is PakjeGemak, filter out all non-PakjeGemak orders
          */
         if ($filterCond == 'pakje_gemak') {
-            $collection->addFieldToFilter('is_pakje_gemak', array('eq' => 1));
+            $collection->addFieldToFilter('postnl_order.is_pakje_gemak', array('eq' => 1));
             $collection->addFieldToFilter('postnl_order.type', array(array('eq' => 'PG'), array('null' => true)));
 
             return $this;
@@ -1202,7 +1214,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * If the filter condition is Pakket Automaat, filter out all non-Pakket Automaat orders
          */
         if ($filterCond == 'pakketautomaat') {
-            $collection->addFieldToFilter('is_pakketautomaat', array('eq' => 1));
+            $collection->addFieldToFilter('postnl_order.is_pakketautomaat', array('eq' => 1));
             $collection->addFieldToFilter(
                 'postnl_order.type',
                 array(
@@ -1229,14 +1241,14 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                        )
             );
             $collection->addFieldToFilter(
-                       'is_pakje_gemak',
+                       'postnl_order.is_pakje_gemak',
                        array(
                            array('eq'   => 0),
                            array('null' => true)
                        )
             );
             $collection->addFieldToFilter(
-                       'is_pakketautomaat',
+                       'postnl_order.is_pakketautomaat',
                        array(
                            array('eq'   => 0),
                            array('null' => true)

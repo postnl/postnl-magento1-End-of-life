@@ -1097,7 +1097,7 @@
                 </cif_labels_and_confirming>
                 <packing_slip translate="label comment" module="postnl">
                     <label>Packing Slip Settings</label>
-                    <comment>Here you can configure which elements you would like to show on the PostNL packing slip.</comment>
+                    <comment><![CDATA[Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href="http://kb.totalinternetgroup.nl/topic/95885953" target="_blank" title="More info">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>700</sort_order>
                     <show_in_default>1</show_in_default>
@@ -1303,7 +1303,7 @@
                 </packing_slip>
                 <parcelware_export translate="label comment" module="postnl">
                     <label>Parcelware Export Settings</label>
-                    <comment>This is where you can configure your Parcelware export.</comment>
+                    <comment><![CDATA[This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href="http://kb.totalinternetgroup.nl/topic/94906903" target="_blank" title="More info">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>800</sort_order>
                     <show_in_default>1</show_in_default>

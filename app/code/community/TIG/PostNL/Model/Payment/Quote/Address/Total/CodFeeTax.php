@@ -150,4 +150,17 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
 
         return $this;
     }
+
+    /**
+     * Prevent this total from being fetched by Magento. It's amounts will already have been added to the general tax
+     * amounts and the PostNL COD fee total.
+     *
+     * @param Mage_Sales_Model_Quote_Address $address
+     *
+     * @return $this
+     */
+    public function fetch(Mage_Sales_Model_Quote_Address $address)
+    {
+        return $this;
+    }
 }

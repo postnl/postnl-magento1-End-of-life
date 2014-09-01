@@ -118,14 +118,12 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Action
     {
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
 
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
-
         /**
          * If this is a PostNL action, but this shipment was not shipped using PosTNL, skip it
          */
         if (isset($action['is_postnl'])
             && $action['is_postnl']
-            && !in_array($shippingMethod, $postnlShippingMethods)
+            && !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
         ) {
             unset($action['is_postnl']);
             return false;

@@ -392,14 +392,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Check if this order was placed using PostNL.
          */
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $shippingMethod = $order->getShippingMethod();
 
         /**
          * If this shipment's order was not placed with PostNL, we need to ignore any PakjeGemak addresses that may have
          * been saved.
          */
-        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
             return false;
         }
 
@@ -1048,7 +1047,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $cache = $this->getCache();
         }
 
-        if ($cache && $cache->hasPostnlCorestatibled()) {
+        if ($cache && $cache->hasPostnlCoreIsEnabled()) {
             return $cache->getPostnlCoreIsEnabled();
         }
 
@@ -1827,7 +1826,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * $session->addError() call.
      *
      * @param string|Mage_Core_Model_Session_Abstract $session The session to which the messages will be added.
-     * @param Exception $exception
+     * @param Exception                               $exception
      *
      * @return $this
      *

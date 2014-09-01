@@ -53,10 +53,9 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
      */
     public function render(Varien_Object $row)
     {
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $shippingMethod = $row->getData(self::SHIPPING_METHOD_COLUMN);
-        if (!in_array($shippingMethod, $postnlShippingMethods)) {
-            return parent::render($row);
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+            return '';
         }
 
         $value = $row->getData($this->getColumn()->getIndex());
@@ -86,7 +85,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
         $diff = $now->diff($value);
         if (
             (($diff->days > 0 || $diff->h > 0) && !$diff->invert)
-            || ($diff->days == 0 || $diff->h < 24) && $diff->invert
+            || ($diff->days == 0 && $diff->h < 24) && $diff->invert
         ) {
             /**
              * Get the number of days until the shipment should be confirmed

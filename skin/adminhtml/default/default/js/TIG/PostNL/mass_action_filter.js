@@ -300,7 +300,7 @@ PostnlMassActionFilter.prototype = {
         this.getIsDefaultCheckbox().disabled = false;
         this.getIsDefaultCheckbox().checked = this.isDefaultChecked;
 
-        if (filteredType == 'domestic') {
+        if (filteredType == 'domestic' || filteredType == 'buspakje') {
             this.getIsBuspakjeField().setValue(this.isBuspakjeCheckboxChecked() ? 1 : '');
             this.showIsBuspakjeContainer();
         } else {

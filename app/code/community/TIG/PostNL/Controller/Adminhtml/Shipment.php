@@ -216,7 +216,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
      *
      * @param Mage_Sales_Model_Order_Shipment $shipment
      *
-     * @return Mage_Adminhtml_Sales_Order_ShipmentController
+     * @return $this
      */
     protected function _saveShipment($shipment)
     {
@@ -409,14 +409,13 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
         }
 
         $shipments = array();
-        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         foreach ($shipmentIds as $shipmentId) {
             /**
              * Load the shipment.
              *
              * @var Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment|boolean $shipment
              */
-            $shipment = $this->_loadShipment($shipmentId, $loadPostnlShipments, $postnlShippingMethods);
+            $shipment = $this->_loadShipment($shipmentId, $loadPostnlShipments);
 
             if (!$shipment && $throwException) {
                 throw new TIG_PostNL_Exception(
@@ -452,11 +451,10 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
      *
      * @param int     $shipmentId
      * @param boolean $loadPostnlShipments
-     * @param array   $postnlShippingMethods
      *
      * @return boolean|Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment
      */
-    protected function _loadShipment($shipmentId, $loadPostnlShipments, $postnlShippingMethods)
+    protected function _loadShipment($shipmentId, $loadPostnlShipments)
     {
         if ($loadPostnlShipments === false) {
             /**
@@ -483,7 +481,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
         /**
          * Check if the shipping method used is allowed
          */
-        if (!in_array($shippingMethod, $postnlShippingMethods)) {
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
             return false;
         }
 
