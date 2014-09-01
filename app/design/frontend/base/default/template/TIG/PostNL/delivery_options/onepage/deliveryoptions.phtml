@@ -281,6 +281,28 @@
         });
     };
 
+    var switchDelivery = function() {
+        $("postnl_dpu").setStyle({
+            "-webkit-transform" : "translateX(-" + (siteWidth+34) + "px)",
+            "-o-transform" : "translateX(-" + (siteWidth+34) + "px)",
+            "transform" : "translateX(-" + (siteWidth+34) + "px)"
+        });
+
+        $("postnl_switch_pickup").removeClassName('active');
+        $("postnl_switch_delivery").addClassName('active');
+    };
+
+    var switchPickup = function() {
+        $("postnl_dpu").setStyle({
+            "-webkit-transform" : "translateX(0)",
+            "-o-transform" : "translateX(0)",
+            "transform" : "translateX(0)"
+        });
+
+        $("postnl_switch_delivery").removeClassName('active');
+        $("postnl_switch_pickup").addClassName('active');
+    };
+
     document.observe('postnl:loadingFinished', function() {
         window.siteWidth = $("postnl_delivery_options").offsetWidth;
         setSiteWidth();
@@ -290,40 +312,20 @@
         window.siteWidth = $("postnl_delivery_options").offsetWidth;
         setSiteWidth();
 
-        $("postnl_dpu").setStyle({
-            "-webkit-transform" : "translate3d(0, 0, 0)",
-            "-o-transform" : "translate3d(0, 0, 0)",
-            "transform" : "translate3d(0, 0, 0)",
-        });
-
-        $("postnl_switch_delivery").removeClassName('active');
-        $("postnl_switch_pickup").addClassName('active');
+        if ($("postnl_switch_delivery").hasClassName('active') && siteWidth < 669) {
+            switchDelivery();
+        } else {
+            switchPickup();
+        }
+        console.log(siteWidth);
     });
 
-    var switchDelivery = $("postnl_switch_delivery");
-    switchDelivery.stopObserving('click');
-    switchDelivery.observe("click", function() {
-        $("postnl_dpu").setStyle({
-            "-webkit-transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
-            "-o-transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
-            "transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
-        });
+    var switchDeliveryBtn = $("postnl_switch_delivery");
+    switchDeliveryBtn.stopObserving('click');
+    switchDeliveryBtn.observe("click", switchDelivery);
 
-        $("postnl_switch_pickup").removeClassName('active');
-        $("postnl_switch_delivery").addClassName('active');
-    });
-
-    var switchPickup = $("postnl_switch_pickup");
-    switchPickup.stopObserving('click');
-    switchPickup.observe("click", function() {
-        $("postnl_dpu").setStyle({
-            "-webkit-transform" : "translate3d(0, 0, 0)",
-            "-o-transform" : "translate3d(0, 0, 0)",
-            "transform" : "translate3d(0, 0, 0)",
-        });
-
-        $("postnl_switch_delivery").removeClassName('active');
-        $("postnl_switch_pickup").addClassName('active');
-    });
+    var switchPickupBtn = $("postnl_switch_pickup");
+    switchPickupBtn.stopObserving('click');
+    switchPickupBtn.observe("click", switchPickup);
     //]]>
 </script>
