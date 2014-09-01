@@ -61,18 +61,17 @@
 <?php if (!$_canUsePakjeGemak && !$_canUsePakjeGemakExpress && !$_canUsePakketAutomaat): ?>
     <?php $_canAddLocation = false; ?>
 <?php endif; ?>
-<div id="initial_loader"><?php echo $this->__('Loading...'); ?></div>
+<div id="initial_loader" class="postnl-loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_delivery_options" style="display:none;">
     <div class="title">
         <h2><?php echo $this->__('Delivery Options'); ?></h2>
     </div>
-    <div class="switch-wrapper">
-        <ul class="switch-nav">
+    <div class="responsive-switch-wrapper">
+        <ul>
             <li><a id="postnl_switch_pickup" class="active"><?php echo $this->__('Delivery'); ?></a></li>
             <li><a id="postnl_switch_delivery"><?php echo $this->__('Pickup'); ?></a></li>
         </ul>
-    </div>  
-
+    </div>
     <div class="responsive-protector">
         <div id="postnl_dpu" class="col2-set">
             <div id="postnl_delivery" class="col-1">
@@ -94,7 +93,7 @@
                     </li>
                 </ul>
             </div>
-            <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
+            <div id="postnl_pickup" class="col-2" style="min-width: 445px; <?php if(!$_canAddLocation): ?>display:none;<?php endif; ?>">
                 <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
                 <ul class="option-list" id="pgelocation"></ul>
                 <ul class="option-list" id="pglocation"></ul>
@@ -109,8 +108,8 @@
         </div>
     </div>
 
-    
-    
+
+
     <?php echo $this->getChildHtml('postnl.add.location') ?>
     <?php echo $this->getChildHtml('postnl.add.phonenumber') ?>
 </div>
@@ -266,7 +265,7 @@
             }
         }
     });
-    
+
     /**
      * Delivery and Pickup switch for Responsive purposes
      */
@@ -281,22 +280,22 @@
             "min-width" : siteWidth + "px"
         });
     };
-    
+
     document.observe('postnl:loadingFinished', function() {
         window.siteWidth = $("postnl_delivery_options").offsetWidth;
         setSiteWidth();
     });
-    
+
     Event.observe(window, "resize", function() {
         window.siteWidth = $("postnl_delivery_options").offsetWidth;
         setSiteWidth();
-        
+
         $("postnl_dpu").setStyle({
             "-webkit-transform" : "translate3d(0, 0, 0)",
             "-o-transform" : "translate3d(0, 0, 0)",
             "transform" : "translate3d(0, 0, 0)",
         });
-        
+
         $("postnl_switch_delivery").removeClassName('active');
         $("postnl_switch_pickup").addClassName('active');
     });
@@ -309,7 +308,7 @@
             "-o-transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
             "transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
         });
-        
+
         $("postnl_switch_pickup").removeClassName('active');
         $("postnl_switch_delivery").addClassName('active');
     });

@@ -9,8 +9,8 @@
     .postnl-container .col2-set .col-1,
     .postnl-container .col2-set .col-2 { padding:0; float:left; }
     .postnl-container .col2-set .col-1 { margin-right:34px; }
-    
-    button.postnl-button { display:block; text-align:center; color:#fff; height:30px; padding:0 20px; 
+
+    button.postnl-button { display:block; text-align:center; color:#fff; height:30px; padding:0 20px;
         background:-moz-linear-gradient(top, #f28d1f 0%, #ec6921 100%);
         background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#f28d1f), color-stop(100%,#ec6921));
         background:-webkit-linear-gradient(top, #f28d1f 0%,#ec6921 100%);
@@ -39,7 +39,7 @@
         background:-ms-linear-gradient(top, #f28d1f 0%,#ec6921 100%);
         background:linear-gradient(to bottom, #f28d1f 0%,#ec6921 100%);
     }
-    
+
     .option-list .option .bkg,
     .option-list .location .bkg { background:none; padding:0 !important; }
     .option-list .location { background:#666; padding:0 8px; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px; }
@@ -51,7 +51,7 @@
         background:-ms-linear-gradient(top, #eaeaea 0%,#e0e0e0 100%);
         background:linear-gradient(to bottom, #eaeaea 0%,#e0e0e0 100%);
     }
-    
+
     .tooltip-container { display:none !important; }
     .responsive-tooltip-open { display:block; width:19px; height:19px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) -2px 5px no-repeat; text-indent:-9999em; float:right; }
     .close-wrapper { text-align:center; }
@@ -63,14 +63,14 @@
     .responsive-tooltip .location-address { font-size:13px; }
     .responsive-tooltip .business-hours { line-height:18px; font-size:12px !important; color:#333 !important; }
     .responsive-tooltip .business-hours tbody th { width:40px; }
-    
+
     .responsive-add-location h3 { text-transform:none; }
     .responsive-location-search { margin-top:12px; }
     .responsive-location-search .search-form { width:77.5%; float:left; }
     .responsive-location-search input.postnl-input { background:#f2f2f2; width:100%; padding:0 16px; color:#585858; height:30px; line-height:28px; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px; }
     .responsive-location-search .actions { width:22%; float:right; }
     .responsive-location-search button.postnl-button { width:100%; padding:0; }
-    
+
     .responsive-location-results { padding-top:18px; border-top:1px solid #bbb; margin-top:14px; }
     .responsive-location-results h3 { color:#ed8c00; }
     .responsive-location-results .location-filters { margin:12px 0 18px; }
@@ -79,22 +79,26 @@
     .responsive-location-results .location-filters .filter { margin-right:20px; }
     .responsive-location-results .location-filters .filter .input-box { display:block; line-height:20px; padding-left:26px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_checkbox.png) 0 0 no-repeat; }
     .responsive-location-results .location-filters .filter .input-box.selected { background-position:0 -26px; }
-    
+
     .responsive-location-results .location-details { background:#f5f5f5; border-top:1px solid #bbb;  }
     .responsive-location-results .location-details:last-child { border-bottom:1px solid #bbb; }
     .responsive-location-results .location-details .content { padding:20px 0; line-height:16px; position:relative; }
+    .responsive-location-results .location-details .content .location-info { cursor:pointer; overflow:hidden; float:left; width:275px; }
     .responsive-location-results .location-details .content span { display:block; float:left; height:50px }
     .responsive-location-results .location-details .content .radio { width:26px; height:38px; margin:7px 12px 5px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_radio.png) 0 -32px no-repeat; }
     .responsive-location-results .location-details .content .radio.selected { background-position:0 2px; }
     .responsive-location-results .location-details .content .distance { position:absolute; right:68px; text-align:right; }
     .responsive-location-results .location-details .content .info-link { display:block; width:44px; height:44px; position:absolute; right:12px; margin-top:3px; text-indent:-9999em; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_info_link.png) 0 0 no-repeat; }
-    
+
     .responsive-location-results .location-details .more-info { margin:-10px 68px 0 50px; padding-top:10px; border-top:1px solid #c8c8c8; }
     .responsive-location-results .location-details .more-info .business-hours { line-height:18px; font-size:12px !important; color:#333 !important; }
     .responsive-location-results .location-details .more-info .business-hours tbody th { width:40px; }
     .responsive-location-results .location-details .more-info .actions button.postnl-button { float:left; margin:20px 20px 0 0; }
     .responsive-location-results .location-details .more-info .close-wrapper { text-align:center; padding:25px 0 20px; }
     .responsive-location-results .location-details .more-info .close-wrapper .more-info-close { display:inline-block; width:20px; height:12px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_tooltip_close.png) 0 0 no-repeat; text-indent:-9999em; }
+
+    #postnl_add_location { display:none; }
+    .responsive-hidden { display:none; }
 }
 
 
@@ -102,6 +106,9 @@
 @media only screen and (min-width: 769px) and (max-width: 1023px) {
     .postnl-container { padding-left:0; padding-right:0; }
     .postnl-container .col-1, .postnl-container .col-2 { width:50%; min-width:281px !important; max-width:351px; }
+
+    #postnl_add_location { display:none; }
+    .responsive-hidden { display:none; }
 }
 
 
@@ -110,6 +117,8 @@
     .postnl-container { padding-left:0; padding-right:0; }
     .postnl-container .col-1, .postnl-container .col-2 { width:50%; min-width:281px !important; max-width:351px; }
 
+    #postnl_add_location_responsive { display:none; }
+    .responsive-noscroll { overflow:hidden; }
 }
 
 
@@ -128,7 +137,7 @@
            -moz-border-radius:3px;
                 border-radius:3px;
     }
-    .option-list .option { 
+    .option-list .option {
         padding:0 8px;
         background:#eaeaea;
         background:-moz-linear-gradient(top, #eaeaea 0%, #e0e0e0 100%);
@@ -147,7 +156,7 @@
  .responsive-location-results .location-filters:after,
  .responsive-location-results .location-details .content:after,
  .responsive-location-search:after,
- .responsive-switch-wrapper ul:after { 
+ .responsive-switch-wrapper ul:after {
      content:".";
      display:block;
      clear:both;

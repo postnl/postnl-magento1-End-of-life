@@ -141,40 +141,41 @@ PostnlDeliveryOptions.prototype = {
         this.fullAddress        = params.fullAddress;
 
         this.options = Object.extend({
-            isOsc                  : false,
-            oscSaveButton          : 'close_options_popup_btn',
-            oscOptionsPopup        : 'postnl_delivery_options',
-            disableCufon           : false,
-            allowDeliveryDays      : true,
-            allowTimeframes        : true,
-            allowEveningTimeframes : false,
-            allowPg                : true,
-            allowPge               : false,
-            allowPa                : true,
-            isBuspakje             : false,
-            taxDisplayType         : 1,
-            eveningFeeIncl         : 0,
-            eveningFeeExcl         : 0,
-            expressFeeIncl         : 0,
-            expressFeeExcl         : 0,
-            eveningFeeText         : '',
-            expressFeeText         : '',
-            allowStreetview        : true,
-            scrollbarContainer     : 'scrollbar_content',
-            scrollbarTrack         : 'scrollbar_track',
-            loaderDiv              : 'initial_loader',
-            locationsLoader        : 'locations_loader',
-            searchField            : 'search_field',
-            searchErrorDiv         : 'search_error_message',
-            optionsContainer       : 'postnl_delivery_options',
-            pgLocationContainer    : 'pglocation',
-            pgeLocationContainer   : 'pgelocation',
-            paLocationContainer    : 'palocation',
-            timeframesContainer    : 'timeframes',
-            addPhoneContainer      : 'postnl_add_phonenumber',
-            currencySymbol         : '€',
-            shippingMethodName     : 's_method_postnl_flatrate',
-            postnlShippingMethods  : [
+            isOsc                     : false,
+            oscSaveButton             : 'close_options_popup_btn',
+            oscOptionsPopup           : 'postnl_delivery_options',
+            disableCufon              : false,
+            allowDeliveryDays         : true,
+            allowTimeframes           : true,
+            allowEveningTimeframes    : false,
+            allowPg                   : true,
+            allowPge                  : false,
+            allowPa                   : true,
+            isBuspakje                : false,
+            taxDisplayType            : 1,
+            eveningFeeIncl            : 0,
+            eveningFeeExcl            : 0,
+            expressFeeIncl            : 0,
+            expressFeeExcl            : 0,
+            eveningFeeText            : '',
+            expressFeeText            : '',
+            allowStreetview           : true,
+            scrollbarContainer        : 'scrollbar_content',
+            scrollbarTrack            : 'scrollbar_track',
+            loaderDiv                 : 'initial_loader',
+            locationsLoader           : 'locations_loader',
+            responsiveLocationsLoader : 'responsive_locations_loader',
+            searchField               : 'search_field',
+            searchErrorDiv            : 'search_error_message',
+            optionsContainer          : 'postnl_delivery_options',
+            pgLocationContainer       : 'pglocation',
+            pgeLocationContainer      : 'pgelocation',
+            paLocationContainer       : 'palocation',
+            timeframesContainer       : 'timeframes',
+            addPhoneContainer         : 'postnl_add_phonenumber',
+            currencySymbol            : '€',
+            shippingMethodName        : 's_method_postnl_flatrate',
+            postnlShippingMethods     : [
                 's_method_postnl_tablerate', 's_method_postnl_flatrate'
             ]
         }, options || {});
@@ -1993,7 +1994,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             return addLocationWindow;
         }
 
-        return $('postnl_add_location');
+        return $('postnl_add_location_container');
     },
 
     /**
@@ -2068,6 +2069,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         $('close_popup').observe('click', this.closeAddLocationWindow.bind(this));
         $('search_button').observe('click', this.addressSearch.bind(this));
         $('search_field').observe('keydown', this.addressSearch.bind(this));
+        $('responsive_search_button').observe('click', this.addressSearch.bind(this));
+        $('responsive_search_field').observe('keydown', this.addressSearch.bind(this));
         $('location-details-close').observe('click', this.closeLocationInfoWindow.bind(this));
         this.getSaveButton().observe('click', this.saveLocation.bind(this));
         Event.observe(this.getOptions().scrollbarTrack, 'mouse:wheel', this.scrollbar.boundMouseWheelEvent);
@@ -2088,6 +2091,19 @@ PostnlDeliveryOptions.Map = new Class.create({
             this.filter();
         }.bind(this));
 
+        var earlyPickupFilterResp = $('early-filter-responsive');
+        earlyPickupFilterResp.observe('click', function() {
+            if (earlyPickupFilterResp.hasClassName('selected')) {
+                this.setFilterEarly(false);
+                earlyPickupFilterResp.removeClassName('selected');
+            } else {
+                this.setFilterEarly(true);
+                earlyPickupFilterResp.addClassName('selected');
+            }
+
+            this.filter();
+        }.bind(this));
+
         var eveningPickupFilter = $('evening-filter');
         eveningPickupFilter.observe('click', function() {
             if (eveningPickupFilter.hasClassName('selected')) {
@@ -2096,6 +2112,18 @@ PostnlDeliveryOptions.Map = new Class.create({
             } else {
                 this.setFilterEvening(true);
                 eveningPickupFilter.addClassName('selected');
+            }
+            this.filter();
+        }.bind(this));
+
+        var eveningPickupFilterResp = $('evening-filter-responsive');
+        eveningPickupFilterResp.observe('click', function() {
+            if (eveningPickupFilterResp.hasClassName('selected')) {
+                this.setFilterEvening(false);
+                eveningPickupFilterResp.removeClassName('selected');
+            } else {
+                this.setFilterEvening(true);
+                eveningPickupFilterResp.addClassName('selected');
             }
             this.filter();
         }.bind(this));
@@ -2179,9 +2207,12 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         var body = $$('body')[0];
-        if (!this.getOptions().isOsc && !body.hasClassName('noscroll')) {
-            body.addClassName('noscroll');
+        if (!this.getOptions().isOsc) {
+            body.addClassName('responsive-noscroll');
         }
+
+        $$('#postnl_delivery_options .responsive-protector')[0].addClassName('responsive-hidden');
+        $$('#postnl_delivery_options .responsive-switch-wrapper')[0].addClassName('responsive-hidden');
 
         this.getAddLocationWindow().show();
 
@@ -2216,16 +2247,20 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         var body = $$('body')[0];
-        if (!this.getOptions().isOsc && body.hasClassName('noscroll')) {
-            body.removeClassName('noscroll');
+        if (!this.getOptions().isOsc) {
+            body.removeClassName('responsive-noscroll');
         }
+
+        $$('#postnl_delivery_options .responsive-protector')[0].removeClassName('responsive-hidden');
+        $$('#postnl_delivery_options .responsive-switch-wrapper')[0].removeClassName('responsive-hidden');
+
         this.getAddLocationWindow().hide();
 
         return this;
     },
 
     /**
-     * Search for an address. The address can be any value, but a postcode or streetname is recommended.
+     * Search for an address. The address can be any value, but a postcode or street name is recommended.
      *
      * @param {Event} event
      *
@@ -2549,7 +2584,8 @@ PostnlDeliveryOptions.Map = new Class.create({
             console.info('Getting nearest locations...');
         }
 
-        var locationsLoader = $(this.getOptions().locationsLoader);
+        var locationsLoader            = $(this.getOptions().locationsLoader);
+        var responsiveLocationsLoader = $(this.getOptions().responsiveLocationsLoader);
 
         if (checkBounds !== true) {
             checkBounds = false;
@@ -2593,6 +2629,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             },
             onCreate : function() {
                 locationsLoader.show();
+                responsiveLocationsLoader.show();
             },
             onSuccess : function(response) {
                 var responseText = response.responseText;
@@ -2619,6 +2656,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             onComplete : function() {
                 this.setNearestLocationsRequestObject(false);
                 locationsLoader.hide();
+                responsiveLocationsLoader.hide();
             }.bind(this)
         });
 
@@ -2639,7 +2677,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         if (this.debug) {
             console.info('Getting locations within map bounds...');
         }
-        var locationsLoader = $(this.getOptions().locationsLoader);
+        var locationsLoader           = $(this.getOptions().locationsLoader);
+        var responsiveLocationsLoader = $(this.getOptions().responsiveLocationsLoader);
         var map = this.map;
 
         /**
@@ -2680,6 +2719,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             },
             onCreate : function() {
                 locationsLoader.show();
+                responsiveLocationsLoader.show();
             },
             onSuccess : function(response) {
                 var responseText = response.responseText;
@@ -2706,6 +2746,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             onComplete : function() {
                 this.setLocationsInAreaRequestObject(false);
                 locationsLoader.hide();
+                responsiveLocationsLoader.hide();
             }.bind(this)
         });
 
@@ -2902,6 +2943,10 @@ PostnlDeliveryOptions.Map = new Class.create({
             location.remove();
         });
 
+        $$('#responsive_location_list li.location-details').each(function(location) {
+            location.remove();
+        });
+
         /**
          * Reset the markers array.
          */
@@ -2936,7 +2981,7 @@ PostnlDeliveryOptions.Map = new Class.create({
                 renderDistance = false;
             }
 
-            location.renderAsMapLocation('scrollbar_content', renderDistance);
+            location.renderAsMapLocation('scrollbar_content', 'responsive_location_list', renderDistance);
         }
 
         this.recalculateScrollbar();
@@ -3004,6 +3049,11 @@ PostnlDeliveryOptions.Map = new Class.create({
             element = marker.location.getMapElement();
         }
 
+        var responsiveElement = false;
+        if (marker.location.getResponsiveMapElement()) {
+            responsiveElement = marker.location.getResponsiveMapElement();
+        }
+
         var isPa = false;
         if (marker.location.getType().indexOf('PA') > -1) {
             isPa = true;
@@ -3020,8 +3070,12 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
         marker.setZIndex(this.getMarkers().length + 1);
 
-        if (element && !element.hasClassName('selected')) {
+        if (element) {
             element.addClassName('selected');
+        }
+
+        if (responsiveElement) {
+            responsiveElement.select('.radio')[0].addClassName('selected');
         }
 
         this.unselectMarker();
@@ -3106,6 +3160,10 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         if (marker.location && marker.location.getMapElement()) {
             marker.location.getMapElement().removeClassName('selected');
+        }
+
+        if (marker.location && marker.location.getResponsiveMapElement()) {
+            marker.location.getResponsiveMapElement().select('.radio')[0].removeClassName('selected');
         }
 
         var isPa = false;
@@ -3447,6 +3505,7 @@ PostnlDeliveryOptions.Map = new Class.create({
                 var type = location.getType();
                 if (type.indexOf('PGE') < 0 && type.indexOf('PA') < 0) {
                     location.getMapElement().hide();
+                    location.getResponsiveMapElement().hide();
                     location.getMarker().setVisible(false);
 
                     return false;
@@ -3456,6 +3515,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             if (filterEvening) {
                 if (!location.getIsEveningLocation()) {
                     location.getMapElement().hide();
+                    location.getResponsiveMapElement().hide();
                     location.getMarker().setVisible(false);
 
                     return false;
@@ -3463,6 +3523,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
 
             location.getMapElement().show();
+            location.getResponsiveMapElement().show();
             location.getMarker().setVisible(true);
 
             hasVisibleMarkers = true;
@@ -3479,6 +3540,7 @@ PostnlDeliveryOptions.Map = new Class.create({
 
         if (hasVisibleMarkers === true) {
             $('no_locations_error').hide();
+            $('no_locations_error_responsive').hide();
             if (this.hasSelectedMarker()) {
                 this.enableSaveButton();
             } else {
@@ -3486,6 +3548,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             }
         } else {
             $('no_locations_error').show();
+            $('no_locations_error_responsive').show();
             this.disableSaveButton();
         }
 
@@ -3552,28 +3615,29 @@ PostnlDeliveryOptions.Map = new Class.create({
  * the type of location and any html elements associated to this location.
  */
 PostnlDeliveryOptions.Location = new Class.create({
-    elements          : [],
-    tooltipElement    : null,
-    mapElement        : null,
-    tooltipClassName  : null,
+    elements             : [],
+    tooltipElement       : null,
+    mapElement           : null,
+    responsiveMapElement : null,
+    tooltipClassName     : null,
 
-    address           : {},
-    distance          : null,
-    latitude          : null,
-    longitude         : null,
-    name              : null,
-    phoneNumber       : null,
-    openingHours      : null,
-    locationCode      : null,
-    date              : null,
+    address              : {},
+    distance             : null,
+    latitude             : null,
+    longitude            : null,
+    name                 : null,
+    phoneNumber          : null,
+    openingHours         : null,
+    locationCode         : null,
+    date                 : null,
 
-    deliveryOptions   : null,
-    type              : [],
-    isEveningLocation : false,
+    deliveryOptions      : null,
+    type                 : [],
+    isEveningLocation    : false,
 
-    marker            : false,
+    marker               : false,
 
-    oldCenter         : false,
+    oldCenter            : false,
 
     /**
      * Constructor method.
@@ -3634,6 +3698,16 @@ PostnlDeliveryOptions.Location = new Class.create({
 
     setMapElement : function(mapElement) {
         this.mapElement = mapElement;
+
+        return this;
+    },
+
+    getResponsiveMapElement : function() {
+        return this.responsiveMapElement;
+    },
+
+    setResponsiveMapElement : function(mapElement) {
+        this.responsiveMapElement = mapElement;
 
         return this;
     },
@@ -3817,10 +3891,30 @@ PostnlDeliveryOptions.Location = new Class.create({
             headerHtml += '</div>';
         }
 
+        headerHtml += '<a class="responsive-tooltip-open" id="location_tooltip_'
+                    + this.getLocationCode()
+                    + '_responsive_open">'
+                    + Translator.translate('More Info')
+                    + '</a>';
         headerHtml += '</div>';
         headerHtml += '</div>';
         headerHtml += '</div>';
         headerHtml += '</li>';
+
+        if (!noTooltip) {
+            headerHtml += '<li class="responsive-tooltip" id="location_tooltip_'
+                        + this.getLocationCode()
+                        + '_responsive" style="display:none;">';
+            headerHtml += '<div class="content">';
+            headerHtml += this.getResponsiveTooltipHtml();
+            headerHtml += '<div class="close-wrapper" id="location_tooltip'
+                        + this.getLocationCode()
+                        + '_responsive_close">';
+            headerHtml += '<a class="responsive-tooltip-close">' + Translator.translate('Close') + '</a>';
+            headerHtml += '</div>';
+            headerHtml += '</div>';
+            headerHtml += '</li>';
+        }
 
         /**
          * Attach the header to the bottom of the parent element.
@@ -3853,10 +3947,13 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.setElements(elements);
 
         /**
-         * Add observers to display the tooltip on mouseover.
+         * Add observers to display the tooltip on mouseover and the responsive tooltip on click.
          */
-        var tooltipElement = $('location_tooltip_' + this.getLocationCode());
-        var showOnMapAnchor = $('show_map_' + this.getLocationCode());
+        var tooltipElement         = $('location_tooltip_' + this.getLocationCode());
+        var showOnMapAnchor        = $('show_map_' + this.getLocationCode());
+        var responsiveTooltipAnchor = $('location_tooltip_' + this.getLocationCode() + '_responsive_open');
+        var responsiveTooltip      = $('location_tooltip_' + this.getLocationCode() + '_responsive');
+        var responsiveTooltipClose = $('location_tooltip' + this.getLocationCode() + '_responsive_close');
 
         showOnMapAnchor.observe('click', function(event) {
             event.stop();
@@ -3866,6 +3963,20 @@ PostnlDeliveryOptions.Location = new Class.create({
             if (this.getMarker() !== false) {
                 this.getMap().selectMarker(this.getMarker(), true, true);
             }
+        }.bind(this));
+
+        responsiveTooltipAnchor.observe('click', function(event) {
+            event.stop();
+
+            $$('.responsive-tooltip').invoke('hide');
+
+            responsiveTooltip.show();
+        }.bind(this));
+
+        responsiveTooltipClose.observe('click', function(event) {
+            event.stop();
+
+            $$('.responsive-tooltip').invoke('hide');
         }.bind(this));
 
         this.setTooltipElement(tooltipElement);
@@ -4122,6 +4233,44 @@ PostnlDeliveryOptions.Location = new Class.create({
     },
 
     /**
+     * Create the responsive html for this location's tooltip. The tooltip contains address information as well as
+     * information regarding the opening hours of this location.
+     *
+     * @return {string}
+     */
+    getResponsiveTooltipHtml : function() {
+        /**
+         * Get the base tooltip html and the address info.
+         */
+        var address = this.getAddress();
+        var addressText = address.Street + ' ' + address.HouseNr;
+        if (address.HouseNrExt) {
+            addressText += address.HouseNrExt;
+        }
+        addressText += '  ' + Translator.translate('in') + ' ' + address.City;
+
+        html = '<strong class="location-address">' + addressText + '</strong>';
+        html += '<hr class="divider" />';
+        html += '<table class="business-hours">';
+        html += '<thead>';
+        html += '<tr>';
+        html += '<th colspan="2">' + Translator.translate('Business Hours') + '</th>';
+        html += '</tr>';
+        html += '</thead>';
+        html += '<tbody>';
+
+        html += this.getOpeningHoursHtml();
+
+        /**
+         * Close all elements and return the result.
+         */
+        html += '</tbody>';
+        html += '</table>';
+
+        return html;
+    },
+
+    /**
      * Gets html for this location's business hours.
      *
      * Html will be formatted as tr and td elements. This method expects the calling method to provide a container
@@ -4228,12 +4377,13 @@ PostnlDeliveryOptions.Location = new Class.create({
     /**
      * Render this location as a map element. Map elements appear in a list below the google maps interface.
      *
-     * @param {string} parent
+     * @param {string}  parent
+     * @param {string}  responsiveParent
      * @param {boolean} renderDistance
      *
      * @returns {PostnlDeliveryOptions.Location}
      */
-    renderAsMapLocation : function(parent, renderDistance) {
+    renderAsMapLocation : function(parent, responsiveParent, renderDistance) {
         var address = this.getAddress();
 
         /**
@@ -4296,7 +4446,7 @@ PostnlDeliveryOptions.Location = new Class.create({
             bottom: html
         });
 
-        var element = $(id);
+        var element           = $(id);
 
         /**
          * Add observers to this element.
@@ -4405,6 +4555,165 @@ PostnlDeliveryOptions.Location = new Class.create({
         }.bind(this));
 
         this.setMapElement(element);
+
+        /**
+         * Format the address.
+         */
+        var responsiveAddressText = '<strong>' + this.getName() + '</strong><br />';
+        responsiveAddressText += address.Street + ' ' + address.HouseNr + '<br />';
+        if (responsiveAddressText.HouseNrExt) {
+            responsiveAddressText += address.HouseNrExt;
+        }
+        responsiveAddressText += address.Zipcode + ' ' + address.City;
+
+        /**
+         * Get the responsive map location html.
+         */
+        var responsiveId = 'map_location_' + this.getLocationCode() + '_responsive';
+        var responsiveHtml = '<li class="location-details" id="' + responsiveId + '">';
+        responsiveHtml += '<div class="content">';
+        responsiveHtml += '<div class="location-info">';
+        responsiveHtml += '<span class="radio"></span>';
+        responsiveHtml += '<span class="address">';
+        responsiveHtml += responsiveAddressText;
+        responsiveHtml += '</span>';
+        responsiveHtml += '<span class="distance"><strong>' + distanceText + '</strong></span>';
+        responsiveHtml += '</div>';
+        responsiveHtml += '<a href="#" class="info-link" id="'
+                        + responsiveId
+                        + '_info_open">'
+                        + Translator.translate('More info')
+                        + '</a>';
+        responsiveHtml += '</div>';
+        responsiveHtml += '<div class="more-info" id="' + responsiveId + '_info" style="display:none;">';
+        responsiveHtml += '<table class="business-hours">';
+        responsiveHtml += '<thead>';
+        responsiveHtml += '<tr>';
+        responsiveHtml += '<th colspan="2">' + businessHoursText + '</th>';
+        responsiveHtml += '</tr>';
+        responsiveHtml += '</thead>';
+        responsiveHtml += '<tbody>';
+        responsiveHtml += this.getOpeningHoursHtml();
+        responsiveHtml += '</tbody>';
+        responsiveHtml += '</table>';
+        responsiveHtml += '<div class="actions">';
+        responsiveHtml += '<button class="postnl-button" id="'
+                        + responsiveId
+                        + '_select">'
+                        + Translator.translate('Select location')
+                        + '</button>';
+        responsiveHtml += '<button class="postnl-button white" id="'
+                        + responsiveId
+                        + '_map">'
+                        + Translator.translate('Show map')
+                        + '</button>';
+        responsiveHtml += '</div>';
+        responsiveHtml += '<div class="close-wrapper">';
+        responsiveHtml += '<a class="more-info-close" id="'
+                        + responsiveId
+                        + '_info_close">'
+                        + Translator.translate('Close')
+                        + '</a>';
+        responsiveHtml += '</div>';
+        responsiveHtml += '</div>';
+        responsiveHtml += '</li>';
+
+        /**
+         * Attach the location to the bottom of the parent element.
+         */
+        $(responsiveParent).insert({
+            bottom: responsiveHtml
+        });
+
+        var responsiveElement             = $(responsiveId);
+        var responsiveElementInfo         = $(responsiveId + '_info');
+        var responsiveElementInfoAnchor   = $(responsiveId + '_info_open');
+        var responsiveElementInfoClose    = $(responsiveId + '_info_close');
+        var responsiveElementSelectButton = $(responsiveId + '_select');
+        var responsiveElementMapButton    = $(responsiveId + '_map');
+
+        responsiveElement.select('.location-info').invoke('observe', 'click', function(event) {
+            var map = this.getMap();
+
+            event.stop();
+
+            if (!this.getMarker()) {
+                return false;
+            }
+
+            this.setOldCenter(this.getMarker().getPosition());
+
+            map.selectMarker(this.getMarker(), false, true);
+
+            map.saveLocation();
+
+            return true;
+        }.bind(this));
+
+        responsiveElementInfoAnchor.observe('click', function(event) {
+            event.stop();
+
+            responsiveElementInfo.show();
+        });
+
+        responsiveElementInfoClose.observe('click', function(event) {
+            event.stop();
+
+            responsiveElementInfo.hide();
+        });
+
+        responsiveElementSelectButton.observe('click', function(event) {
+            var map = this.getMap();
+
+            event.stop();
+
+            if (!this.getMarker()) {
+                return false;
+            }
+
+            this.setOldCenter(this.getMarker().getPosition());
+
+            map.selectMarker(this.getMarker(), false, true);
+
+            map.saveLocation();
+
+            return true;
+        }.bind(this));
+
+        //http://maps.google.com/?q=Albert%20Heijn%20Gulden%20Winckelplantsoen%205%20Amsterdam&f=d&saddr=Hofwijckstraat%2032%20III%2C%20AMSTERDAM%2C%201055GH%2C%20NL&daddr=52.3786040329176,4.846825820632148
+        responsiveElementMapButton.observe('click', function(event) {
+            event.stop();
+
+            var markerPosition = this.getMarker().getPosition();
+            var mapsUrl = 'http://maps.google.com/?q=';
+
+            mapsUrl += encodeURIComponent(
+                this.getName()
+                + ' '
+                + address.Street
+                + ' '
+                + address.HouseNr
+                + ' '
+                + address.City
+            );
+
+            mapsUrl += '&f=d';
+
+            mapsUrl += '&saddr=' + encodeURIComponent(this.getDeliveryOptions().getFullAddress());
+
+            mapsUrl += '&daddr='
+                     + markerPosition.lat()
+                     + ','
+                     + markerPosition.lng();
+
+            if (this.getDeliveryOptions().debug) {
+                console.info('Opening google maps with url: ' + mapsUrl);
+            }
+
+            window.open(mapsUrl);
+        }.bind(this));
+
+        this.setResponsiveMapElement(responsiveElement);
 
         return this;
     },
