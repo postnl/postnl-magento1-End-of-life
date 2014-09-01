@@ -66,39 +66,51 @@
     <div class="title">
         <h2><?php echo $this->__('Delivery Options'); ?></h2>
     </div>
-    <div class="col2-set">
-        <div id="postnl_delivery" class="col-1">
-            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
-            <ul class="option-list" id="timeframes">
-                <li class="location">
-                    <div class="bkg">
+    <div class="switch-wrapper">
+        <ul class="switch-nav">
+            <li><a id="postnl_switch_pickup" class="active"><?php echo $this->__('Delivery'); ?></a></li>
+            <li><a id="postnl_switch_delivery"><?php echo $this->__('Pickup'); ?></a></li>
+        </ul>
+    </div>  
+
+    <div class="responsive-protector">
+        <div id="postnl_dpu" class="col2-set">
+            <div id="postnl_delivery" class="col-1">
+                <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+                <ul class="option-list" id="timeframes">
+                    <li class="location">
                         <div class="bkg">
-                            <div class="content">
-                                <strong class="location-name overflow-protect"><?php echo $this->escapeHtml($_address->getStreetFull()); ?></strong>
+                            <div class="bkg">
+                                <div class="content">
+                                    <strong class="location-name overflow-protect"><?php echo $this->escapeHtml($_address->getStreetFull()); ?></strong>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
-            <ul class="option-list" id="change_address">
-                <li class="add-location">
-                    <a id="change_address_link" href="#" ><?php echo $this->__('choose a different shipping address'); ?></a>
-                </li>
-            </ul>
-        </div>
-        <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
-            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
-            <ul class="option-list" id="pgelocation"></ul>
-            <ul class="option-list" id="pglocation"></ul>
-            <ul class="option-list" id="palocation"></ul>
-            <ul class="option-list" id="customlocation"></ul>
-            <ul class="option-list" id="add_location">
-                <li class="add-location">
-                    <a id="add_location_link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
-                </li>
-            </ul>
+                    </li>
+                </ul>
+                <ul class="option-list" id="change_address">
+                    <li class="add-location">
+                        <a id="change_address_link" href="#" ><?php echo $this->__('choose a different shipping address'); ?></a>
+                    </li>
+                </ul>
+            </div>
+            <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
+                <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+                <ul class="option-list" id="pgelocation"></ul>
+                <ul class="option-list" id="pglocation"></ul>
+                <ul class="option-list" id="palocation"></ul>
+                <ul class="option-list" id="customlocation"></ul>
+                <ul class="option-list" id="add_location">
+                    <li class="add-location">
+                        <a id="add_location_link" href="#" ><?php echo $this->__('choose a different pickup location'); ?></a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
+
+    
+    
     <?php echo $this->getChildHtml('postnl.add.location') ?>
     <?php echo $this->getChildHtml('postnl.add.phonenumber') ?>
 </div>
@@ -145,7 +157,7 @@
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
         allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
         allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
-        disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
+        disableCufon           : <?php echo $this->getUseCufon()             ? 'true' : 'true'; ?>,
         isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,
         shippingMethodName     : '<?php echo $this->getMethodName()          ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
         currencySymbol         : '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(); ?>'
@@ -253,6 +265,66 @@
                 );
             }
         }
+    });
+    
+    /**
+     * Delivery and Pickup switch for Responsive purposes
+     */
+    window.siteWidth = $("postnl_delivery_options").offsetWidth;
+
+    window.setSiteWidth = function() {
+        console.log('resize triggered');
+        $("postnl_pickup").setStyle({
+            "min-width" : siteWidth + "px"
+        });
+        $("postnl_delivery").setStyle({
+            "min-width" : siteWidth + "px"
+        });
+    };
+    
+    document.observe('postnl:loadingFinished', function() {
+        window.siteWidth = $("postnl_delivery_options").offsetWidth;
+        setSiteWidth();
+    });
+    
+    Event.observe(window, "resize", function() {
+        window.siteWidth = $("postnl_delivery_options").offsetWidth;
+        setSiteWidth();
+        
+        $("postnl_dpu").setStyle({
+            "-webkit-transform" : "translate3d(0, 0, 0)",
+            "-o-transform" : "translate3d(0, 0, 0)",
+            "transform" : "translate3d(0, 0, 0)",
+        });
+        
+        $("postnl_switch_delivery").removeClassName('active');
+        $("postnl_switch_pickup").addClassName('active');
+    });
+
+    var switchDelivery = $("postnl_switch_delivery");
+    switchDelivery.stopObserving('click');
+    switchDelivery.observe("click", function() {
+        $("postnl_dpu").setStyle({
+            "-webkit-transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
+            "-o-transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
+            "transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
+        });
+        
+        $("postnl_switch_pickup").removeClassName('active');
+        $("postnl_switch_delivery").addClassName('active');
+    });
+
+    var switchPickup = $("postnl_switch_pickup");
+    switchPickup.stopObserving('click');
+    switchPickup.observe("click", function() {
+        $("postnl_dpu").setStyle({
+            "-webkit-transform" : "translate3d(0, 0, 0)",
+            "-o-transform" : "translate3d(0, 0, 0)",
+            "transform" : "translate3d(0, 0, 0)",
+        });
+
+        $("postnl_switch_delivery").removeClassName('active');
+        $("postnl_switch_pickup").addClassName('active');
     });
     //]]>
 </script>

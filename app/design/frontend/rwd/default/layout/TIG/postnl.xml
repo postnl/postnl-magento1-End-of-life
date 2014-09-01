@@ -197,6 +197,7 @@
                 <type>skin_js</type>
                 <file>js/TIG/PostNL/postcodecheck.js</file>
             </action>
+            <block type="core/template" name="postnl_deliveryoptions_css" template="TIG/PostNL/delivery_options/css.phtml"/>
             <block type="postnl_deliveryoptions/theme" name="postnl_deliveryoptions_theme" template="TIG/PostNL/delivery_options/theme.phtml"/>
         </reference>
         <reference name="checkout.onepage.billing">
