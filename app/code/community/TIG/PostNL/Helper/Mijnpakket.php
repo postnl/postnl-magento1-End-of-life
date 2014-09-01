@@ -115,6 +115,11 @@ class TIG_PostNL_Helper_Mijnpakket extends TIG_PostNL_Helper_Data
         return true;
     }
 
+    /**
+     * Check if the MijnPakket notification may be shown.
+     *
+     * @return bool
+     */
     public function canShowMijnpakketNotification()
     {
         $cache = $this->getCache();

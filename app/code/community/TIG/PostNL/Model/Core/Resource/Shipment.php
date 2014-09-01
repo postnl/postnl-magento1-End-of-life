@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_Resource_Shipment extends Mage_Core_Model_Resource_Db_Abstract
+class TIG_PostNL_Model_Core_Resource_Shipment extends TIG_PostNL_Model_Resource_Db_Abstract
 {
     public function _construct()
     {

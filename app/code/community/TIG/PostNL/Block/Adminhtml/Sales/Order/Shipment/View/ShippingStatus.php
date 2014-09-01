@@ -62,6 +62,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_ShippingStatus extend
       */
     public function getShippingStatus($shipment)
      {
+         /**
+          * @var TIG_PostnL_Model_Core_Shipment $postnlShipment
+          */
          $postnlShipment = Mage::getModel('postnl_core/shipment')->load($shipment->getId(), 'shipment_id');
 
         /**
@@ -95,7 +98,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_ShippingStatus extend
     /**
      * Checks if a given shipment has been confirmed with PostNL
      *
-     * @param Mage_Sales_Model_Order_Shipment
+     * @param Mage_Sales_Model_Order_Shipment $shipment
      *
      * @return boolean
      */

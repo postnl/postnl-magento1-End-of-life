@@ -49,7 +49,12 @@
 <?php $_housenumber             = $_streetData['housenumber']; ?>
 
 <?php $_canUsePakjeGemak        = $this->canUsePakjeGemak(); ?>
-<?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
+
+<?php $_canUsePakjeGemakExpress = false; ?>
+<?php if ($_canUsePakjeGemak): ?>
+    <?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
+<?php endif; ?>
+
 <?php $_canUsePakketAutomaat    = $this->canUsePakketAutomaat(); ?>
 
 <?php $_canAddLocation = true; ?>
@@ -111,7 +116,7 @@
 
     var options;
     var params;
-    var debug = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
+    var postnlDebugMode = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
 
     params = {
         saveUrl            : '<?php echo $this->getUrl('postnl/deliveryOptions/saveSelectedOption', array('_secure' => true)) ?>',
@@ -136,18 +141,24 @@
         allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
         allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
         allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
+        allowDeliveryDays      : <?php echo $this->canUseDeliveryDays()      ? 'true' : 'false'; ?>,
         allowTimeframes        : <?php echo $this->canUseTimeframes()        ? 'true' : 'false'; ?>,
         allowEveningTimeframes : <?php echo $this->canUseEveningTimeframes() ? 'true' : 'false'; ?>,
         allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
         disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
+        isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,
         shippingMethodName     : '<?php echo $this->getMethodName()          ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
         currencySymbol         : '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(); ?>'
     };
 
     try {
-        deliveryOptions = new PostnlDeliveryOptions(params, options, debug);
+        deliveryOptions = new PostnlDeliveryOptions(params, options, postnlDebugMode);
     } catch(e) {
-        console.log(e);
+        $('initial_loader').hide();
+        $('postnl_delivery_options').hide();
+        $('postnl_delivery_options').up().hide();
+        $('postnl_pickup').hide();
+        console.error(e);
     }
 
     if (typeof deliveryOptions != 'undefined') {
@@ -155,11 +166,11 @@
             deliveryOptions.showOptions();
             window.deliveryOptions = deliveryOptions;
         } catch(e) {
-            console.log(e);
             $('initial_loader').hide();
             $('postnl_delivery_options').show();
             $('postnl_pickup').hide();
             deliveryOptions.showDefaultTimeframe();
+            console.error(e);
         }
     } else {
         $('initial_loader').hide();
@@ -171,6 +182,11 @@
     changeAddressLink.stopObserving('click');
     changeAddressLink.observe('click', function() {
         checkout.gotoSection('shipping');
+    });
+
+    document.stopObserving('postnl:selectOptionSaved');
+    document.observe('postnl:selectOptionSaved', function() {
+        checkout.reloadProgressBlock('shipping_method');
     });
 
     /**
@@ -194,11 +210,30 @@
         save: function(){
             if (checkout.loadWaiting!=false) return;
             if (this.validate()) {
-                var continueWithSave = false;
-                if (deliveryOptions) {
+                var continueWithSave;
+                var selectedShippingMethod = $$('#co-shipping-method-form input:checked[name="shipping_method"]')[0];
+                if (selectedShippingMethod.identify() == '<?php echo $this->getMethodName() ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>') {
+                    if (postnlDebugMode) {
+                        console.info('Selected shipping method is linked to PostNL delivery options.');
+                    }
+                    continueWithSave = false;
+                } else {
+                    if (postnlDebugMode) {
+                        console.info('Selected shipping method is not linked to PostNL delivery options.');
+                    }
+                    continueWithSave = true;
+                }
+
+                if (deliveryOptions && !continueWithSave) {
                     continueWithSave = deliveryOptions.saveSelectedOption();
                 } else {
                     continueWithSave = true;
+                }
+
+                if (continueWithSave && postnlDebugMode) {
+                    console.info('Saving the shipping method is allowed.');
+                } else if (postnlDebugMode) {
+                    console.info('Saving the shipping method is not allowed.');
                 }
 
                 if (!continueWithSave) {
@@ -206,7 +241,7 @@
                 }
 
                 checkout.setLoadWaiting('shipping-method');
-                var request = new Ajax.Request(
+                new Ajax.Request(
                     this.saveUrl,
                     {
                         method:'post',

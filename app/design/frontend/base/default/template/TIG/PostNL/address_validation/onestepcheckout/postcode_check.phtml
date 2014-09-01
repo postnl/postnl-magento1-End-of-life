@@ -145,7 +145,7 @@
     <?php endfor; ?>
 </div>
 <script type="text/javascript">
-//<![CDATA[
+    //<![CDATA[
     <?php for ($_i = 4, $_n = $this->helper('customer/address')->getStreetLines(); $_i <= $_n; $_i++): ?>
         $('virtual:<?php echo $_addressType; ?>:street<?php echo $_i; ?>').observe('change', function(event) {
             var element = Event.element(event);
@@ -171,5 +171,137 @@
         postcodeCheck<?php echo $_addressType; ?>.timeoutDelay = '<?php echo $_timeoutDelay; ?>';
         postcodeCheck<?php echo $_addressType; ?>.init();
     });
-//]]>
+
+    function addressPreview(templates, target) {
+        var items;
+        var value;
+        var index;
+        var selectText;
+        var billinga_template;
+        var shippinga_template;
+
+        var bparams = {};
+        var sparams = {};
+
+        var savedBillingItems = $('billing-address-select');
+
+        if(savedBillingItems && savedBillingItems.getValue()){
+            index = savedBillingItems.selectedIndex;
+            bparams = customerBAddresses[index];
+        } else {
+            items = $$('input[name^=billing]').concat($$('select[name^=billing]'));
+            items.each(function(s) {
+                if(s.getStyle('display') == 'none'
+                    && s.id != 'billing:street1'
+                    && s.id != 'billing:street2'
+                    && s.id != 'billing:street3'
+                ){
+                    return;
+                }
+
+                selectText = s.options;
+                if(selectText){
+                    value = selectText[s.selectedIndex].text;
+                } else {
+                    value = s.getValue();
+                }
+                if(value){
+                    value = '<span class="' + s.id.replace(':','-') + '">' + value.escapeHTML() + '</span>';
+                }
+                if(s.id == 'billing:region_id'){
+                    bparams['billing:region'] = value;
+                } else {
+                    bparams[s.id] = value;
+                }
+            });
+        }
+
+        var savedShippingItems = $('shipping-address-select');
+        if(savedShippingItems && savedShippingItems.getValue()){
+            index = savedShippingItems.selectedIndex;
+            sparams = customerSAddresses[index];
+        } else {
+            items = $$('input[name^=shipping]').concat($$('select[name^=shipping]'));
+            items.each(function(s) {
+                if(s.getStyle('display') == 'none'
+                    && s.id != 'shipping:street1'
+                    && s.id != 'shipping:street2'
+                    && s.id != 'shipping:street3'
+                ){
+                    return;
+                }
+
+                selectText = s.options;
+                if(selectText){
+                    value = selectText[s.selectedIndex].text;
+                } else {
+                    value = s.getValue();
+                }
+                if(value){
+                    value = '<span class="' + s.id.replace(':','-') + '">' + value.escapeHTML() + '</span>';
+                }
+                if(s.id == 'shipping:region_id'){
+                    sparams['shipping:region'] = value;
+                } else {
+                    sparams[s.id] = value;
+                }
+            });
+        }
+
+        var form = $('onestepcheckout-form');
+
+        var shipping_method = $RF(form, 'shipping_method');
+        if(shipping_method){
+            var shipping_label = $('s_method_' + shipping_method).up('dt').down('label').innerHTML.stripScripts();
+            var shipping_title = $('s_method_' + shipping_method).up('dt').previous('dd').innerHTML.stripScripts();
+            var shipping_row = shipping_title + ' - ' + shipping_label
+        }
+
+        var useOnlyBilling = $('billing:use_for_shipping_yes').getValue();
+        billinga_template = new Template(templates.billing);
+
+        if(useOnlyBilling){
+            shippinga_template = new Template(templates.billing);
+        }else{
+            shippinga_template = new Template(templates.shipping);
+        }
+
+        var payment_method = payment.currentMethod;
+
+        if(payment_method){
+            var payment_label = $('p_method_'+payment_method).up('dt').down('label').innerHTML.stripScripts();
+        }
+
+        var targetelem = $(target + '_billinga').childElements()[1];
+        if(targetelem){
+            targetelem.update(billinga_template.evaluate(bparams));
+        }
+
+        var targetelem = $(target + '_shippinga').childElements()[1];
+        if(targetelem){
+            if(useOnlyBilling){
+                targetelem.update(shippinga_template.evaluate(bparams));
+            }else{
+                targetelem.update(shippinga_template.evaluate(sparams));
+            }
+        }
+
+        var targetelem = $(target + '_shipping').childElements()[1];
+        if(targetelem){
+            targetelem.update(shipping_row);
+        }
+
+        var targetelem = $(target + '_payment').childElements()[1];
+        if(targetelem){
+            targetelem.update(payment_label);
+        }
+
+        var targetelem = $(target + '_summary').childElements()[1];
+        if(targetelem){
+            targetelem.update('');
+            targetelem.insert($$('table.onestepcheckout-summary')[0].cloneNode(true));
+            targetelem.insert($$('table.onestepcheckout-totals')[0].cloneNode(true));
+        }
+    }
+    //]]>
 </script>

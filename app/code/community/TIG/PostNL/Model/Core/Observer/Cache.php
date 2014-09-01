@@ -38,6 +38,15 @@
  */
 class TIG_PostNL_Model_Core_Observer_Cache
 {
+    /**
+     * Cleans the PostNL config cache after PostNL's configuration has been saved.
+     *
+     * @return $this
+     *
+     * @event admin_system_config_changed_section_postnl|admin_system_config_changed_section_carrier
+     *
+     * @observer postnl_clean_cache
+     */
     public function cleanCache()
     {
         $cache = Mage::getSingleton('postnl_core/cache');

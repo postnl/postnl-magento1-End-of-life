@@ -41,28 +41,27 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Xml path to maximum file storage setting in system/config
      */
-    const XML_PATH_MAX_FILE_STORAGE  = 'postnl/advanced/max_temp_file_storage_time';
+    const XPATH_MAX_FILE_STORAGE  = 'postnl/advanced/max_temp_file_storage_time';
 
     /**
      * XML path to confirmation expire time setting
      */
-    const XML_PATH_CONFIRM_EXPIRE_DAYS = 'postnl/advanced/confirm_expire_days';
+    const XPATH_CONFIRM_EXPIRE_DAYS = 'postnl/advanced/confirm_expire_days';
 
     /**
      * XML path to setting that determines whether or not to send track and trace emails
      */
-    const XML_PATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
+    const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
 
     /**
      * Method to destroy temporary label files that have been stored for too long.
      *
-     * By default the PostNL module creates temporary label files in order to merge them into
-     * a single shipping label. These files are then destroyed. However, sometimes these files
-     * may survive the script if the script has encountered an error. This method will make
-     * sure these files will not survive indefinitely, which may lead to the file system
-     * being overburdened or the server running out of harddrive space.
+     * By default the PostNL module creates temporary label files in order to merge them into a single shipping label.
+     * These files are then destroyed. However, sometimes these files may survive the script if the script has
+     * encountered an error. This method will make sure these files will not survive indefinitely, which may lead to the
+     * file system being overburdened or the server running out of hard drive space.
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -93,7 +92,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Check the maximum amount of time a temp file may be stored. By default this is 300s (5m).
          * If this settings is empty, end the script.
          */
-        $maxFileStorageTime = (int) Mage::getStoreConfig(self::XML_PATH_MAX_FILE_STORAGE, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $maxFileStorageTime = (int) Mage::getStoreConfig(
+            self::XPATH_MAX_FILE_STORAGE,
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
         if (empty($maxFileStorageTime)) {
             $helper->cronLog('No max file storage time defined. Exiting cron.');
             return $this;
@@ -107,6 +109,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
          */
         $labelModel = Mage::app()->getConfig()->getModelClassName('postnl_core/label');
         $tempLabelName = $labelModel::TEMP_LABEL_FILENAME;
+
+        $helper->cronLog('Attempting to read temp label files from %s.', $tempLabelsDirectory);
 
         /**
          * Get all temporary label files in the directory
@@ -147,7 +151,9 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             $time = $nameParts[1];
             if ((time() - $time) < $maxFileStorageTime) {
-                $helper->cronLog("File {$filename} is less than {$maxFileStorageTime}s old. Continuing with the next file.");
+                $helper->cronLog(
+                    "File {$filename} is less than {$maxFileStorageTime}s old. Continuing with the next file."
+                );
                 continue;
             }
 
@@ -165,7 +171,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Method to destroy old lock files.
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      *
      * @throws TIG_PostNL_Exception
      */
@@ -190,6 +196,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
             $helper->cronLog('Locks directory not found. Exiting cron.');
             return $this;
         }
+
+        $helper->cronLog('Attempting to read lock files from %s.', $locksDirectory);
 
         /**
          * Get all PostNL lock files in the directory
@@ -254,7 +262,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Retrieve barcodes for postnl shipments that do not have one.
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     public function getBarcodes()
     {
@@ -273,7 +281,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Get all postnl shipments without a barcode
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
-        $postnlShipmentCollection->addFieldToFilter('main_barcode', array('null' => true));
+        $postnlShipmentCollection->addFieldToFilter('main_barcode', array('null' => true))
+                                 ->addFieldToFilter('shipment_id', array('notnull' => true));
 
         if ($postnlShipmentCollection->getSize() < 1) {
             $helper->cronLog('No valid shipments found. Exiting cron.');
@@ -284,12 +293,20 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         $counter = 1000;
         foreach ($postnlShipmentCollection as $postnlShipment) {
+            if (!$postnlShipment->getShipment(false)) {
+                continue;
+            }
+
             /**
-             * Process a maximum of 1000 shipments (to prevent Cif from being overburdoned).
-             * Only successfull requests count towards this number
+             * Process a maximum of 1000 shipments (to prevent Cif from being overburdened).
+             * Only successful requests count towards this number
              */
             if ($counter < 1) {
                 break;
+            }
+
+            if (!$postnlShipment->canGenerateBarcode()) {
+                continue;
             }
 
             /**
@@ -314,7 +331,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Update shipping status for all confirmed, but undelivered shipments.
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     public function updateShippingStatus()
     {
@@ -354,6 +371,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                          array('neq' => $deliveredStatus),
                                          array('null' => true)
                                      )
+                                 )
+                                 ->addFieldToFilter(
+                                     'shipment_id',
+                                     array(
+                                         'notnull' => true
+                                     )
                                  );
 
         if ($postnlShipmentCollection->getSize() < 1) {
@@ -371,7 +394,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
              * Attempt to update the shipping status. Continue with the next one if it fails.
              */
             try{
-                if (!$postnlShipment->getShipment()) {
+                if (!$postnlShipment->getShipment(false)) {
                     continue;
                 }
 
@@ -379,7 +402,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
                 if (!$postnlShipment->canUpdateShippingStatus()) {
                     $postnlShipment->unlock();
-                    $helper->cronLog("Updating shipment #{$postnlShipment->getShipment()->getId()} is not allowed. Continuing with next shipment.");
+                    $helper->cronLog("Updating shipment #{$postnlShipment->getShipment()->getId()} is not allowed. " .
+                        "Continuing with next shipment.");
                     continue;
                 }
 
@@ -407,7 +431,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      * @param TIG_PostNL_Model_Core_Cif_Exception $e
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     protected function _parseErrorCodes($e, $postnlShipment)
     {
@@ -440,8 +464,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
              * Check if the shipment was confirmed more than a day ago
              */
             $confirmedAt = strtotime($postnlShipment->getConfirmedAt());
+            $yesterday = new DateTime();
+            $yesterday->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+                      ->sub(new DateInterval('P1D'));
+
             $now = Mage::getModel('core/date')->gmtTimestamp();
-            $yesterday = strtotime('-1 day', $now);
+            $yesterday = $yesterday->getTimestamp();
 
             if ($confirmedAt > $yesterday) {
                 return $this;
@@ -466,7 +494,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * Removes expired confirmations by resetting the postnl shipment to a pre-confirm state
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     public function expireConfirmation()
     {
@@ -488,15 +516,22 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
         $collectionPhase = $postnlShipmentModelClass::SHIPPING_PHASE_COLLECTION;
 
-        $confirmationExpireDays = Mage::getStoreConfig(self::XML_PATH_CONFIRM_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
-        $expireTimestamp = strtotime("-{$confirmationExpireDays} days", Mage::getModel('core/date')->gmtTimestamp());
-        $expireDate = date('Y-m-d H:i:s', $expireTimestamp);
+        $confirmationExpireDays = Mage::getStoreConfig(
+            self::XPATH_CONFIRM_EXPIRE_DAYS,
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        $expireTimestamp = new DateTime();
+        $expireTimestamp->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+                        ->sub(new DateInterval("P{$confirmationExpireDays}D"));
+
+        $expireDate = $expireTimestamp->format('Y-m-d H:i:s');
 
         $helper->cronLog("All confirmation placed before {$expireDate} will be expired.");
 
         /**
-         * Get all postnl shipments that have been confirmed over X days ago and who have not yet been shipped (shipping_phase
-         * other than 'collection')
+         * Get all postnl shipments that have been confirmed over X days ago and who have not yet been shipped
+         * (shipping_phase other than 'collection')
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter(
@@ -515,6 +550,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                      array(
                                          array('lt' => $expireDate),
                                          array('null' => true)
+                                     )
+                                 )
+                                 ->addFieldToFilter(
+                                     'shipment_id',
+                                     array(
+                                         'notnull' => true
                                      )
                                  );
 
@@ -536,11 +577,21 @@ class TIG_PostNL_Model_Core_Observer_Cron
              * Attempt to reset the shipment to a pre-confirmed status
              */
             try{
+                if (!$postnlShipment->getShipment(false)) {
+                    continue;
+                }
+
                 $helper->cronLog("Expiring confirmation of shipment #{$postnlShipment->getId()}");
                 $postnlShipment->resetConfirmation()
-                               ->setConfirmStatus($postnlShipment::CONFIRM_STATUS_CONFIRM_EXPIRED)
-                               ->generateBarcodes() //generate new barcodes as the current ones have expired
-                               ->save();
+                               ->setConfirmStatus($postnlShipment::CONFIRM_STATUS_CONFIRM_EXPIRED);
+
+                /**
+                 * Generate new barcodes as the current ones have expired.
+                 */
+                if ($postnlShipment->canGenerateBarcode()) {
+                    $postnlShipment->generateBarcodes();
+                }
+                $postnlShipment->save();
             } catch (Exception $e) {
                 $helper->logException($e);
             }
@@ -551,16 +602,16 @@ class TIG_PostNL_Model_Core_Observer_Cron
     }
 
     /**
-     * Send a track & trace e-mail to the customer
+     * Send a track & trace e-mail to the customer.
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     public function sendTrackAndTraceEmail()
     {
         $helper = Mage::helper('postnl');
 
         /**
-         * Check if the PostNL module is active
+         * Check if the PostNL module is active.
          */
         if (!$helper->isEnabled()) {
             return $this;
@@ -569,11 +620,11 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog('SendTrackAndTraceEmail cron starting...');
 
         /**
-         * Check each storeview if sending track & trace emails is allowed
+         * Check each storeview if sending track & trace emails is allowed.
          */
         $allowedStoreIds = array();
         foreach (array_keys(Mage::app()->getStores()) as $storeId) {
-            if (Mage::getStoreConfig(self::XML_PATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId)) {
+            if (Mage::getStoreConfig(self::XPATH_SEND_TRACK_AND_TRACE_EMAIL, $storeId)) {
                 $allowedStoreIds[] = $storeId;
             }
         }
@@ -589,13 +640,18 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $postnlShipmentModelClass = Mage::getConfig()->getModelClassName('postnl_core/shipment');
         $confirmedStatus = $postnlShipmentModelClass::CONFIRM_STATUS_CONFIRMED;
 
-        $twentyMinutesAgo = strtotime("-20 minutes", Mage::getModel('core/date')->gmtTimestamp());
-        $twentyMinutesAgo = date('Y-m-d H:i:s', $twentyMinutesAgo);
+        $twentyMinutesAgo = new DateTime();
+        $twentyMinutesAgo->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
+                         ->sub(new DateInterval('PT20M'));
 
-        $helper->cronLog("Track and trace email will be sent for all shipments that were confirmed on or before {$twentyMinutesAgo}.");
+        $twentyMinutesAgo = $twentyMinutesAgo->format('Y-m-d H:i:s');
+
+        $helper->cronLog("Track and trace email will be sent for all shipments that were confirmed on or before " .
+            "{$twentyMinutesAgo}.");
 
         /**
-         * Get all postnl shipments that have been confirmed over 20 minutes ago whose track & trace e-mail has not yet been sent
+         * Get all postnl shipments that have been confirmed over 20 minutes ago whose track & trace e-mail has not yet
+         * been sent
          *
          * Resulting SQL:
          * SELECT `main_table` . *
@@ -619,6 +675,9 @@ class TIG_PostNL_Model_Core_Observer_Cron
          *         )
          *     )
          * )
+         * AND (
+         *     shipment_id IS NOT NULL
+         * )
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter(
@@ -639,6 +698,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                         array('null' => true),
                                         array('eq' => '0')
                                     )
+                                 )
+                                 ->addFieldToFilter(
+                                     'shipment_id',
+                                     array(
+                                         'notnull' => true
+                                     )
                                  );
 
         /**
@@ -655,12 +720,18 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Send the track and trace email for all shipments
          */
         foreach ($postnlShipmentCollection as $postnlShipment) {
+            if (!$postnlShipment->getShipment(false)) {
+                continue;
+            }
+
             /**
              * Check if sending the email is allowed for this shipment
              */
             $storeId = $postnlShipment->getStoreId();
             if (!in_array($storeId, $allowedStoreIds) || !$postnlShipment->canSendTrackAndTraceEmail()) {
-                $helper->cronLog("Sending the track and trace email is not allowed for shipment #{$postnlShipment->getId()}.");
+                $helper->cronLog(
+                    "Sending the track and trace email is not allowed for shipment #{$postnlShipment->getId()}."
+                );
                 continue;
             }
 
@@ -682,9 +753,10 @@ class TIG_PostNL_Model_Core_Observer_Cron
     }
 
     /**
-     * Deletes labels belonging to shipments that have been delievered as well as labels who have no associated shipments.
+     * Deletes labels belonging to shipments that have been delivered as well as labels who have no associated
+     * shipments.
      *
-     * @return TIG_PostNL_Model_Core_Observer_Cron
+     * @return $this
      */
     public function removeOldLabels()
     {
@@ -700,7 +772,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog('RemoveOldLabels cron starting...');
 
         /**
-         * Get the PostNL Shipment classname for later use
+         * Get the PostNL Shipment class name for later use
          *
          * @var $postnlShipmentClass TIG_PostNL_Model_Core_Shipment
          */
@@ -737,7 +809,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
          * Resulting query:
          * SELECT `main_table`.`label_id` , `postnl_shipment`.`shipping_phase`
          * FROM `tig_postnl_shipment_label` AS `main_table`
-         * LEFT JOIN `tig_postnl_shipment` AS `postnl_shipment` ON `main_table`.`parent_id` = `postnl_shipment`.`entity_id`
+         * LEFT JOIN `tig_postnl_shipment` AS `postnl_shipment`
+         *     ON `main_table`.`parent_id` = `postnl_shipment`.`entity_id`
          * WHERE (
          *     (
          *         parent_id IS NULL

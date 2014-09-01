@@ -50,145 +50,194 @@ $conn = $installer->getConnection();
  * POSTNL SHIPMENT
  **********************************************************************************************************************/
 
-$conn->addColumn($installer->getTable('postnl_core/shipment'),
-    'is_parcelware_exported',
-    array(
-        'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
-        'nullable' => false,
-        'default'  => 0,
-        'comment'  => 'Is Parcelware Exported',
-        'after'    => 'labels_printed',
-    )
-);
+$tableName = $installer->getTable('postnl_core/shipment');
 
-$conn->addColumn($installer->getTable('postnl_core/shipment'),
-    'delivery_date',
-    array(
-        'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
-        'nullable' => true,
-        'comment'  => 'Delivery Date',
-        'after'    => 'confirm_date',
-    )
-);
+if (!$conn->tableColumnExists($tableName, 'is_parcelware_exported')) {
+    $conn->addColumn(
+        $tableName,
+        'is_parcelware_exported',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+            'nullable' => false,
+            'default'  => 0,
+            'comment'  => 'Is Parcelware Exported',
+            'after'    => 'labels_printed',
+        )
+    );
+}
 
-$conn->addColumn($installer->getTable('postnl_core/shipment'),
-    'is_pakketautomaat',
-    array(
-        'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
-        'nullable' => false,
-        'default'  => 0,
-        'comment'  => 'Is Pakketautomaat',
-        'after'    => 'is_pakje_gemak',
-    )
-);
+if (!$conn->tableColumnExists($tableName, 'delivery_date')) {
+    $conn->addColumn(
+        $tableName,
+        'delivery_date',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
+            'nullable' => true,
+            'comment'  => 'Delivery Date',
+            'after'    => 'confirm_date',
+        )
+    );
+}
+
+if (!$conn->tableColumnExists($tableName, 'is_pakketautomaat')) {
+    $conn->addColumn(
+        $tableName,
+        'is_pakketautomaat',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+            'nullable' => true,
+            'default'  => 0,
+            'comment'  => 'Is Pakketautomaat',
+            'after'    => 'is_pakje_gemak',
+        )
+    );
+}
 
 /**
  * Modify the shipment_type column to avoid confusion with the PostNL order's 'type' column.
  */
-$conn->changeColumn($installer->getTable('postnl_core/shipment'),
-    'shipment_type',
-    'globalpack_shipment_type',
-    array(
-        'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
-        'length'   => 32,
-        'nullable' => true,
-        'comment'  => 'GlobalPack Shipment Type',
-    )
-);
+if ($conn->tableColumnExists($tableName, 'shipment_type')) {
+    $conn->changeColumn(
+        $tableName,
+        'shipment_type',
+        'globalpack_shipment_type',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'length'   => 32,
+            'nullable' => true,
+            'comment'  => 'GlobalPack Shipment Type',
+        )
+    );
+}
 
 /***********************************************************************************************************************
  * POSTNL ORDER
  **********************************************************************************************************************/
 
-$conn->addColumn($installer->getTable('postnl_core/order'),
-    'type',
-    array(
-        'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
-        'nullable' => true,
-        'default'  => null,
-        'comment'  => 'Type',
-        'after'    => 'quote_id',
-    )
-);
+$tableName = $installer->getTable('postnl_core/order');
 
-$conn->addColumn($installer->getTable('postnl_core/order'),
-    'shipment_costs',
-    array(
-        'type'     => Varien_Db_Ddl_Table::TYPE_FLOAT,
-        'nullable' => true,
-        'default'  => 0,
-        'comment'  => 'Shipment Costs',
-        'after'    => 'product_code',
-    )
-);
+if (!$conn->tableColumnExists($tableName, 'type')) {
+    $conn->addColumn(
+        $tableName,
+        'type',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'nullable' => true,
+            'default'  => null,
+            'comment'  => 'Type',
+            'after'    => 'quote_id',
+        )
+    );
+}
 
-$conn->addColumn($installer->getTable('postnl_core/order'),
-    'mobile_phone_number',
-    array(
-        'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
-        'nullable' => true,
-        'default'  => null,
-        'comment'  => 'Mobile Phone Number',
-        'after'    => 'is_pakje_gemak',
-    )
-);
+if (!$conn->tableColumnExists($tableName, 'shipment_costs')) {
+    $conn->addColumn(
+        $tableName,
+        'shipment_costs',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_FLOAT,
+            'nullable' => true,
+            'default'  => 0,
+            'comment'  => 'Shipment Costs',
+            'after'    => 'product_code',
+        )
+    );
+}
 
-$conn->addColumn($installer->getTable('postnl_core/order'),
-    'is_pakketautomaat',
-    array(
-        'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
-        'nullable' => true,
-        'default'  => 0,
-        'comment'  => 'Is Pakketautomaat',
-        'after'    => 'is_pakje_gemak',
-    )
-);
+if (!$conn->tableColumnExists($tableName, 'mobile_phone_number')) {
+    $conn->addColumn(
+        $tableName,
+        'mobile_phone_number',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'nullable' => true,
+            'default'  => null,
+            'comment'  => 'Mobile Phone Number',
+            'after'    => 'is_pakje_gemak',
+        )
+    );
+}
+
+if (!$conn->tableColumnExists($tableName, 'is_pakketautomaat')) {
+    $conn->addColumn(
+        $tableName,
+        'is_pakketautomaat',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+            'nullable' => true,
+            'default'  => 0,
+            'comment'  => 'Is Pakketautomaat',
+            'after'    => 'is_pakje_gemak',
+        )
+    );
+}
 
 /***********************************************************************************************************************
  * POSTNL TABLERATE
  **********************************************************************************************************************/
 
-$table = $installer->getConnection()
-                   ->newTable($installer->getTable('postnl_carrier/tablerate'));
+$tableName = $installer->getTable('postnl_carrier/tablerate');
 
-$table->addColumn('pk', Varien_Db_Ddl_Table::TYPE_INTEGER, null,
-    array(
-        'identity'  => true,
-        'unsigned'  => true,
-        'nullable'  => false,
-        'primary'   => true,
-    ), 'Primary key')
-    ->addColumn('website_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-        'nullable'  => false,
-        'default'   => '0',
-    ), 'Website Id')
-    ->addColumn('dest_country_id', Varien_Db_Ddl_Table::TYPE_TEXT, 4, array(
-        'nullable'  => false,
-        'default'   => '0',
-    ), 'Destination country ISO/2 or ISO/3 code')
-    ->addColumn('dest_region_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-        'nullable'  => false,
-        'default'   => '0',
-    ), 'Destination Region Id')
-    ->addColumn('dest_zip', Varien_Db_Ddl_Table::TYPE_TEXT, 10, array(
-        'nullable'  => false,
-        'default'   => '*',
-    ), 'Destination Post Code (Zip)')
-    ->addColumn('condition_name', Varien_Db_Ddl_Table::TYPE_TEXT, 20, array(
-        'nullable'  => false,
-    ), 'Rate Condition name')
-    ->addColumn('condition_value', Varien_Db_Ddl_Table::TYPE_DECIMAL, '12,4', array(
-        'nullable'  => false,
-        'default'   => '0.0000',
-    ), 'Rate condition value')
-    ->addColumn('price', Varien_Db_Ddl_Table::TYPE_DECIMAL, '12,4', array(
-        'nullable'  => false,
-        'default'   => '0.0000',
-    ), 'Price')
-    ->addColumn('cost', Varien_Db_Ddl_Table::TYPE_DECIMAL, '12,4', array(
-        'nullable'  => false,
-        'default'   => '0.0000',
-    ), 'Cost')
+if (!$conn->isTableExists($tableName)) {
+    $table = $installer->getConnection()
+                       ->newTable($tableName);
+
+    $table->addColumn(
+        'pk', Varien_Db_Ddl_Table::TYPE_INTEGER, null,
+        array(
+            'identity' => true,
+            'unsigned' => true,
+            'nullable' => false,
+            'primary'  => true,
+        ), 'Primary key'
+    )
+    ->addColumn(
+        'website_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+            'nullable' => false,
+            'default'  => '0',
+        ), 'Website Id'
+    )
+    ->addColumn(
+        'dest_country_id', Varien_Db_Ddl_Table::TYPE_TEXT, 4, array(
+            'nullable' => false,
+            'default'  => '0',
+        ), 'Destination country ISO/2 or ISO/3 code'
+    )
+    ->addColumn(
+        'dest_region_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+            'nullable' => false,
+            'default'  => '0',
+        ), 'Destination Region Id'
+    )
+    ->addColumn(
+        'dest_zip', Varien_Db_Ddl_Table::TYPE_TEXT, 10, array(
+            'nullable' => false,
+            'default'  => '*',
+        ), 'Destination Post Code (Zip)'
+    )
+    ->addColumn(
+        'condition_name', Varien_Db_Ddl_Table::TYPE_TEXT, 20, array(
+            'nullable' => false,
+        ), 'Rate Condition name'
+    )
+    ->addColumn(
+        'condition_value', Varien_Db_Ddl_Table::TYPE_DECIMAL, '12,4', array(
+            'nullable' => false,
+            'default'  => '0.0000',
+        ), 'Rate condition value'
+    )
+    ->addColumn(
+        'price', Varien_Db_Ddl_Table::TYPE_DECIMAL, '12,4', array(
+            'nullable' => false,
+            'default'  => '0.0000',
+        ), 'Price'
+    )
+    ->addColumn(
+        'cost', Varien_Db_Ddl_Table::TYPE_DECIMAL, '12,4', array(
+            'nullable' => false,
+            'default'  => '0.0000',
+        ), 'Cost'
+    )
     ->addIndex(
         $installer->getIdxName(
             'postnl_carrier/tablerate',
@@ -216,41 +265,55 @@ $table->addColumn('pk', Varien_Db_Ddl_Table::TYPE_INTEGER, null,
     )
     ->setComment('PostNL Tablerate');
 
-$installer->getConnection()->createTable($table);
+    $installer->getConnection()->createTable($table);
+}
 
 /***********************************************************************************************************************
  * PRODUCT ATTRIBUTES
  **********************************************************************************************************************/
 
-$installer->addAttribute('catalog_product', 'postnl_shipping_duration', array(
-    'backend'                    => '',
-    'group'                      => 'General',
-    'sort_order'                 => 100,
-    'frontend'                   => '',
-    'class'                      => '',
-    'default'                    => '',
-    'label'                      => 'PostNL Shipping Duration',
-    'input'                      => 'select',
-    'type'                       => 'int',
-    'source'                     => 'postnl_deliveryoptions/product_attribute_source_shippingDuration',
-    'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
-    'visible'                    => true,
-    'required'                   => false,
-    'searchable'                 => false,
-    'filterable'                 => false,
-    'filterable_in_search'       => false,
-    'unique'                     => false,
-    'comparable'                 => false,
-    'visible_on_front'           => false,
-    'visible_in_advanced_search' => false,
-    'is_html_allowed_on_front'   => false,
-    'used_in_product_listing'    => false,
-    'user_defined'               => false,
-    'apply_to'                   => 'simple',
-    'is_configurable'            => false,
-    'used_for_sort_by'           => false,
-    'position'                   => 0,
-    'used_for_promo_rules'       => false,
-));
+if (!$installer->getAttribute('catalog_product', 'postnl_shipping_duration')) {
+    $applyTo = array(
+        Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
+        Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
+        Mage_Catalog_Model_Product_Type::TYPE_GROUPED,
+        Mage_Catalog_Model_Product_Type::TYPE_BUNDLE,
+    );
+
+    $installer->addAttribute(
+        'catalog_product',
+        'postnl_shipping_duration',
+        array(
+            'backend'                    => '',
+            'group'                      => 'General',
+            'sort_order'                 => 100,
+            'frontend'                   => '',
+            'class'                      => '',
+            'default'                    => '',
+            'label'                      => 'PostNL Shipping Duration',
+            'input'                      => 'select',
+            'type'                       => 'int',
+            'source'                     => 'postnl_deliveryoptions/product_attribute_source_shippingDuration',
+            'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+            'visible'                    => true,
+            'required'                   => false,
+            'searchable'                 => false,
+            'filterable'                 => false,
+            'filterable_in_search'       => false,
+            'unique'                     => false,
+            'comparable'                 => false,
+            'visible_on_front'           => false,
+            'visible_in_advanced_search' => false,
+            'is_html_allowed_on_front'   => false,
+            'used_in_product_listing'    => false,
+            'user_defined'               => false,
+            'is_configurable'            => false,
+            'used_for_sort_by'           => false,
+            'position'                   => 0,
+            'used_for_promo_rules'       => false,
+            'apply_to'                   => implode(',', $applyTo),
+        )
+    );
+}
 
 $installer->endSetup();

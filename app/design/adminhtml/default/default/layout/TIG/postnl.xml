@@ -48,20 +48,21 @@
         </reference>
         <reference name="notifications">
             <block type="postnl/adminhtml_cronNotification" name="postnl_cron_notification" template="TIG/PostNL/cron_notification.phtml"/>
+            <block type="postnl/adminhtml_logNotification" name="postnl_log_notification" template="TIG/PostNL/log_notification.phtml"/>
         </reference>
     </default>
 
     <adminhtml_system_config_edit>
         <reference name="head">
-        	<action method="addItem">
-        		<type>skin_css</type>
-        		<name>css/TIG/PostNL/system_config_edit.css</name>
-        	</action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/TIG/PostNL/system_config_edit.css</name>
+            </action>
             <action method="addItem">
                 <type>skin_js</type>
                 <name>js/TIG/PostNL/validate.js</name>
             </action>
-        	<block type="adminhtml/abstract" name="postnl_system_config_js" template="TIG/PostNL/system/config/form/field/js.phtml" output="tohtml" after="-"/>
+            <block type="adminhtml/abstract" name="postnl_system_config_js" template="TIG/PostNL/system/config/form/field/js.phtml" output="tohtml" after="-"/>
         </reference>
         <remove name="form"/>
     </adminhtml_system_config_edit>
@@ -72,19 +73,28 @@
                 <type>js_css</type>
                 <name>prototype/windows/themes/default.css</name>
             </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/mass_action_filter.js</file>
+            </action>
             <block type="postnl_adminhtml/windowsTheme" name="postnl_order_windows_theme" template="TIG/PostNL/sales/order/windows_theme.phtml" output="toHtml"/>
         </reference>
         <reference name="content">
-            <block type="postnl_adminhtml/sales_order_productOptions" name="postnl_order_product_options" template="TIG/PostNL/sales/order/product_options.phtml" />
+            <block type="postnl_adminhtml/sales_order_productOptions" name="postnl_order_product_options" template="TIG/PostNL/sales/order/product_options.phtml"/>
         </reference>
         <reference name="before_body_end">
             <block type="adminhtml/abstract" name="postnl_filter_massaction" template="TIG/PostNL/sales/order/filter_massaction.phtml"/>
+            <block type="adminhtml/abstract" name="postnl_print_label_action" template="TIG/PostNL/sales/order/js.phtml"/>
         </reference>
     </adminhtml_sales_order_index>
 
     <adminhtml_sales_order_view>
         <reference name="content">
             <block type="adminhtml/abstract" name="postnl_pakjegemak_address" template="TIG/PostNL/sales/order/view/pakje_gemak_address.phtml"/>
+            <block type="postnl_adminhtml/sales_order_view_deliveryOptions" name="postnl_delivery_options" template="TIG/PostNL/sales/order/view/delivery_options.phtml"/>
+        </reference>
+        <reference name="order_totals">
+            <block type="postnl_adminhtml/sales_order_totals_codFee" before="tax" name="postnl_cod_fee"/>
         </reference>
     </adminhtml_sales_order_view>
 
@@ -96,47 +106,131 @@
         </reference>
     </adminhtml_sales_order_address>
 
+    <adminhtml_sales_order_invoice_view>
+        <reference name="invoice_totals">
+            <block type="postnl_adminhtml/sales_order_invoice_totals_codFee" before="tax" name="postnl_cod_fee"/>
+        </reference>
+        <reference name="tax">
+            <action method="setTemplate">
+                <template>TIG/PostNL/sales/order/totals/tax.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_invoice_view>
+
+    <adminhtml_sales_order_invoice_new>
+        <reference name="invoice_totals">
+            <block type="postnl_adminhtml/sales_order_invoice_totals_codFee" before="tax" name="postnl_cod_fee"/>
+        </reference>
+        <reference name="tax">
+            <action method="setTemplate">
+                <template>TIG/PostNL/sales/order/totals/tax.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_invoice_new>
+
+    <adminhtml_sales_order_invoice_updateqty>
+        <reference name="invoice_totals">
+            <block type="postnl_adminhtml/sales_order_invoice_totals_codFee" before="tax" name="postnl_cod_fee"/>
+        </reference>
+        <reference name="tax">
+            <action method="setTemplate">
+                <template>TIG/PostNL/sales/order/totals/tax.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_invoice_updateqty>
+
+    <adminhtml_sales_order_creditmemo_view>
+        <reference name="creditmemo_totals">
+            <block type="postnl_adminhtml/sales_order_creditmemo_totals_codFee" before="tax" name="postnl_cod_fee"/>
+        </reference>
+        <reference name="tax">
+            <action method="setTemplate">
+                <template>TIG/PostNL/sales/order/totals/tax.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_creditmemo_view>
+
+    <adminhtml_sales_order_creditmemo_new>
+        <reference name="creditmemo_totals">
+            <block type="postnl_adminhtml/sales_order_creditmemo_totals_codFee" before="tax" name="postnl_cod_fee"/>
+            <block type="postnl_adminhtml/sales_order_creditmemo_create_codFee" name="postnl_cod_fee_adjustment" template="TIG/PostNL/sales/order/creditmemo/create/totals/cod_fee.phtml" before="adjustments"/>
+        </reference>
+        <reference name="tax">
+            <action method="setTemplate">
+                <template>TIG/PostNL/sales/order/totals/tax.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_creditmemo_new>
+
+    <adminhtml_sales_order_creditmemo_updateqty>
+        <reference name="creditmemo_totals">
+            <block type="postnl_adminhtml/sales_order_creditmemo_totals_codFee" before="tax" name="postnl_cod_fee"/>
+            <block type="postnl_adminhtml/sales_order_creditmemo_create_codFee" name="postnl_cod_fee_adjustment" template="TIG/PostNL/sales/order/creditmemo/create/totals/cod_fee.phtml" before="adjustments"/>
+        </reference>
+        <reference name="tax">
+            <action method="setTemplate">
+                <template>TIG/PostNL/sales/order/totals/tax.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_creditmemo_updateqty>
+
     <adminhtml_sales_shipment_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/mass_action_filter.js</file>
+            </action>
+        </reference>
         <reference name="content">
             <block type="adminhtml/abstract" name="postnl_customize_grid_link" template="TIG/PostNL/sales/shipment/customize_link.phtml"/>
             <block type="postnl_adminhtml/system_config_form_field_configCheck" name="postnl_testmode_warning" template="TIG/PostNL/sales/shipment/testmode_warning.phtml"/>
         </reference>
         <reference name="before_body_end">
+            <block type="adminhtml/abstract" name="postnl_filter_massaction" template="TIG/PostNL/sales/order/shipment/filter_massaction.phtml"/>
             <block type="adminhtml/abstract" name="postnl_print_label_action" template="TIG/PostNL/sales/shipment/js.phtml"/>
         </reference>
     </adminhtml_sales_shipment_index>
 
     <adminhtml_sales_order_shipment_new>
-        <reference name="head">
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/TIG/PostNL/shipment_options.js</name>
+        <reference name="order_items">
+            <action method="addColumnRender">
+                <column>qty</column>
+                <block>postnl_adminhtml/sales_items_column_qty</block>
+                <template>TIG/PostNL/sales/items/column/qty.phtml</template>
             </action>
         </reference>
-    	<reference name="before_body_end">
-    		<block type="postnl_adminhtml/sales_order_shipment_create_shipmentOptions" name="postnl_shipment_create_shipment_options" template="TIG/PostNL/sales/order/shipment/create/shipment_options.phtml" />
-    	</reference>
+        <reference name="before_body_end">
+            <block type="postnl_adminhtml/sales_order_shipment_create_shipmentOptions" name="postnl_shipment_create_shipment_options" template="TIG/PostNL/sales/order/shipment/create/shipment_options.phtml"/>
+        </reference>
     </adminhtml_sales_order_shipment_new>
 
     <!-- Add a shipping status bar to the shipment view page as well as adding tabs to the page -->
     <adminhtml_sales_order_shipment_view>
-    	<reference name="head">
-    	    <!-- CSS for the shipping status bar -->
-    		<action method="addItem">
-    			<type>skin_css</type>
-    			<name>css/TIG/PostNL/shipping_status.css</name>
-    		</action>
-    	</reference>
-    	<reference name="sales_shipment_view">
-    	    <!-- All children have been moved to the tabs -->
+        <reference name="head">
+            <!-- CSS for the shipping status bar -->
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/TIG/PostNL/shipping_status.css</name>
+            </action>
+            <action method="addItem">
+                <type>js_css</type>
+                <name>prototype/windows/themes/default.css</name>
+            </action>
+            <block type="postnl_adminhtml/windowsTheme" name="postnl_order_windows_theme" template="TIG/PostNL/sales/order/windows_theme.phtml" output="toHtml"/>
+        </reference>
+        <reference name="sales_shipment_view">
+            <!-- All children have been moved to the tabs -->
             <action method="unsetChildren"/>
             <!-- Change template to contain a unique div where the tab contents will be loaded later -->
-            <action method="setTemplate"><template>TIG/PostNL/sales/order/shipment/view.phtml</template></action>
-    	</reference>
+            <action method="setTemplate">
+                <template>TIG/PostNL/sales/order/shipment/view.phtml</template>
+            </action>
+        </reference>
         <reference name="content">
             <!-- Contains some javascript and html to add a shipping status bar -->
             <block type="postnl_adminhtml/sales_order_shipment_view_shippingStatus" name="postnl_shipping_status" template="TIG/PostNL/sales/order/shipment/view/shipping_status.phtml" before="-"/>
             <block type="adminhtml/abstract" name="postnl_pakjegemak_address" template="TIG/PostNL/sales/order/shipment/view/pakje_gemak_address.phtml"/>
+            <block type="postnl_adminhtml/sales_order_shipment_view_deliveryOptions" name="postnl_delivery_options" template="TIG/PostNL/sales/order/shipment/view/delivery_options.phtml"/>
         </reference>
         <reference name="left">
             <!-- Tabs container -->
@@ -146,21 +240,41 @@
                     <block type="adminhtml/sales_order_payment" name="order_payment"/>
                     <block type="adminhtml/sales_order_shipment_view_tracking" name="shipment_tracking" template="sales/order/shipment/view/tracking.phtml"/>
                     <block type="adminhtml/sales_order_shipment_view_items" name="shipment_items" template="sales/order/shipment/view/items.phtml">
-                        <action method="addItemRender"><type>default</type><block>adminhtml/sales_items_renderer_default</block><template>sales/order/shipment/view/items/renderer/default.phtml</template></action>
-                        <action method="addColumnRender"><column>qty</column><block>adminhtml/sales_items_column_qty</block><template>sales/items/column/qty.phtml</template></action>
-                        <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>sales/items/column/name.phtml</template></action>
+                        <action method="addItemRender">
+                            <type>default</type>
+                            <block>adminhtml/sales_items_renderer_default</block>
+                            <template>sales/order/shipment/view/items/renderer/default.phtml</template>
+                        </action>
+                        <action method="addColumnRender">
+                            <column>qty</column>
+                            <block>adminhtml/sales_items_column_qty</block>
+                            <template>sales/items/column/qty.phtml</template>
+                        </action>
+                        <action method="addColumnRender">
+                            <column>name</column>
+                            <block>adminhtml/sales_items_column_name</block>
+                            <template>sales/items/column/name.phtml</template>
+                        </action>
                         <block type="core/text_list" name="order_item_extra_info"/>
                     </block>
                     <block type="adminhtml/sales_order_invoice_create_tracking" name="invoice_tracking" template="sales/order/shipment/create/tracking.phtml"/>
-                    <block type="adminhtml/sales_order_comments_view"  name="order_comments" template="sales/order/comments/view.phtml">
-                        <action method="setParentType"><type>shipment</type></action>
+                    <block type="adminhtml/sales_order_comments_view" name="order_comments" template="sales/order/comments/view.phtml">
+                        <action method="setParentType">
+                            <type>shipment</type>
+                        </action>
                     </block>
-                    <block type="adminhtml/sales_order_shipment_packaging" name="shipment_packaging" template="sales/order/shipment/packaging/popup.phtml" />
+                    <block type="adminhtml/sales_order_shipment_packaging" name="shipment_packaging" template="sales/order/shipment/packaging/popup.phtml"/>
                     <block type="adminhtml/sales_order_shipment_packaging" name="shipment_packed" template="sales/order/shipment/packaging/packed.phtml"/>
                 </block>
             </block>
         </reference>
     </adminhtml_sales_order_shipment_view>
+
+    <adminhtml_sales_order_create_index>
+        <reference name="before_body_end">
+            <block type="adminhtml/abstract" name="postnl_admin_order" template="TIG/PostNL/sales/order/create/js.phtml"/>
+        </reference>
+    </adminhtml_sales_order_create_index>
 
     <postnl_admin_adminhtml_shipment_statushistory>
         <block type="core/text_list" name="root" output="toHtml">

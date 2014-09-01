@@ -57,70 +57,13 @@
                         <ul class="postnl-config-warning">
                             <li><?php echo $_helper->__("You should make sure that each product you intend to ship using PostNL has a maximum size of 175 x 78 x 58 cm and weighs less than 30 kg. The shipment will only be invoiced after the weigh-in at the PostNL sorting centre. If you wish to ship an order that weighs over 30 kg, you will have to split it into separate parcels that each weigh less than 30 kg. To do this you may create multiple shipments for a single order or you may use the extension's multi-colli functionality."); ?></li>
                             <li><?php echo $_helper->__("Make sure the PostNL shipping method is configured under system > config > shipping methods > PostNL. Only shipments made using this shipping method will be able to use PostNL's services. You may choose to charge either a flat rate or a table rate-based shipping fee. In the case of the latter, the table rates you have added under the Table Rate shipping method will be used. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.", 'http://www.magentocommerce.com/knowledge-base/entry/how-do-i-set-up-table-rate-shipping'); ?></li>
-                            <li><?php echo $_helper->__("You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.", 'http://kb.totalinternetgroup.nl/topic/31080848'); ?></li>
+                            <li><?php echo $_helper->__("You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.", 'http://kb.totalinternetgroup.nl/topic/55961916'); ?></li>
                         </ul>
                     </div>
                 </td>
             </tr>
             <tr>
                 <td class="col-left">
-                    <div class="text-box">
-                        <h3><?php echo $_helper->__('Quick reference guide');?></h3>
-                        <ol>
-                            <li><strong><?php echo $_helper->__('Register the extension for use');?></strong>
-                                <ol>
-                                    <li><?php echo $_helper->__("Open the 'General Settings' tab and enter your email address.");?></li>
-                                    <li><?php echo $_helper->__("Press the 'Activate the extension' button. You will now recieve an email at the address you specified containing 2 secure keys.");?></li>
-                                    <li><?php echo $_helper->__("Copy the keys and enter them in the 'Unique-' and 'Private key' fields that are now available.");?></li>
-                                    <li><?php echo $_helper->__("Press the 'Finish activation' button.");?></li>
-                                    <li><?php echo $_helper->__("Set the 'Active' field to 'Yes' and save the configuration. Your extension is now registered.");?></li>
-                                </ol>
-                            </li>
-                            <li><strong><?php echo $_helper->__('Configure your PostNL account');?></strong>
-                                <ol>
-                                    <li><?php echo $_helper->__('By default the extension is pre-configured using a test account. If you already have your PostNL account credentials, you can enter them using the steps below. If you have not yet received these credentials you may keep using the extensions in test mode. In this case you can continue to step 3.'); ?></li>
-                                    <li><?php echo $_helper->__("Make sure you have your PostNL account info with you. You will need the following info: username & password, customer number, customer code, and BLS code. You need to enter these in the 'Account Settings' tab.");?></li>
-                                    <li><?php echo $_helper->__("First enter your username and password. Depending on the status of your account, you may either enter the 'test' or 'live' version of these fields. Please note: if you do not enter the 'live' fields, you will only be able to create test shipments.");?></li>
-                                    <li><?php echo $_helper->__('Next enter your customer number, customer code and BLS code. If you are unsure about which information to enter here, please contact PostNL.'); ?></li>
-                                </ol>
-                            </li>
-                            <li><strong><?php echo $_helper->__('Enter a sender and return address');?></strong>
-                                <ol>
-                                    <li><?php echo $_helper->__('You have to enter the address to which PostNL may return shipments that could not be delivered. The sender address is mandatory. You may also enter a separate, optional return address.');?></li>
-                                    <li><?php echo $_helper->__("Go to the 'Sender Address' tab and enter your address. If you enter a company name, it will be printed on the shipping label. Otherwise, your name will be printed.");?></li>
-                                    <li><?php echo $_helper->__('You may now choose to enter a separate return address. If you choose to do so, this address will be printed on the shipping labels, rather than your sender address.');?></li>
-                                    <li><?php echo $_helper->__("In order to enter a separare return address, go to the 'Return Address' tab and switch the 'Use the sender address as the return adress' settng to 'no'. New fields will now appear for you to enter your return address."); ?></li>
-                                </ol>
-                            </li>
-                            <li><strong><?php echo $_helper->__('Configure your address settings, your confirming & label printing preferences and your preferred product options');?></strong>
-                                <ol>
-                                    <li><?php echo $_helper->__("Go to the 'Address Settings' tab and configure this section based on which fields you use in your checkout process. If this does not precisely match your checkout process, orders may not be shipped to the correct address.");?></li>
-                                    <li><?php echo $_helper->__("Go to the 'Confirming & Label Printing Settings' tab and change your preferences. You may want to tweak these and then test them repeatedly before deciding on a final configuration.");?></li>
-                                    <li><?php echo $_helper->__("Go to the 'Product Options' tab and select your supported and preferred product options. If you have questions regarding each product option and which would be most suitable to you, please contact PostNL.");?></li>
-                                </ol>
-                            </li>
-                            <li><strong><?php echo $_helper->__('Configure your GlobalPack settings');?></strong>
-                                <ol>
-                                   <li><?php echo $_helper->__('If you wish to send orders to outside the EU, you need to configure your GlobalPack settings.');?></li>
-                                   <li><?php echo $_helper->__("Go to the 'Account Settings' tab and fill in the 'Global Barcode Type' and 'Global Barcode Range' fields.");?></li>
-                                   <li><?php echo $_helper->__("Go to the 'GlobalPack Settings' tab and specify your preferences. Be aware, that if you do not configure these settings correctly, international shipments may be refused by either PostNL or the customs office.");?></li>
-                                </ol>
-                            </li>
-                            <li><strong><?php echo $_helper->__('Configure your PostNL Checkout settings');?></strong>
-                                <ol>
-                                   <li><?php echo $_helper->__('If you wish to use PostNL Checkout in your webshop, you need to configure your PostNL Checkout settings.');?></li>
-                                   <li><?php echo $_helper->__("Go to the 'Account Settings' tab and fill in the 'Webshop ID' and 'Public Webshop ID' fields.");?></li>
-                                   <li><?php echo $_helper->__("Go to the 'PostNL Checkout' tab and specify your preferences.");?></li>
-                                   <li><?php echo $_helper->__("Go to the 'PostNL Checkout Paymen Settings' tab and specify which payment methods PostNL Checkout supports. Here you must also link the PostNL Checkout payment methods to the payment methods you use in Magento. If you do not configure this properly, customers may be forced to pay with a different payment method than the one they selected.");?></li>
-                                </ol>
-                            </li>
-                        </ol>
-                    </div>
-                </td>
-
-                <td class="col-faux"></td>
-
-                <td class="col-right">
                     <div class="text-box">
                         <h3><?php echo $_helper->__('Magento &amp; 3rd party version compatibility');?></h3>
                         <ul>
@@ -134,6 +77,20 @@
                             <li><?php echo $_helper->__('If you wish to use this extension on an unsupported Magento version or edition, or in combination with an unsupported 3rd party extension, we cannot guarantee the PostNL extension will function as expected. For questions please contact the Total Internet Group servicedesk.'); ?></li>
                         </ul>
                     </div>
+                    <div class="text-box">
+                        <h3><?php echo $_helper->__('Documentation');?></h3>
+                        <p><?php echo $_helper->__('A list of documents regarding the extension.');?></p>
+                        <ul>
+                            <li><a class="link" target="_blank" href="http://kb.totalinternetgroup.nl/topic/39335103" title="<?php echo $_helper->__('View the installation and configuration manual.');?>"><?php echo $_helper->__('Installation and configuration manual');?></a></li>
+                            <li><a class="link" target="_blank" href="http://kb.totalinternetgroup.nl/topic/44206406" title="<?php echo $_helper->__('View the user manual.');?>"><?php echo $_helper->__('User manual');?></a></li>
+                            <li><a class="link" target="_blank" href="http://kb.totalinternetgroup.nl/topic/38584893" title="<?php echo $_helper->__('View the complete changelog of the extension.');?>"><?php echo $_helper->__('Full changelog');?></a></li>
+                        </ul>
+                    </div>
+                </td>
+
+                <td class="col-faux"></td>
+
+                <td class="col-right">
                     <div class="text-box">
                         <h3><?php echo $_helper->__('Support');?></h3>
                         <p><?php echo $_helper->__('The extension is developed by Total Internet Group, commissioned by PostNL. Depending on the nature of the issue or question you should contact either PostNL or Total Internet Group.');?></p>
@@ -156,11 +113,11 @@
                         <table class="contact">
                              <tr>
                                 <td class="first"><?php echo $_helper->__('Online knowledgebase:');?></td>
-                                <td class="last"><a target="_blank" href="http://servicedesk.totalinternetgroup.nl/forums">http://servicedesk.totalinternetgroup.nl/forums</a></td>
+                                <td class="last"><a target="_blank" href="http://kb.totalinternetgroup.nl/">http://kb.totalinternetgroup.nl/</a></td>
                             </tr>
                              <tr>
                                 <td class="first"><?php echo $_helper->__('Request help directly:');?></td>
-                                <td class="last"><a target="_blank" href="http://servicedesk.totalinternetgroup.nl/requests/new">http://servicedesk.totalinternetgroup.nl/requests/new</a></td>
+                                <td class="last"><a target="_blank" href="http://kb.totalinternetgroup.nl/ticket/form/new">http://kb.totalinternetgroup.nl/ticket/form/new</a></td>
                             </tr>
                             <tr>
                                 <td class="first"><?php echo $_helper->__('Email:');?></td>
@@ -168,18 +125,9 @@
                             </tr>
                             <tr>
                                 <td class="first"><?php echo $_helper->__('Phone:');?></td>
-                                <td class="last">+31(0)20 – 21 81 001</td>
+                                <td class="last">+31(0)20 - 21 81 008</td>
                             </tr>
                         </table>
-                    </div>
-                    <div class="text-box">
-                        <h3><?php echo $_helper->__('Documentation');?></h3>
-                        <p><?php echo $_helper->__('A list of documents regarding the extension.');?></p>
-                        <ul>
-                            <li><a class="link" target="_blank" href="http://kb.totalinternetgroup.nl/topic/39335103" title="<?php echo $_helper->__('View the installation and configuration manual.');?>"><?php echo $_helper->__('Installation and configuration manual');?></a></li>
-                            <li><a class="link" target="_blank" href="http://kb.totalinternetgroup.nl/topic/44206406" title="<?php echo $_helper->__('View the user manual.');?>"><?php echo $_helper->__('User manual');?></a></li>
-                            <li><a class="link" target="_blank" href="http://servicedesk.totalinternetgroup.nl/entries/38584893" title="<?php echo $_helper->__('View the complete changelog of the extension.');?>"><?php echo $_helper->__('Full changelog');?></a></li>
-                        </ul>
                     </div>
                 </td>
             </tr>

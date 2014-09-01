@@ -55,7 +55,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     /**
      * Xpath for shipping duration setting.
      */
-    const XPATH_SHIPPING_DURATION = 'postnl/delivery_options/shipping_duration';
+    const XPATH_SHIPPING_DURATION = 'postnl/cif_labels_and_confirming/shipping_duration';
 
     /**
      * Gets a PostNL Order. If none is set; load one.
@@ -133,13 +133,16 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
             return $this->_getData('confirm_date');
         }
 
-        $deliveryDate = strtotime($deliveryDate);
-        $deliveryDay = date('N');
+        $deliveryDate = new DateTime($deliveryDate);
+        $deliveryDay = $deliveryDate->format('N');
 
-        $shippingDuration = $this->getShippingDuration($deliveryDay);
-        $confirmDate = strtotime("-{$shippingDuration} days", $deliveryDate);
+        $shippingDuration = 1;
+        if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
+            $shippingDuration++;
+        }
 
-        $confirmDate = date('Y-m-d', $confirmDate);
+        $confirmDate = $deliveryDate->sub(new DateInterval("P{$shippingDuration}D"));
+        $confirmDate = $confirmDate->format('Y-m-d');
 
         $this->setConfirmDate($confirmDate);
         return $confirmDate;

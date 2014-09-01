@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
+class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
 {
     /**
      * Cron expression and cron model definitions for shipping_status cron
@@ -51,7 +51,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     const UPDATE_STATISTICS_CRON_MODEL_PATH  = 'crontab/jobs/postnl_update_statistics/run/model';
 
     /**
-     * XML path to the supporttab_expanded setting
+     * XML path to the support tab_expanded setting
      */
     const EXPAND_SUPPORT_PATH = 'postnl/support/expanded';
 
@@ -71,6 +71,16 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
      * Xpath to supported options configuration setting
      */
     const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+
+    /**
+     * Xpath to the item columns setting.
+     */
+    const XPATH_PACKING_SLIP_ITEM_COLUMNS = 'postnl/packing_slip/item_columns';
+
+    /**
+     * Minimum server memory required by the PostNL extension in bytes.
+     */
+    const MIN_SERVER_MEMORY = 268435456; //256MB
 
     /**
      * callAfterApplyAllUpdates flag. Causes applyAfterUpdates() to be called.
@@ -200,37 +210,45 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $dbVer = $this->getDbVer();
         $configVer = $this->getConfigVer();
 
-        $this->_checkVersionCompatibility();
-
         if (version_compare($configVer, $dbVer) != self::VERSION_COMPARE_GREATER) {
             return $this;
         }
 
+        $this->_checkVersionCompatibility();
+        $this->_checkMemoryRequirement();
+
         $helper = Mage::helper('postnl');
 
-        $inbox = Mage::getModel('postnl/inbox');
+        $inbox = Mage::getModel('postnl_admin/inbox');
         if ($dbVer) {
-            $message = '[POSTNL-0083] ' . $helper->__(
+            $title = '[POSTNL-0083] ' . $helper->__(
                 'PostNL extension has been successfully updated to version v%s.',
                 $configVer
             );
+
             $url = 'http://kb.totalinternetgroup.nl/topic/31921907';
         } else {
-            $message = '[POSTNL-0156] ' . $helper->__(
+            $title = '[POSTNL-0156] ' . $helper->__(
                 'The PostNL extension v%s has been successfully installed.',
                 $configVer
             );
             $url = '';
         }
 
-        $inbox->addNotice($message, $message, $url, true)
+        $message = $helper->__(
+            'You can read the full changelog in the <a href="%s" target="_blank" title="TIG knowledgebase">TIG ' .
+            'knowledgebase</a>.',
+            'http://kb.totalinternetgroup.nl/topic/38584893/'
+        );
+
+        $inbox->addNotice($title, $message, $url, true)
               ->save();
 
         return $this;
     }
 
     /**
-     * Generate a random cron expression for the status update cron for this merchant and store it in the database
+     * Generate a random cron expression for the status update cron for this merchant and store it in the database.
      *
      * @throws TIG_PostNL_Exception
      *
@@ -239,7 +257,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     public function generateShippingStatusCronExpr()
     {
         /**
-         * Generate semi-random values for the cron expression
+         * Generate semi-random values for the cron expression.
          */
         $cronMorningHour   = mt_rand(10, 12);
         $cronMorningHour  += Mage::getModel('core/date')->getGmtOffset('hours');
@@ -254,7 +272,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $cronExpr = "{$cronMinute} {$cronMorningHour},{$cronAfternoonHour} * * *";
 
         /**
-         * Store the cron expression in core_config_data
+         * Store the cron expression in core_config_data.
          */
         try {
             Mage::getModel('core/config_data')
@@ -327,12 +345,16 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
 
     /**
      * Checks the store's config to see if the extension is compatible with the installed Magento version. If not, a
-     * message will be added to Mage_Adminnotification.
+     * message will be added to Mage_AdminNotification.
      *
      * @return $this
      */
     public function _checkVersionCompatibility()
     {
+        if (Mage::registry('postnl_version_compatibility_checked')) {
+            return $this;
+        }
+
         $helper = Mage::helper('postnl');
         if ($helper->isEnterprise()) {
             $edition = 'enterprise';
@@ -340,24 +362,25 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
             $edition = 'community';
         }
 
-        $inbox = Mage::getModel('postnl/inbox');
-
         $supportedVersions = Mage::getConfig()->getNode('tig/compatibility/postnl/' . $edition);
         if ($supportedVersions === false) {
-            $message = '[POSTNL-0086] '
-                     . $helper->__(
-                         'The PostNL extension is not compatible with your Magento version! This may cause unexpected '
-                         . 'behaviour.'
-                     );
+            $title = '[POSTNL-0086] '
+                     . $helper->__('The PostNL extension is not compatible with your Magento version!');
 
+            $message = $helper->__(
+                'This may cause unexpected behaviour. You may use the PostNL extension on unsupported versions of ' .
+                'Magento at your own risk.'
+            );
+
+            $inbox = Mage::getModel('postnl_admin/inbox');
             $inbox->addCritical(
-                      $message,
-                      $message,
-                      'http://kb.totalinternetgroup.nl/topic/31925577',
-                      true
-                  )
-                  ->save();
+                $title,
+                $message,
+                'http://kb.totalinternetgroup.nl/topic/31925577',
+                true
+            )->save();
 
+            Mage::register('postnl_version_compatibility_checked', true);
             return $this;
         }
 
@@ -368,23 +391,66 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         $installedMagentoVersion = $installedMagentoVersionInfo['major'] . '.' . $installedMagentoVersionInfo['minor'];
 
         if (!in_array($installedMagentoVersion, $supportedVersionArray)) {
-            $message = '[POSTNL-0086] '
-                     . $helper->__(
-                         'The PostNL extension is not compatible with your Magento version! This may cause unexpected '
-                         . 'behaviour.'
-                     );
+            $title = '[POSTNL-0086] '
+                   . $helper->__('The PostNL extension is not compatible with your Magento version!');
 
+            $message = $helper->__(
+                'This may cause unexpected behaviour. You may use the PostNL extension on unsupported versions of ' .
+                'Magento at your own risk.'
+            );
+
+            $inbox = Mage::getModel('postnl_admin/inbox');
             $inbox->addCritical(
-                      $message,
-                      $message,
-                      'http://kb.totalinternetgroup.nl/topic/31925577',
-                      true
-                  )
-                  ->save();
+                $title,
+                $message,
+                'http://kb.totalinternetgroup.nl/topic/31925577',
+                true
+            )->save();
 
+            Mage::register('postnl_version_compatibility_checked', true);
             return $this;
         }
 
+
+        Mage::register('postnl_version_compatibility_checked', true);
+        return $this;
+    }
+
+    /**
+     * Make sure that the server meets Magento's (and PostNL's) memory requirements.
+     *
+     * @return $this
+     * @throws Exception
+     */
+    protected function _checkMemoryRequirement()
+    {
+        if (Mage::registry('postnl_memory_requirement_checked')) {
+            return $this;
+        }
+
+        $helper = Mage::helper('postnl');
+
+        if ($helper->getMemoryLimit() < self::MIN_SERVER_MEMORY) {
+            $memoryMb = self::MIN_SERVER_MEMORY / 1024 / 1024;
+            $title = '[POSTNL-0175] '
+                   . $helper->__("The server's memory limit is less than %.0fMB.", $memoryMb);
+
+            $message = $helper->__(
+                'The PostNL extension requires at least %.0fMB to function properly. Using the PostNL extension on ' .
+                'servers with less memory than this may cause unexpected errors.',
+                $memoryMb
+            );
+
+            $inbox = Mage::getModel('postnl_admin/inbox');
+            $inbox->addCritical(
+                $title,
+                $message,
+                '',
+                true
+            )->save();
+        }
+
+        Mage::register('postnl_memory_requirement_checked', true);
         return $this;
     }
 
@@ -481,7 +547,10 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     }
 
     /**
-     * Resets an array of config fields to factory defaults.
+     * Resets an array of config fields to factory defaults. This is done by actually deleting the config value from the
+     * core_config_data table.
+     * Because Magento overwrites the default values in the config.xml files with those from the db, if we remove the
+     * values from the db, the default values from the config.xml files will again be used.
      *
      * @param array|string $configFields
      *
@@ -560,6 +629,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     public function moveConfigSetting($fromXpath, $toXpath, $removeOldValue = true)
     {
         /**
+         * Get the current default value.
+         */
+        $defaultValue = Mage::getConfig()->getNode($fromXpath, 'default');
+
+        /**
          * First loop through all stores.
          *
          * @var Mage_Core_Model_Store $store
@@ -569,7 +643,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         foreach ($stores as $store) {
             $scopeId = $store->getId();
 
-            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
+            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue, $defaultValue);
         }
 
         /**
@@ -582,13 +656,19 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         foreach ($websites as $website) {
             $scopeId = $website->getId();
 
-            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue);
+            $this->moveConfigSettingForScope($fromXpath, $toXpath, $scope, $scopeId, $removeOldValue, $defaultValue);
         }
 
         /**
          * Finally, try to move the config setting for the default scope.
          */
-        $this->moveConfigSettingForScope($fromXpath, $toXpath, 'default', 0, $removeOldValue);
+        $this->moveConfigSettingForScope(
+            $fromXpath,
+            $toXpath,
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID,
+            $removeOldValue
+        );
 
         return $this;
     }
@@ -604,12 +684,20 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
      *
      * @return $this
      */
-    protected function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
-                                                 $removeOldValue = true)
+    public function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
+                                             $removeOldValue = true, $defaultValue = false)
     {
         $config = Mage::getConfig();
 
-        $node = $config->getNode($fromXpath, $scope, $scopeId);
+        if ($scope == 'store') {
+            $scopeCode = Mage::app()->getStore($scopeId)->getCode();
+        } elseif ($scope == 'website') {
+            $scopeCode = Mage::app()->getWebsite($scopeId)->getCode();
+        } else {
+            $scopeCode = null;
+        }
+
+        $node = $config->getNode($fromXpath, $scope, $scopeCode);
 
         /**
          * If the node is not set for the default scope, there is nothing left to do.
@@ -622,6 +710,10 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
          * Get the string representation of the value.
          */
         $currentValue = $node->__toString();
+
+        if ($defaultValue !== false && $currentValue == $defaultValue) {
+            return $this;
+        }
 
         /**
          * Save the value to the new xpath for the scope from which we got the old value.
@@ -678,7 +770,12 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
         /**
          * Save the supported product codes.
          */
-        Mage::getConfig()->saveConfig(self::XPATH_SUPPORTED_PRODUCT_OPTIONS, $newCodes, 'default', 0);
+        Mage::getConfig()->saveConfig(
+            self::XPATH_SUPPORTED_PRODUCT_OPTIONS,
+            $newCodes,
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
 
         return $this;
     }
@@ -692,6 +789,263 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Eav_Model_Entity_Setup
     {
         Mage::getConfig()->reinit();
         Mage::app()->reinitStores();
+
+        return $this;
+    }
+
+    /**
+     * Sets the order ID of every postNL shipment. this is mostly for convenience's sake. Using the new order ID we can
+     * load an order directly from the PostNL shipment without first having to load the Magento shipment.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     */
+    public function setOrderId()
+    {
+        $transactionSave = Mage::getResourceModel('core/transaction');
+
+        $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        foreach ($postnlShipmentCollection as $shipment) {
+            try {
+                /**
+                 * The getOrderId() method will calculate and set the order id if none is available.
+                 */
+                $shipment->getOrderId();
+            } catch (Exception $e) {
+                Mage::helper('postnl')->logException($e);
+                continue;
+            }
+
+            if ($shipment->hasDataChanges()) {
+                $transactionSave->addObject($shipment);
+            }
+        }
+
+        $transactionSave->save();
+
+        return $this;
+    }
+
+    /**
+     * Sets the shipment type of every PostNL shipment. Before 1.3.0 the shipment type was determined on the fly. Since
+     * 1.3.0 it is instead set once in the PostNL Shipment table. This method updates the table for all PostNL shipments
+     * that do not yet have a shipment type.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     */
+    public function setShipmentType()
+    {
+        $transactionSave = Mage::getResourceModel('core/transaction');
+
+        $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        foreach ($postnlShipmentCollection as $shipment) {
+            try {
+                /**
+                 * The getShipmentType() method will calculate and set the shipment type if none is available.
+                 */
+                $shipment->getShipmentType();
+            } catch (Exception $e) {
+                Mage::helper('postnl')->logException($e);
+                continue;
+            }
+
+            if ($shipment->hasDataChanges()) {
+                $transactionSave->addObject($shipment);
+            }
+        }
+
+        $transactionSave->save();
+
+        return $this;
+    }
+
+    /**
+     * Sets the newly added 'is_buspakje' flag of every PostNL shipment.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     */
+    public function setIsBuspakje()
+    {
+        $transactionSave = Mage::getResourceModel('core/transaction');
+
+        $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        foreach ($postnlShipmentCollection as $shipment) {
+            /**
+             * Set the 'is_buspakje' flag to false for all existing shipments.
+             */
+            $shipment->setIsBuspakje(false);
+
+            if ($shipment->hasDataChanges()) {
+                $transactionSave->addObject($shipment);
+            }
+        }
+
+        $transactionSave->save();
+
+        return $this;
+    }
+
+    /**
+     * Add new resources to all admin roles.
+     *
+     * @param array      $resourcesToAdd The resources to add.
+     * @param null|array $resourcesRequired The resources that a role already needs to have.
+     *
+     * @return $this
+     */
+    public function addAclRules($resourcesToAdd, $resourcesRequired = null)
+    {
+        $adminRoles = Mage::getResourceModel('admin/role_collection');
+
+        /**
+         * @var Mage_Admin_Model_Rules $role
+         */
+        foreach ($adminRoles as $role) {
+            $rules = Mage::getResourceModel('admin/rules_collection')->getByRoles($role->getId());
+            $rules->addFieldToFilter('permission', array('eq' => 'allow'));
+            $resources = $rules->getColumnValues('resource_id');
+
+            /**
+             * If the role has no resources, it's probably deleted and we shouldn't add any.
+             */
+            if (!$resources) {
+                continue;
+            }
+
+            /**
+             * If the role has the resource 'all', it already has access to everything.
+             */
+            if (in_array('all', $resources)) {
+                continue;
+            }
+
+            /**
+             * If any resources are required, check that the role has these resources. If even one of the required
+             * resources is missing, skip this role.
+             */
+            if ($resourcesRequired) {
+                foreach ($resourcesRequired as $requiredResource) {
+                    if (!in_array($requiredResource, $resources)) {
+                        continue(2);
+                    }
+                }
+            }
+
+            /**
+             * Add the new resources to the existing ones.
+             */
+            $resources = array_merge($resources, $resourcesToAdd);
+
+            /**
+             * Save the role.
+             */
+            Mage::getModel('admin/rules')
+                ->setRoleId($role->getId())
+                ->setResources($resources)
+                ->saveRel();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Installs the default value for the PostNL packing slip 'item_columns' configuration setting.
+     *
+     * @return $this
+     */
+    public function installPackingSlipItemColumns()
+    {
+        /**
+         * These are the default item columns that need to be added.
+         */
+        $itemColumns = array (
+            'postnl_packing_slip_item_column_0' => array (
+                'field'    => 'name',
+                'title'    => 'Name',
+                'width'    => '255',
+                'position' => '10',
+            ),
+            'postnl_packing_slip_item_column_1' => array (
+                'field'    => 'sku',
+                'title'    => 'SKU',
+                'width'    => '90',
+                'position' => '20',
+            ),
+            'postnl_packing_slip_item_column_2' => array (
+                'field'    => 'price',
+                'title'    => 'Price',
+                'width'    => '70',
+                'position' => '30',
+            ),
+            'postnl_packing_slip_item_column_3' => array (
+                'field'    => 'qty',
+                'title'    => 'Qty',
+                'width'    => '60',
+                'position' => '40',
+            ),
+            'postnl_packing_slip_item_column_4' => array (
+                'field'    => 'tax',
+                'title'    => 'VAT',
+                'width'    => '80',
+                'position' => '50',
+            ),
+            'postnl_packing_slip_item_column_5' => array (
+                'field'    => 'subtotal',
+                'title'    => 'Subtotal',
+                'width'    => '40',
+                'position' => '60',
+            ),
+        );
+
+        /**
+         * Save the columns as a serialized array.
+         */
+        Mage::getConfig()->saveConfig(
+            self::XPATH_PACKING_SLIP_ITEM_COLUMNS,
+            serialize($itemColumns),
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        return $this;
+    }
+
+    /**
+     * Updates attribute data for all existing products of specific types.
+     *
+     * @param array $attributesData An array of attribute data as $attributeCode => $value.
+     * @param array $productTypes   An array of product types for which these attributes need to be updated.
+     *
+     * @return $this
+     */
+    public function updateAttributeValues($attributesData, $productTypes)
+    {
+        if (!is_array($productTypes)) {
+            $productTypes = array($productTypes);
+        }
+
+        /**
+         * Get all products which are of the specified types.
+         */
+        $productCollection = Mage::getResourceModel('catalog/product_collection')
+                                 ->addStoreFilter(Mage_Core_Model_App::ADMIN_STORE_ID)
+                                 ->addFieldToFilter(
+                                     'type_id',
+                                     array(
+                                         'in' => $productTypes
+                                     )
+                                 );
+
+        /**
+         * Update the attributes of these products.
+         */
+        Mage::getSingleton('catalog/product_action')
+            ->updateAttributes($productCollection->getAllIds(), $attributesData, Mage_Core_Model_App::ADMIN_STORE_ID);
 
         return $this;
     }

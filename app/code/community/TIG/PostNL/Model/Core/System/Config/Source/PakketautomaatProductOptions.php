@@ -37,77 +37,15 @@
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_PakketautomaatProductOptions
+    extends TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstract
 {
     /**
-     * XML path to supported options configuration setting
+     * @var array
      */
-    const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
-
-    /**
-     * Returns an option array for all possible PostNL product options
-     *
-     * @return array
-     */
-    public function toOptionArray()
-    {
-        $helper = Mage::helper('postnl');
-        $availableOptions = array(
-            array(
-                'value'        => '3553',
-                'label'        => $helper->__('Parcel Dispenser'),
-            ),
-        );
-
-        return $availableOptions;
-    }
-
-    /**
-     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
-     *
-     * @param boolean|int $storeId
-     * @param boolean $codesOnly
-     *
-     * @return array
-     */
-    public function getAvailableOptions($storeId = false, $codesOnly = false)
-    {
-        if ($storeId === false) {
-            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        }
-
-        $options = $this->toOptionArray();
-
-        /**
-         * Get a list of all possible options
-         */
-        $availableOptions = array();
-
-        /**
-         * Get the list of supported product options from the shop's configuration
-         */
-        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
-        $supportedOptionsArray = explode(',', $supportedOptions);
-
-        /**
-         * Check each standard option to see if it's supprted
-         */
-        foreach ($options as $option) {
-            if (!array_key_exists('value', $option)) {
-                continue;
-            }
-
-            if (!in_array($option['value'], $supportedOptionsArray)) {
-                continue;
-            }
-
-            if ($codesOnly === true) {
-                $availableOptions[] = $option['value'];
-                continue;
-            }
-
-            $availableOptions[] = $option;
-        }
-
-        return $availableOptions;
-    }
+    protected $_options = array(
+        array(
+            'value'        => '3553',
+            'label'        => 'Parcel Dispenser',
+        ),
+    );
 }
