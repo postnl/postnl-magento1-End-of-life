@@ -39,18 +39,18 @@
 class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
 {
     /**
-     * Shipping carrier code used by PostNL
+     * Shipping carrier code used by PostNL.
      */
     const POSTNL_CARRIER = 'postnl';
 
     /**
-     * PostNL shipping methods
+     * PostNL shipping methods.
      */
     const POSTNL_FLATRATE_METHOD  = 'flatrate';
     const POSTNL_TABLERATE_METHOD = 'tablerate';
 
     /**
-     * Localised track and trace base URL's
+     * Localised track and trace base URL's.
      */
     const POSTNL_TRACK_AND_TRACE_NL_BASE_URL  = 'https://mijnpakket.postnl.nl/Inbox/Search?';
     const POSTNL_TRACK_AND_TRACE_GB_BASE_URL  = 'http://parcels-uk.tntpost.com/mytrackandtrace/trackandtrace.aspx?';
@@ -59,7 +59,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     const POSTNL_TRACK_AND_TRACE_INT_BASE_URL = 'http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?';
 
     /**
-     * XML path to rate type setting
+     * XML path to rate type setting.
      */
     const XPATH_RATE_TYPE = 'carriers/postnl/rate_type';
 
@@ -69,7 +69,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     const XPATH_POSTNL_SHIPPING_METHODS = 'postnl/advanced/postnl_shipping_methods';
 
     /**
-     * Array of possible PostNL shipping methods
+     * Array of possible PostNL shipping methods.
      *
      * @var array
      */
@@ -83,7 +83,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     protected $_matchedMethods = array();
 
     /**
-     * Gets an array of possible PostNL shipping methods
+     * Gets an array of possible PostNL shipping methods.
      *
      * @return array
      */
