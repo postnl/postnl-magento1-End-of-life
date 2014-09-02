@@ -309,9 +309,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * Calls a CIF method.
      *
-     * @param string         $wsdlType   Which wsdl to use
-     * @param callable       $method     The method that will be called
-     * @param array          $soapParams An array of parameters to be sent
+     * @param string $wsdlType   Which wsdl to use
+     * @param string $method     The method that will be called
+     * @param array  $soapParams An array of parameters to be sent
      *
      * @return object|boolean
      *

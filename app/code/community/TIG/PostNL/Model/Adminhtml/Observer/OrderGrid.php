@@ -149,6 +149,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $this->_applySortAndFilter();
         $this->_addMassaction($block);
 
+        echo $collection->getSelect();
         $block->setCollection($collection);
         return $this;
     }
@@ -435,13 +436,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             $block->addColumnAfter(
                 'confirm_date',
                 array(
-                    'type'           => 'date',
-                    'header'         => $helper->__('Send date'),
-                    'index'          => 'confirm_date',
-                    'filter_index'   => 'postnl_order.confirm_date',
-                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_orderConfirmDate',
-                    'width'          => '150px',
-                    'frame_callback' => array($this, 'decorateConfirmDate'),
+                    'type'                      => 'date',
+                    'header'                    => $helper->__('Send date'),
+                    'index'                     => 'confirm_date',
+                    'filter_condition_callback' => array($this, '_filterConfirmDate'),
+                    'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_orderConfirmDate',
+                    'width'                     => '150px',
+                    'frame_callback'            => array($this, 'decorateConfirmDate'),
                 ),
                 $after
             );
@@ -614,7 +615,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return $values;
         }
 
-        if (is_null($values)) {
+        if (is_null($values) || $values === '') {
             return '';
         }
 
@@ -1275,6 +1276,27 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $collection->addFieldToFilter('country_id', array('neq' => 'NL'));
         $collection->addFieldToFilter('country_id', array('nin' => $euCountries));
+
+        return $this;
+    }
+
+    /**
+     * Filter the order grid's confirm date field. This field may represent either the postnl_order's confirm_date
+     * column or the postnl_shipment's confirm_date column.
+     *
+     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column         $column
+     *
+     * @return $this
+     */
+    protected function _filterConfirmDate($collection, $column)
+    {
+        $cond  = $column->getFilter()->getCondition();
+
+        $field = "IF(`postnl_shipment`.`confirm_date`, `postnl_shipment`.`confirm_date`, "
+               . "`postnl_order`.`confirm_date`)";
+
+        $collection->addFieldToFilter($field , $cond);
 
         return $this;
     }
