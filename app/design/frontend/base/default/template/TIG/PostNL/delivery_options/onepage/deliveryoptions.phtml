@@ -66,7 +66,7 @@
     <div class="title">
         <h2><?php echo $this->__('Delivery Options'); ?></h2>
     </div>
-    <div class="responsive-switch-wrapper">
+    <div id="responsive_switch" class="responsive-switch-wrapper">
         <ul>
             <li><a id="postnl_switch_pickup" class="active"><?php echo $this->__('Delivery'); ?></a></li>
             <li><a id="postnl_switch_delivery"><?php echo $this->__('Pickup'); ?></a></li>
@@ -312,7 +312,7 @@
         window.siteWidth = $("postnl_delivery_options").offsetWidth;
         setSiteWidth();
 
-        if ($("postnl_switch_delivery").hasClassName('active') && siteWidth < 669) {
+        if ($("postnl_switch_delivery").hasClassName('active') && window.innerWidth < 769) {
             switchDelivery();
         } else {
             switchPickup();

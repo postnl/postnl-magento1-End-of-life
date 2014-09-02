@@ -1,9 +1,12 @@
 /* To default */
 .responsive-switch-wrapper { display:none; }
+.responsive-tooltip { display:none; }
 .responsive-tooltip-open { display:none; }
 
 /* Mobile devices */
 @media only screen and (max-width: 768px) {
+    h3.sub-title { display:none; }
+
     .postnl-container { padding-left:0; padding-right:0; font-size:12px; }
     .postnl-container .col2-set { width:9999em; -webkit-transition:-webkit-transform 250ms linear; -o-transition:-o-transform 250ms linear; transition:transform 250ms linear; }
     .postnl-container .col2-set .col-1,
@@ -53,6 +56,7 @@
     }
 
     .tooltip-container { display:none !important; }
+    .responsive-tooltip { display:block; }
     .responsive-tooltip-open { display:block; width:19px; height:19px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_more-info.png) -2px 5px no-repeat; text-indent:-9999em; float:right; }
     .close-wrapper { text-align:center; }
     .responsive-tooltip-close { display:inline-block; width:20px; height:12px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_tooltip_close.png) 0 0 no-repeat; text-indent:-9999em; margin-top:6px; }

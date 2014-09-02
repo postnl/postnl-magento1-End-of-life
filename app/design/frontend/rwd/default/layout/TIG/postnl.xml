@@ -260,6 +260,7 @@
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/ajax.js</file></action>
             <action method="addItem"><type>skin_js</type><file>js/TIG/PostNL/postcodecheck.js</file></action>
             <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
+            <block type="core/template" name="postnl_deliveryoptions_css" template="TIG/PostNL/delivery_options/css.phtml"/>
             <block type="postnl_deliveryoptions/js" name="postnl_deliveryoptions_js" template="TIG/PostNL/delivery_options/js.phtml"/>
             <block type="postnl_deliveryoptions/theme" name="postnl_deliveryoptions_theme" template="TIG/PostNL/delivery_options/theme.phtml">
                 <action method="setIsOsc">

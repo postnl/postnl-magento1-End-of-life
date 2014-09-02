@@ -55,6 +55,23 @@ if (typeof Translator == 'undefined' && typeof Translate === 'function') {
 }
 
 /**
+ * Add the option to trigger HTML events on elements.
+ */
+if (typeof Element.triggerEvent == 'undefined') {
+    Element.prototype.triggerEvent = function (eventName) {
+        if (document.createEvent) {
+            var evt = document.createEvent('HTMLEvents');
+            evt.initEvent(eventName, true, true);
+
+            return this.dispatchEvent(evt);
+        }
+
+        if (this.fireEvent)
+            return this.fireEvent('on' + eventName);
+    };
+}
+
+/**
  * PostNL delivery options logic class.
  *
  * Uses AJAX to communicate with PostNL and retrieve possible delivery options. This class also manages all available
@@ -3861,7 +3878,7 @@ PostnlDeliveryOptions.Location = new Class.create({
          * Get the html for this location's header.
          */
         var headerHtml = '';
-        headerHtml += '<li class="location ' + paClassName + '">';
+        headerHtml += '<li id="location_header_' + this.getLocationCode() + '" class="location ' + paClassName + '">';
         headerHtml += '<div class="bkg">';
         headerHtml += '<div class="bkg">';
         headerHtml += '<div class="content">';
@@ -3947,16 +3964,36 @@ PostnlDeliveryOptions.Location = new Class.create({
         this.setElements(elements);
 
         /**
-         * Add observers to display the tooltip on mouseover and the responsive tooltip on click.
+         * Add observers to display the tooltip on mouse over and the responsive tooltip on click.
          */
-        var tooltipElement         = $('location_tooltip_' + this.getLocationCode());
-        var showOnMapAnchor        = $('show_map_' + this.getLocationCode());
+        var locationHeader          = $('location_header_' + this.getLocationCode());
+        var tooltipElement          = $('location_tooltip_' + this.getLocationCode());
+        var showOnMapAnchor         = $('show_map_' + this.getLocationCode());
         var responsiveTooltipAnchor = $('location_tooltip_' + this.getLocationCode() + '_responsive_open');
-        var responsiveTooltip      = $('location_tooltip_' + this.getLocationCode() + '_responsive');
-        var responsiveTooltipClose = $('location_tooltip' + this.getLocationCode() + '_responsive_close');
+        var responsiveTooltip       = $('location_tooltip_' + this.getLocationCode() + '_responsive');
+        var responsiveTooltipClose  = $('location_tooltip' + this.getLocationCode() + '_responsive_close');
+
+        locationHeader.observe('click', function() {
+            var responsiveSwitch = $('responsive_switch');
+            if (!responsiveSwitch || getComputedStyle(responsiveSwitch).display == 'none') {
+                return;
+            }
+
+            responsiveTooltipAnchor.triggerEvent('click');
+        });
 
         showOnMapAnchor.observe('click', function(event) {
             event.stop();
+
+            /**
+             * If the responsive switcher is shown, modify the observer so it shows the tooltip instead.
+             */
+            var responsiveSwitch = $('responsive_switch');
+            if (responsiveSwitch && getComputedStyle(responsiveSwitch).display != 'none') {
+                responsiveTooltipAnchor.triggerEvent('click');
+
+                return;
+            }
 
             this.getMap().openAddLocationWindow();
 
@@ -3968,9 +4005,13 @@ PostnlDeliveryOptions.Location = new Class.create({
         responsiveTooltipAnchor.observe('click', function(event) {
             event.stop();
 
+            var tooltipShown = (getComputedStyle(responsiveTooltip).display != 'none');
+
             $$('.responsive-tooltip').invoke('hide');
 
-            responsiveTooltip.show();
+            if (!tooltipShown) {
+                responsiveTooltip.show();
+            }
         }.bind(this));
 
         responsiveTooltipClose.observe('click', function(event) {
