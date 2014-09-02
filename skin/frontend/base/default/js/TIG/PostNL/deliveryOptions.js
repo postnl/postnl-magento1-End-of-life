@@ -3924,7 +3924,7 @@ PostnlDeliveryOptions.Location = new Class.create({
                         + '_responsive" style="display:none;">';
             headerHtml += '<div class="content">';
             headerHtml += this.getResponsiveTooltipHtml();
-            headerHtml += '<div class="close-wrapper" id="location_tooltip'
+            headerHtml += '<div class="close-wrapper" id="location_tooltip_'
                         + this.getLocationCode()
                         + '_responsive_close">';
             headerHtml += '<a class="responsive-tooltip-close">' + Translator.translate('Close') + '</a>';
@@ -3971,7 +3971,7 @@ PostnlDeliveryOptions.Location = new Class.create({
         var showOnMapAnchor         = $('show_map_' + this.getLocationCode());
         var responsiveTooltipAnchor = $('location_tooltip_' + this.getLocationCode() + '_responsive_open');
         var responsiveTooltip       = $('location_tooltip_' + this.getLocationCode() + '_responsive');
-        var responsiveTooltipClose  = $('location_tooltip' + this.getLocationCode() + '_responsive_close');
+        var responsiveTooltipClose  = $('location_tooltip_' + this.getLocationCode() + '_responsive_close');
 
         locationHeader.observe('click', function() {
             var responsiveSwitch = $('responsive_switch');
@@ -4694,6 +4694,11 @@ PostnlDeliveryOptions.Location = new Class.create({
         responsiveElementInfoAnchor.observe('click', function(event) {
             event.stop();
 
+            if (getComputedStyle(responsiveElementInfo).display != 'none') {
+                responsiveElementInfo.hide();
+                return;
+            }
+
             responsiveElementInfo.show();
         });
 
@@ -4721,7 +4726,6 @@ PostnlDeliveryOptions.Location = new Class.create({
             return true;
         }.bind(this));
 
-        //http://maps.google.com/?q=Albert%20Heijn%20Gulden%20Winckelplantsoen%205%20Amsterdam&f=d&saddr=Hofwijckstraat%2032%20III%2C%20AMSTERDAM%2C%201055GH%2C%20NL&daddr=52.3786040329176,4.846825820632148
         responsiveElementMapButton.observe('click', function(event) {
             event.stop();
 

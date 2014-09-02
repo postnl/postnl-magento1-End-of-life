@@ -66,7 +66,7 @@
     <div class="title">
         <h2><?php echo $this->__('Delivery Options'); ?></h2>
     </div>
-    <div id="responsive_switch" class="responsive-switch-wrapper">
+    <div id="responsive_switch" class="responsive-switch-wrapper" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
         <ul>
             <li><a id="postnl_switch_pickup" class="active"><?php echo $this->__('Delivery'); ?></a></li>
             <li><a id="postnl_switch_delivery"><?php echo $this->__('Pickup'); ?></a></li>
