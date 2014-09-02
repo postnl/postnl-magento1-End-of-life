@@ -259,7 +259,7 @@
             </block>
         </reference>
 
-        <reference name="conestepcheckout.checkout">
+        <reference name="onestepcheckout.checkout">
             <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/onestepcheckout/login_button.phtml" output="toHtml"/>
         </reference>
 
