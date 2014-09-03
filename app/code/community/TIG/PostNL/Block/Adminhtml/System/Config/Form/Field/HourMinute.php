@@ -233,4 +233,19 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
 
         return $attributes;
     }
+
+    /**
+     * Decorate field row html.
+     *
+     * This method is missing in some versions of Magento, therefore we copied it here.
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @param string                            $html
+     *
+     * @return string
+     */
+    protected function _decorateRowHtml($element, $html)
+    {
+        return '<tr id="row_' . $element->getHtmlId() . '">' . $html . '</tr>';
+    }
 }
