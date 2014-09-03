@@ -149,7 +149,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $this->_applySortAndFilter();
         $this->_addMassaction($block);
 
-        echo $collection->getSelect();
         $block->setCollection($collection);
         return $this;
     }
