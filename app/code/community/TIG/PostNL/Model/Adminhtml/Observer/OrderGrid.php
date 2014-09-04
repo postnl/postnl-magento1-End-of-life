@@ -788,6 +788,31 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         }
 
         /**
+         * Make sure the admin is allowed to ship orders, print labels, print packing slips and confirm shipments. If
+         * so, add the massaction.
+         */
+        if ($helper->checkIsPostnlActionAllowed(
+            array(
+                'create_shipment',
+                'confirm',
+                'print_label',
+                'print_packing_slips',
+            )
+        )
+        ) {
+            $fullPostnlFlowPackingSlipMassActionData = $this->_getFullPostnlFlowPackingSlipMassAction();
+
+            /**
+             * Add the massaction.
+             */
+            $block->getMassactionBlock()
+                  ->addItem(
+                      'postnl_create_shipment_print_packing_slip_and_confirm',
+                      $fullPostnlFlowPackingSlipMassActionData
+                  );
+        }
+
+        /**
          * Make sure the admin is allowed to print packing slips and add the mass action.
          */
         if ($helper->checkIsPostnlActionAllowed('print_packing_slips')) {
@@ -1064,6 +1089,37 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         );
 
         if ($defaultMassAction == 'postnl_create_shipment_print_label_and_confirm') {
+            $massActionData['selected'] = true;
+        }
+
+        return $massActionData;
+    }
+
+    /**
+     * Gets mass action data for the full PostNL flow mass action with packing slip.
+     *
+     * @return array
+     */
+    protected function _getFullPostnlFlowPackingSlipMassAction()
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Build an array of options for the massaction item.
+         */
+        $massActionData = array(
+            'label' => $helper->__('PostNL - Create shipments, print packing slips and confirm'),
+            'url'   => Mage::helper('adminhtml')->getUrl(
+                'postnl_admin/adminhtml_shipment/massFullPostnlFlowWithPackingSlip'
+            ),
+        );
+
+        $defaultMassAction = Mage::getStoreConfig(
+            self::XPATH_ORDER_GRID_MASSACTION_DEFAULT,
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        if ($defaultMassAction == 'postnl_create_shipment_print_packing_slip_and_confirm') {
             $massActionData['selected'] = true;
         }
 

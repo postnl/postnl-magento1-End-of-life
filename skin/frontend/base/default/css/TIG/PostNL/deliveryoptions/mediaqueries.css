@@ -85,6 +85,8 @@
     .responsive-location-results .location-filters .filter .input-box.selected { background-position:0 -26px; }
 
     .responsive-location-results .location-details { background:#f5f5f5; border-top:1px solid #bbb;  }
+    .responsive-location-results .location-details:nth-child(1n+7) { display:none; }
+    .responsive-location-results .location-details:nth-child(6),
     .responsive-location-results .location-details:last-child { border-bottom:1px solid #bbb; }
     .responsive-location-results .location-details .content { padding:20px 0; line-height:16px; position:relative; }
     .responsive-location-results .location-details .content .location-info { cursor:pointer; overflow:hidden; float:left; width:275px; }

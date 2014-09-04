@@ -247,7 +247,8 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
 
         $labelModel = Mage::getSingleton('postnl_core/label')
                           ->setLabelSize('A4')
-                          ->setOutputMode('S');
+                          ->setOutputMode('S')
+                          ->setLabelCounter(0);
 
         /**
          * @var TIG_PostNL_Model_Core_Shipment_Label $firstLabel
@@ -771,7 +772,7 @@ class TIG_PostNL_Model_Core_PackingSlip extends Mage_Sales_Model_Order_Pdf_Abstr
         $top -= 10;
 
         $deliveryDate = $postnlShipment->getDeliveryDate();
-        $text = $this->getCoreHelper()->formatDate($deliveryDate, 'short', false);
+        $text = $this->getCoreHelper()->formatDate($deliveryDate, 'full', false);
         $x = 580 - $this->widthForStringUsingFontSize($text, $font, 8);
         $page->drawText($text, $x, $top, 'UTF-8');
 

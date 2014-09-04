@@ -230,6 +230,166 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
     }
 
     /**
+     * Get the output of printing labels for an array of shipments.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment[] $shipments
+     *
+     * @return string|false
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getMassLabelsOutput($shipments)
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Get the labels from CIF.
+         */
+        $labels = array();
+        foreach ($shipments as $shipment) {
+            try {
+                $shipmentLabels = $this->_getLabels($shipment, true);
+                $labels = array_merge($labels, $shipmentLabels);
+            } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                Mage::helper('postnl/cif')->parseCifException($e);
+
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (TIG_PostNL_Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => null,
+                        'description' => $e->getMessage(),
+                    )
+                );
+            }
+        }
+
+        if (!$labels) {
+            return false;
+        }
+
+        /**
+         * The label wills be base64 encoded strings. Convert these to a single pdf.
+         */
+        $label  = Mage::getModel('postnl_core/label');
+        $output = $label->createPdf($labels);
+
+        return $output;
+    }
+
+    /**
+     * Get the output of printing packing slips for an array of shipments.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment[] $shipments
+     *
+     * @return bool|string
+     *
+     * @throws Zend_Pdf_Exception
+     */
+    protected function _getMassPackingSlipsOutput($shipments)
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Get the packing slip model.
+         */
+        $packingSlipModel = Mage::getModel('postnl_core/packingSlip');
+
+        /**
+         * Get the current memory limit as an integer in bytes. Because printing packing slips can be very memory
+         * intensive, we need to monitor memory usage.
+         */
+        $memoryLimit = $helper->getMemoryLimit();
+
+        /**
+         * Create the pdf's and add them to the main pdf object.
+         *
+         * @var TIG_PostNL_Model_Core_Shipment $shipment
+         */
+        $pdf = new Zend_Pdf();
+        foreach ($shipments as $shipment) {
+            try {
+                /**
+                 * If the current memory usage exceeds 75%, end the script. Otherwise we risk other processes being
+                 * unable to finish and throwing fatal errors.
+                 */
+                $memoryUsage = memory_get_usage(true);
+
+                if ($memoryUsage / $memoryLimit > 0.75) {
+                    throw new TIG_PostNL_Exception(
+                        $this->__(
+                            'Approaching memory limit for this operation. Please select fewer shipments and try ' .
+                            'again.'
+                        ),
+                        'POSTNL-0170'
+                    );
+                }
+
+                $shipmentLabels = $this->_getLabels($shipment, false);
+                $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
+            } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                Mage::helper('postnl/cif')->parseCifException($e);
+
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (TIG_PostNL_Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => null,
+                        'description' => $e->getMessage(),
+                    )
+                );
+            }
+        }
+        unset($shipment, $shipments, $shipmentLabels, $packingSlip, $packingSlipModel);
+
+        if (!$pdf->pages) {
+            return false;
+        }
+
+        /**
+         * Render the pdf as a string.
+         */
+        $output = $pdf->render();
+        return $output;
+    }
+
+    /**
      * Retrieves the shipping label for a given shipment ID.
      *
      * If the shipment has a stored label, it is returned. Otherwise a new one is generated.

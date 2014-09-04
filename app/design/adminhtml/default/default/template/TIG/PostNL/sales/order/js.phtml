@@ -85,6 +85,7 @@
                 } else if(item.url) {
                     if (item.id == 'postnl_print_packing_slip'
                         || item.id == 'postnl_create_shipment_print_label_and_confirm'
+                        || item.id == 'postnl_create_shipment_print_packing_slip_and_confirm'
                     ) {
                         var windowName = 'printWindow' + (new Date()).getTime();
                         var printWindow = window.open('', windowName);
