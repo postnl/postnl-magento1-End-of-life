@@ -39,7 +39,6 @@
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
     extends Mage_Adminhtml_Block_System_Config_Form_Field
 {
-
     /**
      * Enter description here...
      *
@@ -52,15 +51,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
 
         $html = '<td class="label"><label for="'.$id.'">'.$element->getLabel().'</label></td>';
 
-        //$isDefault = !$this->getRequest()->getParam('website') && !$this->getRequest()->getParam('store');
-        $isMultiple = $element->getExtType()==='multiple';
-
         // replace [value] with [inherit]
         $namePrefix = preg_replace('#\[value\](\[\])?$#', '', $element->getName());
 
-        $options = $element->getValues();
-
         $addInheritCheckbox = false;
+        $checkboxLabel = '';
         if ($element->getCanUseWebsiteValue()) {
             $addInheritCheckbox = true;
             $checkboxLabel = Mage::helper('adminhtml')->__('Use Website');
@@ -70,6 +65,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
             $checkboxLabel = Mage::helper('adminhtml')->__('Use Default');
         }
 
+        $inherit = '';
         if ($addInheritCheckbox) {
             $inherit = $element->getInherit()==1 ? 'checked="checked"' : '';
             if ($inherit) {
@@ -243,6 +239,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
      * @param string                            $html
      *
      * @return string
+     *
+     * @see Mage_Adminhtml_Block_System_Config_Form_Field::_decorateRowHtml()
      */
     protected function _decorateRowHtml($element, $html)
     {
