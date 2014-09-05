@@ -58,19 +58,20 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             return '';
         }
 
-        $value = $row->getData($this->getColumn()->getIndex());
+        $helper = Mage::helper('postnl/deliveryOptions');
+        $value  = $row->getData($this->getColumn()->getIndex());
 
         /**
          * If we have no value, then no delivery date was chosen by the customer. In this case we can calculate when the
          * order could be shipped.
          */
         if (!$value) {
-            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(
+            $deliveryDate = $helper->getDeliveryDate(
                 $row->getCreatedAt(),
                 $row->getStoreId()
             );
-
-            $deliveryDate = new DateTime($deliveryDate);
+            $deliveryDate = $helper->checkDate($deliveryDate);
+            
             $value = $deliveryDate->sub(new DateInterval('P1D'));
         } else {
             $value = new DateTime($value);
@@ -103,14 +104,14 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
              * Check if the shipment should be confirmed today
              */
             if ($diffDays == 0) {
-                return Mage::helper('postnl')->__('Today');
+                return $helper->__('Today');
             }
 
             /**
              * Check if it should be confirmed tomorrow
              */
             if ($diffDays == 1) {
-                $renderedValue = Mage::helper('postnl')->__('Tomorrow');
+                $renderedValue = $helper->__('Tomorrow');
 
                 return $renderedValue;
             }
@@ -118,7 +119,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             /**
              * Render the number of days before the shipment should be confirmed
              */
-            $renderedValue = Mage::helper('postnl')->__('%s days from now', $diffDays);
+            $renderedValue = $helper->__('%s days from now', $diffDays);
 
             return $renderedValue;
         }

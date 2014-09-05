@@ -73,6 +73,8 @@
  * @method boolean                     hasOrderId()
  * @method boolean                     hasQuoteId()
  * @method boolean                     hasPakjeGemakAddress()
+ * @method boolean                     hasConfirmDate()
+ * @method boolean                     hasDeliveryDate()
  */
 class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
 {

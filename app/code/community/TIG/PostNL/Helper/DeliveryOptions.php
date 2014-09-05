@@ -79,6 +79,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_SHIPPING_DURATION  = 'postnl/cif_labels_and_confirming/shipping_duration';
     const XPATH_CUTOFF_TIME        = 'postnl/cif_labels_and_confirming/cutoff_time';
     const XPATH_SUNDAY_CUTOFF_TIME = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_SHIPPING_DAYS      = 'postnl/cif_labels_and_confirming/shipping_days';
 
     /**
      * The time we consider to be the start of the evening.
@@ -474,6 +475,107 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $deliveryDate = $deliveryTime->format('Y-m-d');
         return $deliveryDate;
+    }
+
+    /**
+     * Check if a given delivery date is available by checking the configured shipping dates.
+     *
+     * @param string|DateTime $date
+     * @param boolean         $asShippingDate
+     *
+     * @return DateTime
+     *
+     * @todo implement sunday sorting
+     */
+    public function checkDate($date, $asShippingDate = false)
+    {
+        if (is_string($date)) {
+            $date = new DateTime($date);
+        }
+
+        if (!($date instanceof DateTime)) {
+            throw new InvalidArgumentException('Date parameter must be a valid date string or DateTime object.');
+        }
+
+        /**
+         * Get the configured shipping days.
+         */
+        $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
+        $shippingDays = explode(',', $shippingDays);
+        $shippingDate = clone $date;
+
+        $shippingDay   = (int) $shippingDate->sub(new DateInterval('P1D'))->format('N');
+
+        /**
+         * Shipping is only available on monday through saturday.
+         */
+        if ($shippingDay < 1 || $shippingDay > 6) {
+            $shippingDay = 6;
+        }
+
+        /**
+         * If the shipping day is allowed, return the date.
+         */
+        if (in_array($shippingDay, $shippingDays)) {
+            return $date;
+        }
+
+        $dayArr = array(
+            1 => 'monday',
+            2 => 'tuesday',
+            3 => 'wednesday',
+            4 => 'thursday',
+            5 => 'friday',
+            6 => 'saturday',
+            7 => 'sunday'
+        );
+
+        /**
+         * If a higher day is available, use that. I.e. the requested date is on a thursday and only friday is
+         * available.
+         */
+        natsort($shippingDays);
+        foreach ($shippingDays as $availableDay) {
+            if ($availableDay < $shippingDay) {
+                continue;
+            }
+
+            if (!$asShippingDate) {
+                $availableDay++;
+
+                /**
+                 * Monday and sunday are not available as delivery days.
+                 */
+                if ($availableDay < 2 || $availableDay > 6) {
+                    $availableDay = 2;
+                }
+            }
+
+            $availableDate = $date->modify("next {$dayArr[$availableDay]}");
+            return $availableDate;
+        }
+
+        /**
+         * If no higher value was available, get the first possible shipping day next week.
+         *
+         * Sort the array and get the first element.
+         */
+        reset($shippingDays);
+        $availableDay = current($shippingDays);
+
+        if (!$asShippingDate) {
+            $availableDay++;
+
+            /**
+             * Monday and sunday are not available as delivery days.
+             */
+            if ($availableDay < 2 || $availableDay > 6) {
+                $availableDay = 2;
+            }
+        }
+
+        $availableDate = $date->modify("next {$dayArr[$availableDay]}");
+        return $availableDate;
     }
 
     /**

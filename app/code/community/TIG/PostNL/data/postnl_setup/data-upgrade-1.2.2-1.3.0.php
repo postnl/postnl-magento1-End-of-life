@@ -42,6 +42,8 @@
  */
 $installer = $this;
 
+set_time_limit(0);
+
 /**
  * A new ACL role has been added for the config page.
  */
