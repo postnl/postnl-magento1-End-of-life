@@ -530,8 +530,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
 
         $postnlShippingMethodsRegex .= '$';
         $shipmentCollection->addFieldToFilter('`order`.`shipping_method`', array('regexp' => $postnlShippingMethodsRegex))
-                           ->addFieldToFilter('`main_table`.`store_id`', array('in' => $storeIds))
-                           ->addFieldToFilter('`main_table`.`shipment_id`', array('notnull' => true));
+                           ->addFieldToFilter('`main_table`.`store_id`', array('in' => $storeIds));
 
         if ($shipmentTypes) {
             $shipmentCollection->addFieldToFilter('`shipment_type`', array('in', $shipmentTypes));

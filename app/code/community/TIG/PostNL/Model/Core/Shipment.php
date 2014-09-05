@@ -658,6 +658,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return $this->_getData('shipment_type');
         }
 
+        if (!$this->getShipment(false)) {
+            return null;
+        }
+
         $shipmentType = $this->_getShipmentType($checkBuspakje);
 
         $this->setShipmentType($shipmentType);
@@ -915,11 +919,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $locale = Mage::getStoreConfig('general/locale/code', $this->getStoreId());
         $lang = substr($locale, 0, 2);
 
+        $url = '';
         $pakjeGemakAddress = $this->getPakjeGemakAddress();
         if ($pakjeGemakAddress) {
             $url = $helper->getBarcodeUrl($barcode, $pakjeGemakAddress, $lang, $forceNl);
         } else {
-            $url = $helper->getBarcodeUrl($barcode, $this->getShippingAddress(), $lang, $forceNl);
+            $shippingAddress = $this->getShippingAddress();
+            if ($shippingAddress) {
+                $url = $helper->getBarcodeUrl($barcode, $shippingAddress, $lang, $forceNl);
+            }
         }
 
         $this->setBarcodeUrl($url);
@@ -994,8 +1002,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 $xpath = self::XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION;
                 break;
             case self::SHIPMENT_TYPE_EPS:
+                $shippingAddress = $this->getShippingAddress();
                 if ($this->getHelper()->canUseEpsBEOnlyOption($this->getStoreId())
-                    && $this->getShippingAddress()->getCountryId() == 'BE'
+                    && $shippingAddress
+                    && $shippingAddress->getCountryId() == 'BE'
                 ) {
                     $xpath = self::XPATH_DEFAULT_EU_BE_PRODUCT_OPTION;
                 } else {
@@ -1349,6 +1359,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Gets the default extra cover amount for this shipment.
+     *
+     * @return float|int
+     */
+    public function getDefaultExtraCoverAmount()
+    {
+        if ($this->isGlobalShipment()) {
+            return 200;
+        }
+
+        $shipmentAmount = $this->getShipmentBaseGrandTotal();
+        $extraCoverAmount = ceil($shipmentAmount / 500) * 500;
+
+        return $extraCoverAmount;
+    }
+
+    /**
      * Getter for the '_preventSaving' class variable.
      *
      * @return bool
@@ -1379,19 +1406,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Set an extra cover amount
      *
-     * @param int $amount
+     * @param int|null $amount
      *
-     * @return boolean|TIG_PostNL_Model_Core_Shipment
+     * @return false|TIG_PostNL_Model_Core_Shipment
      */
-    public function setExtraCoverAmount($amount)
+    public function setExtraCoverAmount($amount = null)
     {
         /**
          * Check if extra cover is allowed for this shipment
          */
-        $productCode = $this->getProductCode();
-        $extraCoverProductCodes = $this->getExtraCoverProductCodes();
-        if (!in_array($productCode, $extraCoverProductCodes)) {
+        if (!$this->isExtraCover()) {
             return false;
+        }
+
+        if (is_null($amount)) {
+            $amount = $this->getDefaultExtraCoverAmount();
         }
 
         $this->setData('extra_cover_amount', $amount);
@@ -1699,7 +1728,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return true;
         }
 
-        $shippingDestination = $this->getShippingAddress()->getCountryId();
+        $shippingAddress = $this->getShippingAddress();
+        if (!$shippingAddress) {
+            return false;
+        }
+
+        $shippingDestination = $shippingAddress->getCountryId();
 
         if ($shippingDestination == 'NL') {
             return true;
@@ -1719,7 +1753,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return true;
         }
 
-        $shippingDestination = $this->getShippingAddress()->getCountryId();
+        $shippingAddress = $this->getShippingAddress();
+        if (!$shippingAddress) {
+            return false;
+        }
+
+        $shippingDestination = $shippingAddress->getCountryId();
 
         /**
          * @var TIG_PostNL_Helper_Cif $helper
@@ -1807,7 +1846,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Check if the currrent shipment is a PakjeGemak shipment.
+     * Check if the current shipment is a PakjeGemak shipment.
      *
      * @return boolean
      */
@@ -1955,6 +1994,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $isExported = (bool) $this->getIsParcelwareExported();
 
         return $isExported;
+    }
+
+    /**
+     * Check if this shipment is an extra cover shipment.
+     *
+     * @return boolean
+     */
+    public function isExtraCover()
+    {
+        $productCode = $this->getProductCode();
+        if (!$productCode) {
+            return false;
+        }
+
+        $extraCoverProductCodes = $this->getExtraCoverProductCodes();
+        if (in_array($productCode, $extraCoverProductCodes)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -2158,7 +2217,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * if this shipment uses a custom barcode we can't send the track and trace email, because custom barcodes can't
+         * If this shipment uses a custom barcode we can't send the track and trace email, because custom barcodes can't
          * be tracked.
          */
         if ($this->hasCustomBarcode()) {
@@ -3483,8 +3542,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Check if the destination country of this shipment is allowed.
          */
-        $destination = $this->getShippingAddress()->getCountryId();
-        if (!in_array($destination, $allowedCountries)) {
+        $shippingAddress = $this->getShippingAddress();
+        if (!$shippingAddress
+            || !in_array($shippingAddress->getCountryId(), $allowedCountries)
+        ) {
             throw new TIG_PostNL_Exception(
                 $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
                 'POSTNL-0078'
@@ -3902,6 +3963,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (!$this->getProductCode() || Mage::registry('postnl_product_option') !== null) {
             $productCode = $this->_getProductCode();
             $this->setProductCode($productCode);
+
+            /**
+             * If this is an extra cover shipment and no extra cover amount has been set, set the default of 500 EUR.
+             */
+            if ($this->isExtraCover() && !$this->hasExtraCoverAmount()) {
+                $this->setExtraCoverAmount();
+            }
         }
 
         /**

@@ -63,7 +63,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Creditmemo_Totals_CodFee
          * @var Mage_Sales_Model_Order_Creditmemo $creditmemo
          */
         $parent     = $this->getParentBlock();
-        $creditmemo = $parent->getCreditmemo();
+        $creditmemo = $this->getCreditmemo();
 
         $fee     = $creditmemo->getPostnlCodFee();
         $baseFee = $creditmemo->getBasePostnlCodFee();

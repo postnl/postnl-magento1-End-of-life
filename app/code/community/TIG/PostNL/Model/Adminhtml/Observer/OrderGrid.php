@@ -435,13 +435,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             $block->addColumnAfter(
                 'confirm_date',
                 array(
-                    'type'           => 'date',
-                    'header'         => $helper->__('Send date'),
-                    'index'          => 'confirm_date',
-                    'filter_index'   => 'postnl_order.confirm_date',
-                    'renderer'       => 'postnl_adminhtml/widget_grid_column_renderer_orderConfirmDate',
-                    'width'          => '150px',
-                    'frame_callback' => array($this, 'decorateConfirmDate'),
+                    'type'                      => 'date',
+                    'header'                    => $helper->__('Send date'),
+                    'index'                     => 'confirm_date',
+                    'filter_condition_callback' => array($this, '_filterConfirmDate'),
+                    'renderer'                  => 'postnl_adminhtml/widget_grid_column_renderer_orderConfirmDate',
+                    'width'                     => '150px',
+                    'frame_callback'            => array($this, 'decorateConfirmDate'),
                 ),
                 $after
             );
@@ -614,7 +614,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             return $values;
         }
 
-        if (is_null($values)) {
+        if (is_null($values) || $values === '') {
             return '';
         }
 
@@ -784,6 +784,31 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                   ->addItem(
                       'postnl_create_shipment_print_label_and_confirm',
                       $fullPostnlFlowMassActionData
+                  );
+        }
+
+        /**
+         * Make sure the admin is allowed to ship orders, print labels, print packing slips and confirm shipments. If
+         * so, add the massaction.
+         */
+        if ($helper->checkIsPostnlActionAllowed(
+            array(
+                'create_shipment',
+                'confirm',
+                'print_label',
+                'print_packing_slips',
+            )
+        )
+        ) {
+            $fullPostnlFlowPackingSlipMassActionData = $this->_getFullPostnlFlowPackingSlipMassAction();
+
+            /**
+             * Add the massaction.
+             */
+            $block->getMassactionBlock()
+                  ->addItem(
+                      'postnl_create_shipment_print_packing_slip_and_confirm',
+                      $fullPostnlFlowPackingSlipMassActionData
                   );
         }
 
@@ -1071,6 +1096,37 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     }
 
     /**
+     * Gets mass action data for the full PostNL flow mass action with packing slip.
+     *
+     * @return array
+     */
+    protected function _getFullPostnlFlowPackingSlipMassAction()
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Build an array of options for the massaction item.
+         */
+        $massActionData = array(
+            'label' => $helper->__('PostNL - Create shipments, print packing slips and confirm'),
+            'url'   => Mage::helper('adminhtml')->getUrl(
+                'postnl_admin/adminhtml_shipment/massFullPostnlFlowWithPackingSlip'
+            ),
+        );
+
+        $defaultMassAction = Mage::getStoreConfig(
+            self::XPATH_ORDER_GRID_MASSACTION_DEFAULT,
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        if ($defaultMassAction == 'postnl_create_shipment_print_packing_slip_and_confirm') {
+            $massActionData['selected'] = true;
+        }
+
+        return $massActionData;
+    }
+
+    /**
      * Gets mass action data for the printPackingSlips mass action.
      *
      * @return array
@@ -1275,6 +1331,27 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          */
         $collection->addFieldToFilter('country_id', array('neq' => 'NL'));
         $collection->addFieldToFilter('country_id', array('nin' => $euCountries));
+
+        return $this;
+    }
+
+    /**
+     * Filter the order grid's confirm date field. This field may represent either the postnl_order's confirm_date
+     * column or the postnl_shipment's confirm_date column.
+     *
+     * @param TIG_PostNL_Model_Resource_Order_Grid_Collection $collection
+     * @param Mage_Adminhtml_Block_Widget_Grid_Column         $column
+     *
+     * @return $this
+     */
+    protected function _filterConfirmDate($collection, $column)
+    {
+        $cond  = $column->getFilter()->getCondition();
+
+        $field = "IF(`postnl_shipment`.`confirm_date`, `postnl_shipment`.`confirm_date`, "
+               . "`postnl_order`.`confirm_date`)";
+
+        $collection->addFieldToFilter($field , $cond);
 
         return $this;
     }
