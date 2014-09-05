@@ -371,14 +371,19 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             return $this;
         }
 
-        if (!is_array($response)) {
+        /**
+         * Filter out unavailable time frames.
+         */
+        $timeframes = $this->getService()->filterTimeframes($response);
+
+        if (!$timeframes) {
             $this->getResponse()
                  ->setBody('error');
 
             return $this;
         }
 
-        $timeframes = Mage::helper('core')->jsonEncode($response);
+        $timeframes = Mage::helper('core')->jsonEncode($timeframes);
 
         /**
          * Return the result as a json response

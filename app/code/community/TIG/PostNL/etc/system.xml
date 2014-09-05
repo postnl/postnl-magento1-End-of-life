@@ -945,10 +945,20 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </cutoff_time>
+                        <shipping_days translate="label comment" module="postnl">
+                            <label>Shipping days</label>
+                            <comment>Select on which days of the week orders are shipped.</comment>
+                            <source_model>postnl_core/system_config_source_shippingDays</source_model>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>120</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </shipping_days>
                         <grid_header translate="label" module="postnl">
                             <label>These fields allow you to alter the way the order and shipment grids are displayed.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -959,7 +969,7 @@
                             <tooltip>These options will appear in a dropdown field next to the 'create shipments' mass action in the sales > order grid.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -969,7 +979,7 @@
                             <comment>This will add the option to mark shipments as being letter box parcels when creating shipments from the order grid.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -981,7 +991,7 @@
                         <shipping_grid_columns_anchor>
                             <frontend_model>postnl_adminhtml/system_config_form_field_anchor</frontend_model>
                             <anchor_name>shipment_grid_columns</anchor_name>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -992,7 +1002,7 @@
                             <tooltip>Selecting too many columns may cause the order grid to no longer fit on your monitor.</tooltip>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_orderGridColumns</source_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1002,7 +1012,7 @@
                             <label>Select a default option for the order grid mass action.</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_orderGridMassaction</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1013,7 +1023,7 @@
                             <tooltip>Selecting too many columns may cause the shipment grid to no longer fit on your monitor.</tooltip>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_shipmentGridColumns</source_model>
-                            <sort_order>180</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1023,7 +1033,7 @@
                             <label>Select a default option for the shipment grid mass action.</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_shipmentGridMassaction</source_model>
-                            <sort_order>190</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1031,7 +1041,7 @@
                         <email_header translate="label" module="postnl">
                             <label>These fields are used to configure the track &amp; trace email that may be automatically emailed to customers after a shipment has been confirmed.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>200</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1041,7 +1051,7 @@
                             <comment>If enabled, a track &amp; trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>210</sort_order>
+                            <sort_order>220</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1052,7 +1062,7 @@
                             <comment>You can customize the track &amp; trace email in system > transactional emails.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_template</source_model>
-                            <sort_order>220</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1063,7 +1073,7 @@
                             <comment>If enabled, you may enter seperate email addresses to which the track &amp; trace email will be sent in addition to the customer.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>230</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1073,7 +1083,7 @@
                             <label>Send track &amp; trace email copy to</label>
                             <comment>You can enter multiple email addresses seperated by commas.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>240</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1085,7 +1095,7 @@
                             <label>Track &amp; trace email copy method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_method</source_model>
-                            <sort_order>250</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

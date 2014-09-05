@@ -53,9 +53,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
 
     /**
-     * Xpath for shipping duration setting.
+     * Xpaths for shipping settings.
      */
     const XPATH_SHIPPING_DURATION = 'postnl/cif_labels_and_confirming/shipping_duration';
+    const XPATH_SHIPPING_DAYS     = 'postnl/cif_labels_and_confirming/shipping_days';
 
     /**
      * Gets a PostNL Order. If none is set; load one.
@@ -146,6 +147,59 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
 
         $this->setConfirmDate($confirmDate);
         return $confirmDate;
+    }
+
+    /**
+     * @param StdClass[] $timeframes
+     *
+     * @return StdClass[]|false
+     */
+    public function filterTimeframes($timeframes)
+    {
+        /**
+         * If the time frames are not an array, something has gone wrong.
+         */
+        if (!is_array($timeframes)) {
+            return false;
+        }
+
+        /**
+         * Get the configured shipping days.
+         */
+        $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
+        $shippingDays = explode(',', $shippingDays);
+
+        foreach ($timeframes as $key => $timeframe) {
+            /**
+             * Get the date of the time frame and calculate the shipping day. The shipping day will be the day before
+             * the delivery date, but may not be a sunday.
+             */
+            $timeframeDate = new DateTime($timeframe->Date);
+            $deliveryDay   = (int) $timeframeDate->format('N');
+            $shippingDay   = (int) $timeframeDate->sub(new DateInterval('P1D'))->format('N');
+
+            if ($shippingDay < 1 || $shippingDay > 6) {
+                $shippingDay = 6;
+            }
+
+            /**
+             * If the shipping day is not allowed, remove the time frame from the array.
+             *
+             * For tuesday delivery either saturday or monday needs to be available.
+             */
+            if ($deliveryDay === 2 && !in_array($shippingDay, $shippingDays)) {
+                $shippingDay = 6;
+            }
+
+            if (!in_array($shippingDay, $shippingDays)) {
+                unset($timeframes[$key]);
+            }
+        }
+
+        /**
+         * Only return the values, as otherwise the array will be JSON encoded as an object.
+         */
+        return array_values($timeframes);
     }
 
     /**

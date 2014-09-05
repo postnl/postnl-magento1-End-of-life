@@ -1316,7 +1316,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Try to get the delivery date for a PostNL order.
          */
         $postnlOrder = $this->getPostnlOrder();
-        if ($postnlOrder && $postnlOrder->getDeliveryDate()) {
+        if ($postnlOrder && $postnlOrder->hasDeliveryDate()) {
             $deliveryDate = $postnlOrder->getDeliveryDate();
 
             $this->setDeliveryDate($deliveryDate);
@@ -1330,6 +1330,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $deliveryDate = $helper->getDeliveryDate($this->getOrder()->getCreatedAt(), $this->getStoreId());
 
         if ($deliveryDate) {
+            $deliveryDate = $helper->checkDate($deliveryDate)->format('Y-m-d H:i:s');
+
             return $deliveryDate;
         }
 
@@ -1532,7 +1534,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If this shipment has an associated PostNL order with a confirm date, use that.
          */
         $postnlOrder = $this->getPostnlOrder();
-        if ($postnlOrder && $postnlOrder->getConfirmDate()) {
+        if ($postnlOrder && $postnlOrder->hasConfirmDate()) {
             $confirmDate = new DateTime($postnlOrder->getConfirmDate());
 
             $this->setData('confirm_date', $confirmDate->getTimestamp());
@@ -1549,6 +1551,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         if (!$deliveryDate) {
             $confirmDate = Mage::getModel('core/date')->gmtTimestamp();
+            $confirmDate = $this->getHelper('deliveryOptions')->checkDate($confirmDate, true)->format('Y-m-d H:i:s');
 
             $this->setData('confirm_date', $confirmDate);
             return $this;

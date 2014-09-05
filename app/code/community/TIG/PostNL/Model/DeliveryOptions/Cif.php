@@ -129,11 +129,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * Get evening timeframes for the specified postcode and delivery window.
+     * Get evening time frames for the specified postcode and delivery window.
      *
      * @param array $data
      *
-     * @return StdClass
+     * @return StdClass[]
      *
      * @throws TIG_PostNL_Exception
      */
