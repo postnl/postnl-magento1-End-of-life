@@ -1098,3 +1098,11 @@ TIG_PostNL::Pickup,Ophalen
 TIG_PostNL::Choose a different pickup location,Kies een ander ophaalpunt
 "TIG_PostNL::PostNL - Create shipments, print packing slips and confirm","PostNL - Maak zendingen aan, print pakbonnen en meld voor"
 "TIG_PostNL::Create shipments, print packing slips and confirm","Maak zendingen aan, print pakbonnen en meld voor"
+TIG_PostNL::Shipping days,Verzenddagen
+TIG_PostNL::Select on which days of the week orders are shipped.,Selecteer op welke dagen u bestellingen verstuurt.
+TIG_PostNL::Monday,Maandag
+TIG_PostNL::Tuesday,Dinsdag
+TIG_PostNL::Wednesday,Woensdag
+TIG_PostNL::Thursday,Donderdag
+TIG_PostNL::Friday,Vrijdag
+TIG_PostNL::Saturday,Zaterdag
