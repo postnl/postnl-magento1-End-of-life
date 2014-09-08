@@ -855,16 +855,15 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Retrieves streetname, housenumber and housenumber extension from the shipping address.
-     * The shipping address may be in multiple streetlines configuration or single line
-     * configuration. In the case of multi-line, each part of the street data will be in a seperate
-     * field. In the single line configuration, each part will be in the same field and will have
-     * to be split using PREG.
+     * Retrieves street name, house number and house number extension from the shipping address.
+     * The shipping address may be in multiple street lines configuration or single line configuration. In the case of
+     * multi-line, each part of the street data will be in a separate field. In the single line configuration, each part
+     * will be in the same field and will have to be split using PREG.
      *
-     * PREG cannot be relied on as it is impossible to create a regex that can filter all
-     * possible street syntaxes. Therefore we strongly recommend to use multiple street lines. This
-     * can be enabled in Magento community in system > config > customer configuration. Or if you
-     * use Enterprise, in customers > attributes > manage customer address attributes.
+     * PREG cannot be relied on as it is impossible to create a regex that can filter all possible street syntaxes.
+     * Therefore we strongly recommend to use multiple street lines. This can be enabled in Magento community in
+     * system > config > customer configuration. Or if you use Enterprise, in customers > attributes > manage customer
+     * address attributes.
      *
      * @param int                                  $storeId
      * @param Mage_Customer_Model_Address_Abstract $address
@@ -925,8 +924,8 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Retrieves streetname, housenumber and housenumber extension from the shipping address in the multiple streetlines
-     * configuration.
+     * Retrieves street name, house number and housen umber extension from the shipping address in the multiple street
+     * ines configuration.
      *
      * @param int                            $storeId
      * @param Mage_Sales_Model_Order_Address $address
@@ -937,22 +936,22 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     {
         $addressHelper = Mage::helper('postnl/addressValidation');
 
-        $streetnameField = $addressHelper->getStreetnameField($storeId);;
-        $housenumberField = $addressHelper->getHousenumberField($storeId);;
+        $streetnameField = $addressHelper->getStreetnameField($storeId);
+        $housenumberField = $addressHelper->getHousenumberField($storeId);
 
         $streetname = $address->getStreet($streetnameField);
         $housenumber = $address->getStreet($housenumberField);
         $housenumber = trim($housenumber);
 
         /**
-         * If street or housenr fields are empty, use alternative options to obtain the address data
+         * If street or house number fields are empty, use alternative options to obtain the address data
          */
         if (empty($streetname) || empty($housenumber)) {
             return false;
         }
 
         /**
-         * Split the housenumber into a number and an extension
+         * Split the house number into a number and an extension
          */
         $splitHouseNumber = $addressHelper->useSplitHousenumber();
         if ($splitHouseNumber) {
@@ -960,7 +959,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
             $housenumberExtension      = $address->getStreet($housenumberExtensionField);
 
             /**
-             * Make sure the housenumber is actually split.
+             * Make sure the house number is actually split.
              */
             if (!$housenumberExtension && !is_numeric($housenumber)) {
                 $housenumberParts     = $this->_splitHousenumber($housenumber);
@@ -988,9 +987,9 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Splits street data into seperate parts for streetname, housenumber and extension.
+     * Splits street data into separate parts for street name, house number and extension.
      *
-     * @param string $fullStreet The full streetname including all parts
+     * @param string $fullStreet The full street name including all parts
      *
      * @return array
      *
@@ -1031,7 +1030,7 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Splits a supplier housenumber into a number and an extension.
+     * Splits a supplier house number into a number and an extension.
      *
      * @param string $housenumber
      *

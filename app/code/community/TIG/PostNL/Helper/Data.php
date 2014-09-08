@@ -1826,7 +1826,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * $session->addError() call.
      *
      * @param string|Mage_Core_Model_Session_Abstract $session The session to which the messages will be added.
-     * @param Exception $exception
+     * @param Exception                               $exception
      *
      * @return $this
      *
