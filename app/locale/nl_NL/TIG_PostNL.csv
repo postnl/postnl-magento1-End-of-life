@@ -118,7 +118,7 @@ TIG_PostNL::Customs value attribute,Douane waarde
 TIG_PostNL::The product attribute used to determine product's customs value.,Het productattribuut wat gebruikt wordt om de waarde voor de douane van het product te bepalen
 TIG_PostNL::Country of origin attribute,Land van herkomst
 TIG_PostNL::The product attribute used to determine the product's country of origin.,Het productattribuut wat gebruikt wordt om het land van herkomst van het product te bepalen
-TIG_PostNL::Product description attribyte,Product beschrijving
+TIG_PostNL::Product description attribute,Product beschrijving
 TIG_PostNL::The product attribute used to supply the product's customs description.,Het productattribuut wat gebruikt wordt om omschrijving van het product voor de douane te bepalen
 TIG_PostNL::The following fields determine which products are displayed on international shipping labels and how.,De volgende velden bepalen hoe en welke producten er getoond gaan worden op het internationale verzend label
 TIG_PostNL::Product sorting attribute,Product sortering attribuut
@@ -626,7 +626,7 @@ TIG_PostNL::choose a different pickup location,kies een ander ophaalpunt
 TIG_PostNL::Select pickup location,Postkantoor kiezen
 TIG_PostNL::Search,Zoeken
 TIG_PostNL::early pickup,extra vroeg ophalen
-TIG_PostNL::opened in the evening,'s avonds open
+TIG_PostNL::open in the evening,'s avonds open
 TIG_PostNL::Close,Sluiten
 TIG_PostNL::Pickup locations found,Gevonden ophaallocaties
 TIG_PostNL::business hours,openingstijden
@@ -1090,3 +1090,11 @@ To Letter Box Parcel,Naar Pakket
 To Package,Naar Brievenbuspakje
 Change Product Option,Wijzig Productoptie
 TIG_PostNL::Fits through the mailslot,Past door de brievenbus
+TIG_PostNL::Nearest PostNL pickup points,Resultaat van dichtsbijzijnde PostNL ophaalpunten
+TIG_PostNL::Filter,Filter
+TIG_PostNL::Select location,Selecteer locatie
+TIG_PostNL::Show map,Toon kaart
+TIG_PostNL::Pickup,Ophalen
+TIG_PostNL::Choose a different pickup location,Kies een ander ophaalpunt
+"TIG_PostNL::PostNL - Create shipments, print packing slips and confirm","PostNL - Maak zendingen aan, print pakbonnen en meld voor"
+"TIG_PostNL::Create shipments, print packing slips and confirm","Maak zendingen aan, print pakbonnen en meld voor"

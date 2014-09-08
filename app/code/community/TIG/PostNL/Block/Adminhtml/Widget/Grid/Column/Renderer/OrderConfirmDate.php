@@ -85,7 +85,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
         $diff = $now->diff($value);
         if (
             (($diff->days > 0 || $diff->h > 0) && !$diff->invert)
-            || ($diff->days == 0 || $diff->h < 24) && $diff->invert
+            || ($diff->days == 0 && $diff->h < 24) && $diff->invert
         ) {
             /**
              * Get the number of days until the shipment should be confirmed

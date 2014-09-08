@@ -51,7 +51,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     const UPDATE_STATISTICS_CRON_MODEL_PATH  = 'crontab/jobs/postnl_update_statistics/run/model';
 
     /**
-     * XML path to the supporttab_expanded setting
+     * XML path to the support tab_expanded setting
      */
     const EXPAND_SUPPORT_PATH = 'postnl/support/expanded';
 
@@ -73,7 +73,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
 
     /**
-     *
+     * Xpath to the item columns setting.
      */
     const XPATH_PACKING_SLIP_ITEM_COLUMNS = 'postnl/packing_slip/item_columns';
 
@@ -807,10 +807,15 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
 
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         foreach ($postnlShipmentCollection as $shipment) {
-            /**
-             * The getOrderId() method will calculate and set the order id if none is available.
-             */
-            $shipment->getOrderId();
+            try {
+                /**
+                 * The getOrderId() method will calculate and set the order id if none is available.
+                 */
+                $shipment->getOrderId();
+            } catch (Exception $e) {
+                Mage::helper('postnl')->logException($e);
+                continue;
+            }
 
             if ($shipment->hasDataChanges()) {
                 $transactionSave->addObject($shipment);
@@ -837,10 +842,15 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
 
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         foreach ($postnlShipmentCollection as $shipment) {
-            /**
-             * The getShipmentType() method will calculate and set the shipment type if none is available.
-             */
-            $shipment->getShipmentType();
+            try {
+                /**
+                 * The getShipmentType() method will calculate and set the shipment type if none is available.
+                 */
+                $shipment->getShipmentType();
+            } catch (Exception $e) {
+                Mage::helper('postnl')->logException($e);
+                continue;
+            }
 
             if ($shipment->hasDataChanges()) {
                 $transactionSave->addObject($shipment);
