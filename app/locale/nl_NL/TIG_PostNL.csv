@@ -1098,3 +1098,4 @@ TIG_PostNL::Pickup,Ophalen
 TIG_PostNL::Choose a different pickup location,Kies een ander ophaalpunt
 "TIG_PostNL::PostNL - Create shipments, print packing slips and confirm","PostNL - Maak zendingen aan, print pakbonnen en meld voor"
 "TIG_PostNL::Create shipments, print packing slips and confirm","Maak zendingen aan, print pakbonnen en meld voor"
+TIG_PostNL::PostNL - Print Packing Slip,PostNL - Print Pakbon
