@@ -64,12 +64,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_EuProductOptions
 
         $helper = Mage::helper('postnl');
         if ($helper->canUseEpsBEOnlyOption()) {
-            $options['eu_options']['value']['4955'] = array(
-                'value'         => '4955',
-                'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
-                'isBelgiumOnly' => true,
-                'isExtraCover'  => false,
-            );
+            if (!$asFlatArray) {
+                $options[] = array(
+                    'value'         => '4955',
+                    'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                    'isBelgiumOnly' => true,
+                    'isExtraCover'  => false,
+                );
+            } else {
+                $options['4955'] = $helper->__('EU Pack Standard (Belgium only, no signature)');
+            }
         }
 
         return $options;
