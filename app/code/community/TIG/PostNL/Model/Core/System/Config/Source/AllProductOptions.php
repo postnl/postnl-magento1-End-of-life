@@ -296,14 +296,31 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
     {
         $options = parent::getOptions($flags, $asFlatArray, $checkAvailable);
 
+        /**
+         * Add the EU EPS BE only option if it's allowed and if either EPS options are requested or if all groups are
+         * requested.
+         */
         $helper = Mage::helper('postnl');
-        if ($helper->canUseEpsBEOnlyOption()) {
-            $options['eu_options']['value']['4955'] = array(
-                'value'         => '4955',
-                'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
-                'isBelgiumOnly' => true,
-                'isExtraCover'  => false,
-            );
+        if ($helper->canUseEpsBEOnlyOption()
+            && (
+                (isset($flags['group'])
+                    && $flags['group'] == 'eu_options'
+                )
+                || (!isset($flags['group']))
+            )
+        ) {
+            if (!$asFlatArray) {
+                $options['4955'] = array(
+                    'value'         => '4955',
+                    'label'         => $helper->__('EU Pack Standard (Belgium only, no signature)'),
+                    'isBelgiumOnly' => true,
+                    'isExtraCover'  => false,
+                );
+            } else {
+                $options['4955'] = $helper->__('EU Pack Standard (Belgium only, no signature)');
+            }
+
+            ksort($options);
         }
 
         return $options;
