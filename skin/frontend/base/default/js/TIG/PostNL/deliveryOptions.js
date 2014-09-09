@@ -194,7 +194,8 @@ PostnlDeliveryOptions.prototype = {
             shippingMethodName        : 's_method_postnl_flatrate',
             postnlShippingMethods     : [
                 's_method_postnl_tablerate', 's_method_postnl_flatrate'
-            ]
+            ],
+            extraOptions              : {}
         }, options || {});
 
         this.debug = debug;
@@ -334,7 +335,16 @@ PostnlDeliveryOptions.prototype = {
     },
 
     setSelectedOption : function(option) {
+        var fire = false;
+        if (this.getSelectedOption() !== option) {
+            fire = true;
+        }
+
         this.selectedOption = option;
+
+        if (fire) {
+            document.fire('postnl:selectedOptionChange');
+        }
 
         return this;
     },
@@ -344,8 +354,16 @@ PostnlDeliveryOptions.prototype = {
     },
 
     setSelectedType : function(type) {
+        var fire = false;
+        if (this.getSelectedType() !== type) {
+            fire = true;
+        }
+
         this.selectedType = type;
 
+        if (fire) {
+            document.fire('postnl:selectedTypeChange');
+        }
         return this;
     },
 
@@ -475,6 +493,7 @@ PostnlDeliveryOptions.prototype = {
 
         document.stopObserving('postnl:saveDeliveryOptions');
         document.stopObserving('postnl:domModified');
+        document.stopObserving('postnl:selectedTypeChange');
 
         if (this.getOptions().isOsc && this.getOptions().oscSaveButton && $(this.getOptions().oscSaveButton)) {
             var saveButton = $(this.getOptions().oscSaveButton);
@@ -522,6 +541,25 @@ PostnlDeliveryOptions.prototype = {
             var saveButton = $(this.getOptions().oscSaveButton);
             saveButton.observe('click', this.saveOscOptions.bind(this));
         }
+
+        document.observe('postnl:selectedTypeChange', function() {
+            var extraOptions = this.options.extraOptions;
+            if (!extraOptions) {
+                return;
+            }
+
+            $H(extraOptions).each(function(option) {
+                var params = option.value;
+                var selectedType = this.getSelectedType();
+
+                if (params.allowedTypes.indexOf(selectedType) < 0) {
+                    params.element.checked = false;
+                    params.element.disabled = true;
+                } else {
+                    params.element.disabled = false;
+                }
+            }.bind(this));
+        }.bind(this));
 
         return this;
     },

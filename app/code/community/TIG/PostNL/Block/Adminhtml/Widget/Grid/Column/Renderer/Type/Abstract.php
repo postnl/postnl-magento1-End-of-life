@@ -48,6 +48,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
     const IS_PAKKETAUTOMAAT_COLUMN    = 'is_pakketautomaat';
     const DELIVERY_OPTION_TYPE_COLUMN = 'delivery_option_type';
     const PAYMENT_METHOD_COLUMN       = 'payment_method';
+    const OPTIONS_COLUMN              = 'options';
 
     /**
      * Renders a type column for a shipment type.
@@ -409,5 +410,40 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_Type_Abstract
         }
 
         return $isCod;
+    }
+
+    /**
+     * Add additional comments for chosen options. Currently only the 'only_stated_address' option is supported, but
+     * this will likely be expanded in future releases.
+     *
+     * @param string        $html
+     * @param Varien_Object $row
+     *
+     * @return mixed
+     */
+    protected function _addOptionComments($html, Varien_Object $row)
+    {
+        $options = $row->getData(self::OPTIONS_COLUMN);
+        if (empty($options)) {
+            return $html;
+        }
+
+        $helper = Mage::helper('postnl');
+
+        $options = unserialize($options);
+        foreach ($options as $option => $value) {
+            if (!$value) {
+                continue;
+            }
+
+            switch ($option) {
+                case 'only_stated_address':
+                    $html .= '<br /><em>(' . $helper->__('deliver to stated address only') . ')</em>';
+                    break;
+                //no default
+            }
+        }
+
+        return $html;
     }
 }

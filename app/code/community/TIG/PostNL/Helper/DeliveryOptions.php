@@ -66,12 +66,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_DELIVERY_DAYS_FOR_BUSPAKJE  = 'postnl/delivery_options/enable_delivery_days_for_buspakje';
     const XPATH_ENABLE_PAKJEGEMAK_FOR_BUSPAKJE     = 'postnl/delivery_options/enable_pakjegemak_for_buspakje';
     const XPATH_ENABLE_PAKKETAUTOMAAT_FOR_BUSPAKJE = 'postnl/delivery_options/enable_pakketautomaat_for_buspakje';
+    const XPATH_STATED_ADDRESS_ONLY_OPTION         = 'postnl/delivery_options/stated_address_only_option';
 
     /**
      * Xpaths to extra fee config settings.
      */
-    const XPATH_EVENING_TIMEFRAME_FEE  = 'postnl/delivery_options/evening_timeframe_fee';
-    const XPATH_PAKJEGEMAK_EXPRESS_FEE = 'postnl/delivery_options/pakjegemak_express_fee';
+    const XPATH_EVENING_TIMEFRAME_FEE   = 'postnl/delivery_options/evening_timeframe_fee';
+    const XPATH_PAKJEGEMAK_EXPRESS_FEE  = 'postnl/delivery_options/pakjegemak_express_fee';
+    const XPATH_ONLY_STATED_ADDRESS_FEE = 'postnl/delivery_options/stated_address_only_fee';
 
     /**
      * Xpath for shipping duration setting.
@@ -172,6 +174,94 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
 
         $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted, false);
+
+        if ($price > 2) {
+            $price = 0;
+        }
+
+        if ($convert) {
+            $quote = $this->getQuote();
+            $store = $quote->getStore();
+
+            $price = $store->convertPrice($price, $formatted, false);
+        }
+
+        return $price;
+    }
+
+    /**
+     * Get the fee charged for possible options saved to the PostNL order.
+     *
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
+     * @param bool                        $formatted
+     * @param bool                        $includingTax
+     * @param bool                        $convert
+     *
+     * @return float|int
+     */
+    public function getOptionsFee(TIG_PostNL_Model_Core_Order $postnlOrder, $formatted = false, $includingTax = true,
+                                  $convert = true)
+    {
+        if (!$postnlOrder->hasOptions()) {
+            return 0;
+        }
+
+        $options = $postnlOrder->getOptions();
+        if (empty($options)) {
+            return 0;
+        }
+
+        $storeId = Mage::app()->getStore()->getId();
+
+        $fee = 0;
+        foreach ($options as $option => $value) {
+            if (!$value) {
+                continue;
+            }
+
+            switch ($option) {
+                case 'only_stated_address':
+                    $fee += (float) Mage::getStoreConfig(self::XPATH_ONLY_STATED_ADDRESS_FEE, $storeId);
+                    break;
+                //no default
+            }
+        }
+
+        $price = $this->getPriceWithTax($fee, $includingTax, $formatted, false);
+
+        if ($convert) {
+            $quote = $this->getQuote();
+            $store = $quote->getStore();
+
+            $price = $store->convertPrice($price, $formatted, false);
+        }
+
+        return $price;
+    }
+
+    /**
+     * Gets the configured fee for a specified option.
+     *
+     * @param string $option
+     * @param bool  $formatted
+     * @param bool  $includingTax
+     * @param bool  $convert
+     *
+     * @return float|int
+     */
+    public function getOptionFee($option, $formatted = false, $includingTax = true, $convert = true)
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        $fee = 0;
+        switch ($option) {
+            case 'only_stated_address':
+                $fee = (float) Mage::getStoreConfig(self::XPATH_ONLY_STATED_ADDRESS_FEE, $storeId);
+                break;
+            //no default
+        }
+
+        $price = $this->getPriceWithTax($fee, $includingTax, $formatted, false);
 
         if ($price > 2) {
             $price = 0;
@@ -2080,6 +2170,143 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         Mage::register($registryKey, $pakketautomaatEnabledForBuspakje);
         return $pakketautomaatEnabledForBuspakje;
+    }
+
+    /**
+     * Check whether showing the 'only_stated_address' option is allowed.
+     *
+     * @param boolean $checkQuote
+     *
+     * @return boolean
+     */
+    public function canShowOnlyStatedAddressOption($checkQuote = true)
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_show_only_stated_address_option';
+
+        $quote = $this->getQuote();
+        if ($quote) {
+            $registryKey .= '_' . $quote->getId();
+        }
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        if ($checkQuote) {
+            /**
+             * Check if these options are allowed for this specific quote.
+             */
+            $canUseForQuote = $this->canShowOnlyStatedAddressOptionForQuote();
+
+            if (!$canUseForQuote) {
+                Mage::register($registryKey, false);
+                return false;
+            }
+        }
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasCanShowOnlyStatedAddressOption()) {
+            /**
+             * Check if the result of this method has been cached in the PostNL cache.
+             */
+            $allowed = $cache->getCanShowOnlyStatedAddressOption();
+
+            Mage::register($registryKey, $allowed);
+            return $allowed;
+        }
+
+        $allowed = $this->_canShowOnlyStatedAddressOption();
+
+        if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
+            $cache->setCanShowOnlyStatedAddressOption($allowed)
+                  ->saveCache();
+        }
+
+        Mage::register($registryKey, $allowed);
+        return $allowed;
+    }
+
+    /**
+     * Check if the 'only_stated_address' option can be shown for the current quote.
+     *
+     * @return bool
+     */
+    protected function canShowOnlyStatedAddressOptionForQuote()
+    {
+        $quote = $this->getQuote();
+
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_show_only_stated_address_option_for_quote_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * This option is only available for Dutch shipments.
+         */
+        $shippingAddress = $quote->getShippingAddress();
+        if ($shippingAddress->getCountryId() != 'NL') {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * This shipment cannot be used for buspakje shipments.
+         */
+        if ($this->isBuspakjeConfigApplicableToQuote($quote) && !$this->canShowDeliveryDaysForBuspakje($quote)) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        Mage::register($registryKey, true);
+        return true;
+    }
+
+    /**
+     * Check if the 'only_stated_address' option can be shown for the current config.
+     *
+     * @return bool
+     */
+    protected function _canShowOnlyStatedAddressOption()
+    {
+        $showOption = Mage::getStoreConfigFlag(
+            self::XPATH_STATED_ADDRESS_ONLY_OPTION,
+            Mage::app()->getStore()->getId()
+        );
+
+        if (!$showOption) {
+            return false;
+        }
+
+        /**
+         * Check if any valid product options are available.
+         */
+        $statedAddressOnlyOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions')
+                                        ->getOptions(array('statedAddressOnly' => true), true, true);
+
+        if (empty($statedAddressOnlyOptions)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

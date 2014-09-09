@@ -97,11 +97,11 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         $postnlOrder = Mage::getModel('postnl_core/order')->load($shipment->getOrderId(), 'order_id');
 
         if ($postnlOrder->getId()) {
-            if ($postnlOrder->getConfirmDate()) {
+            if ($postnlOrder->hasConfirmDate()) {
                 $postnlShipment->setConfirmDate(strtotime($postnlOrder->getConfirmDate()));
             }
 
-            if ($postnlOrder->getDeliveryDate()) {
+            if ($postnlOrder->hasDeliveryDate()) {
                 $postnlShipment->setDeliveryDate(strtotime($postnlOrder->getDeliveryDate()));
             }
 

@@ -61,6 +61,8 @@
 <?php if (!$_canUsePakjeGemak && !$_canUsePakjeGemakExpress && !$_canUsePakketAutomaat): ?>
     <?php $_canAddLocation = false; ?>
 <?php endif; ?>
+
+<?php $_canShowStatedAddressOnlyOption = Mage::helper('postnl/deliveryOptions')->canShowOnlyStatedAddressOption(); ?>
 <div id="initial_loader" class="postnl-loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_delivery_options" style="display:none;">
     <div class="title">
@@ -87,6 +89,17 @@
                         </div>
                     </li>
                 </ul>
+                <?php if ($_canShowStatedAddressOnlyOption): ?>
+                    <ul>
+                        <li>
+                            <input type="checkbox" name="<?php echo $this->getMethodName(); ?>[postnl][only_stated_address]" id="<?php echo $this->getMethodName(); ?>_only_stated_address" value="1" class="checkbox">
+                            <label for="<?php echo $this->getMethodName(); ?>_only_stated_address">
+                                <?php echo $this->__("Do not deliver to neighbours if I'm not home"); ?>
+                                <span class="price"><?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
+                            </label>
+                        </li>
+                    </ul>
+                <?php endif; ?>
                 <ul class="option-list" id="change_address">
                     <li class="add-location">
                         <a id="change_address_link" href="#" ><?php echo $this->__('choose a different shipping address'); ?></a>
@@ -107,9 +120,6 @@
             </div>
         </div>
     </div>
-
-
-
     <?php echo $this->getChildHtml('postnl.add.location') ?>
     <?php echo $this->getChildHtml('postnl.add.phonenumber') ?>
 </div>
@@ -159,6 +169,17 @@
         disableCufon           : <?php echo $this->getUseCufon()             ? 'true' : 'true'; ?>,
         isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,
         shippingMethodName     : '<?php echo $this->getMethodName()          ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
+        <?php if ($_canShowStatedAddressOnlyOption): ?>
+            extraOptions           : {
+                only_stated_address : {
+                    element : $('<?php echo $this->getMethodName(); ?>_only_stated_address'),
+                    allowedTypes : [
+                        'Avond',
+                        'Overdag'
+                    ]
+                }
+            },
+        <?php endif; ?>
         currencySymbol         : '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(); ?>'
     };
 
