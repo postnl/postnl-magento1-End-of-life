@@ -85,13 +85,18 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderType
                         'product_code' => $productCodes[$key],
                     )
                 );
-                $renderedValues[] = $this->getShipmentTypeRenderedValue($type, $rowDummy);
+
+                $renderedValue = $this->getShipmentTypeRenderedValue($type, $rowDummy);
+                $renderedValue = $this->_addOptionComments($renderedValue, $row);
+
+                $renderedValues[] = $renderedValue;
             }
 
             return implode('<br />', $renderedValues);
         }
 
         $renderedValue = $this->getOrderTypeRenderedValue($value, $row);
+        $renderedValue = $this->_addOptionComments($renderedValue, $row);
 
         return $renderedValue;
     }

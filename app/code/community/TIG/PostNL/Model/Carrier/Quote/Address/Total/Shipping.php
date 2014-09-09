@@ -219,6 +219,8 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
                 $fee = Mage::helper('postnl/deliveryOptions')->getEveningFee(false, $includingTax, false);
             }
 
+            $fee += Mage::helper('postnl/deliveryOptions')->getOptionsFee($postnlOrder, false, $includingTax, false);
+
             $price += $fee;
 
             $amountPrice = $address->getQuote()->getStore()->convertPrice($price, false);

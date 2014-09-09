@@ -543,6 +543,26 @@
                     </checkout_deliveryoptions>
                 </observers>
             </core_block_abstract_to_html_before>
+            <controller_action_postdispatch_checkout_onepage_saveShippingMethod>
+                <observers>
+                    <!-- Saves selected PostNL options for Onepage checkout. -->
+                    <checkout_shipping_method_save_options>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
+                        <method>saveOptions</method>
+                    </checkout_shipping_method_save_options>
+                </observers>
+            </controller_action_postdispatch_checkout_onepage_saveShippingMethod>
+            <controller_action_postdispatch_onestepcheckout_index_index>
+                <observers>
+                    <!-- Saves a selected PostNL options for OneStepCheckout. -->
+                    <checkout_shipping_method_save_options>
+                        <type>singleton</type>
+                        <class>postnl_deliveryoptions/observer_updatePostnlOrder</class>
+                        <method>saveOptions</method>
+                    </checkout_shipping_method_save_options>
+                </observers>
+            </controller_action_postdispatch_onestepcheckout_index_index>
         </events>
     </frontend>
 
@@ -820,6 +840,7 @@
                 <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- Post Office + signature on delivery -->
                 <default_pge_product_option>3543</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
                 <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
+                <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
         		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_eu_be_product_option>4952</default_eu_be_product_option> <!-- EU Pack Special to consumer (combilabel) -->
                 <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
@@ -872,6 +893,9 @@
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
                 <show_mijnpakket_app_link>1</show_mijnpakket_app_link> <!-- Show the MijnPakket app link -->
+                <stated_address_only_option>0</stated_address_only_option> <!-- Do not show the 'stated address only' option -->
+                <stated_address_only_checked>0</stated_address_only_checked> <!-- The stated address only option is not checked by default -->
+                <stated_address_only_fee>0.26</stated_address_only_fee> <!-- Charge 26 cents extra -->
         	</delivery_options>
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->

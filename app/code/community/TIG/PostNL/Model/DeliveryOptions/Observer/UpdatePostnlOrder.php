@@ -205,6 +205,60 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
     }
 
     /**
+     * @param Varien_Event_Observer $observer
+     *
+     * @return $this
+     *
+     * @event controller_action_postdispatch_checkout_onepage_saveShippingMethod
+     *        |controller_action_postdispatch_onestepcheckout_index_index
+     *
+     * @observer checkout_shipping_method_save_options
+     */
+    public function saveOptions(Varien_Event_Observer $observer)
+    {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        /**
+         * Get the PostNL order associated with this quote.
+         *
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
+
+        /**
+         * Get all shipping methods that are considered to be PostNL.
+         */
+        $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
+
+        /**
+         * If this order is not being shipped to the Netherlands or was not placed using PostNL, remove any options that
+         * may have been saved.
+         */
+        $shippingCountry = $quote->getShippingAddress()->getCountryId();
+        if ($shippingCountry != 'NL' || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+            $postnlOrder->setOptions(false)
+                        ->save();
+            return $this;
+        }
+
+        /**
+         * @var Mage_Core_Controller_Varien_Front $controller
+         */
+        $controller = $observer->getControllerAction();
+        $options    = $controller->getRequest()->getParam('s_method_' . $shippingMethod, array());
+
+        $postnlOptions = false;
+        if (isset($options['postnl'])) {
+            $postnlOptions = $options['postnl'];
+        }
+
+        $postnlOrder->setOptions($postnlOptions)
+                    ->save();
+
+        return $this;
+    }
+
+    /**
      * Deletes any PakjeGemak addresses associated with this order.
      *
      * @param Mage_Sales_Model_Order $order

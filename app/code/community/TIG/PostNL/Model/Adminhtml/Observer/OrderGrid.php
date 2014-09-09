@@ -272,6 +272,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'is_pakje_gemak'       => 'postnl_order.is_pakje_gemak',
                 'is_pakketautomaat'    => 'postnl_order.is_pakketautomaat',
                 'delivery_option_type' => 'postnl_order.type',
+                'options'              => 'postnl_order.options',
             )
         );
 

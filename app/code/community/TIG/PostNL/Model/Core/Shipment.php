@@ -200,6 +200,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/cif_product_options/use_alternative_default';
     const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/cif_product_options/alternative_default_max_amount';
     const XPATH_ALTERNATIVE_DEFAULT_OPTION            = 'postnl/cif_product_options/alternative_default_option';
+    const XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION    = 'postnl/cif_product_options/default_stated_address_only_product_option';
 
     /**
      * Xpath to weight per parcel config setting.
@@ -961,6 +962,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets the default product code for this shipment from the module's configuration.
      *
+     * The flow for determining the default product code is as follows:
+     *  - For domestic COD, Avond COD, PakjeGemak, PakjeGemak COD, PakjeGemak Express, PakjeGemak Express COD,
+     *    Pakketautomaat, GlobalPack and Buspakje shipments we have a specific settings in the config that determines
+     *    the product code.
+     *  - For Avond shipments we first have to check if an option has been saved to the PostNL order table. Otherwise we
+     *    use the configured default product option for Avond shipments.
+     *  - For EPS shipments we first check if the destination is Belgium and if the 'EPS BE only' option is available.
+     *    Otherwise we use the configured default product option for EPS shipments.
+     *  - For domestic shipments we first check if an option has been saved to the PostNL order table. If not, we need
+     *    to check if an alternative default option has been configured and if the shipment meets the requirements to
+     *    use the alternative option. Finally, we get the configured default option for domestic shipments.
+     *
+     * We then check if the product option determined by this code is actually valid for this shipment. If not, an error
+     * is thrown.
+     *
      * @throws TIG_PostNL_Exception
      *
      * @return string
@@ -975,13 +991,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $shipmentType = $this->getShipmentType();
 
+        $postnlOrder = $this->getPostnlOrder();
+
         $xpath = false;
         switch ($shipmentType) {
             case self::SHIPMENT_TYPE_DOMESTIC_COD:
                 $xpath = self::XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION;
                 break;
             case self::SHIPMENT_TYPE_AVOND:
-                $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
+                if ($postnlOrder && $postnlOrder->hasOptions()) {
+                    $xpath = $this->_getDefaultProductCodeXpathByOptions();
+                }
+
+                if (!$xpath) {
+                    $xpath = self::XPATH_DEFAULT_EVENING_PRODUCT_OPTION;
+                }
                 break;
             case self::SHIPMENT_TYPE_AVOND_COD:
                 $xpath = self::XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION;
@@ -1022,8 +1046,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         /**
-         * If the shipment is not EU or global, it's dutch (AKA a 'standard' shipment)
-         *
+         * If the shipment is not EU or global, it's dutch (AKA a 'standard' shipment).         *
+         */
+        if (!$xpath && $postnlOrder && $postnlOrder->hasOptions()) {
+            $xpath = $this->_getDefaultProductCodeXpathByOptions();
+        }
+
+        /**
          * Dutch shipments may use an alternative default option when the shipment's base grand total exceeds a
          * specified amount.
          */
@@ -1094,6 +1123,55 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setDefaultProductCode($productCode);
         return $productCode;
+    }
+
+    /**
+     * Gets the xpath for the default product option by saved PostNL Order options. Currently only the
+     * 'only_stated_address' option is supported, but this may be expanded in future releases.
+     *
+     * If multiple options are applicable, the first applicable option is applied.
+     *
+     * @return bool|string
+     */
+    protected function _getDefaultProductCodeXpathByOptions()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+
+        /**
+         * If this shipment has no PostNL order or that order doesn't have any options, do nothing.
+         */
+        if (!$postnlOrder || !$postnlOrder->hasOptions()) {
+            return false;
+        }
+
+        /**
+         * If the options are empty, do nothing.
+         */
+        $options = $postnlOrder->getOptions();
+        if (empty($options)) {
+            return false;
+        }
+
+        /**
+         * Unserialize the options and check loop through them.
+         */
+        foreach ($options as $option => $value) {
+            /**
+             * If the option has no true value, move on to the next option.
+             */
+            if (!$value) {
+                continue;
+            }
+
+            switch ($option) {
+                case 'only_stated_address':
+                    return self::XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION;
+                    break;
+                //no default
+            }
+        }
+
+        return false;
     }
 
     /**

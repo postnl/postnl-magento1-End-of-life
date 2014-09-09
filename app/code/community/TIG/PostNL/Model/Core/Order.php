@@ -52,6 +52,7 @@
  * @method int                         getEntityId()
  * @method string                      getMobilePhoneNumber()
  * @method int                         getIsPakketautomaat()
+ * @method array|boolean               getUnserializedOptions()
  *
  * @method TIG_PostNL_Model_Core_Order setIsPakketautomaat(int $value)
  * @method TIG_PostNL_Model_Core_Order setEntityId(int $value)
@@ -69,12 +70,15 @@
  * @method TIG_PostNL_Model_Core_Order setIsActive(int $value)
  * @method TIG_PostNL_Model_Core_Order setConfirmDate(string $value)
  * @method TIG_PostNL_Model_Core_Order setPakjeGemakAddress(mixed $value)
+ * @method TIG_PostNL_Model_Core_Order setUnserializedOptions(array $value)
  *
  * @method boolean                     hasOrderId()
  * @method boolean                     hasQuoteId()
  * @method boolean                     hasPakjeGemakAddress()
  * @method boolean                     hasConfirmDate()
  * @method boolean                     hasDeliveryDate()
+ * @method boolean                     hasUnserializedOptions()
+ * @method boolean                     hasOptions()
  */
 class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
 {
@@ -251,6 +255,44 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
         $this->setPakjeGemakAddress(false);
 
         return false;
+    }
+
+    /**
+     * @return array|boolean
+     */
+    public function getOptions()
+    {
+        if ($this->hasUnserializedOptions()) {
+            return $this->getUnserializedOptions();
+        }
+
+        $options = $this->_getData('options');
+
+        if (!empty($options)) {
+            $options = unserialize($options);
+        }
+
+
+        $this->setUnserializedOptions($options);
+        return $options;
+    }
+
+    /**
+     * @param array|boolean|null $options
+     *
+     * @return $this
+     */
+    public function setOptions($options)
+    {
+        $this->setUnserializedOptions($options);
+
+        if (is_array($options)) {
+            $options = serialize($options);
+        }
+
+        $this->setData('options', $options);
+
+        return $this;
     }
 
     /**
