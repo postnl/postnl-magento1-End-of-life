@@ -1059,23 +1059,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $useAlternativeDefault = Mage::getStoreConfig(self::XPATH_USE_ALTERNATIVE_DEFAULT, $storeId);
         if (!$xpath && $useAlternativeDefault) {
             /**
-             * Alternative default option usage is enabled
+             * Alternative default option usage is enabled.
              */
             $maxShipmentAmount = Mage::getStoreConfig(self::XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT, $storeId);
             if ($this->getShipmentBaseGrandTotal() > $maxShipmentAmount) {
                 /**
-                 * The shipment's base grand total exceeds the specified amount: use the alternative default
+                 * The shipment's base grand total exceeds the specified amount: use the alternative default.
                  */
                 $xpath = self::XPATH_ALTERNATIVE_DEFAULT_OPTION;
             }
         }
 
+        /**
+         * If we still don't have an xpath, the shipment is a regular domestic shipment.
+         */
         if (!$xpath) {
             $xpath = self::XPATH_DEFAULT_STANDARD_PRODUCT_OPTION;
         }
 
         /**
-         * standard default option
+         * Get the product code configured to the xpath.
          */
         $productCode = Mage::getStoreConfig($xpath, $storeId);
 
@@ -1112,8 +1115,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 'POSTNL-0189',
                 'warning',
                 $helper->__(
-                    "The default product option was not available for this shipment, so another product option was " .
-                    "chosen. Please check if the default product options are configured correctly in the PostNL " .
+                    'The default product option was not available for this shipment, so another product option was ' .
+                    'chosen. Please check if the default product options are configured correctly in the PostNL ' .
                     "extension's configuration."
                 )
             );
