@@ -259,13 +259,21 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         $countryCode = null;
         $postcode    = null;
         if (is_array($destination)) {
+            if (!isset($destination['countryCode']) || !isset($destination['postcode'])) {
+                throw new InvalidArgumentException("Destination must contain the 'countryCode' and 'postcode' keys.");
+            }
+
             $countryCode = $destination['countryCode'];
             $postcode    = $destination['postcode'];
-        }
+        } elseif (is_object($destination) && $destination instanceof Varien_Object) {
+            if (!$destination->hasCountry() || !$destination->hasPostcode()) {
+                throw new InvalidArgumentException('Destination must have a country and a postcode.');
+            }
 
-        if (is_object($destination) && $destination instanceof Varien_Object) {
             $countryCode = $destination->getCountry();
             $postcode    = str_replace(' ', '', $destination->getPostcode());
+        } else {
+            throw new InvalidArgumentException('Destination must be an array or an instance of Varien_Object.');
         }
 
         /**

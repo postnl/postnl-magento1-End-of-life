@@ -842,7 +842,7 @@
                 <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
                 <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
         		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
-                <default_eu_be_product_option>4952</default_eu_be_product_option> <!-- EU Pack Special to consumer (combilabel) -->
+                <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
                 <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
         	    <default_cod_product_option>3086</default_cod_product_option> <!-- COD -->

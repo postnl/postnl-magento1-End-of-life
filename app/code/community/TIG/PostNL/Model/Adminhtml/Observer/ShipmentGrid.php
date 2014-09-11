@@ -657,7 +657,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $class = '';
         }
 
-        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
+        $origValue = $row->getData($column->getIndex());
+        $formattedDate = Mage::helper('core')->formatDate($origValue, 'full', false);
+
+        return '<span class="'.$class.'" title="' . $formattedDate . '"><span>'.$value.'</span></span>';
     }
 
     /**
