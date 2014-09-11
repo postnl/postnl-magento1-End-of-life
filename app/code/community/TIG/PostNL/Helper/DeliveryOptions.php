@@ -588,16 +588,34 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $durationArray  = array($configDuration);
 
         /**
-         * Loop through all products in the quote.
+         * Get all items in the quote, so we can check the corresponding products.
          *
          * @var Mage_Sales_Model_Quote_Item $item
          */
-        foreach ($quote->getAllVisibleItems() as $item) {
-            $product = Mage::getModel('catalog/product')->load($item->getProductId());
+        $items = $quote->getItemsCollection();
+        foreach ($items as $key => $item) {
+            if ($item->isDeleted() || $item->getParentItemId()) {
+                $items->removeItemByKey($key);
+            }
+        }
+        $productIds = $items->getColumnValues('product_id');
 
-            /**
-             * If the product has a specific shipping duration, add it to the array of durations.
-             */
+        if (!$productIds) {
+            return end($durationArray);
+        }
+
+        /**
+         * Get all products.
+         */
+        $products = Mage::getResourceModel('catalog/product_collection')
+                        ->setStoreId($quote->getStoreId())
+                        ->addFieldToFilter('entity_id', $productIds)
+                        ->addAttributeToSelect('postnl_shipping_duration');
+
+        /**
+         * Get the shipping duration of all products.
+         */
+        foreach ($products as $product) {
             if ($product->hasData('postnl_shipping_duration')
                 && $product->getData('postnl_shipping_duration') !== ''
             ) {
