@@ -86,6 +86,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const EVENING_TIME = 1900;
 
     /**
+     * The maximum fee amount allowed for evening and early delivery options.
+     */
+    const MAX_FEE = 2;
+
+    /**
      * @var array
      */
     protected $_validTypes = array(
@@ -141,7 +146,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted, false);
 
-        if ($price > 2) {
+        if ($price > self::MAX_FEE) {
             $price = 0;
         }
 
@@ -172,7 +177,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted, false);
 
-        if ($price > 2) {
+        if ($price > self::MAX_FEE) {
             $price = 0;
         }
 

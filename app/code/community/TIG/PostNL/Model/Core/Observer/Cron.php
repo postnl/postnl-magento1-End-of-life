@@ -447,8 +447,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
             return $this;
         }
 
+        /**
+         * @var $cifAbstractModelClassName TIG_PostNL_Model_Core_Cif_Abstract
+         */
+        $cifAbstractModelClassName = Mage::getConfig()->getModelClassName('postnl_core/cif_abstract');
         foreach ($errorNumbers as $errorNumber) {
-            if ($errorNumber != '13') { // Collo not found error
+            if ($errorNumber != $cifAbstractModelClassName::SHIPMENT_NOT_FOUND_ERROR_NUMBER) { // Collo not found error
                 $helper->logException($e);
                 return $this;
             }
@@ -468,7 +472,6 @@ class TIG_PostNL_Model_Core_Observer_Cron
             $yesterday->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
                       ->sub(new DateInterval('P1D'));
 
-            $now = Mage::getModel('core/date')->gmtTimestamp();
             $yesterday = $yesterday->getTimestamp();
 
             if ($confirmedAt > $yesterday) {

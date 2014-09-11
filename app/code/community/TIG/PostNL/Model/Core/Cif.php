@@ -136,6 +136,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XPATH_COD_IBAN         = 'postnl/cod/iban';
 
     /**
+     * The maximum amount of products which can be printed on the customs declaration form.
+     */
+    const MAX_CUSTOMS_PRODUCT_COUNT = 5;
+
+    /**
      * Array containing possible address types.
      *
      * @var array
@@ -1392,7 +1397,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             /**
              * A maximum of 5 rows are allowed
              */
-            if (++$itemCount > 5) {
+            if (++$itemCount > self::MAX_CUSTOMS_PRODUCT_COUNT) {
                 break;
             }
 

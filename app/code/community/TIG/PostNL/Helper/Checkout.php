@@ -354,7 +354,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
 
         $kilograms = $this->standardizeWeight($totalWeight, $storeId);
 
-        if ($kilograms < 2) {
+        if ($kilograms < self::MAX_LETTER_BOX_PARCEL_WEIGHT) {
             return true;
         }
 

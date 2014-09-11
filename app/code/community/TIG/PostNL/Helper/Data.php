@@ -119,6 +119,32 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const MIN_PHP_VERSION = '5.3.0';
 
     /**
+     * Xpath to the changelog URL.
+     */
+    const CHANGELOG_URL_XPATH = 'postnl/general/changelog_url';
+
+    /**
+     * Logging levels supported by this extension.
+     */
+    const LOGGING_EXCEPTION_ONLY = 1;
+    const LOGGING_FULL           = 2;
+
+    /**
+     * Maximum weight for letter box parcels (in kilograms).
+     */
+    const MAX_LETTER_BOX_PARCEL_WEIGHT = 2;
+
+    /**
+     * Maximum weight for letter box parcels (in kilograms).
+     */
+    const MAX_LETTER_BOX_PARCEL_QTY_RATIO = 1;
+
+    /**
+     * Value the 'is_activated' setting must achieve for the extension to be considered 'activated'.
+     */
+    const EXTENSION_ACTIVE = 2;
+
+    /**
      * Required configuration fields.
      *
      * @var array
@@ -207,11 +233,18 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_cache = null;
 
     /**
-     * THe current server's memory limit.
+     * The current server's memory limit.
      *
      * @var int
      */
     protected $_memoryLimit;
+
+    /**
+     * The URL of the PostNL change log.
+     *
+     * @var string
+     */
+    protected $_changelogUrl;
 
     /**
      * Get required fields array.
@@ -251,6 +284,21 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     public function getGlobalShipmentsRequiredFields()
     {
         return $this->_globalShipmentRequiredFields;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChangelogUrl()
+    {
+        if ($this->_changelogUrl) {
+            return $this->_changelogUrl;
+        }
+
+        $changelogUrl = Mage::getStoreConfig(self::CHANGELOG_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        $this->_changelogUrl = $changelogUrl;
+        return $changelogUrl;
     }
 
     /**
@@ -769,7 +817,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * If the combined weight of all items is more than 2 kg, this shipment is not a buspakje.
          */
-        if ($totalWeight > 2) {
+        if ($totalWeight > self::MAX_LETTER_BOX_PARCEL_WEIGHT) {
             if ($registerReason) {
                 Mage::register('postnl_reason_not_buspakje', 'weight');
             }
@@ -779,7 +827,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * If the combined qty ratios of the items is more than 1 this is not a buspakje.
          */
-        if ($totalQtyRatio > 1) {
+        if ($totalQtyRatio > self::MAX_LETTER_BOX_PARCEL_QTY_RATIO) {
             if ($registerReason) {
                 Mage::register('postnl_reason_not_buspakje', 'qty_ratio');
             }
@@ -1301,7 +1349,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          *  2 - The activation procedure has been finished. The merchant has entered his keys.
          */
         $isActivated = Mage::getStoreConfig(self::XPATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
-        if ($isActivated != 2) {
+        if ($isActivated != self::EXTENSION_ACTIVE) {
             $errors[] = array(
                 'code'    => 'POSTNL-0033',
                 'message' => $this->__('The extension has not been activated.'),
@@ -1534,7 +1582,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         $debugMode = $this->getDebugMode();
-        if ($debugMode > 1) {
+        if ($debugMode >= self::LOGGING_FULL) {
             return true;
         }
 
@@ -1553,7 +1601,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         $debugMode = $this->getDebugMode();
-        if ($debugMode > 0) {
+        if ($debugMode >= self::LOGGING_EXCEPTION_ONLY) {
             return true;
         }
 

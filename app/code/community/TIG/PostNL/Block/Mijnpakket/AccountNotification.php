@@ -63,7 +63,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
     /**
      * Base URL to create a new MijnPakket account.
      */
-    const CREATE_ACCOUNT_BASE_URL = 'https://mijnpakket.postnl.nl/Register/RegisterFromWebshop?';
+    const CREATE_ACCOUNT_BASE_URL_XPATH = 'postnl/delivery_options/create_account_base_url';
 
     /**
      * The webshop's public webshop ID is used to secure communications with PostNL's servers.
@@ -211,7 +211,7 @@ class TIG_PostNL_Block_Mijnpakket_AccountNotification extends TIG_PostNL_Block_C
             return $this->_getData('create_account_base_url');
         }
 
-        $baseUrl = self::CREATE_ACCOUNT_BASE_URL;
+        $baseUrl = Mage::getStoreConfig(self::CREATE_ACCOUNT_BASE_URL_XPATH);
 
         $this->setCreateAccountBaseUrl($baseUrl);
         return $baseUrl;

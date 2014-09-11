@@ -568,39 +568,112 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             $shipmentIds = array($shipmentIds);
         }
 
-        $shipments = array();
-        foreach ($shipmentIds as $shipmentId) {
-            /**
-             * Load the shipment.
-             *
-             * @var Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment|boolean $shipment
-             */
-            $shipment = $this->_loadShipment($shipmentId, $loadPostnlShipments);
+        $resource              = Mage::getSingleton('core/resource');
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
 
-            if (!$shipment && $throwException) {
+        /**
+         * This regex will filter all non-postnl shipments.
+         */
+        $postnlShippingMethodsRegex = '';
+        foreach ($postnlShippingMethods as $method) {
+            if ($postnlShippingMethodsRegex) {
+                $postnlShippingMethodsRegex .= '|';
+            } else {
+                $postnlShippingMethodsRegex .= '^';
+            }
+
+            $postnlShippingMethodsRegex .= "({$method})(_{0,1}[0-9]*)";
+        }
+
+        $postnlShippingMethodsRegex .= '$';
+
+        /**
+         * Get the requested shipments. Only shipments that have been shipped using PostNL will be returned.
+         */
+        if ($loadPostnlShipments) {
+            $shipments = Mage::getResourceModel('postnl_core/shipment_collection')
+                             ->addFieldToFilter('shipment_id', $shipmentIds)
+                             ->addFieldToFilter(
+                                 '`order`.`shipping_method`',
+                                 array(
+                                     'regexp' => $postnlShippingMethodsRegex
+                                 )
+                             );
+
+            $shipments->getSelect()->joinInner(
+                array('order' => $resource->getTableName('sales/order')),
+                '`main_table`.`order_id`=`order`.`entity_id`',
+                array(
+                    'shipping_method' => 'order.shipping_method',
+                )
+            );
+
+            $processedShipmentIds = $shipments->getColumnValues('shipment_id');
+        } else {
+            $shipments = Mage::getResourceModel('sales/order_shipment_collection')
+                             ->addFieldToFilter('main_table.entity_id', $shipmentIds)
+                             ->addFieldToFilter(
+                                 '`order`.`shipping_method`',
+                                 array(
+                                     'regexp' => $postnlShippingMethodsRegex
+                                 )
+                             );
+
+            $shipments->getSelect()->joinInner(
+                array('order' => $resource->getTableName('sales/order')),
+                '`main_table`.`order_id`=`order`.`entity_id`',
+                array(
+                    'shipping_method' => 'order.shipping_method',
+                )
+            );
+
+            $processedShipmentIds = $shipments->getColumnValues('entity_id');
+        }
+
+        /**
+         * Check if all requested IDs were processed.
+         */
+        $missingIds = array_diff($shipmentIds, $processedShipmentIds);
+        if (!$missingIds) {
+            return $shipments;
+        }
+
+        /**
+         * If any requested shipments were not found, it's because they were not shipped using PostNL.
+         */
+        $adapter = Mage::getSingleton('core/resource')->getConnection('core_read');
+        foreach ($missingIds as $shipmentId) {
+            /**
+             * Get the shipment's increment ID. We need this, because many merchants do not know the difference between
+             * increment IDs and entity IDs.
+             */
+            $bind    = array(':entity_id' => $shipmentId);
+            $select  = $adapter->select()
+                               ->from($resource->getTableName('sales/shipment'), array("increment_id"))
+                               ->where('entity_id = :entity_id');
+
+            $shipmentIncrementId = $adapter->fetchOne($select, $bind);
+
+            if ($throwException) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
-                        $shipment->getIncrementId()
+                        $shipmentIncrementId
                     ),
                     'POSTNL-0009'
                 );
-            } elseif (!$shipment) {
-                $this->addWarning(
-                    array(
-                        'entity_id'   => $shipmentId,
-                        'code'        => 'POSTNL-0009',
-                        'description' => $this->__(
-                            'This action is not available for shipment #%s, because it was not shipped using PostNL.',
-                            $shipmentId
-                        ),
-                    )
-                );
-
-                continue;
             }
 
-            $shipments[] = $shipment;
+            $this->addWarning(
+                array(
+                    'entity_id'   => $shipmentIncrementId,
+                    'code'        => 'POSTNL-0009',
+                    'description' => $this->__(
+                        'This action is not available for shipment #%s, because it was not shipped using PostNL.',
+                        $shipmentIncrementId
+                    ),
+                )
+            );
         }
 
         return $shipments;
