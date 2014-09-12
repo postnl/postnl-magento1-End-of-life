@@ -609,7 +609,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         $products = Mage::getResourceModel('catalog/product_collection')
                         ->setStoreId($quote->getStoreId())
-                        ->addFieldToFilter('entity_id', $productIds)
+                        ->addFieldToFilter('entity_id', array('in' => $productIds))
                         ->addAttributeToSelect('postnl_shipping_duration');
 
         /**

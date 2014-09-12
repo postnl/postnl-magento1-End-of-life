@@ -906,12 +906,12 @@
         	    <agree_conditions>1</agree_conditions> <!-- Customers must first agree to the webshop's terms and conditions -->
                 <contact_url/>
         	    <service_url/>
-                <checkout_button_test_base_url>https://tppcb-sandbox.e-id.nl/Button/Checkout</checkout_button_test_base_url>
-                <checkout_button_live_base_url>https://checkout.postnl.nl/Button/Checkout</checkout_button_live_base_url>
-                <test_checkout_js_url>https://tppwscheckout-sandbox.e-id.nl/Checkout2/Scripts/Checkout.js</test_checkout_js_url>
-                <live_checkout_js_url>https://mijnpakket.postnl.nl/Checkout2/Scripts/Checkout.js</live_checkout_js_url>
-                <test_checkout_premium_js_url>https://tppwscheckout-sandbox.e-id.nl/Checkout2/CheckoutPremium.js</test_checkout_premium_js_url>
-                <live_checkout_premium_js_url>https://mijnpakket.postnl.nl/Checkout2/CheckoutPremium.js</live_checkout_premium_js_url>
+                <checkout_button_test_base_url>https://tppcb-sandbox.e-id.nl/Button/Checkout</checkout_button_test_base_url> <!-- Base URL for PostNl Checkout button in test mode -->
+                <checkout_button_live_base_url>https://checkout.postnl.nl/Button/Checkout</checkout_button_live_base_url> <!-- Base URL for PostNl Checkout button -->
+                <test_checkout_js_url>https://tppwscheckout-sandbox.e-id.nl/Checkout2/Scripts/Checkout.js</test_checkout_js_url> <!-- URL for PostNL Checkout JS file in test mode -->
+                <live_checkout_js_url>https://mijnpakket.postnl.nl/Checkout2/Scripts/Checkout.js</live_checkout_js_url> <!-- URL for PostNL Checkout JS file -->
+                <test_checkout_premium_js_url>https://tppwscheckout-sandbox.e-id.nl/Checkout2/CheckoutPremium.js</test_checkout_premium_js_url> <!-- URL for PostNL Checkout premium JS file in test mode -->
+                <live_checkout_premium_js_url>https://mijnpakket.postnl.nl/Checkout2/CheckoutPremium.js</live_checkout_premium_js_url> <!-- URL for PostNL Checkout premium JS file -->
         	</checkout>
         	<checkout_payment_methods>
         	    <ideal>0</ideal> <!-- Do not use iDEAL -->

@@ -1492,7 +1492,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $productIds = $items->getColumnValues('product_id');
         $products = Mage::getResourceModel('catalog/product_collection')
                         ->setStoreId($this->getStoreId())
-                        ->addFieldToFilter('entity_id', $productIds)
+                        ->addFieldToFilter('entity_id', array('in' => $productIds))
                         ->addAttributeToSelect($sortingAttribute)
                         ->setOrder($sortingAttribute, strtoupper($sortingDirection));
 

@@ -47,7 +47,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
      * @var array
      */
     protected $_warnings = array();
-    
+
     /**
      * Error counter used by certain actions.
      *
@@ -704,7 +704,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
          */
         if ($loadPostnlShipments) {
             $shipments = Mage::getResourceModel('postnl_core/shipment_collection')
-                             ->addFieldToFilter('shipment_id', $shipmentIds)
+                             ->addFieldToFilter('shipment_id', array('in' => $shipmentIds))
                              ->addFieldToFilter(
                                  '`order`.`shipping_method`',
                                  array(
@@ -723,7 +723,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             $processedShipmentIds = $shipments->getColumnValues('shipment_id');
         } else {
             $shipments = Mage::getResourceModel('sales/order_shipment_collection')
-                             ->addFieldToFilter('main_table.entity_id', $shipmentIds)
+                             ->addFieldToFilter('main_table.entity_id', array('in' => $shipmentIds))
                              ->addFieldToFilter(
                                  '`order`.`shipping_method`',
                                  array(
@@ -823,7 +823,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
         $postnlShippingMethodsRegex .= '$';
 
         $orders = Mage::getResourceModel('sales/order_collection')
-                      ->addFieldToFilter('entity_id', $orderIds)
+                      ->addFieldToFilter('entity_id', array('in' => $orderIds))
                       ->addFieldToFilter('shipping_method', array('regexp' => $postnlShippingMethodsRegex));
 
         return $orders;
