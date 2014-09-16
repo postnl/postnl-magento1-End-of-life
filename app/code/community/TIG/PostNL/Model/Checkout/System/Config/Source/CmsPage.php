@@ -95,7 +95,8 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
         }
 
         $options = array(
-            '' => Mage::helper('postnl')->__('-- none --'),
+            'value' => '',
+            'label' => Mage::helper('postnl')->__('-- none --'),
         );
 
         /**
