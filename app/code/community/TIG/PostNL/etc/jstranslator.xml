@@ -117,4 +117,10 @@
     <fits_through_the_mailslot translate="message" module="postnl">
         <message>Fits through the mailslot</message>
     </fits_through_the_mailslot>
+    <select_location translate="message" module="postnl">
+        <message>Select location</message>
+    </select_location>
+    <show_map translate="message" module="postnl">
+        <message>Show map</message>
+    </show_map>
 </jstranslator>

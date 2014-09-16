@@ -933,6 +933,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'download_logs':
                 $aclPath = 'system/config/postnl/download_logs';
                 break;
+            case 'print_packing_slip': //no break
             case 'print_packing_slips':
                 $aclPath = 'postnl/shipment/actions/print_label/print_packing_slips';
                 break;

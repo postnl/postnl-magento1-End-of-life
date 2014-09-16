@@ -1359,6 +1359,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Gets the default extra cover amount for this shipment.
+     *
+     * @return float|int
+     */
+    public function getDefaultExtraCoverAmount()
+    {
+        if ($this->isGlobalShipment()) {
+            return 200;
+        }
+
+        $shipmentAmount = $this->getShipmentBaseGrandTotal();
+        $extraCoverAmount = ceil($shipmentAmount / 500) * 500;
+
+        return $extraCoverAmount;
+    }
+
+    /**
      * Getter for the '_preventSaving' class variable.
      *
      * @return bool
@@ -1389,19 +1406,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Set an extra cover amount
      *
-     * @param int $amount
+     * @param int|null $amount
      *
-     * @return boolean|TIG_PostNL_Model_Core_Shipment
+     * @return false|TIG_PostNL_Model_Core_Shipment
      */
-    public function setExtraCoverAmount($amount)
+    public function setExtraCoverAmount($amount = null)
     {
         /**
          * Check if extra cover is allowed for this shipment
          */
-        $productCode = $this->getProductCode();
-        $extraCoverProductCodes = $this->getExtraCoverProductCodes();
-        if (!in_array($productCode, $extraCoverProductCodes)) {
+        if (!$this->isExtraCover()) {
             return false;
+        }
+
+        if (is_null($amount)) {
+            $amount = $this->getDefaultExtraCoverAmount();
         }
 
         $this->setData('extra_cover_amount', $amount);
@@ -1975,6 +1994,26 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $isExported = (bool) $this->getIsParcelwareExported();
 
         return $isExported;
+    }
+
+    /**
+     * Check if this shipment is an extra cover shipment.
+     *
+     * @return boolean
+     */
+    public function isExtraCover()
+    {
+        $productCode = $this->getProductCode();
+        if (!$productCode) {
+            return false;
+        }
+
+        $extraCoverProductCodes = $this->getExtraCoverProductCodes();
+        if (in_array($productCode, $extraCoverProductCodes)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -3924,6 +3963,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (!$this->getProductCode() || Mage::registry('postnl_product_option') !== null) {
             $productCode = $this->_getProductCode();
             $this->setProductCode($productCode);
+
+            /**
+             * If this is an extra cover shipment and no extra cover amount has been set, set the default of 500 EUR.
+             */
+            if ($this->isExtraCover() && !$this->hasExtraCoverAmount()) {
+                $this->setExtraCoverAmount();
+            }
         }
 
         /**
