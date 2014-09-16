@@ -413,10 +413,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param null|string $orderDate
      * @param null|int    $storeId
      * @param boolean     $asDays
+     * @param boolean     $asDateTime
      *
      * @return bool|string|int
      */
-    public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false)
+    public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false, $asDateTime = false)
     {
         if (!$orderDate) {
             $orderDate = new DateTime(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
@@ -470,6 +471,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         if ($asDays) {
             return $shippingDuration;
+        }
+
+        if ($asDateTime) {
+            return $deliveryTime;
         }
 
         $deliveryDate = $deliveryTime->format('Y-m-d');
