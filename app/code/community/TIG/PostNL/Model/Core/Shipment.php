@@ -1327,7 +1327,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Helper_DeliveryOptions $helper
          */
         $helper = $this->getHelper('deliveryOptions');
-        $deliveryDate = $helper->getDeliveryDate($this->getOrder()->getCreatedAt(), $this->getStoreId());
+        $orderDate = Mage::getSingleton('core/date')->date(null, $this->getOrder()->getCreatedAt());
+        $deliveryDate = $helper->getDeliveryDate($orderDate, $this->getStoreId());
 
         if ($deliveryDate) {
             return $deliveryDate;
@@ -1548,7 +1549,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If no delivery date is available, set the confirm date to today.
          */
         if (!$deliveryDate) {
-            $confirmDate = Mage::getModel('core/date')->gmtTimestamp();
+            $confirmDate = Mage::getSingleton('core/date')->gmtTimestamp();
 
             $this->setData('confirm_date', $confirmDate);
             return $this;
@@ -1558,9 +1559,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Calculate the confirm based on the delivery date.
          */
         $deliveryDate = new DateTime($deliveryDate);
-        $confirmDate = $deliveryDate->sub(new DateInterval('P1D'))->getTimestamp();
+        $confirmDate = clone $deliveryDate;
+        $confirmDate = $confirmDate->sub(new DateInterval('P1D'));
 
-        $this->setData('confirm_date', $confirmDate);
+        $this->setData('confirm_date', $confirmDate->getTimestamp());
         return $this;
     }
 
