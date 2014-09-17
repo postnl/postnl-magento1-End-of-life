@@ -343,7 +343,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                     );
                 }
 
-                $shipmentLabels = $this->_getLabels($shipment, false);
+                $shipmentLabels = $this->_getLabels($shipment, true);
                 $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
             } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
                 Mage::helper('postnl/cif')->parseCifException($e);
