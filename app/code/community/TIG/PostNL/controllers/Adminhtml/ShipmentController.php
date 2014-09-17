@@ -1043,6 +1043,8 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
      * selected orders. Then we confirm those shipments and get their shipping labels. If all goes according to plan,
      * the labels will be presented as a pdf. This really is the "Don't give me any options, just do everything"-option.
      *
+     * @param string $type
+     *
      * @return $this
      *
      * @throws TIG_PostNL_Exception

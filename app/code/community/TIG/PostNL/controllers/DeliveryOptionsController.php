@@ -50,7 +50,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     const CITY_NAME_REGEX   = '#^[a-zA-Z]+(?:(?:\\s+|-)[a-zA-Z]+)*$#';
     const STREET_NAME_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
     const HOUSENR_EXT_REGEX = "#^[a-zA-Z0-9\s,'-]*$#";
-    const NAME_REGEX        = "#^[a-zA-Z0-9\s,'-]*$#";
+    const NAME_REGEX        = "#^[a-zA-Z0-9\s,'&-]*$#";
 
     /**
      * Regular expression to validate dutch phone number.
