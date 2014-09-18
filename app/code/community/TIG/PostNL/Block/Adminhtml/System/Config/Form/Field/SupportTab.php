@@ -51,6 +51,15 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     const MAGENTO_16_CSS_FILE         = 'css/TIG/PostNL/system_config_edit_postnl_magento16.css';
 
     /**
+     * Xpaths to URLs used in the support tab.
+     */
+    const POSTNL_REGISTER_URL_XPATH     = 'postnl/general/postnl_register_url';
+    const KNOWLEDGEBASE_URL_XPATH       = 'postnl/general/knowledgebase_url';
+    const NEW_TICKET_URL_XPATH          = 'postnl/general/new_ticket_url';
+    const INSTALLATION_MANUAL_URL_XPATH = 'postnl/general/installation_manual_url';
+    const USER_GUIDE_URL_XPATH          = 'postnl/general/user_guide_url';
+
+    /**
      * Template file used
      *
      * @var string
@@ -67,9 +76,13 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
      */
     protected function _prepareLayout()
     {
-        $this->getLayout()
-             ->getBlock('head')
-             ->addCss(self::SYSTEM_CONFIG_EDIT_CSS_FILE);
+        /**
+         * @var Mage_Adminhtml_Block_Page_Head $head
+         */
+        $head = $this->getLayout()
+                     ->getBlock('head');
+
+        $head->addCss(self::SYSTEM_CONFIG_EDIT_CSS_FILE);
 
         /**
          * For Magento 1.6 and 1.11 we need to add another css file.
@@ -91,11 +104,79 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
          */
         $isBelowMinimumVersion = version_compare(Mage::getVersion(), $minimumVersion, '<');
         if ($isBelowMinimumVersion) {
-            $this->getLayout()
-                 ->getBlock('head')
-                 ->addCss(self::MAGENTO_16_CSS_FILE);
+            $head->addCss(self::MAGENTO_16_CSS_FILE);
         }
 
         return parent::_prepareLayout();
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion()
+    {
+        $version =  Mage::helper('postnl')->getModuleVersion();
+
+        return $version;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostnlRegisterUrl()
+    {
+        $url = Mage::getStoreConfig(self::POSTNL_REGISTER_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKnowledgebaseUrl()
+    {
+        $url = Mage::getStoreConfig(self::KNOWLEDGEBASE_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNewTicketUrl()
+    {
+        $url = Mage::getStoreConfig(self::NEW_TICKET_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInstallationManualUrl()
+    {
+        $url = Mage::getStoreConfig(self::INSTALLATION_MANUAL_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserGuideUrl()
+    {
+        $url = Mage::getStoreConfig(self::USER_GUIDE_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChangelogUrl()
+    {
+        $url = Mage::helper('postnl')->getChangelogUrl();
+
+        return $url;
     }
 }

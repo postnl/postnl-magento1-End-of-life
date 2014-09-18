@@ -415,6 +415,30 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Alias for TIG_PostNL_Helper_Data::getModuleVersion()
+     *
+     * @return string
+     *
+     * @see TIG_PostNL_Helper_Data::getModuleVersion
+     */
+    public function getExtensionVersion()
+    {
+        return $this->getModuleVersion();
+    }
+
+    /**
+     * Get the current version of the PostNL extension's code base.
+     *
+     * @return string
+     */
+    public function getModuleVersion()
+    {
+        $version = (string) Mage::getConfig()->getModuleConfig("TIG_PostNL")->version;
+
+        return $version;
+    }
+
+    /**
      * Gets a shipment's PakjeGemak address if available.
      *
      * @param Mage_Sales_Model_Order_Shipment $shipment

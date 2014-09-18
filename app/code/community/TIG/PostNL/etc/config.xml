@@ -699,7 +699,12 @@
                 <unique_key/>
         		<private_key/>
                 <webservice_wsdl_url>http://api.tigpostnl.nl/soap?wsdl</webservice_wsdl_url> <!-- URL of the TIG extension control system that is used for activating the extension -->
-        	    <changelog_url>http://kb.totalinternetgroup.nl/topic/38584893/</changelog_url>
+        	    <changelog_url>http://kb.totalinternetgroup.nl/topic/38584893/</changelog_url> <!-- URL of the extension's changelog -->
+                <postnl_register_url>http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties</postnl_register_url> <!-- URL where new PostNL customers can register -->
+                <knowledgebase_url>http://kb.totalinternetgroup.nl</knowledgebase_url> <!-- URL of the TIG knowledgebase -->
+                <new_ticket_url>http://kb.totalinternetgroup.nl/ticket/form/new</new_ticket_url> <!-- URL where merchants can submit a support ticket -->
+                <installation_manual_url>http://kb.totalinternetgroup.nl/topic/39335103</installation_manual_url> <!-- URL to the extension's installation manual -->
+                <user_guide_url>http://kb.totalinternetgroup.nl/topic/44206406</user_guide_url> <!-- URL to the extension's user guide -->
             </general>
         	<cif>
                 <mode>1</mode> <!-- Test mode -->
