@@ -36,31 +36,44 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Carrier_System_Config_Source_RateType
+class TIG_PostNL_Model_Carrier_Resource_Matrixrate_Collection
+    extends Mage_Shipping_Model_Resource_Carrier_Tablerate_Collection
 {
     /**
-     * Returns an option array for rate type options
-     *
-     * @return array
+     * Define resource model and item.
      */
-    public function toOptionArray()
+    protected function _construct()
     {
-        $helper = Mage::helper('postnl');
-        $options = array(
-            array(
-                'value' => 'flat',
-                'label' => $helper->__('Flat'),
-            ),
-            array(
-                'value' => 'table',
-                'label' => $helper->__('Table'),
-            ),
-            array(
-                'value' => 'matrix',
-                'label' => $helper->__('Matrix'),
-            ),
-        );
+        $this->_init('postnl_carrier/matrixrate');
+        $this->_shipTable       = $this->getMainTable();
+        $this->_countryTable    = $this->getTable('directory/country');
+        $this->_regionTable     = $this->getTable('directory/country_region');
+    }
 
-        return $options;
+    /**
+     * Initialize select, add country iso3 code and region name, and define default sorting.
+     */
+    public function _initSelect()
+    {
+        Mage_Core_Model_Resource_Db_Collection_Abstract::_initSelect();
+
+        $this->_select
+            ->joinLeft(
+                array('country_table' => $this->_countryTable),
+                'country_table.country_id = main_table.dest_country_id',
+                array('dest_country' => 'iso3_code')
+            )
+            ->joinLeft(
+                array('region_table' => $this->_regionTable),
+                'region_table.region_id = main_table.dest_region_id',
+                array('dest_region' => 'code')
+            );
+
+        $this->addOrder('dest_country', self::SORT_ORDER_ASC);
+        $this->addOrder('dest_region',  self::SORT_ORDER_ASC);
+        $this->addOrder('dest_zip',     self::SORT_ORDER_ASC);
+        $this->addOrder('weight',       self::SORT_ORDER_ASC);
+        $this->addOrder('subtotal',     self::SORT_ORDER_ASC);
+        $this->addOrder('qty',          self::SORT_ORDER_ASC);
     }
 }

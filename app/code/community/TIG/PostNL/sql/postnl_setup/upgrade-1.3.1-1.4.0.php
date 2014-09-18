@@ -65,4 +65,110 @@ if (!$conn->tableColumnExists($tableName, 'options')) {
     );
 }
 
+/***********************************************************************************************************************
+ * POSTNL MATRIXRATE
+ **********************************************************************************************************************/
+
+$tableName = $installer->getTable('postnl_carrier/matrixrate');
+
+if (!$conn->isTableExists($tableName)) {
+    $table = $installer->getConnection()
+                       ->newTable($tableName);
+
+    $table->addColumn(
+              'pk', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+                  'identity' => true,
+                  'unsigned' => true,
+                  'nullable' => false,
+                  'primary'  => true,
+              ), 'Primary key'
+          )
+          ->addColumn(
+              'website_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+                  'nullable' => false,
+                  'default'  => '0',
+              ), 'Website Id'
+          )
+          ->addColumn(
+              'dest_country_id', Varien_Db_Ddl_Table::TYPE_TEXT, 4, array(
+                  'nullable' => false,
+                  'default'  => '0',
+              ), 'Destination country ISO/2 or ISO/3 code'
+          )
+          ->addColumn(
+              'dest_region_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+                  'nullable' => false,
+                  'default'  => '0',
+              ), 'Destination Region Id'
+          )
+          ->addColumn(
+              'dest_zip', Varien_Db_Ddl_Table::TYPE_TEXT, 10, array(
+                  'nullable' => false,
+                  'default'  => '*',
+              ), 'Destination Post Code (Zip)'
+          )
+          ->addColumn(
+              'weight', Varien_Db_Ddl_Table::TYPE_DECIMAL, '12,4', array(
+                  'nullable' => false,
+                  'default'  => '0.0000',
+              ), 'Minimum Order Weight'
+          )
+          ->addColumn(
+              'subtotal', Varien_Db_Ddl_Table::TYPE_DECIMAL, '12,4', array(
+                  'nullable' => false,
+                  'default'  => '0.0000',
+              ), 'Minimum Order Amount'
+          )
+          ->addColumn(
+              'qty', Varien_Db_Ddl_Table::TYPE_INTEGER, 10, array(
+                  'nullable' => false,
+                  'default'  => '0',
+              ), 'Minimum Quantity'
+          )
+          ->addColumn(
+              'parcel_type', Varien_Db_Ddl_Table::TYPE_TEXT, 10, array(
+                  'nullable' => false,
+                  'default'  => '*',
+              ), 'Parcel Type (Letter Box Parcel or Regular)'
+          )
+          ->addColumn(
+              'price', Varien_Db_Ddl_Table::TYPE_DECIMAL, '12,4', array(
+                  'nullable' => false,
+                  'default'  => '0.0000',
+              ), 'Price'
+          )
+          ->addIndex(
+              $installer->getIdxName(
+                  'postnl_carrier/matrixrate',
+                  array(
+                      'website_id',
+                      'dest_country_id',
+                      'dest_region_id',
+                      'dest_zip',
+                      'weight',
+                      'subtotal',
+                      'wty',
+                      'parcel_type',
+                  ),
+                  Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE
+              ),
+              array(
+                  'website_id',
+                  'dest_country_id',
+                  'dest_region_id',
+                  'dest_zip',
+                  'weight',
+                  'subtotal',
+                  'wty',
+                  'parcel_type',
+              ),
+              array(
+                  'type' => Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE
+              )
+          )
+          ->setComment('PostNL Matrixrate');
+
+    $installer->getConnection()->createTable($table);
+}
+
 $installer->endSetup();

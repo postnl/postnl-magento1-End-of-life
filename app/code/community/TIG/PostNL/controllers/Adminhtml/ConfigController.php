@@ -246,6 +246,30 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
     }
 
     /**
+     * Export shipping matrix rates in csv format.
+     *
+     * @return $this
+     */
+    public function exportMatrixratesAction()
+    {
+        $fileName   = 'matrixrates.csv';
+
+        /**
+         * @var TIG_PostNL_Block_Adminhtml_Carrier_Postnl_Matrixrate_Grid $gridBlock
+         */
+        $gridBlock  = $this->getLayout()->createBlock('postnl_adminhtml/carrier_postnl_matrixrate_grid');
+        $website    = Mage::app()->getWebsite($this->getRequest()->getParam('website'));
+
+        $gridBlock->setWebsiteId($website->getId());
+
+        $content = $gridBlock->getCsvFile();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+
+        return $this;
+    }
+
+    /**
      * Download all PostNL log files as a zip file.
      *
      * @return $this

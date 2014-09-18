@@ -42,11 +42,10 @@ class TIG_PostNL_Block_Adminhtml_Carrier_Postnl_Tablerate_Grid
     /**
      * Prepare shipping table rate collection
      *
-     * @return Mage_Adminhtml_Block_Shipping_Carrier_Tablerate_Grid
+     * @return Mage_Adminhtml_Block_Widget_Grid
      */
     protected function _prepareCollection()
     {
-        /** @var $collection Mage_Shipping_Model_Mysql4_Carrier_Tablerate_Collection */
         $collection = Mage::getResourceModel('postnl_carrier/tablerate_collection');
         $collection->setConditionFilter($this->getConditionName())
                    ->setWebsiteFilter($this->getWebsiteId());

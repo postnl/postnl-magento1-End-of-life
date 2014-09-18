@@ -36,31 +36,15 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Carrier_System_Config_Source_RateType
+class TIG_PostNL_Model_Carrier_System_Config_Backend_Matrixrate extends Mage_Core_Model_Config_Data
 {
     /**
-     * Returns an option array for rate type options
+     * Upload a new csv file.
      *
-     * @return array
+     * @return void
      */
-    public function toOptionArray()
+    public function _afterSave()
     {
-        $helper = Mage::helper('postnl');
-        $options = array(
-            array(
-                'value' => 'flat',
-                'label' => $helper->__('Flat'),
-            ),
-            array(
-                'value' => 'table',
-                'label' => $helper->__('Table'),
-            ),
-            array(
-                'value' => 'matrix',
-                'label' => $helper->__('Matrix'),
-            ),
-        );
-
-        return $options;
+        Mage::getResourceModel('postnl_carrier/matrix')->uploadAndImport($this);
     }
 }
