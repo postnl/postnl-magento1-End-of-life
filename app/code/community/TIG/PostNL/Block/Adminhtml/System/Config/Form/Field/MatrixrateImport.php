@@ -36,31 +36,24 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Carrier_System_Config_Source_RateType
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_MatrixrateImport
+    extends Mage_Adminhtml_Block_System_Config_Form_Field
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
     /**
-     * Returns an option array for rate type options
+     * Render the element.
      *
-     * @return array
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
+     * @return string
      */
-    public function toOptionArray()
+    public function render(Varien_Data_Form_Element_Abstract $element)
     {
-        $helper = Mage::helper('postnl');
-        $options = array(
-            array(
-                'value' => 'flat',
-                'label' => $helper->__('Flat'),
-            ),
-            array(
-                'value' => 'table',
-                'label' => $helper->__('Table'),
-            ),
-            array(
-                'value' => 'matrix',
-                'label' => $helper->__('Matrix'),
-            ),
-        );
+        $element->setType('file')
+                ->removeClass('input-text');
 
-        return $options;
+        $html = parent::render($element);
+
+        return $html;
     }
 }

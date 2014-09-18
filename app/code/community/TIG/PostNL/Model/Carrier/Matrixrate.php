@@ -35,32 +35,20 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * This is a dummy class for the matrixrate export/import functionality.
  */
-class TIG_PostNL_Model_Carrier_System_Config_Source_RateType
+class TIG_PostNL_Model_Carrier_Matrixrate extends Mage_Core_Model_Abstract
 {
     /**
-     * Returns an option array for rate type options
+     * Prefix of model events names
      *
-     * @return array
+     * @var string
      */
-    public function toOptionArray()
-    {
-        $helper = Mage::helper('postnl');
-        $options = array(
-            array(
-                'value' => 'flat',
-                'label' => $helper->__('Flat'),
-            ),
-            array(
-                'value' => 'table',
-                'label' => $helper->__('Table'),
-            ),
-            array(
-                'value' => 'matrix',
-                'label' => $helper->__('Matrix'),
-            ),
-        );
+    protected $_eventPrefix = 'postnl_carrier_matrixrate';
 
-        return $options;
+    public function _construct()
+    {
+        $this->_init('postnl_carrier/matrixrate');
     }
 }

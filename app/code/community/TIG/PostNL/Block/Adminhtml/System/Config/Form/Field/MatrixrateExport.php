@@ -36,31 +36,47 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Carrier_System_Config_Source_RateType
+class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_MatrixrateExport
+    extends Mage_Adminhtml_Block_System_Config_Form_Field
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
     /**
-     * Returns an option array for rate type options
+     * @param Varien_Data_Form_Element_Abstract $element
      *
-     * @return array
+     * @return string
      */
-    public function toOptionArray()
+    public function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
-        $helper = Mage::helper('postnl');
-        $options = array(
-            array(
-                'value' => 'flat',
-                'label' => $helper->__('Flat'),
-            ),
-            array(
-                'value' => 'table',
-                'label' => $helper->__('Table'),
-            ),
-            array(
-                'value' => 'matrix',
-                'label' => $helper->__('Matrix'),
-            ),
+        $buttonBlock = $this->getLayout()->createBlock('adminhtml/widget_button');
+
+        $params = array(
+            'website' => $buttonBlock->getRequest()->getParam('website')
         );
 
-        return $options;
+        $onClick = 'setLocation(\''
+                 . Mage::helper('adminhtml')->getUrl("postnl_admin/adminhtml_config/exportMatrixrates", $params)
+                 . '\')';
+
+        $data = array(
+            'label'   => Mage::helper('postnl')->__('Export CSV'),
+            'onclick' => $onClick,
+            'id'      => $element->getHtmlId(),
+            'type'    => 'button',
+            'class'   => 'scalable postnl-button',
+        );
+
+        $html = $buttonBlock->setData($data)->toHtml();
+
+        return $html;
+    }
+
+    /**
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
+     * @return string
+     */
+    public function render(Varien_Data_Form_Element_Abstract $element)
+    {
+        return parent::render($element);
     }
 }
