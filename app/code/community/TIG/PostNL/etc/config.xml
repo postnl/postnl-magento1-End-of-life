@@ -478,7 +478,9 @@
 
     <frontend>
         <secure_url>
-            <postnl_checkout>/postnl/checkout</postnl_checkout>
+            <postnl_checkout_summary>/postnl/checkout/summary/</postnl_checkout_summary>
+            <postnl_checkout_finishcheckout>/postnl/checkout/finishCheckout/</postnl_checkout_finishcheckout>
+            <postnl_checkout_cancel>/postnl/checkout/cancel/</postnl_checkout_cancel>
             <postnl_addressvalidation>/postnl/addressValidation</postnl_addressvalidation>
             <postnl_deliveryoptions>/postnl/deliveryOptions</postnl_deliveryoptions>
             <postnl_mijnpakket>/postnl/mijnpakket</postnl_mijnpakket>
