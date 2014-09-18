@@ -164,8 +164,6 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
         try {
             /**
              * Load the shipment and check if it exists and is valid.
-             *
-             * @var Mage_Sales_Model_Order_Shipment $shipment
              */
             $shipment = $this->_loadShipment($shipmentId, true);
 
@@ -955,71 +953,15 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             Mage::register('postnl_additional_options', $extraOptions);
         }
 
-        try {
-            $orderIds = $this->_getOrderIds();
+        $orderIds = $this->_getOrderIds();
 
-            /**
-             * Create the shipments.
-             */
-            $errors = 0;
-            foreach ($orderIds as $orderId) {
-                try {
-                    $this->_createShipment($orderId);
-                } catch (TIG_PostNL_Exception $e) {
-                    $helper->logException($e);
-                    $this->addWarning(
-                        array(
-                            'entity_id'   => Mage::getResourceModel('sales/order')->getIncrementId($orderId),
-                            'code'        => $e->getCode(),
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                    $errors++;
-                } catch (Exception $e) {
-                    $helper->logException($e);
-                    $this->addWarning(
-                        array(
-                            'entity_id'   => Mage::getResourceModel('sales/order')->getIncrementId($orderId),
-                            'code'        => null,
-                            'description' => $e->getMessage(),
-                        )
-                    );
-                    $errors++;
-                }
-            }
-        } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
-            Mage::helper('postnl/cif')->parseCifException($e);
-
-            $helper->logException($e);
-            $helper->addExceptionSessionMessage('adminhtml/session', $e);
-
-            $this->_redirect('adminhtml/sales_order/index');
-            return $this;
-        } catch (TIG_PostNL_Exception $e) {
-            $helper->logException($e);
-            $helper->addExceptionSessionMessage('adminhtml/session', $e);
-
-            $this->_redirect('adminhtml/sales_order/index');
-            return $this;
-        } catch (Exception $e) {
-            $helper->logException($e);
-            $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
-                $this->__('An error occurred while processing this action.')
-            );
-
-            $this->_redirect('adminhtml/sales_order/index');
-            return $this;
-        }
-
-        /**
-         * Check for warnings.
-         */
-        $this->_checkForWarnings();
+        $this->_errors = 0;
+        $this->_createShipments($orderIds);
 
         /**
          * Add either a success or failure message and redirect the user accordingly.
          */
-        if ($errors < count($orderIds)) {
+        if ($this->_errors < count($orderIds)) {
             $helper->addSessionMessage(
                 'adminhtml/session', null, 'success',
                 $this->__('The shipments were successfully created.')
@@ -1028,12 +970,19 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $this->_redirect('adminhtml/sales_shipment/index');
         } else {
             $helper->addSessionMessage(
-                'adminhtml/session', null, 'error',
+                'adminhtml/session',
+                null,
+                'error',
                 $this->__('None of the shipments could be created. Please check the error messages for more details.')
             );
 
             $this->_redirect('adminhtml/sales_order/index');
         }
+
+        /**
+         * Check for warnings.
+         */
+        $this->_checkForWarnings();
 
         return $this;
     }
@@ -1150,84 +1099,17 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             )
         );
 
-        /**
-         * Create the shipments.
-         */
-        $errors = 0;
-        $shipmentIds = array();
-        $carrierHelper = Mage::helper('postnl/carrier');
-        foreach ($orderIds as $orderId) {
-            try {
-                /**
-                 * @var Mage_Sales_Model_Order $order
-                 */
-                $order = Mage::getModel('sales/order')->load($orderId);
-                $shippingMethod = $order->getShippingMethod();
+        $this->_errors = 0;
 
-                /**
-                 * Check that the order was placed using PostNL.
-                 */
-                if (!$carrierHelper->isPostnlShippingMethod($shippingMethod)) {
-                    $this->addWarning(
-                        array(
-                            'entity_id'   => $order->getIncrementId(),
-                            'code'        => 'POSTNL-0009',
-                            'description' => $this->__(
-                                'This action is not available for order #%s, because it was not placed using PostNL.',
-                                $order->getIncrementId()
-                            ),
-                        )
-                    );
-
-                    $errors++;
-                    continue;
-                }
-
-                $shipmentIds[] = $this->_createShipment($orderId);
-            } catch (TIG_PostNL_Exception $e) {
-                /**
-                 * If any shipments already exist, get their IDs so they can be processed.
-                 */
-                $shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection');
-                $shipmentCollection->addFieldToSelect('entity_id')
-                                   ->addFieldToFilter('order_id', $orderId);
-
-                if ($shipmentCollection->getSize() > 0) {
-                    $shipmentIds = array_merge($shipmentCollection->getColumnValues('entity_id'), $shipmentIds);
-                } else {
-                    /**
-                     * If no shipments exist, add a warning message indicating the process failed for this order.
-                     */
-                    $helper->logException($e);
-                    $this->addWarning(
-                         array(
-                             'entity_id'   => Mage::getResourceModel('sales/order')->getIncrementId($orderId),
-                             'code'        => $e->getCode(),
-                             'description' => $e->getMessage(),
-                         )
-                    );
-                    $errors++;
-                }
-            } catch (Exception $e) {
-                $helper->logException($e);
-                $this->addWarning(
-                     array(
-                         'entity_id'   => Mage::getResourceModel('sales/order')->getIncrementId($orderId),
-                         'code'        => null,
-                         'description' => $e->getMessage(),
-                     )
-                );
-                $errors++;
-            }
-        }
+        $shipmentIds = $this->_createShipments($orderIds, true);
 
         /**
          * Add either a success or failure message and redirect the user accordingly.
          */
-        if ($errors < count($orderIds)) {
+        if ($this->_errors < count($orderIds)) {
             $helper->addSessionMessage(
-            'adminhtml/session', null, 'success',
-            $this->__('The shipments were successfully created.')
+                'adminhtml/session', null, 'success',
+                $this->__('The shipments were successfully created.')
             );
         } else {
             $helper->addSessionMessage(

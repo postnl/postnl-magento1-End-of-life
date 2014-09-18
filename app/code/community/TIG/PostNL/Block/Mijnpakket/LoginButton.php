@@ -64,9 +64,9 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends TIG_PostNL_Block_Core_Temp
     /**
      * Available URl's for PostNL's login buttons.
      */
-    const LIVE_BASE_URL   = 'https://checkout.postnl.nl/';
-    const TEST_BASE_URL   = 'https://tppcb-sandbox.e-id.nl/';
-    const BUTTON_URL_PATH = 'Button/PremiumLogin';
+    const LIVE_BASE_URL_XPATH   = 'postnl/delivery_options/mijnpakket_login_btn_live_base_url';
+    const TEST_BASE_URL_XPATH   = 'postnl/delivery_options/mijnpakket_login_btn_test_base_url';
+    const BUTTON_URL_PATH_XPATH = 'postnl/delivery_options/mijnpakket_login_btn_url_path';
 
     /**
      * @var string
@@ -101,9 +101,9 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends TIG_PostNL_Block_Core_Temp
 
         $isTestMode = $this->getIsTestMode();
         if ($isTestMode) {
-            $baseUrl = self::TEST_BASE_URL;
+            $baseUrl = Mage::getStoreConfig(self::TEST_BASE_URL_XPATH);
         } else {
-            $baseUrl = self::LIVE_BASE_URL;
+            $baseUrl = Mage::getStoreConfig(self::LIVE_BASE_URL_XPATH);
         }
 
         $this->setBaseUrl($baseUrl);
@@ -156,7 +156,7 @@ class TIG_PostNL_Block_Mijnpakket_LoginButton extends TIG_PostNL_Block_Core_Temp
         }
 
         $baseUrl = $this->getBaseUrl();
-        $url = $baseUrl . self::BUTTON_URL_PATH;
+        $url = $baseUrl . Mage::getStoreConfig(self::BUTTON_URL_PATH_XPATH);
 
         $url .= '?publicId=' . $this->getPublicWebshopId();
 

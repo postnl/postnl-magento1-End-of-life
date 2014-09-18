@@ -52,11 +52,11 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     /**
      * Localised track and trace base URL's.
      */
-    const POSTNL_TRACK_AND_TRACE_NL_BASE_URL  = 'https://mijnpakket.postnl.nl/Inbox/Search?';
-    const POSTNL_TRACK_AND_TRACE_GB_BASE_URL  = 'http://parcels-uk.tntpost.com/mytrackandtrace/trackandtrace.aspx?';
-    const POSTNL_TRACK_AND_TRACE_DE_BASE_URL  = 'http://parcels-de.tntpost.com/de/mytrackandtrace/TrackAndTrace.aspx?';
-    const POSTNL_TRACK_AND_TRACE_FR_BASE_URL  = 'http://parcels-fr.tntpost.com/fr/mytrackandtrace/TrackAndTrace.aspx?';
-    const POSTNL_TRACK_AND_TRACE_INT_BASE_URL = 'http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?';
+    const POSTNL_TRACK_AND_TRACE_NL_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_nl_base_url';
+    const POSTNL_TRACK_AND_TRACE_GB_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_gb_base_url';
+    const POSTNL_TRACK_AND_TRACE_DE_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_de_base_url';
+    const POSTNL_TRACK_AND_TRACE_FR_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_fr_base_url';
+    const POSTNL_TRACK_AND_TRACE_INT_BASE_URL_XPATH = 'postnl/cif/track_and_trace_int_base_url';
 
     /**
      * XML path to rate type setting.
@@ -276,7 +276,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
                 && $countryCode == 'NL'
             )
         ) {
-            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_NL_BASE_URL
+            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_NL_BASE_URL_XPATH)
                         . '&b=' . $barcode;
             /**
              * For dutch shipments add the postcode. For international shipments add an 'international' flag
@@ -301,7 +301,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
                 || $countryCode == 'GB'
             )
         ) {
-            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_GB_BASE_URL
+            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_GB_BASE_URL_XPATH)
                         . '&B=' . $barcode
                         . '&D=GB'
                         . '&lang=en';
@@ -310,7 +310,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         }
 
         if (isset($countryCode) && $countryCode == 'DE') {
-            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_DE_BASE_URL
+            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_DE_BASE_URL_XPATH)
                         . '&B=' . $barcode
                         . '&D=DE'
                         . '&lang=de';
@@ -319,7 +319,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         }
 
         if (isset($countryCode) && $countryCode == 'FR') {
-            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_FR_BASE_URL
+            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_FR_BASE_URL_XPATH)
                         . '&B=' . $barcode
                         . '&D=FR'
                         . '&lang=fr';
@@ -330,7 +330,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         /**
          * Get a general track & trace URL for all other destinations
          */
-        $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_INT_BASE_URL
+        $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_INT_BASE_URL_XPATH)
                     . '&B=' . $barcode
                     . '&I=true';
 
