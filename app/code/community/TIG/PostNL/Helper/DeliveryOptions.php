@@ -89,6 +89,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const EVENING_TIME = 1900;
 
     /**
+     * The maximum fee amount allowed for evening and early delivery options.
+     */
+    const MAX_FEE = 2;
+
+    /**
      * @var array
      */
     protected $_validTypes = array(
@@ -144,7 +149,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted, false);
 
-        if ($price > 2) {
+        if ($price > self::MAX_FEE) {
             $price = 0;
         }
 
@@ -175,7 +180,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted, false);
 
-        if ($price > 2) {
+        if ($price > self::MAX_FEE) {
             $price = 0;
         }
 
@@ -504,10 +509,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param null|string $orderDate
      * @param null|int    $storeId
      * @param boolean     $asDays
+     * @param boolean     $asDateTime
      *
      * @return bool|string|int
      */
-    public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false)
+    public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false, $asDateTime = false)
     {
         if (!$orderDate) {
             $orderDate = new DateTime(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
@@ -561,6 +567,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         if ($asDays) {
             return $shippingDuration;
+        }
+
+        if ($asDateTime) {
+            return $deliveryTime;
         }
 
         $deliveryDate = $deliveryTime->format('Y-m-d');
@@ -775,16 +785,34 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $durationArray  = array($configDuration);
 
         /**
-         * Loop through all products in the quote.
+         * Get all items in the quote, so we can check the corresponding products.
          *
          * @var Mage_Sales_Model_Quote_Item $item
          */
-        foreach ($quote->getAllVisibleItems() as $item) {
-            $product = Mage::getModel('catalog/product')->load($item->getProductId());
+        $items = $quote->getItemsCollection();
+        foreach ($items as $key => $item) {
+            if ($item->isDeleted() || $item->getParentItemId()) {
+                $items->removeItemByKey($key);
+            }
+        }
+        $productIds = $items->getColumnValues('product_id');
 
-            /**
-             * If the product has a specific shipping duration, add it to the array of durations.
-             */
+        if (!$productIds) {
+            return end($durationArray);
+        }
+
+        /**
+         * Get all products.
+         */
+        $products = Mage::getResourceModel('catalog/product_collection')
+                        ->setStoreId($quote->getStoreId())
+                        ->addFieldToFilter('entity_id', array('in' => $productIds))
+                        ->addAttributeToSelect('postnl_shipping_duration');
+
+        /**
+         * Get the shipping duration of all products.
+         */
+        foreach ($products as $product) {
             if ($product->hasData('postnl_shipping_duration')
                 && $product->getData('postnl_shipping_duration') !== ''
             ) {
@@ -1896,48 +1924,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         Mage::register($registryKey, true);
         return true;
-    }
-
-    /**
-     * Checks if the buspakje-specific configuration is applicable to the current quote.
-     *
-     * @param Mage_Sales_Model_Quote $quote
-     *
-     * @return bool
-     */
-    public function isBuspakjeConfigApplicableToQuote(Mage_Sales_Model_Quote $quote)
-    {
-        /**
-         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
-         * the registry.
-         */
-        $registryKey = 'is_buspakje_config_applicable_to_quote_' . $quote->getId();
-
-        /**
-         * Check if the result of this method has been cached in the registry.
-         */
-        if (Mage::registry($registryKey) !== null) {
-            return Mage::registry($registryKey);
-        }
-
-        /**
-         * If the buspakje calculation mode is set to 'manual', no further checks are required as the regular delivery
-         * option rules will apply.
-         */
-        if ($this->getBuspakjeCalculationMode() != 'automatic') {
-            Mage::register($registryKey, false);
-            return false;
-        }
-
-        /**
-         * Check if the current quote would fit as a letter box parcel.
-         */
-        $quoteItems = $quote->getAllItems();
-
-        $fits = $this->fitsAsBuspakje($quoteItems);
-
-        Mage::register($registryKey, $fits);
-        return $fits;
     }
 
     /**

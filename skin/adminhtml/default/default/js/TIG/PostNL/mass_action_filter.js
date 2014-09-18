@@ -312,7 +312,10 @@ PostnlMassActionFilter.prototype = {
             return this;
         }
 
-        $('postnl_' + filteredType + '_options').up().show();
+        var optionsField = $('postnl_' + filteredType + '_options');
+        if (optionsField) {
+            $('postnl_' + filteredType + '_options').up().show();
+        }
 
         return this;
     },

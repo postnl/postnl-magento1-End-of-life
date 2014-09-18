@@ -267,14 +267,14 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
          * Check if PostNL Checkout may be used for 'letter' orders and if not, if the quote could fit in an envelope
          */
         $showCheckoutForLetters = Mage::getStoreConfigFlag(self::XPATH_SHOW_CHECKOUT_FOR_LETTER, $storeId);
-        if (!$showCheckoutForLetters) {
-            $isLetterQuote = $this->quoteIsLetter($quote, $storeId);
+        if (!$showCheckoutForLetters || true) {
+            $isLetterQuote = $this->isBuspakjeConfigApplicableToQuote($quote);
             if ($isLetterQuote) {
                 $errors = array(
                     array(
                         'code'    => 'POSTNL-0101',
                         'message' => $this->__(
-                            "The quote's total weight is below the miniumum required to use PostNL Checkout."
+                            "The quote fits as a letter box parcel."
                         ),
                     )
                 );
@@ -334,7 +334,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @todo Expand this method to also check the size of products to see if they fit in an envelope
+     * @deprecated 1.3.2 This method has been replaced by TIG_PostNL_Helper_Data::isBuspakjeConfigApplicableToQuote()
      */
     public function quoteIsLetter($quoteItems, $storeId = null)
     {
@@ -349,12 +349,12 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         $totalWeight = 0;
         /** @var Mage_Sales_Model_Quote_Item $item */
         foreach ($quoteItems as $item) {
-            $totalWeight += $item->getRowWeight();
+            $totalWeight += ($item->getWeight() * $item->getQty());
         }
 
         $kilograms = $this->standardizeWeight($totalWeight, $storeId);
 
-        if ($kilograms < 2) {
+        if ($kilograms < self::MAX_LETTER_BOX_PARCEL_WEIGHT) {
             return true;
         }
 

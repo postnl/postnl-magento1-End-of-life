@@ -136,6 +136,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XPATH_COD_IBAN         = 'postnl/cod/iban';
 
     /**
+     * The maximum amount of products which can be printed on the customs declaration form.
+     */
+    const MAX_CUSTOMS_PRODUCT_COUNT = 5;
+
+    /**
+     * Default HS tariff value.
+     */
+    const DEFAULT_HS_TARIFF = '000000';
+
+    /**
      * Array containing possible address types.
      *
      * @var array
@@ -1381,7 +1391,18 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          */
         $itemCount = 0;
         $content = array();
-        $items = $this->_sortCustomsItems($shipment->getAllItems());
+
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Item $item
+         */
+        $items = $shipment->getItemsCollection();
+        foreach ($items as $key => $item) {
+            if ($item->isDeleted()) {
+                $items->removeItemByKey($key);
+            }
+        }
+
+        $items = $this->_sortCustomsItems($items);
 
         $helper = Mage::helper('postnl');
 
@@ -1392,7 +1413,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             /**
              * A maximum of 5 rows are allowed
              */
-            if (++$itemCount > 5) {
+            if (++$itemCount > self::MAX_CUSTOMS_PRODUCT_COUNT) {
                 break;
             }
 
@@ -1447,7 +1468,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Sorts an array of shipment items based on a product attribute that is defined in the module configuration
      *
-     * @param array $items
+     * @param Mage_Sales_Model_Resource_Order_Shipment_Item_Collection $items
      *
      * @return array
      */
@@ -1466,17 +1487,34 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
 
         /**
+         * Get all products linked to the requested items.
+         */
+        $productIds = $items->getColumnValues('product_id');
+        $products = Mage::getResourceModel('catalog/product_collection')
+                        ->setStoreId($this->getStoreId())
+                        ->addFieldToFilter('entity_id', array('in' => $productIds))
+                        ->addAttributeToSelect($sortingAttribute)
+                        ->setOrder($sortingAttribute, strtoupper($sortingDirection));
+
+        $products->getSelect()->limit(self::MAX_CUSTOMS_PRODUCT_COUNT);
+
+        /**
+         * Get the attribute values of the requested sorting attribute.
+         */
+        $attributeValues = array();
+        foreach ($products as $product) {
+            $attributeValues[$product->getId()] = $product->getDataUsingMethod($sortingAttribute);
+        }
+
+        /**
          * Place the item's sorting value in a temporary array where the key is the item's ID
          *
          * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
+        $sortedItems = array();
         foreach ($items as $item) {
-            $product = Mage::getModel('catalog/product')->load($item->getOrderItem()->getProductId());
-            if (!$product) {
-                continue;
-            }
+            $sortingAttributeValue = $attributeValues[$item->getProductId()];
 
-            $sortingAttributeValue = $product->getDataUsingMethod($sortingAttribute);
             $sortedItems[$item->getId()] = $sortingAttributeValue;
         }
 
@@ -1515,7 +1553,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * HS Tariff is an optional attribute. Check if it's used and if not, return a default value of 000000
          */
         if (!Mage::getStoreConfig(self::XPATH_GLOBALPACK_USE_HS_TARIFF_ATTRIBUTE, $storeId)) {
-            return '000000';
+            return self::DEFAULT_HS_TARIFF;
         }
 
         if ($this->hasHSTariffAttribute()) {
@@ -1529,7 +1567,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $hsTariff = $product->getDataUsingMethod($hsTariffAttribute);
 
         if (empty($hsTariff)) {
-            $hsTariff = '000000';
+            $hsTariff = self::DEFAULT_HS_TARIFF;
         }
 
         return $hsTariff;
