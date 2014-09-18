@@ -1107,3 +1107,5 @@ TIG_PostNL::Thursday,Donderdag
 TIG_PostNL::Friday,Vrijdag
 TIG_PostNL::Saturday,Zaterdag
 TIG_PostNL::PostNL - Print Packing Slip,PostNL - Print Pakbon
+TIG_PostNL::deliver to stated address only,lever alleen aan opgegeven adres
+TIG_PostNL::Do not deliver to neighbours,Niet bij buren bezorgen
