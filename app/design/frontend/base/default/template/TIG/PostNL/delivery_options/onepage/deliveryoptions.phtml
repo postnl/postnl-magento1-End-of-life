@@ -94,7 +94,7 @@
                         <li>
                             <input type="checkbox" name="<?php echo $this->getMethodName(); ?>[postnl][only_stated_address]" id="<?php echo $this->getMethodName(); ?>_only_stated_address" value="1" class="checkbox">
                             <label for="<?php echo $this->getMethodName(); ?>_only_stated_address">
-                                <?php echo $this->__("Do not deliver to neighbours if I'm not home"); ?>
+                                <?php echo $this->__('Do not deliver to neighbours'); ?>
                                 <span class="price"><?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
                             </label>
                         </li>
