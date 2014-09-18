@@ -145,6 +145,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const EXTENSION_ACTIVE = 2;
 
     /**
+     * Buspakje calculation modes.
+     */
+    const BUSPAKJE_CALCULATION_MODE_AUTOMATIC = 'automatic';
+    const BUSPAKJE_CALCULATION_MODE_MANUAL    = 'manual';
+
+    /**
      * Required configuration fields.
      *
      * @var array
@@ -762,7 +768,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * If the buspakje calculation mode is set to 'manual', no further checks are required as the regular delivery
          * option rules will apply.
          */
-        if ($this->getBuspakjeCalculationMode() != 'automatic') {
+        if (self::BUSPAKJE_CALCULATION_MODE_AUTOMATIC != $this->getBuspakjeCalculationMode()) {
             Mage::register($registryKey, false);
             return false;
         }
