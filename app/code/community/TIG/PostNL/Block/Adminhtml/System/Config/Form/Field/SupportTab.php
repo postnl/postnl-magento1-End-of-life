@@ -67,8 +67,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     protected $_template = 'TIG/PostNL/system/config/form/field/support_tab.phtml';
 
     /**
-     * Add a new css file to the head. We couldn't do this from layout.xml, because it would have loaded
-     * for all System > Config pages, rather than just PostNL's section.
+     * Add a new css file to the head. We couldn't do this from layout.xml, because it would have loaded for all
+     * System > Config pages, rather than just PostNL's section.
      *
      * @return Mage_Adminhtml_Block_Abstract::_prepareLayout()
      *
@@ -93,11 +93,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
         /**
          * Get the minimum version requirement for the current Magento edition.
          */
-            if($isEnterprise) {
-                $minimumVersion = '1.12.0.0';
-            } else {
-                $minimumVersion = '1.7.0.0';
-            }
+        if($isEnterprise) {
+            $minimumVersion = '1.12.0.0';
+        } else {
+            $minimumVersion = '1.7.0.0';
+        }
 
         /**
          * Check if the current version is below the minimum version requirement.
