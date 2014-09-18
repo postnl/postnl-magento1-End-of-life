@@ -239,6 +239,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_cache = null;
 
     /**
+     * @var Mage_Sales_Model_Quote
+     */
+    protected $_quote;
+
+    /**
      * The current server's memory limit.
      *
      * @var int
@@ -339,6 +344,21 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
 
         $this->setCache($cache);
         return $cache;
+    }
+
+    /**
+     * @return Mage_Sales_Model_Quote
+     */
+    public function getQuote()
+    {
+        if ($this->_quote) {
+            return $this->_quote;
+        }
+
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $this->_quote = $quote;
+        return $quote;
     }
 
     /**
@@ -749,8 +769,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return bool
      */
-    public function isBuspakjeConfigApplicableToQuote(Mage_Sales_Model_Quote $quote)
+    public function isBuspakjeConfigApplicableToQuote(Mage_Sales_Model_Quote $quote = null)
     {
+        if (is_null($quote)) {
+            $quote = $this->getQuote();
+        }
+
         /**
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
          * the registry.

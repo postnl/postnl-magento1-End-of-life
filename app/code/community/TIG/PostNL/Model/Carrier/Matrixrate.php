@@ -35,14 +35,20 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * This is a dummy class for the matrixrate export/import functionality.
  */
-class TIG_PostNL_Model_Carrier_System_Config_Backend_Matrixrate extends Mage_Core_Model_Config_Data
+class TIG_PostNL_Model_Carrier_Matrixrate extends Mage_Core_Model_Abstract
 {
     /**
-     * Upload a new csv file.
+     * Prefix of model events names
+     *
+     * @var string
      */
-    public function _afterSave()
+    protected $_eventPrefix = 'postnl_carrier_matrixrate';
+
+    public function _construct()
     {
-        Mage::getResourceModel('postnl_carrier/matrixrate')->uploadAndImport($this);
+        $this->_init('postnl_carrier/matrixrate');
     }
 }

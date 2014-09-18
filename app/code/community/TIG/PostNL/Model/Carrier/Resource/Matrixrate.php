@@ -49,21 +49,99 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
     }
 
     /**
+     * Return table rate array or false by rate request.
+     *
+     * @param Mage_Shipping_Model_Rate_Request $request
+     * 
+     * @return array|boolean
+     */
+    public function getRate(Mage_Shipping_Model_Rate_Request $request)
+    {
+        $adapter = $this->_getReadAdapter();
+        $bind = array(
+            ':website_id'  => (int) $request->getWebsiteId(),
+            ':country_id'  => $request->getDestCountryId(),
+            ':region_id'   => (int) $request->getDestRegionId(),
+            ':postcode'    => $request->getDestPostcode(),
+            ':weight'      => $request->getPackageWeight(),
+            ':subtotal'    => $request->getPackageValue(),
+            ':qty'         => $request->getPackageQty(),
+        );
+
+        $bind[':parcel_type'] = Mage::helper('postnl')->isBuspakjeConfigApplicableToQuote() ? 'letter_box' : 'regular';
+
+        $select = $adapter->select()
+                          ->from($this->getMainTable())
+                          ->where('website_id = :website_id')
+                          ->order(
+                              array(
+                                  'website_id DESC',
+                                  'parcel_type DESC',
+                                  'dest_country_id DESC',
+                                  'dest_region_id DESC',
+                                  'dest_zip DESC',
+                                  'weight DESC',
+                                  'subtotal DESC',
+                                  'qty DESC',
+                              )
+                          )
+                          ->limit(1);
+
+        // Render destination condition
+        $orWhere = '('
+                 . implode(
+                     ') OR (',
+                     array(
+                         "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = :postcode",
+                         "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = ''",
+
+                         // Handle asterix in dest_zip field
+                         "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = '*'",
+                         "dest_country_id = :country_id AND dest_region_id = 0 AND dest_zip = '*'",
+                         "dest_country_id = '0' AND dest_region_id = :region_id AND dest_zip = '*'",
+                         "dest_country_id = '0' AND dest_region_id = 0 AND dest_zip = '*'",
+
+                         "dest_country_id = :country_id AND dest_region_id = 0 AND dest_zip = ''",
+                         "dest_country_id = :country_id AND dest_region_id = 0 AND dest_zip = :postcode",
+                         "dest_country_id = :country_id AND dest_region_id = 0 AND dest_zip = '*'",
+                     )
+                 )
+                 . ')';
+        $select->where($orWhere);
+
+        $select->where('weight <= :weight');
+        $select->where('subtotal <= :subtotal');
+        $select->where('qty <= :qty');
+        $select->where("(parcel_type = :parcel_type) OR (parcel_type = '*')");
+
+        $result = $adapter->fetchRow($select, $bind);
+
+        // Normalize destination zip code
+        if ($result && $result['dest_zip'] == '*') {
+            $result['dest_zip'] = '';
+        }
+
+        $result['cost'] = 0;
+
+        return $result;
+    }
+
+    /**
      * Upload table rate file and import data from it
      *
      * @param Varien_Object $object
      *
-     * @throws Mage_Core_Exception
+     * @throws TIG_PostNL_Exception
      *
-     * @return Mage_Shipping_Model_Resource_Carrier_Tablerate
+     * @return $this
      */
     public function uploadAndImport(Varien_Object $object)
     {
-        if (empty($_FILES['groups']['tmp_name']['postnl']['fields']['import']['value'])) {
+        if (empty($_FILES['groups']['tmp_name']['postnl']['fields']['matrix_import']['value'])) {
             return $this;
         }
 
-        $csvFile = $_FILES['groups']['tmp_name']['postnl']['fields']['import']['value'];
+        $csvFile = $_FILES['groups']['tmp_name']['postnl']['fields']['matrix_import']['value'];
         $website = Mage::app()->getWebsite($object->getScopeId());
 
         $this->_importWebsiteId     = (int)$website->getId();
@@ -212,18 +290,58 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
             $zipCode = $row[2];
         }
 
-        // validate condition value
-        $value = $this->_parseDecimalValue($row[3]);
-        if ($value === false) {
+        // validate weight
+        $weight = $this->_parseDecimalValue($row[3]);
+        if ($weight === false) {
             $this->_importErrors[] = Mage::helper('postnl')->__(
-                'Invalid %s "%s" in the Row #%s.',
-                $this->_getConditionFullName($this->_importConditionName), $row[3], $rowNumber
+                'Invalid weight "%s" in row #%s.',
+                $row[3],
+                $rowNumber
+            );
+            return false;
+        }
+
+        // validate subtotal
+        $subtotal = $this->_parseDecimalValue($row[4]);
+        if ($subtotal === false) {
+            $this->_importErrors[] = Mage::helper('postnl')->__(
+                'Invalid subtotal "%s" in row #%s.',
+                $row[4],
+                $rowNumber
+            );
+            return false;
+        }
+
+        // validate qty
+        $qty = $this->_parseIntegerValue($row[5]);
+        if ($qty === false) {
+            $this->_importErrors[] = Mage::helper('postnl')->__(
+                'Invalid quantity "%s" in row #%s.',
+                $row[5],
+                $rowNumber
+            );
+            return false;
+        }
+
+        // validate parcel type
+        $allowedParcelTypes = array(
+            '*',
+            'letter_box',
+            'regular'
+        );
+        $parcelType = $row[6];
+        if (!in_array($parcelType, $allowedParcelTypes)) {
+            $this->_importErrors[] = Mage::helper('postnl')->__(
+                'Invalid parcel type "%s" in row #%s. Valid values are: "%s".',
+                $row[6],
+                $rowNumber,
+                implode('", "', $allowedParcelTypes)
             );
             return false;
         }
 
         // validate price
-        $price = $this->_parseDecimalValue($row[4]);
+        $price = $this->_parseDecimalValue($row[7]);
         if ($price === false) {
             $this->_importErrors[] = Mage::helper('postnl')->__(
                 'Invalid shipping price "%s" in row #%s.',
@@ -234,28 +352,86 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         }
 
         // protect from duplicate
-        $hash = sprintf("%s-%d-%s-%F", $countryId, $regionId, $zipCode, $value);
+        $hash = sprintf("%s-%d-%s-%F", $countryId, $regionId, $zipCode, $weight, $subtotal, $qty, $parcelType);
         if (isset($this->_importUniqueHash[$hash])) {
             $this->_importErrors[] = Mage::helper('postnl')->__(
-                'Duplicate row #%s (country "%s", region/state "%s", zip "%s" and value "%s").',
+                'Duplicate row #%s (country "%s", region/state "%s", zip "%s", weight "%s", subtotal "%s", quantity ' .
+                '"%s" and parcel type "%s").',
                 $rowNumber,
                 $row[0],
                 $row[1],
                 $zipCode,
-                $value
+                $row[3],
+                $row[4],
+                $row[5],
+                $row[6]
             );
             return false;
         }
         $this->_importUniqueHash[$hash] = true;
 
         return array(
-            $this->_importWebsiteId,    // website_id
-            $countryId,                 // dest_country_id
-            $regionId,                  // dest_region_id,
-            $zipCode,                   // dest_zip
-            $this->_importConditionName,// condition_name,
-            $value,                     // condition_value
-            $price                      // price
+            $this->_importWebsiteId, // website_id
+            $countryId,              // dest_country_id
+            $regionId,               // dest_region_id,
+            $zipCode,                // dest_zip
+            $weight,                 // weight,
+            $subtotal,               // subtotal
+            $qty,                    // quantity
+            $parcelType,             // parcel type
+            $price                   // price
         );
+    }
+
+    /**
+     * Parse and validate positive integer value.
+     *
+     * Return false if value is not decimal or is not positive.
+     *
+     * @param string $value
+     *
+     * @return bool|int
+     */
+    protected function _parseintegerValue($value)
+    {
+        if (!is_numeric($value)) {
+            return false;
+        }
+
+        $value = (int) $value;
+
+        if ($value < 0) {
+            return false;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Save import data batch.
+     *
+     * @param array $data
+     *
+     * @return $this
+     */
+    protected function _saveImportData(array $data)
+    {
+        if (!empty($data)) {
+            $columns = array(
+                'website_id',
+                'dest_country_id',
+                'dest_region_id',
+                'dest_zip',
+                'weight',
+                'subtotal',
+                'qty',
+                'parcel_type',
+                'price',
+            );
+            $this->_getWriteAdapter()->insertArray($this->getMainTable(), $columns, $data);
+            $this->_importedRows += count($data);
+        }
+
+        return $this;
     }
 }

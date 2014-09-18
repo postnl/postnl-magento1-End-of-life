@@ -91,7 +91,7 @@
                         var printWindow = window.open('', windowName);
 
                         Event.observe(printWindow, 'unload', function() {
-                            Event.stopObserving(printWindow);
+                            //Event.stopObserving(printWindow);
                             window.location.reload();
                         });
                         this.form.setAttribute('target', windowName);
@@ -116,7 +116,7 @@
         $('print_label_spinner').show();
         var printWindow = window.open(url);
         Event.observe(printWindow, 'unload', function() {
-            Event.stopObserving(printWindow);
+            //Event.stopObserving(printWindow);
             window.location.reload();
         });
 

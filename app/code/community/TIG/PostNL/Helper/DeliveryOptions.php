@@ -105,31 +105,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     );
 
     /**
-     * @var Mage_Sales_Model_Quote
-     */
-    protected $_quote;
-
-    /**
      * @return array
      */
     public function getValidTypes()
     {
         return $this->_validTypes;
-    }
-
-    /**
-     * @return Mage_Sales_Model_Quote
-     */
-    public function getQuote()
-    {
-        if ($this->_quote) {
-            return $this->_quote;
-        }
-
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
-
-        $this->_quote = $quote;
-        return $quote;
     }
 
     /**

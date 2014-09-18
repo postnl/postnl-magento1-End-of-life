@@ -147,7 +147,7 @@ if (!$conn->isTableExists($tableName)) {
                       'dest_zip',
                       'weight',
                       'subtotal',
-                      'wty',
+                      'qty',
                       'parcel_type',
                   ),
                   Varien_Db_Adapter_Interface::INDEX_TYPE_UNIQUE
@@ -159,7 +159,7 @@ if (!$conn->isTableExists($tableName)) {
                   'dest_zip',
                   'weight',
                   'subtotal',
-                  'wty',
+                  'qty',
                   'parcel_type',
               ),
               array(
