@@ -218,6 +218,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         $storeId = Mage::app()->getStore()->getId();
 
+        /**
+         * For upgradability reasons this is a switch, rather than an if statement.
+         */
         $fee = 0;
         foreach ($options as $option => $value) {
             if (!$value) {
@@ -258,6 +261,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     {
         $storeId = Mage::app()->getStore()->getId();
 
+        /**
+         * For upgradability reasons this is a switch, rather than an if statement.
+         */
         $fee = 0;
         switch ($option) {
             case 'only_stated_address':
