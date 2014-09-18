@@ -126,7 +126,7 @@
 }
 
 
-/* Retina compatibility
+/* Retina compatibility */
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and ( min-resolution: 192dpi), only screen and ( min-resolution: 2dppx) {
 
     .option-list .option .bkg,
@@ -155,16 +155,17 @@
                 border-radius:3px;
     }
 }
- */
- .responsive-location-results .location-details .more-info .actions:after,
- .responsive-location-results .location-filters:after,
- .responsive-location-results .location-details .content:after,
- .responsive-location-search:after,
- .responsive-switch-wrapper ul:after {
+
+/* Clears */
+.responsive-location-results .location-details .more-info .actions:after,
+.responsive-location-results .location-filters:after,
+.responsive-location-results .location-details .content:after,
+.responsive-location-search:after,
+.responsive-switch-wrapper ul:after {
      content:".";
      display:block;
      clear:both;
      height:0;
      line-height:0;
      overflow:hidden;
- }
+}
