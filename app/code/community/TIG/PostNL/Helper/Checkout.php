@@ -264,28 +264,26 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         $storeId = $quote->getStoreId();
 
         /**
-         * Check if PostNL Checkout may be used for 'letter' orders and if not, if the quote could fit in an envelope
+         * Check if the quote is a letter box parcel.
          */
-        $showCheckoutForLetters = Mage::getStoreConfigFlag(self::XPATH_SHOW_CHECKOUT_FOR_LETTER, $storeId);
-        if (!$showCheckoutForLetters || true) {
-            $isLetterQuote = $this->isBuspakjeConfigApplicableToQuote($quote);
-            if ($isLetterQuote) {
-                $errors = array(
-                    array(
-                        'code'    => 'POSTNL-0101',
-                        'message' => $this->__(
-                            "The quote fits as a letter box parcel."
-                        ),
-                    )
-                );
-                Mage::register('postnl_checkout_is_enabled_errors', $errors);
-                Mage::register('can_use_postnl_checkout', false);
-                return false;
-            }
+        $isLetterQuote = $this->isBuspakjeConfigApplicableToQuote($quote);
+        if ($isLetterQuote) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0101',
+                    'message' => $this->__(
+                        "The quote fits as a letter box parcel."
+                    ),
+                )
+            );
+            Mage::register('postnl_checkout_is_enabled_errors', $errors);
+            Mage::register('can_use_postnl_checkout', false);
+            return false;
         }
 
         /**
-         * Check if PostNL Checkout may be used for out-og-stock orders and if not, whether the quote has any such products
+         * Check if PostNL Checkout may be used for out-og-stock orders and if not, whether the quote has any such
+         * products.
          */
         $showCheckoutForBackorders = Mage::getStoreConfigFlag(self::XPATH_SHOW_CHECKOUT_FOR_BACKORDERS, $storeId);
         if (!$showCheckoutForBackorders) {
