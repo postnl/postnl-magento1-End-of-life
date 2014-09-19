@@ -26,15 +26,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
@@ -663,7 +663,7 @@
                 </general>
                 <cif translate="label comment" module="postnl">
                     <label>Account Settings</label>
-                    <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.</p><p>If you want to test the extension, but don't have any test mode credentials you can use the account credentials found <a href="http://kb.totalinternetgroup.nl/topic/55404467" title="Test mode account credentials" target="_blank">here</a>.]]></comment>
+                    <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.</p><p>If you want to test the extension, but don't have any test mode credentials you can use the account credentials found <a href="http://kb.tig.nl/topic/55404467" title="Test mode account credentials" target="_blank">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>500</sort_order>
                     <show_in_default>1</show_in_default>
@@ -1130,7 +1130,7 @@
                 </cif_labels_and_confirming>
                 <packing_slip translate="label comment" module="postnl">
                     <label>Packing Slip Settings</label>
-                    <comment><![CDATA[Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href="http://kb.totalinternetgroup.nl/topic/95885953" target="_blank" title="More info">here</a>.]]></comment>
+                    <comment><![CDATA[Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href="http://kb.tig.nl/topic/95885953" target="_blank" title="More info">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>700</sort_order>
                     <show_in_default>1</show_in_default>
@@ -1336,7 +1336,7 @@
                 </packing_slip>
                 <parcelware_export translate="label comment" module="postnl">
                     <label>Parcelware Export Settings</label>
-                    <comment><![CDATA[This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href="http://kb.totalinternetgroup.nl/topic/94906903" target="_blank" title="More info">here</a>.]]></comment>
+                    <comment><![CDATA[This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href="http://kb.tig.nl/topic/94906903" target="_blank" title="More info">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>800</sort_order>
                     <show_in_default>1</show_in_default>
@@ -2420,7 +2420,7 @@
                         </delivery_options_active>
                         <theme translate="label comment" module="postnl">
                             <label>Delivery options theme</label>
-                            <comment><![CDATA[You can view an example of the different themes <a href="http://kb.totalinternetgroup.nl/topic/58787233" target="_blank" title="PostNL delivery option themes">here</a>.]]></comment>
+                            <comment><![CDATA[You can view an example of the different themes <a href="http://kb.tig.nl/topic/58787233" target="_blank" title="PostNL delivery option themes">here</a>.]]></comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_deliveryoptions/system_config_source_themes</source_model>
                             <sort_order>20</sort_order>
@@ -2812,7 +2812,7 @@
                             </depends>
                         </show_mijnpakket_app_link>
                         <stated_address_header translate="label" module="postnl">
-                            <label>If a customer is not home when a shipment is delievered, PostNL will try to deliver it to the neighbours instead and leave a note for the intended recipient. Using these settings you may allow the customer to choose whether they want to allow their order to be delieverd to their neighbours.</label>
+                            <label>If a customer is not home when a shipment is delivered, PostNL will try to deliver it to the neighbours instead and leave a note for the intended recipient. Using these settings you may allow the customer to choose whether they want to allow their order to be delieverd to their neighbours.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
