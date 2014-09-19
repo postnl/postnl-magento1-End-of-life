@@ -62,6 +62,8 @@
 <?php if (!$_canUsePakjeGemak && !$_canUsePakjeGemakExpress && !$_canUsePakketAutomaat): ?>
     <?php $_canAddLocation = false; ?>
 <?php endif; ?>
+
+<?php $_canShowStatedAddressOnlyOption = Mage::helper('postnl/deliveryOptions')->canShowOnlyStatedAddressOption(); ?>
 <div id="osc_initial_loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_add_moment" style="display:none;">
     <ul class="option-list">
@@ -107,6 +109,17 @@
                                 </div>
                             </li>
                         </ul>
+                        <?php if ($_canShowStatedAddressOnlyOption): ?>
+                            <ul>
+                                <li>
+                                    <input type="checkbox" name="<?php echo $this->getMethodName(); ?>[postnl][only_stated_address]" id="<?php echo $this->getMethodName(); ?>_only_stated_address" value="1" class="checkbox">
+                                    <label for="<?php echo $this->getMethodName(); ?>_only_stated_address">
+                                        <?php echo $this->__('Do not deliver to neighbours'); ?>
+                                        <span class="price"><?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
+                                    </label>
+                                </li>
+                            </ul>
+                        <?php endif; ?>
                     </div>
                     <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
                         <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
@@ -266,6 +279,17 @@
             disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
             isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,
             shippingMethodName     : '<?php echo $this->getMethodName()          ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
+            <?php if ($_canShowStatedAddressOnlyOption): ?>
+                extraOptions           : {
+                    only_stated_address : {
+                        element : $('<?php echo $this->getMethodName(); ?>_only_stated_address'),
+                        allowedTypes : [
+                            'Avond',
+                            'Overdag'
+                        ]
+                    }
+                },
+            <?php endif; ?>
             optionsContainer       : 'osc_scrollbar_container'
         };
 

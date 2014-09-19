@@ -79,9 +79,21 @@
                 <td class="label"><label><?php echo $this->__('Product option'); ?></label></td>
                 <td class="value">
                     <strong><?php echo $_postnlShipment->getProductOption(); ?> (<?php echo $_postnlShipment->getProductCode() ?>)</strong>
-                    <?php if($_canChangeProductCode): ?><?php echo $this->getChangeProductCodeButtonHtml(); ?><?php endif; ?>
+                    <?php if ($_canChangeProductCode): ?><?php echo $this->getChangeProductCodeButtonHtml(); ?><?php endif; ?>
                 </td>
             </tr>
+            <?php if ($this->hasExtraOptions()): ?>
+                <tr>
+                    <td class="label"><label><?php echo $this->__('Extra options'); ?></label></td>
+                    <td class="value">
+                        <ul>
+                            <?php foreach ($this->getFormattedExtraOptions() as $option): ?>
+                                <li><?php echo $this->__($option); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </td>
+                </tr>
+            <?php endif; ?>
         </table>
     </div>
 

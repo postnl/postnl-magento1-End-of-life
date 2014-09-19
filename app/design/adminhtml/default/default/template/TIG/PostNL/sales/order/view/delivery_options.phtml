@@ -62,6 +62,18 @@
                 <td class="label"><label><?php echo $this->__('Requested delivery date'); ?></label></td>
                 <td class="value"><strong><?php echo $this->formatDate($_postnlOrder->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
             </tr>
+            <?php if ($this->hasExtraOptions()): ?>
+                <tr>
+                    <td class="label"><label><?php echo $this->__('Extra options'); ?></label></td>
+                    <td class="value">
+                        <ul>
+                            <?php foreach ($this->getFormattedExtraOptions() as $option): ?>
+                                <li><?php echo $this->__($option); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </td>
+                </tr>
+            <?php endif; ?>
         </table>
     </div>
 
