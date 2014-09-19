@@ -58,6 +58,8 @@
  * @method boolean                     hasPostnlCoreCanUseBuspakje()
  * @method boolean                     hasPostnlDeliveryOptionsCanUseDeliveryDays()
  * @method boolean                     hasCanShowOnlyStatedAddressOption()
+ * @method boolean                     hasPostnlShippingMethods()
+ * @method boolean                     hasMatchedPostnlShippingMethods()
  *
  * @method boolean                     getPostnlCoreIsEnabled()
  * @method boolean                     getPostnlCoreIsConfigured()
@@ -81,6 +83,8 @@
  * @method boolean                     getPostnlCoreCanUseBuspakje()
  * @method boolean                     getPostnlDeliveryOptionsCanUseDeliveryDays()
  * @method boolean                     getCanShowOnlyStatedAddressOption()
+ * @method array                       getPostnlShippingMethods()
+ * @method array                       getMatchedPostnlShippingMethods()
  *
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsEnabled(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsConfigured(boolean $value)
@@ -104,6 +108,8 @@
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseBuspakje(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseDeliveryDays(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setCanShowOnlyStatedAddressOption(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlShippingMethods(array $value)
+ * @method TIG_PostNL_Model_Core_Cache setMatchedPostnlShippingMethods(array $value)
  */
 class TIG_PostNL_Model_Core_Cache extends Varien_Object
 {

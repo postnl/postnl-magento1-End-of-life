@@ -75,11 +75,13 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         /**
          * Get the request's parcel type. This is 'regular' by default.
          *
-         * If the request contains any items, get the quote from the first item and check if the quote is a letter box
-         * parcel.
+         * If the request has specified a parcel type, use that. Otherwise if the request contains any items, get the
+         * quote from the first item and check if the quote is a letter box parcel.
          */
         $parcelType = 'regular';
-        if ($request->getAllItems()) {
+        if ($request->hasData('parcel_type')) {
+            $parcelType = $request->getData('parcel_type');
+        } elseif ($request->getAllItems()) {
             $item  = current($request->getAllItems());
             $quote = $item->getQuote();
 
@@ -120,7 +122,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                          "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = :postcode",
                          "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = ''",
                          /**
-                          * Handle asterix in dest_zip field.
+                          * Handle asterisk in dest_zip field.
                           */
                          "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = '*'",
                          "dest_country_id = :country_id AND dest_region_id = 0 AND dest_zip = '*'",
