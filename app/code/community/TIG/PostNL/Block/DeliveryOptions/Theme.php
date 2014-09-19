@@ -87,13 +87,65 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
             return '';
         }
 
-        if ($this->getIsOsc()) {
-            $file = (string) $files->onestepcheckout;
-        } else {
-            $file = (string) $files->onepage;
+        $file = '';
+        if ($this->getIsOsc()
+            && isset($files->onestepcheckout)
+            && isset($files->onestepcheckout->main)
+        ) {
+            $file = (string) $files->onestepcheckout->main;
+        } elseif (isset($files->onepage)
+            && isset($files->onepage->main)
+        ) {
+            $file = (string) $files->onepage->main;
         }
 
         return $file;
+    }
+
+    /**
+     * Gets a css file path for the current theme.
+     *
+     * @return string
+     */
+    public function getResponsiveThemeCssFile()
+    {
+        /**
+         * @var Varien_Simplexml_Element $theme
+         */
+        $theme = $this->getCurrentTheme();
+        if (!$theme) {
+            return '';
+        }
+
+        /**
+         * @var Varien_Simplexml_Element $files
+         */
+        $files = $theme->files;
+        if (!$files) {
+            return '';
+        }
+
+        $file = '';
+        if ($this->getIsOsc()
+            && isset($files->onestepcheckout)
+            && isset($files->onestepcheckout->responsive)
+        ) {
+            $file = (string) $files->onestepcheckout->responsive;
+        } elseif (isset($files->onepage)
+            && isset($files->onepage->responsive)
+        ) {
+            $file = (string) $files->onepage->responsive;
+        }
+
+        return $file;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canUseResponsive()
+    {
+        return Mage::helper('postnl/deliveryOptions')->canUseResponsive();
     }
 
     /**
@@ -108,10 +160,6 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
         $helper = Mage::helper('postnl/deliveryOptions');
 
         if (!$helper->canUseDeliveryOptions($quote)) {
-            return '';
-        }
-
-        if (!$this->getThemeCssFile()) {
             return '';
         }
 
