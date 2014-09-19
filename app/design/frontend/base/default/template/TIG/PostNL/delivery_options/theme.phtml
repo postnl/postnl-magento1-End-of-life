@@ -35,7 +35,14 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PostNL_Block_DeliveryOptions_Theme $this
  */
 ?>
 <?php $_filePath = $this->getThemeCssFile(); ?>
-<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl($_filePath); ?>" media="all"/>
+<?php if ($_filePath): ?>
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl($_filePath); ?>" media="all"/>
+<?php endif; ?>
+<?php if ($this->canUseResponsive()): ?>
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl($this->getResponsiveThemeCssFile()); ?>" media="all"/>
+<?php endif; ?>
