@@ -1,0 +1,167 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PostNL_Block_DeliveryOptions_Checkout_AddPhoneNumber $this
+ */
+?>
+<script type="text/javascript">
+    //<![CDATA[
+    Validation.add('validate-postnl-mobilephone',
+        '<?php echo $this->__('Please enter a valid Dutch mobile phone number.'); ?>',
+        {
+            pattern : /^\s*(((\+31|0|0031)([\s]*[-]?)?[\s]*6){1}[\s]*[-]?[\s]*[1-9]{1}[\s-]*([0-9]{1}[\s]*){6}[0-9]{1})\s*$/i
+        }
+    );
+    //]]>
+</script>
+<div id="postnl_add_phonenumber" style="display: none;">
+    <div class="popup-overlay">
+        <div class="popup-window">
+            <div class="popup-header">
+                <h2><?php echo $this->__('Phone number for Package Dispenser service'); ?></h2>
+                <a id="add_phone_close" title="<?php echo $this->__('Close');?>" class="btn-close"><?php echo $this->__('Close');?></a>
+            </div>
+            <div class="popup-content">
+                <div class="text">
+                    <p><?php echo $this->__('We will send you a text message when the package can be collected from the package dispenser.'); ?></p>
+                    <p><?php echo $this->__('We need your mobile phone number in order to do this.'); ?></p>
+                </div>
+                <div class="number-input">
+                    <input type="text" id="add_phone_input" class="input-text required-entry validate-required validate-postnl-mobilephone" name="add_phone" placeholder="<?php echo $this->__('Phone number'); ?>" value="<?php echo $this->escapeHtml($this->getPhoneNumber()); ?>" />
+                    <div id="number_verify_text" class="number-verify" style="display: none;"><?php echo $this->__('Please make sure your phone number is correct.'); ?></div>
+                    <div id="number_verify_fail" class="number-failed" style="display: none;"><?php echo $this->__('Please enter a mobile phone number.'); ?></div>
+                </div>
+            </div>
+            <div class="button-set">
+                <button id="add_phone_save" type="button" class="button next disabled" disabled="disabled"><span><span><?php echo $this->__('Continue'); ?></span></span></button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    //<![CDATA[
+    savePhoneNumber = function(event) {
+        event.stop();
+
+        var phoneInputField = $('add_phone_input');
+
+        if (typeof shippingMethod != 'undefined') {
+            if (shippingMethod.validator.validate()) {
+                window.deliveryOptions.setPaPhoneCheckPassed(true);
+            } else {
+                return;
+            }
+
+            shippingMethod.save();
+        } else if (Validation.validate(phoneInputField)) {
+            window.deliveryOptions.setPaPhoneCheckPassed(true);
+            window.deliveryOptions.saveOscOptions();
+        } else {
+            return;
+        }
+
+        window.deliveryOptions.closeAddPhoneWindow();
+        window.deliveryOptions.setPaPhoneCheckPassed(false);
+    };
+
+    closeAddPhoneWindow = function(event) {
+        event.stop();
+
+        window.deliveryOptions.closeAddPhoneWindow();
+    };
+
+    validateShippingMethod = function() {
+        var saveButton = $('add_phone_save');
+        var verifyText = $('number_verify_text');
+        var verifyFail = $('number_verify_fail');
+
+        var input = $('add_phone_input');
+
+        var valid = Validation.validate(input);
+
+        if (valid) {
+            verifyText.show();
+            verifyFail.hide();
+
+            saveButton.disabled = false;
+            if (saveButton.hasClassName('disabled')) {
+                saveButton.removeClassName('disabled');
+            }
+
+            return this;
+        }
+
+        verifyText.hide();
+        verifyFail.show();
+
+        saveButton.disabled = true;
+        if (!saveButton.hasClassName('disabled')) {
+            saveButton.addClassName('disabled');
+        }
+
+        return this;
+    };
+
+    /**
+     * Validate the input initially.
+     */
+    validateShippingMethod();
+
+    var addPhoneInput = $('add_phone_input');
+    var addPhoneSave  = $('add_phone_save');
+    var addPhoneClose = $('add_phone_close');
+
+    /**
+     * Validate the phone number as it's being typed.
+     */
+    addPhoneInput.stopObserving('keyup');
+    addPhoneInput.observe('keyup', validateShippingMethod);
+
+    /**
+     * Save the supplied mobile phone number and continue to the next checkout step.
+     */
+    addPhoneSave.stopObserving('click');
+    addPhoneSave.observe('click', savePhoneNumber);
+
+    /**
+     * Close the add phone pop-up.
+     */
+    addPhoneClose.stopObserving('click');
+    addPhoneClose.observe('click', closeAddPhoneWindow);
+    //]]>
+</script>

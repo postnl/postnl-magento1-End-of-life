@@ -1,0 +1,6 @@
+/* Additional CSS to make things work properly in IE8 ==================================== */
+.postnl-container .col-1, .postnl-container .col-2 { min-width:264px; max-width:334px; }
+
+.postnl-container .popup-overlay { background:url("../../../../images/TIG/PostNL/deliveryoptions/ie8_bkg_transparent-white.png") repeat; }
+.postnl-container .popup-window { border:1px solid #A6A6A6; }
+/* ======================================================================================= */

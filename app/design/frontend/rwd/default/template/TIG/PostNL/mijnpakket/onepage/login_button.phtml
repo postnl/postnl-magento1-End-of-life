@@ -1,0 +1,183 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ */
+?>
+<?php $_savedData = $this->getSavedMijnpakketData(); ?>
+<div id="postnl_mijnpakket" style="display:none;">
+    <div class="clearfix">
+        <div id="mijnpakket_text">
+            <h3><?php echo $this->__('Checkout using MijnPakket') ?></h3>
+            <div id="postnl_mijnpakket_tooltip" class="postnl-tooltip">
+                <div><?php echo $this->__('If you have a MijnPakket account you can use the button below to log in to your account. When you log in to your MijnPakket account the webshop will read your preferred address and select it as your billing and shipping address. You can change this address in the forms below.'); ?></div>
+            </div>
+            <p><?php echo $this->__('Log in with your MijnPakket account to automatically use your preferred address.') ?></p>
+        </div>
+        <div id="mijnpakket_buttons">
+            <div id="postnl_mijnpakket_login"></div>
+            <div id="postnl_mijnpakket_login_btn" style="display:none;">
+                <span>
+                    <img src="<?php echo $this->getButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
+                </span>
+            </div>
+            <div id="postnl_mijnpakket_login_btn_disabled" style="display:none;">
+                <span>
+                    <img src="<?php echo $this->getDisabledButtonUrl(); ?>" title="PostNL - MijnPakket" alt="PostNL - MijnPakket"/>
+                </span>
+            </div>
+        </div>
+        <div id="login-buttons-container">
+            <span class="please-wait" id="login-please-wait" style="display:none;">
+                <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->__('Loading MijnPakket data...') ?>" title="<?php echo $this->__('Loading MijnPakket data...') ?>" class="v-middle" /> <?php echo $this->__('Loading MijnPakket data...') ?>
+            </span>
+        </div>
+    </div>
+</div>
+<div id="postnl_placeholder" style="display:none;"></div>
+<script type="text/javascript">
+    //<![CDATA[
+    document.observe('dom:loaded', function() {
+        var publicWebshopId  = '<?php echo $this->getPublicWebshopId(); ?>';
+        var profileAccessUrl = '<?php echo $this->getUrl('postnl/mijnpakket/getProfileAccess', array('_secure' => true)); ?>';
+        var debug            = <?php echo $this->isDebugEnabled() ? 'true' : 'false'; ?>;
+
+        var mijnpakketLogin = new MijnpakketLogin(publicWebshopId, profileAccessUrl, false);
+        window.mijnpakketLogin = mijnpakketLogin;
+
+        mijnpakketLogin.setCheckout(checkout)
+                       .setBilling(billing)
+                       .setShipping(shipping)
+                       .setFailureUrl('<?php echo $this->getUrl('checkout/cart'); ?>');
+
+        <?php if ($_savedData): ?>
+            var mijnpakketData = '<?php echo Mage::helper('core')->jsonEncode($_savedData); ?>';
+            mijnpakketLogin.setMijnpakketDataJson(mijnpakketData);
+        <?php endif; ?>
+
+        var updateLoggedIn = function(data) {
+            if (debug) {
+                console.log('Logged-in status:', data);
+            }
+
+            if (!data.Ok) {
+                return;
+            }
+
+            $('postnl_mijnpakket').show();
+            mijnpakketLogin.init('postnl_mijnpakket_login', debug);
+        };
+
+        var mijnpakketLoginCheck = PostNL.Checkout.init({
+            userLoggedin     : updateLoggedIn,
+            detectPopupState : function() {},
+            elementId        : 'postnl_placeholder',
+            pId              : '<?php echo $this->getPublicWebshopId(); ?>'
+        });
+
+        var loginContainerArray = $$('#checkout-step-login .col2-set');
+        var billingContainer    = $('checkout-step-billing');
+        var mijnpakketContainer = $('postnl_mijnpakket');
+
+        if (loginContainerArray && loginContainerArray[0]) {
+            var loginContainer = loginContainerArray[0].down('.col-2');
+
+            mijnpakketContainer.insert({
+                top: new Element('hr', {'class':'mijnpakket_seperator'})
+            });
+
+            loginContainer.insert({
+                bottom: mijnpakketContainer
+            });
+
+            mijnpakketLoginCheck.checkLogin();
+            registerObservers();
+        } else if (billingContainer) {
+            mijnpakketContainer.insert({
+                bottom: new Element('hr', {'class':'mijnpakket_seperator'})
+            });
+
+            billingContainer.insert({
+                top: mijnpakketContainer
+            });
+
+            mijnpakketLoginCheck.checkLogin();
+            registerObservers();
+        }
+
+        function registerObservers() {
+            document.observe('postnl:getProfileDataStart', function() {
+                $('mijnpakket_buttons').hide();
+            });
+            document.observe('postnl:getProfileDataRequestEnd', function() {
+                $('mijnpakket_buttons').show();
+            });
+        }
+    });
+
+    /**
+     * Fix for rwd theme to make sure all steps are displayed after using PostNL MijnPakket login.
+     *
+     * @param section
+     * @param reloadProgressBlock
+     */
+    Checkout.prototype.gotoSection = function (section, reloadProgressBlock) {
+        // Adds class so that the page can be styled to only show the "Checkout Method" step
+        if ((this.currentStep == 'login' || this.currentStep == 'billing')
+            && (section == 'billing' || section == 'shipping_method')) {
+            $j('body').addClass('opc-has-progressed-from-login');
+        }
+
+        if (reloadProgressBlock) {
+            this.reloadProgressBlock(this.currentStep);
+        }
+        this.currentStep = section;
+        var sectionElement = $('opc-' + section);
+        sectionElement.addClassName('allow');
+        this.accordion.openSection('opc-' + section);
+
+        // Scroll viewport to top of checkout steps for smaller viewports
+        if (Modernizr.mq('(max-width: ' + bp.xsmall + 'px)')) {
+            $j('html,body').animate({scrollTop: $j('#checkoutSteps').offset().top}, 800);
+        }
+
+        if (!reloadProgressBlock) {
+            this.resetPreviousSteps();
+        }
+    }
+
+    //]]>
+</script>

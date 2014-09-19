@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -33,59 +33,79 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
- 
-/**
+ *
  * PostNL shipping method model
- * 
- * @todo check code for inconsistency and conventions. Copied from flat_rate method
+ *
+ * @method boolean                         hasQuote()
+ * @method TIG_PostNL_Model_Carrier_Postnl setQuote(Mage_Sales_Model_Quote $value)
+ * @method boolean                         hasPostnlOrder()
+ * @method TIG_PostNL_Model_Carrier_Postnl setPostnlOrder(TIG_PostNL_Model_Core_Order $value)
+ * @method boolean                         hasHelper()
+ * @method TIG_PostNL_Model_Carrier_Postnl setHelper(TIG_PostNL_Helper_Carrier $value)
  */
-class TIG_PostNL_Model_Carrier_Postnl
-    extends Mage_Shipping_Model_Carrier_Abstract
+class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstract
     implements Mage_Shipping_Model_Carrier_Interface
 {
-    const XML_PATH_RATE_TYPE = 'carriers/postnl/rate_type';
-    
+    /**
+     * Rate type (tablerate or flatrate).
+     */
+    const XPATH_RATE_TYPE = 'carriers/postnl/rate_type';
+
+    /**
+     * Whether to use Magento's tabelrates or PostNL's.
+     */
+    const XPATH_RATE_SOURCE = 'carriers/postnl/rate_source';
+
     /**
      * PostNL carrier code
-     * 
+     *
      * @var string
      */
     protected $_code = 'postnl';
-    
+
     /**
      * Fixed price flag
-     * 
+     *
      * @var boolean
      */
     protected $_isFixed = true;
+
+    /**
+     * @var string
+     */
     protected $_default_condition_name = 'package_weight';
 
+    /**
+     * @var array
+     */
     protected $_conditionNames = array();
 
+    /**
+     * Class constructor.
+     */
     public function __construct()
     {
         parent::__construct();
-        foreach ($this->getCode('condition_name') as $k=>$v) {
+        foreach (array_keys($this->getCode('condition_name')) as $k) {
             $this->_conditionNames[] = $k;
         }
     }
 
     /**
      * get PostNL Carrier helper
-     * 
+     *
      * @return TIG_PostNL_Helper_Carrier
      */
     public function getHelper()
     {
-        if ($this->getData('helper')) {
+        if ($this->hasHelper()) {
             return $this->getData('helper');
         }
-        
+
         $helper = Mage::helper('postnl/carrier');
-        
+
         $this->setHelper($helper);
         return $helper;
     }
@@ -99,12 +119,13 @@ class TIG_PostNL_Model_Carrier_Postnl
     {
         return true;
     }
-    
+
     /**
      * Collect shipping rate
      *
-     * @param Mage_Shipping_Model_Rate_Request $data
-     * 
+     * @param Mage_Shipping_Model_Rate_Request $request
+     *
+     * @throws TIG_PostNL_Exception
      * @return Mage_Shipping_Model_Rate_Result|void
      */
     public function collectRates(Mage_Shipping_Model_Rate_Request $request)
@@ -112,7 +133,7 @@ class TIG_PostNL_Model_Carrier_Postnl
         if (!$this->getConfigFlag('active')) {
             return false;
         }
-        
+
         /**
          * Several checks to see if shipping to the selected country is allowed based on the supported PostNL shipping products
          */
@@ -120,19 +141,19 @@ class TIG_PostNL_Model_Carrier_Postnl
         $helper = $this->getHelper();
         if ($countryId) {
             $euCountries = Mage::helper('postnl/cif')->getEuCountries();
-        
+
             if ($countryId == 'NL'
                 && !$helper->canUseStandard()
             ) {
                 return false;
             }
-            
+
             if (in_array($countryId, $euCountries)
                 && !$helper->canUseEps()
             ) {
                 return false;
             }
-            
+
             if ($countryId != 'NL'
                 && !in_array($countryId, $euCountries)
                 && !$helper->canUseGlobalPack()
@@ -140,26 +161,32 @@ class TIG_PostNL_Model_Carrier_Postnl
                 return false;
             }
         }
-        
 
-        $rateType = Mage::getStoreConfig(self::XML_PATH_RATE_TYPE, Mage::app()->getStore()->getId());
+        $rateType = Mage::getStoreConfig(self::XPATH_RATE_TYPE, Mage::app()->getStore()->getId());
 
         if ($rateType == 'flat') {
             $result = $this->_getFlatRate($request);
-            return $result;
         }
-        
+
         if ($rateType == 'table') {
             $result = $this->_getTableRate($request);
-            return $result;
         }
-        
-        throw new TIG_PostNL_Exception(
-            $helper->__('Invalid rate type requested: %s', $rateType),
-            'POSTNL-0036'
-        );
+
+        if (!isset($result)) {
+            throw new TIG_PostNL_Exception(
+                $helper->__('Invalid rate type requested: %s', $rateType),
+                'POSTNL-0036'
+            );
+        }
+
+        return $result;
     }
-    
+
+    /**
+     * @param Mage_Shipping_Model_Rate_Request $request
+     *
+     * @return Mage_Shipping_Model_Rate_Result
+     */
     protected function _getFlatRate($request)
     {
         $freeBoxes = 0;
@@ -187,7 +214,8 @@ class TIG_PostNL_Model_Carrier_Postnl
         if ($this->getConfigData('type') == 'O') { // per order
             $shippingPrice = $this->getConfigData('price');
         } elseif ($this->getConfigData('type') == 'I') { // per item
-            $shippingPrice = ($request->getPackageQty() * $this->getConfigData('price')) - ($this->getFreeBoxes() * $this->getConfigData('price'));
+            $shippingPrice = ($request->getPackageQty() * $this->getConfigData('price'))
+                           - ($this->getFreeBoxes() * $this->getConfigData('price'));
         } else {
             $shippingPrice = false;
         }
@@ -207,7 +235,6 @@ class TIG_PostNL_Model_Carrier_Postnl
                 $shippingPrice = '0.00';
             }
 
-
             $method->setPrice($shippingPrice);
             $method->setCost($shippingPrice);
 
@@ -217,7 +244,12 @@ class TIG_PostNL_Model_Carrier_Postnl
         return $result;
     }
 
-    public function _getTableRate(Mage_Shipping_Model_Rate_Request $request)
+    /**
+     * @param Mage_Shipping_Model_Rate_Request $request
+     *
+     * @return Mage_Shipping_Model_Rate_Result
+     */
+    protected function _getTableRate(Mage_Shipping_Model_Rate_Request $request)
     {
         // exclude Virtual products price from Package value if pre-configured
         if (!$this->getConfigFlag('include_virtual_price') && $request->getAllItems()) {
@@ -239,6 +271,7 @@ class TIG_PostNL_Model_Carrier_Postnl
 
         // Free shipping by qty
         $freeQty = 0;
+        $freePackageValue = false;
         if ($request->getAllItems()) {
             $freePackageValue = 0;
             foreach ($request->getAllItems() as $item) {
@@ -266,10 +299,9 @@ class TIG_PostNL_Model_Carrier_Postnl
         if ($freePackageValue) {
             $request->setPackageValue($request->getPackageValue() - $freePackageValue);
         }
-        if (!$request->getConditionName()) {
-            $conditionName = $this->getConfigData('conditi on_name');
-            $request->setConditionName($conditionName ? $conditionName : $this->_default_condition_name);
-        }
+
+        $conditionName = $this->getConfigData('condition_name');
+        $request->setConditionName($conditionName ? $conditionName : $this->_default_condition_name);
 
          // Package weight and qty free shipping
         $oldWeight = $request->getPackageWeight();
@@ -284,25 +316,16 @@ class TIG_PostNL_Model_Carrier_Postnl
         $request->setPackageWeight($oldWeight);
         $request->setPackageQty($oldQty);
 
+        $method = Mage::getModel('shipping/rate_result_method');
         if (!empty($rate) && $rate['price'] >= 0) {
-            $method = Mage::getModel('shipping/rate_result_method');
-
-            $method->setCarrier('postnl');
-            $method->setCarrierTitle($this->getConfigData('title'));
-
-            $method->setMethod('tablerate');
-            $method->setMethodTitle($this->getConfigData('name'));
-
             if ($request->getFreeShipping() === true || ($request->getPackageQty() == $freeQty)) {
                 $shippingPrice = 0;
             } else {
                 $shippingPrice = $this->getFinalPriceWithHandlingFee($rate['price']);
             }
 
-            $method->setPrice($shippingPrice);
-            $method->setCost($rate['cost']);
-
-            $result->append($method);
+            $price = $shippingPrice;
+            $cost = $rate['cost'];
         } elseif (empty($rate) && $request->getFreeShipping() === true) {
             /**
              * was applied promotion rule for whole cart
@@ -315,34 +338,61 @@ class TIG_PostNL_Model_Carrier_Postnl
             $rate = $this->getRate($request);
             if (!empty($rate) && $rate['price'] >= 0) {
                 $method = Mage::getModel('shipping/rate_result_method');
-
-                $method->setCarrier('postnl');
-                $method->setCarrierTitle($this->getConfigData('title'));
-
-                $method->setMethod('tablerate');
-                $method->setMethodTitle($this->getConfigData('name'));
-
-                $method->setPrice(0);
-                $method->setCost(0);
-
-                $result->append($method);
             }
+
+            $price = 0;
+            $cost = 0;
         } else {
             $error = Mage::getModel('shipping/rate_result_error');
             $error->setCarrier('tablerate');
             $error->setCarrierTitle($this->getConfigData('title'));
             $error->setErrorMessage($this->getConfigData('specificerrmsg'));
             $result->append($error);
+
+            return $result;
         }
+
+        $method->setCarrier('postnl');
+        $method->setCarrierTitle($this->getConfigData('title'));
+
+        $method->setMethod('tablerate');
+        $method->setMethodTitle($this->getConfigData('name'));
+
+        $method->setPrice($price);
+        $method->setCost($cost);
+
+        $result->append($method);
 
         return $result;
     }
 
+    /**
+     * @param Mage_Shipping_Model_Rate_Request $request
+     *
+     * @return array|bool
+     */
     public function getRate(Mage_Shipping_Model_Rate_Request $request)
     {
-        return Mage::getResourceModel('shipping/carrier_tablerate')->getRate($request);
+        $websiteId = $request->getWebsiteId();
+        $website = Mage::getModel('core/website')->load($websiteId);
+
+        $rateSource = $website->getConfig(self::XPATH_RATE_SOURCE);
+        if ($rateSource == 'shipping_tablerate') {
+            $rate = Mage::getResourceModel('shipping/carrier_tablerate')->getRate($request);
+        } else {
+            $rate = Mage::getResourceModel('postnl_carrier/tablerate')->getRate($request);
+        }
+
+        return $rate;
     }
 
+    /**
+     * @param        $type
+     * @param string $code
+     *
+     * @return mixed
+     * @throws Mage_Core_Exception
+     */
     public function getCode($type, $code='')
     {
         $codes = array(
@@ -375,71 +425,85 @@ class TIG_PostNL_Model_Carrier_Postnl
 
         return $codes[$type][$code];
     }
-    
+
     /**
      * Get array of allowed methods
-     * 
+     *
      * @return array
      */
     public function getAllowedMethods()
     {
-        return array(
-            'flatrate' => $this->getConfigData('name') . ' flat', 
-            'tablerate' => $this->getConfigData('name') . ' table'
+        $helper = Mage::helper('postnl');
+
+        $methods = array(
+            'flatrate' => $this->getConfigData('name') . ' (' . $helper->__('flat rate') . ')',
+            'tablerate' => $this->getConfigData('name') . ' (' . $helper->__('table rate') . ')',
         );
+
+        return $methods;
     }
 
     /**
      * Get tracking information
-     * 
+     *
      * @param string $tracking
-     * 
+     *
      * @return Mage_Shipping_Model_Tracking_Result_Status
-     * 
-     * @todo check code and docblock
      */
     public function getTrackingInfo($tracking)
     {
         $statusModel = Mage::getModel('shipping/tracking_result_status');
         $track = $this->_getTrackByNumber($tracking);
         $shipment = $track->getShipment();
-        
+
         $locale = Mage::getStoreConfig('general/locale/code', $shipment->getStoreId());
         $lang = substr($locale, 0, 2);
-        
+
         $shippingAddress = $shipment->getShippingAddress();
-        
+
+        /**
+         * @var Mage_Sales_Model_Order_Address $address
+         */
+        $addresses = $shipment->getOrder()->getAddressesCollection();
+        foreach ($addresses as $address) {
+            if ($address->getAddressType() == 'pakje_gemak') {
+                $shippingAddress = $address;
+                break;
+            }
+        }
+
+
         $statusModel->setCarrier($track->getCarrierCode())
                     ->setCarrierTitle($this->getConfigData('name'))
                     ->setTracking($track->getTrackNumber())
                     ->setPopup(1)
-                    ->setUrl($this->getHelper()->getBarcodeUrl($track->getTrackNumber(), $shippingAddress, $lang, false));
-                    
+                    ->setUrl(
+                        $this->getHelper()->getBarcodeUrl($track->getTrackNumber(), $shippingAddress, $lang, false)
+                    );
+
         return $statusModel;
     }
-    
+
     /**
      * Load track object by tracking number
-     * 
+     *
      * @param string $number
-     * 
+     *
      * @return Mage_Sales_Model_Order_Shipment_Track
-     * 
-     * @todo check code and docblock
      */
     protected function _getTrackByNumber($number)
     {
         $coreResource = Mage::getSingleton('core/resource');
         $readConn = $coreResource->getConnection('core_read');
-        
+
         $trackSelect = $readConn->select();
         $trackSelect->from($coreResource->getTableName('sales/shipment_track'), array('entity_id'));
         $trackSelect->where('track_number = ?', $number);
-        
+
         $trackId = $readConn->fetchOne($trackSelect);
-        
+
         $track = Mage::getModel('sales/order_shipment_track')->load($trackId);
-        
+
         return $track;
     }
 }

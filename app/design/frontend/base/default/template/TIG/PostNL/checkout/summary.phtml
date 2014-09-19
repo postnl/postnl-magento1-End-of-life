@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -33,9 +33,9 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */	
+ */
 ?>
 <?php $_quote             = $this->getQuote(); ?>
 <?php $_order             = $this->getPostnlOrder(); ?>
@@ -63,8 +63,8 @@
                     <?php echo $_billingAddress->getCity(); ?><br />
                     <?php if($_billingAddress->getRegion() && $_billingAddress->getRegion() != '-'): ?>
                         <?php echo $_billingAddress->getRegion(); ?><br />
-                    <?php endif; ?>      
-                    <?php echo $_billingAddress->getCountry(); ?><br /> 
+                    <?php endif; ?>
+                    <?php echo $_billingAddress->getCountry(); ?><br />
                     <?php if($_billingAddress->getTelephone() && $_billingAddress->getTelephone() != '-'): ?>
                         <?php echo $_billingAddress->getTelephone(); ?><br />
                     <?php endif; ?>
@@ -83,8 +83,8 @@
                     <?php echo $_shippingAddress->getCity(); ?><br />
                     <?php if($_shippingAddress->getRegion() && $_shippingAddress->getRegion() != '-'): ?>
                         <?php echo $_shippingAddress->getRegion(); ?><br />
-                    <?php endif; ?>      
-                    <?php echo $_shippingAddress->getCountry(); ?><br /> 
+                    <?php endif; ?>
+                    <?php echo $_shippingAddress->getCountry(); ?><br />
                     <?php if($_shippingAddress->getTelephone() && $_shippingAddress->getTelephone() != '-'): ?>
                         <?php echo $_shippingAddress->getTelephone(); ?><br />
                     <?php endif; ?>
@@ -131,20 +131,26 @@
             </div>
         </div>
     </div>
-    
+
     <div class="order-items order-details">
         <h2 class="table-caption"><?php echo $this->__('Items Ordered'); ?></h2>
         <table class="data-table" id="order-summary-table">
-            <col>
-            <col width="1">
-            <col width="1">
-            <col width="1">
-            <col width="1">
+            <?php if ($this->helper('tax')->displayCartBothPrices()): $colspan = $rowspan = 2; else: $colspan = $rowspan = 1; endif; ?>
+            <col />
+            <col width="1" />
+            <col width="1" />
+            <col width="1" />
+            <?php if ($this->helper('tax')->displayCartBothPrices()): ?>
+            <col width="1" />
+            <col width="1" />
+            <?php endif; ?>
             <thead>
-                <th><?php echo $this->__('Product Name'); ?></th>
-                <th class="a-right"><?php echo $this->__('Price'); ?></th>
-                <th class="a-center"><?php echo $this->__('Qty'); ?></th>
-                <th class="a-right"><?php echo $this->__('Subtotal'); ?></th>
+                <tr>
+                    <th rowspan="<?php echo $rowspan ?>"><?php echo $this->__('Product Name') ?></th>
+                    <th colspan="<?php echo $colspan ?>" class="a-center"><?php echo $this->__('Price') ?></th>
+                    <th rowspan="<?php echo $rowspan ?>" class="a-center"><?php echo $this->__('Qty') ?></th>
+                    <th colspan="<?php echo $colspan ?>" class="a-center"><?php echo $this->__('Subtotal') ?></th>
+                </tr>
             </thead>
             <tbody>
                 <?php foreach ($_itemCollection as $_item): ?>
@@ -154,7 +160,6 @@
             <?php echo $this->getChild('totals')->setQuote($_quote)->toHtml(); ?>
         </table>
     </div>
-    
     <div class="buttons-set">
         <p class="back-link">
             <a href="<?php echo $this->getUrl('postnl/checkout/cancel', array('_secure' => true)); ?>" title="<?php echo $this->__('Return to the shopping cart.'); ?>"><?php echo $this->__('Cancel');?></a>
@@ -168,15 +173,15 @@
             if ($('payment_form_<?php echo $_quote->getPayment()->getMethod(); ?>')) {
                 $('payment_form_<?php echo $_quote->getPayment()->getMethod(); ?>').show();
             }
-            
+
             paymentForm = new VarienForm('payment_form');
-            
+
             <?php if ($_paymentOption !== false): ?>
                 var paymentOption = $$('option[value="<?php echo $_paymentOption; ?>"]');
                 paymentOption.each(function(element) {
                     element.selected = true;
                 });
-                
+
                 var paymentInput = $$('input[value="<?php echo $_paymentOption; ?>"]');
                 paymentInput.each(function(element) {
                     element.checked = true;

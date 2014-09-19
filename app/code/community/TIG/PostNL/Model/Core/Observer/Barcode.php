@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -33,23 +33,21 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Observer_Barcode
 {
     /**
      * Generates a barcode for the shipment if it is new
-     * 
+     *
      * @param Varien_Event_Observer $observer
-     * 
-     * @return TIG_PostNL_Model_Core_Observer_Barcode
-     * 
+     *
+     * @return $this
+     *
      * @event sales_order_shipment_save_after
-     * 
+     *
      * @observer postnl_shipment_generate_barcode
-     * 
-     * @todo change confirm date to the correct value, taking into account 'ordered before X, delivered on Y' settings
      */
     public function generateBarcode(Varien_Event_Observer $observer)
     {
@@ -59,56 +57,85 @@ class TIG_PostNL_Model_Core_Observer_Barcode
         if (!Mage::helper('postnl')->isEnabled()) {
             return $this;
         }
-        
-        $shipment = $observer->getShipment();
-        
+
         /**
-         * Check if a postnl shipment exists for this shipment
+         * @var Mage_Sales_Model_Order_Shipment $shipment
+         */
+        $shipment = $observer->getShipment();
+
+        /**
+         * Check if this shipment was placed using PostNL.
+         */
+        $shippingMethod = $shipment->getOrder()->getShippingMethod();
+
+        /**
+         * If this shipment's order was not placed with PostNL, remove any PakjeGemak addresses that may have been
+         * saved.
+         */
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+            return $this;
+        }
+
+        /**
+         * Check if a postnl shipment exists for this shipment.
          */
         if (Mage::helper('postnl/cif')->postnlShipmentExists($shipment->getId())) {
             return $this;
         }
-        
+
         /**
-         * create a new postnl shipment entity
+         * Create a new postnl shipment entity.
          */
         $postnlShipment = Mage::getModel('postnl_core/shipment');
-        $postnlShipment->setShipmentId($shipment->getId())
-                       ->setConfirmDate(Mage::getModel('core/date')->gmtTimestamp());
-        
+        $postnlShipment->setShipmentId($shipment->getId());
+
         /**
          * Check if this shipment has an associated PostNL Order. If so, copy it's data.
+         *
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
-        $postnlOrder = Mage::getModel('postnl_checkout/order')->load($shipment->getOrderId(), 'order_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($shipment->getOrderId(), 'order_id');
+
         if ($postnlOrder->getId()) {
             if ($postnlOrder->getConfirmDate()) {
                 $postnlShipment->setConfirmDate(strtotime($postnlOrder->getConfirmDate()));
             }
-            
+
+            if ($postnlOrder->getDeliveryDate()) {
+                $postnlShipment->setDeliveryDate(strtotime($postnlOrder->getDeliveryDate()));
+            }
+
             if ($postnlOrder->getIsPakjeGemak()) {
                 $postnlShipment->setIsPakjeGemak($postnlOrder->getIsPakjeGemak());
             }
+
+            if ($postnlOrder->getIsPakketautomaat()) {
+                $postnlShipment->setIsPakketautomaat($postnlOrder->getIsPakketautomaat());
+            }
         }
-        
+
         /**
-         * We need an ID in order to save the barcodes
+         * We need an ID in order to save the barcodes.
          */
         $postnlShipment->save();
-        
+
         /**
-         * Barcode generation needs to be tried seperately. This functionality may throw a valid exception
-         * in which case it needs to be tried again later without preventing the shipment from being
-         * created. This may happen when CIF is overburdoned.
-         */              
+         * Barcode generation needs to be tried separately. This functionality may throw a valid exceptionin which case
+         * it needs to be tried again later without preventing the shipment from being created. This may happen when CIF
+         * is overburdened.
+         */
         try {
-            $postnlShipment->saveAdditionalShippingOptions()
-                           ->generateBarcodes();
+            $postnlShipment->saveAdditionalShippingOptions();
+
+            if ($postnlShipment->canGenerateBarcode()) {
+                $postnlShipment->generateBarcodes();
+            }
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
         }
-        
+
         $postnlShipment->save();
-        
+
         return $this;
     }
 }

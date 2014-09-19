@@ -1,0 +1,191 @@
+<?php
+/**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Creative Commons License.
+ * It is available through the world-wide-web at this URL:
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ *
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ */
+?>
+<?php /** @var TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions $this */ ?>
+<?php $_helper = Mage::helper('postnl'); ?>
+
+<?php $_postnlShipment = $this->getPostnlShipment(); ?>
+
+<?php $_canChangeProductCode = $this->canChangeProductCode(); ?>
+<?php if($_canChangeProductCode): ?>
+    <?php $_cifHelper             = $this->helper('postnl/cif'); ?>
+    <?php $_shipment              = $this->getShipment(); ?>
+    <?php $_productOptions        = $this->getProductOptions(); ?>
+    <?php $_defaultProductOption  = $this->getDefaultProductOption(); ?>
+    <?php $_isBelgium             = $this->isBelgium(); ?>
+    <?php $_isGlobalPackShipment  = (bool) $_cifHelper->isGlobalShipment($_shipment); ?>
+    <?php $_isDutchShipment       = (bool) $_cifHelper->isDutchShipment($_shipment); ?>
+    <?php $_isCod                 = (bool) $_cifHelper->isCodShipment($_shipment);?>
+    <?php $_isPakjeGemak          = (bool) $_cifHelper->isPakjeGemakShipment($_shipment);?>
+<?php endif; ?>
+<?php if ($_postnlShipment->getId() && $_postnlShipment->getShipmentType()): ?>
+    <div class="hor-scroll" id="postnl_delivery_option_info">
+        <table cellspacing="0" class="form-list">
+            <tr>
+                <td class="label"><label><?php echo $this->__('Delivery option'); ?></label></td>
+                <td class="value">
+                    <strong><?php echo $this->getShipmentType(); ?></strong>
+                    <?php $_subType = $this->getShipmentSubType(); ?>
+                    <?php if ($_subType): ?>
+                        <br/>
+                        <span>
+                            <em><?php echo $_subType; ?></em>
+                        </span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><label><?php echo $this->__('Expected delivery date'); ?></label></td>
+                <td class="value"><strong><?php echo $this->formatDate($_postnlShipment->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
+            </tr>
+            <tr>
+                <td class="label"><label><?php echo $this->__('Product option'); ?></label></td>
+                <td class="value">
+                    <strong><?php echo $_postnlShipment->getProductOption(); ?> (<?php echo $_postnlShipment->getProductCode() ?>)</strong>
+                    <?php if($_canChangeProductCode): ?><?php echo $this->getChangeProductCodeButtonHtml(); ?><?php endif; ?>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        //<![CDATA[
+        var shippingFieldset = $$('.box-right fieldset')[1];
+
+        shippingFieldset.insert({
+            bottom: $('postnl_delivery_option_info')
+        });
+
+        var shippingTrackingLink = $$('.box-right fieldset a#linkId');
+
+        if (shippingTrackingLink) {
+            shippingFieldset.insert({
+                bottom: shippingTrackingLink[0]
+            });
+        }
+
+        <?php if($_canChangeProductCode): ?>
+            var changeProductCodeDialog = {
+                overlayShowEffectOptions : null,
+                overlayHideEffectOptions : null,
+                changeProductCodeUrl     : '',
+                form                     : null,
+
+                open : function(url) {
+
+                    html = '<form id="change_product_code_form" method="post" action="' + url + '">'
+                         + '<input type="hidden" name="form_key" value="<? echo Mage::getSingleton('core/session')->getFormKey(); ?>" />'
+                         + '<p id="postnl_product_option_container">'
+                         + '<label class="normal" for="postnl_product_option"><?php echo $this->__('PostNL Shipping Options'); ?></label>'
+                         + '<select id="postnl_product_option" class="select required-entry" name="product_option">';
+
+                    <?php foreach($_productOptions as $_option): ?>
+                        <?php if ($_option['value'] == $_postnlShipment->getProductCode()): ?>
+                            <?php continue; ?>
+                        <?php endif; ?>
+
+                        <?php if (isset($_option['isBelgiumOnly']) && $_isBelgium === false): ?>
+                            <?php continue; ?>
+                        <?php endif; ?>
+
+                        <?php if (isset($_option['isExtraCover']) && $_option['isExtraCover'] === true): ?>
+                            <?php continue;?>
+                        <?php endif; ?>
+
+                        <?php $_selected = ''; ?>
+                        <?php if ($_option['value'] == $_defaultProductOption): ?>
+                            <?php $_selected = 'selected="selected"'; ?>
+                        <?php endif; ?>
+                            html += '<option <?php echo $_selected; ?> value="<?php echo $_option['value']; ?>">';
+                            html += '<?php echo $this->__($_option['label']); ?>';
+                            html += '</option>';
+                    <?php endforeach; ?>
+
+                    html += '</select>'
+                          + '</p>'
+                          + '</form>';
+
+                    this.openDialogWindow(html);
+                },
+                openDialogWindow : function(content) {
+                    this.overlayShowEffectOptions = Windows.overlayShowEffectOptions;
+                    this.overlayHideEffectOptions = Windows.overlayHideEffectOptions;
+                    Windows.overlayShowEffectOptions = {duration:0};
+                    Windows.overlayHideEffectOptions = {duration:0};
+
+                    Dialog.confirm(content, {
+                        draggable       : true,
+                        resizable       : true,
+                        closable        : true,
+                        className       : "magento",
+                        windowClassName : "popup-window",
+                        title           : '<?php echo $_helper->__('Please choose a product option.'); ?>',
+                        width           : 600,
+                        height          : 100,
+                        zIndex          : 1000,
+                        recenterAuto    : true,
+                        hideEffect      : Element.hide,
+                        showEffect      : Element.show,
+                        id              : "extra-options-dialog",
+                        buttonClass     : "form-button",
+                        okLabel         : "<?php echo $_helper->__('Save'); ?>",
+                        ok              : this.okDialogWindow.bind(this),
+                        cancel          : this.closeDialogWindow.bind(this),
+                        cancelLabel     : "<?php echo $_helper->__('Cancel'); ?>",
+                        onClose         : this.closeDialogWindow.bind(this)
+                    });
+                },
+                okDialogWindow : function(dialogWindow) {
+                    $('change_product_code_form').submit();
+                },
+                closeDialogWindow : function(dialogWindow) {
+                    dialogWindow.close();
+                    Windows.overlayShowEffectOptions = this.overlayShowEffectOptions;
+                    Windows.overlayHideEffectOptions = this.overlayHideEffectOptions;
+                }
+            };
+
+            var changeProductCode = function(url) {
+                changeProductCodeDialog.open(url);
+            };
+        <?php endif; ?>
+        //]]>
+    </script>
+<?php endif; ?>

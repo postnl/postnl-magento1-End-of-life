@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -33,33 +33,51 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean                                       hasFieldsetParam()
+ * @method TIG_PostNL_Block_Adminhtml_System_Config_Form setFieldsetParam(string $value)
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block_System_Config_Form
 {
     /**
-     * For Magento versions below these versions we need to execute some special backwards compatgibility code.
+     * For Magento versions below these versions we need to execute some special backwards compatibility code.
      */
-    const MINIMUM_VERSION_COMPATIBILITY            = '1.7.0.0';
-    const MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY = '1.12.0.0';
-    
+    const MINIMUM_VERSION_COMPATIBILITY            = '1.7.0.1';
+    const MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY = '1.12.0.1';
+
+    /**
+     * Gets the fieldset parameter from the GET superglobal if available.
+     *
+     * @return null|string
+     */
+    public function getFieldsetParam()
+    {
+        if ($this->hasFieldsetParam()) {
+            return $this->getData('fieldset_param');
+        }
+
+        $fieldsetparam = Mage::app()->getRequest()->getParam('fieldset');
+
+        $this->setFieldsetParam($fieldsetparam);
+        return $fieldsetparam;
+    }
+
     /**
      * Creates the system > config > edit form for the PostNL section.
-     * 
-     * The only reason we have a custom form, rather than the default Adminhtml form is because the default form doesn't allow
-     * for 'forwards' field dependency.
-     * 
-     * Due to the way the form is initialized, each fieldset is initialized with it's fields in order. Due to this order a field 
-     * can only depend on a field that is in the same fieldset or in a fieldset that is already initialized. An example:
-     * We have fieldset_a containing field_a. We also have fieldset_b containing field_b. If field_a depends on field_b, this
-     * is not possible. When field_a is initialized, fieldset_b and therefore field_b, will not yet have been initialized and 
-     * will not be available.
-     * 
-     * We have split the initialization of fieldsets and fields. This way Magento will first initialize all fieldsets and then
-     * init all fields. So when field_a is initialized, fieldset_b is already available and the dependency will work.
      *
-     * @return TIG_PostNL_Block_Adminhtml_System_Config_Edit_Form
+     * Due to the way the form is initialized, each fieldset is initialized with it's fields in order. Due to this order
+     * a field can only depend on a field that is in the same fieldset or in a fieldset that is already initialized. An
+     * example: We have fieldset_a containing field_a. We also have fieldset_b containing field_b. If field_a depends on
+     * field_b, this is not possible. When field_a is initialized, fieldset_b and therefore field_b, will not yet have
+     * been initialized and will not be available.
+     *
+     * We have split the initialization of fieldsets and fields. This way Magento will first initialize all fieldsets
+     * and then init all fields. So when field_a is initialized, fieldset_b is already available and the dependency will
+     * work.
+     *
+     * @return $this
      */
     public function initForm()
     {
@@ -91,7 +109,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     }
                     $this->_initGroup($form, $group, $section);
                 }
-                
+
                 /*************************
                  * This part is new
                  ************************/
@@ -99,7 +117,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     if (!isset($this->_fieldsets[$group->getName()])) {
                         continue;
                     }
-                    
+
                     $fieldset = $this->_fieldsets[$group->getName()];
                     $this->initFields($fieldset, $group, $section);
                 }
@@ -113,11 +131,13 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
     /**
      * Init config group
      *
-     * @param Varien_Data_Form $form
-     * @param Varien_Simplexml_Element $group
-     * @param Varien_Simplexml_Element $section
+     * @param Varien_Data_Form                       $form
+     * @param Varien_Simplexml_Element               $group
+     * @param Varien_Simplexml_Element               $section
      * @param Varien_Data_Form_Element_Fieldset|null $parentElement
-     * 
+     *
+     * @throws TIG_PostNL_Exception
+     *
      * @return void
      */
     protected function _initGroup($form, $group, $section, $parentElement = null)
@@ -127,7 +147,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
         } else {
             $fieldsetRenderer = $this->_defaultFieldsetRenderer;
         }
-        
+
         $fieldsetRenderer->setForm($this)
             ->setConfigData($this->_configData);
 
@@ -135,10 +155,38 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
             $helperName = $this->_configFields->getAttributeModule($section, $group);
             $fieldsetConfig = array('legend' => Mage::helper($helperName)->__((string)$group->label));
             if (!empty($group->comment)) {
-                $fieldsetConfig['comment'] = Mage::helper($helperName)->__((string)$group->comment);
+                if (!empty($group->comment_url)) {
+                    if (!empty($group->comment_url->base)) {
+                        $baseUrl = (string) $group->comment_url->base;
+                    } else {
+                        $baseUrl = '';
+                    }
+
+                    $params = array();
+                    if (!empty($group->comment_url->params)) {
+                        foreach ($group->comment_url->params->asArray() as $param => $value) {
+                            $params[$param] = $value;
+                        }
+                    }
+
+                    $commentUrl = $this->getUrl($baseUrl, $params);
+
+                    $comment = Mage::helper($helperName)->__((string)$group->comment, $commentUrl);
+                } else {
+                    $comment = Mage::helper($helperName)->__((string)$group->comment);
+                }
+                $fieldsetConfig['comment'] = $comment;
             }
             if (!empty($group->expanded)) {
                 $fieldsetConfig['expanded'] = (bool)$group->expanded;
+            }
+
+            /**
+             * Added support for a 'fieldset' URL parameter that forces a certain fieldset to the expanded state.
+             */
+            $fieldsetParam = $this->getFieldsetParam();
+            if ($fieldsetParam && $fieldsetParam == $group->getName()) {
+                $fieldsetConfig['expanded'] = true;
             }
 
             $fieldset = new Varien_Data_Form_Element_Fieldset($fieldsetConfig);
@@ -178,16 +226,17 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
     }
 
     /**
-     * Init fieldset fields. Copied from EE1.13 Mage_Adminhtml_Block_System_Config_Form::initFields to allow for cross-fieldset
-     * dependencies in CE 1.6. Only made a small change to core code for backwards compatibility.
+     * Init fieldset fields. Copied from EE1.13 Mage_Adminhtml_Block_System_Config_Form::initFields to allow for
+     * cross-fieldset dependencies in CE 1.6 and 1.7.0.0, and EE 1.11 and 1.12.0.0. Only made a small change to core
+     * code for backwards compatibility.
      *
      * @param Varien_Data_Form_Element_Fieldset $fieldset
-     * @param Varien_Simplexml_Element $group
-     * @param Varien_Simplexml_Element $section
-     * @param string $fieldPrefix
-     * @param string $labelPrefix
-     * 
-     * @return Mage_Adminhtml_Block_System_Config_Form
+     * @param Varien_Simplexml_Element          $group
+     * @param Varien_Simplexml_Element          $section
+     * @param string                            $fieldPrefix
+     * @param string                            $labelPrefix
+     *
+     * @return $this
      */
     public function initFields($fieldset, $group, $section, $fieldPrefix='', $labelPrefix='')
     {
@@ -239,20 +288,35 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     }
                 }
 
+                $inherit = null;
                 $data = $this->_configDataObject->getConfigDataValue($path, $inherit, $this->_configData);
-                
+
                 /**
-                 * Because Magento 1.6 and 1.11 retrieved config data in a different manner, we need to provide backwards
-                 * compatibility for those versions.
+                 * Because Magento 1.6 and 1.11 retrieved config data in a different manner, we need to provide
+                 * backwards compatibility for those versions.
                  */
+                $version = Mage::getVersion();
                 $isEnterprise = Mage::helper('postnl')->isEnterprise();
-                if (!$data
-                    && (
-                        ($isEnterprise 
-                            && version_compare(Mage::getVersion(), self::MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY, '<') === true)
-                        || (version_compare(Mage::getVersion(), self::MINIMUM_VERSION_COMPATIBILITY, '<') === true)
-                    )
-                ) {
+
+                /**
+                 * Get the minimum version requirement for the current Magento edition.
+                 */
+                if($isEnterprise) {
+                    $minimumVersion = self::MINIMUM_ENTERPRISE_VERSION_COMPATIBILITY;
+                } else {
+                    $minimumVersion = self::MINIMUM_VERSION_COMPATIBILITY;
+                }
+
+                /**
+                 * Check if the current version is below the minimum version requirement.
+                 */
+                $isBelowMinimumVersion = version_compare($version, $minimumVersion, '<');
+
+                /**
+                 * If the current version is below the minimum version or if we have no data, use the old method of
+                 * getting config data.
+                 */
+                if (!$data && $isBelowMinimumVersion === true) {
                     if (isset($this->_configData[$path])) {
                         $data = $this->_configData[$path];
                         $inherit = false;
@@ -261,7 +325,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                         $inherit = true;
                     }
                 }
-                
+
                 if ($element->frontend_model) {
                     $fieldRenderer = Mage::getBlockSingleton((string)$element->frontend_model);
                 } else {
@@ -375,13 +439,17 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                     'scope'                 => $this->getScope(),
                     'scope_id'              => $this->getScopeId(),
                     'scope_label'           => $this->getScopeLabel($element),
-                    'can_use_default_value' => $this->canUseDefaultValue((int)$element->show_in_default),
-                    'can_use_website_value' => $this->canUseWebsiteValue((int)$element->show_in_website),
+                    'can_use_default_value' => $this->canUseDefaultValue($element),
+                    'can_use_website_value' => $this->canUseWebsiteValue($element),
                 ));
                 $this->_prepareFieldOriginalData($field, $element);
 
                 if (isset($element->validate)) {
                     $field->addClass($element->validate);
+                }
+
+                if (isset($element->autocomplete)) {
+                    $field->setAutocomplete($element->autocomplete);
                 }
 
                 if (isset($element->frontend_type)
@@ -407,7 +475,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                         $sourceModel->setPath($path);
                     }
                     if ($method) {
-                        if ($fieldType == 'multiselect') {
+                        if ($fieldType == 'multiselect' || $element->multidimensional) {
                             $optionArray = $sourceModel->$method();
                         } else {
                             $optionArray = array();
@@ -422,6 +490,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                 }
             }
         }
+
         return $this;
     }
 }

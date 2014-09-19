@@ -1,28 +1,28 @@
 <?php
 /**
- *                  ___________       __            __   
- *                  \__    ___/____ _/  |_ _____   |  |  
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
  *                    |    |  /  _ \\   __\\__  \  |  |
  *                    |    | |  |_| ||  |   / __ \_|  |__
  *                    |____|  \____/ |__|  (____  /|____/
- *                                              \/       
- *          ___          __                                   __   
- *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_ 
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
  *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
- *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |  
- *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|  
- *                  \/                           \/               
- *                  ________       
- *                 /  _____/_______   ____   __ __ ______  
- *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \ 
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
  *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
- *                 \______  /|__|    \____/ |____/ |   __/ 
- *                        \/                       |__|    
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Creative Commons License.
- * It is available through the world-wide-web at this URL: 
+ * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
@@ -33,140 +33,195 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
+    extends TIG_PostNL_Model_Core_System_Config_Source_ProductOptions_Abstract
 {
     /**
-     * XML path to supported options configuration setting
+     * @var array
      */
-    const XML_PATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
-    
+    protected $_options = array(
+        array(
+            'value'        => '3085',
+            'label'        => 'Standard shipment',
+            'isExtraCover' => false,
+            'isAvond'      => false,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3087',
+            'label'        => 'Extra Cover',
+            'isExtraCover' => true,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3094',
+            'label'        => 'Extra cover + Return when not home',
+            'isExtraCover' => true,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3189',
+            'label'        => 'Signature on delivery',
+            'isExtraCover' => false,
+            'isAvond'      => false,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3089',
+            'label'        => 'Signature on delivery + Delivery to stated address only',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3389',
+            'label'        => 'Signature on delivery + Return when not home',
+            'isExtraCover' => false,
+            'isAvond'      => false,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3096',
+            'label'        => 'Signature on delivery + Deliver to stated address only + Return when not home',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3090',
+            'label'        => 'Delivery to neighbour + Return when not home',
+            'isExtraCover' => false,
+            'isAvond'      => false,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3385',
+            'label'        => 'Deliver to stated address only',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3390',
+            'label'        => 'Deliver to stated address only + Return when not home',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => false,
+        ),
+        array(
+            'value'        => '3086',
+            'label'        => 'COD',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => true,
+        ),
+        array(
+            'value'        => '3091',
+            'label'        => 'COD + Extra cover',
+            'isExtraCover' => true,
+            'isAvond'      => true,
+            'isCod'        => true,
+        ),
+        array(
+            'value'        => '3093',
+            'label'        => 'COD + Return when not home',
+            'isExtraCover' => false,
+            'isAvond'      => true,
+            'isCod'        => true,
+        ),
+        array(
+            'value'        => '3097',
+            'label'        => 'COD + Extra cover + Return when not home',
+            'isExtraCover' => true,
+            'isAvond'      => true,
+            'isCod'        => true,
+        ),
+    );
+
     /**
-     * Returns an option array for all possible PostNL product options
-     * 
+     * Gets an array of possible standard delivery product options.
+     *
      * @return array
-     * 
-     * @todo implement COD
      */
     public function toOptionArray()
     {
-        $helper = Mage::helper('postnl');
-        $availableOptions = array(
-            array(
-                'value' => '3085',
-                'label' => $helper->__('Standard shipment'),
-            ),
-            /**
-             * These are not currently implemented
-             * 
-             * TODO implement these options
-             */
-            /*array(
-                'value' => '3086',
-                'label' => $helper->__('COD'),
-            ),
-            array(
-                'value' => '3091',
-                'label' => $helper->__('COD + Extra cover'),
-            ),
-            array(
-                'value' => '3093',
-                'label' => $helper->__('COD + Return when not home'),
-            ),
-            array(
-                'value' => '3097',
-                'label' => $helper->__('COD + Extra cover + Return when not home'),
-            ),*/
-            array(
-                'value'        => '3087',
-                'label'        => $helper->__('Extra Cover'),
-                'isExtraCover' => true,
-            ),
-            array(
-                'value'        => '3094',
-                'label'        => $helper->__('Extra cover + Return when not home'),
-                'isExtraCover' => true,
-            ),
-            array(
-                'value' => '3189',
-                'label' => $helper->__('Signature on delivery'),
-            ),
-            array(
-                'value' => '3089',
-                'label' => $helper->__('Signature on delivery + Delivery to stated address only'),
-            ),
-            array(
-                'value' => '3389',
-                'label' => $helper->__('Signature on delivery + Return when not home'),
-            ),
-            array(
-                'value' => '3096',
-                'label' => $helper->__('Signature on delivery + Deliver to stated address only + Return when not home'),
-            ),
-            array(
-                'value' => '3090',
-                'label' => $helper->__('Delivery to neighbour + Return when not home'),
-            ),
-            array(
-                'value' => '3385',
-                'label' => $helper->__('Deliver to stated address only'),
-            ),
-            array(
-                'value' => '3390',
-                'label' => $helper->__('Deliver to stated address only + Return when not home'),
-            ),
-        );
-        
-        return $availableOptions;
+        return $this->getOptions(array('isCod' => false));
     }
-    
+
     /**
-     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
-     * 
-     * @param boolean|int $storeId
-     * @param boolean $codesOnly
-     * 
+     * Gets an array of possible evening delivery product options.
+     *
+     * @param boolean $asFlatArray
+     *
      * @return array
      */
-    public function getAvailableOptions($storeId = false, $codesOnly = false)
+    public function getAvondOptions($asFlatArray = false)
     {
-        if ($storeId === false) {
-            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        }
-        
-        $helper = Mage::helper('postnl');
-        $options = $this->toOptionArray();
-        
-        /**
-         * Get a list of all possible options
-         */
-        $availableOptions = array();
-        
-        /**
-         * Get the list of supported product options from the shop's configuration
-         */
-        $supportedOptions = Mage::getStoreConfig(self::XML_PATH_SUPPORTED_PRODUCT_OPTIONS, $storeId);
-        $supportedOptionsArray = explode(',', $supportedOptions);
-        
-        /**
-         * Check each standard option to see if it's supprted
-         */
-        $availableStandardOptions = array();
-        foreach ($options as $option) {
-            if (!in_array($option['value'], $supportedOptionsArray)) {
-                continue;
-            }
-            
-            if ($codesOnly === true) {
-                $availableOptions[] = $option['value'];
-                continue;
-            }
-            
-            $availableOptions[] = $option;
-        }
-        
-        return $availableOptions;
+        return $this->getOptions(array('isAvond' => true, 'isCod' => false), $asFlatArray);
+    }
+
+    /**
+     * Gets an array of possible evening delivery product options.
+     *
+     * @param boolean $asFlatArray
+     *
+     * @return array
+     */
+    public function getAvondCodOptions($asFlatArray = false)
+    {
+        return $this->getOptions(array('isAvond' => true, 'isCod' => true), $asFlatArray);
+    }
+
+    /**
+     * Get a list of available options. This is a filtered/modified version of the array supplied by toOptionArray();
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableOptions($flat = false)
+    {
+        return $this->getOptions(array('isCod' => false), $flat, true);
+    }
+
+    /**
+     * Alias for getAvailableOptions() with $cod = true.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableCodOptions($flat = false)
+    {
+        return $this->getOptions(array('isCod' => true), $flat, true);
+    }
+
+    /**
+     * Get available avond options.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableAvondOptions($flat = false)
+    {
+        return $this->getOptions(array('isAvond' => true, 'isCod' => false), $flat, true);
+    }
+
+    /**
+     * Get available avond options that are also COD.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableAvondCodOptions($flat = false)
+    {
+        return $this->getOptions(array('isAvond' => true, 'isCod' => true), $flat, true);
     }
 }
