@@ -5,6 +5,8 @@
 }
 
 @media screen and (max-width : 953px) {
+    /* General */
+    .tooltip-container,
     #postnl_delivery_options h3.sub-title,
     #postnl_add_moment,
     #postnl_delivery_options { display:none !important; }
@@ -12,18 +14,25 @@
     .postnl-container .col-1, 
     .postnl-container .col-2 { padding:0; }
     #osc_scrollbar_content .option-list li { padding:0 8px; }
+    #osc_scrollbar_content .option-list li.responsive-tooltip { padding:0; }
     #osc_scrollbar_content #add_location.option-list li { padding:0; }
-       
+    #carrier_postnl.options-available { background:none; }
+    .postnl-container .title { margin-bottom:11px; }
+    .postnl-container .title h2 { display:inline-block; }
+    .postnl-container .title #postnl_back_link { display:inline-block; width:12px; padding-right:18px; height:20px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_back_link.png) 0 0 no-repeat; text-indent:-999em; vertical-align:middle; margin-top:-4px; }
+        
+    /* Revert Popup Behavior  */   
     #postnl_delivery_options { display:block !important; }
     #postnl_delivery_options .popup-overlay { position:static; }
-    #postnl_delivery_options .popup-window {  position:static; margin:0; padding:0; width:auto; height:auto; -webkit-box-shadow:none; box-shadow:none; -moz-box-shadow:none;  }
+    #postnl_delivery_options .popup-window { position:static; margin:0; padding:0; width:auto; height:auto; -webkit-box-shadow:none; box-shadow:none; -moz-box-shadow:none;  }
     #postnl_delivery_options .popup-content { width:9999em; height:auto; }
     #postnl_delivery_options .popup-header,
     #postnl_delivery_options .button-set,
     #initial_loader, 
     #osc_scrollbar_track { display:none; }
-    #osc_scrollbar_container { width:100%; }
+    #osc_scrollbar_container { width:100%; border:1px solid #bbbbbc; border-left:none; border-right:none; padding:11px 0; margin:16px 0 24px; }
     
+    /* Fix Default OSC   */
     .checkoutcontainer div.onestepcheckout-column-left,
     .checkoutcontainer div.onestepcheckout-column-middle,
     .checkoutcontainer div.onestepcheckout-column-right { width:100% !important; margin:0 !important; padding-right:0 !important; }
@@ -36,11 +45,10 @@
              -o-transition:-o-transform 250ms linear;
                 transition:transform 250ms linear; 
     }
-    #postnl_pickup,
-    #postnl_delivery { float:left !important; margin-right:34px; }
     
+    /* Styling */
     .responsive-protector { overflow:hidden !important; }
-    .responsive-switch-wrapper { display:block; margin:16px 0 24px; }
+    .responsive-switch-wrapper { display:block; margin:0 0 24px; }
     .responsive-switch-wrapper li { display:block; float:left; width:50%; box-sizing:border-box; text-align:center; }
     .responsive-switch-wrapper li:first-child { padding-right:2px; }
     .responsive-switch-wrapper li:last-child { padding-left:2px; }
@@ -68,5 +76,7 @@
         background:linear-gradient(to bottom, #eaeaea 0%,#e0e0e0 100%);
     }
     
+    #postnl_pickup,
+    #postnl_delivery { float:left !important; margin-right:34px; }
 }
 /* ======================================================================================= */

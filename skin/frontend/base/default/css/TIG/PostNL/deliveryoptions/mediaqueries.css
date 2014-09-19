@@ -66,6 +66,8 @@
 /* Both Mobile and Tablet */
 @media only screen and (max-width: 1023px) {
     .postnl-container { padding-left:0; padding-right:0; font-size:12px; }
+    .postnl-container .title h2 { display:inline-block; }
+    .postnl-container .title #postnl_back_link { display:inline-block; width:12px; padding-right:18px; height:20px; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_back_link.png) 0 0 no-repeat; text-indent:-999em; vertical-align:middle; margin-top:-4px; }
     
     button.postnl-button { display:block; text-align:center; color:#fff; height:30px; padding:0 20px;
         background:-moz-linear-gradient(top, #f28d1f 0%, #ec6921 100%);
@@ -120,7 +122,8 @@
 @media only screen and (min-width: 1024px) {
     .postnl-container { padding-left:0; padding-right:0; }
     .postnl-container .col-1, .postnl-container .col-2 { width:50%; min-width:281px !important; max-width:351px; }
-
+    
+    .postnl-container .title #postnl_back_link,
     #postnl_add_location_responsive { display:none; }
     .responsive-noscroll { overflow:hidden; }
 }
