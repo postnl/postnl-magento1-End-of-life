@@ -266,7 +266,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         /**
          * Check if the quote is a letter box parcel.
          */
-        $isLetterQuote = $this->isBuspakjeConfigApplicableToQuote($quote);
+        $isLetterQuote = $this->quoteIsBuspakje($quote);
         if ($isLetterQuote) {
             $errors = array(
                 array(

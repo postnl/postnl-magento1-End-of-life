@@ -395,7 +395,7 @@
                             <label>Export Rates</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_matrixrateExport</frontend_model>
                             <sort_order>100</sort_order>
-                            <show_in_default>0</show_in_default>
+                            <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
@@ -407,7 +407,7 @@
                             <frontend_model>postnl_adminhtml/system_config_form_field_matrixrateImport</frontend_model>
                             <backend_model>postnl_carrier/system_config_backend_matrixrate</backend_model>
                             <sort_order>110</sort_order>
-                            <show_in_default>0</show_in_default>
+                            <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>

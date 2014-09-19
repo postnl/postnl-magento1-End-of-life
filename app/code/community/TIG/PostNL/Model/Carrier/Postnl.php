@@ -377,14 +377,22 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
      */
     protected function _getMatrixRate(Mage_Shipping_Model_Rate_Request $request)
     {
+        //Zend_Debug::dump($request->debug());exit;
+
         // exclude Virtual products price from Package value if pre-configured
         if (!$this->getConfigFlag('include_virtual_price') && $request->getAllItems()) {
+            /**
+             * @var Mage_Sales_Model_Quote_Item $item
+             */
             foreach ($request->getAllItems() as $item) {
                 if ($item->getParentItem()) {
                     continue;
                 }
                 if ($item->getHasChildren() && $item->isShipSeparately()) {
                     foreach ($item->getChildren() as $child) {
+                        /**
+                         * @var Mage_Sales_Model_Quote_Item $child
+                         */
                         if ($child->getProduct()->isVirtual()) {
                             $request->setPackageValue($request->getPackageValue() - $child->getBaseRowTotal());
                         }
@@ -400,12 +408,18 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $freePackageValue = false;
         if ($request->getAllItems()) {
             $freePackageValue = 0;
+            /**
+             * @var Mage_Sales_Model_Quote_Item $item
+             */
             foreach ($request->getAllItems() as $item) {
                 if ($item->getProduct()->isVirtual() || $item->getParentItem()) {
                     continue;
                 }
 
                 if ($item->getHasChildren() && $item->isShipSeparately()) {
+                    /**
+                     * @var Mage_Sales_Model_Quote_Item $child
+                     */
                     foreach ($item->getChildren() as $child) {
                         if ($child->getFreeShipping() && !$child->getProduct()->isVirtual()) {
                             $freeShipping = is_numeric($child->getFreeShipping()) ? $child->getFreeShipping() : 0;
@@ -610,7 +624,6 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
                 break;
             }
         }
-
 
         $statusModel->setCarrier($track->getCarrierCode())
                     ->setCarrierTitle($this->getConfigData('name'))

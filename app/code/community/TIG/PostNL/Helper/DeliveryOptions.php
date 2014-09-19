@@ -1040,7 +1040,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
          * these options are available for letter box parcel orders.
          */
-        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+        if ($this->quoteIsBuspakje($quote)
             && !$this->canShowPakjeGemakForBuspakje($quote)
         ) {
             Mage::register($registryKey, false);
@@ -1276,7 +1276,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
          * these options are available for letter box parcel orders.
          */
-        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+        if ($this->quoteIsBuspakje($quote)
             && !$this->canShowPakketAutomaatForBuspakje($quote)
         ) {
             Mage::register($registryKey, false);
@@ -1430,7 +1430,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
          * these options are available for letter box parcel orders.
          */
-        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+        if ($this->quoteIsBuspakje($quote)
             && !$this->canShowDeliveryDaysForBuspakje($quote)
         ) {
             Mage::register($registryKey, false);
@@ -1563,7 +1563,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
          * these options are available for letter box parcel orders.
          */
-        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+        if ($this->quoteIsBuspakje($quote)
             && !$this->canShowAllDeliveryOptionsForBuspakje($quote)
         ) {
             Mage::register($registryKey, false);
@@ -1807,7 +1807,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Check if the current quote is a letter box parcel order and if so, if delivery options are allowed for letter
          * box parcel orders.
          */
-        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+        if ($this->quoteIsBuspakje($quote)
             && !$this->canShowDeliveryOptionsForBuspakje($quote)
         ) {
             $errors = array(
@@ -2243,7 +2243,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * This shipment cannot be used for buspakje shipments.
          */
-        if ($this->isBuspakjeConfigApplicableToQuote($quote) && !$this->canShowDeliveryDaysForBuspakje($quote)) {
+        if ($this->quoteIsBuspakje($quote) && !$this->canShowDeliveryDaysForBuspakje($quote)) {
             Mage::register($registryKey, false);
             return false;
         }

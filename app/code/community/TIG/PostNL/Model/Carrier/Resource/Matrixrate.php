@@ -52,27 +52,50 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
      * Return table rate array or false by rate request.
      *
      * @param Mage_Shipping_Model_Rate_Request $request
-     * 
-     * @return array|boolean
+     *
+     * @return array|false
      */
     public function getRate(Mage_Shipping_Model_Rate_Request $request)
     {
         $adapter = $this->_getReadAdapter();
+
+        /**
+         * Get the bound values for the select conditions.
+         */
         $bind = array(
             ':website_id'  => (int) $request->getWebsiteId(),
             ':country_id'  => $request->getDestCountryId(),
             ':region_id'   => (int) $request->getDestRegionId(),
             ':postcode'    => $request->getDestPostcode(),
             ':weight'      => $request->getPackageWeight(),
-            ':subtotal'    => $request->getPackageValue(),
+            ':subtotal'    => $request->getBaseSubtotalInclTax(),
             ':qty'         => $request->getPackageQty(),
         );
 
-        $bind[':parcel_type'] = Mage::helper('postnl')->isBuspakjeConfigApplicableToQuote() ? 'letter_box' : 'regular';
+        /**
+         * Get the request's parcel type. This is 'regular' by default.
+         *
+         * If the request contains any items, get the quote from the first item and check if the quote is a letter box
+         * parcel.
+         */
+        $parcelType = 'regular';
+        if ($request->getAllItems()) {
+            $item  = current($request->getAllItems());
+            $quote = $item->getQuote();
 
+            if (Mage::helper('postnl')->quoteIsBuspakje($quote)) {
+                $parcelType = 'letter_box';
+            }
+        }
+
+        $bind[':parcel_type'] = $parcelType;
+
+        /**
+         * Get the base select query.
+         */
         $select = $adapter->select()
                           ->from($this->getMainTable())
-                          ->where('website_id = :website_id')
+                          ->where('(website_id = :website_id) OR (website_id = ?)', Mage_Core_Model_App::ADMIN_STORE_ID)
                           ->order(
                               array(
                                   'website_id DESC',
@@ -87,15 +110,18 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                           )
                           ->limit(1);
 
-        // Render destination condition
+        /**
+         * Render destination condition.
+         */
         $orWhere = '('
                  . implode(
                      ') OR (',
                      array(
                          "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = :postcode",
                          "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = ''",
-
-                         // Handle asterix in dest_zip field
+                         /**
+                          * Handle asterix in dest_zip field.
+                          */
                          "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = '*'",
                          "dest_country_id = :country_id AND dest_region_id = 0 AND dest_zip = '*'",
                          "dest_country_id = '0' AND dest_region_id = :region_id AND dest_zip = '*'",
@@ -109,6 +135,9 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                  . ')';
         $select->where($orWhere);
 
+        /**
+         * Add PostNL matrix rate specific conditions.
+         */
         $select->where('weight <= :weight');
         $select->where('subtotal <= :subtotal');
         $select->where('qty <= :qty');
@@ -116,7 +145,13 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
 
         $result = $adapter->fetchRow($select, $bind);
 
-        // Normalize destination zip code
+        if (!$result) {
+            return false;
+        }
+
+        /**
+         * Normalize destination zip code.
+         */
         if ($result && $result['dest_zip'] == '*') {
             $result['dest_zip'] = '';
         }
