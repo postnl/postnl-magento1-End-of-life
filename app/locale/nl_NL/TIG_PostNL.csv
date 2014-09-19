@@ -1131,3 +1131,6 @@ TIG_PostNL::Invalid PostNL matrix rates format in row #%s,Incorrect PostNL matri
 TIG_PostNL::matrix rate,matrixtarief
 TIG_PostNL::Default 'stated address only' option,Standaard 'lever alleen aan opgegeven adres' optie
 TIG_PostNL::This option will be used as default when the customer has checked the 'stated address only' checkbox during checkout.,Deze optie zal gebruikt worden voor zendingen waarbij de consument gebruik heeft gemaakt van de 'niet bij buren leveren' checkbox.
+TIG_PostNL::Extra options,Extra opties
+TIG_PostNL::Use responsive design,Gebruik responsive ontwerp
+"TIG_PostNL::Select 'yes' to make the delivery options theme responsive. Responsive themes allow users on their mobile phone, tablets and desktops to view the same page in a way that is optimized for their device. Beware: this option may conflict with custom Magento theme.","Selecteer 'ja' om het responsive ontwerp van de bezorgopties te gebruiken. Het responsive ontwerp zorgt ervoor dat gebruikers op een mobiele telefoon, tablet of desktop de bezorgopties te zien krijgen op een wijze die voor hun apperaat geoptimaliseerd is. N.B.: deze optie kan conflicteren met custom Magento thema's."

@@ -2122,6 +2122,7 @@ PostnlDeliveryOptions.Map = new Class.create({
          */
         $('add_location').observe('click', this.openAddLocationWindow.bind(this));
         $('close_popup').observe('click', this.closeAddLocationWindow.bind(this));
+        $('postnl_back_link').observe('click', this.closeAddLocationWindow.bind(this));
         $('search_button').observe('click', this.addressSearch.bind(this));
         $('search_field').observe('keydown', this.addressSearch.bind(this));
         $('responsive_search_button').observe('click', this.addressSearch.bind(this));
@@ -2267,7 +2268,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         $$('#postnl_delivery_options .responsive-protector')[0].addClassName('responsive-hidden');
-        $$('#postnl_delivery_options .responsive-switch-wrapper')[0].addClassName('responsive-hidden');
+        $$('#postnl_delivery_options .responsive-switch-wrapper ul')[0].addClassName('responsive-hidden');
+        $('postnl_back_link').show();
 
         this.getAddLocationWindow().show();
 
@@ -2307,7 +2309,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         $$('#postnl_delivery_options .responsive-protector')[0].removeClassName('responsive-hidden');
-        $$('#postnl_delivery_options .responsive-switch-wrapper')[0].removeClassName('responsive-hidden');
+        $$('#postnl_delivery_options .responsive-switch-wrapper ul')[0].removeClassName('responsive-hidden');
+        $('postnl_back_link').hide();
 
         this.getAddLocationWindow().hide();
 

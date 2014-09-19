@@ -2431,12 +2431,22 @@
                                 <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </theme>
+                        <responsive translate="label comment" module="postnl">
+                            <label>Use responsive design</label>
+                            <comment>Select 'yes' to make the delivery options theme responsive. Responsive themes allow users on their mobile phone, tablets and desktops to view the same page in a way that is optimized for their device. Beware: this option may conflict with custom Magento theme.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </responsive>
                         <mijnpakket_login_active translate="label comment" module="postnl">
                             <label>Enable MijnPakket login</label>
                             <comment>MijnPakket login will only be available to customers who have a MijnPakket account. This will be automatically detected.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2449,7 +2459,7 @@
                             <tooltip>Customers can select a specific date and time when they want their shipment delivered when they use PostNL delivery options. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL delivery options if they are attempting to order an item that is not in stock, thereby preventing this situation.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2460,7 +2470,7 @@
                         <shipping_duration_header translate="label" module="postnl">
                             <label>PostNL delivery options allows your customers to choose their delivery date and timeframe, or choose to have their order delivered to a post office, early delivery post office or parcel dispenser. Each of these options can be individually enabled and disabled. In the case of evening- and early delivery, you may charge an additional fee.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2474,7 +2484,7 @@
                             <tooltip>This value will be added to the earliest possible delivery date. Timeframes will be displayed for all options between the first possible delivery date and this number of days after that.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_deliveryoptions/system_config_source_deliveryDaysNumber</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2488,7 +2498,7 @@
                             <comment>Delivery days allow customers to choose on which date they want their order delivered.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2501,7 +2511,7 @@
                             <comment>Time frames allow customers to specify at which time they want their order delivered.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2516,7 +2526,7 @@
                             <tooltip>Evening timeframes may not be available in all areas. The PostNL extension will automatically determine whether or not evening delivery is available for a specific area.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2532,7 +2542,7 @@
                             <tooltip>This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for evening timeframes.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2549,7 +2559,7 @@
                             <comment>Whether or not customers may choose to have their order delivered to a nearby post office.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2563,7 +2573,7 @@
                             <tooltip>Not all post offces may support early delivery. You will not be able to use Premium Sorting or Sunday Sorting for these shipments.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2578,7 +2588,7 @@
                             <tooltip>This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2595,7 +2605,7 @@
                             <tooltip>Parcel dispensers are available at certain NS train stations across the Netherlands. Shipments to parcel dispensers must have minimum dimensions of 38x26.5x3.2cm and maximum dimensions of 41x38x64cm.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2608,7 +2618,7 @@
                             <comment>If enabled, users may use Google Streetview when choosing a post office location.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2619,7 +2629,7 @@
                         <buspakje_header translate="label" module="postnl">
                             <label>These settings are only applicable to orders which fit as a letter box parcel.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2640,7 +2650,7 @@
                             <tooltip>If a customer chooses a delivery option, that order may not be shipped as a letter box parcel. Only shipments to a regular Dutch address may be shipped as letter box parcels. If you disable this setting delivery options will automatically be disabled when an order would fit as a letter box parcel. Enable this option if you always want to show delivery options to customers even when that means an order might not be shipped as a letter box parcel.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2661,7 +2671,7 @@
                             <comment>If set to 'yes' the same delivery options will be shown for letter box parcel orders as for regular orders. Please note that if the customer chooses a delivery option, the order may no longer be shipped as a letter box parcel.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>180</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2682,7 +2692,7 @@
                             <label>Show delivery days for letter box parcel orders.</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>190</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2706,7 +2716,7 @@
                             <comment>If the customer chooses to have an order delivered to a post office location the order may no longer be shipped as a letter box parcel.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>200</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2730,7 +2740,7 @@
                             <comment>If the customer chooses to have an order delivered to a parcel dispenser the order may no longer be shipped as a letter box parcel.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>210</sort_order>
+                            <sort_order>220</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2752,7 +2762,7 @@
                         <mijnpakket_notification_header translate="label" module="postnl">
                             <label>You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>220</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2765,7 +2775,7 @@
                             <comment>This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>230</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2778,7 +2788,7 @@
                             <comment>If enabled, customers who do not yet have a MijnPakket account will be shown a link through which they can create a MijnPakket account without having to fully fill in the registration form.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>240</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2792,7 +2802,7 @@
                             <comment>If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>250</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

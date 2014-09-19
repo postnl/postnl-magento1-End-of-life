@@ -60,6 +60,7 @@
  * @method boolean                     hasCanShowOnlyStatedAddressOption()
  * @method boolean                     hasPostnlShippingMethods()
  * @method boolean                     hasMatchedPostnlShippingMethods()
+ * @method boolean                     hasCanUseResponsiveDeliveryOptions()
  *
  * @method boolean                     getPostnlCoreIsEnabled()
  * @method boolean                     getPostnlCoreIsConfigured()
@@ -85,6 +86,7 @@
  * @method boolean                     getCanShowOnlyStatedAddressOption()
  * @method array                       getPostnlShippingMethods()
  * @method array                       getMatchedPostnlShippingMethods()
+ * @method boolean                     getCanUseResponsiveDeliveryOptions()
  *
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsEnabled(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsConfigured(boolean $value)
@@ -110,6 +112,7 @@
  * @method TIG_PostNL_Model_Core_Cache setCanShowOnlyStatedAddressOption(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlShippingMethods(array $value)
  * @method TIG_PostNL_Model_Core_Cache setMatchedPostnlShippingMethods(array $value)
+ * @method TIG_PostNL_Model_Core_Cache setCanUseResponsiveDeliveryOptions(boolean $value)
  */
 class TIG_PostNL_Model_Core_Cache extends Varien_Object
 {
