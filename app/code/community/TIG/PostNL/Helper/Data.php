@@ -459,7 +459,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getModuleVersion()
     {
-        $version = (string) Mage::getConfig()->getModuleConfig("TIG_PostNL")->version;
+        $version = (string) Mage::getConfig()->getModuleConfig('TIG_PostNL')->version;
 
         return $version;
     }
@@ -763,13 +763,27 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Alias for TIG_PostNL_Helper_Data::quoteIsBuspakje() provided for backwards compatibility.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     *
+     * @see TIG_PostNL_Helper_Data::quoteIsBuspakje()
+     */
+    public function isBuspakjeConfigApplicableToQuote(Mage_Sales_Model_Quote $quote = null)
+    {
+        return $this->quoteIsBuspakje($quote);
+    }
+
+    /**
      * Checks if the buspakje-specific configuration is applicable to the current quote.
      *
      * @param Mage_Sales_Model_Quote $quote
      *
      * @return bool
      */
-    public function isBuspakjeConfigApplicableToQuote(Mage_Sales_Model_Quote $quote = null)
+    public function quoteIsBuspakje(Mage_Sales_Model_Quote $quote = null)
     {
         if (is_null($quote)) {
             $quote = $this->getQuote();
