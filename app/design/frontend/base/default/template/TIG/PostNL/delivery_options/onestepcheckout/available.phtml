@@ -54,9 +54,11 @@
     <?php $_canUseDeliveryOptions = false; ?>
     <?php $_store = $this->getQuote()->getStore(); ?>
     <?php $_carrierHelper = Mage::helper('postnl/carrier'); ?>
+    <?php $_deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions'); ?>
+    <?php $_canShowOnlyStatedAddressOption = $_deliveryOptionsHelper->canShowOnlyStatedAddressOption(); ?>
 
-    <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote())
-        && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
+    <?php if ($_deliveryOptionsHelper->canUseDeliveryOptions($this->getQuote())
+        && $_deliveryOptionsHelper->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
         <?php $_canUseDeliveryOptions = true; ?>
     <?php endif; ?>
     <?php if (count($_shippingRateGroups)=='1' && Mage::getStoreConfig('onestepcheckout/general/hide_shipping_method')):?>
@@ -140,6 +142,16 @@
                                         <?php echo $this->getChild('postnl.osc.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
                                     </div>
                             <?php $_deliveryOptionsShown = true; ?>
+                                <?php elseif ($_carrierHelper->isPostnlShippingMethod($_rate->getCode()) && $_canShowOnlyStatedAddressOption): ?>
+                                    </dt>
+                                    <dt>
+                                    <input type="checkbox" name="s_method_<?php echo $_rate->getCode(); ?>[postnl][only_stated_address]" id="<?php echo $_rate->getCode(); ?>_only_stated_address" value="1" class="checkbox">
+                                    <label for="<?php echo $_rate->getCode(); ?>_only_stated_address">
+                                        <?php echo $_deliveryOptionsHelper->__('Do not deliver to neighbours'); ?>
+                                        <strong>
+                                            <span class="price"><?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
+                                        </strong>
+                                    </label>
                                 <?php endif; ?>
 
                            <?php endif ?>
