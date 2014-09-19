@@ -161,74 +161,6 @@
             document.observe('postnl:domModified', recalculateOscScrollbar);
             //]]>
         </script>
-        <script type="text/javascript">
-            //<![CDATA[
-                /**
-                 * Delivery and Pickup switch for Responsive purposes
-                 */
-                window.siteWidth = $("onestepcheckout-form").offsetWidth;
-
-                window.setSiteWidth = function() {
-                    console.log('resize triggered');
-                    $("osc_scrollbar_container").setStyle({
-                        "width" : siteWidth + "px"
-                    });
-                    $("postnl_pickup").setStyle({
-                        "width" : siteWidth + "px",
-                        "max-width" : siteWidth + "px"
-                    });
-                    $("postnl_delivery").setStyle({
-                        "width" : siteWidth + "px",
-                        "max-width" : siteWidth + "px"
-                    });
-                };
-
-                document.observe('postnl:loadingFinished', function() {
-                    window.siteWidth = $("onestepcheckout-form").offsetWidth;
-                    setSiteWidth();
-                });
-
-                Event.observe(window, "resize", function() {
-                    window.siteWidth = $("onestepcheckout-form").offsetWidth;
-                    setSiteWidth();
-
-                    $("osc_scrollbar_content").setStyle({
-                        "-webkit-transform" : "translate3d(0, 0, 0)",
-                        "-o-transform" : "translate3d(0, 0, 0)",
-                        "transform" : "translate3d(0, 0, 0)",
-                    });
-
-                    $("postnl_switch_delivery").removeClassName('active');
-                    $("postnl_switch_pickup").addClassName('active');
-                });
-
-                var switchDelivery = $("postnl_switch_delivery");
-                switchDelivery.stopObserving('click');
-                switchDelivery.observe("click", function() {
-                    $("osc_scrollbar_content").setStyle({
-                        "-webkit-transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
-                        "-o-transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
-                        "transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
-                    });
-
-                    $("postnl_switch_pickup").removeClassName('active');
-                    $("postnl_switch_delivery").addClassName('active');
-                });
-
-                var switchPickup = $("postnl_switch_pickup");
-                switchPickup.stopObserving('click');
-                switchPickup.observe("click", function() {
-                    $("osc_scrollbar_content").setStyle({
-                        "-webkit-transform" : "translate3d(0, 0, 0)",
-                        "-o-transform" : "translate3d(0, 0, 0)",
-                        "transform" : "translate3d(0, 0, 0)",
-                    });
-
-                    $("postnl_switch_delivery").removeClassName('active');
-                    $("postnl_switch_pickup").addClassName('active');
-                });
-                //]]>
-        </script>
     </div>
 </div>
 <?php echo $this->getChildHtml('postnl.osc.add.location') ?>
@@ -783,5 +715,84 @@
             });
         }
     };
+
+    /**
+     * Delivery and Pickup switch for Responsive purposes
+     */
+    window.siteWidth = $("onestepcheckout-form").offsetWidth;
+
+    window.setSiteWidth = function() {
+        if (window.outerWidth < 954) {
+            $("osc_scrollbar_container").setStyle({
+                "width" : siteWidth + "px"
+            });
+            $("postnl_pickup").setStyle({
+                width    : siteWidth + "px",
+                maxWidth : siteWidth + "px"
+            });
+            $("postnl_delivery").setStyle({
+                width    : siteWidth + "px",
+                maxWidth : siteWidth + "px"
+            });
+        } else {
+            $("osc_scrollbar_container").setStyle({
+                "width" : ''
+            });
+            $("postnl_pickup").setStyle({
+                width    : '',
+                maxWidth : ''
+            });
+            $("postnl_delivery").setStyle({
+                width    : '',
+                maxWidth : ''
+            });
+        }
+    };
+
+    var switchDelivery = function() {
+        $("osc_scrollbar_content").setStyle({
+            "-webkit-transform" : "translateX(-" + (siteWidth+34) + "px)",
+            "-o-transform" : "translateX(-" + (siteWidth+34) + "px)",
+            "transform" : "translateX(-" + (siteWidth+34) + "px)"
+        });
+
+        $("postnl_switch_pickup").removeClassName('active');
+        $("postnl_switch_delivery").addClassName('active');
+    };
+
+    var switchPickup = function() {
+        $("osc_scrollbar_content").setStyle({
+            "-webkit-transform" : "translateX(0)",
+            "-o-transform" : "translateX(0)",
+            "transform" : "translateX(0)"
+        });
+
+        $("postnl_switch_delivery").removeClassName('active');
+        $("postnl_switch_pickup").addClassName('active');
+    };
+
+    document.observe('postnl:loadingFinished', function() {
+        window.siteWidth = $("onestepcheckout-form").offsetWidth;
+        setSiteWidth();
+    });
+
+    Event.observe(window, "resize", function() {
+        window.siteWidth = $("onestepcheckout-form").offsetWidth;
+        setSiteWidth();
+
+        if ($("postnl_switch_delivery").hasClassName('active') && window.innerWidth < 952) {
+            switchDelivery();
+        } else {
+            switchPickup();
+        }
+    });
+
+    var switchDeliveryBtn = $("postnl_switch_delivery");
+    switchDeliveryBtn.stopObserving('click');
+    switchDeliveryBtn.observe("click", switchDelivery);
+
+    var switchPickupBtn = $("postnl_switch_pickup");
+    switchPickupBtn.stopObserving('click');
+    switchPickupBtn.observe("click", switchPickup);
     //]]>
 </script>
