@@ -93,8 +93,20 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             return $this->_postnlShippingMethods;
         }
 
+        $cache = $this->getCache();
+        if ($cache && $cache->hasPostnlShippingMethods()) {
+            $shippingMethods = $cache->getPostnlShippingMethods();
+
+            $this->setPostnlShippingMethods($shippingMethods);
+            return $shippingMethods;
+        }
+
         $shippingMethods = Mage::getStoreConfig(self::XPATH_POSTNL_SHIPPING_METHODS, Mage::app()->getStore()->getId());
         $shippingMethods = explode(',', $shippingMethods);
+
+        if ($cache) {
+            $cache->setPostnlShippingMethods($shippingMethods);
+        }
 
         $this->setPostnlShippingMethods($shippingMethods);
         return $shippingMethods;
@@ -117,6 +129,18 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      */
     public function getMatchedMethods()
     {
+        $matchedMethods = $this->_matchedMethods;
+        if (!empty($matchedMethods)) {
+            return $matchedMethods;
+        }
+
+        $cache = $this->getCache();
+        if ($cache && $cache->hasMatchedPostnlShippingMethods()) {
+            $this->setMatchedMethods(
+                $cache->getMatchedPostnlShippingMethods()
+            );
+        }
+
         return $this->_matchedMethods;
     }
 
@@ -128,6 +152,11 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     public function setMatchedMethods($matchedMethods)
     {
         $this->_matchedMethods = $matchedMethods;
+
+        $cache = $this->getCache();
+        if ($cache) {
+            $cache->setMatchedPostnlShippingMethods($matchedMethods);
+        }
 
         return $this;
     }
