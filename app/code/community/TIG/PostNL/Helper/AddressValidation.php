@@ -39,12 +39,12 @@
 class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
 {
     /**
-     * XML path to use_postcode_check setting
+     * XML path to use_postcode_check setting.
      */
     const XPATH_USE_POSTCODE_CHECK = 'postnl/cif_address/use_postcode_check';
 
     /**
-     * Constants containing XML paths to cif address configuration options
+     * Constants containing XML paths to cif address configuration options.
      */
     const XPATH_SPLIT_STREET                = 'postnl/cif_address/split_street';
     const XPATH_STREETNAME_FIELD            = 'postnl/cif_address/streetname_field';
@@ -53,13 +53,13 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const XPATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
 
     /**
-     * XML paths to flags that determine which environment allows the postcode check functionality
+     * XML paths to flags that determine which environment allows the postcode check functionality.
      */
     const XPATH_POSTCODE_CHECK_IN_CHECKOUT    = 'postnl/cif_address/postcode_check_in_checkout';
     const XPATH_POSTCODE_CHECK_IN_ADDRESSBOOK = 'postnl/cif_address/postcode_check_in_addressbook';
 
     /**
-     * XML paths that control some features of postcode check
+     * XML paths that control some features of postcode check.
      */
     const XPATH_POSTCODE_CHECK_MAX_ATTEMPTS = 'postnl/cif_address/postcode_check_max_attempts';
     const XPATH_POSTCODE_CHECK_TIMEOUT     = 'postnl/cif_address/postcode_check_timeout';
@@ -70,14 +70,21 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     const XPATH_STREET_FIELD_SORT_ORDER = 'onestepcheckout/sortordering_fields/street';
 
     /**
-     * Log filename to log all cendris exceptions
+     * Log filename to log all cendris exceptions.
      */
     const CENDRIS_EXCEPTION_LOG_FILE = 'TIG_PostNL_Cendris_Exception.log';
 
     /**
-     * Log filename to log cendris calls
+     * Log filename to log cendris calls.
      */
     const CENDRIS_DEBUG_LOG_FILE = 'TIG_PostNL_Cendris_Debug.log';
+
+    /**
+     * Street lines used by postcode check.
+     */
+    const POSTCODE_CHECK_STREETNAME_FIELD             = 1;
+    const POSTCODE_CHECK_HOUSE_NUMBER_FIELD           = 2;
+    const POSTCODE_CHECK_HOUSE_NUMBER_EXTENSION_FIELD = 3;
 
     /**
      * @var null|string|int
@@ -158,7 +165,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
         }
 
         if ($this->isPostcodeCheckEnabled($storeId)) {
-            return 1;
+            return self::POSTCODE_CHECK_STREETNAME_FIELD;
         }
 
         $streetnameField = (int) Mage::getStoreConfig(self::XPATH_STREETNAME_FIELD, $storeId);
@@ -180,7 +187,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
         }
 
         if ($this->isPostcodeCheckEnabled($storeId)) {
-            return 2;
+            return self::POSTCODE_CHECK_HOUSE_NUMBER_FIELD;
         }
 
         $housenumberField = (int) Mage::getStoreConfig(self::XPATH_HOUSENUMBER_FIELD, $storeId);
@@ -201,7 +208,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
         }
 
         if ($this->isPostcodeCheckEnabled($storeId)) {
-            return 3;
+            return self::POSTCODE_CHECK_HOUSE_NUMBER_EXTENSION_FIELD;
         }
 
         $housenumberExtensionField = (int) Mage::getStoreConfig(self::XPATH_HOUSENUMBER_EXTENSION_FIELD, $storeId);

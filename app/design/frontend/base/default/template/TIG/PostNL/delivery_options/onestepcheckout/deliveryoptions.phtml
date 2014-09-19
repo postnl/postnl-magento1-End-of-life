@@ -94,10 +94,10 @@
                 <div id="osc_scrollbar_track">
                     <div id="osc_scrollbar_handle"></div>
                 </div>
-                
+
                 <div class="responsive-switch-wrapper">
                     <div class="title">
-                        <a href="#" id="postnl_back_link"><?php echo $this->__('Back'); ?></a>
+                        <a href="#" id="postnl_back_link" style="display:none;"><?php echo $this->__('Back'); ?></a>
                         <h2>Bezorgopties</h2>
                     </div>
                     <ul>
@@ -167,7 +167,7 @@
                  * Delivery and Pickup switch for Responsive purposes
                  */
                 window.siteWidth = $("onestepcheckout-form").offsetWidth;
-            
+
                 window.setSiteWidth = function() {
                     console.log('resize triggered');
                     $("osc_scrollbar_container").setStyle({
@@ -182,26 +182,26 @@
                         "max-width" : siteWidth + "px"
                     });
                 };
-                
+
                 document.observe('postnl:loadingFinished', function() {
                     window.siteWidth = $("onestepcheckout-form").offsetWidth;
                     setSiteWidth();
                 });
-                
+
                 Event.observe(window, "resize", function() {
                     window.siteWidth = $("onestepcheckout-form").offsetWidth;
                     setSiteWidth();
-                    
+
                     $("osc_scrollbar_content").setStyle({
                         "-webkit-transform" : "translate3d(0, 0, 0)",
                         "-o-transform" : "translate3d(0, 0, 0)",
                         "transform" : "translate3d(0, 0, 0)",
                     });
-                    
+
                     $("postnl_switch_delivery").removeClassName('active');
                     $("postnl_switch_pickup").addClassName('active');
                 });
-            
+
                 var switchDelivery = $("postnl_switch_delivery");
                 switchDelivery.stopObserving('click');
                 switchDelivery.observe("click", function() {
@@ -210,11 +210,11 @@
                         "-o-transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
                         "transform" : "translate3d(-" + (siteWidth+34) + "px, 0, 0)",
                     });
-                    
+
                     $("postnl_switch_pickup").removeClassName('active');
                     $("postnl_switch_delivery").addClassName('active');
                 });
-            
+
                 var switchPickup = $("postnl_switch_pickup");
                 switchPickup.stopObserving('click');
                 switchPickup.observe("click", function() {
@@ -223,7 +223,7 @@
                         "-o-transform" : "translate3d(0, 0, 0)",
                         "transform" : "translate3d(0, 0, 0)",
                     });
-            
+
                     $("postnl_switch_delivery").removeClassName('active');
                     $("postnl_switch_pickup").addClassName('active');
                 });
@@ -525,8 +525,8 @@
                 event.stop();
 
                 var body = $$('body')[0];
-                if (!body.hasClassName('noscroll')) {
-                    body.addClassName('noscroll');
+                if (!body.hasClassName('responsive-noscroll')) {
+                    body.addClassName('responsive-noscroll');
                 }
                 postnlDeliveryOptionsDiv.show();
 
@@ -542,8 +542,8 @@
                 event.stop();
 
                 var body = $$('body')[0];
-                if (body.hasClassName('noscroll')) {
-                    body.removeClassName('noscroll');
+                if (body.hasClassName('responsive-noscroll')) {
+                    body.removeClassName('responsive-noscroll');
                 }
                 postnlDeliveryOptionsDiv.hide();
             });

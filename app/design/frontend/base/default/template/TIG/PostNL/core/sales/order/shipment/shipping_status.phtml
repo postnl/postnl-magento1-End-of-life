@@ -35,17 +35,19 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PostNL_Block_Core_ShippingStatus $this
  */
 ?>
-<?php /** @var Mage_Sales_Model_Order_Shipment $_shipment */ ?>
-<?php foreach (Mage::registry('current_order')->getShipmentsCollection() as $_shipment): ?>
-    <?php $_isConfirmed = $this->isConfirmed($_shipment); ?>
+<?php foreach ($this->getPostnlShipments() as $_shipment): ?>
+    <?php $this->setPostnlShipment($_shipment); ?>
+    <?php $_isConfirmed = $this->isConfirmed(); ?>
     <?php if(!$_isConfirmed): ?>
         <?php continue; ?>
     <?php endif; ?>
 
-    <?php $_confirmedAt = $this->getConfirmedAt($_shipment); ?>
-    <?php $_trackingUrl = $this->getTrackingUrl($_shipment); ?>
+    <?php $_confirmedAt = $this->getConfirmedAt(); ?>
+    <?php $_trackingUrl = $this->getTrackingUrl(); ?>
     <div id="postnl_status-<?php echo $_shipment->getId(); ?>">
         <p><?php echo $this->__('Your shipment has been shipped on %s. Click %s to track your shipment.', $_confirmedAt, $_trackingUrl); ?></p>
     </div>
@@ -55,7 +57,7 @@
         document.observe('dom:loaded', function() {
             var status<?php echo $_shipment->getId(); ?> = $('postnl_status-<?php echo $_shipment->getId(); ?>');
 
-            var trackingTable = $('my-tracking-table-<?php echo $_shipment->getId(); ?>');
+            var trackingTable = $('my-tracking-table-<?php echo $_shipment->getShipment()->getId(); ?>');
             if (trackingTable) {
                 trackingTable.insert({
                     before: status<?php echo $_shipment->getId(); ?>

@@ -46,6 +46,8 @@
  * @method TIG_PostNL_Model_Core_Cif_Abstract setPassword(string $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setUsername(string $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setStoreId(int $value)
+ * @method TIG_PostNL_Model_Core_Cif_Abstract setWsdlBaseUrl(string $value)
+ * @method TIG_PostNL_Model_Core_Cif_Abstract setTestWsdlBaseUrl(string $value)
  *
  * @method boolean hasSoapClient()
  * @method boolean hasHelper()
@@ -53,6 +55,8 @@
  * @method boolean hasTestMode()
  * @method boolean hasPassword()
  * @method boolean hasUsername()
+ * @method boolean hasWsdlBaseUrl()
+ * @method boolean hasTestWsdlBaseUrl()
  *
  * @method TIG_PostNL_Model_Core_Cif_Abstract unsTestMode()
  */
@@ -61,12 +65,12 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * Base URL of wsdl files
      */
-    const WSDL_BASE_URL = 'https://service.postnl.com/CIF/';
+    const WSDL_BASE_URL_XPATH = 'postnl/cif/wsdl_base_url';
 
     /**
      * Base URL of sandbox wsdl files
      */
-    const TEST_WSDL_BASE_URL = 'https://testservice.postnl.com/CIF_SB/';
+    const TEST_WSDL_BASE_URL_XPATH = 'postnl/cif/test_wsdl_base_url';
 
     /**
      * Available wsdl filenames.
@@ -105,6 +109,11 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const XPATH_CIF_VERSION_DELIVERYDATE   = 'postnl/advanced/cif_version_deliverydate';
     const XPATH_CIF_VERSION_TIMEFRAME      = 'postnl/advanced/cif_version_timeframe';
     const XPATH_CIF_VERSION_LOCATION       = 'postnl/advanced/cif_version_location';
+
+    /**
+     * The error number CIF uses for the 'shipment not found' error.
+     */
+    const SHIPMENT_NOT_FOUND_ERROR_NUMBER = 13;
 
     /**
      * Check if the required PHP extensions are installed.
@@ -147,6 +156,36 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 
         $this->setStoreId($storeId);
         return $storeId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWsdlBaseUrl()
+    {
+        if ($this->hasWsdlBaseUrl()) {
+            return $this->_getData('wsdl_base_url');
+        }
+
+        $wsdlBaseUrl = Mage::getStoreConfig(self::WSDL_BASE_URL_XPATH, $this->getStoreId());
+
+        $this->setWsdlBaseUrl($wsdlBaseUrl);
+        return $wsdlBaseUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTestWsdlBaseUrl()
+    {
+        if ($this->hasTestWsdlBaseUrl()) {
+            return $this->_getData('test_wsdl_base_url');
+        }
+
+        $wsdlBaseUrl = Mage::getStoreConfig(self::TEST_WSDL_BASE_URL_XPATH, $this->getStoreId());
+
+        $this->setTestWsdlBaseUrl($wsdlBaseUrl);
+        return $wsdlBaseUrl;
     }
 
     /**
@@ -437,9 +476,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
          * Check if we need the live or the sandbox wsdl.
          */
         if ($this->isTestMode()) {
-            $wsdlUrl = self::TEST_WSDL_BASE_URL;
+            $wsdlUrl = $this->getTestWsdlBaseUrl();
         } else {
-            $wsdlUrl = self::WSDL_BASE_URL;
+            $wsdlUrl = $this->getWsdlBaseUrl();
         }
 
         /**
@@ -603,7 +642,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                      * log this error.
                      */
                     $value = $errorNumber->nodeValue;
-                    if ($value == '13') {
+                    if ($value == self::SHIPMENT_NOT_FOUND_ERROR_NUMBER) {
                         $logException = false;
                     }
 
