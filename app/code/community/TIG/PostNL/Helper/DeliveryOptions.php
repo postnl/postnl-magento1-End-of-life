@@ -81,6 +81,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_SUNDAY_CUTOFF_TIME = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
 
     /**
+     * Xpath to the responsive design setting.
+     */
+    const XPATH_RESPONSIVE = 'postnl/delivery_options/responsive';
+
+    /**
      * The time we consider to be the start of the evening.
      */
     const EVENING_TIME = 1900;
@@ -765,6 +770,27 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return false;
+    }
+
+    /**
+     * Check whether the responsive design may be used for delivery options.
+     *
+     * @return bool
+     */
+    public function canUseResponsive()
+    {
+        $cache = $this->getCache();
+        if ($cache && $cache->hasCanUseResponsiveDeliveryOptions()) {
+            return $cache->getCanUseResponsiveDeliveryOptions();
+        }
+
+        $canUseResponsive = Mage::getStoreConfigFlag(self::XPATH_RESPONSIVE, Mage::app()->getStore()->getId());
+
+        if ($cache) {
+            $cache->setCanUseResponsiveDeliveryOptions($canUseResponsive);
+        }
+
+        return $canUseResponsive;
     }
 
     /**
