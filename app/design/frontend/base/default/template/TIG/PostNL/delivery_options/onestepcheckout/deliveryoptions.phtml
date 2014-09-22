@@ -95,12 +95,12 @@
                     <div id="osc_scrollbar_handle"></div>
                 </div>
 
-                <div class="responsive-switch-wrapper">
+                <div id="responsive_switch" class="responsive-switch-wrapper">
                     <div class="title">
                         <a href="#" id="postnl_back_link" style="display:none;"><?php echo $this->__('Back'); ?></a>
                         <h2>Bezorgopties</h2>
                     </div>
-                    <ul>
+                    <ul <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
                         <li><a id="postnl_switch_pickup" class="active"><?php echo $this->__('Delivery'); ?></a></li>
                         <li><a id="postnl_switch_delivery"><?php echo $this->__('Pickup'); ?></a></li>
                     </ul>
@@ -752,6 +752,7 @@
     var switchDelivery = function() {
         $("osc_scrollbar_content").setStyle({
             "-webkit-transform" : "translateX(-" + (siteWidth+34) + "px)",
+            "-ms-transform" : "translateX(-" + (siteWidth+34) + "px)",
             "-o-transform" : "translateX(-" + (siteWidth+34) + "px)",
             "transform" : "translateX(-" + (siteWidth+34) + "px)"
         });
@@ -763,6 +764,7 @@
     var switchPickup = function() {
         $("osc_scrollbar_content").setStyle({
             "-webkit-transform" : "translateX(0)",
+            "-ms-transform" : "translateX(0)",
             "-o-transform" : "translateX(0)",
             "transform" : "translateX(0)"
         });
