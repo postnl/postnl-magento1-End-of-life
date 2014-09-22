@@ -1123,6 +1123,7 @@ PostnlDeliveryOptions.prototype = {
                 }
 
                 document.fire('postnl:selectTimeframe');
+                document.fire('postnl:selectDeliveryOption');
                 timeframe.select();
             } else {
                 timeframe.unSelect();
@@ -1189,6 +1190,7 @@ PostnlDeliveryOptions.prototype = {
                     }
 
                     document.fire('postnl:selectLocation');
+                    document.fire('postnl:selectDeliveryOption');
 
                     if (this.debug) {
                         console.log('Delivery location selected:', location);
