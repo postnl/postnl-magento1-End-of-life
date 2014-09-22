@@ -3597,9 +3597,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Get the selected product code for the current shipment's shipment type.
          */
         $shipmentType .= '_options';
-        if (array_key_exists($shipmentType, $codes)) {
+        if (isset($codes[$shipmentType])) {
             return $codes[$shipmentType];
-        } elseif (array_key_exists('product_option', $codes)) {
+        } elseif (isset($codes['product_option'])) {
             return $codes['product_option'];
         }
 
@@ -3630,8 +3630,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Check if the product code is allowed.
          */
         if (!in_array($productCode, $allowedProductCodes)) {
+            $options = Mage::getSingleton('postnl_core/system_config_source_allProductOptions')->getOptions();
+            $productName = $cifHelper->__($options[$productCode]['label']);
+
             throw new TIG_PostNL_Exception(
-                $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
+                $cifHelper->__(
+                    "Product option '%s' (%s) is not allowed for this shipment.", $productName, $productCode
+                ),
                 'POSTNL-0078'
             );
         }
@@ -3651,8 +3656,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (!$shippingAddress
             || !in_array($shippingAddress->getCountryId(), $allowedCountries)
         ) {
+            $options = Mage::getSingleton('postnl_core/system_config_source_allProductOptions')->getOptions();
+            $productName = $cifHelper->__($options[$productCode]['label']);
+
             throw new TIG_PostNL_Exception(
-                $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
+                $cifHelper->__(
+                    "Product option '%s' (%s) is not allowed for this shipment.", $productName, $productCode
+                ),
                 'POSTNL-0078'
             );
         }

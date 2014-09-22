@@ -49,14 +49,15 @@
 <?php $_streetData    = $this->getStreetData(); ?>
 <?php $_housenumber   = $_streetData['housenumber']; ?>
 
-<?php $_canUsePakjeGemak        = $this->canUsePakjeGemak(); ?>
+<?php $_canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
+<?php $_canUsePakjeGemak = $this->canUsePakjeGemak(); ?>
 
 <?php $_canUsePakjeGemakExpress = false; ?>
 <?php if ($_canUsePakjeGemak): ?>
     <?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
 <?php endif; ?>
 
-<?php $_canUsePakketAutomaat    = $this->canUsePakketAutomaat(); ?>
+<?php $_canUsePakketAutomaat = $this->canUsePakketAutomaat(); ?>
 
 <?php $_canAddLocation = true; ?>
 <?php if (!$_canUsePakjeGemak && !$_canUsePakjeGemakExpress && !$_canUsePakketAutomaat): ?>
@@ -97,12 +98,12 @@
                     <div id="osc_scrollbar_handle"></div>
                 </div>
 
-                <div class="responsive-switch-wrapper">
+                <div id="responsive_switch" class="responsive-switch-wrapper">
                     <div class="title">
                         <a href="#" id="postnl_back_link" style="display:none;"><?php echo $this->__('Back'); ?></a>
                         <h2>Bezorgopties</h2>
                     </div>
-                    <ul>
+                    <ul <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
                         <li><a id="postnl_switch_pickup" class="active"><?php echo $this->__('Delivery'); ?></a></li>
                         <li><a id="postnl_switch_delivery"><?php echo $this->__('Pickup'); ?></a></li>
                     </ul>
@@ -740,83 +741,94 @@
         }
     };
 
-    /**
-     * Delivery and Pickup switch for Responsive purposes
-     */
-    window.siteWidth = $("onestepcheckout-form").offsetWidth;
+    <?php if ($_canUseResponsive): ?>
+        /**
+         * Delivery and Pickup switch for Responsive purposes
+         */
+        window.siteWidth = $("onestepcheckout-form").offsetWidth;
 
-    window.setSiteWidth = function() {
-        if (window.outerWidth < 954) {
-            $("osc_scrollbar_container").setStyle({
-                "width" : siteWidth + "px"
-            });
-            $("postnl_pickup").setStyle({
-                width    : siteWidth + "px",
-                maxWidth : siteWidth + "px"
-            });
-            $("postnl_delivery").setStyle({
-                width    : siteWidth + "px",
-                maxWidth : siteWidth + "px"
-            });
-        } else {
-            $("osc_scrollbar_container").setStyle({
-                "width" : ''
-            });
-            $("postnl_pickup").setStyle({
-                width    : '',
-                maxWidth : ''
-            });
-            $("postnl_delivery").setStyle({
-                width    : '',
-                maxWidth : ''
-            });
-        }
-    };
+        window.setSiteWidth = function() {
+            if (window.outerWidth < 954) {
+                $("osc_scrollbar_container").setStyle({
+                    "width" : siteWidth + "px"
+                });
+                $("postnl_pickup").setStyle({
+                    width    : siteWidth + "px",
+                    maxWidth : siteWidth + "px"
+                });
+                $("postnl_delivery").setStyle({
+                    width    : siteWidth + "px",
+                    maxWidth : siteWidth + "px"
+                });
+            } else {
+                $("osc_scrollbar_container").setStyle({
+                    "width" : ''
+                });
+                $("postnl_pickup").setStyle({
+                    width    : '',
+                    maxWidth : ''
+                });
+                $("postnl_delivery").setStyle({
+                    width    : '',
+                    maxWidth : ''
+                });
+            }
+        };
 
-    var switchDelivery = function() {
-        $("osc_scrollbar_content").setStyle({
-            "-webkit-transform" : "translateX(-" + (siteWidth+34) + "px)",
-            "-o-transform" : "translateX(-" + (siteWidth+34) + "px)",
-            "transform" : "translateX(-" + (siteWidth+34) + "px)"
+        var switchDelivery = function() {
+            $("osc_scrollbar_content").setStyle({
+                "-webkit-transform" : "translateX(-" + (siteWidth+34) + "px)",
+                "-ms-transform" : "translateX(-" + (siteWidth+34) + "px)",
+                "-o-transform" : "translateX(-" + (siteWidth+34) + "px)",
+                "transform" : "translateX(-" + (siteWidth+34) + "px)"
+            });
+
+            $("postnl_switch_pickup").removeClassName('active');
+            $("postnl_switch_delivery").addClassName('active');
+        };
+
+        var switchPickup = function() {
+            $("osc_scrollbar_content").setStyle({
+                "-webkit-transform" : "translateX(0)",
+                "-ms-transform" : "translateX(0)",
+                "-o-transform" : "translateX(0)",
+                "transform" : "translateX(0)"
+            });
+
+            $("postnl_switch_delivery").removeClassName('active');
+            $("postnl_switch_pickup").addClassName('active');
+        };
+
+        document.observe('postnl:loadingFinished', function() {
+            window.siteWidth = $("onestepcheckout-form").offsetWidth;
+            setSiteWidth();
         });
 
-        $("postnl_switch_pickup").removeClassName('active');
-        $("postnl_switch_delivery").addClassName('active');
-    };
+        Event.observe(window, "resize", function() {
+            window.siteWidth = $("onestepcheckout-form").offsetWidth;
+            setSiteWidth();
 
-    var switchPickup = function() {
-        $("osc_scrollbar_content").setStyle({
-            "-webkit-transform" : "translateX(0)",
-            "-o-transform" : "translateX(0)",
-            "transform" : "translateX(0)"
+            if ($("postnl_switch_delivery").hasClassName('active') && window.innerWidth < 952) {
+                switchDelivery();
+            } else {
+                switchPickup();
+            }
         });
 
-        $("postnl_switch_delivery").removeClassName('active');
-        $("postnl_switch_pickup").addClassName('active');
-    };
+        var switchDeliveryBtn = $("postnl_switch_delivery");
+        switchDeliveryBtn.stopObserving('click');
+        switchDeliveryBtn.observe("click", switchDelivery);
 
-    document.observe('postnl:loadingFinished', function() {
-        window.siteWidth = $("onestepcheckout-form").offsetWidth;
-        setSiteWidth();
-    });
+        var switchPickupBtn = $("postnl_switch_pickup");
+        switchPickupBtn.stopObserving('click');
+        switchPickupBtn.observe("click", switchPickup);
 
-    Event.observe(window, "resize", function() {
-        window.siteWidth = $("onestepcheckout-form").offsetWidth;
-        setSiteWidth();
-
-        if ($("postnl_switch_delivery").hasClassName('active') && window.innerWidth < 952) {
-            switchDelivery();
-        } else {
-            switchPickup();
-        }
-    });
-
-    var switchDeliveryBtn = $("postnl_switch_delivery");
-    switchDeliveryBtn.stopObserving('click');
-    switchDeliveryBtn.observe("click", switchDelivery);
-
-    var switchPickupBtn = $("postnl_switch_pickup");
-    switchPickupBtn.stopObserving('click');
-    switchPickupBtn.observe("click", switchPickup);
+        document.stopObserving('postnl:selectDeliveryOption');
+        document.observe('postnl:selectDeliveryOption', function() {
+            if (getComputedStyle($('responsive_switch')).display != 'none') {
+                deliveryOptions.saveOscOptions();
+            }
+        });
+    <?php endif; ?>
     //]]>
 </script>

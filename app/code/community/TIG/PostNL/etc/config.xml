@@ -1041,7 +1041,7 @@
                             <responsive>css/TIG/PostNL/deliveryoptions/mediaqueries.css</responsive>
                         </onepage>
                         <onestepcheckout>
-                            <responsive>css/TIG/PostNL/deliveryoptions/mediaqueries.css</responsive>
+                            <responsive>css/TIG/PostNL/deliveryoptions/onestepcheckout_mediaqueries.css</responsive>
                         </onestepcheckout>
                     </files>
                 </default>
@@ -1052,11 +1052,11 @@
                     <files>
                         <onepage>
                             <main>css/TIG/PostNL/deliveryoptions/neutral.css</main>
-                            <responsive>css/TIG/PostNL/deliveryoptions/neutral_mediaqueries.css</responsive>
+                            <responsive>css/TIG/PostNL/deliveryoptions/mediaqueries.css</responsive>
                         </onepage>
                         <onestepcheckout>
                             <main>css/TIG/PostNL/deliveryoptions/onestepcheckout_neutral.css</main>
-                            <responsive>css/TIG/PostNL/deliveryoptions/neutral_mediaqueries.css</responsive>
+                            <responsive>css/TIG/PostNL/deliveryoptions/onestepcheckout_mediaqueries.css</responsive>
                         </onestepcheckout>
                     </files>
                 </neutral>

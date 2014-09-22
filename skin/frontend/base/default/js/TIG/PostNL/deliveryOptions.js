@@ -1161,6 +1161,7 @@ PostnlDeliveryOptions.prototype = {
                 }
 
                 document.fire('postnl:selectTimeframe');
+                document.fire('postnl:selectDeliveryOption');
                 timeframe.select();
             } else {
                 timeframe.unSelect();
@@ -1227,6 +1228,7 @@ PostnlDeliveryOptions.prototype = {
                     }
 
                     document.fire('postnl:selectLocation');
+                    document.fire('postnl:selectDeliveryOption');
 
                     if (this.debug) {
                         console.log('Delivery location selected:', location);
@@ -2123,10 +2125,10 @@ PostnlDeliveryOptions.Map = new Class.create({
         $('add_location').observe('click', this.openAddLocationWindow.bind(this));
         $('close_popup').observe('click', this.closeAddLocationWindow.bind(this));
         $('postnl_back_link').observe('click', this.closeAddLocationWindow.bind(this));
-        $('search_button').observe('click', this.addressSearch.bind(this));
-        $('search_field').observe('keydown', this.addressSearch.bind(this));
-        $('responsive_search_button').observe('click', this.addressSearch.bind(this));
-        $('responsive_search_field').observe('keydown', this.addressSearch.bind(this));
+        $('search_button').observe('click', this.addressSearch.bindAsEventListener(this, 'search_field'));
+        $('search_field').observe('keydown', this.addressSearch.bindAsEventListener(this, 'search_field'));
+        $('responsive_search_button').observe('click', this.addressSearch.bindAsEventListener(this, 'responsive_search_field'));
+        $('responsive_search_field').observe('keydown', this.addressSearch.bindAsEventListener(this, 'responsive_search_field'));
         $('location-details-close').observe('click', this.closeLocationInfoWindow.bind(this));
         this.getSaveButton().observe('click', this.saveLocation.bind(this));
         Event.observe(this.getOptions().scrollbarTrack, 'mouse:wheel', this.scrollbar.boundMouseWheelEvent);
@@ -2321,10 +2323,11 @@ PostnlDeliveryOptions.Map = new Class.create({
      * Search for an address. The address can be any value, but a postcode or street name is recommended.
      *
      * @param {Event} event
+     * @param {String} searchField
      *
      * @returns {PostnlDeliveryOptions.Map}
      */
-    addressSearch : function(event) {
+    addressSearch : function(event, searchField) {
         /**
          * If this event was triggered by a keypress, we want to ignore any except the return key.
          */
@@ -2351,7 +2354,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             event.stop();
         }
 
-        var address = $('search_field').getValue();
+        var address = $(searchField).getValue();
         if (!address) {
             return this;
         }
