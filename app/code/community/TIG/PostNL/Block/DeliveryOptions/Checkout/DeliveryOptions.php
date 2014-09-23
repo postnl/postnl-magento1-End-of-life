@@ -36,11 +36,19 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
- * @method string                                                    getMethodName()
  * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setStreetnameField(int $value)
  * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setHousenumberField(int $value)
- * @method boolean                                                   hasTaxDisplayType()
  * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setTaxDisplayType(int $value)
+ * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setMethodName(string $value)
+ * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setMethodRate(float $value)
+ * @method TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions setMethodCode(string $value)
+ *
+ * @method boolean                                                   hasTaxDisplayType()
+ * @method boolean                                                   hasMethodName()
+ * @method boolean                                                   hasMethodRate()
+ * @method boolean                                                   hasMethodCode()
+ *
+ * @method Mage_Sales_Model_Quote_Address_Rate                       getRate()
  */
 class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_PostNL_Block_DeliveryOptions_Template
 {
@@ -53,6 +61,11 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      * Xpath to 'allow_streetview' setting.
      */
     const XPATH_ALLOW_STREETVIEW = 'postnl/delivery_options/allow_streetview';
+
+    /**
+     * Shipping method code used by PostNL matrix rate.
+     */
+    const POSTNL_MATRIX_RATE_CODE = 'postnl_matrixrate';
 
     /**
      * Currently selected shipping address.
@@ -80,6 +93,73 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         $this->_shippingAddress = $shippingAddress;
 
         return $this;
+    }
+
+    /**
+     * Get the current shipping method's name.
+     *
+     * @return string
+     */
+    public function getMethodName()
+    {
+        if ($this->hasMethodName()) {
+            return $this->_getData('method_name');
+        }
+
+        $rate = $this->getRate();
+        if (!$rate) {
+            return '';
+        }
+
+        $methodCode = $this->getMethodCode();
+        $methodName = 's_method_' . $methodCode;
+
+        $this->setMethodName($methodName);
+        return $methodCode;
+    }
+
+    /**
+     * Get the current shipping method's rate.
+     *
+     * @return float|int
+     */
+    public function getMethodRate()
+    {
+        if ($this->hasMethodRate()) {
+            return $this->_getData('method_rate');
+        }
+
+        $rate = $this->getRate();
+        if (!$rate) {
+            return 0;
+        }
+
+        $methodRate = $rate->getPrice();
+
+        $this->setMethodRate($methodRate);
+        return $methodRate;
+    }
+
+    /**
+     * Get the current shipping method's code.
+     *
+     * @return string
+     */
+    public function getMethodCode()
+    {
+        if ($this->hasMethodCode()) {
+            return $this->_getData('method_code');
+        }
+
+        $rate = $this->getRate();
+        if (!$rate) {
+            return '';
+        }
+
+        $methodCode = $rate->getCode();
+
+        $this->setMethodCode($methodCode);
+        return $methodCode;
     }
 
     /**
@@ -240,6 +320,59 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Get either the evening or express fee as a float or int.
+     *
+     * @param string  $type
+     * @param boolean $includingTax
+     *
+     * @return float|int
+     */
+    public function getFee($type, $includingTax = false) {
+        switch ($type) {
+            case 'evening':
+                $fee = $this->getEveningFee(false, $includingTax);
+                break;
+            case 'express':
+                $fee = $this->getExpressFee(false, $includingTax);
+                break;
+            case 'pakje_gemak':
+                $fee = $this->getPakjeGemakFee(false, $includingTax);
+                break;
+            default:
+                return 0;
+        }
+
+        return $fee;
+    }
+
+    /**
+     * Get either the evening or the express fee as a currency value.
+     *
+     * @param string  $type
+     * @param boolean $includingTax
+     *
+     * @return string
+     */
+    public function getFeeText($type, $includingTax = false)
+    {
+        switch ($type) {
+            case 'evening':
+                $feeText = $this->getEveningFee(true, $includingTax);
+                break;
+            case 'express':
+                $feeText = $this->getExpressFee(true, $includingTax);
+                break;
+            case 'pakje_gemak':
+                $feeText = $this->getPakjeGemakFee(true, $includingTax);
+                break;
+            default:
+                return 0;
+        }
+
+        return $feeText;
+    }
+
+    /**
      * Get the fee charged for evening timeframes.
      *
      * @param boolean $formatted
@@ -266,50 +399,37 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
-     * Get either the evening or express fee as a float or int.
+     * Get the fee for PakjeGemak locations. This is the difference between the current shipping rate and the shipping
+     * rate specifically for parcel.
      *
-     * @param string  $type
+     * This method is only applicable for buspakje shipments where PakjeGemak locations are also allowed.
+     *
+     * @param boolean $formatted
      * @param boolean $includingTax
      *
-     * @return float|int
+     * @return int
      */
-    public function getFee($type, $includingTax = false) {
-        switch ($type) {
-            case 'evening':
-                $fee = $this->getEveningFee(false, $includingTax);
-                break;
-            case 'express':
-                $fee = $this->getExpressFee(false, $includingTax);
-                break;
-            default:
-                return 0;
-        }
-
-        return $fee;
-    }
-
-    /**
-     * Get either the evening or the express fee as a currency value.
-     *
-     * @param string  $type
-     * @param boolean $includingTax
-     *
-     * @return string
-     */
-    public function getFeeText($type, $includingTax = false)
+    public function getPakjeGemakFee($formatted = false, $includingTax = true)
     {
-        switch ($type) {
-            case 'evening':
-                $feeText = $this->getEveningFee(true, $includingTax);
-                break;
-            case 'express':
-                $feeText = $this->getExpressFee(true, $includingTax);
-                break;
-            default:
-                return 0;
+        if (!$this->getIsBuspakje()) {
+            return 0;
         }
 
-        return $feeText;
+        if (!$this->canUsePakjeGemak()
+            && !$this->canUsePakjeGemakExpress()
+            && !$this->canUsePakketAutomaat()
+        ) {
+            return 0;
+        }
+
+        $shippingMethod = $this->getMethodCode();
+        if (self::POSTNL_MATRIX_RATE_CODE !== $shippingMethod) {
+            return 0;
+        }
+
+        $currentRate = $this->getMethodRate();
+
+        return Mage::helper('postnl/deliveryOptions')->getPakjeGemakFee($currentRate, $formatted, $includingTax);
     }
 
     /**
@@ -468,6 +588,17 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Check if using the responsive design is allowed.
+     *
+     * @return bool
+     */
+    public function canUseResponsive()
+    {
+        $canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive();
+        return $canUseResponsive;
+    }
+
+    /**
      * Checks whether the current theme uses cufon.
      *
      * @return boolean
@@ -495,6 +626,17 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         }
 
         return false;
+    }
+
+    /**
+     * Check whether the 'only_stated_address' option can be shown.
+     *
+     * @return boolean
+     */
+    public function canShowOnlyStatedAddressOption()
+    {
+        $canShowOnlyStatedAddressOptions = Mage::helper('postnl/deliveryOptions')->canShowOnlyStatedAddressOption();
+        return $canShowOnlyStatedAddressOptions;
     }
 
     /**

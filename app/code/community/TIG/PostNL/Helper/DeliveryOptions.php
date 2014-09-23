@@ -128,21 +128,37 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getEveningFee($formatted = false, $includingTax = true, $convert = true)
     {
-        $storeId = Mage::app()->getStore()->getId();
+        $registryKey = 'postnl_evening_fee';
 
-        $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
+        if ($includingTax) {
+            $registryKey .= '_incl';
+        }
 
-        $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted, false);
+        if (Mage::registry($registryKey) !== null) {
+            $price = Mage::registry($registryKey);
+        } else {
+            $storeId = Mage::app()->getStore()->getId();
 
-        if ($price > self::MAX_FEE) {
-            $price = 0;
+            $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
+
+            $price = $this->getPriceWithTax($eveningFee, $includingTax, false, false);
+
+            if ($price > self::MAX_FEE) {
+                $price = 0;
+            }
+
+            Mage::register($registryKey, $price);
         }
 
         if ($convert) {
             $quote = $this->getQuote();
             $store = $quote->getStore();
 
-            $price = $store->convertPrice($price, $formatted, false);
+            $price = $store->convertPrice($price, false, false);
+        }
+
+        if ($formatted) {
+            $price = Mage::app()->getStore()->formatPrice($price, false);
         }
 
         return $price;
@@ -159,21 +175,87 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getExpressFee($formatted = false, $includingTax = true, $convert = true)
     {
-        $storeId = Mage::app()->getStore()->getId();
+        $registryKey = 'postnl_express_fee';
 
-        $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
+        if ($includingTax) {
+            $registryKey .= '_incl';
+        }
 
-        $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted, false);
+        if (Mage::registry($registryKey) !== null) {
+            $price = Mage::registry($registryKey);
+        } else {
+            $storeId = Mage::app()->getStore()->getId();
 
-        if ($price > self::MAX_FEE) {
-            $price = 0;
+            $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
+
+            $price = $this->getPriceWithTax($expressFee, $includingTax, false, false);
+
+            if ($price > self::MAX_FEE) {
+                $price = 0;
+            }
+
+            Mage::register($registryKey, $price);
         }
 
         if ($convert) {
             $quote = $this->getQuote();
             $store = $quote->getStore();
 
-            $price = $store->convertPrice($price, $formatted, false);
+            $price = $store->convertPrice($price, false, false);
+        }
+
+        if ($formatted) {
+            $price = Mage::app()->getStore()->formatPrice($price, false);
+        }
+
+        return $price;
+    }
+
+    /**
+     * Get the fee for PakjeGemak locations. This is only applicable to buspakje orders.
+     *
+     * @param float   $currentRate
+     * @param boolean $formatted
+     * @param boolean $includingTax
+     * @param boolean $convert
+     *
+     * @return float|int
+     */
+    public function getPakjeGemakFee($currentRate, $formatted = false, $includingTax = true, $convert = true)
+    {
+        $registryKey = 'postnl_pakje_gemak_fee';
+
+        if ($includingTax) {
+            $registryKey .= '_incl';
+        }
+
+        if (Mage::registry($registryKey) !== null) {
+            $price = Mage::registry($registryKey);
+        } else {
+            $pakjeGemakShippingRate = Mage::helper('postnl/carrier')->getParcelShippingRate($this->getQuote());
+            if (!$pakjeGemakShippingRate) {
+                return 0;
+            }
+
+            $pakjeGemakShippingRate = $pakjeGemakShippingRate->getPrice();
+
+            $difference = $pakjeGemakShippingRate - $currentRate;
+
+            $price = $this->getPriceWithTax($difference, $includingTax, false, false);
+
+            Mage::register($registryKey, $price);
+        }
+
+        if ($convert) {
+            $quote = $this->getQuote();
+            $store = $quote->getStore();
+
+            $price = $store->convertPrice($price, false, false);
+        }
+
+
+        if ($formatted) {
+            $price = Mage::app()->getStore()->formatPrice($price, false);
         }
 
         return $price;
@@ -220,13 +302,17 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             }
         }
 
-        $price = $this->getPriceWithTax($fee, $includingTax, $formatted, false);
+        $price = $this->getPriceWithTax($fee, $includingTax, false, false);
 
         if ($convert) {
             $quote = $this->getQuote();
             $store = $quote->getStore();
 
-            $price = $store->convertPrice($price, $formatted, false);
+            $price = $store->convertPrice($price, false, false);
+        }
+
+        if ($formatted) {
+            $price = Mage::app()->getStore()->formatPrice($price, false);
         }
 
         return $price;
@@ -257,7 +343,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             //no default
         }
 
-        $price = $this->getPriceWithTax($fee, $includingTax, $formatted, false);
+        $price = $this->getPriceWithTax($fee, $includingTax, false, false);
 
         if ($price > 2) {
             $price = 0;
@@ -267,7 +353,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $quote = $this->getQuote();
             $store = $quote->getStore();
 
-            $price = $store->convertPrice($price, $formatted, false);
+            $price = $store->convertPrice($price, false, false);
+        }
+
+        if ($formatted) {
+            $price = Mage::app()->getStore()->formatPrice($price, false);
         }
 
         return $price;
@@ -2269,7 +2359,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * This shipment cannot be used for buspakje shipments.
          */
-        if ($this->quoteIsBuspakje($quote) && !$this->canShowDeliveryDaysForBuspakje($quote)) {
+        if ($this->quoteIsBuspakje($quote) && !$this->canShowAllDeliveryOptionsForBuspakje($quote)) {
             Mage::register($registryKey, false);
             return false;
         }
