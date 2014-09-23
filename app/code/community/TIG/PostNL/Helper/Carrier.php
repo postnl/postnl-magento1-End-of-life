@@ -48,6 +48,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      */
     const POSTNL_FLATRATE_METHOD  = 'flatrate';
     const POSTNL_TABLERATE_METHOD = 'tablerate';
+    const POSTNL_MATRIX_METHOD    = 'matrixrate';
 
     /**
      * Localised track and trace base URL's.
@@ -220,6 +221,9 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             case 'table':
                 $shippingMethod = $carrier . '_' . self::POSTNL_TABLERATE_METHOD;
                 break;
+            case 'matrix':
+                $shippingMethod = $carrier . '_' . self::POSTNL_MATRIX_METHOD;
+                break;
             default:
                 throw new TIG_PostNL_Exception(
                     $this->__('Invalid rate type requested: %s', $rateType),
@@ -229,6 +233,96 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
 
         Mage::register('current_postnl_shipping_method', $shippingMethod);
         return $shippingMethod;
+    }
+
+    /**
+     * Get a shipping rate for a parcel only.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return Mage_Shipping_Model_Rate_Result_Method|false
+     */
+    public function getParcelShippingRate(Mage_Sales_Model_Quote $quote)
+    {
+        $registryKey = 'postnl_parcel_shipping_rate_quote_id_' . $quote->getId();
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        $shippingAddress = $quote->getShippingAddress();
+        if (!$shippingAddress) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        $store = $quote->getStore();
+
+        /** @var $request Mage_Shipping_Model_Rate_Request */
+        $request = Mage::getModel('shipping/rate_request');
+        $request->setAllItems($shippingAddress->getAllItems());
+        $request->setDestCountryId($shippingAddress->getCountryId());
+        $request->setDestRegionId($shippingAddress->getRegionId());
+        $request->setDestRegionCode($shippingAddress->getRegionCode());
+
+        /**
+         * need to call getStreet with -1
+         * to get data in string instead of array
+         */
+        $request->setDestStreet($shippingAddress->getStreet($shippingAddress::DEFAULT_DEST_STREET));
+        $request->setDestCity($shippingAddress->getCity());
+        $request->setDestPostcode($shippingAddress->getPostcode());
+        $request->setPackageValue($shippingAddress->getBaseSubtotal());
+        $packageValueWithDiscount = $shippingAddress->getBaseSubtotalWithDiscount();
+        $request->setPackageValueWithDiscount($packageValueWithDiscount);
+        $request->setPackageWeight($shippingAddress->getWeight());
+        $request->setPackageQty($shippingAddress->getItemQty());
+
+        /**
+         * Need for shipping methods that use insurance based on price of physical products
+         */
+        $packagePhysicalValue = $shippingAddress->getBaseVirtualAmount();
+        $request->setPackagePhysicalValue($packagePhysicalValue);
+
+        $request->setFreeMethodWeight($shippingAddress->getFreeMethodWeight());
+
+        $request->setStoreId($store->getId());
+        $request->setWebsiteId($store->getWebsiteId());
+        $request->setFreeShipping($shippingAddress->getFreeShipping());
+        /**
+         * Currencies need to convert in free shipping
+         */
+        $request->setBaseCurrency($store->getBaseCurrency());
+        $request->setPackageCurrency($store->getCurrentCurrency());
+        $request->setLimitCarrier($shippingAddress->getLimitCarrier());
+
+        $request->setBaseSubtotalInclTax(
+            $shippingAddress->getBaseSubtotalInclTax() + $shippingAddress->getBaseExtraTaxAmount()
+        );
+        $request->setParcelType('regular');
+
+        $result = Mage::getResourceModel('postnl_carrier/matrixrate')->getRate($request);
+        if (!$result) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        $result = Mage::getModel('shipping/shipping')
+                     ->collectCarrierRates('postnl', $request)
+                     ->getResult();
+
+        $rates = $result->getAllRates();
+        if (empty($rates)) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * Return the first rate found (there should only be 1).
+         */
+        $rate = $rates[0];
+
+        Mage::register($registryKey, $rate);
+        return $rate;
     }
 
     /**
@@ -274,16 +368,17 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Constructs a PostNL track & trace url based on a barcode and the destination of the package (country and zipcode)
+     * Constructs a PostNL track & trace url based on a barcode and the destination of the package (country and
+     * zipcode).
      *
-     * @param string $barcode
-     * @param mixed $destination An array or object containing the shipment's destination data
-     * @param boolean | string $lang
-     * @param boolean $forceNl
+     * @param string              $barcode
+     * @param array|Varien_Object $destination An array or object containing the shipment's destination data.
+     * @param boolean|string      $lang
+     * @param boolean             $forceNl
      *
      * @return string
      */
-    public function getBarcodeUrl($barcode, $destination = false, $lang = false, $forceNl = false)
+    public function getBarcodeUrl($barcode, $destination, $lang = false, $forceNl = false)
     {
         $countryCode = null;
         $postcode    = null;

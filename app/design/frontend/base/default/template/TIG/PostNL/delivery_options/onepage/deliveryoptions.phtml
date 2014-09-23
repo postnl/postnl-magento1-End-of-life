@@ -48,7 +48,7 @@
 <?php $_streetData              = $this->getStreetData(); ?>
 <?php $_housenumber             = $_streetData['housenumber']; ?>
 
-<?php $_canUseResponsive        = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
+<?php $_canUseResponsive        = $this->canUseResponsive(); ?>
 <?php $_canUsePakjeGemak        = $this->canUsePakjeGemak(); ?>
 
 <?php $_canUsePakjeGemakExpress = false; ?>
@@ -64,6 +64,7 @@
 <?php endif; ?>
 
 <?php $_canShowStatedAddressOnlyOption = Mage::helper('postnl/deliveryOptions')->canShowOnlyStatedAddressOption(); ?>
+<h1><?php echo $this->getFee('pakje_gemak', true); ?></h1>
 <div id="initial_loader" class="postnl-loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_delivery_options" style="display:none;">
     <div class="title">
@@ -157,10 +158,13 @@
         taxDisplayType         : <?php echo $this->getTaxDisplayType() ?>,
         eveningFeeIncl         : <?php echo $this->getFee('evening', true); ?>,
         eveningFeeExcl         : <?php echo $this->getFee('evening', false); ?>,
-        expressFeeIncl         : <?php echo $this->getFee('express', true); ?>,
-        expressFeeExcl         : <?php echo $this->getFee('express', false); ?>,
+        expressFeeIncl         : <?php echo $this->getFee('express', true) + $this->getFee('pakje_gemak', true); ?>,
+        expressFeeExcl         : <?php echo $this->getFee('express', false) + $this->getFee('pakje_gemak', false); ?>,
+        pakjeGemakFeeIncl      : <?php echo $this->getFee('pakje_gemak', true); ?>,
+        pakjeGemakFeeExcl      : <?php echo $this->getFee('pakje_gemak', false); ?>,
         eveningFeeText         : '<?php echo $this->getFeeText('evening', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
         expressFeeText         : '<?php echo $this->getFeeText('express', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
+        pakjeGemakFeeText      : '<?php echo $this->getFeeText('pakje_gemak', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
         allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
         allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
         allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,

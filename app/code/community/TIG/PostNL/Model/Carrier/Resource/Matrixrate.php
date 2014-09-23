@@ -389,7 +389,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         }
 
         // protect from duplicate
-        $hash = sprintf("%s-%d-%s-%F", $countryId, $regionId, $zipCode, $weight, $subtotal, $qty, $parcelType);
+        $hash = sprintf("%s-%d-%s-%F-%F-%d-%s", $countryId, $regionId, $zipCode, $weight, $subtotal, $qty, $parcelType);
         if (isset($this->_importUniqueHash[$hash])) {
             $this->_importErrors[] = Mage::helper('postnl')->__(
                 'Duplicate row #%s (country "%s", region/state "%s", zip "%s", weight "%s", subtotal "%s", quantity ' .

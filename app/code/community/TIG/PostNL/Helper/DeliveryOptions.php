@@ -180,6 +180,40 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
+     * Get the fee for PakjeGemak locations. This is only applicable to buspakje orders.
+     *
+     * @param float   $currentRate
+     * @param boolean $formatted
+     * @param boolean $includingTax
+     * @param boolean $convert
+     *
+     * @return float|int
+     */
+    public function getPakjeGemakFee($currentRate, $formatted = false, $includingTax = true, $convert = true)
+    {
+        $pakjeGemakShippingRate = Mage::helper('postnl/carrier')->getParcelShippingRate($this->getQuote());
+        if (!$pakjeGemakShippingRate) {
+            echo 'test';
+            return 0;
+        }
+
+        $pakjeGemakShippingRate = $pakjeGemakShippingRate->getPrice();
+
+        $difference = $pakjeGemakShippingRate - $currentRate;
+
+        $price = $this->getPriceWithTax($difference, $includingTax, $formatted, false);
+
+        if ($convert) {
+            $quote = $this->getQuote();
+            $store = $quote->getStore();
+
+            $price = $store->convertPrice($price, $formatted, false);
+        }
+
+        return $price;
+    }
+
+    /**
      * Get the fee charged for possible options saved to the PostNL order.
      *
      * @param TIG_PostNL_Model_Core_Order $postnlOrder
