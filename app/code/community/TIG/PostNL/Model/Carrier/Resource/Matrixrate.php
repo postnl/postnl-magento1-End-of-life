@@ -64,7 +64,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
          */
         $bind = array(
             ':website_id'  => (int) $request->getWebsiteId(),
-            ':country_id'  => $request->getDestCountryId(),
+            ':country_id'  => "%{$request->getDestCountryId()}%",
             ':region_id'   => (int) $request->getDestRegionId(),
             ':postcode'    => $request->getDestPostcode(),
             ':weight'      => $request->getPackageWeight(),
@@ -112,19 +112,19 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                  . implode(
                      ') OR (',
                      array(
-                         "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = :postcode",
-                         "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = ''",
+                         "dest_country_id LIKE :country_id AND dest_region_id = :region_id AND dest_zip = :postcode",
+                         "dest_country_id LIKE :country_id AND dest_region_id = :region_id AND dest_zip = ''",
                          /**
                           * Handle asterisk in dest_zip field.
                           */
-                         "dest_country_id = :country_id AND dest_region_id = :region_id AND dest_zip = '*'",
-                         "dest_country_id = :country_id AND dest_region_id = 0 AND dest_zip = '*'",
+                         "dest_country_id LIKE :country_id AND dest_region_id = :region_id AND dest_zip = '*'",
+                         "dest_country_id LIKE :country_id AND dest_region_id = 0 AND dest_zip = '*'",
                          "dest_country_id = '0' AND dest_region_id = :region_id AND dest_zip = '*'",
                          "dest_country_id = '0' AND dest_region_id = 0 AND dest_zip = '*'",
 
-                         "dest_country_id = :country_id AND dest_region_id = 0 AND dest_zip = ''",
-                         "dest_country_id = :country_id AND dest_region_id = 0 AND dest_zip = :postcode",
-                         "dest_country_id = :country_id AND dest_region_id = 0 AND dest_zip = '*'",
+                         "dest_country_id LIKE :country_id AND dest_region_id = 0 AND dest_zip = ''",
+                         "dest_country_id LIKE :country_id AND dest_region_id = 0 AND dest_zip = :postcode",
+                         "dest_country_id LIKE :country_id AND dest_region_id = 0 AND dest_zip = '*'",
                      )
                  )
                  . ')';
@@ -284,20 +284,27 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         }
 
         // validate country
-        if (isset($this->_importIso2Countries[$row[0]])) {
-            $countryId = $this->_importIso2Countries[$row[0]];
-        } elseif (isset($this->_importIso3Countries[$row[0]])) {
-            $countryId = $this->_importIso3Countries[$row[0]];
-        } elseif ($row[0] == '*' || $row[0] == '') {
-            $countryId = '0';
-        } else {
-            $this->_importErrors[] = Mage::helper('postnl')->__(
-                'Invalid country "%s" in row #%s.',
-                $row[0],
-                $rowNumber
-            );
-            return false;
+        $countries = explode(',', $row[0]);
+        $countryIds = array();
+        foreach ($countries as $country) {
+            $country = trim($country);
+            if (isset($this->_importIso2Countries[$country])) {
+                $countryIds[] = $this->_importIso2Countries[$country];
+            } elseif (isset($this->_importIso3Countries[$country])) {
+                $countryIds[] = $this->_importIso3Countries[$country];
+            } elseif ($country == '*' || $country == '') {
+                $countryIds[] = '0';
+            } else {
+                $this->_importErrors[] = Mage::helper('postnl')->__(
+                    'Invalid country "%s" in row #%s.',
+                    $country,
+                    $rowNumber
+                );
+
+                return false;
+            }
         }
+        $countryId = implode(',', $countryIds);
 
         // validate region
         if ($countryId != '0' && isset($this->_importRegions[$countryId][$row[1]])) {
