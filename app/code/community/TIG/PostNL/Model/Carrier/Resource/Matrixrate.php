@@ -81,13 +81,6 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         $parcelType = 'regular';
         if ($request->hasData('parcel_type')) {
             $parcelType = $request->getData('parcel_type');
-        } elseif ($request->getAllItems()) {
-            $item  = current($request->getAllItems());
-            $quote = $item->getQuote();
-
-            if (Mage::helper('postnl')->quoteIsBuspakje($quote)) {
-                $parcelType = 'letter_box';
-            }
         }
 
         $bind[':parcel_type'] = $parcelType;

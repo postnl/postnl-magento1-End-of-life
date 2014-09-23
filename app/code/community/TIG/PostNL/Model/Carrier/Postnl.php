@@ -450,6 +450,21 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $request->setPackageWeight($request->getFreeMethodWeight());
         $request->setPackageQty($oldQty - $freeQty);
 
+        /**
+         * Determine the parcel type.
+         */
+        if ($request->getAllItems()) {
+            $item  = current($request->getAllItems());
+            $quote = $item->getQuote();
+
+            $postnlOrder = Mage::getModel('postnl_core/order')->loadByQuote($quote);
+            if ($postnlOrder && $postnlOrder->getId() && $postnlOrder->isPakjeGemak()) {
+                $request->setParcelType('regular');
+            } elseif (Mage::helper('postnl')->quoteIsBuspakje($quote)) {
+                $request->setParcelType('letter_box');
+            }
+        }
+
         $result = Mage::getModel('shipping/rate_result');
         $rate = $this->getMatrixRate($request);
 

@@ -629,6 +629,17 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Check whether the 'only_stated_address' option can be shown.
+     *
+     * @return boolean
+     */
+    public function canShowOnlyStatedAddressOption()
+    {
+        $canShowOnlyStatedAddressOptions = Mage::helper('postnl/deliveryOptions')->canShowOnlyStatedAddressOption();
+        return $canShowOnlyStatedAddressOptions;
+    }
+
+    /**
      * Get whether this order is a buspakje order.
      *
      * @return bool

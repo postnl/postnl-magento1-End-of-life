@@ -97,9 +97,28 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
      */
     protected $_eventPrefix = 'postnl_order';
 
+    /**
+     * PostNL order types considered to be 'PakjeGemak';
+     *
+     * @var array
+     */
+    protected $_pakjeGemakTypes = array(
+        'PG',
+        'PGE',
+        'PA'
+    );
+
     public function _construct()
     {
         $this->_init('postnl_core/order');
+    }
+
+    /**
+     * @return array
+     */
+    public function getPakjeGemakTypes()
+    {
+        return $this->_pakjeGemakTypes;
     }
 
     /**
@@ -306,6 +325,36 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
 
         $this->load($orderId, 'order_id');
         return $this;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return $this
+     */
+    public function loadByQuote(Mage_Sales_Model_Quote $quote)
+    {
+        $quoteId = $quote->getId();
+        $this->load($quoteId, 'quote_id');
+
+        return $this;
+    }
+
+    /**
+     * Check if this order is a PakjeGemak order.
+     *
+     * @return boolean
+     */
+    public function isPakjeGemak()
+    {
+        $type = $this->getType();
+        $pakjeGemakTypes = $this->getPakjeGemakTypes();
+
+        if (in_array($type, $pakjeGemakTypes)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

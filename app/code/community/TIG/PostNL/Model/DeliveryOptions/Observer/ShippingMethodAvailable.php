@@ -161,10 +161,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
          *
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
-        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
+        $postnlOrder = Mage::getModel('postnl_core/order')->loadByQuote($quote);
         if ($postnlOrder->getId()) {
             $postnlOrder->setIsActive(false)
                         ->setShipmentCosts(0)
+                        ->setType(null)
                         ->save();
         }
 
