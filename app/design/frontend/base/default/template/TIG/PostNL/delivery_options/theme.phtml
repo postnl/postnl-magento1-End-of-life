@@ -39,10 +39,11 @@
  * @var TIG_PostNL_Block_DeliveryOptions_Theme $this
  */
 ?>
+<?php if ($this->canUseResponsive()): ?>
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl($this->getResponsiveThemeCssFile()); ?>" media="all"/>
+<?php endif; ?>
+
 <?php $_filePath = $this->getThemeCssFile(); ?>
 <?php if ($_filePath): ?>
     <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl($_filePath); ?>" media="all"/>
-<?php endif; ?>
-<?php if ($this->canUseResponsive()): ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl($this->getResponsiveThemeCssFile()); ?>" media="all"/>
 <?php endif; ?>
