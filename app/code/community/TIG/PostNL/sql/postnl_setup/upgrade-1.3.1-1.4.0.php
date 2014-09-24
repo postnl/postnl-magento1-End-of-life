@@ -90,7 +90,7 @@ if (!$conn->isTableExists($tableName)) {
               ), 'Website Id'
           )
           ->addColumn(
-              'dest_country_id', Varien_Db_Ddl_Table::TYPE_TEXT, null, array(
+              'dest_country_id', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
                   'nullable' => false,
                   'default'  => '0',
               ), 'Destination country ISO/2 or ISO/3 code'
