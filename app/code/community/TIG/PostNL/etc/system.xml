@@ -2440,6 +2440,9 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
                         </responsive>
                         <mijnpakket_login_active translate="label comment" module="postnl">
                             <label>Enable MijnPakket login</label>
@@ -2814,7 +2817,7 @@
                         <stated_address_header translate="label" module="postnl">
                             <label>If a customer is not home when a shipment is delivered, PostNL will try to deliver it to the neighbours instead and leave a note for the intended recipient. Using these settings you may allow the customer to choose whether they want to allow their order to be delieverd to their neighbours.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>260</sort_order>
+                            <sort_order>270</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2824,7 +2827,7 @@
                             <comment>Enable this option to show a checkbox on the checkout page with which the customer can choose to only send the shipment to the stated address.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>270</sort_order>
+                            <sort_order>280</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2833,7 +2836,7 @@
                             <label>Stated address only option checked by default</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>280</sort_order>
+                            <sort_order>290</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -2845,7 +2848,7 @@
                             <label>Stated address only fee</label>
                             <frontend_type>text</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>290</sort_order>
+                            <sort_order>300</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

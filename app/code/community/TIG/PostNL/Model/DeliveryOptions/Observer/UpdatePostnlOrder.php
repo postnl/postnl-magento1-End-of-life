@@ -77,7 +77,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         if ($shippingCountry != 'NL' || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
             $this->_removePakjeGemakAddress($order);
 
-            $postnlOrder->delete();
+            if ($postnlOrder && $postnlOrder->getId()) {
+                $postnlOrder->delete();
+            }
             return $this;
         }
 
