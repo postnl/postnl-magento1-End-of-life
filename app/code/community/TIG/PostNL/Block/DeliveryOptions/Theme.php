@@ -105,16 +105,18 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
     /**
      * Gets a css file path for the current theme.
      *
-     * @return string
+     * @return array
      */
-    public function getResponsiveThemeCssFile()
+    public function getResponsiveThemeCssFiles()
     {
+        $cssFiles = array();
+
         /**
          * @var Varien_Simplexml_Element $theme
          */
         $theme = $this->getCurrentTheme();
         if (!$theme) {
-            return '';
+            return $cssFiles;
         }
 
         /**
@@ -122,22 +124,29 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
          */
         $files = $theme->files;
         if (!$files) {
-            return '';
+            return $cssFiles;
         }
 
-        $file = '';
         if ($this->getIsOsc()
             && isset($files->onestepcheckout)
             && isset($files->onestepcheckout->responsive)
         ) {
-            $file = (string) $files->onestepcheckout->responsive;
+            /**
+             * @var Mage_Core_Model_Config_Element $cssFiles
+             */
+            $cssFiles = $files->onestepcheckout->responsive;
+            $cssFiles = $cssFiles->asArray();
         } elseif (isset($files->onepage)
             && isset($files->onepage->responsive)
         ) {
-            $file = (string) $files->onepage->responsive;
+            /**
+             * @var Mage_Core_Model_Config_Element $cssFiles
+             */
+            $cssFiles = $files->onepage->responsive;
+            $cssFiles = $cssFiles->asArray();
         }
 
-        return $file;
+        return $cssFiles;
     }
 
     /**
