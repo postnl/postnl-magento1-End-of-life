@@ -40,7 +40,10 @@
  */
 ?>
 <?php if ($this->canUseResponsive()): ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl($this->getResponsiveThemeCssFile()); ?>" media="all"/>
+    <?php $_responsiveFiles = $this->getResponsiveThemeCssFiles(); ?>
+    <?php foreach ($_responsiveFiles as $_responsiveFile): ?>
+        <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl($_responsiveFile); ?>" media="all"/>
+    <?php endforeach; ?>
 <?php endif; ?>
 
 <?php $_filePath = $this->getThemeCssFile(); ?>
