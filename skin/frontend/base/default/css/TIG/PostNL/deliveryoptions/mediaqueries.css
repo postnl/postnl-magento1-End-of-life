@@ -130,6 +130,10 @@
     .responsive-noscroll { overflow:hidden; }
 }
 
+@media only screen and (max-width: 399px) {
+    .responsive-location-results ul.location-filters li { float:none; }
+    .responsive-location-results .location-details .more-info .actions button.postnl-button { display:block; width:100%; }
+}
 
 /* Retina compatibility */
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and ( min-resolution: 192dpi), only screen and ( min-resolution: 2dppx) {
@@ -137,7 +141,6 @@
     .option-list .option .bkg,
     .option-list .location .bkg {
         background:none;
-        padding:0 !important;
     }
     .option-list .location {
         background:#666;
