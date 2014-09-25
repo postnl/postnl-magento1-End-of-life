@@ -35,16 +35,12 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @deprecated This file has been superseded by the data-upgrade-1.2.2-1.4.0.php file.
  */
 
 /**
  * @var TIG_PostNL_Model_Resource_Setup $installer
  */
 $installer = $this;
-
-set_time_limit(0);
 
 /**
  * A new ACL role has been added for the config page.
@@ -129,8 +125,18 @@ $installer->setOrderId()
               )
           )
           ->installPackingSlipItemColumns()
-          ->updateAttributeValues($simpleAttributesData, array(Mage_Catalog_Model_Product_Type::TYPE_SIMPLE))
-          ->updateAttributeValues($attributesData, $productTypes)
+          ->setProductAttributeUpdateCron(
+              array(
+                  array(
+                      $simpleAttributesData,
+                      array(Mage_Catalog_Model_Product_Type::TYPE_SIMPLE),
+                  ),
+                  array(
+                      $attributesData,
+                      $productTypes,
+                  )
+              )
+          )
           ->moveConfigSetting(
               'postnl/delivery_options/shipping_duration',
               'postnl/cif_labels_and_confirming/shipping_duration',

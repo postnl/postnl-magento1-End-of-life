@@ -35,17 +35,36 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- *
- * @var TIG_PostNL_Block_Adminhtml_LogNotification $this
- * @var TIG_PostNL_Helper_Data                     $_helper
  */
-?>
-<?php $_logsExceedSize = $this->logsExceedMaxSize(); ?>
-<?php if ($_logsExceedSize):?>
-    <?php $_helper = $this->helper('postnl'); ?>
-    <div class="notification-global">
-        <strong>[POSTNL-0187] <?php echo $this->__('The total size of all PostNL logs exceeds %.0fMB!', $this->getMaxLogSize() / 1024 / 1024); ?></strong>
-        <?php echo $this->__('We recommend you disable logging and remove these log files.') ?>
-        <a href="<?php echo $_helper->getErrorUrl('POSTNL-0187'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
-    </div>
-<?php endif;?>
+class TIG_PostNL_Block_Adminhtml_UpgradeNotification extends TIG_PostNL_Block_Adminhtml_Template
+{
+    /**
+     * Xpath to PostNL update product attribute cron expression.
+     */
+    const XPATH_POSTNL_UPDADE_PRODUCT_ATTRIBUTE_CRON_EXPR = 'crontab/jobs/postnl_update_product_attribute/schedule/cron_expr';
+
+    /**
+     * @var string
+     */
+    protected $_eventPrefix = 'postnl_adminhtml_upgradenotification';
+
+    /**
+     * Check to see if the PostNL extension is currently being upgraded.
+     *
+     * @return boolean
+     */
+    public function isUpgradeActive()
+    {
+        /**
+         * Check if the cron job has an expression. This will indicate if it is still working or if it has already
+         * finished.
+         */
+        $cronjob = Mage::getStoreConfig(self::XPATH_POSTNL_UPDADE_PRODUCT_ATTRIBUTE_CRON_EXPR);
+
+        if (empty($cronjob)) {
+            return false;
+        }
+
+        return true;
+    }
+}

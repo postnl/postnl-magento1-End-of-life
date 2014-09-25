@@ -492,6 +492,14 @@
                     get_save_billing_function(url_save_billing, url_set_methods, true)();
                 });
             });
+
+            /**
+             * When postcodecheck starts, show the OSC spinner so customers know to wait for new information.
+             */
+            document.stopObserving('postnl:postcodeCheckStart');
+            document.observe('postnl:postcodeCheckStart', function() {
+                $$('div.onestepcheckout-shipping-method-block')[0].update('<div class="loading-ajax">&nbsp;</div>');
+            });
         }
 
         /**
@@ -533,14 +541,6 @@
         document.observe('postnl:loadingFinished', function() {
             $('osc_initial_loader').hide();
             $('postnl_add_moment').show();
-        });
-
-        /**
-         * When postcodecheck starts, show the OSC spinner so customers know to wait for new information.
-         */
-        document.stopObserving('postnl:postcodeCheckStart');
-        document.observe('postnl:postcodeCheckStart', function() {
-            $$('div.onestepcheckout-shipping-method-block')[0].update('<div class="loading-ajax">&nbsp;</div>');
         });
 
         /**
