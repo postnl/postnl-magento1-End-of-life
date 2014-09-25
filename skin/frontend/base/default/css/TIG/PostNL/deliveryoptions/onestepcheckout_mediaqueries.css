@@ -1,9 +1,11 @@
 /* Additional Mediaqueries for OneStepCheckout =========================================== */
 @media screen and (min-width : 954px) {
     .responsive-switch-wrapper,
-    #postnl_responsive { display:none; }
+    #postnl_add_location_responsive,
+    #postnl_responsive,
     .responsive-hidden { display:none; }
     .responsive-noscroll { overflow:hidden; }
+    #postnl_add_location { display:block; }
 }
 
 @media screen and (max-width : 953px) {
