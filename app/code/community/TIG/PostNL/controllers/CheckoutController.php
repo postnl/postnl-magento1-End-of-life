@@ -607,7 +607,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
     }
 
     /**
-     * Checks if a quote is (still) valid
+     * Checks if a quote is (still) valid.
      *
      * @param Mage_Sales_Model_Quote $quote
      * @param boolean $addErrors
@@ -622,7 +622,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
 
         /**
-         * Check if the quote is active
+         * Check if the quote is active.
          */
         if (!$quote->getIsActive()) {
             if ($addErrors) {
@@ -636,7 +636,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
 
         /**
-         * Check if a valid PostNL order exists for this quote
+         * Check if a valid PostNL order exists for this quote.
          */
         if (!$postnlOrder->getIsActive()
             || !$postnlOrder->getId()
@@ -652,7 +652,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
 
         /**
-         * Make sure the cart hasnt changed since we started the checkout process
+         * Make sure the cart hasn't changed since we started the checkout process.
          */
         if (Mage::getSingleton('checkout/session')->getCartWasUpdated(true)) {
             if ($addErrors) {
@@ -666,7 +666,7 @@ class TIG_PostNL_CheckoutController extends Mage_Core_Controller_Front_Action
         }
 
         /**
-         * Check if the quote actually has any items
+         * Check if the quote actually has any items.
          */
         if (Mage::helper('checkout/cart')->getItemsCount() < 1) {
             if ($addErrors) {

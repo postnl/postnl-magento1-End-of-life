@@ -56,10 +56,10 @@ class TIG_PostNL_Block_Mijnpakket_Js extends TIG_PostNL_Block_Core_Template
     /**
      * Available URl's for PostNL's login API.
      */
-    const LIVE_BASE_URL            = 'https://mijnpakket.postnl.nl/';
-    const TEST_BASE_URL            = 'https://tppwscheckout-sandbox.e-id.nl/';
-    const LOGIN_JS_PATH            = 'Checkout2/Login.js';
-    const CHECKOUT_PREMIUM_JS_PATH = 'Checkout2/CheckoutPremium.js';
+    const LIVE_BASE_URL_XPATH            = 'postnl/delivery_options/mijnpakket_live_base_url';
+    const TEST_BASE_URL_XPATH            = 'postnl/delivery_options/mijnpakket_test_base_url';
+    const LOGIN_JS_PATH_XPATH            = 'postnl/delivery_options/mijnpakket_login_js_path';
+    const CHECKOUT_PREMIUM_JS_PATH_XPATH = 'postnl/delivery_options/mijnpakket_checkout_premium_js_path';
 
     /**
      * @return boolean
@@ -89,9 +89,9 @@ class TIG_PostNL_Block_Mijnpakket_Js extends TIG_PostNL_Block_Core_Template
 
         $isTestMode = $this->getIsTestMode();
         if ($isTestMode) {
-            $baseUrl = self::TEST_BASE_URL;
+            $baseUrl = Mage::getStoreConfig(self::TEST_BASE_URL_XPATH);
         } else {
-            $baseUrl = self::LIVE_BASE_URL;
+            $baseUrl = Mage::getStoreConfig(self::LIVE_BASE_URL_XPATH);
         }
 
         $this->setBaseUrl($baseUrl);
@@ -107,7 +107,7 @@ class TIG_PostNL_Block_Mijnpakket_Js extends TIG_PostNL_Block_Core_Template
     {
         $baseUrl = $this->getBaseUrl();
 
-        $url = $baseUrl . self::LOGIN_JS_PATH;
+        $url = $baseUrl . Mage::getStoreConfig(self::LOGIN_JS_PATH_XPATH);
 
         return $url;
     }
@@ -121,7 +121,7 @@ class TIG_PostNL_Block_Mijnpakket_Js extends TIG_PostNL_Block_Core_Template
     {
         $baseUrl = $this->getBaseUrl();
 
-        $url = $baseUrl . self::CHECKOUT_PREMIUM_JS_PATH;
+        $url = $baseUrl . Mage::getStoreConfig(self::CHECKOUT_PREMIUM_JS_PATH_XPATH);
 
         return $url;
     }

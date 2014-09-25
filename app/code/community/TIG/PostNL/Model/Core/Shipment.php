@@ -118,6 +118,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setLabels(array $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setPayment(Mage_Sales_Model_Order_Payment $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -140,6 +141,7 @@
  * @method bool                           hasIsBuspakjeShipment()
  * @method bool                           hasDefaultProductCode()
  * @method bool                           hasProductOption()
+ * @method bool                           hasPayment()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -378,6 +380,25 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->setOrder($order);
         return $order;
+    }
+
+    /**
+     * Retrieve the payment model associated with this shipment's order.
+     *
+     * @return Mage_Sales_Model_Order_Payment
+     */
+    public function getPayment()
+    {
+        if ($this->hasPayment()) {
+            return $this->_getData('payment');
+        }
+        $orderId = $this->getOrderId();
+
+        $payment = Mage::getModel('sales/order_payment')
+                       ->load($orderId, 'parent_id');
+
+        $this->setPayment($payment);
+        return $payment;
     }
 
     /**
@@ -1327,7 +1348,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * @var TIG_PostNL_Helper_DeliveryOptions $helper
          */
         $helper = $this->getHelper('deliveryOptions');
-        $deliveryDate = $helper->getDeliveryDate($this->getOrder()->getCreatedAt(), $this->getStoreId());
+        $orderDate = Mage::getSingleton('core/date')->date(null, $this->getOrder()->getCreatedAt());
+        $deliveryDate = $helper->getDeliveryDate($orderDate, $this->getStoreId());
 
         if ($deliveryDate) {
             return $deliveryDate;
@@ -1548,7 +1570,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If no delivery date is available, set the confirm date to today.
          */
         if (!$deliveryDate) {
-            $confirmDate = Mage::getModel('core/date')->gmtTimestamp();
+            $confirmDate = Mage::getSingleton('core/date')->gmtTimestamp();
 
             $this->setData('confirm_date', $confirmDate);
             return $this;
@@ -1558,9 +1580,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Calculate the confirm based on the delivery date.
          */
         $deliveryDate = new DateTime($deliveryDate);
-        $confirmDate = $deliveryDate->sub(new DateInterval('P1D'))->getTimestamp();
+        $confirmDate = clone $deliveryDate;
+        $confirmDate = $confirmDate->sub(new DateInterval('P1D'));
 
-        $this->setData('confirm_date', $confirmDate);
+        $this->setData('confirm_date', $confirmDate->getTimestamp());
         return $this;
     }
 
@@ -1948,8 +1971,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * @var Mage_Sales_Model_Order_Payment $payment
          */
-        $payment = Mage::getModel('sales/order_payment')
-                       ->load($this->getShipment()->getOrderId(), 'parent_id');
+        $payment = $this->getPayment();
         $paymentMethod = $payment->getMethod();
 
         if (in_array($paymentMethod, $codPaymentMethods)) {
@@ -3066,34 +3088,33 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $template = Mage::getStoreConfig(self::XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE, $storeId);
 
-
-        /**
-         * @var Mage_Sales_Model_Order $order
-         */
-        $shippingAddress = $this->getShippingAddress();
-        $shipment        = $this->getShipment();
-        $order           = $shipment->getOrder();
-
-        /** @noinspection PhpUndefinedMethodInspection */
-        $templateVariables = array(
-            'postnlshipment' => $this,
-            'barcode'        => $this->getMainBarcode(),
-            'barcode_url'    => $this->getBarcodeUrl(false),
-            'shipment'       => $shipment,
-            'order'          => $order,
-            'customer'       => $order->getCustomer(),
-            'quote'          => $order->getQuote(),
-        );
-
-        // Get the destination email addresses to send copies to
-        $copy       = Mage::getStoreConfigFlag(self::XPATH_EMAIL_COPY, $storeId);
-        $copyTo     = explode(',', Mage::getStoreConfig(self::XPATH_EMAIL_COPY_TO, $storeId));
-        $copyMethod = Mage::getStoreConfig(self::XPATH_EMAIL_COPY_METHOD, $storeId);
-
         try {
+            /**
+             * @var Mage_Sales_Model_Order $order
+             */
+            $shippingAddress = $this->getShippingAddress();
+            $shipment        = $this->getShipment();
+            $order           = $this->getOrder();
+
+            /** @noinspection PhpUndefinedMethodInspection */
+            $templateVariables = array(
+                'postnlshipment' => $this,
+                'barcode'        => $this->getMainBarcode(),
+                'barcode_url'    => $this->getBarcodeUrl(false),
+                'shipment'       => $shipment,
+                'order'          => $order,
+                'customer'       => $order->getCustomer(),
+                'quote'          => $order->getQuote(),
+            );
+
+            // Get the destination email addresses to send copies to
+            $copy       = Mage::getStoreConfigFlag(self::XPATH_EMAIL_COPY, $storeId);
+            $copyTo     = explode(',', Mage::getStoreConfig(self::XPATH_EMAIL_COPY_TO, $storeId));
+            $copyMethod = Mage::getStoreConfig(self::XPATH_EMAIL_COPY_METHOD, $storeId);
+
             $mailer = Mage::getModel('core/email_template_mailer');
             $emailInfo = Mage::getModel('core/email_info');
-            $emailInfo->addTo($this->getShipment()->getOrder()->getCustomerEmail(), $shippingAddress->getName());
+            $emailInfo->addTo($order->getCustomerEmail(), $shippingAddress->getName());
 
             if ($copy && !empty($copyTo) && $copyMethod == 'bcc') {
                 foreach ($copyTo as $email) {
@@ -3492,9 +3513,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Get the selected product code for the current shipment's shipment type.
          */
         $shipmentType .= '_options';
-        if (array_key_exists($shipmentType, $codes)) {
+        if (isset($codes[$shipmentType])) {
             return $codes[$shipmentType];
-        } elseif (array_key_exists('product_option', $codes)) {
+        } elseif (isset($codes['product_option'])) {
             return $codes['product_option'];
         }
 
@@ -3525,8 +3546,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * Check if the product code is allowed.
          */
         if (!in_array($productCode, $allowedProductCodes)) {
+            $options = Mage::getSingleton('postnl_core/system_config_source_allProductOptions')->getOptions();
+            $productName = $cifHelper->__($options[$productCode]['label']);
+
             throw new TIG_PostNL_Exception(
-                $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
+                $cifHelper->__(
+                    "Product option '%s' (%s) is not allowed for this shipment.", $productName, $productCode
+                ),
                 'POSTNL-0078'
             );
         }
@@ -3546,8 +3572,13 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         if (!$shippingAddress
             || !in_array($shippingAddress->getCountryId(), $allowedCountries)
         ) {
+            $options = Mage::getSingleton('postnl_core/system_config_source_allProductOptions')->getOptions();
+            $productName = $cifHelper->__($options[$productCode]['label']);
+
             throw new TIG_PostNL_Exception(
-                $cifHelper->__('Product code %s is not allowed for this shipment.', $productCode),
+                $cifHelper->__(
+                    "Product option '%s' (%s) is not allowed for this shipment.", $productName, $productCode
+                ),
                 'POSTNL-0078'
             );
         }

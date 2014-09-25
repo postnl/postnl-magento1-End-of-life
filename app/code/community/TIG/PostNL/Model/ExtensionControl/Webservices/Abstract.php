@@ -41,7 +41,7 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
     /**
      * Wsdl location
      */
-    const WEBSERVICE_WSDL_URL = 'http://api.tigpostnl.nl/soap?wsdl';
+    const WEBSERVICE_WSDL_URL_XPATH = 'postnl/general/webservice_wsdl_url';
 
     /**
      * Check if the required PHP extensions are installed.
@@ -94,7 +94,7 @@ abstract class TIG_PostNL_Model_ExtensionControl_Webservices_Abstract extends Va
     public function call($method, $soapParams)
     {
         try {
-            $wsdl = self::WEBSERVICE_WSDL_URL;
+            $wsdl = Mage::getStoreConfig(self::WEBSERVICE_WSDL_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
 
             /**
              * Array of soap options used when connecting to CIF

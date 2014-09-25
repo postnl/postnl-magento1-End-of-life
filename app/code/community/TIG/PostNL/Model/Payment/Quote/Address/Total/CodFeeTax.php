@@ -83,7 +83,7 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
             return $this;
         }
 
-        if (!$address->getPostnlCodFee() || !$address->getBasePostnlCodFee()) {
+        if ($address->getPostnlCodFee() < 0.0001 || $address->getBasePostnlCodFee() < 0.0001) {
             return $this;
         }
 
@@ -142,8 +142,8 @@ class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFeeTax
                 ->setPostnlCodFeeTax($feeTax)
                 ->setBasePostnlCodFeeTax($baseFeeTax);
 
-        $address->addTotalAmount('nominal_tax', $feeTax);
-        $address->addBaseTotalAmount('nominal_tax', $baseFeeTax);
+        $address->addTotalAmount('postnl_cod_fee_tax', $feeTax);
+        $address->addBaseTotalAmount('postnl_cod_fee_tax', $baseFeeTax);
 
         $quote->setPostnlCodFeeTax($feeTax)
               ->setBasePostnlCodFeeTax($baseFeeTax);

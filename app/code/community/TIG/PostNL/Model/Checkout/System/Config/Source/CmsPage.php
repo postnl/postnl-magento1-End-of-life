@@ -44,7 +44,7 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
     protected $_options;
 
     /**
-     * Get the stored options array
+     * Get the stored options array.
      *
      * @return array
      */
@@ -54,7 +54,7 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
     }
 
     /**
-     * Store the options array
+     * Store the options array.
      *
      * @param array $options
      *
@@ -68,7 +68,7 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
     }
 
     /**
-     * Checks if an option array has been stored
+     * Checks if an option array has been stored.
      *
      * @return boolean
      */
@@ -83,7 +83,7 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
     }
 
     /**
-     * Get an option array of all CMS pages available
+     * Get an option array of all CMS pages available.
      *
      * @return array
      */
@@ -95,7 +95,10 @@ class TIG_PostNL_Model_Checkout_System_Config_Source_CmsPage
         }
 
         $options = array(
-            '' => Mage::helper('postnl')->__('-- none --'),
+            array(
+                'value' => '',
+                'label' => Mage::helper('postnl')->__('-- none --'),
+            )
         );
 
         /**

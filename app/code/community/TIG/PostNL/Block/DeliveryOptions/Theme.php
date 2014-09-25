@@ -87,13 +87,74 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
             return '';
         }
 
-        if ($this->getIsOsc()) {
-            $file = (string) $files->onestepcheckout;
-        } else {
-            $file = (string) $files->onepage;
+        $file = '';
+        if ($this->getIsOsc()
+            && isset($files->onestepcheckout)
+            && isset($files->onestepcheckout->main)
+        ) {
+            $file = (string) $files->onestepcheckout->main;
+        } elseif (isset($files->onepage)
+            && isset($files->onepage->main)
+        ) {
+            $file = (string) $files->onepage->main;
         }
 
         return $file;
+    }
+
+    /**
+     * Gets a css file path for the current theme.
+     *
+     * @return array
+     */
+    public function getResponsiveThemeCssFiles()
+    {
+        $cssFiles = array();
+
+        /**
+         * @var Varien_Simplexml_Element $theme
+         */
+        $theme = $this->getCurrentTheme();
+        if (!$theme) {
+            return $cssFiles;
+        }
+
+        /**
+         * @var Varien_Simplexml_Element $files
+         */
+        $files = $theme->files;
+        if (!$files) {
+            return $cssFiles;
+        }
+
+        if ($this->getIsOsc()
+            && isset($files->onestepcheckout)
+            && isset($files->onestepcheckout->responsive)
+        ) {
+            /**
+             * @var Mage_Core_Model_Config_Element $cssFiles
+             */
+            $cssFiles = $files->onestepcheckout->responsive;
+            $cssFiles = $cssFiles->asArray();
+        } elseif (isset($files->onepage)
+            && isset($files->onepage->responsive)
+        ) {
+            /**
+             * @var Mage_Core_Model_Config_Element $cssFiles
+             */
+            $cssFiles = $files->onepage->responsive;
+            $cssFiles = $cssFiles->asArray();
+        }
+
+        return $cssFiles;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canUseResponsive()
+    {
+        return Mage::helper('postnl/deliveryOptions')->canUseResponsive();
     }
 
     /**
@@ -108,10 +169,6 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
         $helper = Mage::helper('postnl/deliveryOptions');
 
         if (!$helper->canUseDeliveryOptions($quote)) {
-            return '';
-        }
-
-        if (!$this->getThemeCssFile()) {
             return '';
         }
 

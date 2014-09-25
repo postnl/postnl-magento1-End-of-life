@@ -181,6 +181,14 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
             return $this;
         }
 
+        $postnlOrder = Mage::getModel('postnl_core/order');
+        $postnlOrder->load($address->getQuoteId(), 'quote_id');
+
+        $type = false;
+        if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
+            $type = $postnlOrder->getType();
+        }
+
         /**
          * @var Mage_Sales_Model_Quote_Address_Rate $rate
          */
@@ -191,13 +199,7 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
 
             $price = $rate->getPrice();
 
-            $postnlOrder = Mage::getModel('postnl_core/order');
-
-            $postnlOrder->load($address->getQuoteId(), 'quote_id');
-
-            if ($postnlOrder->getId() && $postnlOrder->getIsActive()) {
-                $type = $postnlOrder->getType();
-            } else {
+            if (!$type) {
                 $amountPrice = $address->getQuote()->getStore()->convertPrice($rate->getPrice(), false);
                 $this->_setAmount($amountPrice);
                 $this->_setBaseAmount($price);

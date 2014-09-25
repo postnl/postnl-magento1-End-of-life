@@ -478,7 +478,9 @@
 
     <frontend>
         <secure_url>
-            <postnl_checkout>/postnl/checkout</postnl_checkout>
+            <postnl_checkout_summary>/postnl/checkout/summary/</postnl_checkout_summary>
+            <postnl_checkout_finishcheckout>/postnl/checkout/finishCheckout/</postnl_checkout_finishcheckout>
+            <postnl_checkout_cancel>/postnl/checkout/cancel/</postnl_checkout_cancel>
             <postnl_addressvalidation>/postnl/addressValidation</postnl_addressvalidation>
             <postnl_deliveryoptions>/postnl/deliveryOptions</postnl_deliveryoptions>
             <postnl_mijnpakket>/postnl/mijnpakket</postnl_mijnpakket>
@@ -698,7 +700,14 @@
         		<email/>
                 <unique_key/>
         		<private_key/>
-        	</general>
+                <webservice_wsdl_url>http://api.tigpostnl.nl/soap?wsdl</webservice_wsdl_url> <!-- URL of the TIG extension control system that is used for activating the extension -->
+        	    <changelog_url>http://kb.totalinternetgroup.nl/topic/38584893/</changelog_url> <!-- URL of the extension's changelog -->
+                <postnl_register_url>http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties</postnl_register_url> <!-- URL where new PostNL customers can register -->
+                <knowledgebase_url>http://kb.totalinternetgroup.nl</knowledgebase_url> <!-- URL of the TIG knowledgebase -->
+                <new_ticket_url>http://kb.totalinternetgroup.nl/ticket/form/new</new_ticket_url> <!-- URL where merchants can submit a support ticket -->
+                <installation_manual_url>http://kb.totalinternetgroup.nl/topic/39335103</installation_manual_url> <!-- URL to the extension's installation manual -->
+                <user_guide_url>http://kb.totalinternetgroup.nl/topic/44206406</user_guide_url> <!-- URL to the extension's user guide -->
+            </general>
         	<cif>
                 <mode>1</mode> <!-- Test mode -->
                 <customer_number>11223344</customer_number> <!-- Demo customer number -->
@@ -713,7 +722,14 @@
         		<use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
         		<global_barcode_type>CD</global_barcode_type> <!-- Demo barcode type -->
         		<global_barcode_range>1660</global_barcode_range> <!-- Demo barcode range -->
-        	</cif>
+        	    <wsdl_base_url>https://service.postnl.com/CIF/</wsdl_base_url> <!-- Base URL of CIF WSDL files -->
+        	    <test_wsdl_base_url>https://testservice.postnl.com/CIF_SB/</test_wsdl_base_url> <!-- Base URL of CIF sandbox WSDL files -->
+                <track_and_trace_nl_base_url>https://mijnpakket.postnl.nl/Inbox/Search?</track_and_trace_nl_base_url> <!-- Base URL for the Dutch track & trace page -->
+                <track_and_trace_gb_base_url>http://parcels-uk.tntpost.com/mytrackandtrace/trackandtrace.aspx?</track_and_trace_gb_base_url> <!-- Base URL for the UK track & trace page -->
+                <track_and_trace_de_base_url>http://parcels-de.tntpost.com/de/mytrackandtrace/TrackAndTrace.aspx?</track_and_trace_de_base_url> <!-- Base URL for the German track & trace page -->
+                <track_and_trace_fr_base_url>http://parcels-fr.tntpost.com/fr/mytrackandtrace/TrackAndTrace.aspx?</track_and_trace_fr_base_url> <!-- Base URL for the French track & trace page -->
+                <track_and_trace_int_base_url>http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?</track_and_trace_int_base_url> <!-- Base URL for the international track & trace page -->
+            </cif>
         	<cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
                 <weight_per_parcel>20000</weight_per_parcel> <!-- 20 kg -->
@@ -850,6 +866,7 @@
         	<delivery_options>
         	    <delivery_options_active>0</delivery_options_active> <!-- Delivery options are disabled -->
                 <theme>default</theme> <!-- Use the default PostNL theme -->
+                <responsive>0</responsive> <!-- Do not use the responsive design -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
                 <show_options_for_letter>0</show_options_for_letter> <!-- Do not show delivery options if the order's total weight is less than 2 kg -->
                 <show_options_for_backorders>0</show_options_for_backorders> <!-- Do not show delivery options if the order is not in stock -->
@@ -871,6 +888,14 @@
                 <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
                 <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
                 <show_mijnpakket_app_link>1</show_mijnpakket_app_link> <!-- Show the MijnPakket app link -->
+                <create_account_base_url>https://mijnpakket.postnl.nl/Register/RegisterFromWebshop?</create_account_base_url> <!-- Base URl for create MijnPakket account link -->
+                <mijnpakket_live_base_url>https://mijnpakket.postnl.nl/</mijnpakket_live_base_url> <!-- Base URL for MijnPakket in live mode -->
+                <mijnpakket_test_base_url>https://tppwscheckout-sandbox.e-id.nl/</mijnpakket_test_base_url> <!-- Base URL for MijnPakket in test mode -->
+                <mijnpakket_login_js_path>Checkout2/Login.js</mijnpakket_login_js_path> <!-- Path to MijnPakket login JS file -->
+                <mijnpakket_checkout_premium_js_path>Checkout2/CheckoutPremium.js</mijnpakket_checkout_premium_js_path> <!-- Path to MijnPakket Checkout premium JS file -->
+                <mijnpakket_login_btn_live_base_url>https://checkout.postnl.nl/</mijnpakket_login_btn_live_base_url> <!-- Base URL for MijnPakket login button in live mode -->
+                <mijnpakket_login_btn_test_base_url>https://tppcb-sandbox.e-id.nl/</mijnpakket_login_btn_test_base_url> <!-- Base URL for MijnPakket login button in test mode -->
+                <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
         	</delivery_options>
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
@@ -889,6 +914,12 @@
         	    <agree_conditions>1</agree_conditions> <!-- Customers must first agree to the webshop's terms and conditions -->
                 <contact_url/>
         	    <service_url/>
+                <checkout_button_test_base_url>https://tppcb-sandbox.e-id.nl/Button/Checkout</checkout_button_test_base_url> <!-- Base URL for PostNl Checkout button in test mode -->
+                <checkout_button_live_base_url>https://checkout.postnl.nl/Button/Checkout</checkout_button_live_base_url> <!-- Base URL for PostNl Checkout button -->
+                <test_checkout_js_url>https://tppwscheckout-sandbox.e-id.nl/Checkout2/Scripts/Checkout.js</test_checkout_js_url> <!-- URL for PostNL Checkout JS file in test mode -->
+                <live_checkout_js_url>https://mijnpakket.postnl.nl/Checkout2/Scripts/Checkout.js</live_checkout_js_url> <!-- URL for PostNL Checkout JS file -->
+                <test_checkout_premium_js_url>https://tppwscheckout-sandbox.e-id.nl/Checkout2/CheckoutPremium.js</test_checkout_premium_js_url> <!-- URL for PostNL Checkout premium JS file in test mode -->
+                <live_checkout_premium_js_url>https://mijnpakket.postnl.nl/Checkout2/CheckoutPremium.js</live_checkout_premium_js_url> <!-- URL for PostNL Checkout premium JS file -->
         	</checkout>
         	<checkout_payment_methods>
         	    <ideal>0</ideal> <!-- Do not use iDEAL -->
@@ -977,14 +1008,38 @@
                 <default translate="label" module="postnl">
                     <label>Default PostNL theme</label>
                     <use_cufon>1</use_cufon>
+                    <files>
+                        <onepage>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                            </responsive>
+                        </onepage>
+                        <onestepcheckout>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                                <osc>css/TIG/PostNL/deliveryoptions/onestepcheckout_mediaqueries.css</osc>
+                            </responsive>
+                        </onestepcheckout>
+                    </files>
                 </default>
                 <!-- An unbranded, white, gray and blue theme -->
                 <neutral translate="label" module="postnl">
                     <label>Neutral theme</label>
                     <use_cufon>1</use_cufon>
                     <files>
-                        <onepage>css/TIG/PostNL/deliveryoptions/neutral.css</onepage>
-                        <onestepcheckout>css/TIG/PostNL/deliveryoptions/onestepcheckout_neutral.css</onestepcheckout>
+                        <onepage>
+                            <main>css/TIG/PostNL/deliveryoptions/neutral.css</main>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                            </responsive>
+                        </onepage>
+                        <onestepcheckout>
+                            <main>css/TIG/PostNL/deliveryoptions/onestepcheckout_neutral.css</main>
+                            <responsive>
+                                <default>css/TIG/PostNL/deliveryoptions/mediaqueries.css</default>
+                                <osc>css/TIG/PostNL/deliveryoptions/onestepcheckout_mediaqueries.css</osc>
+                            </responsive>
+                        </onestepcheckout>
                     </files>
                 </neutral>
             </themes>

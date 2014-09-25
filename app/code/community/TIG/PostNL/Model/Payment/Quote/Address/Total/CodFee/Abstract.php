@@ -226,4 +226,17 @@ abstract class TIG_PostNL_Model_Payment_Quote_Address_Total_CodFee_Abstract exte
 
         return $baseFeeTax;
     }
+
+    /**
+     * Process model configuration array.
+     * This method can be used for changing models apply sort order
+     *
+     * @param   array $config
+     * @param   store $store
+     * @return  array
+     */
+    public function processConfigArray($config, $store)
+    {
+        return $config;
+    }
 }
