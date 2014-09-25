@@ -84,6 +84,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_SHIPPING_DAYS      = 'postnl/cif_labels_and_confirming/shipping_days';
 
     /**
+     * Xpath to the 'stated_address_only_checked' setting.
+     */
+    const XPATH_STATED_ADDRESS_ONLY_CHECKED = 'postnl/delivery_options/stated_address_only_checked';
+
+    /**
      * Xpath to the responsive design setting.
      */
     const XPATH_RESPONSIVE = 'postnl/delivery_options/responsive';
@@ -2291,7 +2296,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             /**
              * Check if these options are allowed for this specific quote.
              */
-            $canUseForQuote = $this->canShowOnlyStatedAddressOptionForQuote();
+            $canUseForQuote = $this->_canShowOnlyStatedAddressOptionForQuote();
 
             if (!$canUseForQuote) {
                 Mage::register($registryKey, false);
@@ -2330,7 +2335,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return bool
      */
-    protected function canShowOnlyStatedAddressOptionForQuote()
+    protected function _canShowOnlyStatedAddressOptionForQuote()
     {
         $quote = $this->getQuote();
 
@@ -2395,6 +2400,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         return true;
+    }
+
+    /**
+     * Check if the 'only_stated_address' option should be checked by default.
+     *
+     * @return bool
+     */
+    public function isOnlyStatedAddressOptionChecked()
+    {
+        $isOnlyStatedAddressOptionChecked = Mage::getStoreConfigFlag(
+            self::XPATH_STATED_ADDRESS_ONLY_CHECKED,
+            Mage::app()->getStore()->getId()
+        );
+
+        return $isOnlyStatedAddressOptionChecked;
     }
 
     /**
