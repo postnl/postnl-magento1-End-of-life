@@ -176,7 +176,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $output = $pdf->render();
 
             /**
-             * We need to check for warnings before the packing s;ip download response.
+             * We need to check for warnings before the packing slip download response.
              */
             $this->_checkForWarnings();
 

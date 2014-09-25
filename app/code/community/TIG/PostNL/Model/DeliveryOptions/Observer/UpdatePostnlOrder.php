@@ -212,7 +212,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
      * @return $this
      *
      * @event controller_action_postdispatch_checkout_onepage_saveShippingMethod
-     *        |controller_action_postdispatch_onestepcheckout_index_index
+     *        |controller_action_predispatch_onestepcheckout_ajax_set_methods_separate
      *
      * @observer checkout_shipping_method_save_options
      */
@@ -226,6 +226,9 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
          */
         $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
+        if (!$postnlOrder->getId()) {
+            $postnlOrder->setQuoteId($quote->getId());
+        }
 
         /**
          * Get all shipping methods that are considered to be PostNL.
@@ -240,6 +243,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         if ($shippingCountry != 'NL' || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
             $postnlOrder->setOptions(false)
                         ->save();
+
             return $this;
         }
 
@@ -247,7 +251,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * @var Mage_Core_Controller_Varien_Front $controller
          */
         $controller = $observer->getControllerAction();
-        $options    = $controller->getRequest()->getParam('s_method_' . $shippingMethod, array());
+        $options    = $controller->getRequest()->getParam($shippingMethod, array());
 
         $postnlOptions = false;
         if (isset($options['postnl'])) {

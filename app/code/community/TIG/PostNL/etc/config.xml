@@ -558,7 +558,7 @@
                     </checkout_shipping_method_save_options>
                 </observers>
             </controller_action_postdispatch_checkout_onepage_saveShippingMethod>
-            <controller_action_postdispatch_onestepcheckout_index_index>
+            <controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
                 <observers>
                     <!-- Saves a selected PostNL options for OneStepCheckout. -->
                     <checkout_shipping_method_save_options>
@@ -567,7 +567,7 @@
                         <method>saveOptions</method>
                     </checkout_shipping_method_save_options>
                 </observers>
-            </controller_action_postdispatch_onestepcheckout_index_index>
+            </controller_action_predispatch_onestepcheckout_ajax_set_methods_separate>
         </events>
     </frontend>
 

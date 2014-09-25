@@ -199,16 +199,6 @@ class TIG_PostNL_Model_Carrier_Quote_Address_Total_Shipping
 
             $price = $rate->getPrice();
 
-            if (!$type) {
-                $amountPrice = $address->getQuote()->getStore()->convertPrice($rate->getPrice(), false);
-                $this->_setAmount($amountPrice);
-                $this->_setBaseAmount($price);
-                $shippingDescription = $rate->getCarrierTitle() . ' - ' . $rate->getMethodTitle();
-                $address->setShippingDescription(trim($shippingDescription, ' -'));
-
-                break;
-            }
-
             $includingTax = false;
             if (Mage::getSingleton('tax/config')->shippingPriceIncludesTax()) {
                 $includingTax = true;

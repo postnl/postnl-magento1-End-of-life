@@ -63,6 +63,11 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     const XPATH_ALLOW_STREETVIEW = 'postnl/delivery_options/allow_streetview';
 
     /**
+     * Xpath to the 'stated_address_only_checked' setting.
+     */
+    const XPATH_STATED_ADDRESS_ONLY_CHECKED = 'postnl/delivery_options/stated_address_only_checked';
+
+    /**
      * Shipping method code used by PostNL matrix rate.
      */
     const POSTNL_MATRIX_RATE_CODE = 'postnl_matrixrate';
@@ -637,6 +642,17 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     {
         $canShowOnlyStatedAddressOptions = Mage::helper('postnl/deliveryOptions')->canShowOnlyStatedAddressOption();
         return $canShowOnlyStatedAddressOptions;
+    }
+
+    /**
+     * Check if the 'only_stated_address' option should be checked.
+     *
+     * @return bool
+     */
+    public function isOnlyStatedAddressOptionChecked()
+    {
+        $isOnlyStatedAddressOptionChecked = Mage::helper('postnl/deliveryOptions')->isOnlyStatedAddressOptionChecked();
+        return $isOnlyStatedAddressOptionChecked;
     }
 
     /**
