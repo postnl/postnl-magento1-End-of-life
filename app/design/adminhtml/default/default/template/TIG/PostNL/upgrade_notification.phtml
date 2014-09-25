@@ -36,16 +36,19 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
- * @var TIG_PostNL_Block_Adminhtml_LogNotification $this
- * @var TIG_PostNL_Helper_Data                     $_helper
+ * @var TIG_PostNL_Block_Adminhtml_UpgradeNotification $this
+ * @var TIG_PostNL_Helper_Data                         $_helper
  */
 ?>
-<?php $_logsExceedSize = $this->logsExceedMaxSize(); ?>
-<?php if ($_logsExceedSize):?>
+<?php $_upgradeActive = $this->isUpgradeActive(); ?>
+<?php if ($_upgradeActive):?>
     <?php $_helper = $this->helper('postnl'); ?>
+    <?php $_errorUrl = $_helper->getErrorUrl('POSTNL-0198'); ?>
     <div class="notification-global">
-        <strong>[POSTNL-0187] <?php echo $this->__('The total size of all PostNL logs exceeds %.0fMB!', $this->getMaxLogSize() / 1024 / 1024); ?></strong>
-        <?php echo $this->__('We recommend you disable logging and remove these log files.') ?>
-        <a href="<?php echo $_helper->getErrorUrl('POSTNL-0187'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
+        <strong>[POSTNL-0187] <?php echo $this->__('The PostNL extension is currently being upgraded.'); ?></strong>
+        <?php echo $this->__('Depending on the number of products in your store, this could take several hours.'); ?>
+        <?php if ($_errorUrl): ?>
+            <a href="<?php echo $_helper->getErrorUrl('POSTNL-0198'); ?>" target="blank"><?php echo $this->__('Click here for more information from the TiG knowledgebase.') ?></a>
+        <?php endif; ?>
     </div>
 <?php endif;?>
