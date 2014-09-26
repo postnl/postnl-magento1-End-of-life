@@ -55,8 +55,6 @@
     <?php $_store = $this->getQuote()->getStore(); ?>
     <?php $_carrierHelper = Mage::helper('postnl/carrier'); ?>
     <?php $_deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions'); ?>
-    <?php $_canShowOnlyStatedAddressOption = $_deliveryOptionsHelper->canShowOnlyStatedAddressOption(); ?>
-    <?php $_isOnlyStatedAddressOptionChecked = $_deliveryOptionsHelper->isOnlyStatedAddressOptionChecked(); ?>
 
     <?php if ($_deliveryOptionsHelper->canUseDeliveryOptions($this->getQuote())
         && $_deliveryOptionsHelper->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
@@ -143,16 +141,6 @@
                                         <?php echo $this->getChild('postnl.osc.delivery.options')->setRate($_rate)->toHtml(); ?>
                                     </div>
                                     <?php $_deliveryOptionsShown = true; ?>
-                                <?php elseif ($_carrierHelper->isPostnlShippingMethod($_rate->getCode()) && $_canShowOnlyStatedAddressOption): ?>
-                                    </dt>
-                                    <dt>
-                                    <input type="checkbox" name="<?php echo $_rate->getCode(); ?>[postnl][only_stated_address]" id="<?php echo $_rate->getCode(); ?>_only_stated_address" value="1" class="checkbox postnl-only-stated-address" <?php if ($_isOnlyStatedAddressOptionChecked):?>checked="checked"<?php endif; ?>>
-                                    <label for="<?php echo $_rate->getCode(); ?>_only_stated_address">
-                                        <?php echo $_deliveryOptionsHelper->__('Do not deliver to neighbours'); ?>
-                                        <strong>
-                                            <span class="price"><?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
-                                        </strong>
-                                    </label>
                                 <?php endif; ?>
 
                            <?php endif ?>

@@ -102,7 +102,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
     }
 
     /**
-     * @return TIG_PostNL_Model_Core_Order
+     * @return TIG_PostNL_Model_Core_Order|false
      */
     public function getPostnlOrder()
     {
@@ -271,6 +271,9 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
     public function hasExtraOptions()
     {
         $postnlOrder = $this->getPostnlOrder();
+        if (!$postnlOrder || !$postnlOrder->getId()) {
+            return false;
+        }
 
         $hasOptions = $postnlOrder->hasOptions();
         return $hasOptions;

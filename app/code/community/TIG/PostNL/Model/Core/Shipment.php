@@ -1293,7 +1293,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets a PostNL order associated with this shipment (if any exist)
      *
-     * @return boolean|TIG_PostNL_Model_Core_Order
+     * @return false|TIG_PostNL_Model_Core_Order
      */
     public function getPostnlOrder()
     {
