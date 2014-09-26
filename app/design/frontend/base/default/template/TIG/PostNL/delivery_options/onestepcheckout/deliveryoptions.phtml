@@ -750,7 +750,7 @@
         window.siteWidth = $("onestepcheckout-form").offsetWidth;
 
         window.setSiteWidth = function() {
-            if (window.outerWidth < 954) {
+            if (window.innerWidth < 954) {
                 $("osc_scrollbar_container").setStyle({
                     "width" : siteWidth + "px"
                 });
