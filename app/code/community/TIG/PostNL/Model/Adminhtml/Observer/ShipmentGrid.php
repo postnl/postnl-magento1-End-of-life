@@ -605,30 +605,32 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
 
         $actionColumn = $block->getColumn('action');
-        $actions = $actionColumn->getActions();
+        if ($actionColumn) {
+            $actions = $actionColumn->getActions();
 
-        if ($helper->checkIsPostnlActionAllowed('print_label')) {
-            $actions[] = array(
-                'caption'   => $helper->__('Print label'),
-                'style'     => 'cursor:pointer;',
-                'is_postnl' => true, //custom flag for renderer
-                'code'      => 'postnl_print_label',
-            );
+            if ($helper->checkIsPostnlActionAllowed('print_label')) {
+                $actions[] = array(
+                    'caption'   => $helper->__('Print label'),
+                    'style'     => 'cursor:pointer;',
+                    'is_postnl' => true, //custom flag for renderer
+                    'code'      => 'postnl_print_label',
+                );
+            }
+
+            if ($helper->checkIsPostnlActionAllowed('confirm')) {
+                $actions[] = array(
+                    'caption'   => $helper->__('Confirm'),
+                    'url'       => array('base' => 'postnl_admin/adminhtml_shipment/confirm'),
+                    'field'     => 'shipment_id',
+                    'is_postnl' => true, //custom flag for renderer
+                    'code'      => 'postnl_confirm',
+                );
+            }
+
+            $actionColumn->setActions($actions)
+                         ->setWidth('150px')
+                         ->setData('renderer', 'postnl_adminhtml/widget_grid_column_renderer_action');
         }
-
-        if ($helper->checkIsPostnlActionAllowed('confirm')) {
-            $actions[] = array(
-                'caption'   => $helper->__('Confirm'),
-                'url'       => array('base' => 'postnl_admin/adminhtml_shipment/confirm'),
-                'field'     => 'shipment_id',
-                'is_postnl' => true, //custom flag for renderer
-                'code'      => 'postnl_confirm',
-            );
-        }
-
-        $actionColumn->setActions($actions)
-                     ->setWidth('150px')
-                     ->setData('renderer', 'postnl_adminhtml/widget_grid_column_renderer_action');
 
         $block->sortColumnsByOrder();
 
