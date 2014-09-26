@@ -2821,6 +2821,9 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
                         </stated_address_header>
                         <stated_address_only_option translate="label comment" module="postnl">
                             <label>Show 'only send to stated address' option</label>
@@ -2831,6 +2834,9 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
                         </stated_address_only_option>
                         <stated_address_only_checked>
                             <label>Stated address only option checked by default</label>
@@ -2842,6 +2848,7 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <stated_address_only_option>1</stated_address_only_option>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </stated_address_only_checked>
                         <stated_address_only_fee>
@@ -2855,6 +2862,7 @@
                             <validate>validate-number validate-not-negative-number</validate>
                             <depends>
                                 <stated_address_only_option>1</stated_address_only_option>
+                                <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </stated_address_only_fee>
                     </fields>
