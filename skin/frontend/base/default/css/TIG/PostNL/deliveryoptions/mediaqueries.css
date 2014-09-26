@@ -50,7 +50,22 @@
     .responsive-tooltip .location-address { font-size:13px; }
     .responsive-tooltip .business-hours { line-height:18px; font-size:12px !important; color:#333 !important; }
     .responsive-tooltip .business-hours tbody th { width:40px; }
-
+    
+    body.noscroll { overflow:auto; }
+    #postnl_add_phonenumber .popup-overlay { background:none; position:static; }
+    #postnl_add_phonenumber .popup-window { position:static; width:auto; height:auto; margin:0; box-shadow:none; -webkit-box-shadow:none; -moz-box-shadow:none;  }
+    #postnl_add_phonenumber .popup-header { padding-left:0; }
+    #postnl_add_phonenumber .popup-header h2 { text-transform:none; }
+    #postnl_add_phonenumber .popup-content { height:auto; background:none; padding:0; }
+    #postnl_add_phonenumber .text { font-size:12px; width:auto; }
+    #postnl_add_phonenumber .text p { padding:0; }
+    #postnl_add_phonenumber .button-set { background:none; height:auto; padding:0; margin-top:20px; }
+    #postnl_add_phonenumber .button-set button { float:none; }
+    #postnl_add_phonenumber .number-verify, 
+    #postnl_add_phonenumber .number-failed { font-size:12px; }
+    
+    #add_phone_close { display:none; }
+    
     #postnl_add_location { display:none; }
     .responsive-hidden { display:none; }
 }
@@ -130,6 +145,10 @@
     .responsive-noscroll { overflow:hidden; }
 }
 
+@media only screen and (max-width: 399px) {
+    .responsive-location-results ul.location-filters li { float:none; }
+    .responsive-location-results .location-details .more-info .actions button.postnl-button { display:block; width:100%; }
+}
 
 /* Retina compatibility */
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and ( min-resolution: 192dpi), only screen and ( min-resolution: 2dppx) {
@@ -137,7 +156,6 @@
     .option-list .option .bkg,
     .option-list .location .bkg {
         background:none;
-        padding:0 !important;
     }
     .option-list .location {
         background:#666;
