@@ -591,6 +591,12 @@
         document.observe('postnl:selectOptionSaved', function() {
             get_separate_save_methods_function(url_set_methods, false)();
         });
+
+        <?php if ($_canShowStatedAddressOnlyOption): ?>
+            $('<?php echo $this->getMethodCode(); ?>_only_stated_address').observe('click', function() {
+                $('<?php echo $this->getMethodName(); ?>').checked = true;
+            });
+        <?php endif; ?>
     }
 
     /**

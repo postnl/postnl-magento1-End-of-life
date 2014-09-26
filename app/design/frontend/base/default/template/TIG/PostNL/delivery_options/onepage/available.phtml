@@ -58,8 +58,6 @@
         <?php $_sole = count($_shippingRateGroups) == 1; ?>
         <?php $_carrierHelper = Mage::helper('postnl/carrier'); ?>
         <?php $_deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions'); ?>
-        <?php $_canShowOnlyStatedAddressOption = $_deliveryOptionsHelper->canShowOnlyStatedAddressOption(); ?>
-        <?php $_isOnlyStatedAddressOptionChecked = $_deliveryOptionsHelper->isOnlyStatedAddressOptionChecked(); ?>
         <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
             <dt><?php echo $this->escapeHtml($this->getCarrierName($code)) ?></dt>
             <dd>
@@ -113,23 +111,7 @@
                                         <?php echo $this->getChild('postnl.delivery.options')->setRate($_rate)->toHtml(); ?>
                                     </div>
                                     <?php $_deliveryOptionsShown = true; ?>
-                                <?php elseif ($_carrierHelper->isPostnlShippingMethod($_rate->getCode()) && $_canShowOnlyStatedAddressOption): ?>
-                                    </li>
-                                    <li>
-                                    <input type="checkbox" name="<?php echo $_rate->getCode(); ?>[postnl][only_stated_address]" id="<?php echo $_rate->getCode(); ?>_only_stated_address" value="1" class="checkbox" <?php if ($_isOnlyStatedAddressOptionChecked):?>checked="checked"<?php endif; ?>>
-                                    <label for="<?php echo $_rate->getCode(); ?>_only_stated_address">
-                                        <?php echo $_deliveryOptionsHelper->__('Do not deliver to neighbours'); ?>
-                                        <span class="price"><?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
-                                    </label>
                                 <?php endif; ?>
-                            <?php elseif ($_carrierHelper->isPostnlShippingMethod($_rate->getCode()) && $_canShowOnlyStatedAddressOption): ?>
-                                </li>
-                                <li>
-                                    <input type="checkbox" name="<?php echo $_rate->getCode(); ?>[postnl][only_stated_address]" id="<?php echo $_rate->getCode(); ?>_only_stated_address" value="1" class="checkbox" <?php if ($_isOnlyStatedAddressOptionChecked):?>checked="checked"<?php endif; ?>>
-                                    <label for="<?php echo $_rate->getCode(); ?>_only_stated_address">
-                                        <?php echo $_deliveryOptionsHelper->__('Do not deliver to neighbours'); ?>
-                                        <span class="price"><?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
-                                    </label>
                             <?php endif; ?>
                         </li>
                     <?php endforeach; ?>
