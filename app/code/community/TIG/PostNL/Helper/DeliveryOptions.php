@@ -640,15 +640,27 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $deliveryDay = $deliveryTime->format('N');
 
         /**
+         * Delivery on sunday is not possible.
+         */
+        if ($deliveryDay == 7) {
+            $deliveryDay = 1;
+            $deliveryTime->add(new DateInterval('P1D'));
+            $shippingDuration++;
+        }
+
+        /**
          * If the delivery day is a monday, we need to make sure that sunday sorting is allowed. Otherwise delivery on a
          * monday is not possible.
          */
-        if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
+        if ($deliveryDay == 1 && Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
             $sundayCutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
             if ($orderTime <= str_replace(':', '', $sundayCutOffTime)) {
                 $deliveryTime->add(new DateInterval('P1D'));
                 $shippingDuration++;
             }
+        } else {
+            $deliveryTime->add(new DateInterval('P1D'));
+            $shippingDuration++;
         }
 
         if ($asDays) {
@@ -691,7 +703,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $shippingDate = clone $date;
 
         $shippingDay   = (int) $shippingDate->sub(new DateInterval('P1D'))->format('N');
-
         /**
          * Shipping is only available on monday through saturday.
          */
