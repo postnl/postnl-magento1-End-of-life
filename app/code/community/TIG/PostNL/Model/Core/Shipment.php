@@ -942,14 +942,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $lang = substr($locale, 0, 2);
 
         $url = '';
-        $pakjeGemakAddress = $this->getPakjeGemakAddress();
-        if ($pakjeGemakAddress) {
-            $url = $helper->getBarcodeUrl($barcode, $pakjeGemakAddress, $lang, $forceNl);
-        } else {
-            $shippingAddress = $this->getShippingAddress();
-            if ($shippingAddress) {
-                $url = $helper->getBarcodeUrl($barcode, $shippingAddress, $lang, $forceNl);
-            }
+        $shippingAddress = $this->getShippingAddress();
+        if ($shippingAddress) {
+            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, $lang, $forceNl);
         }
 
         $this->setBarcodeUrl($url);
