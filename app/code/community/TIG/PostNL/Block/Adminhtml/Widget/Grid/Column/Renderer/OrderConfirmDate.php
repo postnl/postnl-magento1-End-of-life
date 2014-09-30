@@ -70,9 +70,16 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
                 $row->getCreatedAt(),
                 $row->getStoreId()
             );
-            $deliveryDate = $helper->checkDate($deliveryDate);
 
-            $value = $deliveryDate->sub(new DateInterval('P1D'));
+            $deliveryDate = $helper->checkDate($deliveryDate)
+                                   ->sub(new DateInterval('P1D'));
+
+            $value        = $helper->checkConfirmDate($deliveryDate);
+
+            /**
+             * Update the row's value for the decorator later.
+             */
+            $row->setData($this->getColumn()->getIndex(), $value->format('Y-m-d H:i:s'));
         } else {
             $value = new DateTime($value);
         }
@@ -81,7 +88,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
         $now->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
 
         /**
-         * Check if the shipment should be confirmed somewhere in the future
+         * Check if the shipment should be confirmed somewhere in the future.
          */
         $diff = $now->diff($value);
         if (
@@ -89,7 +96,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             || ($diff->days == 0 && $diff->h < 24) && $diff->invert
         ) {
             /**
-             * Get the number of days until the shipment should be confirmed
+             * Get the number of days until the shipment should be confirmed.
              */
             $diffDays = $diff->format('%a');
 
@@ -101,14 +108,14 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             }
 
             /**
-             * Check if the shipment should be confirmed today
+             * Check if the shipment should be confirmed today.
              */
             if ($diffDays == 0) {
                 return $helper->__('Today');
             }
 
             /**
-             * Check if it should be confirmed tomorrow
+             * Check if it should be confirmed tomorrow.
              */
             if ($diffDays == 1) {
                 $renderedValue = $helper->__('Tomorrow');
@@ -117,7 +124,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             }
 
             /**
-             * Render the number of days before the shipment should be confirmed
+             * Render the number of days before the shipment should be confirmed.
              */
             $renderedValue = $helper->__('%s days from now', $diffDays);
 
