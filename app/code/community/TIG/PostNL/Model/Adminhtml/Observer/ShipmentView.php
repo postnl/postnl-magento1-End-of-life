@@ -187,7 +187,8 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         /**
          * Add a button to convert this shipment to a buspakje shipment.
          */
-        if ($postnlShipment->canConvertShipmentToBuspakje() && $convertToBuspakjeAllowed
+        if ($postnlShipment->canConvertShipmentToBuspakje()
+            && $convertToBuspakjeAllowed
             && (!$postnlShipment->isConfirmed()
                 || ($postnlShipment->canResetConfirmation()
                     && $resetConfirmAllowed

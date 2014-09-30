@@ -1406,7 +1406,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets the delivery date for this shipment.
      *
-     * @return null|string
+     * @return string
      */
     public function getDeliveryDate()
     {
@@ -1432,16 +1432,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $orderDate = Mage::getSingleton('core/date')->date(null, $this->getOrder()->getCreatedAt());
         $deliveryDate = $helper->getDeliveryDate($orderDate, $this->getStoreId());
 
-        if ($deliveryDate) {
-            $deliveryDate = $helper->checkDate($deliveryDate)->format('Y-m-d H:i:s');
+        $deliveryDate = $helper->checkDate($deliveryDate)->format('Y-m-d H:i:s');
 
-            return $deliveryDate;
-        }
-
-        /**
-         * If no delivery date is available, return null.
-         */
-        return null;
+        return $deliveryDate;
     }
 
     /**
@@ -1650,23 +1643,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $deliveryDate = $this->getDeliveryDate();
 
         /**
-         * If no delivery date is available, set the confirm date to today.
-         */
-        if (!$deliveryDate) {
-            $confirmDate = Mage::getModel('core/date')->gmtTimestamp();
-            $confirmDate = $this->getHelper('deliveryOptions')->checkDate($confirmDate, true)->format('Y-m-d H:i:s');
-
-            $this->setData('confirm_date', $confirmDate);
-            return $this;
-        }
-
-        /**
          * Calculate the confirm based on the delivery date.
          */
         $deliveryDate = new DateTime($deliveryDate);
 
         $confirmDate = clone $deliveryDate;
         $confirmDate = $confirmDate->sub(new DateInterval('P1D'));
+
+        $this->getHelper('deliveryOptions')->checkConfirmDate($confirmDate);
 
         $this->setData('confirm_date', $confirmDate->getTimestamp());
         return $this;
@@ -2362,8 +2346,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shippingPhase = $this->getShippingPhase();
-        if ($shippingPhase == self::SHIPPING_PHASE_COLLECTION
-            || $shippingPhase == self::SHIPPING_PHASE_DELIVERED
+        if ($shippingPhase == self::SHIPPING_PHASE_DELIVERED
             || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
             || $shippingPhase == self::SHIPPING_PHASE_SORTING
         ) {
@@ -2386,8 +2369,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shippingPhase = $this->getShippingPhase();
-        if ($shippingPhase == self::SHIPPING_PHASE_COLLECTION
-            || $shippingPhase == self::SHIPPING_PHASE_DELIVERED
+        if ($shippingPhase == self::SHIPPING_PHASE_DELIVERED
             || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
             || $shippingPhase == self::SHIPPING_PHASE_SORTING
         ) {
@@ -2414,8 +2396,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shippingPhase = $this->getShippingPhase();
-        if ($shippingPhase == self::SHIPPING_PHASE_COLLECTION
-            || $shippingPhase == self::SHIPPING_PHASE_DELIVERED
+        if ($shippingPhase == self::SHIPPING_PHASE_DELIVERED
             || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
             || $shippingPhase == self::SHIPPING_PHASE_SORTING
         ) {
@@ -2443,8 +2424,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $shippingPhase = $this->getShippingPhase();
-        if ($shippingPhase == self::SHIPPING_PHASE_COLLECTION
-            || $shippingPhase == self::SHIPPING_PHASE_DELIVERED
+        if ($shippingPhase == self::SHIPPING_PHASE_DELIVERED
             || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
             || $shippingPhase == self::SHIPPING_PHASE_SORTING
         ) {
