@@ -241,30 +241,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     {
         $resource = Mage::getSingleton('core/resource');
 
-        /**
-         * Add a conditional SELECT clause for the country_id and postcode fields. If the shipment has a PakjeGemak
-         * address we need the postcode and country_id from that address. Otherwise we need them from the shipping
-         * address.
-         */
-        $collection->addExpressionFieldToSelect(
-            'country_id',
-            'IF({{pakjegemak_parent_id}}, {{pakjegemak_country_id}}, {{shipping_country_id}})',
-            array(
-                'pakjegemak_parent_id' => '`pakjegemak_address`.`parent_id`',
-                'pakjegemak_country_id'  => '`pakjegemak_address`.`country_id`',
-                'shipping_country_id'    => '`shipping_address`.`country_id`',
-            )
-        );
-        $collection->addExpressionFieldToSelect(
-            'postcode',
-            'IF({{pakjegemak_parent_id}}, {{pakjegemak_postcode}}, {{shipping_postcode}})',
-            array(
-                'pakjegemak_parent_id' => '`pakjegemak_address`.`parent_id`',
-                'pakjegemak_postcode'  => '`pakjegemak_address`.`postcode`',
-                'shipping_postcode'    => '`shipping_address`.`postcode`',
-            )
-        );
-
         $select = $collection->getSelect();
 
         /**
@@ -280,19 +256,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         );
 
         /**
-         * Join sales_flat_order_address table. Once for the shipping address and once for the pakje_gemak address. We
-         * need both for the conditional select used to get the postcode and country_id of the destination_address.
+         * Join sales_flat_order_address table.
          */
         $select->joinLeft(
             array('shipping_address' => $resource->getTableName('sales/order_address')),
             "`main_table`.`order_id`=`shipping_address`.`parent_id` AND `shipping_address`.`address_type`='shipping'",
-            array()
-        );
-        $select->joinLeft(
-            array('pakjegemak_address' => $resource->getTableName('sales/order_address')),
-            "`main_table`.`order_id`=`pakjegemak_address`.`parent_id`" .
-            " AND `pakjegemak_address`.`address_type`='pakje_gemak'",
-            array()
+            array(
+                'postcode'   => 'shipping_address.postcode',
+                'country_id' => 'shipping_address.country_id',
+            )
         );
 
         /**
