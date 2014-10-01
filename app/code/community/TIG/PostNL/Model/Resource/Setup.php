@@ -1144,4 +1144,22 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
 
         return $this;
     }
+
+    /**
+     * Install new matrix rate data.
+     *
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function installMatrixRates(array $data)
+    {
+        try {
+            Mage::getResourceModel('postnl_carrier/matrixrate')->import($data);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+        }
+
+        return $this;
+    }
 }
