@@ -109,6 +109,11 @@
 .postnl-container .tooltip-content .business-hours { line-height:17px; }
 .postnl-container .tooltip-content .business-hours tbody th { width:36px; }
 
+/* No Neighbour */
+.postnl-container .no-neighbour li.option .content { padding:13px 0; }
+.postnl-container .no-neighbour li.option input { display:inline-block; margin:0 !important; float:none !important; }
+.postnl-container .no-neighbour li.option label { display:inline-block; font:11px/10px Arial, sans-serif; color:#333334 !important; text-transform:lowercase; padding:0 !important; background:none !important; margin-left:4px; }
+.postnl-container .no-neighbour li.option label .price { color:#f05a22; font-weight:normal !important; }
 /* ======================================================================================= */
 
 /* Pop-up =================================================================== */
