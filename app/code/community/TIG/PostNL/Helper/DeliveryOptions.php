@@ -597,7 +597,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param boolean     $asDays
      * @param boolean     $asDateTime
      *
-     * @return bool|string|int
+     * @return string|int|DateTime
      */
     public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false, $asDateTime = false)
     {
@@ -679,13 +679,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * Check if a given delivery date is available by checking the configured shipping dates.
      *
      * @param string|DateTime $date
-     * @param boolean         $asShippingDate
      *
      * @return DateTime
      *
      * @todo implement sunday sorting
      */
-    public function checkDate($date, $asShippingDate = false)
+    public function checkDate($date)
     {
         if (is_string($date)) {
             $date = new DateTime($date);
@@ -737,15 +736,13 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 continue;
             }
 
-            if (!$asShippingDate) {
-                $availableDay++;
+            $availableDay++;
 
-                /**
-                 * Monday and sunday are not available as delivery days.
-                 */
-                if ($availableDay < 2 || $availableDay > 6) {
-                    $availableDay = 2;
-                }
+            /**
+             * Monday and sunday are not available as delivery days.
+             */
+            if ($availableDay < 2 || $availableDay > 6) {
+                $availableDay = 2;
             }
 
             $availableDate = $date->modify("next {$dayArr[$availableDay]}");
@@ -760,19 +757,63 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         reset($shippingDays);
         $availableDay = current($shippingDays);
 
-        if (!$asShippingDate) {
-            $availableDay++;
+        $availableDay++;
 
-            /**
-             * Monday and sunday are not available as delivery days.
-             */
-            if ($availableDay < 2 || $availableDay > 6) {
-                $availableDay = 2;
-            }
+        /**
+         * Monday and sunday are not available as delivery days.
+         */
+        if ($availableDay < 2 || $availableDay > 6) {
+            $availableDay = 2;
         }
 
         $availableDate = $date->modify("next {$dayArr[$availableDay]}");
         return $availableDate;
+    }
+
+    /**
+     * Check if a given confirm date is valid and modify it if not.
+     *
+     * Currently this method only checks if the confirm date is a monday. If so it may need to be modified to a
+     * saturday.
+     *
+     * @param string|DateTime $date
+     *
+     * @return DateTime
+     */
+    public function checkConfirmDate($date)
+    {
+        if (is_string($date)) {
+            $date = new DateTime($date);
+        }
+
+        if (!($date instanceof DateTime)) {
+            throw new InvalidArgumentException('Date parameter must be a valid date string or DateTime object.');
+        }
+
+        /**
+         * Get the configured shipping days.
+         */
+        $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
+        $shippingDays = explode(',', $shippingDays);
+        $shippingDate = clone $date;
+
+        /**
+         * Get the current shipping day of the week (1 through 7).
+         */
+        $shippingDay  = (int) $shippingDate->format('N');
+
+        /**
+         * Check fit he shipping day is a monday. If so, check if monday is allowed. If not, modify it to the previous
+         * saturday if saturdays are allowed.
+         */
+        if (!in_array($shippingDay, $shippingDays)
+            && $shippingDay == 1
+            && in_array(6, $shippingDays)
+        ) {
+            $date->modify('last saturday');
+        }
+
+        return $date;
     }
 
     /**
