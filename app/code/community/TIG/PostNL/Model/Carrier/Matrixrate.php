@@ -47,6 +47,9 @@ class TIG_PostNL_Model_Carrier_Matrixrate extends Mage_Core_Model_Abstract
      */
     protected $_eventPrefix = 'postnl_carrier_matrixrate';
 
+    /**
+     * Class constructor.
+     */
     public function _construct()
     {
         $this->_init('postnl_carrier/matrixrate');

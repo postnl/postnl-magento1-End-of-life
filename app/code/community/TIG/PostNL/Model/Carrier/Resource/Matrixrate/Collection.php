@@ -57,23 +57,17 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate_Collection
     {
         Mage_Core_Model_Resource_Db_Collection_Abstract::_initSelect();
 
-        $this->_select
-            ->joinLeft(
-                array('country_table' => $this->_countryTable),
-                'country_table.country_id = main_table.dest_country_id',
-                array('dest_country' => 'iso3_code')
-            )
-            ->joinLeft(
-                array('region_table' => $this->_regionTable),
-                'region_table.region_id = main_table.dest_region_id',
-                array('dest_region' => 'code')
-            );
+        $this->_select->joinLeft(
+            array('region_table' => $this->_regionTable),
+            'region_table.region_id = main_table.dest_region_id',
+            array('dest_region' => 'code')
+        );
 
-        $this->addOrder('dest_country', self::SORT_ORDER_ASC);
-        $this->addOrder('dest_region',  self::SORT_ORDER_ASC);
-        $this->addOrder('dest_zip',     self::SORT_ORDER_ASC);
-        $this->addOrder('weight',       self::SORT_ORDER_ASC);
-        $this->addOrder('subtotal',     self::SORT_ORDER_ASC);
-        $this->addOrder('qty',          self::SORT_ORDER_ASC);
+        $this->addOrder('dest_country_id', self::SORT_ORDER_ASC);
+        $this->addOrder('dest_region',     self::SORT_ORDER_ASC);
+        $this->addOrder('dest_zip',        self::SORT_ORDER_ASC);
+        $this->addOrder('weight',          self::SORT_ORDER_ASC);
+        $this->addOrder('subtotal',        self::SORT_ORDER_ASC);
+        $this->addOrder('qty',             self::SORT_ORDER_ASC);
     }
 }
