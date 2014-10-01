@@ -60,7 +60,6 @@ class TIG_PostNL_Block_Adminhtml_Carrier_Postnl_Matrixrate_Grid
         $collection->setWebsiteFilter($this->getWebsiteId());
 
         $this->setCollection($collection);
-
         return Mage_Adminhtml_Block_Widget_Grid::_prepareCollection();
     }
 
@@ -74,71 +73,72 @@ class TIG_PostNL_Block_Adminhtml_Carrier_Postnl_Matrixrate_Grid
         $this->addColumn(
             'dest_country',
             array(
-                'header'    => $this->__('Country'),
-                'index'     => 'dest_country',
-                'default'   => '*',
-
-            ));
+                'header'   => $this->__('Country'),
+                'index'    => 'dest_country_id',
+                'default'  => '*',
+                'renderer' => 'postnl_adminhtml/widget_grid_column_renderer_countryArray'
+            )
+        );
 
         $this->addColumn(
             'dest_region',
             array(
-                'header'    => $this->__('Region/State'),
-                'index'     => 'dest_region',
-                'default'   => '*',
+                'header'  => $this->__('Region/State'),
+                'index'   => 'dest_region',
+                'default' => '*',
             )
         );
 
         $this->addColumn(
             'dest_zip',
             array(
-                'header'    => $this->__('Zip/Postal Code'),
-                'index'     => 'dest_zip',
-                'default'   => '*',
+                'header'  => $this->__('Zip/Postal Code'),
+                'index'   => 'dest_zip',
+                'default' => '*',
             )
         );
 
         $this->addColumn(
             'weight',
             array(
-                'header'    => $this->__('Minimum Order Weight'),
-                'index'     => 'weight',
-                'default'   => 0,
+                'header'  => $this->__('Minimum Order Weight'),
+                'index'   => 'weight',
+                'default' => 0,
             )
         );
 
         $this->addColumn(
             'subtotal',
             array(
-                'header'    => $this->__('Minimum Order Amount'),
-                'index'     => 'subtotal',
-                'default'   => 0,
+                'header'  => $this->__('Minimum Order Amount'),
+                'index'   => 'subtotal',
+                'default' => 0,
             )
         );
 
         $this->addColumn(
             'qty',
             array(
-                'header'    => $this->__('Minimum Quantity'),
-                'index'     => 'qty',
-                'default'   => 0,
+                'header'  => $this->__('Minimum Quantity'),
+                'index'   => 'qty',
+                'default' => 0,
             )
         );
 
         $this->addColumn(
             'parcel_type',
             array(
-                'header'    => $this->__('Parcel Type'),
-                'index'     => 'parcel_type',
-                'default'   => '*',
+                'header'  => $this->__('Parcel Type'),
+                'index'   => 'parcel_type',
+                'default' => '*',
             )
         );
 
         $this->addColumn(
             'price',
             array(
-                'header'    => $this->__('Shipping Price'),
-                'index'     => 'price',
+                'header' => $this->__('Shipping Price'),
+                'index'  => 'price',
             )
         );
 

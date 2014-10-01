@@ -361,13 +361,14 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         }
 
         // validate parcel type
-        $allowedParcelTypes = array(
-            '*',
-            'letter_box',
-            'regular'
-        );
-        $parcelType = $row[6];
-        if (!in_array($parcelType, $allowedParcelTypes)) {
+        $parcelType = $this->_importParcelType($row[6]);
+        if (!$parcelType) {
+            $allowedParcelTypes = array(
+                '*',
+                'letter_box',
+                'regular'
+            );
+
             $this->_importErrors[] = Mage::helper('postnl')->__(
                 'Invalid parcel type "%s" in row #%s. Valid values are: "%s".',
                 $row[6],
@@ -470,5 +471,45 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         }
 
         return $this;
+    }
+
+    /**
+     * Import the parcel type column.
+     *
+     * @param $parcelType
+     *
+     * @return string|false
+     */
+    protected function _importParcelType($parcelType)
+    {
+        $formattedType = false;
+        switch ($parcelType) {
+            case '':                 //no break
+            case '0':                //no break
+            case '*':
+                $formattedType = '*';
+                break;
+            case 'letter_box':       //no break
+            case 'letterbox':        //no break
+            case 'buspakje':         //no break
+            case 'bus_pakje':        //no break
+            case 'brievenbuspakje':  //no break
+            case 'brievenbus pakje': //no break
+            case 'letterboxparcel':  //no break
+            case 'letter box parcel':
+                $formattedType = 'letter_box';
+                break;
+            case 'regular':          //no break
+            case 'standaard':        //no break
+            case 'pakket':           //no break
+            case 'belpakje':         //no break
+            case 'parcel':           //no break
+            case 'package':
+                $formattedType = 'regular';
+                break;
+            //no default
+        }
+
+        return $formattedType;
     }
 }
