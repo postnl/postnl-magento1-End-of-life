@@ -62,6 +62,9 @@
  *  - postnl_shipment_savelabels_before
  *  - postnl_shipment_savelabels_after
  *  - postnl_shipment_saveadditionaloptions_after
+ *  - postnl_shipment_add_track_and_trace_email_vars
+ *  - postnl_shipment_send_track_and_trace_email_before
+ *  - postnl_shipment_send_track_and_trace_email_after
  *
  * @method bool                           getIsDutchShipment()
  * @method bool                           getIsEuShipment()
@@ -363,6 +366,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $orderId = $this->getOrderId();
         if (!$orderId) {
             $orderId = $this->getShipment()->getOrderId();
+
+            $this->setOrderId($orderId);
         }
 
         if (!$orderId && $throwException) {
@@ -482,7 +487,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets the order ID from the associated Mage_Sales_Model_Order_Shipment object
      *
-     * @return int
+     * @return int|null
      */
     public function getOrderId()
     {
@@ -3137,9 +3142,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function sendTrackAndTraceEmail($ignoreAlreadySent = false, $ignoreConfig = false)
     {
+        $helper = Mage::helper('postnl');
         if (!$this->canSendTrackAndTraceEmail($ignoreAlreadySent, $ignoreConfig)) {
             throw new TIG_PostNL_Exception(
-                Mage::helper('postnl')->__('The sendTrackAndTraceEmail action is currently unavailable.'),
+                $helper->__('The sendTrackAndTraceEmail action is currently unavailable.'),
                 'POSTNL-0076'
             );
         }
@@ -3155,6 +3161,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $shippingAddress = $this->getShippingAddress();
             $shipment        = $this->getShipment();
             $order           = $this->getOrder();
+            if (!$order || !$shipment || !$shippingAddress) {
+                throw new TIG_PostNL_Exception(
+                    $helper->__('Unable to send track & trace email due to missing shipment parameters.'),
+                    'POSTNL-0200'
+                );
+            }
 
             /** @noinspection PhpUndefinedMethodInspection */
             $templateVariables = array(
@@ -3165,6 +3177,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 'order'          => $order,
                 'customer'       => $order->getCustomer(),
                 'quote'          => $order->getQuote(),
+            );
+
+            $templateVariables = new Varien_Object($templateVariables);
+            Mage::dispatchEvent(
+                'postnl_shipment_add_track_and_trace_email_vars',
+                array(
+                    'vars'            => $templateVariables,
+                    'postnl_shipment' => $this,
+                )
             );
 
             // Get the destination email addresses to send copies to
@@ -3192,14 +3213,52 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 }
             }
 
-            // Set all required params and send emails.
-            $mailer->setSender(Mage::getStoreConfig($order::XML_PATH_EMAIL_IDENTITY, $storeId));
-            $mailer->setStoreId($storeId);
-            $mailer->setTemplateId($template);
-            $mailer->setTemplateParams($templateVariables);
+            /**
+             * Set all required parameters.
+             */
+            $mailer->setSender(Mage::getStoreConfig($order::XML_PATH_EMAIL_IDENTITY, $storeId))
+                   ->setStoreId($storeId)
+                   ->setTemplateId($template)
+                   ->setTemplateParams($templateVariables->getData());
+
+            Mage::dispatchEvent(
+                'postnl_shipment_send_track_and_trace_email_before',
+                array(
+                    'postnl_shipment' => $this,
+                    'mailer'          => $mailer,
+                )
+            );
+
+            /**
+             * Send the emails.
+             */
             $mailer->send();
+
+            Mage::dispatchEvent(
+                'postnl_shipment_send_track_and_trace_email_after',
+                array(
+                    'postnl_shipment' => $this,
+                )
+            );
+
+            /**
+             * Add a comment to the order and shipment that the track & trace email has been sent.
+             */
+            $order->addStatusHistoryComment(
+                       $helper->__(
+                           'PostNL track & trace email has been sent for shipment #%s.',
+                           $shipment->getIncrementId()
+                       )
+                   )
+                   ->setIsCustomerNotified(1)
+                   ->save();
+
+            $shipment->addComment(
+                         $helper->__('PostNL track & trace email has been sent.'),
+                         true
+                     )
+                     ->save();
         } catch (Exception $e) {
-            $helper = Mage::helper('postnl');
             $helper->logException($e);
             throw new TIG_PostNL_Exception(
                 $helper->__(
