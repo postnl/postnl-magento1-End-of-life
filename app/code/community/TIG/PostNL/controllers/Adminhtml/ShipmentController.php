@@ -1368,7 +1368,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
              */
             foreach ($shipments as $shipment) {
                 try {
-                    $shipmentLabels = $this->_getLabels($shipment, true);
+                    $shipmentLabels = $this->_getLabels($shipment, false);
                     $labels = array_merge($labels, $shipmentLabels);
                 } catch (TIG_PostNL_Exception $e) {
                     $helper->logException($e);

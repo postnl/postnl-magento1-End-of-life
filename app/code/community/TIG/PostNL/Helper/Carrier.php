@@ -390,7 +390,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             $countryCode = $destination['countryCode'];
             $postcode    = $destination['postcode'];
         } elseif (is_object($destination) && $destination instanceof Varien_Object) {
-            if (!$destination->hasCountry() || !$destination->hasPostcode()) {
+            if (!$destination->getCountry() || !$destination->getPostcode()) {
                 throw new InvalidArgumentException('Destination must have a country and a postcode.');
             }
 
