@@ -1162,4 +1162,41 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
 
         return $this;
     }
+
+    /**
+     * Add newly supported shipping methods.
+     *
+     * @param array|string $methods
+     *
+     * @return $this
+     */
+    public function addSupportedShippingMethods($methods)
+    {
+        if (!is_array($methods)) {
+            $methods = array($methods);
+        }
+
+        /**
+         * Get the current shipping methods for the default config.
+         */
+        $defaultShippingMethods = Mage::getStoreConfig(
+            'postnl/advanced/postnl_shipping_methods',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        $defaultShippingMethods    = explode(',', $defaultShippingMethods);
+
+        /**
+         * Merge with the new methods and save the config.
+         */
+        $newDefaultShippingMethods = array_merge($defaultShippingMethods, $methods);
+        Mage::getConfig()->saveConfig(
+            'postnl/advanced/postnl_shipping_methods',
+            implode(',', $newDefaultShippingMethods),
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        return $this;
+    }
 }

@@ -120,7 +120,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         $methodName = 's_method_' . $methodCode;
 
         $this->setMethodName($methodName);
-        return $methodCode;
+        return $methodName;
     }
 
     /**
