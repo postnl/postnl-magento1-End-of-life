@@ -955,7 +955,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         if ($pakjeGemakAddress) {
-            $addresses['Address'][] =$this->_getAddress('Delivery', $pakjeGemakAddress);
+            $addresses['Address'][] = $this->_getAddress('Delivery', $pakjeGemakAddress);
         }
 
         return $addresses;

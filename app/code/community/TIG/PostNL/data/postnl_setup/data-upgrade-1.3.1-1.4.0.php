@@ -81,4 +81,6 @@ $matrixRateData = array(
     array('*', '*', '*', '0', '0', '0', '*', '5'), // GlobalPack shipments
 );
 
-$installer->installMatrixRates($matrixRateData);
+$installer->installMatrixRates($matrixRateData)
+          ->addSupportedShippingMethods(array('postnl_matrixrate'))
+          ->clearConfigCache();
