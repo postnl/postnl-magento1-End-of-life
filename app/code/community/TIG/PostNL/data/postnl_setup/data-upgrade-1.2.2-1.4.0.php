@@ -100,6 +100,45 @@ $productTypes = array(
 );
 
 /**
+ * Matrix rate data.
+ */
+$matrixrateData = array(
+    array('NL', '*', '*', '0', '0', '0', 'regular', '5'), // Regular dutch shipments
+    array('NL', '*', '*', '0', '0', '0', 'letter_box', '2.5'), // Dutch buspakje shipments
+    array('BE', '*', '*', '0', '0', '0', '*', '5'), // Belgian shipments
+    array('BE', '*', '*', '1', '0', '0', '*', '5'),
+    array('BE', '*', '*', '2', '0', '0', '*', '5'),
+    array('BE', '*', '*', '3', '0', '0', '*', '5'),
+    array('BE', '*', '*', '4', '0', '0', '*', '5'),
+    array('BE', '*', '*', '5', '0', '0', '*', '5'),
+    array('BE', '*', '*', '6', '0', '0', '*', '5'),
+    array('BE', '*', '*', '7', '0', '0', '*', '5'),
+    array('BE', '*', '*', '8', '0', '0', '*', '5'),
+    array('BE', '*', '*', '9', '0', '0', '*', '5'),
+    array('BE', '*', '*', '10', '0', '0', '*', '5'),
+    array('BE', '*', '*', '11', '0', '0', '*', '5'),
+    array('BE', '*', '*', '12', '0', '0', '*', '5'),
+    array('BE', '*', '*', '13', '0', '0', '*', '5'),
+    array('BE', '*', '*', '14', '0', '0', '*', '5'),
+    array('BE', '*', '*', '15', '0', '0', '*', '5'),
+    array('BE', '*', '*', '16', '0', '0', '*', '5'),
+    array('BE', '*', '*', '17', '0', '0', '*', '5'),
+    array('BE', '*', '*', '18', '0', '0', '*', '5'),
+    array('BE', '*', '*', '19', '0', '0', '*', '5'),
+    array('BE', '*', '*', '20', '0', '0', '*', '5'),
+    array('BE', '*', '*', '21', '0', '0', '*', '5'),
+    array('BE', '*', '*', '22', '0', '0', '*', '5'),
+    array('BE', '*', '*', '23', '0', '0', '*', '5'),
+    array('BE', '*', '*', '24', '0', '0', '*', '5'),
+    array('BE', '*', '*', '25', '0', '0', '*', '5'),
+    array('BE', '*', '*', '26', '0', '0', '*', '5'),
+    array('BE', '*', '*', '27', '0', '0', '*', '5'),
+    array('BE', '*', '*', '28', '0', '0', '*', '5'),
+    array('BE', '*', '*', '29', '0', '0', '*', '5'),
+    array('*', '*', '*', '0', '0', '0', '*', '5'), // GlobalPack shipments
+);
+
+/**
  * In this new version we need to fill the new 'order_id' and 'shipment_type' columns. We also need to add several new
  * ACL rules and add several new support product codes for 'buspakje' and COD shipments, and update several attribute
  * values for existing products. We've also moved several config settings, so we need to copy the previous settings
@@ -157,4 +196,5 @@ $installer->setOrderId()
               'postnl/cif_labels_and_confirming/sunday_cutoff_time',
               true
           )
+          ->installMatrixRates($matrixrateData)
           ->clearConfigCache();

@@ -102,7 +102,7 @@
                             <div class="bkg">
                                 <div class="bkg">
                                     <div class="content">
-                                        <strong class="location-name"><?php echo $this->__('Extra\'s'); ?></strong>
+                                        <strong class="location-name"><?php echo $this->__('Extra service'); ?></strong>
                                     </div>
                                 </div>
                             </div>
@@ -113,7 +113,7 @@
                                     <div class="content">
                                         <input type="checkbox" name="<?php echo $this->getMethodName(); ?>[postnl][only_stated_address]" id="<?php echo $this->getMethodName(); ?>_only_stated_address" value="1" class="checkbox" <?php if ($this->isOnlyStatedAddressOptionChecked()):?>checked="checked"<?php endif; ?>>
                                         <label for="<?php echo $this->getMethodName(); ?>_only_stated_address">
-                                            <?php echo $this->__('Do not deliver to neighbours'); ?>
+                                            <?php echo $this->__('do not deliver to neighbours when not home'); ?>
                                             <span class="price">+ <?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
                                         </label>
                                     </div>
@@ -197,7 +197,7 @@
         <?php if ($_canShowOnlyStatedAddressOption): ?>
             extraOptions           : {
                 only_stated_address : {
-                    element : $('<?php echo $this->getMethodCode(); ?>_only_stated_address'),
+                    element : $('<?php echo $this->getMethodName(); ?>_only_stated_address'),
                     allowedTypes : [
                         'Avond',
                         'Overdag'

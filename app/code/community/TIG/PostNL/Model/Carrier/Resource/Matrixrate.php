@@ -157,7 +157,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
     }
 
     /**
-     * Upload table rate file and import data from it
+     * Upload matrix rate file and import data from it.
      *
      * @param Varien_Object $object
      *
@@ -252,6 +252,79 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
                 implode(" \n", $this->_importErrors)
             );
             throw new TIG_PostNL_Exception($error, 'POSTNL-0196');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Import matrix rate data from an array.
+     *
+     * @param array $data
+     *
+     * @return $this
+     *
+     * @throws Mage_Core_Exception
+     * @throws TIG_PostNL_Exception
+     */
+    public function import(array $data)
+    {
+        $adapter = $this->_getWriteAdapter();
+        $adapter->beginTransaction();
+
+        try {
+            $rowNumber  = 1;
+            $importData = array();
+
+            $this->_loadDirectoryCountries();
+            $this->_loadDirectoryRegions();
+
+            // delete old data by website ID
+            $condition = array(
+                'website_id = ?'     => $this->_importWebsiteId,
+            );
+            $adapter->delete($this->getMainTable(), $condition);
+
+            foreach ($data as $key => $line) {
+                $rowNumber ++;
+
+                if (empty($line)) {
+                    continue;
+                }
+
+                $row = $this->_getImportRow($line, $rowNumber);
+                if ($row !== false) {
+                    $importData[] = $row;
+                }
+
+                if (count($importData) == 5000) {
+                    $this->_saveImportData($importData);
+                    $importData = array();
+                }
+            }
+
+            $this->_saveImportData($importData);
+        } catch (Mage_Core_Exception $e) {
+            $adapter->rollback();
+            Mage::throwException($e->getMessage());
+        } catch (Exception $e) {
+            $adapter->rollback();
+
+            Mage::helper('postnl')->logException($e);
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('An error occurred while importing the matrix rates.'),
+                'POSTNL-0195'
+            );
+        }
+
+        $adapter->commit();
+
+        if ($this->_importErrors) {
+            $error = Mage::helper('postnl')->__(
+                'Data has not been imported. See the following list of errors: %s',
+                implode(" \n", $this->_importErrors)
+            );
+            throw new TIG_PostNL_Exception($error, 'POSTNL-0199');
         }
 
         return $this;
