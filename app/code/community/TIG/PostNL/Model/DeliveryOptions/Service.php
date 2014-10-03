@@ -124,9 +124,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     /**
      * Calculate the confirm date for a specified delivery date.
      *
-     * @param $deliveryDate
+     * @param string $deliveryDate
      *
-     * @return string
+     * @return DateTime
      */
     public function getConfirmDate($deliveryDate)
     {
@@ -135,15 +135,11 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         }
 
         $deliveryDate = new DateTime($deliveryDate);
-        $deliveryDay = $deliveryDate->format('N');
 
-        $shippingDuration = 1;
-        if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
-            $shippingDuration++;
-        }
-
-        $confirmDate = $deliveryDate->sub(new DateInterval("P{$shippingDuration}D"));
+        $confirmDate = $deliveryDate->sub(new DateInterval("P1D"));
         $confirmDate = $confirmDate->format('Y-m-d');
+
+        $confirmDate = Mage::helper('postnl/deliveryOptions')->checkConfirmDate($confirmDate);
 
         $this->setConfirmDate($confirmDate);
         return $confirmDate;
@@ -253,7 +249,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     {
         $quote = $this->getQuote();
 
-        $confirmDate = $this->getConfirmDate($data['date']);
+        $confirmDate = $this->getConfirmDate($data['date'])->getTimestamp();
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder
