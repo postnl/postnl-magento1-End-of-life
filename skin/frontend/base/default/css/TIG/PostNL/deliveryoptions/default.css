@@ -110,10 +110,14 @@
 .postnl-container .tooltip-content .business-hours tbody th { width:36px; }
 
 /* No Neighbour */
-.postnl-container .no-neighbour li.option .content { padding:13px 0; }
-.postnl-container .no-neighbour li.option input { display:inline-block; margin:0 !important; float:none !important; }
-.postnl-container .no-neighbour li.option label { display:inline-block; font:11px/10px Arial, sans-serif; color:#333334 !important; text-transform:lowercase; padding:0 !important; background:none !important; margin-left:4px; }
-.postnl-container .no-neighbour li.option label .price { color:#f05a22; font-weight:normal !important; }
+.postnl-container .no-neighbour .option { cursor:default; }
+.postnl-container .no-neighbour .option .content { padding:13px 0; }
+.postnl-container .no-neighbour .option input { display:inline-block; margin:0 !important; float:none !important; }
+.postnl-container .no-neighbour .option label { display:inline-block; font:11px/10px Arial, sans-serif; color:#333334 !important; text-transform:lowercase; padding:0 !important; background:none !important; margin-left:4px; }
+.postnl-container .no-neighbour .option label .price { color:#f05a22; font-weight:normal !important; }
+
+.postnl-container .no-neighbour .option:hover .bkg { background-position:0 0 !important; }
+.postnl-container .no-neighbour .option:hover .bkg .bkg { background-position: 100% 0 !important; } 
 /* ======================================================================================= */
 
 /* Pop-up =================================================================== */
