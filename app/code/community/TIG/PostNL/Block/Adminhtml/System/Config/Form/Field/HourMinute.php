@@ -233,7 +233,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_HourMinute
     /**
      * Decorate field row html.
      *
-     * This method is missing in some versions of Magento, therefore we copied it here.
+     * Extended, because this method is only present in Magento since v1.7.0.1.
      *
      * @param Varien_Data_Form_Element_Abstract $element
      * @param string                            $html

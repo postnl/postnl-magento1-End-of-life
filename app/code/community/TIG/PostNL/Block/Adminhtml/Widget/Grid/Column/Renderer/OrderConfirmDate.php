@@ -71,18 +71,21 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
                 $row->getStoreId()
             );
 
-            $deliveryDate = $helper->checkDate($deliveryDate)
-                                   ->sub(new DateInterval('P1D'));
-
-            $value        = $helper->checkConfirmDate($deliveryDate);
-
-            /**
-             * Update the row's value for the decorator later.
-             */
-            $row->setData($this->getColumn()->getIndex(), $value->format('Y-m-d H:i:s'));
+            $value = $helper->getValidDeliveryDate($deliveryDate)
+                            ->sub(new DateInterval('P1D'));
         } else {
             $value = new DateTime($value);
         }
+
+        /**
+         * Check if the confirm date is valid.
+         */
+        $value = $helper->getValidConfirmDate($value);
+
+        /**
+         * Update the row's value for the decorator later.
+         */
+        $row->setData($this->getColumn()->getIndex(), $value->format('Y-m-d H:i:s'));
 
         $now = new DateTime();
         $now->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
