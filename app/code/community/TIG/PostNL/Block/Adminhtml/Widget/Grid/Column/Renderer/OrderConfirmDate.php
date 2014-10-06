@@ -71,7 +71,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
                 $row->getStoreId()
             );
 
-            $value = $helper->checkDate($deliveryDate)
+            $value = $helper->getValidDeliveryDate($deliveryDate)
                             ->sub(new DateInterval('P1D'));
         } else {
             $value = new DateTime($value);
@@ -80,7 +80,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
         /**
          * Check if the confirm date is valid.
          */
-        $value = $helper->checkConfirmDate($value);
+        $value = $helper->getValidConfirmDate($value);
 
         /**
          * Update the row's value for the decorator later.

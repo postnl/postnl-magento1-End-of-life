@@ -745,7 +745,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
         $response = $cif->setStoreId(Mage::app()->getStore()->getId())
                         ->getDeliveryDate($postcode, $quote);
 
-        $response = Mage::helper('postnl/deliveryOptions')->checkDate($response)->format('d-m-Y');
+        $response = Mage::helper('postnl/deliveryOptions')->getValidDeliveryDate($response)->format('d-m-Y');
 
         return $response;
     }
