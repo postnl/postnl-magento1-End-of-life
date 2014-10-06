@@ -139,7 +139,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         $confirmDate = $deliveryDate->sub(new DateInterval("P1D"));
         $confirmDate = $confirmDate->format('Y-m-d');
 
-        $confirmDate = Mage::helper('postnl/deliveryOptions')->checkConfirmDate($confirmDate);
+        $confirmDate = Mage::helper('postnl/deliveryOptions')->getValidConfirmDate($confirmDate);
 
         $this->setConfirmDate($confirmDate);
         return $confirmDate;

@@ -1432,7 +1432,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $orderDate = Mage::getSingleton('core/date')->date(null, $this->getOrder()->getCreatedAt());
         $deliveryDate = $helper->getDeliveryDate($orderDate, $this->getStoreId());
 
-        $deliveryDate = $helper->checkDate($deliveryDate)->format('Y-m-d H:i:s');
+        $deliveryDate = $helper->getValidDeliveryDate($deliveryDate)->format('Y-m-d H:i:s');
 
         return $deliveryDate;
     }
@@ -1650,7 +1650,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $confirmDate = clone $deliveryDate;
         $confirmDate = $confirmDate->sub(new DateInterval('P1D'));
 
-        $this->getHelper('deliveryOptions')->checkConfirmDate($confirmDate);
+        $this->getHelper('deliveryOptions')->getValidConfirmDate($confirmDate);
 
         $this->setData('confirm_date', $confirmDate->getTimestamp());
         return $this;

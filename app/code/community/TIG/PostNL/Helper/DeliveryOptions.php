@@ -723,7 +723,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @todo implement sunday sorting
      */
-    public function checkDate($deliveryDate)
+    public function getValidDeliveryDate($deliveryDate)
     {
         if (is_string($deliveryDate)) {
             $deliveryDate = new DateTime($deliveryDate);
@@ -742,7 +742,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $shippingDays = explode(',', $shippingDays);
         $shippingDate = clone $deliveryDate;
 
-        $shippingDay   = (int) $shippingDate->sub(new DateInterval('P1D'))->format('N');
+        $shippingDay = (int) $shippingDate->sub(new DateInterval('P1D'))->format('N');
         /**
          * Shipping is only available on monday through saturday.
          */
@@ -791,10 +791,16 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          */
         natsort($shippingDays);
         foreach ($shippingDays as $availableShippingDay) {
+            /**
+             * Skip all shipping days that are earlier than the desired shipping day.
+             */
             if ($availableShippingDay < $shippingDay) {
                 continue;
             }
 
+            /**
+             * The delivery day is always the day after the shipping day.
+             */
             $availableDeliveryDay = $availableShippingDay + 1;
 
             /**
@@ -804,6 +810,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $availableDeliveryDay = 2;
             }
 
+            /**
+             * Convert the delivery day of the week to the actual date.
+             */
             $availableDeliveryDate = $deliveryDate->modify("next {$dayArr[$availableDeliveryDay]}");
             return $availableDeliveryDate;
         }
@@ -813,8 +822,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          *
          * Sort the array and get the first element.
          */
-        reset($shippingDays);
-        $availableDeliveryDay = current($shippingDays) + 1;
+        $availableDeliveryDay = $shippingDays[0] + 1;
 
         /**
          * Monday and sunday are not available as delivery days.
@@ -823,6 +831,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $availableDeliveryDay = 2;
         }
 
+        /**
+         * Convert the delivery day of the week to the actual date.
+         */
         $availableDeliveryDate = $deliveryDate->modify("next {$dayArr[$availableDeliveryDay]}");
         return $availableDeliveryDate;
     }
@@ -837,7 +848,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      *
      * @return DateTime
      */
-    public function checkConfirmDate($date)
+    public function getValidConfirmDate($date)
     {
         if (is_string($date)) {
             $date = new DateTime($date);
