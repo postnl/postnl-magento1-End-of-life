@@ -240,7 +240,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      *
      * @param Mage_Sales_Model_Quote $quote
      *
-     * @return Mage_Shipping_Model_Rate_Result_Method|false
+     * @return Mage_Shipping_Model_Rate_Result|false
      */
     public function getParcelShippingRate(Mage_Sales_Model_Quote $quote)
     {
@@ -300,29 +300,32 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         );
         $request->setParcelType('regular');
 
-        $result = Mage::getResourceModel('postnl_carrier/matrixrate')->getRate($request);
-        if (!$result) {
-            Mage::register($registryKey, false);
-            return false;
-        }
-
-        $result = Mage::getModel('shipping/shipping')
-                     ->collectCarrierRates('postnl', $request)
-                     ->getResult();
-
-        $rates = $result->getAllRates();
-        if (empty($rates)) {
+        $rawResult = Mage::getResourceModel('postnl_carrier/matrixrate')->getRate($request);
+        if (!$rawResult) {
             Mage::register($registryKey, false);
             return false;
         }
 
         /**
-         * Return the first rate found (there should only be 1).
+         * Convert the raw result from the database to a shipping rate result object.
          */
-        $rate = $rates[0];
+        $carrier = Mage::getModel('postnl_carrier/postnl');
+        $result  = Mage::getModel('shipping/rate_result');
+        $method  = Mage::getModel('shipping/rate_result_method');
 
-        Mage::register($registryKey, $rate);
-        return $rate;
+        $method->setCarrier('postnl');
+        $method->setCarrierTitle($carrier->getConfigData('title'));
+
+        $method->setMethod('flatrate');
+        $method->setMethodTitle($carrier->getConfigData('name'));
+
+        $method->setPrice($rawResult['price']);
+        $method->setCost(0);
+
+        $result->append($method);
+
+        Mage::register($registryKey, $result);
+        return $result;
     }
 
     /**
