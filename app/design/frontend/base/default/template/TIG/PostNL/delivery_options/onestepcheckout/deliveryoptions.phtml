@@ -101,7 +101,7 @@
                 <div id="responsive_switch" class="responsive-switch-wrapper">
                     <div class="title">
                         <a href="#" id="postnl_back_link" style="display:none;"><?php echo $this->__('Back'); ?></a>
-                        <h2>Bezorgopties</h2>
+                        <h2><?php echo $this->__('Delivery Options'); ?></h2>
                     </div>
                     <ul <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
                         <li><a id="postnl_switch_pickup" class="active"><?php echo $this->__('Delivery'); ?></a></li>
@@ -111,7 +111,8 @@
                 <div class="responsive-protector">
                     <div id="osc_scrollbar_content" class="popup-content col2-set">
                         <div id="postnl_delivery" class="col-1">
-                            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+                            <p class="rate"><?php echo $this->__('Have your order delivered %s', '&euro; 5,00'); ?></p>
+                            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?> <span class="rate">&euro; 5,00</span></h3>
                             <ul class="option-list" id="timeframes">
                                 <li class="location">
                                     <div class="bkg">
@@ -124,7 +125,7 @@
                                 </li>
                             </ul>
                             <?php if ($_canShowStatedAddressOnlyOption): ?>
-                                <ul class="option-list no-neighbour">
+                                <ul class="option-list extras">
                                     <li class="location">
                                         <div class="bkg">
                                             <div class="bkg">
@@ -151,7 +152,8 @@
                             <?php endif; ?>
                         </div>
                         <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
-                            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+                            <p class="rate"><?php echo $this->__('Pickup your order %s', '&euro; 6,00'); ?></p>
+                            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?> <span class="rate">&euro; 6,00</span></h3>
                             <ul class="option-list" id="pgelocation"></ul>
                             <ul class="option-list" id="pglocation"></ul>
                             <ul class="option-list" id="palocation"></ul>
