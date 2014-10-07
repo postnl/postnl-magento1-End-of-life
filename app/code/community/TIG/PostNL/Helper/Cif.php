@@ -1068,6 +1068,19 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Strips non-printable ASCII characters from a string.
+     *
+     * @param string &$string
+     */
+    public function stripNonPrintableCharacters(&$string)
+    {
+        /**
+         * Remove the first 32 ASCII characters.
+         */
+        $string = preg_replace('/[\x00-\x1f]/', '', $string);
+    }
+
+    /**
      * Parses a CIF exception. If the last error number is a known error, we replace the message and code with our own.
      *
      * @param TIG_PostNL_Model_Core_Cif_Exception &$exception

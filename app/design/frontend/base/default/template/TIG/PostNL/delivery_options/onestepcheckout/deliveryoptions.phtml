@@ -65,6 +65,15 @@
 <?php endif; ?>
 
 <?php $_canShowStatedAddressOnlyOption = Mage::helper('postnl/deliveryOptions')->canShowOnlyStatedAddressOption(); ?>
+
+<?php $_eveningFeeIncl    = $this->getFee('evening', true); ?>
+<?php $_eveningFeeExcl    = $this->getFee('evening', false); ?>
+<?php $_expressFeeIncl    = $this->getFee('express', true); ?>
+<?php $_expressFeeExcl    = $this->getFee('express', false); ?>
+<?php $_pakjeGemakFeeIncl = $this->getFee('pakje_gemak', true); ?>
+<?php $_pakjeGemakFeeExcl = $this->getFee('pakje_gemak', false); ?>
+
+<?php $_methodName = $this->getMethodName(); ?>
 <div id="osc_initial_loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_add_moment" style="display:none;">
     <ul class="option-list">
@@ -293,12 +302,15 @@
             oscSaveButton          : 'close_options_popup_btn',
             oscOptionsPopup        : 'postnl_delivery_options',
             taxDisplayType         : <?php echo $this->getTaxDisplayType() ?>,
-            eveningFeeIncl         : <?php echo $this->getFee('evening', true); ?>,
-            eveningFeeExcl         : <?php echo $this->getFee('evening', false); ?>,
-            expressFeeIncl         : <?php echo $this->getFee('express', true); ?>,
-            expressFeeExcl         : <?php echo $this->getFee('express', false); ?>,
+            eveningFeeIncl         : <?php echo $_eveningFeeIncl; ?>,
+            eveningFeeExcl         : <?php echo $_eveningFeeExcl; ?>,
+            expressFeeIncl         : <?php echo $_expressFeeIncl; ?>,
+            expressFeeExcl         : <?php echo $_expressFeeIncl; ?>,
+            pakjeGemakFeeIncl      : <?php echo $_pakjeGemakFeeIncl; ?>,
+            pakjeGemakFeeExcl      : <?php echo $_pakjeGemakFeeExcl; ?>,
             eveningFeeText         : '<?php echo $this->getFeeText('evening', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             expressFeeText         : '<?php echo $this->getFeeText('express', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
+            pakjeGemakFeeText      : '<?php echo $this->getFeeText('pakje_gemak', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
             allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
             allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
@@ -308,7 +320,7 @@
             allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
             disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
             isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,
-            shippingMethodName     : '<?php echo $this->getMethodName()          ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
+            shippingMethodName     : '<?php echo $_methodName          ? $_methodName : 's_method_postnl_flatrate'; ?>',
             <?php if ($_canShowStatedAddressOnlyOption): ?>
                 extraOptions           : {
                     only_stated_address : {
@@ -334,6 +346,16 @@
             try {
                 deliveryOptions.showOptions();
                 $('carrier_postnl').addClassName('options-available');
+
+                <?php if($_pakjeGemakFeeIncl > 0): ?>
+                    /**
+                     * Hide the default price label as this will be replaced by separate prices for delivery and pick up options.
+                     */
+                    var priceLabel = $$('label[for="<?php echo $_methodName; ?>"] span.price')[0];
+                    if (priceLabel) {
+                        priceLabel.hide();
+                    }
+                <?php endif; ?>
             } catch(e) {
                 console.error(e);
                 $('initial_loader').hide();
@@ -609,7 +631,7 @@
 
         <?php if ($_canShowStatedAddressOnlyOption): ?>
             $('<?php echo $this->getMethodCode(); ?>_only_stated_address').observe('click', function() {
-                $('<?php echo $this->getMethodName(); ?>').checked = true;
+                $('<?php echo $_methodName; ?>').checked = true;
             });
         <?php endif; ?>
     }

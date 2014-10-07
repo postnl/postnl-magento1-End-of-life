@@ -234,14 +234,24 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $registryKey .= '_incl';
         }
 
+        /**
+         * If the current order is not a buspakje order, the fee is 0.
+         */
+        if (!$this->isBuspakjeConfigApplicableToQuote()) {
+            Mage::register($registryKey, 0);
+
+            return 0;
+        }
+
         if (Mage::registry($registryKey) !== null) {
             $price = Mage::registry($registryKey);
         } else {
-            $pakjeGemakShippingRate = Mage::helper('postnl/carrier')->getParcelShippingRate($this->getQuote());
-            if (!$pakjeGemakShippingRate) {
+            $pakjeGemakShippingRates = Mage::helper('postnl/carrier')->getParcelShippingRate($this->getQuote());
+            if (!$pakjeGemakShippingRates) {
                 return 0;
             }
 
+            $pakjeGemakShippingRate = $pakjeGemakShippingRates->getCheapestRate();
             $pakjeGemakShippingRate = $pakjeGemakShippingRate->getPrice();
 
             $difference = $pakjeGemakShippingRate - $currentRate;
@@ -1801,12 +1811,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
-         * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
-         * these options are available for letter box parcel orders.
+         * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', timeframes
+         * are not allowed.
          */
-        if ($this->quoteIsBuspakje($quote)
-            && !$this->canShowAllDeliveryOptionsForBuspakje($quote)
-        ) {
+        if ($this->quoteIsBuspakje($quote)) {
             Mage::register($registryKey, false);
             return false;
         }
