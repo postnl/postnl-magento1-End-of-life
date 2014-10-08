@@ -1108,7 +1108,7 @@ TIG_PostNL::Friday,Vrijdag
 TIG_PostNL::Saturday,Zaterdag
 TIG_PostNL::PostNL - Print Packing Slip,PostNL - Print Pakbon
 TIG_PostNL::deliver to stated address only,lever alleen aan opgegeven adres
-TIG_PostNL::Do not deliver to neighbours,Niet bij buren bezorgen
+TIG_PostNL::do not deliver to neighbours when not home,"bij niet thuis, niet bij buren bezorgen"
 TIG_PostNL::Matrix,Matrix
 TIG_PostNL::Invalid PostNL Matrix Rates File Format,Incorrect PostNL Matrixtarieven bestandsformaat
 TIG_PostNL::Region/State,Provincie/staat
@@ -1139,3 +1139,21 @@ TIG_PostNL::Show 'only send to stated address' option,Toon 'lever alleen op aang
 TIG_PostNL::Enable this option to show a checkbox on the checkout page with which the customer can choose to only send the shipment to the stated address.,Activeer deze instelling om een checkbox te tonen op de afrekenpagina waarmee de consument kan aangeven dat de zending enkel op het opgegeven adres bezorgd mag worden.
 TIG_PostNL::Stated address only option checked by default,Lever alleen aan opgegeven adres optie standaard aanvinken
 TIG_PostNL::Stated address only fee,Lever alleen aan opgegeven adres toeslag
+TIG_PostNL::Unable to save update_product_attribute cron expression: %s,Unable to save update_product_attribute cron expression: %s
+TIG_PostNL::The PostNL extension is currently being upgraded.,De PostNL extensie wordt momenteel geüpgradet.
+"TIG_PostNL::Depending on the number of products in your store, this could take several hours.",Afhankelijk van het aantal producten in uw winkel kan dit tot enkele uren duren.
+TIG_PostNL::UpdateProductAttribute cron starting...,UpdateProductAttribute cron starting...
+TIG_PostNL::No attribute data found. Exiting cron.,No attribute data found. Exiting cron.
+TIG_PostNL::Updating product attribute data: %s,Updating product attribute data: %s
+TIG_PostNL::Updating product IDs: %s,Updating product IDs: %s
+TIG_PostNL::No products left to update.,No products left to update.
+TIG_PostNL::All attributes have been processed. Removing cron.,All attributes have been processed. Removing cron.
+TIG_PostNL::UpdateProductAttribute cron has finished.,UpdateProductAttribute cron has finished.
+"TIG_PostNL::A prefilled csv file can be found <a href="""" target=""_blank"">here</a>.","U kunt <a href="""" target=""_blank"">hier</a> een voorgevuld csv bestand downloaden."
+TIG_PostNL::Extra service,Extra service
+TIG_PostNL::Unable to send track & trace email due to missing shipment parameters.,De track & trace e-mail kan niet verzonden worden wegens missende zendinggegevens.
+TIG_PostNL::Data has not been imported. See the following list of errors: %s,Data is niet geïmporteerd. Zie de lijst van foutmeldingen: %s
+TIG_PostNL::PostNL track & trace email has been sent.,PostNL track & trace e-mail is verstuurd.
+TIG_PostNL::PostNL track & trace email has been sent for shipment #%s.,PostNL track & trace e-mail is verstuurd voor zending #%s.
+TIG_PostNL::Pickup your order %s,Je bestelling ophalen %s
+TIG_PostNL::Have your order delivered %s,Je bestelling laten bezorgen %s

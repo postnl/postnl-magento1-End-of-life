@@ -73,8 +73,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * If this order is not being shipped to the Netherlands or was not placed using PostNL, remove any PakjeGemak
          * addresses that may have been saved and delete the PostNL order.
          */
-        $shippingCountry = $order->getShippingAddress()->getCountryId();
-        if ($shippingCountry != 'NL' || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        $shippingAddress = $order->getShippingAddress();
+        if (!$shippingAddress
+            || $shippingAddress->getCountryId() != 'NL'
+            || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
+        ) {
             $this->_removePakjeGemakAddress($order);
 
             if ($postnlOrder && $postnlOrder->getId()) {

@@ -43,6 +43,7 @@
  * @var Mage_Sales_Model_Quote_Address $_address
  */
 ?>
+<?php $_store         = Mage::app()->getStore(); ?>
 <?php $_address       = $this->getShippingAddress(); ?>
 <?php $_postcode      = $this->getPostcode(); ?>
 <?php $_deliveryDate  = $this->getDeliveryDate(); ?>
@@ -50,8 +51,11 @@
 <?php $_housenumber   = $_streetData['housenumber']; ?>
 
 <?php $_canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
-<?php $_canUsePakjeGemak = $this->canUsePakjeGemak(); ?>
 
+<?php $_canShowSeparateRates = $this->canShowSeparateRates(); ?>
+
+
+<?php $_canUsePakjeGemak = $this->canUsePakjeGemak(); ?>
 <?php $_canUsePakjeGemakExpress = false; ?>
 <?php if ($_canUsePakjeGemak): ?>
     <?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
@@ -74,6 +78,9 @@
 <?php $_pakjeGemakFeeExcl = $this->getFee('pakje_gemak', false); ?>
 
 <?php $_methodName = $this->getMethodName(); ?>
+<?php $_methodRate = $this->getMethodRate(); ?>
+
+<?php $_pakjeGemakRate = $_methodRate + $this->getFee('pakje_gemak', $this->helper('tax')->shippingPriceIncludesTax()); ?>
 <div id="osc_initial_loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_add_moment" style="display:none;">
     <ul class="option-list">
@@ -120,8 +127,10 @@
                 <div class="responsive-protector">
                     <div id="osc_scrollbar_content" class="popup-content col2-set">
                         <div id="postnl_delivery" class="col-1">
-                            <p class="rate"><?php echo $this->__('Have your order delivered %s', '&euro; 5,00'); ?></p>
-                            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?> <span class="rate">&euro; 5,00</span></h3>
+                            <?php if ($_canShowSeparateRates): ?>
+                                <p class="rate"><?php echo $this->__('Have your order delivered %s', $_store->formatPrice($_methodRate, false)); ?></p>
+                            <?php endif; ?>
+                            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?><?php if ($_canShowSeparateRates): ?> <span class="rate"><?php echo $_store->formatPrice($_methodRate, false); ?></span><?php endif; ?></h3>
                             <ul class="option-list" id="timeframes">
                                 <li class="location">
                                     <div class="bkg">
@@ -161,8 +170,10 @@
                             <?php endif; ?>
                         </div>
                         <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
-                            <p class="rate"><?php echo $this->__('Pickup your order %s', '&euro; 6,00'); ?></p>
-                            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?> <span class="rate">&euro; 6,00</span></h3>
+                            <?php if ($_canShowSeparateRates): ?>
+                                <p class="rate"><?php echo $this->__('Pickup your order %s', $_store->formatPrice($_pakjeGemakRate, false)); ?></p>
+                            <?php endif; ?>
+                            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?><?php if ($_canShowSeparateRates): ?> <span class="rate"><?php echo $_store->formatPrice($_pakjeGemakRate, false); ?></span><?php endif; ?></h3>
                             <ul class="option-list" id="pgelocation"></ul>
                             <ul class="option-list" id="pglocation"></ul>
                             <ul class="option-list" id="palocation"></ul>
@@ -349,13 +360,13 @@
                 deliveryOptions.showOptions();
                 $('carrier_postnl').addClassName('options-available');
 
-                <?php if($_pakjeGemakFeeIncl > 0): ?>
+                <?php if($_canShowSeparateRates): ?>
                     /**
                      * Hide the default price label as this will be replaced by separate prices for delivery and pick up options.
                      */
-                    var priceLabel = $$('label[for="<?php echo $_methodName; ?>"] span.price')[0];
-                    if (priceLabel) {
-                        priceLabel.hide();
+                    var methodLabel = $$('label[for="<?php echo $_methodName; ?>"]')[0];
+                    if (methodLabel) {
+                        methodLabel.update('<?php echo $this->escapeHtml($this->getRate()->getMethodTitle()); ?>');
                     }
                 <?php endif; ?>
             } catch(e) {

@@ -656,6 +656,28 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Check if separate rates should be shown for delivery and pick-up.
+     *
+     * @return boolean
+     */
+    public function canShowSeparateRates()
+    {
+        if (!$this->getIsBuspakje()) {
+            return false;
+        }
+
+        if (!$this->canUsePakjeGemak()) {
+            return false;
+        }
+
+        if ($this->getPakjeGemakFee() < 0.01) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Get whether this order is a buspakje order.
      *
      * @return bool
