@@ -39,11 +39,9 @@
 class TIG_PostNL_Model_Core_System_Config_Source_WeightUnit
 {
     /**
-     * Returns an option array for all possible PostNL product options
+     * Returns an option array for all possible PostNL product options.
      *
      * @return array
-     *
-     * @todo implement COD and extra cover
      */
     public function toOptionArray()
     {
