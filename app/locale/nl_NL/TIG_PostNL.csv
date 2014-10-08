@@ -1108,7 +1108,7 @@ TIG_PostNL::Friday,Vrijdag
 TIG_PostNL::Saturday,Zaterdag
 TIG_PostNL::PostNL - Print Packing Slip,PostNL - Print Pakbon
 TIG_PostNL::deliver to stated address only,lever alleen aan opgegeven adres
-TIG_PostNL::do not deliver to neighbours when not home,"bij niet thuis, niet bij buren bezorgen"
+TIG_PostNL::do not deliver to neighbours,"bij niet thuis, niet bij buren bezorgen"
 TIG_PostNL::Matrix,Matrix
 TIG_PostNL::Invalid PostNL Matrix Rates File Format,Incorrect PostNL Matrixtarieven bestandsformaat
 TIG_PostNL::Region/State,Provincie/staat

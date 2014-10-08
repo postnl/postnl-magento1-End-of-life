@@ -153,13 +153,13 @@
                                             </div>
                                         </div>
                                     </li>
-                                    <li class="option">
+                                    <li class="option" id="<?php echo $_methodName; ?>_only_stated_address_option">
                                         <div class="bkg">
                                             <div class="bkg">
                                                 <div class="content">
-                                                    <input type="checkbox" name="<?php echo $this->getMethodCode(); ?>[postnl][only_stated_address]" id="<?php echo $this->getMethodCode(); ?>_only_stated_address" value="1" class="checkbox postnl-only-stated-address" <?php if ($this->isOnlyStatedAddressOptionChecked()):?>checked="checked"<?php endif; ?>>
-                                                    <label for="<?php echo $this->getMethodCode(); ?>_only_stated_address">
-                                                        <?php echo $this->__('Do not deliver to neighbours'); ?>
+                                                    <input type="checkbox" name="<?php echo $_methodName; ?>[postnl][only_stated_address]" id="<?php echo $_methodName; ?>_only_stated_address" value="1" class="checkbox" <?php if ($this->isOnlyStatedAddressOptionChecked()):?>checked="checked"<?php endif; ?>>
+                                                    <label for="<?php echo $_methodName; ?>_only_stated_address">
+                                                        <?php echo $this->__('do not deliver to neighbours'); ?>
                                                         <span class="price">+ <?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
                                                     </label>
                                                 </div>
@@ -318,7 +318,7 @@
             eveningFeeIncl         : <?php echo $_eveningFeeIncl; ?>,
             eveningFeeExcl         : <?php echo $_eveningFeeExcl; ?>,
             expressFeeIncl         : <?php echo $_expressFeeIncl; ?>,
-            expressFeeExcl         : <?php echo $_expressFeeIncl; ?>,
+            expressFeeExcl         : <?php echo $_expressFeeExcl; ?>,
             pakjeGemakFeeIncl      : <?php echo $_pakjeGemakFeeIncl; ?>,
             pakjeGemakFeeExcl      : <?php echo $_pakjeGemakFeeExcl; ?>,
             eveningFeeText         : '<?php echo $this->getFeeText('evening', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
@@ -333,11 +333,11 @@
             allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
             disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
             isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,
-            shippingMethodName     : '<?php echo $_methodName          ? $_methodName : 's_method_postnl_flatrate'; ?>',
+            shippingMethodName     : '<?php echo $_methodName ? $_methodName : 's_method_postnl_flatrate'; ?>',
             <?php if ($_canShowStatedAddressOnlyOption): ?>
                 extraOptions           : {
                     only_stated_address : {
-                        element : $('<?php echo $this->getMethodCode(); ?>_only_stated_address'),
+                        element : $('<?php echo $_methodName; ?>_only_stated_address'),
                         allowedTypes : [
                             'Avond',
                             'Overdag'
@@ -643,8 +643,18 @@
         });
 
         <?php if ($_canShowStatedAddressOnlyOption): ?>
-            $('<?php echo $this->getMethodCode(); ?>_only_stated_address').observe('click', function() {
-                $('<?php echo $_methodName; ?>').checked = true;
+            var onlyStatedAddressCheckbox = $('<?php echo $_methodName; ?>_only_stated_address');
+            var onlyStatedAddressContainer = $('<?php echo $_methodName; ?>_only_stated_address_option');
+
+            onlyStatedAddressContainer.stopObserving();
+            onlyStatedAddressContainer.observe('click', function(event) {
+                var clickedElement = Event.findElement(event);
+                if (clickedElement.tagName.toUpperCase() == 'INPUT' || clickedElement.tagName.toUpperCase() == 'LABEL') {
+                    return;
+                }
+
+                onlyStatedAddressCheckbox.checked = !onlyStatedAddressCheckbox.checked;
+                onlyStatedAddressCheckbox.focus();
             });
         <?php endif; ?>
     }
