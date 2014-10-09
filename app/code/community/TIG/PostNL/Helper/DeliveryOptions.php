@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @todo Cache the available delivery options in the checkout session. That way we only recalculate them if the quote
@@ -66,12 +66,14 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_ENABLE_DELIVERY_DAYS_FOR_BUSPAKJE  = 'postnl/delivery_options/enable_delivery_days_for_buspakje';
     const XPATH_ENABLE_PAKJEGEMAK_FOR_BUSPAKJE     = 'postnl/delivery_options/enable_pakjegemak_for_buspakje';
     const XPATH_ENABLE_PAKKETAUTOMAAT_FOR_BUSPAKJE = 'postnl/delivery_options/enable_pakketautomaat_for_buspakje';
+    const XPATH_STATED_ADDRESS_ONLY_OPTION         = 'postnl/delivery_options/stated_address_only_option';
 
     /**
      * Xpaths to extra fee config settings.
      */
-    const XPATH_EVENING_TIMEFRAME_FEE  = 'postnl/delivery_options/evening_timeframe_fee';
-    const XPATH_PAKJEGEMAK_EXPRESS_FEE = 'postnl/delivery_options/pakjegemak_express_fee';
+    const XPATH_EVENING_TIMEFRAME_FEE   = 'postnl/delivery_options/evening_timeframe_fee';
+    const XPATH_PAKJEGEMAK_EXPRESS_FEE  = 'postnl/delivery_options/pakjegemak_express_fee';
+    const XPATH_ONLY_STATED_ADDRESS_FEE = 'postnl/delivery_options/stated_address_only_fee';
 
     /**
      * Xpath for shipping duration setting.
@@ -79,6 +81,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     const XPATH_SHIPPING_DURATION  = 'postnl/cif_labels_and_confirming/shipping_duration';
     const XPATH_CUTOFF_TIME        = 'postnl/cif_labels_and_confirming/cutoff_time';
     const XPATH_SUNDAY_CUTOFF_TIME = 'postnl/cif_labels_and_confirming/sunday_cutoff_time';
+    const XPATH_SHIPPING_DAYS      = 'postnl/cif_labels_and_confirming/shipping_days';
+
+    /**
+     * Xpath to the 'stated_address_only_checked' setting.
+     */
+    const XPATH_STATED_ADDRESS_ONLY_CHECKED = 'postnl/delivery_options/stated_address_only_checked';
 
     /**
      * Xpath to the responsive design setting.
@@ -107,31 +115,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     );
 
     /**
-     * @var Mage_Sales_Model_Quote
-     */
-    protected $_quote;
-
-    /**
      * @return array
      */
     public function getValidTypes()
     {
         return $this->_validTypes;
-    }
-
-    /**
-     * @return Mage_Sales_Model_Quote
-     */
-    public function getQuote()
-    {
-        if ($this->_quote) {
-            return $this->_quote;
-        }
-
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
-
-        $this->_quote = $quote;
-        return $quote;
     }
 
     /**
@@ -145,21 +133,37 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getEveningFee($formatted = false, $includingTax = true, $convert = true)
     {
-        $storeId = Mage::app()->getStore()->getId();
+        $registryKey = 'postnl_evening_fee';
 
-        $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
+        if ($includingTax) {
+            $registryKey .= '_incl';
+        }
 
-        $price = $this->getPriceWithTax($eveningFee, $includingTax, $formatted, false);
+        if (Mage::registry($registryKey) !== null) {
+            $price = Mage::registry($registryKey);
+        } else {
+            $storeId = Mage::app()->getStore()->getId();
 
-        if ($price > self::MAX_FEE) {
-            $price = 0;
+            $eveningFee = (float) Mage::getStoreConfig(self::XPATH_EVENING_TIMEFRAME_FEE, $storeId);
+
+            $price = $this->getPriceWithTax($eveningFee, $includingTax, false, false);
+
+            if ($price > self::MAX_FEE) {
+                $price = 0;
+            }
+
+            Mage::register($registryKey, $price);
         }
 
         if ($convert) {
             $quote = $this->getQuote();
             $store = $quote->getStore();
 
-            $price = $store->convertPrice($price, $formatted, false);
+            $price = $store->convertPrice($price, false, false);
+        }
+
+        if ($formatted) {
+            $price = Mage::app()->getStore()->formatPrice($price, false);
         }
 
         return $price;
@@ -176,13 +180,187 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      */
     public function getExpressFee($formatted = false, $includingTax = true, $convert = true)
     {
+        $registryKey = 'postnl_express_fee';
+
+        if ($includingTax) {
+            $registryKey .= '_incl';
+        }
+
+        if (Mage::registry($registryKey) !== null) {
+            $price = Mage::registry($registryKey);
+        } else {
+            $storeId = Mage::app()->getStore()->getId();
+
+            $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
+
+            $price = $this->getPriceWithTax($expressFee, $includingTax, false, false);
+
+            if ($price > self::MAX_FEE) {
+                $price = 0;
+            }
+
+            Mage::register($registryKey, $price);
+        }
+
+        if ($convert) {
+            $quote = $this->getQuote();
+            $store = $quote->getStore();
+
+            $price = $store->convertPrice($price, false, false);
+        }
+
+        if ($formatted) {
+            $price = Mage::app()->getStore()->formatPrice($price, false);
+        }
+
+        return $price;
+    }
+
+    /**
+     * Get the fee for PakjeGemak locations. This is only applicable to buspakje orders.
+     *
+     * @param float   $currentRate
+     * @param boolean $formatted
+     * @param boolean $includingTax
+     * @param boolean $convert
+     *
+     * @return float|int
+     */
+    public function getPakjeGemakFee($currentRate, $formatted = false, $includingTax = true, $convert = true)
+    {
+        $registryKey = 'postnl_pakje_gemak_fee';
+
+        if ($includingTax) {
+            $registryKey .= '_incl';
+        }
+
+        /**
+         * If the current order is not a buspakje order, the fee is 0.
+         */
+        if (!$this->isBuspakjeConfigApplicableToQuote()) {
+            Mage::register($registryKey, 0);
+
+            return 0;
+        }
+
+        if (Mage::registry($registryKey) !== null) {
+            $price = Mage::registry($registryKey);
+        } else {
+            $pakjeGemakShippingRates = Mage::helper('postnl/carrier')->getParcelShippingRate($this->getQuote());
+            if (!$pakjeGemakShippingRates) {
+                return 0;
+            }
+
+            $pakjeGemakShippingRate = $pakjeGemakShippingRates->getCheapestRate();
+            $pakjeGemakShippingRate = $pakjeGemakShippingRate->getPrice();
+
+            $difference = $pakjeGemakShippingRate - $currentRate;
+
+            $price = $this->getPriceWithTax($difference, $includingTax, false, false);
+
+            Mage::register($registryKey, $price);
+        }
+
+        if ($convert) {
+            $quote = $this->getQuote();
+            $store = $quote->getStore();
+
+            $price = $store->convertPrice($price, false, false);
+        }
+
+
+        if ($formatted) {
+            $price = Mage::app()->getStore()->formatPrice($price, false);
+        }
+
+        return $price;
+    }
+
+    /**
+     * Get the fee charged for possible options saved to the PostNL order.
+     *
+     * @param TIG_PostNL_Model_Core_Order $postnlOrder
+     * @param bool                        $formatted
+     * @param bool                        $includingTax
+     * @param bool                        $convert
+     *
+     * @return float|int
+     */
+    public function getOptionsFee(TIG_PostNL_Model_Core_Order $postnlOrder, $formatted = false, $includingTax = true,
+                                  $convert = true)
+    {
+        if (!$postnlOrder->hasOptions()) {
+            return 0;
+        }
+
+        $options = $postnlOrder->getOptions();
+        if (empty($options)) {
+            return 0;
+        }
+
         $storeId = Mage::app()->getStore()->getId();
 
-        $expressFee = (float) Mage::getStoreConfig(self::XPATH_PAKJEGEMAK_EXPRESS_FEE, $storeId);
+        /**
+         * For upgradability reasons this is a switch, rather than an if statement.
+         */
+        $fee = 0;
+        foreach ($options as $option => $value) {
+            if (!$value) {
+                continue;
+            }
 
-        $price = $this->getPriceWithTax($expressFee, $includingTax, $formatted, false);
+            switch ($option) {
+                case 'only_stated_address':
+                    $fee += (float) Mage::getStoreConfig(self::XPATH_ONLY_STATED_ADDRESS_FEE, $storeId);
+                    break;
+                //no default
+            }
+        }
 
-        if ($price > self::MAX_FEE) {
+        $price = $this->getPriceWithTax($fee, $includingTax, false, false);
+
+        if ($convert) {
+            $quote = $this->getQuote();
+            $store = $quote->getStore();
+
+            $price = $store->convertPrice($price, false, false);
+        }
+
+        if ($formatted) {
+            $price = Mage::app()->getStore()->formatPrice($price, false);
+        }
+
+        return $price;
+    }
+
+    /**
+     * Gets the configured fee for a specified option.
+     *
+     * @param string $option
+     * @param bool  $formatted
+     * @param bool  $includingTax
+     * @param bool  $convert
+     *
+     * @return float|int
+     */
+    public function getOptionFee($option, $formatted = false, $includingTax = true, $convert = true)
+    {
+        $storeId = Mage::app()->getStore()->getId();
+
+        /**
+         * For upgradability reasons this is a switch, rather than an if statement.
+         */
+        $fee = 0;
+        switch ($option) {
+            case 'only_stated_address':
+                $fee = (float) Mage::getStoreConfig(self::XPATH_ONLY_STATED_ADDRESS_FEE, $storeId);
+                break;
+            //no default
+        }
+
+        $price = $this->getPriceWithTax($fee, $includingTax, false, false);
+
+        if ($price > 2) {
             $price = 0;
         }
 
@@ -190,7 +368,11 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $quote = $this->getQuote();
             $store = $quote->getStore();
 
-            $price = $store->convertPrice($price, $formatted, false);
+            $price = $store->convertPrice($price, false, false);
+        }
+
+        if ($formatted) {
+            $price = Mage::app()->getStore()->formatPrice($price, false);
         }
 
         return $price;
@@ -418,19 +600,59 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
+     * Check whether the specified order date is past the configured cut-off time.
+     *
+     * @param string|DateTime|null $orderDate
+     * @param null|int             $storeId
+     *
+     * @return bool
+     */
+    public function isPastCutOffTime($orderDate = null, $storeId = null)
+    {
+        if (!$orderDate) {
+            $orderDate = new DateTime(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
+        }
+
+        if ($storeId === null) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (is_string($orderDate)) {
+            $orderDate = new DateTime($orderDate);
+        }
+
+        /**
+         * Get the cut-off time. This is formatted as H:i:s.
+         */
+        $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
+        $orderTime  = $orderDate->format('His');
+
+        /**
+         * Check if the current time (as His) is greater than the cut-off time.
+         */
+        if ($orderTime > str_replace(':', '', $cutOffTime)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Get the delivery date for a specified order date.
      *
      * @param null|string $orderDate
      * @param null|int    $storeId
      * @param boolean     $asDays
      * @param boolean     $asDateTime
+     * @param boolean     $withTime
      *
-     * @return bool|string|int
+     * @return string|int|DateTime
      */
-    public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false, $asDateTime = false)
-    {
+    public function getDeliveryDate($orderDate = null, $storeId = null, $asDays = false, $asDateTime = false,
+        $withTime = true
+    ) {
         if (!$orderDate) {
-            $orderDate = new DateTime(Mage::getModel('core/date')->date('Y-m-d H:i:s'));
+            $orderDate = new DateTime(Mage::getSingleton('core/date')->date('Y-m-d H:i:s'));
         }
 
         if ($storeId === null) {
@@ -449,15 +671,9 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $deliveryTime->add(new DateInterval("P{$shippingDuration}D"));
 
         /**
-         * Get the cut-off time. This is formatted as H:i:s.
+         * Check if the current time is greater than the cut-off time.
          */
-        $cutOffTime = Mage::getStoreConfig(self::XPATH_CUTOFF_TIME, $storeId);
-        $orderTime = $orderDate->format('His');
-
-        /**
-         * Check if the current time (as His) is greater than the cut-off time.
-         */
-        if ($orderTime > str_replace(':', '', $cutOffTime)) {
+        if ($this->isPastCutOffTime($orderDate, $storeId)) {
             $deliveryTime->add(new DateInterval('P1D'));
             $shippingDuration++;
         }
@@ -468,15 +684,29 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $deliveryDay = $deliveryTime->format('N');
 
         /**
+         * Delivery on sunday is not possible.
+         */
+        if ($deliveryDay == 7) {
+            $deliveryDay = 1;
+            $deliveryTime->add(new DateInterval('P1D'));
+            $shippingDuration++;
+        }
+
+        /**
          * If the delivery day is a monday, we need to make sure that sunday sorting is allowed. Otherwise delivery on a
          * monday is not possible.
          */
-        if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
+        if ($deliveryDay == 1 && Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
+            $orderTime = $orderDate->format('His');
             $sundayCutOffTime = Mage::getStoreConfig(self::XPATH_SUNDAY_CUTOFF_TIME, $storeId);
+
             if ($orderTime <= str_replace(':', '', $sundayCutOffTime)) {
                 $deliveryTime->add(new DateInterval('P1D'));
                 $shippingDuration++;
             }
+        } elseif ($deliveryDay == 1) {
+            $deliveryTime->add(new DateInterval('P1D'));
+            $shippingDuration++;
         }
 
         if ($asDays) {
@@ -484,11 +714,184 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         if ($asDateTime) {
+            if (!$withTime) {
+                $deliveryTime->setTime(0, 0, 0);
+            }
             return $deliveryTime;
         }
 
         $deliveryDate = $deliveryTime->format('Y-m-d');
         return $deliveryDate;
+    }
+
+    /**
+     * Check if a given delivery date is available by checking the configured shipping dates.
+     *
+     * @param string|DateTime $deliveryDate
+     *
+     * @return DateTime
+     *
+     * @todo implement sunday sorting
+     */
+    public function getValidDeliveryDate($deliveryDate)
+    {
+        if (is_string($deliveryDate)) {
+            $deliveryDate = new DateTime($deliveryDate);
+        }
+
+        if (!($deliveryDate instanceof DateTime)) {
+            throw new InvalidArgumentException('Date parameter must be a valid date string or DateTime object.');
+        }
+
+        $deliveryDay = $deliveryDate->format('N');
+
+        /**
+         * Get the configured shipping days.
+         */
+        $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
+        $shippingDays = explode(',', $shippingDays);
+        $shippingDate = clone $deliveryDate;
+
+        $shippingDay = (int) $shippingDate->sub(new DateInterval('P1D'))->format('N');
+        /**
+         * Shipping is only available on monday through saturday.
+         */
+        if ($shippingDay < 1 || $shippingDay > 6) {
+            $shippingDay = 6;
+        }
+
+        /**
+         * If the shipping day is allowed, return the date.
+         */
+        if (in_array($shippingDay, $shippingDays)) {
+            return $deliveryDate;
+        }
+
+        /**
+         * If the delivery day is a tuesday, saturday is a valid shipping day and the first possible delivery day is the
+         * date specified or before then, the specified date is allowed.
+         *
+         * If we have configured that we do not ship on mondays, the following will take place:
+         * - If the order on friday or before, we can ship on saturday and it will be delivered on tuesday.
+         * - If we order on saturday and it is before the cut-off time, we can ship on saturday and it will be delivered
+         *   on tuesday.
+         * - If we order on sunday or monday, we can only ship it the next saturday and it will be delivered on tuesday
+         *   the week after.
+         */
+        if ($deliveryDay == 2
+            && in_array(6, $shippingDays)
+            && $this->getDeliveryDate(null, null, false, true, false) <= $deliveryDate
+        ) {
+            return $deliveryDate;
+        }
+
+        $dayArr = array(
+            1 => 'monday',
+            2 => 'tuesday',
+            3 => 'wednesday',
+            4 => 'thursday',
+            5 => 'friday',
+            6 => 'saturday',
+            7 => 'sunday'
+        );
+
+        /**
+         * If a higher day is available, use that. I.e. the requested date is on a thursday and only friday is
+         * available.
+         */
+        natsort($shippingDays);
+        foreach ($shippingDays as $availableShippingDay) {
+            /**
+             * Skip all shipping days that are earlier than the desired shipping day.
+             */
+            if ($availableShippingDay < $shippingDay) {
+                continue;
+            }
+
+            /**
+             * The delivery day is always the day after the shipping day.
+             */
+            $availableDeliveryDay = $availableShippingDay + 1;
+
+            /**
+             * Monday and sunday are not available as delivery days.
+             */
+            if ($availableDeliveryDay < 2 || $availableDeliveryDay > 6) {
+                $availableDeliveryDay = 2;
+            }
+
+            /**
+             * Convert the delivery day of the week to the actual date.
+             */
+            $availableDeliveryDate = $deliveryDate->modify("next {$dayArr[$availableDeliveryDay]}");
+            return $availableDeliveryDate;
+        }
+
+        /**
+         * If no higher value was available, get the first possible shipping day next week.
+         *
+         * Sort the array and get the first element.
+         */
+        $availableDeliveryDay = $shippingDays[0] + 1;
+
+        /**
+         * Monday and sunday are not available as delivery days.
+         */
+        if ($availableDeliveryDay < 2 || $availableDeliveryDay > 6) {
+            $availableDeliveryDay = 2;
+        }
+
+        /**
+         * Convert the delivery day of the week to the actual date.
+         */
+        $availableDeliveryDate = $deliveryDate->modify("next {$dayArr[$availableDeliveryDay]}");
+        return $availableDeliveryDate;
+    }
+
+    /**
+     * Check if a given confirm date is valid and modify it if not.
+     *
+     * Currently this method only checks if the confirm date is a monday. If so it may need to be modified to a
+     * saturday.
+     *
+     * @param string|DateTime $date
+     *
+     * @return DateTime
+     */
+    public function getValidConfirmDate($date)
+    {
+        if (is_string($date)) {
+            $date = new DateTime($date);
+        }
+
+        if (!($date instanceof DateTime)) {
+            throw new InvalidArgumentException('Date parameter must be a valid date string or DateTime object.');
+        }
+
+        /**
+         * Get the configured shipping days.
+         */
+        $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
+        $shippingDays = explode(',', $shippingDays);
+        $shippingDate = clone $date;
+
+        /**
+         * Get the current shipping day of the week (1 through 7).
+         */
+        $shippingDay  = (int) $shippingDate->format('N');
+
+        /**
+         * Check fit he shipping day is a monday. If so, check if monday is allowed. If not, modify it to the previous
+         * saturday if saturdays are allowed.
+         */
+        if (!in_array($shippingDay, $shippingDays)
+            && $shippingDay == 1
+            && in_array(6, $shippingDays)
+        ) {
+            $date->modify('last saturday');
+        }
+
+        return $date;
     }
 
     /**
@@ -888,7 +1291,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
          * these options are available for letter box parcel orders.
          */
-        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+        if ($this->quoteIsBuspakje($quote)
             && !$this->canShowPakjeGemakForBuspakje($quote)
         ) {
             Mage::register($registryKey, false);
@@ -1124,7 +1527,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
          * these options are available for letter box parcel orders.
          */
-        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+        if ($this->quoteIsBuspakje($quote)
             && !$this->canShowPakketAutomaatForBuspakje($quote)
         ) {
             Mage::register($registryKey, false);
@@ -1278,7 +1681,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
          * these options are available for letter box parcel orders.
          */
-        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+        if ($this->quoteIsBuspakje($quote)
             && !$this->canShowDeliveryDaysForBuspakje($quote)
         ) {
             Mage::register($registryKey, false);
@@ -1408,12 +1811,10 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         }
 
         /**
-         * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', check if
-         * these options are available for letter box parcel orders.
+         * If the current quote fits as a letter box parcel and the calculation mode is set to 'automatic', timeframes
+         * are not allowed.
          */
-        if ($this->isBuspakjeConfigApplicableToQuote($quote)
-            && !$this->canShowAllDeliveryOptionsForBuspakje($quote)
-        ) {
+        if ($this->quoteIsBuspakje($quote)) {
             Mage::register($registryKey, false);
             return false;
         }
@@ -1655,7 +2056,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Check if the current quote is a letter box parcel order and if so, if delivery options are allowed for letter
          * box parcel orders.
          */
-        if ($this->isBuspakjeConfigApplicableToQuote($quote)
+        if ($this->quoteIsBuspakje($quote)
             && !$this->canShowDeliveryOptionsForBuspakje($quote)
         ) {
             $errors = array(
@@ -1990,6 +2391,158 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
 
         Mage::register($registryKey, $pakketautomaatEnabledForBuspakje);
         return $pakketautomaatEnabledForBuspakje;
+    }
+
+    /**
+     * Check whether showing the 'only_stated_address' option is allowed.
+     *
+     * @param boolean $checkQuote
+     *
+     * @return boolean
+     */
+    public function canShowOnlyStatedAddressOption($checkQuote = true)
+    {
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_show_only_stated_address_option';
+
+        $quote = $this->getQuote();
+        if ($quote) {
+            $registryKey .= '_' . $quote->getId();
+        }
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        if ($checkQuote) {
+            /**
+             * Check if these options are allowed for this specific quote.
+             */
+            $canUseForQuote = $this->_canShowOnlyStatedAddressOptionForQuote();
+
+            if (!$canUseForQuote) {
+                Mage::register($registryKey, false);
+                return false;
+            }
+        }
+
+        $cache = $this->getCache();
+
+        if ($cache && $cache->hasCanShowOnlyStatedAddressOption()) {
+            /**
+             * Check if the result of this method has been cached in the PostNL cache.
+             */
+            $allowed = $cache->getCanShowOnlyStatedAddressOption();
+
+            Mage::register($registryKey, $allowed);
+            return $allowed;
+        }
+
+        $allowed = $this->_canShowOnlyStatedAddressOption();
+
+        if ($cache) {
+            /**
+             * Save the result in the PostNL cache.
+             */
+            $cache->setCanShowOnlyStatedAddressOption($allowed)
+                  ->saveCache();
+        }
+
+        Mage::register($registryKey, $allowed);
+        return $allowed;
+    }
+
+    /**
+     * Check if the 'only_stated_address' option can be shown for the current quote.
+     *
+     * @return bool
+     */
+    protected function _canShowOnlyStatedAddressOptionForQuote()
+    {
+        $quote = $this->getQuote();
+
+        /**
+         * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
+         * the registry.
+         */
+        $registryKey = 'can_show_only_stated_address_option_for_quote_' . $quote->getId();
+
+        /**
+         * Check if the result of this method has been cached in the registry.
+         */
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        /**
+         * This option is only available for Dutch shipments.
+         */
+        $shippingAddress = $quote->getShippingAddress();
+        if ($shippingAddress->getCountryId() != 'NL') {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * This shipment cannot be used for buspakje shipments.
+         */
+        if ($this->quoteIsBuspakje($quote) && !$this->canShowAllDeliveryOptionsForBuspakje($quote)) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        Mage::register($registryKey, true);
+        return true;
+    }
+
+    /**
+     * Check if the 'only_stated_address' option can be shown for the current config.
+     *
+     * @return bool
+     */
+    protected function _canShowOnlyStatedAddressOption()
+    {
+        $showOption = Mage::getStoreConfigFlag(
+            self::XPATH_STATED_ADDRESS_ONLY_OPTION,
+            Mage::app()->getStore()->getId()
+        );
+
+        if (!$showOption) {
+            return false;
+        }
+
+        /**
+         * Check if any valid product options are available.
+         */
+        $statedAddressOnlyOptions = Mage::getSingleton('postnl_core/system_config_source_allProductOptions')
+                                        ->getOptions(array('statedAddressOnly' => true), true, true);
+
+        if (empty($statedAddressOnlyOptions)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if the 'only_stated_address' option should be checked by default.
+     *
+     * @return bool
+     */
+    public function isOnlyStatedAddressOptionChecked()
+    {
+        $isOnlyStatedAddressOptionChecked = Mage::getStoreConfigFlag(
+            self::XPATH_STATED_ADDRESS_ONLY_CHECKED,
+            Mage::app()->getStore()->getId()
+        );
+
+        return $isOnlyStatedAddressOptionChecked;
     }
 
     /**

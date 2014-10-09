@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > shipments grid
@@ -241,30 +241,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     {
         $resource = Mage::getSingleton('core/resource');
 
-        /**
-         * Add a conditional SELECT clause for the country_id and postcode fields. If the shipment has a PakjeGemak
-         * address we need the postcode and country_id from that address. Otherwise we need them from the shipping
-         * address.
-         */
-        $collection->addExpressionFieldToSelect(
-            'country_id',
-            'IF({{pakjegemak_parent_id}}, {{pakjegemak_country_id}}, {{shipping_country_id}})',
-            array(
-                'pakjegemak_parent_id' => '`pakjegemak_address`.`parent_id`',
-                'pakjegemak_country_id'  => '`pakjegemak_address`.`country_id`',
-                'shipping_country_id'    => '`shipping_address`.`country_id`',
-            )
-        );
-        $collection->addExpressionFieldToSelect(
-            'postcode',
-            'IF({{pakjegemak_parent_id}}, {{pakjegemak_postcode}}, {{shipping_postcode}})',
-            array(
-                'pakjegemak_parent_id' => '`pakjegemak_address`.`parent_id`',
-                'pakjegemak_postcode'  => '`pakjegemak_address`.`postcode`',
-                'shipping_postcode'    => '`shipping_address`.`postcode`',
-            )
-        );
-
         $select = $collection->getSelect();
 
         /**
@@ -280,19 +256,15 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         );
 
         /**
-         * Join sales_flat_order_address table. Once for the shipping address and once for the pakje_gemak address. We
-         * need both for the conditional select used to get the postcode and country_id of the destination_address.
+         * Join sales_flat_order_address table.
          */
         $select->joinLeft(
             array('shipping_address' => $resource->getTableName('sales/order_address')),
             "`main_table`.`order_id`=`shipping_address`.`parent_id` AND `shipping_address`.`address_type`='shipping'",
-            array()
-        );
-        $select->joinLeft(
-            array('pakjegemak_address' => $resource->getTableName('sales/order_address')),
-            "`main_table`.`order_id`=`pakjegemak_address`.`parent_id`" .
-            " AND `pakjegemak_address`.`address_type`='pakje_gemak'",
-            array()
+            array(
+                'postcode'   => 'shipping_address.postcode',
+                'country_id' => 'shipping_address.country_id',
+            )
         );
 
         /**
@@ -605,30 +577,32 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
         }
 
         $actionColumn = $block->getColumn('action');
-        $actions = $actionColumn->getActions();
+        if ($actionColumn) {
+            $actions = $actionColumn->getActions();
 
-        if ($helper->checkIsPostnlActionAllowed('print_label')) {
-            $actions[] = array(
-                'caption'   => $helper->__('Print label'),
-                'style'     => 'cursor:pointer;',
-                'is_postnl' => true, //custom flag for renderer
-                'code'      => 'postnl_print_label',
-            );
+            if ($helper->checkIsPostnlActionAllowed('print_label')) {
+                $actions[] = array(
+                    'caption'   => $helper->__('Print label'),
+                    'style'     => 'cursor:pointer;',
+                    'is_postnl' => true, //custom flag for renderer
+                    'code'      => 'postnl_print_label',
+                );
+            }
+
+            if ($helper->checkIsPostnlActionAllowed('confirm')) {
+                $actions[] = array(
+                    'caption'   => $helper->__('Confirm'),
+                    'url'       => array('base' => 'postnl_admin/adminhtml_shipment/confirm'),
+                    'field'     => 'shipment_id',
+                    'is_postnl' => true, //custom flag for renderer
+                    'code'      => 'postnl_confirm',
+                );
+            }
+
+            $actionColumn->setActions($actions)
+                         ->setWidth('150px')
+                         ->setData('renderer', 'postnl_adminhtml/widget_grid_column_renderer_action');
         }
-
-        if ($helper->checkIsPostnlActionAllowed('confirm')) {
-            $actions[] = array(
-                'caption'   => $helper->__('Confirm'),
-                'url'       => array('base' => 'postnl_admin/adminhtml_shipment/confirm'),
-                'field'     => 'shipment_id',
-                'is_postnl' => true, //custom flag for renderer
-                'code'      => 'postnl_confirm',
-            );
-        }
-
-        $actionColumn->setActions($actions)
-                     ->setWidth('150px')
-                     ->setData('renderer', 'postnl_adminhtml/widget_grid_column_renderer_action');
 
         $block->sortColumnsByOrder();
 
@@ -657,7 +631,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
             $class = '';
         }
 
-        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
+        $origValue = $row->getData($column->getIndex());
+        $formattedDate = Mage::helper('core')->formatDate($origValue, 'full', false);
+
+        return '<span class="'.$class.'" title="' . $formattedDate . '"><span>'.$value.'</span></span>';
     }
 
     /**

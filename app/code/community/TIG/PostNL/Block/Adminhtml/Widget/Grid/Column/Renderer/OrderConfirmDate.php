@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
@@ -58,29 +58,40 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             return '';
         }
 
-        $value = $row->getData($this->getColumn()->getIndex());
+        $helper = Mage::helper('postnl/deliveryOptions');
+        $value  = $row->getData($this->getColumn()->getIndex());
 
         /**
          * If we have no value, then no delivery date was chosen by the customer. In this case we can calculate when the
          * order could be shipped.
          */
         if (!$value) {
-            $deliveryDate = Mage::helper('postnl/deliveryOptions')->getDeliveryDate(
+            $deliveryDate = $helper->getDeliveryDate(
                 $row->getCreatedAt(),
                 $row->getStoreId()
             );
 
-            $deliveryDate = new DateTime($deliveryDate);
-            $value = $deliveryDate->sub(new DateInterval('P1D'));
+            $value = $helper->getValidDeliveryDate($deliveryDate)
+                            ->sub(new DateInterval('P1D'));
         } else {
             $value = new DateTime($value);
         }
+
+        /**
+         * Check if the confirm date is valid.
+         */
+        $value = $helper->getValidConfirmDate($value);
+
+        /**
+         * Update the row's value for the decorator later.
+         */
+        $row->setData($this->getColumn()->getIndex(), $value->format('Y-m-d H:i:s'));
 
         $now = new DateTime();
         $now->setTimestamp(Mage::getModel('core/date')->gmtTimestamp());
 
         /**
-         * Check if the shipment should be confirmed somewhere in the future
+         * Check if the shipment should be confirmed somewhere in the future.
          */
         $diff = $now->diff($value);
         if (
@@ -88,7 +99,7 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             || ($diff->days == 0 && $diff->h < 24) && $diff->invert
         ) {
             /**
-             * Get the number of days until the shipment should be confirmed
+             * Get the number of days until the shipment should be confirmed.
              */
             $diffDays = $diff->format('%a');
 
@@ -100,25 +111,25 @@ class TIG_PostNL_Block_Adminhtml_Widget_Grid_Column_Renderer_OrderConfirmDate
             }
 
             /**
-             * Check if the shipment should be confirmed today
+             * Check if the shipment should be confirmed today.
              */
             if ($diffDays == 0) {
-                return Mage::helper('postnl')->__('Today');
+                return $helper->__('Today');
             }
 
             /**
-             * Check if it should be confirmed tomorrow
+             * Check if it should be confirmed tomorrow.
              */
             if ($diffDays == 1) {
-                $renderedValue = Mage::helper('postnl')->__('Tomorrow');
+                $renderedValue = $helper->__('Tomorrow');
 
                 return $renderedValue;
             }
 
             /**
-             * Render the number of days before the shipment should be confirmed
+             * Render the number of days before the shipment should be confirmed.
              */
-            $renderedValue = Mage::helper('postnl')->__('%s days from now', $diffDays);
+            $renderedValue = $helper->__('%s days from now', $diffDays);
 
             return $renderedValue;
         }

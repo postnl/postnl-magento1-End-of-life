@@ -26,15 +26,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
@@ -391,10 +391,34 @@
                                 <rate_source>postnl_tablerate</rate_source>
                             </depends>
                         </import>
+                        <matrix_export translate="label">
+                            <label>Export Rates</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_matrixrateExport</frontend_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <rate_type>matrix</rate_type>
+                            </depends>
+                        </matrix_export>
+                        <matrix_import translate="label comment">
+                            <label>Import Rates</label>
+                            <comment><![CDATA[A prefilled csv file can be found <a href="http://kb.tig.nl/topic/102462196" target="_blank">here</a>.]]></comment>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_matrixrateImport</frontend_model>
+                            <backend_model>postnl_carrier/system_config_backend_matrixrate</backend_model>
+                            <sort_order>110</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <rate_type>matrix</rate_type>
+                            </depends>
+                        </matrix_import>
                         <import_export_header translate="label" module="postnl">
                             <label>You can import and export rates on the website scope. You can change your current scope with the dropdown at the top left of this page.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -407,7 +431,7 @@
                             <label>Condition</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_shipping_tablerate</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -419,7 +443,7 @@
                             <label>Include Virtual Products in Price Calculation</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -431,7 +455,7 @@
                             <label>Calculate Handling Fee</label>
                             <frontend_type>select</frontend_type>
                             <source_model>shipping/source_handlingType</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -440,7 +464,7 @@
                             <label>Handling Fee</label>
                             <frontend_type>text</frontend_type>
                             <validate>validate-number validate-zero-or-greater</validate>
-                            <sort_order>140</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -448,7 +472,7 @@
                         <specificerrmsg translate="label" module="postnl">
                             <label>Displayed Error Message</label>
                             <frontend_type>textarea</frontend_type>
-                            <sort_order>150</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -456,7 +480,7 @@
                         <sallowspecific translate="label" module="postnl">
                             <label>Ship to Applicable Countries</label>
                             <frontend_type>select</frontend_type>
-                            <sort_order>160</sort_order>
+                            <sort_order>180</sort_order>
                             <frontend_class>shipping-applicable-country</frontend_class>
                             <source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
                             <show_in_default>1</show_in_default>
@@ -466,7 +490,7 @@
                         <specificcountry translate="label" module="postnl">
                             <label>Ship to Specific Countries</label>
                             <frontend_type>multiselect</frontend_type>
-                            <sort_order>170</sort_order>
+                            <sort_order>190</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -476,7 +500,7 @@
                         <showmethod translate="label" module="postnl">
                             <label>Show Method if Not Applicable</label>
                             <frontend_type>select</frontend_type>
-                            <sort_order>180</sort_order>
+                            <sort_order>200</sort_order>
                             <source_model>postnl/system_config_source_yesno</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -485,7 +509,7 @@
                         <sort_order translate="label" module="postnl">
                             <label>Sort Order</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>190</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -640,7 +664,7 @@
                 </general>
                 <cif translate="label comment" module="postnl">
                     <label>Account Settings</label>
-                    <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.</p><p>If you want to test the extension, but don't have any test mode credentials you can use the account credentials found <a href="http://kb.totalinternetgroup.nl/topic/55404467" title="Test mode account credentials" target="_blank">here</a>.]]></comment>
+                    <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.</p><p>If you want to test the extension, but don't have any test mode credentials you can use the account credentials found <a href="http://kb.tig.nl/topic/55404467" title="Test mode account credentials" target="_blank">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>500</sort_order>
                     <show_in_default>1</show_in_default>
@@ -945,10 +969,20 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </cutoff_time>
+                        <shipping_days translate="label comment" module="postnl">
+                            <label>Shipping days</label>
+                            <comment>Select on which days of the week orders are shipped.</comment>
+                            <source_model>postnl_core/system_config_source_shippingDays</source_model>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>120</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </shipping_days>
                         <grid_header translate="label" module="postnl">
                             <label>These fields allow you to alter the way the order and shipment grids are displayed.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -959,7 +993,7 @@
                             <tooltip>These options will appear in a dropdown field next to the 'create shipments' mass action in the sales > order grid.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -969,7 +1003,7 @@
                             <comment>This will add the option to mark shipments as being letter box parcels when creating shipments from the order grid.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -981,7 +1015,7 @@
                         <shipping_grid_columns_anchor>
                             <frontend_model>postnl_adminhtml/system_config_form_field_anchor</frontend_model>
                             <anchor_name>shipment_grid_columns</anchor_name>
-                            <sort_order>150</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -992,7 +1026,7 @@
                             <tooltip>Selecting too many columns may cause the order grid to no longer fit on your monitor.</tooltip>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_orderGridColumns</source_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>170</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1002,7 +1036,7 @@
                             <label>Select a default option for the order grid mass action.</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_orderGridMassaction</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1013,7 +1047,7 @@
                             <tooltip>Selecting too many columns may cause the shipment grid to no longer fit on your monitor.</tooltip>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_shipmentGridColumns</source_model>
-                            <sort_order>180</sort_order>
+                            <sort_order>190</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1023,7 +1057,7 @@
                             <label>Select a default option for the shipment grid mass action.</label>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_adminhtml/system_config_source_shipmentGridMassaction</source_model>
-                            <sort_order>190</sort_order>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1031,7 +1065,7 @@
                         <email_header translate="label" module="postnl">
                             <label>These fields are used to configure the track &amp; trace email that may be automatically emailed to customers after a shipment has been confirmed.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>200</sort_order>
+                            <sort_order>210</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1041,7 +1075,7 @@
                             <comment>If enabled, a track &amp; trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>210</sort_order>
+                            <sort_order>220</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1052,7 +1086,7 @@
                             <comment>You can customize the track &amp; trace email in system > transactional emails.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_template</source_model>
-                            <sort_order>220</sort_order>
+                            <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1063,7 +1097,7 @@
                             <comment>If enabled, you may enter seperate email addresses to which the track &amp; trace email will be sent in addition to the customer.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>230</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1073,7 +1107,7 @@
                             <label>Send track &amp; trace email copy to</label>
                             <comment>You can enter multiple email addresses seperated by commas.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>240</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1085,7 +1119,7 @@
                             <label>Track &amp; trace email copy method</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_email_method</source_model>
-                            <sort_order>250</sort_order>
+                            <sort_order>260</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1097,7 +1131,7 @@
                 </cif_labels_and_confirming>
                 <packing_slip translate="label comment" module="postnl">
                     <label>Packing Slip Settings</label>
-                    <comment><![CDATA[Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href="http://kb.totalinternetgroup.nl/topic/95885953" target="_blank" title="More info">here</a>.]]></comment>
+                    <comment><![CDATA[Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href="http://kb.tig.nl/topic/95885953" target="_blank" title="More info">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>700</sort_order>
                     <show_in_default>1</show_in_default>
@@ -1303,7 +1337,7 @@
                 </packing_slip>
                 <parcelware_export translate="label comment" module="postnl">
                     <label>Parcelware Export Settings</label>
-                    <comment><![CDATA[This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href="http://kb.totalinternetgroup.nl/topic/94906903" target="_blank" title="More info">here</a>.]]></comment>
+                    <comment><![CDATA[This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href="http://kb.tig.nl/topic/94906903" target="_blank" title="More info">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>800</sort_order>
                     <show_in_default>1</show_in_default>
@@ -1983,10 +2017,28 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </default_buspakje_product_option>
+                        <default_stated_address_only_product_option translate="label comment" module="postnl">
+                            <label>Default 'stated address only' option</label>
+                            <comment>This option will be used as default when the customer has checked the 'stated address only' checkbox during checkout.</comment>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableStatedAddressOnlyOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <stated_address_only_option>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </stated_address_only_option>
+                            </depends>
+                        </default_stated_address_only_product_option>
                         <cod_product_options_header translate="label" module="postnl">
                             <label>The following options are only for COD orders.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1998,7 +2050,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>110</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2010,7 +2062,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>120</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2036,7 +2088,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>130</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2048,7 +2100,7 @@
                             <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
                             <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeCodOptions</source_model>
                             <multidimensional>true</multidimensional>
-                            <sort_order>140</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -2369,7 +2421,7 @@
                         </delivery_options_active>
                         <theme translate="label comment" module="postnl">
                             <label>Delivery options theme</label>
-                            <comment><![CDATA[You can view an example of the different themes <a href="http://kb.totalinternetgroup.nl/topic/58787233" target="_blank" title="PostNL delivery option themes">here</a>.]]></comment>
+                            <comment><![CDATA[You can view an example of the different themes <a href="http://kb.tig.nl/topic/58787233" target="_blank" title="PostNL delivery option themes">here</a>.]]></comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_deliveryoptions/system_config_source_themes</source_model>
                             <sort_order>20</sort_order>
@@ -2389,6 +2441,9 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
                         </responsive>
                         <mijnpakket_login_active translate="label comment" module="postnl">
                             <label>Enable MijnPakket login</label>
@@ -2760,6 +2815,57 @@
                                 <mijnpakket_notification>1</mijnpakket_notification>
                             </depends>
                         </show_mijnpakket_app_link>
+                        <stated_address_header translate="label" module="postnl">
+                            <label>If a customer is not home when a shipment is delivered, PostNL will try to deliver it to the neighbours instead and leave a note for the intended recipient. Using these settings you may allow the customer to choose whether they want to allow their order to be delieverd to their neighbours.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>270</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </stated_address_header>
+                        <stated_address_only_option translate="label comment" module="postnl">
+                            <label>Show 'only send to stated address' option</label>
+                            <comment>Enable this option to show a checkbox on the checkout page with which the customer can choose to only send the shipment to the stated address.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>280</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </stated_address_only_option>
+                        <stated_address_only_checked>
+                            <label>Stated address only option checked by default</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>290</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <stated_address_only_option>1</stated_address_only_option>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </stated_address_only_checked>
+                        <stated_address_only_fee>
+                            <label>Stated address only fee</label>
+                            <frontend_type>text</frontend_type>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>300</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-number validate-not-negative-number</validate>
+                            <depends>
+                                <stated_address_only_option>1</stated_address_only_option>
+                                <delivery_options_active>1</delivery_options_active>
+                            </depends>
+                        </stated_address_only_fee>
                     </fields>
                 </delivery_options>
                 <checkout translate="label comment" module="postnl">
@@ -3736,7 +3842,7 @@
                             <source_model>postnl_core/system_config_source_shippingMethods</source_model>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
+                            <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </postnl_shipping_methods>
                         <cif_versions_header translate="label" module="postnl">
@@ -3752,7 +3858,7 @@
                             <frontend_model>postnl_adminhtml/system_config_form_field_warningBox</frontend_model>
                             <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
+                            <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </cif_versions_infobox>
                         <cif_version_shippingstatus translate="label" module="postnl">
