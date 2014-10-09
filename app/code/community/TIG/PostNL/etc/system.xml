@@ -404,7 +404,7 @@
                         </matrix_export>
                         <matrix_import translate="label comment">
                             <label>Import Rates</label>
-                            <comment><![CDATA[A prefilled csv file can be found <a href="" target="_blank">here</a>.]]></comment>
+                            <comment><![CDATA[A prefilled csv file can be found <a href="http://kb.tig.nl/topic/102462196" target="_blank">here</a>.]]></comment>
                             <frontend_model>postnl_adminhtml/system_config_form_field_matrixrateImport</frontend_model>
                             <backend_model>postnl_carrier/system_config_backend_matrixrate</backend_model>
                             <sort_order>110</sort_order>

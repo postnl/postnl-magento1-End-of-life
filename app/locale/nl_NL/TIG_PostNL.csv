@@ -1157,3 +1157,4 @@ TIG_PostNL::PostNL track & trace email has been sent.,PostNL track & trace e-mai
 TIG_PostNL::PostNL track & trace email has been sent for shipment #%s.,PostNL track & trace e-mail is verstuurd voor zending #%s.
 TIG_PostNL::Pickup your order %s,Je bestelling ophalen %s
 TIG_PostNL::Have your order delivered %s,Je bestelling laten bezorgen %s
+"TIG_PostNL::A prefilled csv file can be found <a href=""http://kb.tig.nl/topic/102462196"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/102462196"" target=""_blank"">hier</a> een voorgevuld csv bestand vinden."
