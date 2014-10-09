@@ -321,8 +321,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         );
 
         /**
-         * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without using the
-         * wsdl cache.
+         * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without
+         * using the wsdl cache.
          */
         try {
             $client  = new Zend_Soap_Client(
@@ -361,6 +361,12 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $client = null;
         try {
             /**
+             * Strip non-printable characters from the SOAP parameters.
+             */
+            $cifHelper = Mage::helper('postnl/cif');
+            array_walk_recursive($soapParams, array($cifHelper, 'stripNonPrintableCharacters'));
+
+            /**
              * @var Zend_Soap_Client $client
              */
             $client = $this->getSoapClient($wsdlType);
@@ -370,24 +376,24 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
              */
             if (!is_callable(array($client, $method))) {
                 throw new TIG_PostNL_Exception(
-                    Mage::helper('postnl')->__('The specified method "%s" is not callable.', $method),
+                    $cifHelper->__('The specified method "%s" is not callable.', $method),
                     'POSTNL-0136'
                 );
             }
 
             /**
-             * Add SOAP header,
+             * Add SOAP header.
              */
             $header = $this->_getSoapHeader();
             $client->addSoapInputHeader($header, true); //permanent header
 
             /**
-             * Call the SOAP method,
+             * Call the SOAP method.
              */
             $response = $client->$method($soapParams);
 
             /**
-             * Process any warnings that may have occurred,
+             * Process any warnings that may have occurred.
              */
             $this->_processWarnings($client);
 
@@ -395,7 +401,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             return $response;
         } catch(SoapFault $e) {
             /**
-             * Only Soap exceptions are caught. Other exceptions must be caught by the caller,
+             * Only Soap exceptions are caught. Other exceptions must be caught by the caller.
              *
              * @throws TIG_PostNL_Exception
              */

@@ -46,6 +46,7 @@ class TIG_PostNL_Model_Core_System_Config_Source_Attributes
     public function toOptionArray()
     {
         $attributes = Mage::getResourceModel('catalog/product_attribute_collection')
+                          ->addFieldToSelect(array('attribute_code', 'frontend_label'))
                           ->addFieldToFilter('frontend_label', array('notnull' => true));
 
         $attributes->getSelect()->order('frontend_label ASC');

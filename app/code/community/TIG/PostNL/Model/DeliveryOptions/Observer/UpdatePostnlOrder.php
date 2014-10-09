@@ -73,8 +73,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * If this order is not being shipped to the Netherlands or was not placed using PostNL, remove any PakjeGemak
          * addresses that may have been saved and delete the PostNL order.
          */
-        $shippingCountry = $order->getShippingAddress()->getCountryId();
-        if ($shippingCountry != 'NL' || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        $shippingAddress = $order->getShippingAddress();
+        if (!$shippingAddress
+            || $shippingAddress->getCountryId() != 'NL'
+            || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
+        ) {
             $this->_removePakjeGemakAddress($order);
 
             if ($postnlOrder && $postnlOrder->getId()) {
@@ -238,8 +241,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * If this order is not being shipped to the Netherlands or was not placed using PostNL, remove any options that
          * may have been saved.
          */
-        $shippingCountry = $quote->getShippingAddress()->getCountryId();
-        if ($shippingCountry != 'NL' || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        $shippingAddress = $quote->getShippingAddress();
+        if (!$shippingAddress
+            || $shippingAddress->getCountryId() != 'NL'
+            || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
+        ) {
             $postnlOrder->setOptions(false)
                         ->save();
 
@@ -250,7 +256,10 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * @var Mage_Core_Controller_Varien_Front $controller
          */
         $controller = $observer->getControllerAction();
-        $options    = $controller->getRequest()->getParam($shippingMethod, array());
+        $options    = $controller->getRequest()->getParam('s_method_' . $shippingMethod, array());
+        if (empty($options['postnl'])) {
+            $options = $controller->getRequest()->getParam($shippingMethod, array());
+        }
 
         $postnlOptions = false;
         if (isset($options['postnl'])) {

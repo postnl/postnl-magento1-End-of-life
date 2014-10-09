@@ -55,6 +55,7 @@
     <?php $_store = $this->getQuote()->getStore(); ?>
     <?php $_carrierHelper = Mage::helper('postnl/carrier'); ?>
     <?php $_deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions'); ?>
+    <?php $_methodName = ''; ?>
 
     <?php if ($_deliveryOptionsHelper->canUseDeliveryOptions($this->getQuote())
         && $_deliveryOptionsHelper->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
@@ -141,6 +142,7 @@
                                         <?php echo $this->getChild('postnl.osc.delivery.options')->setRate($_rate)->toHtml(); ?>
                                     </div>
                                     <?php $_deliveryOptionsShown = true; ?>
+                                    <?php $_methodName = 's_method_' . $_rate->getCode(); ?>
                                 <?php endif; ?>
 
                            <?php endif ?>
@@ -190,9 +192,10 @@
                 payment_method: payment_method
             };
 
-            $$('.postnl-only-stated-address').each(function(element) {
-                parameters[element.name] = element.getValue();
-            });
+            var onlyStatedAddressOption = $$('#<?php echo $_methodName; ?>_only_stated_address_option input')[0];
+            if (onlyStatedAddressOption) {
+                parameters[onlyStatedAddressOption.name] = onlyStatedAddressOption.getValue();
+            }
 
             /* Find payment parameters and include */
             var items = $$('input[name^=payment]').concat($$('select[name^=payment]'));

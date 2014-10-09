@@ -42,6 +42,7 @@
  * @var TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions $this
  */
 ?>
+<?php $_store                          = Mage::app()->getStore(); ?>
 <?php $_address                        = $this->getShippingAddress(); ?>
 <?php $_postcode                       = $this->getPostcode(); ?>
 <?php $_deliveryDate                   = $this->getDeliveryDate(); ?>
@@ -50,6 +51,8 @@
 
 <?php $_canAddLocation                 = true; ?>
 <?php $_canUseResponsive               = $this->canUseResponsive(); ?>
+
+<?php $_canShowSeparateRates           = $this->canShowSeparateRates(); ?>
 
 <?php $_canShowOnlyStatedAddressOption = $this->canShowOnlyStatedAddressOption(); ?>
 <?php $_canUsePakjeGemak               = $this->canUsePakjeGemak(); ?>
@@ -71,6 +74,9 @@
 <?php $_pakjeGemakFeeExcl = $this->getFee('pakje_gemak', false); ?>
 
 <?php $_methodName = $this->getMethodName(); ?>
+<?php $_methodRate = $this->getMethodRate(); ?>
+
+<?php $_pakjeGemakRate = $_methodRate + $this->getFee('pakje_gemak', $this->helper('tax')->shippingPriceIncludesTax()); ?>
 <div id="initial_loader" class="postnl-loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_delivery_options" style="display:none;">
     <div class="title">
@@ -86,7 +92,10 @@
     <div class="responsive-protector">
         <div id="postnl_dpu" class="col2-set">
             <div id="postnl_delivery" class="col-1">
-                <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+                <?php if ($_canShowSeparateRates): ?>
+                    <p class="rate"><?php echo $this->__('Have your order delivered %s', $_store->formatPrice($_methodRate, false)); ?></p>
+                <?php endif; ?>
+                <h3 class="sub-title"><?php echo $this->__('Delivery'); ?><?php if ($_canShowSeparateRates): ?> <span class="rate"><?php echo $_store->formatPrice($_methodRate, false); ?></span><?php endif; ?></h3>
                 <ul class="option-list" id="timeframes">
                     <li class="location">
                         <div class="bkg">
@@ -99,7 +108,7 @@
                     </li>
                 </ul>
                 <?php if ($_canShowOnlyStatedAddressOption): ?>
-                    <ul class="option-list no-neighbour">
+                    <ul class="option-list extras">
                         <li class="location">
                             <div class="bkg">
                                 <div class="bkg">
@@ -115,7 +124,7 @@
                                     <div class="content">
                                         <input type="checkbox" name="<?php echo $_methodName; ?>[postnl][only_stated_address]" id="<?php echo $_methodName; ?>_only_stated_address" value="1" class="checkbox" <?php if ($this->isOnlyStatedAddressOptionChecked()):?>checked="checked"<?php endif; ?>>
                                         <label for="<?php echo $_methodName; ?>_only_stated_address">
-                                            <?php echo $this->__('do not deliver to neighbours when not home'); ?>
+                                            <?php echo $this->__('do not deliver to neighbours'); ?>
                                             <span class="price">+ <?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
                                         </label>
                                     </div>
@@ -131,7 +140,10 @@
                 </ul>
             </div>
             <div id="postnl_pickup" class="col-2" style="<?php if(!$_canAddLocation): ?>display:none;<?php endif; ?>">
-                <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+                <?php if ($_canShowSeparateRates): ?>
+                    <p class="rate"><?php echo $this->__('Pickup your order %s', $_store->formatPrice($_pakjeGemakRate, false)); ?></p>
+                <?php endif; ?>
+                <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?><?php if ($_canShowSeparateRates): ?> <span class="rate"><?php echo $_store->formatPrice($_pakjeGemakRate, false); ?></span><?php endif; ?></h3>
                 <ul class="option-list" id="pgelocation"></ul>
                 <ul class="option-list" id="pglocation"></ul>
                 <ul class="option-list" id="palocation"></ul>
@@ -179,8 +191,8 @@
         taxDisplayType         : <?php echo $this->getTaxDisplayType() ?>,
         eveningFeeIncl         : <?php echo $_eveningFeeIncl; ?>,
         eveningFeeExcl         : <?php echo $_eveningFeeExcl; ?>,
-        expressFeeIncl         : <?php echo $_expressFeeIncl + $_pakjeGemakFeeIncl; ?>,
-        expressFeeExcl         : <?php echo $_expressFeeExcl + $_pakjeGemakFeeExcl; ?>,
+        expressFeeIncl         : <?php echo $_expressFeeIncl; ?>,
+        expressFeeExcl         : <?php echo $_expressFeeExcl; ?>,
         pakjeGemakFeeIncl      : <?php echo $_pakjeGemakFeeIncl; ?>,
         pakjeGemakFeeExcl      : <?php echo $_pakjeGemakFeeExcl; ?>,
         eveningFeeText         : '<?php echo $this->getFeeText('evening', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
@@ -207,7 +219,7 @@
                 }
             },
         <?php endif; ?>
-        currencySymbol         : '<?php echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(); ?>'
+        currencySymbol         : '<?php echo Mage::app()->getLocale()->currency($_store->getCurrentCurrencyCode())->getSymbol(); ?>'
     };
 
     try {
@@ -223,6 +235,16 @@
         try {
             deliveryOptions.showOptions();
             window.deliveryOptions = deliveryOptions;
+
+            <?php if($_canShowSeparateRates): ?>
+                /**
+                 * Hide the default price label as this will be replaced by separate prices for delivery and pick up options.
+                 */
+                var methodLabel = $$('label[for="<?php echo $_methodName; ?>"]')[0];
+                if (methodLabel) {
+                    methodLabel.update('<?php echo $this->escapeHtml($this->getRate()->getMethodTitle()); ?>');
+                }
+            <?php endif; ?>
         } catch(e) {
             $('initial_loader').hide();
             $('postnl_delivery_options').show();
