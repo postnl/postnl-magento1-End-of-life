@@ -197,7 +197,17 @@
         </div>
         <script type="text/javascript">
             //<![CDATA[
-            var oscScrollbar = new Control.ScrollBar(
+            var recalculateOscScrollbar = function() {
+                if (!window.oscScrollbar) {
+                    return;
+                }
+
+                window.oscScrollbar.recalculateLayout();
+                window.oscScrollbar.scrollBy(0);
+            };
+
+            window.oscScrollbar = false;
+            window.oscScrollbar = new Control.ScrollBar(
                 'osc_scrollbar_content',
                 'osc_scrollbar_track',
                 {
@@ -205,9 +215,6 @@
                 }
             );
 
-            var recalculateOscScrollbar = function() {
-                oscScrollbar.recalculateLayout();
-            };
             document.stopObserving('postnl:domModified', recalculateOscScrollbar);
             document.observe('postnl:domModified', recalculateOscScrollbar);
             //]]>
@@ -335,15 +342,15 @@
             isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,
             shippingMethodName     : '<?php echo $_methodName ? $_methodName : 's_method_postnl_flatrate'; ?>',
             <?php if ($_canShowStatedAddressOnlyOption): ?>
-                extraOptions           : {
-                    only_stated_address : {
-                        element : $('<?php echo $_methodName; ?>_only_stated_address'),
-                        allowedTypes : [
-                            'Avond',
-                            'Overdag'
-                        ]
-                    }
-                },
+            extraOptions           : {
+                only_stated_address : {
+                    element : $('<?php echo $_methodName; ?>_only_stated_address'),
+                    allowedTypes : [
+                        'Avond',
+                        'Overdag'
+                    ]
+                }
+            },
             <?php endif; ?>
             optionsContainer       : 'osc_scrollbar_container'
         };
@@ -361,13 +368,13 @@
                 $('carrier_postnl').addClassName('options-available');
 
                 <?php if($_canShowSeparateRates): ?>
-                    /**
-                     * Hide the default price label as this will be replaced by separate prices for delivery and pick up options.
-                     */
-                    var methodLabel = $$('label[for="<?php echo $_methodName; ?>"]')[0];
-                    if (methodLabel) {
-                        methodLabel.update('<?php echo $this->escapeHtml($this->getRate()->getMethodTitle()); ?>');
-                    }
+                /**
+                 * Hide the default price label as this will be replaced by separate prices for delivery and pick up options.
+                 */
+                var methodLabel = $$('label[for="<?php echo $_methodName; ?>"]')[0];
+                if (methodLabel) {
+                    methodLabel.update('<?php echo $this->escapeHtml($this->getRate()->getMethodTitle()); ?>');
+                }
                 <?php endif; ?>
             } catch(e) {
                 console.error(e);
@@ -428,8 +435,8 @@
          */
         if (!postcode
             || (
-                (!addressSelectField || addressSelectField.getValue() == '')
-                && postcode != $(billingOrShipping + ':postcode').getValue()
+            (!addressSelectField || addressSelectField.getValue() == '')
+            && postcode != $(billingOrShipping + ':postcode').getValue()
             )
         ) {
             var postcodeFieldValue = $(billingOrShipping + ':postcode').getValue();
@@ -463,8 +470,8 @@
          */
         if (!housenumber
             || (
-                (!addressSelectField || addressSelectField.getValue() == '')
-                && housenumber != $(billingOrShipping + ':street' + housenumberField).getValue()
+            (!addressSelectField || addressSelectField.getValue() == '')
+            && housenumber != $(billingOrShipping + ':street' + housenumberField).getValue()
             )
         ) {
             var housenumberFieldValue = $(billingOrShipping + ':street' + housenumberField).getValue();
