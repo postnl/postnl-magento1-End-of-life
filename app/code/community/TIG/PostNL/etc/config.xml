@@ -2050,37 +2050,37 @@
             </POSTNL-0193>
             <POSTNL-0194>
                 <message>Invalid PostNL Matrix Rates File Format</message>
-                <url/>
+                <url>http://kb.tig.nl/topic/101211863</url>
                 <type>error</type>
             </POSTNL-0194>
             <POSTNL-0195>
                 <message>An error occurred while importing the matrix rates.</message>
-                <url/>
+                <url>http://kb.tig.nl/topic/102370766</url>
                 <type>error</type>
             </POSTNL-0195>
             <POSTNL-0196>
                 <message>File has not been imported. See the following list of errors: %s</message>
-                <url/>
+                <url>http://kb.tig.nl/topic/101212943</url>
                 <type>error</type>
             </POSTNL-0196>
             <POSTNL-0197>
                 <message>Unable to save update_product_attribute cron expression: %s</message>
-                <url/>
+                <url>http://kb.tig.nl/topic/101214223</url>
                 <type>error</type>
             </POSTNL-0197>
             <POSTNL-0198>
                 <message>The PostNL extension is currently being upgraded.</message>
-                <url/>
+                <url>http://kb.tig.nl/topic/102372846</url>
                 <type>error</type>
             </POSTNL-0198>
             <POSTNL-0199>
                 <message>Data has not been imported. See the following list of errors: %s</message>
-                <url/>
+                <url>http://kb.tig.nl/topic/102373046</url>
                 <type>error</type>
             </POSTNL-0199>
             <POSTNL-0200>
                 <message><![CDATA[Unable to send track & trace email due to missing shipment parameters.]]></message>
-                <url/>
+                <url>http://kb.tig.nl/topic/102373326</url>
                 <type>error</type>
             </POSTNL-0200>
 

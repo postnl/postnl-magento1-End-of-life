@@ -704,7 +704,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
                 $deliveryTime->add(new DateInterval('P1D'));
                 $shippingDuration++;
             }
-        } else {
+        } elseif ($deliveryDay == 1) {
             $deliveryTime->add(new DateInterval('P1D'));
             $shippingDuration++;
         }
