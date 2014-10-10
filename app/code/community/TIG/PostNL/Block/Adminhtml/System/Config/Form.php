@@ -493,4 +493,18 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
 
         return $this;
     }
+
+    /**
+     * Add a new checkbox element type.
+     *
+     * @return array
+     */
+    protected function _getAdditionalElementTypes()
+    {
+        $elementTypes = parent::_getAdditionalElementTypes();
+        $elementTypes['checkbox'] = Mage::getConfig()
+                                        ->getBlockClassName('postnl_adminhtml/system_config_form_field_checkbox');
+
+        return $elementTypes;
+    }
 }
