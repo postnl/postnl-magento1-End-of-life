@@ -41,9 +41,10 @@ document.observe('dom:loaded', function(){
     {
         // show the support tab
         var supportTab = document.getElementById('postnl_support');
-        supportTab.style.display = 'block';
-        document.getElementById('postnl_support-state').value = 1;
-        document.getElementById('postnl_support-head').parentNode.style.display = 'none';
+        supportTab.show();
+
+        $('postnl_support-state').setValue(1);
+        $('postnl_support-head').up().hide();
 
         // create the wizard
         var postnlWizard = document.createElement('div');
@@ -56,27 +57,17 @@ document.observe('dom:loaded', function(){
         var sectionParent = supportTab.parentNode.nextSibling;
         sectionParent.parentNode.insertBefore(postnlWizard, sectionParent);
 
-        // merge old retour setting into address setting
-        returnAddress = document.getElementById('postnl_cif_return_address');
-        senderAddress = document.getElementById('postnl_cif_sender_address');
-        senderAddress.parentNode.appendChild(returnAddress);
-
         // move 5 existing config sections into the wizard
-        var sectionConfigs = $$('.section-config');
-        //                               sectionConfigs[0] = support tab
-        //                               sectionConfigs[1] = this wizard
-        postnlWizardFieldset.appendChild(sectionConfigs[2]);
-        postnlWizardFieldset.appendChild(sectionConfigs[3]);
-        //                               sectionConfigs[4] = return address
-        postnlWizardFieldset.appendChild(sectionConfigs[5]);
-        postnlWizardFieldset.appendChild(sectionConfigs[6]);
-        postnlWizardFieldset.appendChild(sectionConfigs[7]);
+        var wizardSectionConfigs = $$('.section-config.postnl-wizard');
+
+        wizardSectionConfigs.each(function(element) {
+            postnlWizardFieldset.appendChild(element);
+        });
 
         // add navigation
         var postnlWizardNavigation = document.createElement('ul'),
             postnlWizardList = document.createElement('li'),
-            postnlWizardLink = document.createElement('a'),
-            fieldsetHeaders = $$('#postnl-wizard .section-config .entry-edit-head a');
+            postnlWizardLink = document.createElement('a');
 
         var step = 0;
         $$('#postnl-wizard .section-config .entry-edit-head a').each(function(elem){
@@ -92,11 +83,7 @@ document.observe('dom:loaded', function(){
                 });
                 document.getElementById(this.rel).parentNode.style.display = 'block';
                 document.getElementById(this.rel).style.display = 'block';
-                // show old retour setting with address setting
-                if('postnl_cif_sender_address' == this.rel)
-                {
-                    document.getElementById('postnl_cif_return_address').style.display = 'block';
-                }
+
                 // switch wizard nav active state
                 $$('#postnl-wizard ul a').each(function(elem){
                     elem.className = '';
@@ -110,11 +97,14 @@ document.observe('dom:loaded', function(){
             postnlWizardNavigation.appendChild(listClone);
         });
 
-        postnlWizardFieldset.insertBefore(postnlWizardNavigation, sectionConfigs[2]);
+        postnlWizardFieldset.firstChild.insert({
+            before: postnlWizardNavigation
+        });
 
         // init active tab
-        $$('#postnl-wizard .section-config fieldset')[0].style.display = 'block';
-        $$('#postnl-wizard ul a')[0].className = 'active';
+        postnlWizard.select('.section-config fieldset').invoke('hide');
+        postnlWizard.select('.section-config fieldset')[0].show();
+        postnlWizard.select('ul a')[0].addClassName('active');
 
         // create the advanced settings group
         var postnlAdvanced = document.createElement('div');
@@ -122,37 +112,16 @@ document.observe('dom:loaded', function(){
         postnlAdvanced.className = 'section-config';
 
         var postnlAdvancedFieldset = document.createElement('fieldset');
+        postnlAdvancedFieldset.id = 'postnl_advanced';
+        postnlAdvancedFieldset.style.display = 'none';
         postnlAdvanced.appendChild(postnlAdvancedFieldset);
 
         postnlWizard.parentNode.insertBefore(postnlAdvanced, postnlWizard.nextSibling);
 
         // move all other sections to the advanced settings group
-        for(var i = 7, l = sectionConfigs.size(); i < l; i++)
-        {
-            postnlAdvancedFieldset.appendChild(sectionConfigs[i]);
-        }
-
-        // advanced switch
-        /*
-        var postnlAdvancedNavigation = document.createElement('ul'),
-            listClone = postnlWizardList.cloneNode(),
-            linkClone = postnlWizardLink.cloneNode();
-
-        linkClone.href = '#';
-        linkClone.onclick = function(){
-            $$('#postnl-wizard .section-config').each(function(elem){
-                elem.hide();
-            });
-            document.getElementById(this.rel).parentNode.style.display = 'block';
-            document.getElementById(this.rel).style.display = 'block';
-            return false;
-        };
-        linkClone.innerHTML = 'Advanced settings'; // TODO: translate
-
-        listClone.appendChild(linkClone);
-        postnlAdvancedNavigation.appendChild(listClone);
-        postnlAdvancedFieldset.insertBefore(postnlAdvancedNavigation, sectionConfigs[7]);
-        */
+        $$('.section-config:not(.postnl-wizard,.postnl-support,#postnl-advanced,#postnl-wizard)').each(function(element) {
+            postnlAdvancedFieldset.appendChild(element);
+        });
 
         // advanced group header
         var postnlAdvancedHeader = document.createElement('div'),
@@ -160,47 +129,14 @@ document.observe('dom:loaded', function(){
 
         postnlAdvancedHeader.className = 'entry-edit-head collapseable';
         postnlAdvancedLink.innerHTML = 'Advanced settings'; // TODO: translate
+        postnlAdvancedLink.id = 'postnl_advanced-head';
+        postnlAdvancedLink.href = '#';
+        postnlAdvancedLink.onclick = function() {
+            Fieldset.toggleCollapse('postnl_advanced', '');
+            return false;
+        };
         postnlAdvancedHeader.appendChild(postnlAdvancedLink);
 
         postnlAdvancedFieldset.parentNode.insertBefore(postnlAdvancedHeader, postnlAdvancedFieldset);
-
-        // frontend_class checkbox
-        var postnlWizardCheckbox = document.createElement('input'),
-            postnlWizardCheckdiv = document.createElement('div');
-        postnlWizardCheckbox.type = 'checkbox';
-        postnlWizardCheckbox.className = 'postnl-checkbox';
-
-        $$('select.checkbox').each(function(elem){
-            // add checkbox placeholder
-            var checkboxClone = postnlWizardCheckbox.cloneNode();
-            checkboxClone.rel = elem.id;
-            checkboxClone.checked = (elem.value == 1); // expect 0 or 1
-            elem.parentNode.appendChild(checkboxClone);
-            // convert to multiselect and hover over checkbox
-            elem.multiple = 'multiple';
-            elem.parentNode.style.position = 'relative';
-            elem.style.position = 'absolute';
-            elem.style.zIndex = '137';
-            elem.style.height = '30px';
-            elem.style.opacity = '0';
-            // native change event not supported, so we move the multiselect
-            elem.style.top = (elem.value == 1) ? '-7px' : '7px';
-            elem.onclick = function(){
-                elem.style.top = (elem.style.top == '7px') ? '-7px' : '7px';
-                this.next().checked = (elem.style.top == '7px') ? false : true;
-            };
-            // add non-clickable area over multiselect
-            var checkdivClone = postnlWizardCheckdiv.cloneNode();
-            checkdivClone.style.position = 'absolute';
-            checkdivClone.style.zIndex = '1337';
-            checkdivClone.style.top = '-7px';
-            checkdivClone.style.width = '300px';
-            checkdivClone.style.height = '15px';
-            checkboxClone.parentNode.appendChild(checkdivClone);
-            checkdivCloneClone = checkdivClone.cloneNode();
-            checkdivCloneClone.style.top = '22px';
-            checkboxClone.parentNode.appendChild(checkdivCloneClone);
-            // TODO: remove for from legend to avoid substitute click event
-        });
     }
 });
