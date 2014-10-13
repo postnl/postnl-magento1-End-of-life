@@ -1,4 +1,4 @@
-TIG_PostNL::Enabled,Geactiveerd
+TIG_PostNL::,Geactiveerd
 TIG_PostNL::Method Name,Methode naam
 TIG_PostNL::Rate Type,Tarief type
 TIG_PostNL::Price,Prijs
@@ -1099,7 +1099,7 @@ TIG_PostNL::Choose a different pickup location,Kies een ander ophaalpunt
 "TIG_PostNL::PostNL - Create shipments, print packing slips and confirm","PostNL - Maak zendingen aan, print pakbonnen en meld voor"
 "TIG_PostNL::Create shipments, print packing slips and confirm","Maak zendingen aan, print pakbonnen en meld voor"
 TIG_PostNL::Shipping days,Verzenddagen
-TIG_PostNL::Select on which days of the week orders are shipped.,Selecteer op welke dagen u bestellingen verstuurt.
+"TIG_PostNL::Select on which days of the week orders are shipped. You can read more about shipping and delivery days <a href=""http://kb.tig.nl/topic/102775036"" target=""_blank"">here</a>.","Selecteer op welke dagen u bestellingen verstuurt. U kunt <a href=""http://kb.tig.nl/topic/102775036"" target=""_blank"">hier</a> meer lezen over verzend- en bezorgdagen."
 TIG_PostNL::Monday,Maandag
 TIG_PostNL::Tuesday,Dinsdag
 TIG_PostNL::Wednesday,Woensdag
