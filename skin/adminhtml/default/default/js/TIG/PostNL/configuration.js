@@ -48,14 +48,15 @@ document.observe('dom:loaded', function(){
 
         // create the wizard
         var postnlWizard = document.createElement('div');
-        postnlWizard.id = 'postnl-wizard';
-        postnlWizard.className = 'section-config';
+        postnlWizard.identify('postnl-wizard');
+        postnlWizard.addClassName('section-config');
 
-        var postnlWizardFieldset = document.createElement('fieldset');
+        var postnlWizardFieldset = document.createElement('div');
+        postnlWizardFieldset.addClassName('fieldset');
         postnlWizard.appendChild(postnlWizardFieldset);
 
         var sectionParent = supportTab.parentNode.nextSibling;
-        sectionParent.parentNode.insertBefore(postnlWizard, sectionParent);
+        sectionParent.up().insert({before: postnlWizard});
 
         // move 5 existing config sections into the wizard
         var wizardSectionConfigs = $$('.section-config.postnl-wizard');
@@ -81,8 +82,8 @@ document.observe('dom:loaded', function(){
                 $$('#postnl-wizard .section-config').each(function(elem){
                     elem.hide();
                 });
-                document.getElementById(this.rel).parentNode.style.display = 'block';
-                document.getElementById(this.rel).style.display = 'block';
+
+                $(this.rel).show().up().show();
 
                 // switch wizard nav active state
                 $$('#postnl-wizard ul a').each(function(elem){
@@ -112,8 +113,8 @@ document.observe('dom:loaded', function(){
         postnlAdvanced.className = 'section-config';
 
         var postnlAdvancedFieldset = document.createElement('fieldset');
-        postnlAdvancedFieldset.id = 'postnl_advanced';
-        postnlAdvancedFieldset.style.display = 'none';
+        postnlAdvancedFieldset.identify('postnl_advanced');
+        postnlAdvancedFieldset.hide();
         postnlAdvanced.appendChild(postnlAdvancedFieldset);
 
         postnlWizard.parentNode.insertBefore(postnlAdvanced, postnlWizard.nextSibling);
@@ -129,7 +130,7 @@ document.observe('dom:loaded', function(){
 
         postnlAdvancedHeader.className = 'entry-edit-head collapseable';
         postnlAdvancedLink.innerHTML = 'Advanced settings'; // TODO: translate
-        postnlAdvancedLink.id = 'postnl_advanced-head';
+        postnlAdvancedLink.identify('postnl_advanced-head');
         postnlAdvancedLink.href = '#';
         postnlAdvancedLink.onclick = function() {
             Fieldset.toggleCollapse('postnl_advanced', '');
