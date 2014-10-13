@@ -92,7 +92,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Xpath to setting that determines whether to use a separate return address.
      */
-    const XPATH_USE_SENDER_ADDRESS_AS_RETURN = 'postnl/cif_return_address/use_sender_address';
+    const XPATH_USE_SENDER_ADDRESS_AS_RETURN = 'postnl/cif_sender_address/use_sender_address';
 
     /**
      * Xpath to sender address data.
@@ -106,7 +106,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * N.B. missing last part so this will return an array of all fields.
      */
-    const XPATH_RETURN_ADDRESS = 'postnl/cif_return_address';
+    const XPATH_RETURN_ADDRESS = 'postnl/cif_sender_address/return_*';
 
     /**.
      * Xpaths for shipment reference info.
@@ -1042,20 +1042,29 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 }
 
                 /**
-                 * Get all cif_return_address fields as an array and convert that to a Varien_Object. This allows the
-                 * _prepareAddress method to access this data in the same way as a conventional
-                 * Mage_Sales_Model_Order_Address object.
+                 * Get all cif_sender_address fields with the 'return_' prefix as an array and convert that to a
+                 * Varien_Object. This allows the _prepareAddress method to access this data in the same way as a
+                 * conventional Mage_Sales_Model_Order_Address object.
                  */
-                $returnAddress = Mage::getStoreConfig(self::XPATH_RETURN_ADDRESS, $this->getStoreId());
+                $returnAddress = Mage::getStoreConfig(self::XPATH_SENDER_ADDRESS, $this->getStoreId());
 
                 $streetData = array(
-                    'streetname'           => $returnAddress['streetname'],
-                    'housenumber'          => $returnAddress['housenumber'],
-                    'housenumberExtension' => $returnAddress['housenumber_extension'],
+                    'streetname'           => $returnAddress['return_streetname'],
+                    'housenumber'          => $returnAddress['return_housenumber'],
+                    'housenumberExtension' => $returnAddress['return_housenumber_extension'],
                     'fullStreet'           => '',
                 );
 
-                $address = new Varien_Object($returnAddress);
+                $returnAddressData = array();
+                foreach($returnAddress as $field => $value) {
+                    if (strpos($field, 'return_') === false) {
+                        continue;
+                    }
+
+                    $returnAddressData[substr($field, 7)] = $value;
+                }
+
+                $address = new Varien_Object($returnAddressData);
                 break;
             case 'PakjeGemak': //no break
             case 'Receiver': //no break

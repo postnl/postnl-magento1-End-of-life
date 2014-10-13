@@ -148,11 +148,6 @@
                     document.getElementById(nextStepRel).parentNode.style.display = 'block';
                     document.getElementById(nextStepRel).style.display = 'block';
 
-                    // show old retour setting with address setting
-                    if ('postnl_cif_sender_address' == nextStepRel) {
-                        document.getElementById('postnl_cif_return_address').style.display = 'block';
-                    }
-
                     // switch wizard nav active state
                     $$('#postnl-wizard ul a').each(function (elem) {
                         elem.removeClassName('active');

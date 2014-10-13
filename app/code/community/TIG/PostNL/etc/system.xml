@@ -544,6 +544,7 @@
                 </split_address_check>
                 <support translate="label" module="postnl">
                     <label>Version &amp; Support</label>
+                    <frontend_class>postnl-support</frontend_class>
                     <sort_order>300</sort_order> <!-- This should always be the first tab -->
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -562,6 +563,7 @@
                     <label>General Settings</label>
                     <comment>Here you can enable or disable the entire extension. This is also where you register your extension for use.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <frontend_class>postnl-wizard</frontend_class>
                     <sort_order>400</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -675,6 +677,7 @@
                     <label>Sender Address</label>
                     <comment>This is where you enter your address. This is required for the extension to work.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <frontend_class>postnl-wizard</frontend_class>
                     <sort_order>500</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -766,17 +769,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </region>
-                    </fields>
-                </cif_sender_address>
-                <cif_return_address translate="label comment" module="postnl">
-                    <label>Return Address</label>
-                    <comment>You may specify a separate return address for shipments that could not be delivered. If you do not wish to specify a separate return address, your sender address will be used.</comment>
-                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>600</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
                         <use_sender_address translate="label comment" module="postnl">
                             <label>Use the sender address as the return adress</label>
                             <frontend_type>select</frontend_type>
@@ -788,7 +780,7 @@
                             <show_in_store>1</show_in_store>
                             <validate>validate-select</validate>
                         </use_sender_address>
-                        <firstname translate="label" module="postnl">
+                        <return_firstname translate="label" module="postnl">
                             <label>First Name</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>20</sort_order>
@@ -799,8 +791,8 @@
                                 <use_sender_address>0</use_sender_address>
                             </depends>
                             <validate>postnl-validate-empty</validate>
-                        </firstname>
-                        <lastname translate="label" module="postnl">
+                        </return_firstname>
+                        <return_lastname translate="label" module="postnl">
                             <label>Last Name</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
@@ -811,8 +803,8 @@
                                 <use_sender_address>0</use_sender_address>
                             </depends>
                             <validate>postnl-validate-empty</validate>
-                        </lastname>
-                        <company translate="label" module="postnl">
+                        </return_lastname>
+                        <return_company translate="label" module="postnl">
                             <label>Company</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
@@ -822,8 +814,8 @@
                             <depends>
                                 <use_sender_address>0</use_sender_address>
                             </depends>
-                        </company>
-                        <department translate="label" module="postnl">
+                        </return_company>
+                        <return_department translate="label" module="postnl">
                             <label>Department</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>50</sort_order>
@@ -833,8 +825,8 @@
                             <depends>
                                 <use_sender_address>0</use_sender_address>
                             </depends>
-                        </department>
-                        <streetname translate="label comment" module="postnl">
+                        </return_department>
+                        <return_streetname translate="label comment" module="postnl">
                             <label>Street</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>60</sort_order>
@@ -846,8 +838,8 @@
                                 <use_sender_address>0</use_sender_address>
                             </depends>
                             <validate>postnl-validate-empty</validate>
-                        </streetname>
-                        <housenumber translate="label comment" module="postnl">
+                        </return_streetname>
+                        <return_housenumber translate="label comment" module="postnl">
                             <label>House Nr.</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>70</sort_order>
@@ -859,8 +851,8 @@
                                 <use_sender_address>0</use_sender_address>
                             </depends>
                             <validate>postnl-validate-empty</validate>
-                        </housenumber>
-                        <housenumber_extension translate="label comment" module="postnl">
+                        </return_housenumber>
+                        <return_housenumber_extension translate="label comment" module="postnl">
                             <label>House Nr. Extension</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>80</sort_order>
@@ -870,8 +862,8 @@
                             <depends>
                                 <use_sender_address>0</use_sender_address>
                             </depends>
-                        </housenumber_extension>
-                        <postcode translate="label" module="postnl">
+                        </return_housenumber_extension>
+                        <return_postcode translate="label" module="postnl">
                             <label>Postcode</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>90</sort_order>
@@ -882,8 +874,8 @@
                                 <use_sender_address>0</use_sender_address>
                             </depends>
                             <validate>postnl-validate-empty</validate>
-                        </postcode>
-                        <city translate="label" module="postnl">
+                        </return_postcode>
+                        <return_city translate="label" module="postnl">
                             <label>City</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>100</sort_order>
@@ -894,8 +886,8 @@
                                 <use_sender_address>0</use_sender_address>
                             </depends>
                             <validate>postnl-validate-empty</validate>
-                        </city>
-                        <region translate="label" module="postnl">
+                        </return_city>
+                        <return_region translate="label" module="postnl">
                             <label>Region</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>110</sort_order>
@@ -905,7 +897,7 @@
                             <depends>
                                 <use_sender_address>0</use_sender_address>
                             </depends>
-                        </region>
+                        </return_region>
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
@@ -916,11 +908,12 @@
                             <next_step_rel>postnl_cif_labels_and_confirming</next_step_rel>
                         </save_and_continue>
                     </fields>
-                </cif_return_address>
+                </cif_sender_address>
                 <cif_labels_and_confirming translate="label comment" module="postnl">
                     <label>Confirming &amp; Label Printing Settings</label>
                     <comment>Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track &amp; trace email to your customers.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <frontend_class>postnl-wizard</frontend_class>
                     <sort_order>700</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -1216,6 +1209,7 @@
                     <label>PostNL Delivery Options &amp; MijnPakket login</label>
                     <comment><![CDATA[Here you can configure your PostNL delivery options.<br />With PostNL delivery options, your customers can choose where and when they want their order delivered. They may choose a date and timeframe for their delivery. Also they can choose to have their order delivered to a nearby post office. New features include the 'evening' delivery option and the option to choose an 'early delivery' post office location. MijnPakket login gives your customers the option to quickly fill in their preferred billing and shipping address by logging in with their PostNL MijnPakket account.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <frontend_class>postnl-wizard</frontend_class>
                     <sort_order>800</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -1692,6 +1686,7 @@
                     <label>Account Settings</label>
                     <comment><![CDATA[Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.</p><p>If you want to test the extension, but don't have any test mode credentials you can use the account credentials found <a href="http://kb.tig.nl/topic/55404467" title="Test mode account credentials" target="_blank">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <frontend_class>postnl-wizard</frontend_class>
                     <sort_order>900</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
