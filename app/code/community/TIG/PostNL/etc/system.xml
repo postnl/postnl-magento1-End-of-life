@@ -1038,7 +1038,7 @@
                         </cutoff_time>
                         <shipping_days translate="label comment" module="postnl">
                             <label>Shipping days</label>
-                            <comment>Select on which days of the week orders are shipped.</comment>
+                            <comment><![CDATA[Select on which days of the week orders are shipped. You can read more about shipping and delivery days <a href="http://kb.tig.nl/topic/102775036" target="_blank">here</a>.]]></comment>
                             <source_model>postnl_core/system_config_source_shippingDays</source_model>
                             <frontend_type>multiselect</frontend_type>
                             <sort_order>120</sort_order>
