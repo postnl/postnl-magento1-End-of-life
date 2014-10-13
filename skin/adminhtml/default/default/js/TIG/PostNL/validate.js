@@ -100,7 +100,6 @@ function checkEmptyGroup(eventElement) {
             }
 
             empty = element.value.empty();
-            console.log(empty);
         }
     );
 

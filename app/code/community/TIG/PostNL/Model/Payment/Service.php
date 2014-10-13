@@ -39,6 +39,11 @@
 class TIG_PostNL_Model_Payment_Service
 {
     /**
+     * Xpath to PostNL COD fee tax class.
+     */
+    const XPATH_COD_FEE_TAX_CLASS = 'tax/classes/postnl_cod_fee';
+
+    /**
      * Add PostNL COD fee tax info to the full tax info array.
      *
      * This is a really annoying hack to fix the problem where the full tax info does not include the custom PostNL COD
