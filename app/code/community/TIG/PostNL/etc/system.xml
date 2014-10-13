@@ -660,6 +660,15 @@
                                 <is_activated>1</is_activated>
                             </depends>
                         </finish_activation_button>
+                        <save_and_continue translate="label" module="postnl">
+                            <label>Save and continue</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <next_step_rel>postnl_cif_sender_address</next_step_rel>
+                        </save_and_continue>
                    </fields>
                 </general>
                 <cif_sender_address translate="label comment" module="postnl">
@@ -897,6 +906,15 @@
                                 <use_sender_address>0</use_sender_address>
                             </depends>
                         </region>
+                        <save_and_continue translate="label" module="postnl">
+                            <label>Save and continue</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
+                            <sort_order>120</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <next_step_rel>postnl_cif_labels_and_confirming</next_step_rel>
+                        </save_and_continue>
                     </fields>
                 </cif_return_address>
                 <cif_labels_and_confirming translate="label comment" module="postnl">
@@ -1183,6 +1201,15 @@
                                 <send_copy>1</send_copy>
                             </depends>
                         </copy_method>
+                        <save_and_continue translate="label" module="postnl">
+                            <label>Save and continue</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
+                            <sort_order>270</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <next_step_rel>postnl_delivery_options</next_step_rel>
+                        </save_and_continue>
                     </fields>
                 </cif_labels_and_confirming>
                 <delivery_options translate="label comment" module="postnl">
@@ -1650,6 +1677,15 @@
                                 <delivery_options_active>1</delivery_options_active>
                             </depends>
                         </stated_address_only_fee>
+                        <save_and_continue translate="label" module="postnl">
+                            <label>Save and continue</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
+                            <sort_order>310</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <next_step_rel>postnl_cif</next_step_rel>
+                        </save_and_continue>
                     </fields>
                 </delivery_options>
                 <cif translate="label comment" module="postnl">
@@ -1831,6 +1867,15 @@
                                 <use_globalpack>1</use_globalpack>
                             </depends>
                         </global_barcode_range>
+                        <save_and_continue translate="label" module="postnl">
+                            <label>Save</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <next_step_rel/>
+                        </save_and_continue>
                    </fields>
                 </cif>
                 <cif_address translate="label comment" module="postnl">
