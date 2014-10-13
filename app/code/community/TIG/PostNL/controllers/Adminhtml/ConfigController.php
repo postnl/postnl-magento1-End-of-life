@@ -323,4 +323,152 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
 
         return $this;
     }
+
+    /**
+     * Saves a step in the PostNL configuration wizard.
+     *
+     * This functionality is nearly identical to Magento's configuration save action.
+     *
+     * @return $this
+     *
+     * @see Mage_Adminhtml_System_ConfigController::saveAction()
+     */
+    public function saveWizardStepAction()
+    {
+        $groups = $this->getRequest()->getPost('groups');
+
+        try {
+            if (!$this->_isSectionAllowed($this->getRequest()->getParam('section'))) {
+                $this->getResponse()
+                     ->setBody('redirect');
+
+                return $this;
+            }
+
+            /**
+             * custom save logic
+             */
+            $this->_saveSection();
+            $section = $this->getRequest()->getParam('section');
+            $website = $this->getRequest()->getParam('website');
+            $store   = $this->getRequest()->getParam('store');
+            Mage::getSingleton('adminhtml/config_data')
+                ->setSection($section)
+                ->setWebsite($website)
+                ->setStore($store)
+                ->setGroups($groups)
+                ->save();
+
+            /**
+             * reinit configuration
+             */
+            Mage::getConfig()->reinit();
+            Mage::dispatchEvent('admin_system_config_section_save_after', array(
+                    'website' => $website,
+                    'store'   => $store,
+                    'section' => $section
+                ));
+            Mage::app()->reinitStores();
+
+            /**
+             * website and store codes can be used in event implementation, so set them as well
+             */
+            Mage::dispatchEvent("admin_system_config_changed_section_{$section}",
+                array('website' => $website, 'store' => $store)
+            );
+        }
+        catch (Mage_Core_Exception $e) {
+            $this->getResponse()
+                 ->setBody($e->getMessage());
+
+            return $this;
+        }
+        catch (Exception $e) {
+            $this->getResponse()
+                 ->setBody(
+                     Mage::helper('adminhtml')->__('An error occurred while saving this configuration:')
+                     . ' '
+                     . $e->getMessage()
+                 );
+
+            return $this;
+        }
+
+        $this->_saveState($this->getRequest()->getPost('config_state'));
+
+        $this->getResponse()
+             ->setBody('success');
+
+        return $this;
+    }
+
+    /**
+     *  Custom save logic for section
+     */
+    protected function _saveSection ()
+    {
+        $method = '_save' . uc_words($this->getRequest()->getParam('section'), '');
+        if (method_exists($this, $method)) {
+            $this->$method();
+        }
+    }
+
+    /**
+     * Check if specified section allowed in ACL
+     *
+     * Will forward to deniedAction(), if not allowed.
+     *
+     * @param string $section
+     * @return bool
+     */
+    protected function _isSectionAllowed($section)
+    {
+        try {
+            $session = Mage::getSingleton('admin/session');
+            $resourceLookup = "admin/system/config/{$section}";
+            if ($session->getData('acl') instanceof Mage_Admin_Model_Acl) {
+                $resourceId = $session->getData('acl')->get($resourceLookup)->getResourceId();
+                if (!$session->isAllowed($resourceId)) {
+                    throw new Exception('');
+                }
+                return true;
+            }
+        }
+        catch (Zend_Acl_Exception $e) {
+            $this->norouteAction();
+            $this->setFlag('', self::FLAG_NO_DISPATCH, true);
+        }
+        catch (Exception $e) {
+            $this->deniedAction();
+            $this->setFlag('', self::FLAG_NO_DISPATCH, true);
+        }
+
+        return false;
+    }
+
+    /**
+     * Save state of configuration field sets
+     *
+     * @param array $configState
+     * @return bool
+     */
+    protected function _saveState($configState = array())
+    {
+        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        if (is_array($configState)) {
+            $extra = $adminUser->getExtra();
+            if (!is_array($extra)) {
+                $extra = array();
+            }
+            if (!isset($extra['configState'])) {
+                $extra['configState'] = array();
+            }
+            foreach ($configState as $fieldset => $state) {
+                $extra['configState'][$fieldset] = $state;
+            }
+            $adminUser->saveExtra($extra);
+        }
+
+        return true;
+    }
 }

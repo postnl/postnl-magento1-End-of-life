@@ -505,6 +505,11 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
         $elementTypes['checkbox'] = Mage::getConfig()
                                         ->getBlockClassName('postnl_adminhtml/system_config_form_field_checkbox');
 
+        $elementTypes['wizard_save_button'] = Mage::getConfig()
+                                                  ->getBlockClassName(
+                                                      'postnl_adminhtml/system_config_form_field_wizardSaveButton'
+                                                  );
+
         return $elementTypes;
     }
 }

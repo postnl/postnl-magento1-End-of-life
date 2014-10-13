@@ -102,5 +102,78 @@
     Validation.add('postnl-validate-webservice-version', '<?php echo $_helper->__('Please enter a valid webservice version number. A valid webservice version number consists of a digit, an underscore and then another digit, e.g.: 1_1 or 2_0.'); ?>', {
         pattern : new RegExp("^([0-9]+_[0-9]+)$", "i")
     });
+
+    var postnlWizardSaveAndContinue = function(nextStepRel, currentStepRel) {
+        var params = {};
+        $$('fieldset#' + currentStepRel + ' input, fieldset#' + currentStepRel + ' select').each(
+            function(element) {
+                params[element.name] = element.getValue();
+            }
+        );
+
+        <?php
+            /**
+             * @todo move to block
+             */
+        ?>
+        <?php $urlParams = array(); ?>
+        <?php if ($this->getRequest()->getParam('section')): ?>
+            <?php $urlParams['section'] = $this->getRequest()->getParam('section'); ?>
+        <?php endif; ?>
+        <?php if ($this->getRequest()->getParam('website')): ?>
+            <?php $urlParams['website'] = $this->getRequest()->getParam('website'); ?>
+        <?php endif; ?>
+        <?php if ($this->getRequest()->getParam('store')): ?>
+            <?php $urlParams['store'] = $this->getRequest()->getParam('store'); ?>
+        <?php endif; ?>
+
+        new Ajax.Request('<?php echo $this->getUrl('postnl_admin/adminhtml_config/saveWizardStep', $urlParams); ?>', {
+            method : 'post',
+            parameters : params,
+            onSuccess : function(response) {
+                var responseText = response.responseText;
+                if (responseText == 'success') {
+                    /**
+                     * TODO Merge with onclick events in the wizard.
+                     * TODO Add success message when there is no next step.
+                     */
+
+                    if (!nextStepRel) {
+                        nextStepRel = currentStepRel;
+                    }
+
+                    // switch tabs
+                    $$('#postnl-wizard .section-config').invoke('hide');
+
+                    document.getElementById(nextStepRel).parentNode.style.display = 'block';
+                    document.getElementById(nextStepRel).style.display = 'block';
+
+                    // show old retour setting with address setting
+                    if ('postnl_cif_sender_address' == nextStepRel) {
+                        document.getElementById('postnl_cif_return_address').style.display = 'block';
+                    }
+
+                    // switch wizard nav active state
+                    $$('#postnl-wizard ul a').each(function (elem) {
+                        elem.removeClassName('active');
+                    });
+
+                    $$('a[rel="' + nextStepRel + '"]')[0].addClassName('active');
+
+                    return;
+                }
+
+                if (responseText == 'redirect') {
+                    window.location.href = '<?php echo $this->getUrl(''); ?>';
+
+                    return;
+                }
+
+                alert(responseText);
+            }
+        });
+
+        return false;
+    };
     //]]>
 </script>
