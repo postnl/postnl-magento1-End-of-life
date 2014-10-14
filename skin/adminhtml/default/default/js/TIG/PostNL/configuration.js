@@ -48,15 +48,14 @@ document.observe('dom:loaded', function(){
 
         // create the wizard
         var postnlWizard = document.createElement('div');
-        postnlWizard.identify('postnl-wizard');
-        postnlWizard.addClassName('section-config');
+        postnlWizard.id = 'postnl-wizard';
+        postnlWizard.className = 'section-config';
 
         var postnlWizardFieldset = document.createElement('div');
         postnlWizardFieldset.addClassName('fieldset');
         postnlWizard.appendChild(postnlWizardFieldset);
 
-        var sectionParent = supportTab.parentNode.nextSibling;
-        sectionParent.up().insert({before: postnlWizard});
+        supportTab.parentNode.insertBefore(postnlWizard, supportTab.nextSibling);
 
         // move 5 existing config sections into the wizard
         var wizardSectionConfigs = $$('.section-config.postnl-wizard');
@@ -98,14 +97,12 @@ document.observe('dom:loaded', function(){
             postnlWizardNavigation.appendChild(listClone);
         });
 
-        postnlWizardFieldset.firstChild.insert({
-            before: postnlWizardNavigation
-        });
+        postnlWizardFieldset.insertBefore(postnlWizardNavigation, postnlWizardFieldset.firstChild);
 
         // init active tab
         postnlWizard.select('.section-config fieldset').invoke('hide');
         postnlWizard.select('.section-config fieldset')[0].show();
-        postnlWizard.select('ul a')[0].addClassName('active');
+        postnlWizard.select('ul a')[0].className = 'active';
 
         // create the advanced settings group
         var postnlAdvanced = document.createElement('div');
@@ -113,14 +110,14 @@ document.observe('dom:loaded', function(){
         postnlAdvanced.className = 'section-config';
 
         var postnlAdvancedFieldset = document.createElement('fieldset');
-        postnlAdvancedFieldset.identify('postnl_advanced');
+        postnlAdvancedFieldset.id = 'postnl_advanced';
         postnlAdvancedFieldset.hide();
         postnlAdvanced.appendChild(postnlAdvancedFieldset);
 
         postnlWizard.parentNode.insertBefore(postnlAdvanced, postnlWizard.nextSibling);
 
         // move all other sections to the advanced settings group
-        $$('.section-config:not(.postnl-wizard,.postnl-support,#postnl-advanced,#postnl-wizard)').each(function(element) {
+        $$('.section-config:not(.postnl-wizard, .postnl-support, #postnl-advanced, #postnl-wizard)').each(function(element) {
             postnlAdvancedFieldset.appendChild(element);
         });
 
@@ -130,7 +127,7 @@ document.observe('dom:loaded', function(){
 
         postnlAdvancedHeader.className = 'entry-edit-head collapseable';
         postnlAdvancedLink.innerHTML = 'Advanced settings'; // TODO: translate
-        postnlAdvancedLink.identify('postnl_advanced-head');
+        postnlAdvancedLink.id = 'postnl_advanced-head';
         postnlAdvancedLink.href = '#';
         postnlAdvancedLink.onclick = function() {
             Fieldset.toggleCollapse('postnl_advanced', '');
