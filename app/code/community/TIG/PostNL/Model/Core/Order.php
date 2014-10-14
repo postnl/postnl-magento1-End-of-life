@@ -303,10 +303,18 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
      */
     public function setOptions($options)
     {
+
         $this->setUnserializedOptions($options);
 
+        /**
+         * If the options are an empty array, remove the options instead. Otherwise, serialize the array before saving.
+         */
         if (is_array($options)) {
-            $options = serialize($options);
+            if (empty($options)) {
+                $options = false;
+            } else {
+                $options = serialize($options);
+            }
         }
 
         $this->setData('options', $options);
@@ -355,6 +363,40 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * Validate the chosen extra options. If an option is invalid, it will be unset.
+     *
+     * @return $this
+     */
+    public function validateOptions()
+    {
+        if (!$this->hasOptions()) {
+            return $this;
+        }
+
+        $options = $this->getOptions();
+        foreach ($options as $option => $value) {
+            if (!$value) {
+                continue;
+            }
+
+            switch ($option) {
+                case 'only_stated_address':
+                    if ($this->getType() == 'PG'
+                        || $this->getType() == 'PGE'
+                        || $this->getType() == 'PA'
+                    ) {
+                        unset($options[$option]);
+                    }
+                    break;
+                //no default
+            }
+        }
+
+        $this->setOptions($options);
+        return $this;
     }
 
     /**
