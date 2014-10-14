@@ -8,15 +8,15 @@
     .postnl-container .col2-set .col-1 { margin-right:34px; }
 
     .responsive-protector { overflow:hidden !important; }
-    .responsive-switch-wrapper { display:block; margin:16px 0 24px; }
+    .responsive-protector p.rate { display:block !important; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_rwd_rate-line.png) left bottom no-repeat; padding:8px 8px 19px; margin-bottom:8px; font-weight:bold; font-size:13px; }
+    .responsive-switch-wrapper { display:block; margin:16px 0 0; }
     .responsive-switch-wrapper li { display:block; float:left; width:50%; box-sizing:border-box; text-align:center; }
     .responsive-switch-wrapper li:first-child { padding-right:2px; }
     .responsive-switch-wrapper li:last-child { padding-left:2px; }
     .responsive-switch-wrapper li:first-child a { border-radius:3px 0 0 3px; }
     .responsive-switch-wrapper li:last-child a { border-radius:0 3px 3px 0; }
     .responsive-switch-wrapper li a { box-sizing:border-box; display:block; border:1px solid #bbb; width:100%; height:40px; background:#fff; line-height:38px; font-weight:bold; color:#ed8c00; font-size:13px; text-align:center; text-decoration:none !important; text-transform:uppercase; }
-    .responsive-switch-wrapper li a.active { color:#fff; border:none; line-height:40px;
-        background:#EF7B20;
+    .responsive-switch-wrapper li a.active { color:#fff; border:none; line-height:40px; background:#f28d1f;
         background:-moz-linear-gradient(top, #f28d1f 0%, #ec6921 100%);
         background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#f28d1f), color-stop(100%,#ec6921));
         background:-webkit-linear-gradient(top, #f28d1f 0%,#ec6921 100%);
@@ -24,18 +24,31 @@
         background:-ms-linear-gradient(top, #f28d1f 0%,#ec6921 100%);
         background:linear-gradient(to bottom, #f28d1f 0%,#ec6921 100%);
     }
-
+    .option-list.extras .option .bkg,
+    .option-list.extras .location .bkg,
     .option-list .option .bkg,
-    .option-list .location .bkg { background:none; padding:0 !important; }
+    .option-list .location .bkg { background:none!important; padding:0 !important; }
     .option-list .location { background:#666; padding:0 8px; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px; }
     .option-list .option { padding:0 8px; background:#eaeaea; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;
-        background:#E5E5E5;
         background:-moz-linear-gradient(top, #eaeaea 0%, #e0e0e0 100%);
         background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#eaeaea), color-stop(100%,#e0e0e0));
         background:-webkit-linear-gradient(top, #eaeaea 0%,#e0e0e0 100%);
         background:-o-linear-gradient(top, #eaeaea 0%,#e0e0e0 100%);
         background:-ms-linear-gradient(top, #eaeaea 0%,#e0e0e0 100%);
         background:linear-gradient(to bottom, #eaeaea 0%,#e0e0e0 100%);
+    }
+    .option-list.extras .option {
+        padding:0 8px;
+        background:#eaeaea;
+        background:-moz-linear-gradient(top, #eaeaea 0%, #f1f1f1 100%);
+        background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#eaeaea), color-stop(100%,#f1f1f1));
+        background:-webkit-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:-o-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:-ms-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:linear-gradient(to bottom, #eaeaea 0%,#f1f1f1 100%);
+        -webkit-border-radius:3px;
+           -moz-border-radius:3px;
+                border-radius:3px;
     }
 
     .tooltip-container { display:none !important; }
@@ -50,7 +63,22 @@
     .responsive-tooltip .location-address { font-size:13px; }
     .responsive-tooltip .business-hours { line-height:18px; font-size:12px !important; color:#333 !important; }
     .responsive-tooltip .business-hours tbody th { width:40px; }
-
+    
+    body.noscroll { overflow:auto; }
+    #postnl_add_phonenumber .popup-overlay { background:none; position:static; }
+    #postnl_add_phonenumber .popup-window { position:static; width:auto; height:auto; margin:0; box-shadow:none; -webkit-box-shadow:none; -moz-box-shadow:none;  }
+    #postnl_add_phonenumber .popup-header { padding-left:0; }
+    #postnl_add_phonenumber .popup-header h2 { text-transform:none; }
+    #postnl_add_phonenumber .popup-content { height:auto; background:none; padding:0; }
+    #postnl_add_phonenumber .text { font-size:12px; width:auto; }
+    #postnl_add_phonenumber .text p { padding:0; }
+    #postnl_add_phonenumber .button-set { background:none; height:auto; padding:0; margin-top:20px; }
+    #postnl_add_phonenumber .button-set button { float:none; }
+    #postnl_add_phonenumber .number-verify, 
+    #postnl_add_phonenumber .number-failed { font-size:12px; }
+    
+    #add_phone_close { display:none; }
+    
     #postnl_add_location { display:none; }
     .responsive-hidden { display:none; }
 }
@@ -130,17 +158,29 @@
     .responsive-noscroll { overflow:hidden; }
 }
 
+@media only screen and (max-width: 399px) {
+    .responsive-location-results ul.location-filters li { float:none; }
+    .responsive-location-results .location-details .more-info .actions button.postnl-button { display:block; width:100%; }
+}
 
 /* Retina compatibility */
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and ( min-resolution: 192dpi), only screen and ( min-resolution: 2dppx) {
-
+    
+    .option-list.extras .option .bkg,
+    .option-list.extras .location .bkg,
     .option-list .option .bkg,
     .option-list .location .bkg {
         background:none;
-        padding:0 !important;
     }
     .option-list .location {
         background:#666;
+        padding:0 8px;
+        -webkit-border-radius:3px;
+           -moz-border-radius:3px;
+                border-radius:3px;
+    }
+    .option-list.extras .location {
+        background:#999;
         padding:0 8px;
         -webkit-border-radius:3px;
            -moz-border-radius:3px;
@@ -155,6 +195,19 @@
         background:-o-linear-gradient(top, #eaeaea 0%,#e0e0e0 100%);
         background:-ms-linear-gradient(top, #eaeaea 0%,#e0e0e0 100%);
         background:linear-gradient(to bottom, #eaeaea 0%,#e0e0e0 100%);
+        -webkit-border-radius:3px;
+           -moz-border-radius:3px;
+                border-radius:3px;
+    }
+    .option-list.extras .option {
+        padding:0 8px;
+        background:#eaeaea;
+        background:-moz-linear-gradient(top, #eaeaea 0%, #f1f1f1 100%);
+        background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#eaeaea), color-stop(100%,#f1f1f1));
+        background:-webkit-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:-o-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:-ms-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:linear-gradient(to bottom, #eaeaea 0%,#f1f1f1 100%);
         -webkit-border-radius:3px;
            -moz-border-radius:3px;
                 border-radius:3px;

@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasIsOsc()
@@ -105,16 +105,18 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
     /**
      * Gets a css file path for the current theme.
      *
-     * @return string
+     * @return array
      */
-    public function getResponsiveThemeCssFile()
+    public function getResponsiveThemeCssFiles()
     {
+        $cssFiles = array();
+
         /**
          * @var Varien_Simplexml_Element $theme
          */
         $theme = $this->getCurrentTheme();
         if (!$theme) {
-            return '';
+            return $cssFiles;
         }
 
         /**
@@ -122,22 +124,29 @@ class TIG_PostNL_Block_DeliveryOptions_Theme extends TIG_PostNL_Block_DeliveryOp
          */
         $files = $theme->files;
         if (!$files) {
-            return '';
+            return $cssFiles;
         }
 
-        $file = '';
         if ($this->getIsOsc()
             && isset($files->onestepcheckout)
             && isset($files->onestepcheckout->responsive)
         ) {
-            $file = (string) $files->onestepcheckout->responsive;
+            /**
+             * @var Mage_Core_Model_Config_Element $cssFiles
+             */
+            $cssFiles = $files->onestepcheckout->responsive;
+            $cssFiles = $cssFiles->asArray();
         } elseif (isset($files->onepage)
             && isset($files->onepage->responsive)
         ) {
-            $file = (string) $files->onepage->responsive;
+            /**
+             * @var Mage_Core_Model_Config_Element $cssFiles
+             */
+            $cssFiles = $files->onepage->responsive;
+            $cssFiles = $cssFiles->asArray();
         }
 
-        return $file;
+        return $cssFiles;
     }
 
     /**

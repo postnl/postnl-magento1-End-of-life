@@ -1,9 +1,11 @@
 /* Additional Mediaqueries for OneStepCheckout =========================================== */
 @media screen and (min-width : 954px) {
     .responsive-switch-wrapper,
-    #postnl_responsive { display:none; }
+    #postnl_add_location_responsive,
+    #postnl_responsive,
     .responsive-hidden { display:none; }
     .responsive-noscroll { overflow:hidden; }
+    #postnl_add_location { display:block; }
 }
 
 @media screen and (max-width : 953px) {
@@ -49,8 +51,8 @@
     }
 
     /* Styling */
-    .responsive-protector { overflow:hidden !important; }
-    .responsive-switch-wrapper { display:block; margin:0 0 24px; }
+    .responsive-protector { overflow:hidden !important; font-size:11px; }
+    .responsive-switch-wrapper { display:block; margin:0; }
     .responsive-switch-wrapper li { display:block; float:left; width:50%; box-sizing:border-box; text-align:center; }
     .responsive-switch-wrapper li:first-child { padding-right:2px; }
     .responsive-switch-wrapper li:last-child { padding-left:2px; }
@@ -65,9 +67,10 @@
         background:-ms-linear-gradient(top, #f28d1f 0%,#ec6921 100%);
         background:linear-gradient(to bottom, #f28d1f 0%,#ec6921 100%);
     }
-
+    .option-list.extras .option .bkg,
+    .option-list.extras .location .bkg,
     .option-list .option .bkg,
-    .option-list .location .bkg { background:none; padding:0 !important; }
+    .option-list .location .bkg { background:none !important; padding:0 !important; }
     .option-list .location { background:#666; padding:0 8px; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px; }
     .option-list .option { padding:0 8px; background:#eaeaea; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;
         background:-moz-linear-gradient(top, #eaeaea 0%, #e0e0e0 100%);
@@ -76,6 +79,15 @@
         background:-o-linear-gradient(top, #eaeaea 0%,#e0e0e0 100%);
         background:-ms-linear-gradient(top, #eaeaea 0%,#e0e0e0 100%);
         background:linear-gradient(to bottom, #eaeaea 0%,#e0e0e0 100%);
+    }
+    .option-list.extras .location { background:#999; padding:0 8px; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px; }
+    .option-list.extras .option { padding:0 8px; background:#eaeaea; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;
+        background:-moz-linear-gradient(top, #eaeaea 0%, #f1f1f1 100%);
+        background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#eaeaea), color-stop(100%,#f1f1f1));
+        background:-webkit-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:-o-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:-ms-linear-gradient(top, #eaeaea 0%,#f1f1f1 100%);
+        background:linear-gradient(to bottom, #eaeaea 0%,#f1f1f1 100%);
     }
 
     #postnl_pickup,

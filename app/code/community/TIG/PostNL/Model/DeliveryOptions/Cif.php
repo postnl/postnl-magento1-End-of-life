@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method TIG_PostNL_Model_DeliveryOptions_Cif setStoreId(int $value)
@@ -97,7 +97,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $soapParams = array(
             'GetDeliveryDate' => array(
                 'Postalcode'                 => $postcode,
-                'ShippingDate'               => date('d-m-Y H:i:s', Mage::getModel('core/date')->timestamp()),
+                'ShippingDate'               => Mage::getSingleton('core/date')->date('d-m-Y H:i:s'),
                 'ShippingDuration'           => $shippingDuration,
                 'CutOffTime'                 => $this->_getCutOffTime(),
                 'AllowSundaySorting'         => $this->_getSundaySortingAllowed(),
@@ -129,11 +129,11 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * Get evening timeframes for the specified postcode and delivery window.
+     * Get evening time frames for the specified postcode and delivery window.
      *
      * @param array $data
      *
-     * @return StdClass
+     * @return StdClass[]
      *
      * @throws TIG_PostNL_Exception
      */
