@@ -217,6 +217,8 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
      *        |controller_action_predispatch_onestepcheckout_ajax_set_methods_separate
      *
      * @observer checkout_shipping_method_save_options
+     *
+     * @todo Move this functionality to the saveSelectedOption AJAX call instead.
      */
     public function saveOptions(Varien_Event_Observer $observer)
     {
@@ -267,6 +269,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
         }
 
         $postnlOrder->setOptions($postnlOptions)
+                    ->validateOptions()
                     ->save();
 
         return $this;
