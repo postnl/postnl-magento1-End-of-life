@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
@@ -239,6 +239,11 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_cache = null;
 
     /**
+     * @var Mage_Sales_Model_Quote
+     */
+    protected $_quote;
+
+    /**
      * The current server's memory limit.
      *
      * @var int
@@ -342,6 +347,21 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @return Mage_Sales_Model_Quote
+     */
+    public function getQuote()
+    {
+        if ($this->_quote) {
+            return $this->_quote;
+        }
+
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $this->_quote = $quote;
+        return $quote;
+    }
+
+    /**
      * @return array
      */
     public function getLogFiles()
@@ -439,7 +459,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getModuleVersion()
     {
-        $version = (string) Mage::getConfig()->getModuleConfig("TIG_PostNL")->version;
+        $version = (string) Mage::getConfig()->getModuleConfig('TIG_PostNL')->version;
 
         return $version;
     }
@@ -743,14 +763,32 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Alias for TIG_PostNL_Helper_Data::quoteIsBuspakje() provided for backwards compatibility.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return bool
+     *
+     * @see TIG_PostNL_Helper_Data::quoteIsBuspakje()
+     */
+    public function isBuspakjeConfigApplicableToQuote(Mage_Sales_Model_Quote $quote = null)
+    {
+        return $this->quoteIsBuspakje($quote);
+    }
+
+    /**
      * Checks if the buspakje-specific configuration is applicable to the current quote.
      *
      * @param Mage_Sales_Model_Quote $quote
      *
      * @return bool
      */
-    public function isBuspakjeConfigApplicableToQuote(Mage_Sales_Model_Quote $quote)
+    public function quoteIsBuspakje(Mage_Sales_Model_Quote $quote = null)
     {
+        if (is_null($quote)) {
+            $quote = $this->getQuote();
+        }
+
         /**
          * Form a unique registry key for the current quote (if available) so we can cache the result of this method in
          * the registry.

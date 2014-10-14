@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
@@ -49,6 +49,12 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
      */
     const UPDATE_STATISTICS_CRON_STRING_PATH = 'crontab/jobs/postnl_update_statistics/schedule/cron_expr';
     const UPDATE_STATISTICS_CRON_MODEL_PATH  = 'crontab/jobs/postnl_update_statistics/run/model';
+
+    /**
+     * Cron expression and cron model definitions for updating product attributes.
+     */
+    const UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH = 'crontab/jobs/postnl_update_product_attribute/schedule/cron_expr';
+    const UPDATE_PRODUCT_ATTRIBUTE_MODEL_PATH  = 'crontab/jobs/postnl_update_product_attribute/run/model';
 
     /**
      * XML path to the support tab_expanded setting
@@ -78,6 +84,11 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     const XPATH_PACKING_SLIP_ITEM_COLUMNS = 'postnl/packing_slip/item_columns';
 
     /**
+     * Xpath to the product attribute update data used by the product attribute update cron.
+     */
+    const XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA = 'postnl/general/product_attribute_update_data';
+
+    /**
      * Minimum server memory required by the PostNL extension in bytes.
      */
     const MIN_SERVER_MEMORY = 268435456; //256MB
@@ -91,6 +102,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     const UNSUPPORTED_MAGENTO_VERSION_ERROR_CODE = 'POSTNL-0086';
     const SUCCESSFUL_INSTALL_ERROR_CODE          = 'POSTNL-0156';
     const MEMORY_LIMIT_ERROR_CODE                = 'POSTNL-0175';
+    const UPDATE_PRODUCT_ATTRIBUTE_ERROR_CODE    = 'POSTNL-0197';
 
     /**
      * callAfterApplyAllUpdates flag. Causes applyAfterUpdates() to be called.
@@ -1062,6 +1074,128 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
          */
         Mage::getSingleton('catalog/product_action')
             ->updateAttributes($productCollection->getAllIds(), $attributesData, Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        return $this;
+    }
+
+    /**
+     * Set the product attribute update cron's cron expression and save the necessary attribute data.
+     *
+     * @param array $data
+     *
+     * @return $this
+     * @throws TIG_PostNL_Exception
+     */
+    public function setProductAttributeUpdateCron($data)
+    {
+        /**
+         * Check if any existing data is present.
+         */
+        $existingData = Mage::getStoreConfig(
+            self::XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA,
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        /**
+         * Merge the existing data with the new data.
+         */
+        if ($existingData) {
+            $data = array_merge($data, unserialize($existingData));
+        }
+
+        /**
+         * Serialize the attribute data for storage in the database.
+         */
+        $serializedData = serialize($data);
+
+        /**
+         * Save the attribute data.
+         */
+        Mage::getConfig()->saveConfig(
+            self::XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA,
+            $serializedData,
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        $cronExpr = "*/5 * * * *";
+
+        /**
+         * Store the cron expression in core_config_data
+         */
+        try {
+            Mage::getModel('core/config_data')
+                ->load(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH, 'path')
+                ->setValue($cronExpr)
+                ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH)
+                ->save();
+            Mage::getModel('core/config_data')
+                ->load(self::UPDATE_PRODUCT_ATTRIBUTE_MODEL_PATH, 'path')
+                ->setValue((string) Mage::getConfig()->getNode(self::UPDATE_PRODUCT_ATTRIBUTE_MODEL_PATH))
+                ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_MODEL_PATH)
+                ->save();
+        } catch (Exception $e) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to save update_product_attribute cron expression: %s', $cronExpr),
+                self::UPDATE_PRODUCT_ATTRIBUTE_ERROR_CODE,
+                $e
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Install new matrix rate data.
+     *
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function installMatrixRates(array $data)
+    {
+        try {
+            Mage::getResourceModel('postnl_carrier/matrixrate')->import($data);
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add newly supported shipping methods.
+     *
+     * @param array|string $methods
+     *
+     * @return $this
+     */
+    public function addSupportedShippingMethods($methods)
+    {
+        if (!is_array($methods)) {
+            $methods = array($methods);
+        }
+
+        /**
+         * Get the current shipping methods for the default config.
+         */
+        $defaultShippingMethods = Mage::getStoreConfig(
+            'postnl/advanced/postnl_shipping_methods',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        $defaultShippingMethods    = explode(',', $defaultShippingMethods);
+
+        /**
+         * Merge with the new methods and save the config.
+         */
+        $newDefaultShippingMethods = array_merge($defaultShippingMethods, $methods);
+        Mage::getConfig()->saveConfig(
+            'postnl/advanced/postnl_shipping_methods',
+            implode(',', $newDefaultShippingMethods),
+            'default',
+            Mage_Core_Model_App::ADMIN_STORE_ID
+        );
 
         return $this;
     }

@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * PostNL shipping method model
@@ -170,6 +170,10 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
 
         if ($rateType == 'table') {
             $result = $this->_getTableRate($request);
+        }
+
+        if ($rateType == 'matrix') {
+            $result = $this->_getMatrixRate($request);
         }
 
         if (!isset($result)) {
@@ -369,6 +373,157 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
     /**
      * @param Mage_Shipping_Model_Rate_Request $request
      *
+     * @return Mage_Shipping_Model_Rate_Result
+     */
+    protected function _getMatrixRate(Mage_Shipping_Model_Rate_Request $request)
+    {
+        //Zend_Debug::dump($request->debug());exit;
+
+        // exclude Virtual products price from Package value if pre-configured
+        if (!$this->getConfigFlag('include_virtual_price') && $request->getAllItems()) {
+            /**
+             * @var Mage_Sales_Model_Quote_Item $item
+             */
+            foreach ($request->getAllItems() as $item) {
+                if ($item->getParentItem()) {
+                    continue;
+                }
+                if ($item->getHasChildren() && $item->isShipSeparately()) {
+                    foreach ($item->getChildren() as $child) {
+                        /**
+                         * @var Mage_Sales_Model_Quote_Item $child
+                         */
+                        if ($child->getProduct()->isVirtual()) {
+                            $request->setPackageValue($request->getPackageValue() - $child->getBaseRowTotal());
+                        }
+                    }
+                } elseif ($item->getProduct()->isVirtual()) {
+                    $request->setPackageValue($request->getPackageValue() - $item->getBaseRowTotal());
+                }
+            }
+        }
+
+        // Free shipping by qty
+        $freeQty = 0;
+        $freePackageValue = false;
+        if ($request->getAllItems()) {
+            $freePackageValue = 0;
+            /**
+             * @var Mage_Sales_Model_Quote_Item $item
+             */
+            foreach ($request->getAllItems() as $item) {
+                if ($item->getProduct()->isVirtual() || $item->getParentItem()) {
+                    continue;
+                }
+
+                if ($item->getHasChildren() && $item->isShipSeparately()) {
+                    /**
+                     * @var Mage_Sales_Model_Quote_Item $child
+                     */
+                    foreach ($item->getChildren() as $child) {
+                        if ($child->getFreeShipping() && !$child->getProduct()->isVirtual()) {
+                            $freeShipping = is_numeric($child->getFreeShipping()) ? $child->getFreeShipping() : 0;
+                            $freeQty += $item->getQty() * ($child->getQty() - $freeShipping);
+                        }
+                    }
+                } elseif ($item->getFreeShipping()) {
+                    $freeShipping = is_numeric($item->getFreeShipping()) ? $item->getFreeShipping() : 0;
+                    $freeQty += $item->getQty() - $freeShipping;
+                    $freePackageValue += $item->getBaseRowTotal();
+                }
+            }
+            $oldValue = $request->getPackageValue();
+            $request->setPackageValue($oldValue - $freePackageValue);
+        }
+
+        if ($freePackageValue) {
+            $request->setPackageValue($request->getPackageValue() - $freePackageValue);
+        }
+
+        $conditionName = $this->getConfigData('condition_name');
+        $request->setConditionName($conditionName ? $conditionName : $this->_default_condition_name);
+
+        // Package weight and qty free shipping
+        $oldWeight = $request->getPackageWeight();
+        $oldQty = $request->getPackageQty();
+
+        $request->setPackageWeight($request->getFreeMethodWeight());
+        $request->setPackageQty($oldQty - $freeQty);
+
+        /**
+         * Determine the parcel type.
+         */
+        if ($request->getAllItems()) {
+            $item  = current($request->getAllItems());
+            $quote = $item->getQuote();
+
+            $postnlOrder = Mage::getModel('postnl_core/order')->loadByQuote($quote);
+            if ($postnlOrder && $postnlOrder->getId() && $postnlOrder->isPakjeGemak()) {
+                $request->setParcelType('regular');
+            } elseif (Mage::helper('postnl')->quoteIsBuspakje($quote)) {
+                $request->setParcelType('letter_box');
+            }
+        }
+
+        $result = Mage::getModel('shipping/rate_result');
+        $rate = $this->getMatrixRate($request);
+
+        $request->setPackageWeight($oldWeight);
+        $request->setPackageQty($oldQty);
+
+        $method = Mage::getModel('shipping/rate_result_method');
+        if (!empty($rate) && $rate['price'] >= 0) {
+            if ($request->getFreeShipping() === true || ($request->getPackageQty() == $freeQty)) {
+                $shippingPrice = 0;
+            } else {
+                $shippingPrice = $this->getFinalPriceWithHandlingFee($rate['price']);
+            }
+
+            $price = $shippingPrice;
+            $cost = $rate['cost'];
+        } elseif (empty($rate) && $request->getFreeShipping() === true) {
+            /**
+             * was applied promotion rule for whole cart
+             * other shipping methods could be switched off at all
+             * we must show table rate method with 0$ price, if grand_total more, than min table condition_value
+             * free setPackageWeight() has already was taken into account
+             */
+            $request->setPackageValue($freePackageValue);
+            $request->setPackageQty($freeQty);
+            $rate = $this->getMatrixRate($request);
+            if (!empty($rate) && $rate['price'] >= 0) {
+                $method = Mage::getModel('shipping/rate_result_method');
+            }
+
+            $price = 0;
+            $cost = 0;
+        } else {
+            $error = Mage::getModel('shipping/rate_result_error');
+            $error->setCarrier('tablerate');
+            $error->setCarrierTitle($this->getConfigData('title'));
+            $error->setErrorMessage($this->getConfigData('specificerrmsg'));
+            $result->append($error);
+
+            return $result;
+        }
+
+        $method->setCarrier('postnl');
+        $method->setCarrierTitle($this->getConfigData('title'));
+
+        $method->setMethod('matrixrate');
+        $method->setMethodTitle($this->getConfigData('name'));
+
+        $method->setPrice($price);
+        $method->setCost($cost);
+
+        $result->append($method);
+
+        return $result;
+    }
+
+    /**
+     * @param Mage_Shipping_Model_Rate_Request $request
+     *
      * @return array|bool
      */
     public function getRate(Mage_Shipping_Model_Rate_Request $request)
@@ -382,6 +537,18 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         } else {
             $rate = Mage::getResourceModel('postnl_carrier/tablerate')->getRate($request);
         }
+
+        return $rate;
+    }
+
+    /**
+     * @param Mage_Shipping_Model_Rate_Request $request
+     *
+     * @return array|bool
+     */
+    public function getMatrixRate(Mage_Shipping_Model_Rate_Request $request)
+    {
+        $rate = Mage::getResourceModel('postnl_carrier/matrixrate')->getRate($request);
 
         return $rate;
     }
@@ -436,8 +603,9 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $helper = Mage::helper('postnl');
 
         $methods = array(
-            'flatrate' => $this->getConfigData('name') . ' (' . $helper->__('flat rate') . ')',
-            'tablerate' => $this->getConfigData('name') . ' (' . $helper->__('table rate') . ')',
+            'flatrate'   => $this->getConfigData('name') . ' (' . $helper->__('flat rate') . ')',
+            'tablerate'  => $this->getConfigData('name') . ' (' . $helper->__('table rate') . ')',
+            'matrixrate' => $this->getConfigData('name') . ' (' . $helper->__('matrix rate') . ')',
         );
 
         return $methods;
@@ -471,7 +639,6 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
                 break;
             }
         }
-
 
         $statusModel->setCarrier($track->getCarrierCode())
                     ->setCarrierTitle($this->getConfigData('name'))

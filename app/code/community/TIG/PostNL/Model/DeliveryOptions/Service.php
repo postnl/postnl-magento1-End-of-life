@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                                  hasQuote()
@@ -53,9 +53,10 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     const ADDRESS_TYPE_PAKJEGEMAK = 'pakje_gemak';
 
     /**
-     * Xpath for shipping duration setting.
+     * Xpaths for shipping settings.
      */
     const XPATH_SHIPPING_DURATION = 'postnl/cif_labels_and_confirming/shipping_duration';
+    const XPATH_SHIPPING_DAYS     = 'postnl/cif_labels_and_confirming/shipping_days';
 
     /**
      * Gets a PostNL Order. If none is set; load one.
@@ -123,9 +124,9 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     /**
      * Calculate the confirm date for a specified delivery date.
      *
-     * @param $deliveryDate
+     * @param string $deliveryDate
      *
-     * @return string
+     * @return DateTime
      */
     public function getConfirmDate($deliveryDate)
     {
@@ -134,18 +135,67 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         }
 
         $deliveryDate = new DateTime($deliveryDate);
-        $deliveryDay = $deliveryDate->format('N');
 
-        $shippingDuration = 1;
-        if ($deliveryDay == 1 && !Mage::helper('postnl/deliveryOptions')->canUseSundaySorting()) {
-            $shippingDuration++;
-        }
-
-        $confirmDate = $deliveryDate->sub(new DateInterval("P{$shippingDuration}D"));
+        $confirmDate = $deliveryDate->sub(new DateInterval("P1D"));
         $confirmDate = $confirmDate->format('Y-m-d');
+
+        $confirmDate = Mage::helper('postnl/deliveryOptions')->getValidConfirmDate($confirmDate);
 
         $this->setConfirmDate($confirmDate);
         return $confirmDate;
+    }
+
+    /**
+     * @param StdClass[] $timeframes
+     *
+     * @return StdClass[]|false
+     */
+    public function filterTimeframes($timeframes)
+    {
+        /**
+         * If the time frames are not an array, something has gone wrong.
+         */
+        if (!is_array($timeframes)) {
+            return false;
+        }
+
+        /**
+         * Get the configured shipping days.
+         */
+        $shippingDays = Mage::getStoreConfig(self::XPATH_SHIPPING_DAYS, Mage::app()->getStore()->getId());
+        $shippingDays = explode(',', $shippingDays);
+
+        foreach ($timeframes as $key => $timeframe) {
+            /**
+             * Get the date of the time frame and calculate the shipping day. The shipping day will be the day before
+             * the delivery date, but may not be a sunday.
+             */
+            $timeframeDate = new DateTime($timeframe->Date);
+            $deliveryDay   = (int) $timeframeDate->format('N');
+            $shippingDay   = (int) $timeframeDate->sub(new DateInterval('P1D'))->format('N');
+
+            if ($shippingDay < 1 || $shippingDay > 6) {
+                $shippingDay = 6;
+            }
+
+            /**
+             * If the shipping day is not allowed, remove the time frame from the array.
+             *
+             * For tuesday delivery either saturday or monday needs to be available.
+             */
+            if ($deliveryDay === 2 && !in_array($shippingDay, $shippingDays)) {
+                $shippingDay = 6;
+            }
+
+            if (!in_array($shippingDay, $shippingDays)) {
+                unset($timeframes[$key]);
+            }
+        }
+
+        /**
+         * Only return the values, as otherwise the array will be JSON encoded as an object.
+         */
+        return array_values($timeframes);
     }
 
     /**
@@ -199,7 +249,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
     {
         $quote = $this->getQuote();
 
-        $confirmDate = $this->getConfirmDate($data['date']);
+        $confirmDate = $this->getConfirmDate($data['date'])->getTimestamp();
 
         /**
          * @var TIG_PostNL_Model_Core_Order $postnlOrder

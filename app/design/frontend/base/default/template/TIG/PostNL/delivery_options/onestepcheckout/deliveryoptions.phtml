@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
@@ -43,6 +43,7 @@
  * @var Mage_Sales_Model_Quote_Address $_address
  */
 ?>
+<?php $_store         = Mage::app()->getStore(); ?>
 <?php $_address       = $this->getShippingAddress(); ?>
 <?php $_postcode      = $this->getPostcode(); ?>
 <?php $_deliveryDate  = $this->getDeliveryDate(); ?>
@@ -50,8 +51,11 @@
 <?php $_housenumber   = $_streetData['housenumber']; ?>
 
 <?php $_canUseResponsive = Mage::helper('postnl/deliveryOptions')->canUseResponsive(); ?>
-<?php $_canUsePakjeGemak = $this->canUsePakjeGemak(); ?>
 
+<?php $_canShowSeparateRates = $this->canShowSeparateRates(); ?>
+
+
+<?php $_canUsePakjeGemak = $this->canUsePakjeGemak(); ?>
 <?php $_canUsePakjeGemakExpress = false; ?>
 <?php if ($_canUsePakjeGemak): ?>
     <?php $_canUsePakjeGemakExpress = $this->canUsePakjeGemakExpress(); ?>
@@ -63,6 +67,20 @@
 <?php if (!$_canUsePakjeGemak && !$_canUsePakjeGemakExpress && !$_canUsePakketAutomaat): ?>
     <?php $_canAddLocation = false; ?>
 <?php endif; ?>
+
+<?php $_canShowStatedAddressOnlyOption = Mage::helper('postnl/deliveryOptions')->canShowOnlyStatedAddressOption(); ?>
+
+<?php $_eveningFeeIncl    = $this->getFee('evening', true); ?>
+<?php $_eveningFeeExcl    = $this->getFee('evening', false); ?>
+<?php $_expressFeeIncl    = $this->getFee('express', true); ?>
+<?php $_expressFeeExcl    = $this->getFee('express', false); ?>
+<?php $_pakjeGemakFeeIncl = $this->getFee('pakje_gemak', true); ?>
+<?php $_pakjeGemakFeeExcl = $this->getFee('pakje_gemak', false); ?>
+
+<?php $_methodName = $this->getMethodName(); ?>
+<?php $_methodRate = $this->getMethodRate(); ?>
+
+<?php $_pakjeGemakRate = $_methodRate + $this->getFee('pakje_gemak', $this->helper('tax')->shippingPriceIncludesTax()); ?>
 <div id="osc_initial_loader"><?php echo $this->__('Loading...'); ?></div>
 <div id="postnl_add_moment" style="display:none;">
     <ul class="option-list">
@@ -99,7 +117,7 @@
                 <div id="responsive_switch" class="responsive-switch-wrapper">
                     <div class="title">
                         <a href="#" id="postnl_back_link" style="display:none;"><?php echo $this->__('Back'); ?></a>
-                        <h2>Bezorgopties</h2>
+                        <h2><?php echo $this->__('Delivery Options'); ?></h2>
                     </div>
                     <ul <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
                         <li><a id="postnl_switch_pickup" class="active"><?php echo $this->__('Delivery'); ?></a></li>
@@ -109,7 +127,10 @@
                 <div class="responsive-protector">
                     <div id="osc_scrollbar_content" class="popup-content col2-set">
                         <div id="postnl_delivery" class="col-1">
-                            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?></h3>
+                            <?php if ($_canShowSeparateRates): ?>
+                                <p class="rate"><?php echo $this->__('Have your order delivered %s', $_store->formatPrice($_methodRate, false)); ?></p>
+                            <?php endif; ?>
+                            <h3 class="sub-title"><?php echo $this->__('Delivery'); ?><?php if ($_canShowSeparateRates): ?> <span class="rate"><?php echo $_store->formatPrice($_methodRate, false); ?></span><?php endif; ?></h3>
                             <ul class="option-list" id="timeframes">
                                 <li class="location">
                                     <div class="bkg">
@@ -121,9 +142,38 @@
                                     </div>
                                 </li>
                             </ul>
+                            <?php if ($_canShowStatedAddressOnlyOption): ?>
+                                <ul class="option-list extras">
+                                    <li class="location">
+                                        <div class="bkg">
+                                            <div class="bkg">
+                                                <div class="content">
+                                                    <strong class="location-name"><?php echo $this->__('Extra\'s'); ?></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="option" id="<?php echo $_methodName; ?>_only_stated_address_option">
+                                        <div class="bkg">
+                                            <div class="bkg">
+                                                <div class="content">
+                                                    <input type="checkbox" name="<?php echo $_methodName; ?>[postnl][only_stated_address]" id="<?php echo $_methodName; ?>_only_stated_address" value="1" class="checkbox" <?php if ($this->isOnlyStatedAddressOptionChecked()):?>checked="checked"<?php endif; ?>>
+                                                    <label for="<?php echo $_methodName; ?>_only_stated_address">
+                                                        <?php echo $this->__('do not deliver to neighbours'); ?>
+                                                        <span class="price">+ <?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            <?php endif; ?>
                         </div>
                         <div id="postnl_pickup" class="col-2" <?php if(!$_canAddLocation): ?>style="display:none;"<?php endif; ?>>
-                            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?></h3>
+                            <?php if ($_canShowSeparateRates): ?>
+                                <p class="rate"><?php echo $this->__('Pickup your order %s', $_store->formatPrice($_pakjeGemakRate, false)); ?></p>
+                            <?php endif; ?>
+                            <h3 class="sub-title"><?php echo $this->__('or Pickup'); ?><?php if ($_canShowSeparateRates): ?> <span class="rate"><?php echo $_store->formatPrice($_pakjeGemakRate, false); ?></span><?php endif; ?></h3>
                             <ul class="option-list" id="pgelocation"></ul>
                             <ul class="option-list" id="pglocation"></ul>
                             <ul class="option-list" id="palocation"></ul>
@@ -147,7 +197,17 @@
         </div>
         <script type="text/javascript">
             //<![CDATA[
-            var oscScrollbar = new Control.ScrollBar(
+            var recalculateOscScrollbar = function() {
+                if (!window.oscScrollbar) {
+                    return;
+                }
+
+                window.oscScrollbar.recalculateLayout();
+                window.oscScrollbar.scrollBy(0);
+            };
+
+            window.oscScrollbar = false;
+            window.oscScrollbar = new Control.ScrollBar(
                 'osc_scrollbar_content',
                 'osc_scrollbar_track',
                 {
@@ -155,9 +215,6 @@
                 }
             );
 
-            var recalculateOscScrollbar = function() {
-                oscScrollbar.recalculateLayout();
-            };
             document.stopObserving('postnl:domModified', recalculateOscScrollbar);
             document.observe('postnl:domModified', recalculateOscScrollbar);
             //]]>
@@ -265,12 +322,15 @@
             oscSaveButton          : 'close_options_popup_btn',
             oscOptionsPopup        : 'postnl_delivery_options',
             taxDisplayType         : <?php echo $this->getTaxDisplayType() ?>,
-            eveningFeeIncl         : <?php echo $this->getFee('evening', true); ?>,
-            eveningFeeExcl         : <?php echo $this->getFee('evening', false); ?>,
-            expressFeeIncl         : <?php echo $this->getFee('express', true); ?>,
-            expressFeeExcl         : <?php echo $this->getFee('express', false); ?>,
+            eveningFeeIncl         : <?php echo $_eveningFeeIncl; ?>,
+            eveningFeeExcl         : <?php echo $_eveningFeeExcl; ?>,
+            expressFeeIncl         : <?php echo $_expressFeeIncl; ?>,
+            expressFeeExcl         : <?php echo $_expressFeeExcl; ?>,
+            pakjeGemakFeeIncl      : <?php echo $_pakjeGemakFeeIncl; ?>,
+            pakjeGemakFeeExcl      : <?php echo $_pakjeGemakFeeExcl; ?>,
             eveningFeeText         : '<?php echo $this->getFeeText('evening', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             expressFeeText         : '<?php echo $this->getFeeText('express', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
+            pakjeGemakFeeText      : '<?php echo $this->getFeeText('pakje_gemak', $this->helper('tax')->displayShippingPriceIncludingTax()); ?>',
             allowPg                : <?php echo $_canUsePakjeGemak               ? 'true' : 'false'; ?>,
             allowPge               : <?php echo $_canUsePakjeGemakExpress        ? 'true' : 'false'; ?>,
             allowPa                : <?php echo $_canUsePakketAutomaat           ? 'true' : 'false'; ?>,
@@ -280,7 +340,18 @@
             allowStreetview        : <?php echo $this->canUseStreetview()        ? 'true' : 'false'; ?>,
             disableCufon           : <?php echo $this->getUseCufon()             ? 'false' : 'true'; ?>,
             isBuspakje             : <?php echo $this->getIsBuspakje()           ? 'true' : 'false'; ?>,
-            shippingMethodName     : '<?php echo $this->getMethodName()          ? $this->getMethodName() : 's_method_postnl_flatrate'; ?>',
+            shippingMethodName     : '<?php echo $_methodName ? $_methodName : 's_method_postnl_flatrate'; ?>',
+            <?php if ($_canShowStatedAddressOnlyOption): ?>
+            extraOptions           : {
+                only_stated_address : {
+                    element : $('<?php echo $_methodName; ?>_only_stated_address'),
+                    allowedTypes : [
+                        'Avond',
+                        'Overdag'
+                    ]
+                }
+            },
+            <?php endif; ?>
             optionsContainer       : 'osc_scrollbar_container'
         };
 
@@ -295,6 +366,16 @@
             try {
                 deliveryOptions.showOptions();
                 $('carrier_postnl').addClassName('options-available');
+
+                <?php if($_canShowSeparateRates): ?>
+                /**
+                 * Hide the default price label as this will be replaced by separate prices for delivery and pick up options.
+                 */
+                var methodLabel = $$('label[for="<?php echo $_methodName; ?>"]')[0];
+                if (methodLabel) {
+                    methodLabel.update('<?php echo $this->escapeHtml($this->getRate()->getMethodTitle()); ?>');
+                }
+                <?php endif; ?>
             } catch(e) {
                 console.error(e);
                 $('initial_loader').hide();
@@ -354,8 +435,8 @@
          */
         if (!postcode
             || (
-                (!addressSelectField || addressSelectField.getValue() == '')
-                && postcode != $(billingOrShipping + ':postcode').getValue()
+            (!addressSelectField || addressSelectField.getValue() == '')
+            && postcode != $(billingOrShipping + ':postcode').getValue()
             )
         ) {
             var postcodeFieldValue = $(billingOrShipping + ':postcode').getValue();
@@ -389,8 +470,8 @@
          */
         if (!housenumber
             || (
-                (!addressSelectField || addressSelectField.getValue() == '')
-                && housenumber != $(billingOrShipping + ':street' + housenumberField).getValue()
+            (!addressSelectField || addressSelectField.getValue() == '')
+            && housenumber != $(billingOrShipping + ':street' + housenumberField).getValue()
             )
         ) {
             var housenumberFieldValue = $(billingOrShipping + ':street' + housenumberField).getValue();
@@ -432,22 +513,50 @@
         /**
          * These fields' values are used to determine available delivery options.
          */
-        var fieldsToObserve = [
-            'virtual:billing:street' + streetnameField,
-            'billing:street' + streetnameField,
-            'virtual:shipping:street' + streetnameField,
-            'shipping:street' + streetnameField,
-            'billing:postcode',
-            'shipping:postcode'
-        ];
+        if (!$('virtual:billing:street' + streetnameField) && !$('virtual:shipping:street' + streetnameField)) {
+            var fieldsToObserve = [
+                'virtual:billing:street' + streetnameField,
+                'billing:street' + streetnameField,
+                'virtual:shipping:street' + streetnameField,
+                'shipping:street' + streetnameField,
+                'billing:postcode',
+                'shipping:postcode'
+            ];
 
-        if (streetnameField != housenumberField) {
-            fieldsToObserve = fieldsToObserve.concat([
-                'virtual:billing:street' + housenumberField,
-                'billing:street' + housenumberField,
-                'virtual:shipping:street' + housenumberField,
-                'shipping:street' + housenumberField
-            ]);
+            if (streetnameField != housenumberField) {
+                fieldsToObserve = fieldsToObserve.concat([
+                    'virtual:billing:street' + housenumberField,
+                    'billing:street' + housenumberField,
+                    'virtual:shipping:street' + housenumberField,
+                    'shipping:street' + housenumberField
+                ]);
+            }
+
+            /**
+             * Reload available delivery options with new address data.
+             */
+            fieldsToObserve.each(function(field) {
+                var element = $(field);
+                if (!element) {
+                    return;
+                }
+
+                element.observe('change', function() {
+                    if (deliveryOptions && deliveryOptions.timeframeRequest) {
+                        deliveryOptions.timeframeRequest.transport.abort();
+                    }
+
+                    get_save_billing_function(url_save_billing, url_set_methods, true)();
+                });
+            });
+
+            /**
+             * When postcodecheck starts, show the OSC spinner so customers know to wait for new information.
+             */
+            document.stopObserving('postnl:postcodeCheckStart');
+            document.observe('postnl:postcodeCheckStart', function() {
+                $$('div.onestepcheckout-shipping-method-block')[0].update('<div class="loading-ajax">&nbsp;</div>');
+            });
         }
 
         /**
@@ -483,38 +592,12 @@
         }
 
         /**
-         * Reload available delivery options with new address data.
-         */
-        fieldsToObserve.each(function(field) {
-            var element = $(field);
-            if (!element) {
-                return;
-            }
-
-            element.observe('change', function() {
-                if (deliveryOptions && deliveryOptions.timeframeRequest) {
-                    deliveryOptions.timeframeRequest.transport.abort();
-                }
-
-                get_save_billing_function(url_save_billing, url_set_methods, true)();
-            });
-        });
-
-        /**
          * After delivery options have loaded, show the default option.
          */
         document.stopObserving('postnl:loadingFinished');
         document.observe('postnl:loadingFinished', function() {
             $('osc_initial_loader').hide();
             $('postnl_add_moment').show();
-        });
-
-        /**
-         * When postcodecheck starts, show the OSC spinner so customers know to wait for new information.
-         */
-        document.stopObserving('postnl:postcodeCheckStart');
-        document.observe('postnl:postcodeCheckStart', function() {
-            $$('div.onestepcheckout-shipping-method-block')[0].update('<div class="loading-ajax">&nbsp;</div>');
         });
 
         /**
@@ -565,6 +648,22 @@
         document.observe('postnl:selectOptionSaved', function() {
             get_separate_save_methods_function(url_set_methods, false)();
         });
+
+        <?php if ($_canShowStatedAddressOnlyOption): ?>
+            var onlyStatedAddressCheckbox = $('<?php echo $_methodName; ?>_only_stated_address');
+            var onlyStatedAddressContainer = $('<?php echo $_methodName; ?>_only_stated_address_option');
+
+            onlyStatedAddressContainer.stopObserving();
+            onlyStatedAddressContainer.observe('click', function(event) {
+                var clickedElement = Event.findElement(event);
+                if (clickedElement.tagName.toUpperCase() == 'INPUT' || clickedElement.tagName.toUpperCase() == 'LABEL') {
+                    return;
+                }
+
+                onlyStatedAddressCheckbox.checked = !onlyStatedAddressCheckbox.checked;
+                onlyStatedAddressCheckbox.focus();
+            });
+        <?php endif; ?>
     }
 
     /**
