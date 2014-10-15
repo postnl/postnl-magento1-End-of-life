@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 ?>
@@ -57,64 +57,67 @@
         <?php $_deliveryOptionsShown = false; ?>
         <?php $_sole = count($_shippingRateGroups) == 1; ?>
         <?php $_carrierHelper = Mage::helper('postnl/carrier'); ?>
+        <?php $_deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions'); ?>
         <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
             <dt><?php echo $this->escapeHtml($this->getCarrierName($code)) ?></dt>
             <dd>
                 <ul>
-                    <?php $_sole = $_sole && count($_rates) == 1; foreach ($_rates as $_rate): ?>
-                    <?php $shippingCodePrice[] = "'".$_rate->getCode()."':".(float)$_rate->getPrice(); ?>
-                    <li>
-                       <?php if ($_rate->getErrorMessage()): ?>
-                            <ul class="messages"><li class="error-msg"><ul><li><?php echo $this->escapeHtml($_rate->getErrorMessage()) ?></li></ul></li></ul>
-                       <?php else: ?>
-                            <?php if ($_sole) : ?>
-                            <span class="no-display"><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>" checked="checked" /></span>
-                            <?php else: ?>
-                            <input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> class="radio"/>
+                    <?php $_sole = $_sole && count($_rates) == 1; ?>
+                    <?php /** @var Mage_Sales_Model_Quote_Address_Rate $_rate */?>
+                    <?php foreach ($_rates as $_rate): ?>
+                        <?php $shippingCodePrice[] = "'".$_rate->getCode()."':".(float)$_rate->getPrice(); ?>
+                        <li>
+                           <?php if ($_rate->getErrorMessage()): ?>
+                                <ul class="messages"><li class="error-msg"><ul><li><?php echo $this->escapeHtml($_rate->getErrorMessage()) ?></li></ul></li></ul>
+                           <?php else: ?>
+                                <?php if ($_sole) : ?>
+                                    <span class="no-display"><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>" checked="checked" /></span>
+                                <?php else: ?>
+                                    <input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> class="radio"/>
 
-                            <?php if ($_rate->getCode() === $this->getAddressShippingMethod()): ?>
-                            <script type="text/javascript">
-                                //<![CDATA[
-                                    lastPrice = <?php echo (float)$_rate->getPrice(); ?>;
-                                //]]>
-                            </script>
-                            <?php endif; ?>
+                                    <?php if ($_rate->getCode() === $this->getAddressShippingMethod()): ?>
+                                        <script type="text/javascript">
+                                            //<![CDATA[
+                                            lastPrice = <?php echo (float)$_rate->getPrice(); ?>;
+                                            //]]>
+                                        </script>
+                                    <?php endif; ?>
 
-                            <?php endif; ?>
-                            <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
-                            <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
+                                <?php endif; ?>
+                                <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
+                                <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
 
 
-                           <?php $_priceExcl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), false, $this->getAddress())); ?>
-                           <?php $_priceIncl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), true, $this->getAddress())); ?>
-                            <label data-price="<?php echo $_priceExcl; ?>" data-price-incl="<?php echo $_priceIncl; ?>" for="s_method_<?php echo $_rate->getCode() ?>"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
-                            <?php echo $_excl; ?>
-                            <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
-                                (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
-                            <?php endif; ?>
-                            </label>
-                       <?php endif ?>
+                               <?php $_priceExcl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), false, $this->getAddress())); ?>
+                               <?php $_priceIncl = $_store->convertPrice(Mage::helper('tax')->getShippingPrice($_rate->getPrice(), true, $this->getAddress())); ?>
+                                <label data-price="<?php echo $_priceExcl; ?>" data-price-incl="<?php echo $_priceIncl; ?>" for="s_method_<?php echo $_rate->getCode() ?>"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
+                                <?php echo $_excl; ?>
+                                <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                                    (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+                                <?php endif; ?>
+                                </label>
+                           <?php endif ?>
 
-                        <?php if (!$_deliveryOptionsShown): ?>
-                            <?php $_canUseDeliveryOptions = false; ?>
-                            <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote()) && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
-                                <?php $_canUseDeliveryOptions = true; ?>
+                            <?php if (!$_deliveryOptionsShown): ?>
+                                <?php $_canUseDeliveryOptions = false; ?>
+                                <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote()) && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
+                                    <?php $_canUseDeliveryOptions = true; ?>
+                                <?php endif; ?>
+                                <?php if ($_canUseDeliveryOptions
+                                    && $_carrierHelper->isPostnlShippingMethod($_rate->getCode())
+                                    && $this->getChild('postnl.delivery.options')
+                                ): ?>
+                                    <div class="postnl-container">
+                                        <?php echo $this->getChild('postnl.delivery.options')->setRate($_rate)->toHtml(); ?>
+                                    </div>
+                                    <?php $_deliveryOptionsShown = true; ?>
+                                <?php endif; ?>
                             <?php endif; ?>
-                            <?php if ($_canUseDeliveryOptions
-                                && $_carrierHelper->isPostnlShippingMethod($_rate->getCode())
-                                && $this->getChild('postnl.delivery.options')
-                            ): ?>
-                                <div class="postnl-container">
-                                    <?php echo $this->getChild('postnl.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
-                                </div>
-                                <?php $_deliveryOptionsShown = true; ?>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        </dd>
-    <?php endforeach; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </dd>
+        <?php endforeach; ?>
     </dl>
 <script type="text/javascript">
 //<![CDATA[

@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the shipment view
@@ -120,6 +120,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          */
         $confirmAllowed           = $helper->checkIsPostnlActionAllowed('confirm');
         $printAllowed             = $helper->checkIsPostnlActionAllowed('print_label');
+        $printPackingSlipAllowed  = $helper->checkIsPostnlActionAllowed(array('print_label', 'print_packing_slip'));
         $deleteLabelsAllowed      = $helper->checkIsPostnlActionAllowed('delete_labels');
         $resetConfirmAllowed      = $helper->checkIsPostnlActionAllowed(array('reset_confirmation', 'delete_labels'));
         $sendTrackAndTraceAllowed = $helper->checkIsPostnlActionAllowed('send_track_and_trace');
@@ -132,11 +133,30 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
         if ($printAllowed) {
             $printShippingLabelUrl = $this->getPrintShippingLabelUrl($shipment->getId());
 
-            $block->addButton('print_shipping_label', array(
-                'label'   => $helper->__('PostNL - Print Shipping Label'),
-                'onclick' => "printLabel('{$printShippingLabelUrl}')",
-                'class'   => 'download',
-            ));
+            $block->addButton(
+                'print_shipping_label',
+                array(
+                    'label'   => $helper->__('PostNL - Print Shipping Label'),
+                    'onclick' => "printLabel('{$printShippingLabelUrl}')",
+                    'class'   => 'download',
+                )
+            );
+        }
+
+        /**
+         * Add a button to print this shipment's packing slip.
+         */
+        if ($printPackingSlipAllowed) {
+            $printPackingSlipUrl = $this->getPrintPackingSlipUrl($shipment->getId());
+
+            $block->addButton(
+                'print_packing_slip',
+                array(
+                    'label'   => $helper->__('PostNL - Print Packing Slip'),
+                    'onclick' => "printLabel('{$printPackingSlipUrl}')",
+                    'class'   => 'download',
+                )
+            );
         }
 
         /**
@@ -164,7 +184,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             );
         }
 
-        if ($postnlShipment->canConvertShipmentToBuspakje() && $convertToBuspakjeAllowed
+        /**
+         * Add a button to convert this shipment to a buspakje shipment.
+         */
+        if ($postnlShipment->canConvertShipmentToBuspakje()
+            && $convertToBuspakjeAllowed
             && (!$postnlShipment->isConfirmed()
                 || ($postnlShipment->canResetConfirmation()
                     && $resetConfirmAllowed
@@ -192,6 +216,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
             );
         }
 
+        /**
+         * Add a button to convert this shipment to a package shipment.
+         */
         if ($postnlShipment->canConvertShipmentToPackage() && $convertToPackageAllowed
             && (!$postnlShipment->isConfirmed()
                 || ($postnlShipment->canResetConfirmation()
@@ -286,7 +313,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     }
 
     /**
-     * Get adminhtml url for PostNL print shipping label action
+     * Get adminhtml url for PostNL print shipping label action.
      *
      * @param int $shipmentId The ID of the current shipment
      *
@@ -296,6 +323,23 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     {
         $url = Mage::helper('adminhtml')->getUrl(
             'postnl_admin/adminhtml_shipment/printLabel',
+            array('shipment_id' => $shipmentId)
+        );
+
+        return $url;
+    }
+
+    /**
+     * Get adminhtml url for PostNL print packing slip action.
+     *
+     * @param int $shipmentId The ID of the current shipment
+     *
+     * @return string
+     */
+    public function getPrintPackingSlipUrl($shipmentId)
+    {
+        $url = Mage::helper('adminhtml')->getUrl(
+            'postnl_admin/adminhtml_shipment/printPackingSlip',
             array('shipment_id' => $shipmentId)
         );
 

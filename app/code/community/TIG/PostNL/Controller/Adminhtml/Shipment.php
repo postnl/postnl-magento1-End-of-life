@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller_Action
@@ -47,6 +47,13 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
      * @var array
      */
     protected $_warnings = array();
+
+    /**
+     * Error counter used by certain actions.
+     *
+     * @var int
+     */
+    protected $_errors = 0;
 
     /**
      * @return array
@@ -180,20 +187,25 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
     }
 
     /**
-     * Creates a shipment of an order containing all available items
+     * Creates a shipment of an order containing all available items.
      *
-     * @param int $orderId
+     * @param Mage_Sales_Model_Order|int $order
      *
      * @return int
      *
      * @throws TIG_PostNL_Exception
      */
-    protected function _createShipment($orderId)
+    protected function _createShipment($order)
     {
-        /**
-         * @var Mage_Sales_Model_Order $order
-         */
-        $order = Mage::getModel('sales/order')->load($orderId);
+        if (is_numeric($order)) {
+            $order = Mage::getModel('sales/order')->load($order);
+        }
+
+        if (!is_object($order) || !($order instanceof Mage_Sales_Model_Order)) {
+            throw new InvalidArgumentException(
+                'Order must be an instance of Mage_Sales_Model_Order or a valid entity ID.'
+            );
+        }
 
         if (!$order->canShip()) {
             throw new TIG_PostNL_Exception(
@@ -212,6 +224,106 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
     }
 
     /**
+     * Create shipments for an array of order IDs
+     *
+     * @param array   $orderIds
+     * @param boolean $loadExisting Flag to determine if existing shipments should be loaded. If set to false, an error
+     *                              will be thrown for shipments that have already been shipped.
+     *
+     * @return array
+     */
+    protected function _createShipments(array $orderIds, $loadExisting = false)
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Load the requested orders. Any orders that weren't shipped using PostNL will be skipped.
+         */
+        $orders = $this->_loadOrders($orderIds);
+        $processedOrderIds = $orders->getColumnValues('entity_id');
+
+        /**
+         * Add a warning for all orders which were skipped because they weren't shipped with PostNL.
+         */
+        $missingIds = array_diff($orderIds, $processedOrderIds);
+        foreach ($missingIds as $missingId) {
+            $incrementId = Mage::getResourceModel('sales/order')->getIncrementId($missingId);
+            $this->addWarning(
+                array(
+                    'entity_id'   => $incrementId,
+                    'code'        => 'POSTNL-0009',
+                    'description' => $this->__(
+                        'This action is not available for order #%s, because it was not placed using PostNL.',
+                        $incrementId
+                    ),
+                )
+            );
+            $this->_errors++;
+        }
+
+        /**
+         * Create the shipments.
+         *
+         * @var Mage_Sales_Model_Order $order
+         */
+        $shipmentIds = array();
+        foreach ($orders as $order) {
+            try {
+                $shipmentIds[] = $this->_createShipment($order);
+            } catch (TIG_PostNL_Exception $e) {
+                if (!$loadExisting) {
+                    $helper->logException($e);
+                    $this->addWarning(
+                        array(
+                            'entity_id'   => Mage::getResourceModel('sales/order')->getIncrementId($order->getId()),
+                            'code'        => $e->getCode(),
+                            'description' => $e->getMessage(),
+                        )
+                    );
+                    $this->_errors++;
+
+                    continue;
+                }
+                /**
+                 * If any shipments already exist, get their IDs so they can be processed.
+                 */
+                $shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection');
+                $shipmentCollection->addFieldToSelect('entity_id')
+                                   ->addFieldToFilter('order_id', $order->getId());
+
+                if ($shipmentCollection->getSize() > 0) {
+                    $shipmentIds = array_merge($shipmentCollection->getColumnValues('entity_id'), $shipmentIds);
+                } else {
+                    /**
+                     * If no shipments exist, add a warning message indicating the process failed for this order.
+                     */
+                    $helper->logException($e);
+                    $this->addWarning(
+                        array(
+                            'entity_id'   => Mage::getResourceModel('sales/order')->getIncrementId($order->getId()),
+                            'code'        => $e->getCode(),
+                            'description' => $e->getMessage(),
+                        )
+                    );
+                    $this->_errors++;
+                }
+            } catch (Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => Mage::getResourceModel('sales/order')->getIncrementId($order->getId()),
+                        'code'        => null,
+                        'description' => $e->getMessage(),
+                    )
+                );
+                $this->_errors++;
+            }
+        }
+
+        return $shipmentIds;
+    }
+
+    /**
      * Save shipment and order in one transaction
      *
      * @param Mage_Sales_Model_Order_Shipment $shipment
@@ -227,6 +339,166 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             ->save();
 
         return $this;
+    }
+
+    /**
+     * Get the output of printing labels for an array of shipments.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment[] $shipments
+     *
+     * @return string|false
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    protected function _getMassLabelsOutput($shipments)
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Get the labels from CIF.
+         */
+        $labels = array();
+        foreach ($shipments as $shipment) {
+            try {
+                $shipmentLabels = $this->_getLabels($shipment, true);
+                $labels = array_merge($labels, $shipmentLabels);
+            } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                Mage::helper('postnl/cif')->parseCifException($e);
+
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (TIG_PostNL_Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => null,
+                        'description' => $e->getMessage(),
+                    )
+                );
+            }
+        }
+
+        if (!$labels) {
+            return false;
+        }
+
+        /**
+         * The label wills be base64 encoded strings. Convert these to a single pdf.
+         */
+        $label  = Mage::getModel('postnl_core/label');
+        $output = $label->createPdf($labels);
+
+        return $output;
+    }
+
+    /**
+     * Get the output of printing packing slips for an array of shipments.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment[] $shipments
+     *
+     * @return bool|string
+     *
+     * @throws Zend_Pdf_Exception
+     */
+    protected function _getMassPackingSlipsOutput($shipments)
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Get the packing slip model.
+         */
+        $packingSlipModel = Mage::getModel('postnl_core/packingSlip');
+
+        /**
+         * Get the current memory limit as an integer in bytes. Because printing packing slips can be very memory
+         * intensive, we need to monitor memory usage.
+         */
+        $memoryLimit = $helper->getMemoryLimit();
+
+        /**
+         * Create the pdf's and add them to the main pdf object.
+         *
+         * @var TIG_PostNL_Model_Core_Shipment $shipment
+         */
+        $pdf = new Zend_Pdf();
+        foreach ($shipments as $shipment) {
+            try {
+                /**
+                 * If the current memory usage exceeds 75%, end the script. Otherwise we risk other processes being
+                 * unable to finish and throwing fatal errors.
+                 */
+                $memoryUsage = memory_get_usage(true);
+
+                if ($memoryUsage / $memoryLimit > 0.75) {
+                    throw new TIG_PostNL_Exception(
+                        $this->__(
+                            'Approaching memory limit for this operation. Please select fewer shipments and try ' .
+                            'again.'
+                        ),
+                        'POSTNL-0170'
+                    );
+                }
+
+                $shipmentLabels = $this->_getLabels($shipment, true);
+                $packingSlipModel->createPdf($shipmentLabels, $shipment, $pdf);
+            } catch (TIG_PostNL_Model_Core_Cif_Exception $e) {
+                Mage::helper('postnl/cif')->parseCifException($e);
+
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (TIG_PostNL_Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => $e->getCode(),
+                        'description' => $e->getMessage(),
+                    )
+                );
+            } catch (Exception $e) {
+                $helper->logException($e);
+                $this->addWarning(
+                    array(
+                        'entity_id'   => $shipment->getShipmentIncrementId(),
+                        'code'        => null,
+                        'description' => $e->getMessage(),
+                    )
+                );
+            }
+        }
+        unset($shipment, $shipments, $shipmentLabels, $packingSlip, $packingSlipModel);
+
+        if (!$pdf->pages) {
+            return false;
+        }
+
+        /**
+         * Render the pdf as a string.
+         */
+        $output = $pdf->render();
+        return $output;
     }
 
     /**
@@ -295,7 +567,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             $postnlShipment->save();
         } else {
             /**
-             * generate new shipping labels without confirming.
+             * Generate new shipping labels without confirming.
              */
             $postnlShipment->generateLabel()
                            ->save();
@@ -408,42 +680,153 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             $shipmentIds = array($shipmentIds);
         }
 
-        $shipments = array();
-        foreach ($shipmentIds as $shipmentId) {
-            /**
-             * Load the shipment.
-             *
-             * @var Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment|boolean $shipment
-             */
-            $shipment = $this->_loadShipment($shipmentId, $loadPostnlShipments);
+        $resource              = Mage::getSingleton('core/resource');
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
 
-            if (!$shipment && $throwException) {
+        /**
+         * This regex will filter all non-postnl shipments.
+         */
+        $postnlShippingMethodsRegex = '';
+        foreach ($postnlShippingMethods as $method) {
+            if ($postnlShippingMethodsRegex) {
+                $postnlShippingMethodsRegex .= '|';
+            } else {
+                $postnlShippingMethodsRegex .= '^';
+            }
+
+            $postnlShippingMethodsRegex .= "({$method})(_{0,1}[0-9]*)";
+        }
+
+        $postnlShippingMethodsRegex .= '$';
+
+        /**
+         * Get the requested shipments. Only shipments that have been shipped using PostNL will be returned.
+         */
+        if ($loadPostnlShipments) {
+            $shipments = Mage::getResourceModel('postnl_core/shipment_collection')
+                             ->addFieldToFilter('shipment_id', array('in' => $shipmentIds))
+                             ->addFieldToFilter(
+                                 '`order`.`shipping_method`',
+                                 array(
+                                     'regexp' => $postnlShippingMethodsRegex
+                                 )
+                             );
+
+            $shipments->getSelect()->joinInner(
+                array('order' => $resource->getTableName('sales/order')),
+                '`main_table`.`order_id`=`order`.`entity_id`',
+                array(
+                    'shipping_method' => 'order.shipping_method',
+                )
+            );
+
+            $processedShipmentIds = $shipments->getColumnValues('shipment_id');
+        } else {
+            $shipments = Mage::getResourceModel('sales/order_shipment_collection')
+                             ->addFieldToFilter('main_table.entity_id', array('in' => $shipmentIds))
+                             ->addFieldToFilter(
+                                 '`order`.`shipping_method`',
+                                 array(
+                                     'regexp' => $postnlShippingMethodsRegex
+                                 )
+                             );
+
+            $shipments->getSelect()->joinInner(
+                array('order' => $resource->getTableName('sales/order')),
+                '`main_table`.`order_id`=`order`.`entity_id`',
+                array(
+                    'shipping_method' => 'order.shipping_method',
+                )
+            );
+
+            $processedShipmentIds = $shipments->getColumnValues('entity_id');
+        }
+
+        /**
+         * Check if all requested IDs were processed.
+         */
+        $missingIds = array_diff($shipmentIds, $processedShipmentIds);
+        if (!$missingIds) {
+            return $shipments;
+        }
+
+        /**
+         * If any requested shipments were not found, it's because they were not shipped using PostNL.
+         */
+        $adapter = Mage::getSingleton('core/resource')->getConnection('core_read');
+        foreach ($missingIds as $shipmentId) {
+            /**
+             * Get the shipment's increment ID. We need this, because many merchants do not know the difference between
+             * increment IDs and entity IDs.
+             */
+            $bind    = array(':entity_id' => $shipmentId);
+            $select  = $adapter->select()
+                               ->from($resource->getTableName('sales/shipment'), array("increment_id"))
+                               ->where('entity_id = :entity_id');
+
+            $shipmentIncrementId = $adapter->fetchOne($select, $bind);
+
+            if ($throwException) {
                 throw new TIG_PostNL_Exception(
                     $this->__(
                         'This action is not available for shipment #%s, because it was not shipped using PostNL.',
-                        $shipment->getIncrementId()
+                        $shipmentIncrementId
                     ),
                     'POSTNL-0009'
                 );
-            } elseif (!$shipment) {
-                $this->addWarning(
-                    array(
-                        'entity_id'   => $shipmentId,
-                        'code'        => 'POSTNL-0009',
-                        'description' => $this->__(
-                            'This action is not available for shipment #%s, because it was not shipped using PostNL.',
-                            $shipmentId
-                        ),
-                    )
-                );
-
-                continue;
             }
 
-            $shipments[] = $shipment;
+            $this->addWarning(
+                array(
+                    'entity_id'   => $shipmentIncrementId,
+                    'code'        => 'POSTNL-0009',
+                    'description' => $this->__(
+                        'This action is not available for shipment #%s, because it was not shipped using PostNL.',
+                        $shipmentIncrementId
+                    ),
+                )
+            );
         }
 
         return $shipments;
+    }
+
+    /**
+     * Load an order collection based on an array of order IDs. Non-PostNL orders will be skipped.
+     *
+     * @param array|int $orderIds
+     *
+     * @return Mage_Sales_Model_Resource_Order_Collection
+     */
+    protected function _loadOrders($orderIds)
+    {
+        if (!is_array($orderIds)) {
+            $orderIds = array($orderIds);
+        }
+
+        $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
+
+        /**
+         * This regex will filter all non-postnl shipments.
+         */
+        $postnlShippingMethodsRegex = '';
+        foreach ($postnlShippingMethods as $method) {
+            if ($postnlShippingMethodsRegex) {
+                $postnlShippingMethodsRegex .= '|';
+            } else {
+                $postnlShippingMethodsRegex .= '^';
+            }
+
+            $postnlShippingMethodsRegex .= "({$method})(_{0,1}[0-9]*)";
+        }
+
+        $postnlShippingMethodsRegex .= '$';
+
+        $orders = Mage::getResourceModel('sales/order_collection')
+                      ->addFieldToFilter('entity_id', array('in' => $orderIds))
+                      ->addFieldToFilter('shipping_method', array('regexp' => $postnlShippingMethodsRegex));
+
+        return $orders;
     }
 
     /**

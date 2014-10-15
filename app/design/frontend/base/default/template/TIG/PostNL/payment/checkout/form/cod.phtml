@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @var TIG_PosTNL_Block_Payment_Form_Cod $this
@@ -81,10 +81,9 @@
         function() {
             var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
             var postnlCodPaymentForm = $('payment_form_<?php echo $_methodCode; ?>');
-            var chosenDeliveryOptions = window.deliveryOptions;
 
-            if (postnlCodPaymentMethod && chosenDeliveryOptions) {
-                if (chosenDeliveryOptions.selectedType == 'PA') {
+            if (postnlCodPaymentMethod && deliveryOptions) {
+                if (deliveryOptions.selectedType == 'PA') {
                     postnlCodPaymentMethod.disabled = true;
                     postnlCodPaymentMethod.up().hide();
 
@@ -94,7 +93,7 @@
                 }
 
                 <?php if (!$this->canShowForBuspakje()): ?>
-                    if (chosenDeliveryOptions.selectedType == 'Overdag') {
+                    if (deliveryOptions.selectedType == 'Overdag') {
                         postnlCodPaymentMethod.disabled = true;
                         postnlCodPaymentMethod.up().hide();
 
@@ -107,13 +106,22 @@
         }
     );
 
-    var deliveryOptions = window.deliveryOptions;
     if (deliveryOptions && deliveryOptions.options.isOsc) {
-        var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
-        var postnlCodPaymentMethodContainer = $('container_payment_method_<?php echo $_methodCode; ?>');
 
-        var togglePostnlCod = function() {
-            if (deliveryOptions.selectedType == 'Overdag' || deliveryOptions.selectedType == 'PA') {
+        if (typeof togglePostnlCod != 'undefined') {
+            document.stopObserving('postnl:selectTimeframe', togglePostnlCod);
+            document.stopObserving('postnl:selectLocation', togglePostnlCod);
+        }
+
+        togglePostnlCod = function() {
+            var postnlCodPaymentMethod = $('p_method_<?php echo $_methodCode; ?>');
+            var postnlCodPaymentMethodContainer = $('container_payment_method_<?php echo $_methodCode; ?>');
+
+            if (
+                (deliveryOptions.selectedType == 'Overdag'
+                    && deliveryOptions.options.isBuspakje
+                ) || deliveryOptions.selectedType == 'PA'
+            ) {
 
                 if (postnlCodPaymentMethod.checked) {
                     postnlCodPaymentMethod.checked = false;
@@ -149,10 +157,7 @@
             }
         };
 
-        document.stopObserving('postnl:selectTimeframe');
         document.observe('postnl:selectTimeframe', togglePostnlCod);
-
-        document.stopObserving('postnl:selectLocation');
         document.observe('postnl:selectLocation', togglePostnlCod);
     }
     //]]>

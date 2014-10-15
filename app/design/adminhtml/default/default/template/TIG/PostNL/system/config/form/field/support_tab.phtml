@@ -25,39 +25,45 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+  *
+  * @var TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab $this
  */
 ?>
-<?php $_helper = Mage::helper('postnl'); ?>
-<?php $_version = (string) Mage::getConfig()->getModuleConfig("TIG_PostNL")->version; ?>
+<?php $_postnlRegisterUrl     = $this->getPostnlRegisterUrl(); ?>
+<?php $_knowledgebaseUrl      = $this->getKnowledgebaseUrl(); ?>
+<?php $_newTicketUrl          = $this->getNewTicketUrl(); ?>
+<?php $_installationManualUrl = $this->getInstallationManualUrl(); ?>
+<?php $_userGuideUrl          = $this->getUserGuideUrl(); ?>
+<?php $_changelogUrl          = $this->getChangelogUrl(); ?>
 <tr>
     <td>
-        <h2 class="content-heading"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>"/> <?php echo $_helper->__('PostNL version %s', $_version);?></h2>
+        <h2 class="content-heading"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>"/> <?php echo $this->__('PostNL version %s', $this->getVersion());?></h2>
         <table id="supportWrap" cellpadding="0" cellspacing="0">
             <tr>
                 <td colspan="3">
                     <div class="text-box">
-                        <h4><?php echo $_helper->__("We highly reccommend you place several 'test'  shipments, before you use the extension for real orders and real shipments."); ?></h4>
+                        <h4><?php echo $this->__("We highly reccommend you place several 'test'  shipments, before you use the extension for real orders and real shipments."); ?></h4>
                     </div>
                 </td>
             </tr>
             <tr>
                 <td colspan="3">
                     <div class="text-box">
-                        <h4><?php echo $_helper->__('Before you proceed to use this extension it is very important that you have properly configured certain elements of your Magento webshop.'); ?></h4>
+                        <h4><?php echo $this->__('Before you proceed to use this extension it is very important that you have properly configured certain elements of your Magento webshop.'); ?></h4>
                         <ul class="postnl-config-warning">
-                            <li><?php echo $_helper->__("You should make sure that each product you intend to ship using PostNL has a maximum size of 175 x 78 x 58 cm and weighs less than 30 kg. The shipment will only be invoiced after the weigh-in at the PostNL sorting centre. If you wish to ship an order that weighs over 30 kg, you will have to split it into separate parcels that each weigh less than 30 kg. To do this you may create multiple shipments for a single order or you may use the extension's multi-colli functionality."); ?></li>
-                            <li><?php echo $_helper->__("Make sure the PostNL shipping method is configured under system > config > shipping methods > PostNL. Only shipments made using this shipping method will be able to use PostNL's services. You may choose to charge either a flat rate or a table rate-based shipping fee. In the case of the latter, the table rates you have added under the Table Rate shipping method will be used. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.", 'http://www.magentocommerce.com/knowledge-base/entry/how-do-i-set-up-table-rate-shipping'); ?></li>
-                            <li><?php echo $_helper->__("You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.", 'http://kb.totalinternetgroup.nl/topic/55961916'); ?></li>
+                            <li><?php echo $this->__("You should make sure that each product you intend to ship using PostNL has a maximum size of 175 x 78 x 58 cm and weighs less than 30 kg. The shipment will only be invoiced after the weigh-in at the PostNL sorting centre. If you wish to ship an order that weighs over 30 kg, you will have to split it into separate parcels that each weigh less than 30 kg. To do this you may create multiple shipments for a single order or you may use the extension's multi-colli functionality."); ?></li>
+                            <li><?php echo $this->__("Make sure the PostNL shipping method is configured under system > config > shipping methods > PostNL. Only shipments made using this shipping method will be able to use PostNL's services. You may choose to charge either a flat rate or a table rate-based shipping fee. In the case of the latter, the table rates you have added under the Table Rate shipping method will be used. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.", 'http://www.magentocommerce.com/knowledge-base/entry/how-do-i-set-up-table-rate-shipping'); ?></li>
+                            <li><?php echo $this->__("You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.", 'http://kb.tig.nl/topic/55961916'); ?></li>
                         </ul>
                     </div>
                 </td>
@@ -65,25 +71,25 @@
             <tr>
                 <td class="col-left">
                     <div class="text-box">
-                        <h3><?php echo $_helper->__('Magento &amp; 3rd party version compatibility');?></h3>
+                        <h3><?php echo $this->__('Magento &amp; 3rd party version compatibility');?></h3>
                         <ul>
-                            <li><?php echo $_helper->__('Magento Community Edition version');?> v1.6, v1.7, v1.8 &amp; v1.9</li>
-                            <li><?php echo $_helper->__('Magento Enterprise Edition version');?> v1.11, v1.12, v1.13 &amp; v1.14</li>
+                            <li><?php echo $this->__('Magento Community Edition version');?> v1.6, v1.7, v1.8 &amp; v1.9</li>
+                            <li><?php echo $this->__('Magento Enterprise Edition version');?> v1.11, v1.12, v1.13 &amp; v1.14</li>
                         </ul>
                         <ul>
-                            <li><?php echo $_helper->__("Idev's OneStepCheckout version");?> v4.0 &amp; v4.1</li>
+                            <li><?php echo $this->__("Idev's OneStepCheckout version");?> v4.0 &amp; v4.1</li>
                         </ul>
                         <ul>
-                            <li><?php echo $_helper->__('If you wish to use this extension on an unsupported Magento version or edition, or in combination with an unsupported 3rd party extension, we cannot guarantee the PostNL extension will function as expected. For questions please contact the Total Internet Group servicedesk.'); ?></li>
+                            <li><?php echo $this->__('If you wish to use this extension on an unsupported Magento version or edition, or in combination with an unsupported 3rd party extension, we cannot guarantee the PostNL extension will function as expected. For questions please contact the Total Internet Group servicedesk.'); ?></li>
                         </ul>
                     </div>
                     <div class="text-box">
-                        <h3><?php echo $_helper->__('Documentation');?></h3>
-                        <p><?php echo $_helper->__('A list of documents regarding the extension.');?></p>
+                        <h3><?php echo $this->__('Documentation');?></h3>
+                        <p><?php echo $this->__('A list of documents regarding the extension.');?></p>
                         <ul>
-                            <li><a class="link" target="_blank" href="http://kb.totalinternetgroup.nl/topic/39335103" title="<?php echo $_helper->__('View the installation and configuration manual.');?>"><?php echo $_helper->__('Installation and configuration manual');?></a></li>
-                            <li><a class="link" target="_blank" href="http://kb.totalinternetgroup.nl/topic/44206406" title="<?php echo $_helper->__('View the user manual.');?>"><?php echo $_helper->__('User manual');?></a></li>
-                            <li><a class="link" target="_blank" href="http://kb.totalinternetgroup.nl/topic/38584893" title="<?php echo $_helper->__('View the complete changelog of the extension.');?>"><?php echo $_helper->__('Full changelog');?></a></li>
+                            <li><a class="link" target="_blank" href="<?php echo $_installationManualUrl; ?>" title="<?php echo $this->__('View the installation and configuration manual.');?>"><?php echo $this->__('Installation and configuration manual');?></a></li>
+                            <li><a class="link" target="_blank" href="<?php echo $_userGuideUrl; ?>" title="<?php echo $this->__('View the user manual.');?>"><?php echo $this->__('User manual');?></a></li>
+                            <li><a class="link" target="_blank" href="<?php echo $_changelogUrl; ?>" title="<?php echo $this->__('View the complete changelog of the extension.');?>"><?php echo $this->__('Full changelog');?></a></li>
                         </ul>
                     </div>
                 </td>
@@ -92,39 +98,39 @@
 
                 <td class="col-right">
                     <div class="text-box">
-                        <h3><?php echo $_helper->__('Support');?></h3>
-                        <p><?php echo $_helper->__('The extension is developed by Total Internet Group, commissioned by PostNL. Depending on the nature of the issue or question you should contact either PostNL or Total Internet Group.');?></p>
-                        <h4><?php echo $_helper->__('PostNL account information and PostNL services');?></h4>
-                        <p><?php echo $_helper->__('For questions related to your PostNL account and PostNL delivery options, please contact PostNL.');?></p>
+                        <h3><?php echo $this->__('Support');?></h3>
+                        <p><?php echo $this->__('The extension is developed by Total Internet Group, commissioned by PostNL. Depending on the nature of the issue or question you should contact either PostNL or Total Internet Group.');?></p>
+                        <h4><?php echo $this->__('PostNL account information and PostNL services');?></h4>
+                        <p><?php echo $this->__('For questions related to your PostNL account and PostNL delivery options, please contact PostNL.');?></p>
                         <p><a href="http://www.postnl.nl" target="_blank"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>" alt="" /></a></p>
                         <table class="contact">
                              <tr>
-                                <td class="first"><?php echo $_helper->__('PostNL:');?></td>
-                                <td class="last"><a target="_blank" href="http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties">http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties</a></td>
+                                <td class="first"><?php echo $this->__('PostNL:');?></td>
+                                <td class="last"><a target="_blank" href="<?php echo $_postnlRegisterUrl; ?>"><?php echo $_postnlRegisterUrl; ?></a></td>
                             </tr>
                             <tr>
-                                <td class="first"><?php echo $_helper->__('Phone:');?></td>
+                                <td class="first"><?php echo $this->__('Phone:');?></td>
                                 <td class="last">058-2333343</td>
                             </tr>
                         </table>
-                        <h4><?php echo $_helper->__('Extension support and configuration questions');?></h4>
-                        <p><?php echo $_helper->__('For configuration problems, extension conflicts and bugs, contact Total Internet Group.');?></p>
-                        <p><a href="http://www.totalinternetgroup.nl" target="_blank"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/tig_logo_medium.gif'); ?>" alt="" /></a></p>
+                        <h4><?php echo $this->__('Extension support and configuration questions');?></h4>
+                        <p><?php echo $this->__('For configuration problems, extension conflicts and bugs, contact Total Internet Group.');?></p>
+                        <p><a href="http://www.tig.nl" target="_blank"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/tig_logo_medium.gif'); ?>" alt="" /></a></p>
                         <table class="contact">
                              <tr>
-                                <td class="first"><?php echo $_helper->__('Online knowledgebase:');?></td>
-                                <td class="last"><a target="_blank" href="http://kb.totalinternetgroup.nl/">http://kb.totalinternetgroup.nl/</a></td>
+                                <td class="first"><?php echo $this->__('Online knowledgebase:');?></td>
+                                <td class="last"><a target="_blank" href="<?php echo $_knowledgebaseUrl; ?>"><?php echo $_knowledgebaseUrl; ?></a></td>
                             </tr>
                              <tr>
-                                <td class="first"><?php echo $_helper->__('Request help directly:');?></td>
-                                <td class="last"><a target="_blank" href="http://kb.totalinternetgroup.nl/ticket/form/new">http://kb.totalinternetgroup.nl/ticket/form/new</a></td>
+                                <td class="first"><?php echo $this->__('Request help directly:');?></td>
+                                <td class="last"><a target="_blank" href="<?php echo $_newTicketUrl; ?>"><?php echo $_newTicketUrl; ?></a></td>
                             </tr>
                             <tr>
-                                <td class="first"><?php echo $_helper->__('Email:');?></td>
-                                <td class="last"><a href="mailto:servicedesk@totalinternetgroup.nl">servicedesk@totalinternetgroup.nl</a></td>
+                                <td class="first"><?php echo $this->__('Email:');?></td>
+                                <td class="last"><a href="mailto:servicedesk@tig.nl">servicedesk@tig.nl</a></td>
                             </tr>
                             <tr>
-                                <td class="first"><?php echo $_helper->__('Phone:');?></td>
+                                <td class="first"><?php echo $this->__('Phone:');?></td>
                                 <td class="last">+31(0)20 - 21 81 008</td>
                             </tr>
                         </table>

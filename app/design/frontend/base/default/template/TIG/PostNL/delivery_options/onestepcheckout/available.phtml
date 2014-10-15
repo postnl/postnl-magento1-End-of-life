@@ -25,16 +25,18 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var Mage_Checkout_Block_Onepage_Shipping_Method_Available $this
  */
 ?>
 <script type="text/javascript">
@@ -52,9 +54,11 @@
     <?php $_canUseDeliveryOptions = false; ?>
     <?php $_store = $this->getQuote()->getStore(); ?>
     <?php $_carrierHelper = Mage::helper('postnl/carrier'); ?>
+    <?php $_deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions'); ?>
+    <?php $_methodName = ''; ?>
 
-    <?php if (Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptions($this->getQuote())
-        && Mage::helper('postnl/deliveryOptions')->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
+    <?php if ($_deliveryOptionsHelper->canUseDeliveryOptions($this->getQuote())
+        && $_deliveryOptionsHelper->canUseDeliveryOptionsForCountry($this->getQuote())): ?>
         <?php $_canUseDeliveryOptions = true; ?>
     <?php endif; ?>
     <?php if (count($_shippingRateGroups)=='1' && Mage::getStoreConfig('onestepcheckout/general/hide_shipping_method')):?>
@@ -135,9 +139,10 @@
 
                                 <?php if ($_isPostnl && $this->getChild('postnl.osc.delivery.options')): ?>
                                     <div class="postnl-container" id="postnl_container" style="display:none;">
-                                        <?php echo $this->getChild('postnl.osc.delivery.options')->setMethodName('s_method_' . $_rate->getCode())->toHtml(); ?>
+                                        <?php echo $this->getChild('postnl.osc.delivery.options')->setRate($_rate)->toHtml(); ?>
                                     </div>
-                            <?php $_deliveryOptionsShown = true; ?>
+                                    <?php $_deliveryOptionsShown = true; ?>
+                                    <?php $_methodName = 's_method_' . $_rate->getCode(); ?>
                                 <?php endif; ?>
 
                            <?php endif ?>
@@ -147,3 +152,97 @@
         </dl>
     <?php endif; ?>
 <?php endif; ?>
+<script type="text/javascript">
+    //<![CDATA[
+    function get_separate_save_methods_function(url, update_payments)
+    {
+        if(typeof update_payments == 'undefined')    {
+            var update_payments = false;
+        }
+
+        return function(e)    {
+            if(typeof e != 'undefined')    {
+                var element = e.element();
+
+                if(element.name != 'shipping_method')    {
+                    update_payments = false;
+                }
+            }
+
+            var form = $('onestepcheckout-form');
+            var shipping_method = $RF(form, 'shipping_method');
+            var payment_method = $RF(form, 'payment[method]');
+            var totals = get_totals_element();
+
+            var freeMethod = $('p_method_free');
+            if(freeMethod){
+                payment.reloadcallback = true;
+                payment.countreload = 1;
+            }
+
+            totals.update('<div class="loading-ajax">&nbsp;</div>');
+
+            if(update_payments)    {
+                var payment_methods = $$('div.payment-methods')[0];
+                payment_methods.update('<div class="loading-ajax">&nbsp;</div>');
+            }
+
+            var parameters = {
+                shipping_method: shipping_method,
+                payment_method: payment_method
+            };
+
+            var onlyStatedAddressOption = $$('#<?php echo $_methodName; ?>_only_stated_address_option input')[0];
+            if (onlyStatedAddressOption) {
+                parameters[onlyStatedAddressOption.name] = onlyStatedAddressOption.getValue();
+            }
+
+            /* Find payment parameters and include */
+            var items = $$('input[name^=payment]').concat($$('select[name^=payment]'));
+            var names = items.pluck('name');
+            var values = items.pluck('value');
+
+            for(var x=0; x < names.length; x++)    {
+                if(names[x] != 'payment[method]')    {
+                    parameters[names[x]] = values[x];
+                }
+            }
+
+            new Ajax.Request(url, {
+                method: 'post',
+                onSuccess: function(transport)    {
+                    if(transport.status == 200)    {
+                        var data = transport.responseText.evalJSON();
+                        var form = $('onestepcheckout-form');
+
+                        totals.update(data.summary);
+
+                        if(update_payments)    {
+
+                            payment_methods.replace(data.payment_method);
+
+                            $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', get_separate_save_methods_function(url));
+                            $$('div.payment-methods input[name="payment\[method\]"]').invoke('observe', 'click', function() {
+                                $$('div.onestepcheckout-payment-method-error').each(function(item) {
+                                    new Effect.Fade(item);
+                                });
+                            });
+
+                            if($RF($('onestepcheckout-form'), 'payment[method]') != null)    {
+                                try    {
+                                    var payment_method = $RF(form, 'payment[method]');
+                                    $('container_payment_method_' + payment_method).show();
+                                    $('payment_form_' + payment_method).show();
+                                } catch(err)    {
+
+                                }
+                            }
+                        }
+                    }
+                },
+                parameters: parameters
+            });
+        }
+    }
+    //]]>
+</script>

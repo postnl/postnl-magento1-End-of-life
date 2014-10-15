@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Class containing all default methods used for CIF communication by this extension.
@@ -109,7 +109,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XPATH_RETURN_ADDRESS = 'postnl/cif_return_address';
 
     /**.
-     * Xpaths for shipment reference info
+     * Xpaths for shipment reference info.
      */
     const XPATH_SHIPMENT_REFERENCE_TYPE   = 'postnl/cif_labels_and_confirming/shipment_reference_type';
     const XPATH_CUSTOM_SHIPMENT_REFERENCE = 'postnl/cif_labels_and_confirming/custom_shipment_reference';
@@ -136,6 +136,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XPATH_COD_IBAN         = 'postnl/cod/iban';
 
     /**
+     * The maximum amount of products which can be printed on the customs declaration form.
+     */
+    const MAX_CUSTOMS_PRODUCT_COUNT = 5;
+
+    /**
+     * Default HS tariff value.
+     */
+    const DEFAULT_HS_TARIFF = '000000';
+
+    /**
      * Array containing possible address types.
      *
      * @var array
@@ -150,8 +160,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     );
 
     /**
-     * array containing all available printer types. These are used to determine the output type of shipping labels
-     * currently only GraphicFile|PDF is supported
+     * Array containing all available printer types. These are used to determine the output type of shipping labels
+     * currently only GraphicFile|PDF is supported.
      *
      * printer type syntax is: <printer family>|<printer type>
      *
@@ -242,7 +252,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     );
 
     /**
-     * Get possible address types
+     * Get possible address types.
      *
      * @return array
      */
@@ -252,7 +262,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Get possible printer types
+     * Get possible printer types.
      *
      * @return array
      */
@@ -262,7 +272,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Get shipment types that require an invoice number
+     * Get shipment types that require an invoice number.
      *
      * @return array
      */
@@ -282,7 +292,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Gets the current store id. If no store id is specified, return the default admin store id
+     * Gets the current store id. If no store id is specified, return the default admin store id.
      *
      * @return int
      */
@@ -299,7 +309,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Retrieves a barcode from CIF
+     * Retrieves a barcode from CIF.
      *
      * @param Mage_Sales_Model_Order_Shipment $shipment
      * @param string $barcodeType Which kind of barcode to generate
@@ -410,7 +420,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Retrieves the latest shipping status of a shipment from CIF
+     * Retrieves the latest shipping status of a shipment from CIF.
      *
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
      *
@@ -478,7 +488,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Retrieves the latest shipping status of a shipment from CIF including full status history
+     * Retrieves the latest shipping status of a shipment from CIF including full status history.
      *
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
      *
@@ -540,7 +550,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Confirms the choen shipment without generating labels
+     * Confirms the chosen shipment without generating labels.
      *
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      * @param string                         $barcode
@@ -606,7 +616,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Generates shipping labels for the chosen shipment
+     * Generates shipping labels for the chosen shipment.
      *
      * @param        TIG_PostnL_Model_Core_Shipment $postnlShipment
      * @param        $barcode
@@ -670,14 +680,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Generates shipping labels for the chosen shipment without confirming it
+     * Generates shipping labels for the chosen shipment without confirming it.
      *
      * @param        TIG_PostnL_Model_Core_Shipment $postnlShipment
      * @param        string                         $barcode
      * @param        boolean|string                 $mainBarcode
      * @param        bool|int                       $shipmentNumber
-     * @param        string                         $printerType The printertype used. Currently only
-     *                                                           'GraphicFile|PDF' is fully supported.
+     * @param        string                         $printerType The printertype used. Currently only 'GraphicFile|PDF'
+     *                                                           is fully supported.
      *
      *
      * @throws TIG_PostNL_Exception
@@ -743,7 +753,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Gets the Message parameter
+     * Gets the Message parameter.
      *
      * @param       $barcode
      * @param array $extra An array of additional parameters to add
@@ -773,7 +783,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Gets the customer parameter
+     * Gets the customer parameter.
      *
      * @param Mage_Sales_Model_Order_Shipment|boolean $shipment
      *
@@ -799,7 +809,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Creates the CIF shipment object based on a PostNL shipment
+     * Creates the CIF shipment object based on a PostNL shipment.
      *
      * @param      TIG_PostnL_Model_Core_Shipment $postnlShipment
      * @param      $barcode
@@ -945,7 +955,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         }
 
         if ($pakjeGemakAddress) {
-            $addresses['Address'][] =$this->_getAddress('Delivery', $pakjeGemakAddress);
+            $addresses['Address'][] = $this->_getAddress('Delivery', $pakjeGemakAddress);
         }
 
         return $addresses;
@@ -978,7 +988,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Gets an array containing required address data
+     * Gets an array containing required address data.
      *
      * @param             $addressType
      * @param bool|string $shippingAddress
@@ -1061,7 +1071,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Forms an array of address data compatible with CIF
+     * Forms an array of address data compatible with CIF.
 
      * @param Mage_Sales_Model_Order_Address|Varien_Object $address
      * @param array|boolean                                $streetData Optional parameter containing streetname,
@@ -1105,8 +1115,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Gets data for the barcode that's requested. Depending on the destination of the shipment
-     * several barcode types may be requested.
+     * Gets data for the barcode that's requested. Depending on the destination of the shipment several barcode types
+     * may be requested.
      *
      * @param string $barcodeType
      *
@@ -1218,7 +1228,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Creates the CIF contact object
+     * Creates the CIF contact object.
      *
      * @param Mage_Sales_Model_Order_Address $address
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
@@ -1260,7 +1270,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Creates the CIF group object
+     * Creates the CIF group object.
      *
      * @param int  $groupCount
      * @param bool $mainBarcode
@@ -1316,7 +1326,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * create Customs CIF object
+     * Create Customs CIF object.
      *
      * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
      *
@@ -1381,7 +1391,18 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          */
         $itemCount = 0;
         $content = array();
-        $items = $this->_sortCustomsItems($shipment->getAllItems());
+
+        /**
+         * @var Mage_Sales_Model_Order_Shipment_Item $item
+         */
+        $items = $shipment->getItemsCollection();
+        foreach ($items as $key => $item) {
+            if ($item->isDeleted()) {
+                $items->removeItemByKey($key);
+            }
+        }
+
+        $items = $this->_sortCustomsItems($items);
 
         $helper = Mage::helper('postnl');
 
@@ -1392,7 +1413,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             /**
              * A maximum of 5 rows are allowed
              */
-            if (++$itemCount > 5) {
+            if (++$itemCount > self::MAX_CUSTOMS_PRODUCT_COUNT) {
                 break;
             }
 
@@ -1445,9 +1466,9 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Sorts an array of shipment items based on a product attribute that is defined in the module configuration
+     * Sorts an array of shipment items based on a product attribute that is defined in the module configuration.
      *
-     * @param array $items
+     * @param Mage_Sales_Model_Resource_Order_Shipment_Item_Collection $items
      *
      * @return array
      */
@@ -1466,17 +1487,34 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         );
 
         /**
+         * Get all products linked to the requested items.
+         */
+        $productIds = $items->getColumnValues('product_id');
+        $products = Mage::getResourceModel('catalog/product_collection')
+                        ->setStoreId($this->getStoreId())
+                        ->addFieldToFilter('entity_id', array('in' => $productIds))
+                        ->addAttributeToSelect($sortingAttribute)
+                        ->setOrder($sortingAttribute, strtoupper($sortingDirection));
+
+        $products->getSelect()->limit(self::MAX_CUSTOMS_PRODUCT_COUNT);
+
+        /**
+         * Get the attribute values of the requested sorting attribute.
+         */
+        $attributeValues = array();
+        foreach ($products as $product) {
+            $attributeValues[$product->getId()] = $product->getDataUsingMethod($sortingAttribute);
+        }
+
+        /**
          * Place the item's sorting value in a temporary array where the key is the item's ID
          *
          * @var Mage_Sales_Model_Order_Shipment_Item $item
          */
+        $sortedItems = array();
         foreach ($items as $item) {
-            $product = Mage::getModel('catalog/product')->load($item->getOrderItem()->getProductId());
-            if (!$product) {
-                continue;
-            }
+            $sortingAttributeValue = $attributeValues[$item->getProductId()];
 
-            $sortingAttributeValue = $product->getDataUsingMethod($sortingAttribute);
             $sortedItems[$item->getId()] = $sortingAttributeValue;
         }
 
@@ -1501,7 +1539,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Get a shipment item's HS tariff
+     * Get a shipment item's HS tariff.
      *
      * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
      *
@@ -1515,7 +1553,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * HS Tariff is an optional attribute. Check if it's used and if not, return a default value of 000000
          */
         if (!Mage::getStoreConfig(self::XPATH_GLOBALPACK_USE_HS_TARIFF_ATTRIBUTE, $storeId)) {
-            return '000000';
+            return self::DEFAULT_HS_TARIFF;
         }
 
         if ($this->hasHSTariffAttribute()) {
@@ -1529,14 +1567,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         $hsTariff = $product->getDataUsingMethod($hsTariffAttribute);
 
         if (empty($hsTariff)) {
-            $hsTariff = '000000';
+            $hsTariff = self::DEFAULT_HS_TARIFF;
         }
 
         return $hsTariff;
     }
 
     /**
-     * Get a shipment item's country of origin
+     * Get a shipment item's country of origin.
      *
      * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
      *
@@ -1576,7 +1614,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     }
 
     /**
-     * Get a shipment item's customs value
+     * Get a shipment item's customs value.
      *
      * @param Mage_Sales_Model_Order_Shipment_Item $shipmentItem
      *

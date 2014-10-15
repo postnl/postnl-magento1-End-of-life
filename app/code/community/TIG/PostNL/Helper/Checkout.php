@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
@@ -264,28 +264,26 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         $storeId = $quote->getStoreId();
 
         /**
-         * Check if PostNL Checkout may be used for 'letter' orders and if not, if the quote could fit in an envelope
+         * Check if the quote is a letter box parcel.
          */
-        $showCheckoutForLetters = Mage::getStoreConfigFlag(self::XPATH_SHOW_CHECKOUT_FOR_LETTER, $storeId);
-        if (!$showCheckoutForLetters) {
-            $isLetterQuote = $this->quoteIsLetter($quote, $storeId);
-            if ($isLetterQuote) {
-                $errors = array(
-                    array(
-                        'code'    => 'POSTNL-0101',
-                        'message' => $this->__(
-                            "The quote's total weight is below the miniumum required to use PostNL Checkout."
-                        ),
-                    )
-                );
-                Mage::register('postnl_checkout_is_enabled_errors', $errors);
-                Mage::register('can_use_postnl_checkout', false);
-                return false;
-            }
+        $isLetterQuote = $this->quoteIsBuspakje($quote);
+        if ($isLetterQuote) {
+            $errors = array(
+                array(
+                    'code'    => 'POSTNL-0101',
+                    'message' => $this->__(
+                        "The quote fits as a letter box parcel."
+                    ),
+                )
+            );
+            Mage::register('postnl_checkout_is_enabled_errors', $errors);
+            Mage::register('can_use_postnl_checkout', false);
+            return false;
         }
 
         /**
-         * Check if PostNL Checkout may be used for out-og-stock orders and if not, whether the quote has any such products
+         * Check if PostNL Checkout may be used for out-og-stock orders and if not, whether the quote has any such
+         * products.
          */
         $showCheckoutForBackorders = Mage::getStoreConfigFlag(self::XPATH_SHOW_CHECKOUT_FOR_BACKORDERS, $storeId);
         if (!$showCheckoutForBackorders) {
@@ -334,7 +332,7 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
      *
      * @return boolean
      *
-     * @todo Expand this method to also check the size of products to see if they fit in an envelope
+     * @deprecated 1.3.2 This method has been replaced by TIG_PostNL_Helper_Data::isBuspakjeConfigApplicableToQuote()
      */
     public function quoteIsLetter($quoteItems, $storeId = null)
     {
@@ -349,12 +347,12 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
         $totalWeight = 0;
         /** @var Mage_Sales_Model_Quote_Item $item */
         foreach ($quoteItems as $item) {
-            $totalWeight += $item->getRowWeight();
+            $totalWeight += ($item->getWeight() * $item->getQty());
         }
 
         $kilograms = $this->standardizeWeight($totalWeight, $storeId);
 
-        if ($kilograms < 2) {
+        if ($kilograms < self::MAX_LETTER_BOX_PARCEL_WEIGHT) {
             return true;
         }
 

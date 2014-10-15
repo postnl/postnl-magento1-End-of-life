@@ -1,4 +1,4 @@
-TIG_PostNL::Enabled,Geactiveerd
+TIG_PostNL::,Geactiveerd
 TIG_PostNL::Method Name,Methode naam
 TIG_PostNL::Rate Type,Tarief type
 TIG_PostNL::Price,Prijs
@@ -118,7 +118,7 @@ TIG_PostNL::Customs value attribute,Douane waarde
 TIG_PostNL::The product attribute used to determine product's customs value.,Het productattribuut wat gebruikt wordt om de waarde voor de douane van het product te bepalen
 TIG_PostNL::Country of origin attribute,Land van herkomst
 TIG_PostNL::The product attribute used to determine the product's country of origin.,Het productattribuut wat gebruikt wordt om het land van herkomst van het product te bepalen
-TIG_PostNL::Product description attribyte,Product beschrijving
+TIG_PostNL::Product description attribute,Product beschrijving
 TIG_PostNL::The product attribute used to supply the product's customs description.,Het productattribuut wat gebruikt wordt om omschrijving van het product voor de douane te bepalen
 TIG_PostNL::The following fields determine which products are displayed on international shipping labels and how.,De volgende velden bepalen hoe en welke producten er getoond gaan worden op het internationale verzend label
 TIG_PostNL::Product sorting attribute,Product sortering attribuut
@@ -453,9 +453,9 @@ TIG_PostNL::Time,Tijd
 TIG_PostNL::Date,Datum
 "TIG_PostNL::We highly reccommend you place several 'test'  shipments, before you use the extension for real orders and real shipments.",Wij raden ten sterkste aan om enkele 'test' zendingen aan te maken voordat u de extensie voor echte bestellingen en zendingen gebruikt.
 TIG_PostNL::Before you proceed to use this extension it is very important that you have properly configured certain elements of your Magento webshop.,"Voordat u de extensie in gebruik neemt, is het belangrijk dat u enkele onderdelen van uw webshop correct ingesteld heeft."
-"TIG_PostNL::You should make sure that each product you intend to ship using PostNL has a maximum size of 175 x 78 x 58 cm and weighs less than 30 kg. The shipment will only be invoiced after the weigh-in at the PostNL sorting centre. If you wish to ship an order that weighs over 30 kg, you will have to split it into separate parcels that each weigh less than 30 kg. To do this you may create multiple shipments for a single order or you may use the extension's multi-colli functionality.",U moet er zeker van zijn dat elk product dat u wilt versturen met PostNL binnen de maximale afmetingen (175 x 78 x 58 cm) en gewicht (30 kg) valt. I[b]ndien u een bestelling wilt versturen die meer weegt dan 30 kg zult u deze moeten opdelen in verschillende pakketten die ieder minder dan 30 kg wegen. U kunt hiervoor meerdere zendingen aanmaken voor één bestelling of u kunt gebruik maken van de multi-colli functionaliteit van de extensie.
+"TIG_PostNL::You should make sure that each product you intend to ship using PostNL has a maximum size of 175 x 78 x 58 cm and weighs less than 30 kg. The shipment will only be invoiced after the weigh-in at the PostNL sorting centre. If you wish to ship an order that weighs over 30 kg, you will have to split it into separate parcels that each weigh less than 30 kg. To do this you may create multiple shipments for a single order or you may use the extension's multi-colli functionality.",U moet er zeker van zijn dat elk product dat u wilt versturen met PostNL binnen de maximale afmetingen (175 x 78 x 58 cm) en gewicht (30 kg) valt. Indien u een bestelling wilt versturen die meer weegt dan 30 kg zult u deze moeten opdelen in verschillende pakketten die ieder minder dan 30 kg wegen. U kunt hiervoor meerdere zendingen aanmaken voor één bestelling of u kunt gebruik maken van de multi-colli functionaliteit van de extensie.
 "TIG_PostNL::Make sure the PostNL shipping method is configured under system > config > shipping methods > PostNL. Only shipments made using this shipping method will be able to use PostNL's services. You may choose to charge either a flat rate or a table rate-based shipping fee. In the case of the latter, the table rates you have added under the Table Rate shipping method will be used. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.","Wees er zeker van dat de PostNL verzendmethode correct geconfigureerd is in systeem > configuratie > verzendmethodes > PostNL. Indien u PostNL handelingen wilt verrichten op andere verzendmethoden dient u dit te configuren in de extensie. U kunt kiezen om een plat tarief of een tabel tarief in rekening te brengen voor het gebruik van PostNL. Voor meer informatie over hoe u de tabel tarieven kunt instellen, kunt u <a href='%s' target='_blank'>hier</a> kijken."
-"TIG_PostNL::You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.",U moet uw afrekenproces goed inrichten. Als u gebruik maakt van de postcode check zal de extensie dit voor u doen. Als u daar geen gebruik van maakt moet PostNL  uit h[d]et afrekenproces een correct opgemaakt adres kunnen lezen om er zeker van te zijn dat de zending ook echt naar het gekozen adres verstuurd wordt. Om hier zeker van te zijn moet u het juiste aantal straat regels aanzetten en deze voorzien van duidelijke labels en validatie. U kunt <a href='%s' target='_blank'>hier</a> meer lezen over hoe u dit juist kunt configureren.
+"TIG_PostNL::You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.",U moet uw afrekenproces goed inrichten. Als u gebruik maakt van de postcode check zal de extensie dit voor u doen. Als u daar geen gebruik van maakt moet PostNL  uit het afrekenproces een correct opgemaakt adres kunnen lezen om er zeker van te zijn dat de zending ook echt naar het gekozen adres verstuurd wordt. Om hier zeker van te zijn moet u het juiste aantal straat regels aanzetten en deze voorzien van duidelijke labels en validatie. U kunt <a href='%s' target='_blank'>hier</a> meer lezen over hoe u dit juist kunt configureren.
 "TIG_PostNL::If you wish to use this extension on an unsupported Magento version or edition, or in combination with an unsupported 3rd party extension, we cannot guarantee the PostNL extension will function as expected. For questions please contact the Total Internet Group servicedesk.","Indien u de extensie wilt gebruiken op een niet-ondersteunde versie of editie van Magento, of als u de extensie wilt gebruiken samen met een 3rd party extensie die niet ondersteund wordt, kunnen wij niet garanderen dat de PostNL extensie feilloos zal functioneren. Voor vragen kunt u contact opnemen met de Total Internet Group servicedesk."
 "TIG_PostNL::The extension is developed by Total Internet Group, commissioned by PostNL. Depending on the nature of the issue or question you should contact either PostNL or Total Internet Group.","De extensie is ontwikkeld door Total Internet Group in opdracht van PostNL. Aan de hand van de aard van uw vraag, kunt u het beste contact opnemen met PostNL of de Total Internet Group."
 TIG_PostNL::PostNL account information and PostNL services,PostNL account informatie en PostNL diensten
@@ -501,9 +501,9 @@ TIG_PostNL::The confirmAndGenerateLabel action is currently unavailable.,De conf
 TIG_PostNL::Invalid message type requested: %s,Ongeldig bericht type gekozen: %s
 TIG_PostNL::Unable to read directory: %s,Kan folder niet lezen: %s
 TIG_PostNL::Invalid UpdateOrder response: %s,Ongeldige UpdateOrder ontvangen: %s
-"TIG_PostNL::Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.</p><p>If you want to test the extension, but don't have any test mode credentials you can use the account credentials found <a href=""http://kb.totalinternetgroup.nl/topic/55404467"" title=""Test mode account credentials"" target=""_blank"">here</a>.","Hier kunt u uw PostNL account gegevens invullen.</p><p>Voor het gebruik van de extensie dient u zich <a
+"TIG_PostNL::Here you can configure your PostNL account.</p><p>In order to use this extension you need to <a href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure the extension. If you cannot find the email containing this information, please contact your PostNL account manager.</p><p>If you want to test the extension, but don't have any test mode credentials you can use the account credentials found <a href=""http://kb.tig.nl/topic/55404467"" title=""Test mode account credentials"" target=""_blank"">here</a>.","Hier kunt u uw PostNL account gegevens invullen.</p><p>Voor het gebruik van de extensie dient u zich <a
 href='http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties/contactformulier' target='_blank'
-title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen. Indien u de e-mail die deze gegevens bevat niet meer kunt vinden, neem dan contact op met uw PostNL account manager.</p><p>Indien u de extensie wilt testen, maar geen test modus account gegevens heeft, kunt u de account gegevens gebruiken die <a href=""http://kb.totalinternetgroup.nl/topic/55404467"" title=""Test modus account gegevens"" target=""_blank"">hier</a> genoemd worden."
+title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen. Indien u de e-mail die deze gegevens bevat niet meer kunt vinden, neem dan contact op met uw PostNL account manager.</p><p>Indien u de extensie wilt testen, maar geen test modus account gegevens heeft, kunt u de account gegevens gebruiken die <a href=""http://kb.tig.nl/topic/55404467"" title=""Test modus account gegevens"" target=""_blank"">hier</a> genoemd worden."
 "TIG_PostNL::You will find these settings in your <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>PostNL Checkout account</a>.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is a free service, however you do need to <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Register'>register</a> yourself with PostNL. You will then receive all necessary information in order to configure this feature.","Deze gegevens vindt u in uw <a href='https://checkout.postnl.nl/' target='_blank' title='PostNL'>Checkout instellingen</a> bij PostNL.</p><p><a href='https://checkout.postnl.nl/' target='_blank' title='PostNL Checkout'>PostNL Checkout</a> is een gratis service, wel dient u zich <a href='https://checkout.postnl.nl/Consumer/Register?utm_source=magento&utm_medium=referral&utm_campaign=2014' target='_blank' title='Aanmelden'>aan te melden</a> bij PostNL. U ontvangt vervolgens de benodigde gegevens voor uw instellingen."
 TIG_PostNL::ONLY CHANGE THESE SETTINGS WITH DIRECT INSTRUCTION FROM POSTNL OR TOTAL INTERNET GROUP,PAS DEZE INSTELLINGEN ENKEL AAN MET DIRECTE INSTRUCTIES VAN POSTNL OF TOTAL INTERNET GROUP
 "TIG_PostNL::Customers who use this feature will subscribe to your webshop's newsletter, not PostNL's newsletter. Please note that 3rd party extensions that alter the Magento newsletter functionality may conflict with this feature.","Klanten die gebruik maken van deze feature zullen ingeschreven worden op de nieuwsbrief van uw webshop, niet op de nieuwsbrief van PostNL. Houd er rekenen mee dat extensies van derden die de Magento nieuwsbrief functionaliteit aanpassen mogelijk zullen conflicteren met deze feature."
@@ -554,7 +554,7 @@ TIG_PostNL::No status history available.,Geen status geschiedenis informatie bes
 TIG_PostNL::PostNL - Create Parcelware export,PostNL - Maak Parcelware export
 TIG_PostNL::Exported to Parcelware,Geëxporteerd naar Parcelware
 TIG_PostNL::Parcelware Export Settings,Parcelware Export Instellingen
-"TIG_PostNL::This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href=""http://kb.totalinternetgroup.nl/topic/94906903"" target=""_blank"" title=""More info"">here</a>.","Hier kunt u uw Parcelware export voorkeuren opgeven. U kunt <a href=""http://kb.totalinternetgroup.nl/topic/94906903"" target=""_blank"" title=""Meer informatie"">hier</a> meer informatie vinden over het configureren van deze instellingen."
+"TIG_PostNL::This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href=""http://kb.tig.nl/topic/94906903"" target=""_blank"" title=""More info"">here</a>.","Hier kunt u uw Parcelware export voorkeuren opgeven. U kunt <a href=""http://kb.tig.nl/topic/94906903"" target=""_blank"" title=""Meer informatie"">hier</a> meer informatie vinden over het configureren van deze instellingen."
 TIG_PostNL::Enable Parcelware export,Activeer Parcelware export
 TIG_PostNL::Parcelware export is disabled. Activate Parcelware export in order to edit these settings. Please note that you can only activate Parcelware export from the global level.,Parcelware export is gedeactiveerd. Activeer Parcelware export om deze instellingen te kunnen aanpassen. Houd er rekening mee dat Parcelware export enkel vanuit op globaal niveau kunt activeren.
 TIG_PostNL::Automatically confirm exported shipments,Geëxporteerde zendingen automatisch voormelden
@@ -626,7 +626,7 @@ TIG_PostNL::choose a different pickup location,kies een ander ophaalpunt
 TIG_PostNL::Select pickup location,Postkantoor kiezen
 TIG_PostNL::Search,Zoeken
 TIG_PostNL::early pickup,extra vroeg ophalen
-TIG_PostNL::opened in the evening,'s avonds open
+TIG_PostNL::open in the evening,'s avonds open
 TIG_PostNL::Close,Sluiten
 TIG_PostNL::Pickup locations found,Gevonden ophaallocaties
 TIG_PostNL::business hours,openingstijden
@@ -793,7 +793,7 @@ TIG_PostNL::This may take a minute. The page will refresh once this is done.,Dit
 TIG_PostNL::View the user manual.,Bekijk de geberuikershandleiding.
 TIG_PostNL::User manual,Gebruikershandleiding
 TIG_PostNL::Delivery options theme,Bezorgopties thema
-"TIG_PostNL::You can view an example of the different themes <a href=""http://kb.totalinternetgroup.nl/topic/58787233"" target=""_blank"" title=""PostNL delivery option themes"">here</a>.","U kunt een voorbeeld van de verschillende thema's <a href=""http://kb.totalinternetgroup.nl/topic/58787233"" target=""_blank"" title=""PostNL bezorgopties thema's"">hier</a> bekijken."
+"TIG_PostNL::You can view an example of the different themes <a href=""http://kb.tig.nl/topic/58787233"" target=""_blank"" title=""PostNL delivery option themes"">here</a>.","U kunt een voorbeeld van de verschillende thema's <a href=""http://kb.tig.nl/topic/58787233"" target=""_blank"" title=""PostNL bezorgopties thema's"">hier</a> bekijken."
 TIG_PostNL::Default PostNL theme,Standaard PostNL thema
 TIG_PostNL::Neutral theme,Neutraal thema
 "TIG_PostNL::You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order.",U kunt er voor kiezen om een melding te tonen aan klanten over MijnPakket nadat zij hun bestelling hebben geplaatst. Deze melding zal klanten informeren over de voordelen van MijnPakket. Klanten kunnen hun MijnPakket account gebruiken om hun bestelling in uw webshop sneller af te ronden. Dit zorgt voor een lager afhaakpercentage en een hogere klanttevredenheid rondom de afhandeling van bestellingen.
@@ -910,7 +910,7 @@ TIG_PostNL::Post office address,Postkantooradres
 TIG_PostNL::Invalid label type supplied for packing slip label pdf: %s.,Ongeldig label type opgegeven voor pakbon label pdf: %s.
 TIG_PostNL::Approaching memory limit for this operation. Please select fewer shipments and try again.,Geheugen limiet bereikt. Selecteer s.v.p. minder zendingen en probeer het opnieuw.
 TIG_PostNL::Packing Slip Settings,Pakbon Instellingen
-"TIG_PostNL::Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href=""http://kb.totalinternetgroup.nl/topic/95885953"" target=""_blank"" title=""More info"">here</a>.","Hier kunt u aangeven welke elementen u wilt tonen op de PostNL pakbonnen. U kunt <a href=""http://kb.totalinternetgroup.nl/topic/95885953"" target=""_blank"" title=""Meer informatie"">hier</a> meer lezen over hoe deze instellingen de pakbon aanpassen."
+"TIG_PostNL::Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href=""http://kb.tig.nl/topic/95885953"" target=""_blank"" title=""More info"">here</a>.","Hier kunt u aangeven welke elementen u wilt tonen op de PostNL pakbonnen. U kunt <a href=""http://kb.tig.nl/topic/95885953"" target=""_blank"" title=""Meer informatie"">hier</a> meer lezen over hoe deze instellingen de pakbon aanpassen."
 TIG_PostNL::Logo for packing slips,Pakbon logo
 TIG_PostNL::The image will automatically be resized to fit the maximum dimensions of 900x100px.,"Deze afbeelding zal automatisch geschaald worden, zodat deze binnen de maximum afmetingen van 900x100px past."
 TIG_PostNL::Show webshop information,Toon webshopinformatie
@@ -1090,3 +1090,71 @@ To Letter Box Parcel,Naar Pakket
 To Package,Naar Brievenbuspakje
 Change Product Option,Wijzig Productoptie
 TIG_PostNL::Fits through the mailslot,Past door de brievenbus
+TIG_PostNL::Nearest PostNL pickup points,Resultaat van dichtsbijzijnde PostNL ophaalpunten
+TIG_PostNL::Filter,Filter
+TIG_PostNL::Select location,Selecteer locatie
+TIG_PostNL::Show map,Toon kaart
+TIG_PostNL::Pickup,Ophalen
+TIG_PostNL::Choose a different pickup location,Kies een ander ophaalpunt
+"TIG_PostNL::PostNL - Create shipments, print packing slips and confirm","PostNL - Maak zendingen aan, print pakbonnen en meld voor"
+"TIG_PostNL::Create shipments, print packing slips and confirm","Maak zendingen aan, print pakbonnen en meld voor"
+TIG_PostNL::Shipping days,Verzenddagen
+"TIG_PostNL::Select on which days of the week orders are shipped. You can read more about shipping and delivery days <a href=""http://kb.tig.nl/topic/102775036"" target=""_blank"">here</a>.","Selecteer op welke dagen u bestellingen verstuurt. U kunt <a href=""http://kb.tig.nl/topic/102775036"" target=""_blank"">hier</a> meer lezen over verzend- en bezorgdagen."
+TIG_PostNL::Monday,Maandag
+TIG_PostNL::Tuesday,Dinsdag
+TIG_PostNL::Wednesday,Woensdag
+TIG_PostNL::Thursday,Donderdag
+TIG_PostNL::Friday,Vrijdag
+TIG_PostNL::Saturday,Zaterdag
+TIG_PostNL::PostNL - Print Packing Slip,PostNL - Print Pakbon
+TIG_PostNL::deliver to stated address only,lever alleen aan opgegeven adres
+TIG_PostNL::do not deliver to neighbours,"bij niet thuis, niet bij buren bezorgen"
+TIG_PostNL::Matrix,Matrix
+TIG_PostNL::Invalid PostNL Matrix Rates File Format,Incorrect PostNL Matrixtarieven bestandsformaat
+TIG_PostNL::Region/State,Provincie/staat
+TIG_PostNL::Minimum Order Weight,Minimum bestellingsgewicht
+TIG_PostNL::Minimum Order Amount,Minimum orderbedrag (subtotaal)
+TIG_PostNL::Minimum Quantity,Minimum hoeveelheid
+TIG_PostNL::Parcel Type,Pakkettype
+TIG_PostNL::Shipping Price,Verzendprijs
+TIG_PostNL::An error occurred while importing the matrix rates.,Er is een fout opgetreden tijdens het importeren van de matrixtarieven.
+TIG_PostNL::File has not been imported. See the following list of errors: %s,Bestand is niet geïmporteerd. Zie de lijst van foutmeldingen: %s
+TIG_PostNL::Invalid PostNL matrix rates format in row #%s,Incorrect PostNL matrixtarieven formaat op regel #%s
+"TIG_PostNL::Invalid country ""%s"" in row #%s","Incorrect land: ""%s"" op regel #%s."
+"TIG_PostNL::Invalid region/state ""%s"" in row #%s.","Incorrecte provincie/staat: ""%s"" op regel #%s."
+"TIG_PostNL::Invalid shipping price ""%s"" in row #%s.","Incorrecte verzendprijs: ""%s"" op regel #%s."
+"TIG_PostNL::Duplicate row #%s (country ""%s"", region/state ""%s"", zip ""%s"", weight ""%s"", subtotal ""%s"", quantity ""%s"" and parcel type ""%s"").","Dubbele regel #%s (land ""%s"", pronvicie/staat ""%s"", postcode ""%s"", gewicht ""%s"", orderbedrag ""%s"", hoeveelheid ""%s"" en pakkettype ""%s"")."
+"TIG_PostNL::Invalid parcel type ""%s"" in row #%s. Valid values are: ""letter_box"", ""regular"" or ""*"".","Incorrect pakkettype: ""%s"" op regel #%s."
+"TIG_PostNL::Invalid quantity ""%s"" in row #%s.","Incorrect hoeveelheid: ""%s"" op regel #%s."
+"TIG_PostNL::Invalid subtotal ""%s"" in row #%s.","Incorrect orderbedrag: ""%s"" op regel #%s."
+"TIG_PostNL::Invalid weight ""%s"" in row #%s.","Incorrect gewicht: ""%s"" op regel #%s."
+TIG_PostNL::matrix rate,matrixtarief
+TIG_PostNL::Default 'stated address only' option,Standaard 'lever alleen aan opgegeven adres' optie
+TIG_PostNL::This option will be used as default when the customer has checked the 'stated address only' checkbox during checkout.,Deze optie zal gebruikt worden voor zendingen waarbij de consument gebruik heeft gemaakt van de 'niet bij buren leveren' checkbox.
+TIG_PostNL::Extra options,Extra opties
+TIG_PostNL::Use responsive design,Gebruik responsive ontwerp
+"TIG_PostNL::Select 'yes' to make the delivery options theme responsive. Responsive themes allow users on their mobile phone, tablets and desktops to view the same page in a way that is optimized for their device. Beware: this option may conflict with custom Magento theme.","Selecteer 'ja' om het responsive ontwerp van de bezorgopties te gebruiken. Het responsive ontwerp zorgt ervoor dat gebruikers op een mobiele telefoon, tablet of desktop de bezorgopties te zien krijgen op een wijze die voor hun apperaat geoptimaliseerd is. N.B.: deze optie kan conflicteren met custom Magento thema's."
+"TIG_PostNL::If a customer is not home when a shipment is delivered, PostNL will try to deliver it to the neighbours instead and leave a note for the intended recipient. Using these settings you may allow the customer to choose whether they want to allow their order to be delieverd to their neighbours.","Indien een consument niet thuis is wanneer PostNl de zending komt bezorgen, zal de bezorger de zending bij de buren proberen af te leveren en een kaartje achter te laten bij de geaddresseerde. Met deze instellingen kunt u de consument de optie bieden om er voor te kiezen om de zending enkel bij de geaddresseerde te bezorgen en dus niet bij de buren."
+TIG_PostNL::Show 'only send to stated address' option,Toon 'lever alleen op aangegeven adres' optie
+TIG_PostNL::Enable this option to show a checkbox on the checkout page with which the customer can choose to only send the shipment to the stated address.,Activeer deze instelling om een checkbox te tonen op de afrekenpagina waarmee de consument kan aangeven dat de zending enkel op het opgegeven adres bezorgd mag worden.
+TIG_PostNL::Stated address only option checked by default,Lever alleen aan opgegeven adres optie standaard aanvinken
+TIG_PostNL::Stated address only fee,Lever alleen aan opgegeven adres toeslag
+TIG_PostNL::Unable to save update_product_attribute cron expression: %s,Unable to save update_product_attribute cron expression: %s
+TIG_PostNL::The PostNL extension is currently being upgraded.,De PostNL extensie wordt momenteel geüpgradet.
+"TIG_PostNL::Depending on the number of products in your store, this could take several hours.",Afhankelijk van het aantal producten in uw winkel kan dit tot enkele uren duren.
+TIG_PostNL::UpdateProductAttribute cron starting...,UpdateProductAttribute cron starting...
+TIG_PostNL::No attribute data found. Exiting cron.,No attribute data found. Exiting cron.
+TIG_PostNL::Updating product attribute data: %s,Updating product attribute data: %s
+TIG_PostNL::Updating product IDs: %s,Updating product IDs: %s
+TIG_PostNL::No products left to update.,No products left to update.
+TIG_PostNL::All attributes have been processed. Removing cron.,All attributes have been processed. Removing cron.
+TIG_PostNL::UpdateProductAttribute cron has finished.,UpdateProductAttribute cron has finished.
+"TIG_PostNL::A prefilled csv file can be found <a href="""" target=""_blank"">here</a>.","U kunt <a href="""" target=""_blank"">hier</a> een voorgevuld csv bestand downloaden."
+TIG_PostNL::Extra service,Extra service
+TIG_PostNL::Unable to send track & trace email due to missing shipment parameters.,De track & trace e-mail kan niet verzonden worden wegens missende zendinggegevens.
+TIG_PostNL::Data has not been imported. See the following list of errors: %s,Data is niet geïmporteerd. Zie de lijst van foutmeldingen: %s
+TIG_PostNL::PostNL track & trace email has been sent.,PostNL track & trace e-mail is verstuurd.
+TIG_PostNL::PostNL track & trace email has been sent for shipment #%s.,PostNL track & trace e-mail is verstuurd voor zending #%s.
+TIG_PostNL::Pickup your order %s,Je bestelling ophalen %s
+TIG_PostNL::Have your order delivered %s,Je bestelling laten bezorgen %s
+"TIG_PostNL::A prefilled csv file can be found <a href=""http://kb.tig.nl/topic/102462196"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/102462196"" target=""_blank"">hier</a> een voorgevuld csv bestand vinden."

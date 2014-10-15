@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Base CIF model. Contains general code for communicating with the CIF API
@@ -46,6 +46,8 @@
  * @method TIG_PostNL_Model_Core_Cif_Abstract setPassword(string $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setUsername(string $value)
  * @method TIG_PostNL_Model_Core_Cif_Abstract setStoreId(int $value)
+ * @method TIG_PostNL_Model_Core_Cif_Abstract setWsdlBaseUrl(string $value)
+ * @method TIG_PostNL_Model_Core_Cif_Abstract setTestWsdlBaseUrl(string $value)
  *
  * @method boolean hasSoapClient()
  * @method boolean hasHelper()
@@ -53,6 +55,8 @@
  * @method boolean hasTestMode()
  * @method boolean hasPassword()
  * @method boolean hasUsername()
+ * @method boolean hasWsdlBaseUrl()
+ * @method boolean hasTestWsdlBaseUrl()
  *
  * @method TIG_PostNL_Model_Core_Cif_Abstract unsTestMode()
  */
@@ -61,12 +65,12 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * Base URL of wsdl files
      */
-    const WSDL_BASE_URL = 'https://service.postnl.com/CIF/';
+    const WSDL_BASE_URL_XPATH = 'postnl/cif/wsdl_base_url';
 
     /**
      * Base URL of sandbox wsdl files
      */
-    const TEST_WSDL_BASE_URL = 'https://testservice.postnl.com/CIF_SB/';
+    const TEST_WSDL_BASE_URL_XPATH = 'postnl/cif/test_wsdl_base_url';
 
     /**
      * Available wsdl filenames.
@@ -105,6 +109,11 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     const XPATH_CIF_VERSION_DELIVERYDATE   = 'postnl/advanced/cif_version_deliverydate';
     const XPATH_CIF_VERSION_TIMEFRAME      = 'postnl/advanced/cif_version_timeframe';
     const XPATH_CIF_VERSION_LOCATION       = 'postnl/advanced/cif_version_location';
+
+    /**
+     * The error number CIF uses for the 'shipment not found' error.
+     */
+    const SHIPMENT_NOT_FOUND_ERROR_NUMBER = 13;
 
     /**
      * Check if the required PHP extensions are installed.
@@ -147,6 +156,36 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
 
         $this->setStoreId($storeId);
         return $storeId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWsdlBaseUrl()
+    {
+        if ($this->hasWsdlBaseUrl()) {
+            return $this->_getData('wsdl_base_url');
+        }
+
+        $wsdlBaseUrl = Mage::getStoreConfig(self::WSDL_BASE_URL_XPATH, $this->getStoreId());
+
+        $this->setWsdlBaseUrl($wsdlBaseUrl);
+        return $wsdlBaseUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTestWsdlBaseUrl()
+    {
+        if ($this->hasTestWsdlBaseUrl()) {
+            return $this->_getData('test_wsdl_base_url');
+        }
+
+        $wsdlBaseUrl = Mage::getStoreConfig(self::TEST_WSDL_BASE_URL_XPATH, $this->getStoreId());
+
+        $this->setTestWsdlBaseUrl($wsdlBaseUrl);
+        return $wsdlBaseUrl;
     }
 
     /**
@@ -282,8 +321,8 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         );
 
         /**
-         * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without using the
-         * wsdl cache.
+         * try to create a new Zend_Soap_Client instance based on the supplied wsdl. if it fails, try again without
+         * using the wsdl cache.
          */
         try {
             $client  = new Zend_Soap_Client(
@@ -309,9 +348,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
     /**
      * Calls a CIF method.
      *
-     * @param string         $wsdlType   Which wsdl to use
-     * @param callable       $method     The method that will be called
-     * @param array          $soapParams An array of parameters to be sent
+     * @param string $wsdlType   Which wsdl to use
+     * @param string $method     The method that will be called
+     * @param array  $soapParams An array of parameters to be sent
      *
      * @return object|boolean
      *
@@ -322,6 +361,12 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
         $client = null;
         try {
             /**
+             * Strip non-printable characters from the SOAP parameters.
+             */
+            $cifHelper = Mage::helper('postnl/cif');
+            array_walk_recursive($soapParams, array($cifHelper, 'stripNonPrintableCharacters'));
+
+            /**
              * @var Zend_Soap_Client $client
              */
             $client = $this->getSoapClient($wsdlType);
@@ -331,24 +376,24 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
              */
             if (!is_callable(array($client, $method))) {
                 throw new TIG_PostNL_Exception(
-                    Mage::helper('postnl')->__('The specified method "%s" is not callable.', $method),
+                    $cifHelper->__('The specified method "%s" is not callable.', $method),
                     'POSTNL-0136'
                 );
             }
 
             /**
-             * Add SOAP header,
+             * Add SOAP header.
              */
             $header = $this->_getSoapHeader();
             $client->addSoapInputHeader($header, true); //permanent header
 
             /**
-             * Call the SOAP method,
+             * Call the SOAP method.
              */
             $response = $client->$method($soapParams);
 
             /**
-             * Process any warnings that may have occurred,
+             * Process any warnings that may have occurred.
              */
             $this->_processWarnings($client);
 
@@ -356,7 +401,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
             return $response;
         } catch(SoapFault $e) {
             /**
-             * Only Soap exceptions are caught. Other exceptions must be caught by the caller,
+             * Only Soap exceptions are caught. Other exceptions must be caught by the caller.
              *
              * @throws TIG_PostNL_Exception
              */
@@ -437,9 +482,9 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
          * Check if we need the live or the sandbox wsdl.
          */
         if ($this->isTestMode()) {
-            $wsdlUrl = self::TEST_WSDL_BASE_URL;
+            $wsdlUrl = $this->getTestWsdlBaseUrl();
         } else {
-            $wsdlUrl = self::WSDL_BASE_URL;
+            $wsdlUrl = $this->getWsdlBaseUrl();
         }
 
         /**
@@ -603,7 +648,7 @@ abstract class TIG_PostNL_Model_Core_Cif_Abstract extends Varien_Object
                      * log this error.
                      */
                     $value = $errorNumber->nodeValue;
-                    if ($value == '13') {
+                    if ($value == self::SHIPMENT_NOT_FOUND_ERROR_NUMBER) {
                         $logException = false;
                     }
 

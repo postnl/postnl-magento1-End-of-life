@@ -25,41 +25,42 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
 {
     /**
-     * Shipping carrier code used by PostNL
+     * Shipping carrier code used by PostNL.
      */
     const POSTNL_CARRIER = 'postnl';
 
     /**
-     * PostNL shipping methods
+     * PostNL shipping methods.
      */
     const POSTNL_FLATRATE_METHOD  = 'flatrate';
     const POSTNL_TABLERATE_METHOD = 'tablerate';
+    const POSTNL_MATRIX_METHOD    = 'matrixrate';
 
     /**
-     * Localised track and trace base URL's
+     * Localised track and trace base URL's.
      */
-    const POSTNL_TRACK_AND_TRACE_NL_BASE_URL  = 'https://mijnpakket.postnl.nl/Inbox/Search?';
-    const POSTNL_TRACK_AND_TRACE_GB_BASE_URL  = 'http://parcels-uk.tntpost.com/mytrackandtrace/trackandtrace.aspx?';
-    const POSTNL_TRACK_AND_TRACE_DE_BASE_URL  = 'http://parcels-de.tntpost.com/de/mytrackandtrace/TrackAndTrace.aspx?';
-    const POSTNL_TRACK_AND_TRACE_FR_BASE_URL  = 'http://parcels-fr.tntpost.com/fr/mytrackandtrace/TrackAndTrace.aspx?';
-    const POSTNL_TRACK_AND_TRACE_INT_BASE_URL = 'http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?';
+    const POSTNL_TRACK_AND_TRACE_NL_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_nl_base_url';
+    const POSTNL_TRACK_AND_TRACE_GB_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_gb_base_url';
+    const POSTNL_TRACK_AND_TRACE_DE_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_de_base_url';
+    const POSTNL_TRACK_AND_TRACE_FR_BASE_URL_XPATH  = 'postnl/cif/track_and_trace_fr_base_url';
+    const POSTNL_TRACK_AND_TRACE_INT_BASE_URL_XPATH = 'postnl/cif/track_and_trace_int_base_url';
 
     /**
-     * XML path to rate type setting
+     * XML path to rate type setting.
      */
     const XPATH_RATE_TYPE = 'carriers/postnl/rate_type';
 
@@ -69,7 +70,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     const XPATH_POSTNL_SHIPPING_METHODS = 'postnl/advanced/postnl_shipping_methods';
 
     /**
-     * Array of possible PostNL shipping methods
+     * Array of possible PostNL shipping methods.
      *
      * @var array
      */
@@ -83,7 +84,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     protected $_matchedMethods = array();
 
     /**
-     * Gets an array of possible PostNL shipping methods
+     * Gets an array of possible PostNL shipping methods.
      *
      * @return array
      */
@@ -93,8 +94,20 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             return $this->_postnlShippingMethods;
         }
 
+        $cache = $this->getCache();
+        if ($cache && $cache->hasPostnlShippingMethods()) {
+            $shippingMethods = $cache->getPostnlShippingMethods();
+
+            $this->setPostnlShippingMethods($shippingMethods);
+            return $shippingMethods;
+        }
+
         $shippingMethods = Mage::getStoreConfig(self::XPATH_POSTNL_SHIPPING_METHODS, Mage::app()->getStore()->getId());
         $shippingMethods = explode(',', $shippingMethods);
+
+        if ($cache) {
+            $cache->setPostnlShippingMethods($shippingMethods);
+        }
 
         $this->setPostnlShippingMethods($shippingMethods);
         return $shippingMethods;
@@ -117,6 +130,18 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
      */
     public function getMatchedMethods()
     {
+        $matchedMethods = $this->_matchedMethods;
+        if (!empty($matchedMethods)) {
+            return $matchedMethods;
+        }
+
+        $cache = $this->getCache();
+        if ($cache && $cache->hasMatchedPostnlShippingMethods()) {
+            $this->setMatchedMethods(
+                $cache->getMatchedPostnlShippingMethods()
+            );
+        }
+
         return $this->_matchedMethods;
     }
 
@@ -128,6 +153,11 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     public function setMatchedMethods($matchedMethods)
     {
         $this->_matchedMethods = $matchedMethods;
+
+        $cache = $this->getCache();
+        if ($cache) {
+            $cache->setMatchedPostnlShippingMethods($matchedMethods);
+        }
 
         return $this;
     }
@@ -191,6 +221,9 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
             case 'table':
                 $shippingMethod = $carrier . '_' . self::POSTNL_TABLERATE_METHOD;
                 break;
+            case 'matrix':
+                $shippingMethod = $carrier . '_' . self::POSTNL_MATRIX_METHOD;
+                break;
             default:
                 throw new TIG_PostNL_Exception(
                     $this->__('Invalid rate type requested: %s', $rateType),
@@ -200,6 +233,99 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
 
         Mage::register('current_postnl_shipping_method', $shippingMethod);
         return $shippingMethod;
+    }
+
+    /**
+     * Get a shipping rate for a parcel only.
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return Mage_Shipping_Model_Rate_Result|false
+     */
+    public function getParcelShippingRate(Mage_Sales_Model_Quote $quote)
+    {
+        $registryKey = 'postnl_parcel_shipping_rate_quote_id_' . $quote->getId();
+        if (Mage::registry($registryKey) !== null) {
+            return Mage::registry($registryKey);
+        }
+
+        $shippingAddress = $quote->getShippingAddress();
+        if (!$shippingAddress) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        $store = $quote->getStore();
+
+        /** @var $request Mage_Shipping_Model_Rate_Request */
+        $request = Mage::getModel('shipping/rate_request');
+        $request->setAllItems($shippingAddress->getAllItems());
+        $request->setDestCountryId($shippingAddress->getCountryId());
+        $request->setDestRegionId($shippingAddress->getRegionId());
+        $request->setDestRegionCode($shippingAddress->getRegionCode());
+
+        /**
+         * need to call getStreet with -1
+         * to get data in string instead of array
+         */
+        $request->setDestStreet($shippingAddress->getStreet($shippingAddress::DEFAULT_DEST_STREET));
+        $request->setDestCity($shippingAddress->getCity());
+        $request->setDestPostcode($shippingAddress->getPostcode());
+        $request->setPackageValue($shippingAddress->getBaseSubtotal());
+        $packageValueWithDiscount = $shippingAddress->getBaseSubtotalWithDiscount();
+        $request->setPackageValueWithDiscount($packageValueWithDiscount);
+        $request->setPackageWeight($shippingAddress->getWeight());
+        $request->setPackageQty($shippingAddress->getItemQty());
+
+        /**
+         * Need for shipping methods that use insurance based on price of physical products
+         */
+        $packagePhysicalValue = $shippingAddress->getBaseVirtualAmount();
+        $request->setPackagePhysicalValue($packagePhysicalValue);
+
+        $request->setFreeMethodWeight($shippingAddress->getFreeMethodWeight());
+
+        $request->setStoreId($store->getId());
+        $request->setWebsiteId($store->getWebsiteId());
+        $request->setFreeShipping($shippingAddress->getFreeShipping());
+        /**
+         * Currencies need to convert in free shipping
+         */
+        $request->setBaseCurrency($store->getBaseCurrency());
+        $request->setPackageCurrency($store->getCurrentCurrency());
+        $request->setLimitCarrier($shippingAddress->getLimitCarrier());
+
+        $request->setBaseSubtotalInclTax(
+            $shippingAddress->getBaseSubtotalInclTax() + $shippingAddress->getBaseExtraTaxAmount()
+        );
+        $request->setParcelType('regular');
+
+        $rawResult = Mage::getResourceModel('postnl_carrier/matrixrate')->getRate($request);
+        if (!$rawResult) {
+            Mage::register($registryKey, false);
+            return false;
+        }
+
+        /**
+         * Convert the raw result from the database to a shipping rate result object.
+         */
+        $carrier = Mage::getModel('postnl_carrier/postnl');
+        $result  = Mage::getModel('shipping/rate_result');
+        $method  = Mage::getModel('shipping/rate_result_method');
+
+        $method->setCarrier('postnl');
+        $method->setCarrierTitle($carrier->getConfigData('title'));
+
+        $method->setMethod('flatrate');
+        $method->setMethodTitle($carrier->getConfigData('name'));
+
+        $method->setPrice($rawResult['price']);
+        $method->setCost(0);
+
+        $result->append($method);
+
+        Mage::register($registryKey, $result);
+        return $result;
     }
 
     /**
@@ -245,27 +371,36 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
     }
 
     /**
-     * Constructs a PostNL track & trace url based on a barcode and the destination of the package (country and zipcode)
+     * Constructs a PostNL track & trace url based on a barcode and the destination of the package (country and
+     * zipcode).
      *
-     * @param string $barcode
-     * @param mixed $destination An array or object containing the shipment's destination data
-     * @param boolean | string $lang
-     * @param boolean $forceNl
+     * @param string              $barcode
+     * @param array|Varien_Object $destination An array or object containing the shipment's destination data.
+     * @param boolean|string      $lang
+     * @param boolean             $forceNl
      *
      * @return string
      */
-    public function getBarcodeUrl($barcode, $destination = false, $lang = false, $forceNl = false)
+    public function getBarcodeUrl($barcode, $destination, $lang = false, $forceNl = false)
     {
         $countryCode = null;
         $postcode    = null;
         if (is_array($destination)) {
+            if (!isset($destination['countryCode']) || !isset($destination['postcode'])) {
+                throw new InvalidArgumentException("Destination must contain the 'countryCode' and 'postcode' keys.");
+            }
+
             $countryCode = $destination['countryCode'];
             $postcode    = $destination['postcode'];
-        }
+        } elseif (is_object($destination) && $destination instanceof Varien_Object) {
+            if (!$destination->getCountry() || !$destination->getPostcode()) {
+                throw new InvalidArgumentException('Destination must have a country and a postcode.');
+            }
 
-        if (is_object($destination) && $destination instanceof Varien_Object) {
             $countryCode = $destination->getCountry();
             $postcode    = str_replace(' ', '', $destination->getPostcode());
+        } else {
+            throw new InvalidArgumentException('Destination must be an array or an instance of Varien_Object.');
         }
 
         /**
@@ -276,7 +411,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
                 && $countryCode == 'NL'
             )
         ) {
-            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_NL_BASE_URL
+            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_NL_BASE_URL_XPATH)
                         . '&b=' . $barcode;
             /**
              * For dutch shipments add the postcode. For international shipments add an 'international' flag
@@ -301,7 +436,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
                 || $countryCode == 'GB'
             )
         ) {
-            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_GB_BASE_URL
+            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_GB_BASE_URL_XPATH)
                         . '&B=' . $barcode
                         . '&D=GB'
                         . '&lang=en';
@@ -310,7 +445,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         }
 
         if (isset($countryCode) && $countryCode == 'DE') {
-            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_DE_BASE_URL
+            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_DE_BASE_URL_XPATH)
                         . '&B=' . $barcode
                         . '&D=DE'
                         . '&lang=de';
@@ -319,7 +454,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         }
 
         if (isset($countryCode) && $countryCode == 'FR') {
-            $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_FR_BASE_URL
+            $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_FR_BASE_URL_XPATH)
                         . '&B=' . $barcode
                         . '&D=FR'
                         . '&lang=fr';
@@ -330,7 +465,7 @@ class TIG_PostNL_Helper_Carrier extends TIG_PostNL_Helper_Data
         /**
          * Get a general track & trace URL for all other destinations
          */
-        $barcodeUrl = self::POSTNL_TRACK_AND_TRACE_INT_BASE_URL
+        $barcodeUrl = Mage::getStoreConfig(self::POSTNL_TRACK_AND_TRACE_INT_BASE_URL_XPATH)
                     . '&B=' . $barcode
                     . '&I=true';
 

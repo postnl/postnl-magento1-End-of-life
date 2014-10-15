@@ -40,58 +40,93 @@
 <?php $_helper = Mage::helper('postnl'); ?>
 <?php $_address = Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress(); ?>
 <?php $_canUsePakjeGemakExpress = Mage::helper('postnl/deliveryOptions')->canUsePakjeGemakExpress(); ?>
-<div id="postnl_add_location" style="display:none;">
-    <div class="popup-overlay">
-        <div class="popup-window">
-            <div class="popup-header">
-                <h2><?php echo $_helper->__('Select pickup location'); ?></h2>
-                <div class="search-location">
-                    <input type="text" class="input-text" name="test" value="<?php echo $_address->getPostcode(); ?>" id="search_field" placeholder="<?php echo $_helper->__('Search by zipcode, address or city'); ?>"/>
-                    <button type="button" class="button btn-search" id="search_button"><span><span><?php echo $_helper->__('Search'); ?></span></span></button>
-                    <ul class="location-options">
-                        <li <?php if (!$_canUsePakjeGemakExpress): ?>style="display:none;"<?php endif; ?>>
-                            <a id="early-filter" class="location-option-checkbox"><?php echo $_helper->__('early pickup');?></a>
-                            <div id="early_filter_tooltip" class="postnl-tooltip">
-                                <div><?php echo $_helper->__('Select this checkbox to only show post office locations that are open as early as 8:30 A.M.'); ?></div>
-                            </div>
-                        </li>
-                        <li>
-                            <a id="evening-filter" class="location-option-checkbox"><?php echo $_helper->__('opened in the evening');?></a>
-                            <div id="evening_filter_tooltip" class="postnl-tooltip">
-                                <div><?php echo $_helper->__('Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.'); ?></div>
-                            </div>
-                        </li>
-                    </ul>
-                    <em id="search_error_message" class="no-results" style="display:none;"><?php echo $_helper->__('The address you searched for was not found. Please try again.'); ?></em>
-                </div>
-                <a title="<?php echo $_helper->__('Close'); ?>" id="close_popup" class="btn-close"><?php echo $_helper->__('Close'); ?></a>
-            </div>
-            <div class="popup-map" id="map-div"></div>
-
-            <div class="popup-content">
-                <h2><?php echo $_helper->__('Pickup locations found'); ?><span id="locations_loader" style="display:none;"><?php echo $_helper->__('Loading...'); ?></span></h2>
-
-                <div id="scrollbar_container">
-                    <div id="scrollbar_track">
-                        <div id="scrollbar_handle"></div>
+<div id="postnl_add_location_container" style="display:none;">
+    <div id="postnl_add_location">
+        <div class="popup-overlay">
+            <div class="popup-window">
+                <div class="popup-header">
+                    <h2><?php echo $_helper->__('Select pickup location'); ?></h2>
+                    <div class="search-location">
+                        <input type="text" class="input-text" name="" value="<?php echo $_address->getPostcode(); ?>" id="search_field" placeholder="<?php echo $_helper->__('Search by zipcode, address or city'); ?>"/>
+                        <button type="button" class="button btn-search" id="search_button"><span><span><?php echo $_helper->__('Search'); ?></span></span></button>
+                        <ul class="location-options">
+                            <li <?php if (!$_canUsePakjeGemakExpress): ?>style="display:none;"<?php endif; ?>>
+                                <a id="early-filter" class="location-option-checkbox"><?php echo $_helper->__('early pickup');?></a>
+                                <div id="early_filter_tooltip" class="postnl-tooltip">
+                                    <div><?php echo $_helper->__('Select this checkbox to only show post office locations that are open as early as 8:30 A.M.'); ?></div>
+                                </div>
+                            </li>
+                            <li>
+                                <a id="evening-filter" class="location-option-checkbox"><?php echo $_helper->__('open in the evening');?></a>
+                                <div id="evening_filter_tooltip" class="postnl-tooltip">
+                                    <div><?php echo $_helper->__('Select this checkbox to only show post office locations that are open after 7:00 P.M. on the next possible delivery date.'); ?></div>
+                                </div>
+                            </li>
+                        </ul>
+                        <em id="search_error_message" class="no-results" style="display:none;"><?php echo $_helper->__('The address you searched for was not found. Please try again.'); ?></em>
                     </div>
-                    <ul id="scrollbar_content" class="location-list">
-                        <li id="no_locations_error" class="location-error-msg" style="display:none;"><?php echo $_helper->__('We could not find any locations matching your filters. Please unselect any filters or try again at a different location.'); ?></li>
-                    </ul>
+                    <a title="<?php echo $_helper->__('Close'); ?>" id="close_popup" class="btn-close"><?php echo $_helper->__('Close'); ?></a>
                 </div>
-                <div class="location-details" id="location-info-window" style="display:none;">
-                    <a id="location-details-close" title="<?php echo $_helper->__('Close'); ?>" class="btn-close">
-                        <?php echo Mage::helper('postnl')->__('Close'); ?>
-                    </a>
-                </div>
-                <div class="button-set">
-                    <button type="button" class="button btn-save next disabled" disabled="disabled" id="location_save">
-                        <span>
-                            <span><?php echo $_helper->__('Save'); ?></span>
-                        </span>
-                    </button>
+                <div class="popup-map" id="map-div"></div>
+
+                <div class="popup-content">
+                    <h2><?php echo $_helper->__('Pickup locations found'); ?><span id="locations_loader" style="display:none;"><?php echo $_helper->__('Loading...'); ?></span></h2>
+
+                    <div id="scrollbar_container">
+                        <div id="scrollbar_track">
+                            <div id="scrollbar_handle"></div>
+                        </div>
+                        <ul id="scrollbar_content" class="location-list">
+                            <li id="no_locations_error" class="location-error-msg" style="display:none;"><?php echo $_helper->__('We could not find any locations matching your filters. Please unselect any filters or try again at a different location.'); ?></li>
+                        </ul>
+                    </div>
+                    <div class="location-details" id="location-info-window" style="display:none;">
+                        <a id="location-details-close" title="<?php echo $_helper->__('Close'); ?>" class="btn-close">
+                            <?php echo Mage::helper('postnl')->__('Close'); ?>
+                        </a>
+                    </div>
+                    <div class="button-set">
+                        <button type="button" class="button btn-save next disabled" disabled="disabled" id="location_save">
+                            <span>
+                                <span><?php echo $_helper->__('Save'); ?></span>
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div id="postnl_add_location_responsive" class="responsive-add-location">
+        <h3><?php echo $_helper->__('Choose a different pickup location'); ?></h3>
+
+        <div class="responsive-location-search">
+            <div class="search-form">
+                <input type="text" class="postnl-input" name="" id="responsive_search_field" value="<?php echo $_address->getPostcode(); ?>" placeholder="<?php echo $_helper->__('Search by zipcode, address or city'); ?>" />
+            </div>
+            <div class="actions">
+                <button class="postnl-button" id="responsive_search_button"><?php echo $_helper->__('Search'); ?></button>
+            </div>
+        </div>
+
+        <div class="responsive-location-results">
+            <div class="heading">
+                <h3><?php echo $_helper->__('Nearest PostNL pickup points'); ?></h3>
+                <ul class="location-filters">
+                    <li class="label">
+                        <strong><?php echo $_helper->__('Filter');?></strong>
+                    </li>
+                    <li class="filter">
+                        <a class="input-box" id="early-filter-responsive"><?php echo $_helper->__('early pickup');?></a>
+                    </li>
+                    <li class="filter">
+                        <a class="input-box" id="evening-filter-responsive"><?php echo $_helper->__('open in the evening');?></a>
+                    </li>
+                </ul>
+            </div>
+            <div id="responsive_locations_loader" class="postnl-loader" style="display:none;"></div>
+            <ul class="list" id="responsive_location_list">
+                <li id="no_locations_error_responsive" class="location-error-msg" style="display:none;"><?php echo $_helper->__('We could not find any locations matching your filters. Please unselect any filters or try again at a different location.'); ?></li>
+            </ul>
         </div>
     </div>
 </div>

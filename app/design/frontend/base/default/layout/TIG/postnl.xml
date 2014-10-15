@@ -26,15 +26,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 -->
@@ -163,6 +163,27 @@
         </reference>
     </customer_address_form>
 
+    <checkout_multishipping_customer_address>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/ajax.js</file>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <file>js/TIG/PostNL/postcodecheck.js</file>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/postcodecheck.css</file>
+            </action>
+            <block type="core/template" name="postnl_validation" template="TIG/PostNL/address_validation/validate.phtml"/>
+        </reference>
+        <reference name="customer_address_edit">
+            <block type="core/template" name="postnl_postcodecheck" template="TIG/PostNL/address_validation/customer/address/postcode_check.phtml"/>
+        </reference>
+    </checkout_multishipping_customer_address>
+
     <!--  DELIVERY OPTIONS, POSTCODE CHECK AND MIJNPAKKET LOGIN  -->
 
     <checkout_onepage_index>
@@ -259,7 +280,7 @@
             </block>
         </reference>
 
-        <reference name="conestepcheckout.checkout">
+        <reference name="onestepcheckout.checkout">
             <block type="postnl_mijnpakket/loginButton" name="postnl_mijnpakket_login" template="TIG/PostNL/mijnpakket/onestepcheckout/login_button.phtml" output="toHtml"/>
         </reference>
 

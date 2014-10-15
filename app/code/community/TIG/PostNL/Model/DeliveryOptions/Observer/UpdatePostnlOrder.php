@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
@@ -73,11 +73,16 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * If this order is not being shipped to the Netherlands or was not placed using PostNL, remove any PakjeGemak
          * addresses that may have been saved and delete the PostNL order.
          */
-        $shippingCountry = $order->getShippingAddress()->getCountryId();
-        if ($shippingCountry != 'NL' || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+        $shippingAddress = $order->getShippingAddress();
+        if (!$shippingAddress
+            || $shippingAddress->getCountryId() != 'NL'
+            || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
+        ) {
             $this->_removePakjeGemakAddress($order);
 
-            $postnlOrder->delete();
+            if ($postnlOrder && $postnlOrder->getId()) {
+                $postnlOrder->delete();
+            }
             return $this;
         }
 
@@ -106,7 +111,6 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
             /**
              * Calculate the correct fee based on the order type.
              */
-            $type = $postnlOrder->getType();
             if ($type == 'PGE') {
                 $fee = Mage::helper('postnl/deliveryOptions')
                            ->getExpressFee(false, $includingTax, false);
@@ -200,6 +204,73 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_UpdatePostnlOrder
          * @since v1.2.1
          */
         $orderAddress->save();
+
+        return $this;
+    }
+
+    /**
+     * @param Varien_Event_Observer $observer
+     *
+     * @return $this
+     *
+     * @event controller_action_postdispatch_checkout_onepage_saveShippingMethod
+     *        |controller_action_predispatch_onestepcheckout_ajax_set_methods_separate
+     *
+     * @observer checkout_shipping_method_save_options
+     *
+     * @todo Move this functionality to the saveSelectedOption AJAX call instead.
+     */
+    public function saveOptions(Varien_Event_Observer $observer)
+    {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        /**
+         * Get the PostNL order associated with this quote.
+         *
+         * @var TIG_PostNL_Model_Core_Order $postnlOrder
+         */
+        $postnlOrder = Mage::getModel('postnl_core/order')->load($quote->getId(), 'quote_id');
+        if (!$postnlOrder->getId()) {
+            $postnlOrder->setQuoteId($quote->getId());
+        }
+
+        /**
+         * Get all shipping methods that are considered to be PostNL.
+         */
+        $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
+
+        /**
+         * If this order is not being shipped to the Netherlands or was not placed using PostNL, remove any options that
+         * may have been saved.
+         */
+        $shippingAddress = $quote->getShippingAddress();
+        if (!$shippingAddress
+            || $shippingAddress->getCountryId() != 'NL'
+            || !Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)
+        ) {
+            $postnlOrder->setOptions(false)
+                        ->save();
+
+            return $this;
+        }
+
+        /**
+         * @var Mage_Core_Controller_Varien_Front $controller
+         */
+        $controller = $observer->getControllerAction();
+        $options    = $controller->getRequest()->getParam('s_method_' . $shippingMethod, array());
+        if (empty($options['postnl'])) {
+            $options = $controller->getRequest()->getParam($shippingMethod, array());
+        }
+
+        $postnlOptions = false;
+        if (isset($options['postnl'])) {
+            $postnlOptions = $options['postnl'];
+        }
+
+        $postnlOrder->setOptions($postnlOptions)
+                    ->validateOptions()
+                    ->save();
 
         return $this;
     }
