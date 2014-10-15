@@ -51,3 +51,5 @@ button.postnl-button { width:280px; margin-right:5px; }
 #postnl_advanced { border-top:0; }
 #row_postnl_cif_sender_address_region,
 #postnl_cif_sender_address_return_region { display:none; }
+.wrapper-radio { margin-bottom:3px; }
+.wrapper-radio input { margin-right:10px; }
