@@ -18,7 +18,7 @@
 .postnl-container strong { font-weight:bold; }
 
 .postnl-container a { color:#333334; text-decoration:none; cursor:pointer; }
-.postnl-container a:hover { text-decoration:underline; }
+.postnl-container a:hover { color:#333334; text-decoration:underline; }
 .postnl-container :focus{ outline:0; }
 
 /* Layout */
@@ -55,7 +55,7 @@
 /* ======================================================================================= */
 
 /* Option List ========================================================================== */
-.postnl-container .option-list { margin-bottom:6px; position:relative; }
+.postnl-container .option-list { margin-bottom:6px; position:relative; font-size:11px; }
 .postnl-container .option-list .bkg { display:block; padding:0 0 0 8px; background-position:0 0; }
 .postnl-container .option-list .bkg .bkg { padding:0 8px 0 0; background-position:100% 0; }
 
@@ -106,9 +106,20 @@
 .postnl-container .tooltip-container:hover .tooltip { display:block; }
 .postnl-container .tooltip-container:hover span { width: 31px; background-position: 5px -41px; }
 
-.postnl-container .tooltip-content .business-hours { line-height:17px; }
+.postnl-container .tooltip-content .business-hours { font-size:11px; line-height:17px; }
 .postnl-container .tooltip-content .business-hours tbody th { width:36px; }
 
+/* Extra options */
+.postnl-container .extras .location .bkg { background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_extras.gif) 0 0 no-repeat; }
+.postnl-container .extras .location .bkg .bkg { background-position:100% 0; }
+
+.postnl-container .extras .option { cursor:default; }
+.postnl-container .extras .option .bkg { background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_extras.gif) 0 -24px no-repeat;  }
+.postnl-container .extras .option .bkg .bkg { background-position:100% -24px; }
+.postnl-container .extras .option .content { padding:13px 0; }
+.postnl-container .extras .option input { display:inline-block; margin:0 !important; float:none !important; }
+.postnl-container .extras .option label { display:inline-block; font:11px/10px Arial, sans-serif; color:#333334 !important; text-transform:lowercase; padding:0 !important; background:none !important; margin-left:4px; }
+.postnl-container .extras .option label .price { color:#f05a22; font-weight:normal !important; }
 /* ======================================================================================= */
 
 /* Pop-up =================================================================== */
@@ -241,4 +252,10 @@ cufon { overflow:hidden !important; cursor:text; }
 .button cufon { cursor:pointer; }
 cufon canvas { user-select:all; -moz-user-select:all; -webkit-user-select:all; }
 cufon[alt=" "] { display:none !important; width:0 !important; height:0 !important; }
+
+/* Hide Responsive-only Elements */
+.responsive-protector p.rate,
+.responsive-switch-wrapper,
+.responsive-tooltip,
+.responsive-tooltip-open { display:none; }
 /* ======================================================================================= */

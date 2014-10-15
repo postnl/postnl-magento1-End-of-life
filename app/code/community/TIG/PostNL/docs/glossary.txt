@@ -1,0 +1,13 @@
+- Buspakje: a shipment that can fit through a standard-size Dutch mailslot. Generally cheaper than a regular shipment.
+- Buspakje extra: a buspakje shipment that can be tracked using Track & Trace.
+- Package shipment: a regular shipment that is delivered by ringing the doorbell.
+- Avond shipment: a shipment that is delivered in the evening, rather than during the day. Evening shipping is chosen byt he customer as a delivery option in the frontend.
+- PakjeGemak: a PostNL service for delivering shipments to a post office, rather than someone's home. PakjeGemak is chosen by the customer as a delivery option in the frontend.
+- 'custom barcode': normally barcodes are semi-randomly generated for each shipment. Certain shipment types, however have a custom, static barcode. These shipments do not need to be confirmed. Currently only buspakje shipments have a custom barcode.
+- Confirming: this action needs to be performed before handing the shipment over to PostNL. It lets PostNL know abou the shipment and it's details.
+- Label printing: this action is required to retrieve PostNL's shipping label that can then be placed on the shipment.
+- Product options: same as shipping options.
+- Shipping options: these are various options that may be used to ship a PostNL shipment. For example, a possible option is to require a signature on delivery or to only deliver the shipment to the stated address and not the neighbours.
+- Delivery options: these are various options that the customer may choose during checkout.
+- Product code: this is the internal code used by PostNL to determine the selected shipping options.
+- Standard shipment: this term is sometimes used instead of 'domestic' shipment.

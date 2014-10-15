@@ -25,20 +25,22 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean hasPostnlShipment()
+ * @method boolean hasPostnlOrder()
  *
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setPostnlShipment(TIG_PostNL_Model_Core_Shipment $value)
+ * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setPostnlOrder(TIG_PostNL_Model_Core_Order $value)
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setIsCod(boolean $value)
  * @method TIG_PostNL_Block_Adminhtml_Sales_Order_View_DeliveryOptions setSubType(string $value)
  *
@@ -97,6 +99,23 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
 
         $this->setPostnlShipment($postnlShipment);
         return $postnlShipment;
+    }
+
+    /**
+     * @return TIG_PostNL_Model_Core_Order|false
+     */
+    public function getPostnlOrder()
+    {
+        if ($this->hasPostnlOrder()) {
+            return $this->_getData('postnl_order');
+        }
+
+        $postnlShipment = $this->getPostnlShipment();
+
+        $postnlOrder = $postnlShipment->getPostnlOrder();
+
+        $this->setPostnlOrder($postnlOrder);
+        return $postnlOrder;
     }
 
     /**
@@ -242,5 +261,52 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
         );
 
         return $url;
+    }
+
+    /**
+     * Check if the customer chose any additional options during checkout.
+     *
+     * @return bool
+     */
+    public function hasExtraOptions()
+    {
+        $postnlOrder = $this->getPostnlOrder();
+        if (!$postnlOrder || !$postnlOrder->getId()) {
+            return false;
+        }
+
+        $hasOptions = $postnlOrder->hasOptions();
+        return $hasOptions;
+    }
+
+    /**
+     * Get additional options the customer chose during checkout.
+     *
+     * @return array
+     */
+    public function getFormattedExtraOptions()
+    {
+        $postnlOptions = $this->getPostnlOrder();
+
+        $options = $postnlOptions->getOptions();
+        if (!$options) {
+            return array();
+        }
+
+        $formattedOptions = array();
+        foreach ($options as $option => $value) {
+            if (!$value) {
+                continue;
+            }
+
+            switch ($option) {
+                case 'only_stated_address':
+                    $formattedOptions[] = $this->__('deliver to stated address only');
+                    break;
+                //no default
+            }
+        }
+
+        return $formattedOptions;
     }
 }

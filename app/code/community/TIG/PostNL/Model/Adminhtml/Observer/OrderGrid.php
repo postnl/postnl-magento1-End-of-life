@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Observer to edit the sales > order grid
@@ -272,6 +272,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                 'is_pakje_gemak'       => 'postnl_order.is_pakje_gemak',
                 'is_pakketautomaat'    => 'postnl_order.is_pakketautomaat',
                 'delivery_option_type' => 'postnl_order.type',
+                'options'              => 'postnl_order.options',
             )
         );
 
@@ -513,7 +514,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
 
         $class = $this->_getConfirmDateClass($value, $row, $column);
 
-        return '<span class="'.$class.'"><span>'.$value.'</span></span>';
+        $origValue = $row->getData($column->getIndex());
+        $formattedDate = Mage::helper('core')->formatDate($origValue, 'full', false);
+
+        return '<span class="'.$class.'" title="' . $formattedDate . '"><span>'.$value.'</span></span>';
     }
 
     /**
@@ -858,11 +862,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
         $showOptions = Mage::getStoreConfig(self::XPATH_SHOW_OPTIONS, $storeId);
 
         if ($showOptions) {
-            $optionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
+            $optionLabel = $helper->__('Product options');
+            $options     = $this->_getProductOptions();
 
             /**
              * Add another dropdown containing the possible product options.
-             * Mage_Adminhtml_Block_Widget_Grid_Massaction_Item_Additional_Default
              */
             $config = array(
                 'postnl_use_default' => array(
@@ -872,163 +876,6 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
                     'value'   => 1,
                     'checked' => 'checked',
                 ),
-                'postnl_domestic_options' => array(
-                    'name'   => 'product_options[domestic_options]',
-                    'type'   => 'select',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                            'group' => 'standard_options',
-                            'isCod' => false,
-                        ),
-                        false,
-                        true
-                    ),
-                ),
-                'postnl_avond_options' => array(
-                    'name'   => 'product_options[avond_options]',
-                    'type'   => 'select',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                            'group'   => 'standard_options',
-                            'isCod'   => false,
-                            'isAvond' => true),
-                        false,
-                        true
-                    ),
-                ),
-                'postnl_pg_options' => array(
-                    'name'   => 'product_options[pg_options]',
-                    'type'   => 'select',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                            'group' => 'pakjegemak_options',
-                            'isCod' => false,
-                        ),
-                        false,
-                        true
-                    ),
-                ),
-                'postnl_pge_options' => array(
-                    'name'   => 'product_options[pge_options]',
-                    'type'   => 'select',
-                    'class'  => 'required-entry',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                            'group' => 'pakjegemak_options',
-                            'isCod' => false,
-                            'isPge' => true,
-                        ),
-                        false,
-                        true
-                    ),
-                ),
-                'postnl_eps_options' => array(
-                    'name'   => 'product_options[eps_options]',
-                    'type'   => 'select',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                            'group' => 'eu_options',
-                        ),
-                        false,
-                        true
-                    ),
-                ),
-                'postnl_globalpack_options' => array(
-                    'name'   => 'product_options[globalpack_options]',
-                    'type'   => 'select',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                            'group' => 'global_options',
-                        ),
-                        false,
-                        true
-                    ),
-                ),
-                'postnl_domestic_cod_options' => array(
-                    'name'   => 'product_options[domestic_cod_options]',
-                    'type'   => 'select',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                            'group' => 'standard_options',
-                            'isCod' => true,
-                        ),
-                        false,
-                        true
-                    ),
-                ),
-                'postnl_avond_cod_options' => array(
-                    'name'   => 'product_options[avond_cod_options]',
-                    'type'   => 'select',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                            'group'   => 'standard_options',
-                            'isCod'   => true,
-                            'isAvond' => true,
-                        ),
-                        false,
-                        true
-                    ),
-                ),
-                'postnl_pg_cod_options' => array(
-                    'name'   => 'product_options[pg_cod_options]',
-                    'type'   => 'select',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                            'group' => 'pakjegemak_options',
-                            'isCod' => true,
-                        ),
-                        false,
-                        true
-                    ),
-                ),
-                'postnl_pge_cod_options' => array(
-                    'name'   => 'product_options[pge_cod_options]',
-                    'type'   => 'select',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                            'group' => 'pakjegemak_options',
-                            'isCod' => true,
-                            'isPge' => true,
-                        ),
-                        false,
-                        true
-                    ),
-                ),
-                'postnl_pa_options' => array(
-                    'name'   => 'product_options[pa_options]',
-                    'type'   => 'select',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                         'group' => 'pakketautomaat_options',
-                        ),
-                        false,
-                        true
-                    ),
-                ),
-                'postnl_buspakje_options' => array(
-                    'name'   => 'product_options[buspakje_options]',
-                    'type'   => 'select',
-                    'class'  => 'required-entry',
-                    'label'  => $helper->__('Product options'),
-                    'values' => $optionsModel->getOptions(
-                        array(
-                            'group' => 'buspakje_options',
-                        ),
-                        false,
-                        true
-                    ),
-                ),
             );
 
             $buspakjeCalculationMode = Mage::getStoreConfig(self::XPATH_BUSPAKJE_CALCULATION_MODE, $storeId);
@@ -1036,22 +883,122 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             if ($helper->canUseBuspakje()
                 && $buspakjeCalculationMode == 'manual'
                 && $showBuspakjeOptions
+                && !empty($options['postnl_buspakje_options'])
             ) {
-                $buspakjeConfig = array(
-                    'postnl_is_buspakje' => array(
-                        'name'    => 'product_options[is_buspakje]',
-                        'type'    => 'postnl_checkbox',
-                        'label'   => $helper->__('Is letter box parcel'),
-                        'value'   => 1,
-                    ),
+                $config['postnl_is_buspakje'] = array(
+                    'name'    => 'product_options[is_buspakje]',
+                    'type'    => 'postnl_checkbox',
+                    'label'   => $helper->__('Is letter box parcel'),
+                    'value'   => 1,
                 );
+            }
 
-                /**
-                 * Insert the is_buspakje checkbox at the second position in the config array.
-                 */
-                $config = array_slice($config, 0, 1, true)
-                        + $buspakjeConfig
-                        + array_slice($config, 1, count($config) - 1, true);
+            if (!empty($options['postnl_domestic_options'])) {
+                $config['postnl_domestic_options'] = array(
+                    'name'   => 'product_options[domestic_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_domestic_options'],
+                );
+            }
+
+            if (!empty($options['postnl_avond_options'])) {
+                $config['postnl_avond_options'] = array(
+                    'name'   => 'product_options[avond_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_avond_options'],
+                );
+            }
+
+            if (!empty($options['postnl_pg_options'])) {
+                $config['postnl_pg_options'] = array(
+                    'name'   => 'product_options[pg_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_pg_options'],
+                );
+            }
+
+            if (!empty($options['postnl_pge_options'])) {
+                $config['postnl_pge_options'] = array(
+                    'name'   => 'product_options[pge_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_pge_options'],
+                );
+            }
+
+            if (!empty($options['postnl_eps_options'])) {
+                $config['postnl_eps_options'] = array(
+                    'name'   => 'product_options[eps_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_eps_options'],
+                );
+            }
+
+            if (!empty($options['postnl_globalpack_options'])) {
+                $config['postnl_globalpack_options'] = array(
+                    'name'   => 'product_options[globalpack_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_globalpack_options'],
+                );
+            }
+
+            if (!empty($options['postnl_domestic_cod_options'])) {
+                $config['postnl_domestic_cod_options'] = array(
+                    'name'   => 'product_options[domestic_cod_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_domestic_cod_options'],
+                );
+            }
+
+            if (!empty($options['postnl_avond_cod_options'])) {
+                $config['postnl_avond_cod_options'] = array(
+                    'name'   => 'product_options[avond_cod_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_avond_cod_options'],
+                );
+            }
+
+            if (!empty($options['postnl_pg_cod_options'])) {
+                $config['postnl_pg_cod_options'] = array(
+                    'name'   => 'product_options[pg_cod_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_pg_cod_options'],
+                );
+            }
+
+            if (!empty($options['postnl_pge_cod_options'])) {
+                $config['postnl_pge_cod_options'] = array(
+                    'name'   => 'product_options[pge_cod_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_pge_cod_options'],
+                );
+            }
+
+            if (!empty($options['postnl_pa_options'])) {
+                $config['postnl_pa_options'] = array(
+                    'name'   => 'product_options[pa_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_pa_options'],
+                );
+            }
+
+            if (!empty($options['postnl_buspakje_options'])) {
+                $config['postnl_buspakje_options'] = array(
+                    'name'   => 'product_options[buspakje_options]',
+                    'type'   => 'select',
+                    'label'  => $optionLabel,
+                    'values' => $options['postnl_buspakje_options'],
+                );
             }
 
             /**
@@ -1060,10 +1007,119 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             $block = Mage::app()
                          ->getLayout()
                          ->createBlock('postnl_adminhtml/widget_grid_massaction_item_additional_productOptions');
+            
             $massActionData['additional'] = $block->createFromConfiguration($config);
         }
 
         return $massActionData;
+    }
+
+    /**
+     * @return array
+     */
+    protected function _getProductOptions()
+    {
+        $optionsModel = Mage::getModel('postnl_core/system_config_source_allProductOptions');
+        $options = array(
+            'postnl_domestic_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'standard_options',
+                    'isCod' => false,
+                ),
+                false,
+                true
+            ),
+            'postnl_avond_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'standard_options',
+                    'isCod' => false,
+                ),
+                false,
+                true
+            ),
+            'postnl_pg_options' => $optionsModel->getOptions(
+                array(
+                    'group'   => 'standard_options',
+                    'isCod'   => false,
+                    'isAvond' => true,
+                ),
+                false,
+                true
+            ),
+            'postnl_pge_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'pakjegemak_options',
+                    'isCod' => false,
+                    'isPge' => true,
+                ),
+                false,
+                true
+            ),
+            'postnl_eps_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'eu_options',
+                ),
+                false,
+                true
+            ),
+            'postnl_globalpack_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'global_options',
+                ),
+                false,
+                true
+            ),
+            'postnl_domestic_cod_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'standard_options',
+                    'isCod' => true,
+                ),
+                false,
+                true
+            ),
+            'postnl_avond_cod_options' => $optionsModel->getOptions(
+                array(
+                    'group'   => 'standard_options',
+                    'isCod'   => true,
+                    'isAvond' => true,
+                ),
+                false,
+                true
+            ),
+            'postnl_pg_cod_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'pakjegemak_options',
+                    'isCod' => true,
+                ),
+                false,
+                true
+            ),
+            'postnl_pge_cod_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'pakjegemak_options',
+                    'isCod' => true,
+                    'isPge' => true,
+                ),
+                false,
+                true
+            ),
+            'postnl_pa_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'pakketautomaat_options',
+                ),
+                false,
+                true
+            ),
+            'postnl_buspakje_options' => $optionsModel->getOptions(
+                array(
+                    'group' => 'buspakje_options',
+                ),
+                false,
+                true
+            )
+        );
+
+        return $options;
     }
 
     /**

@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * Class TIG_PostNL_Model_Core_Order
@@ -52,6 +52,7 @@
  * @method int                         getEntityId()
  * @method string                      getMobilePhoneNumber()
  * @method int                         getIsPakketautomaat()
+ * @method array|boolean               getUnserializedOptions()
  *
  * @method TIG_PostNL_Model_Core_Order setIsPakketautomaat(int $value)
  * @method TIG_PostNL_Model_Core_Order setEntityId(int $value)
@@ -69,10 +70,15 @@
  * @method TIG_PostNL_Model_Core_Order setIsActive(int $value)
  * @method TIG_PostNL_Model_Core_Order setConfirmDate(string $value)
  * @method TIG_PostNL_Model_Core_Order setPakjeGemakAddress(mixed $value)
+ * @method TIG_PostNL_Model_Core_Order setUnserializedOptions(array $value)
  *
  * @method boolean                     hasOrderId()
  * @method boolean                     hasQuoteId()
  * @method boolean                     hasPakjeGemakAddress()
+ * @method boolean                     hasConfirmDate()
+ * @method boolean                     hasDeliveryDate()
+ * @method boolean                     hasUnserializedOptions()
+ * @method boolean                     hasOptions()
  */
 class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
 {
@@ -91,9 +97,28 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
      */
     protected $_eventPrefix = 'postnl_order';
 
+    /**
+     * PostNL order types considered to be 'PakjeGemak';
+     *
+     * @var array
+     */
+    protected $_pakjeGemakTypes = array(
+        'PG',
+        'PGE',
+        'PA'
+    );
+
     public function _construct()
     {
         $this->_init('postnl_core/order');
+    }
+
+    /**
+     * @return array
+     */
+    public function getPakjeGemakTypes()
+    {
+        return $this->_pakjeGemakTypes;
     }
 
     /**
@@ -252,6 +277,52 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @return array|boolean
+     */
+    public function getOptions()
+    {
+        if ($this->hasUnserializedOptions()) {
+            return $this->getUnserializedOptions();
+        }
+
+        $options = $this->_getData('options');
+
+        if (!empty($options)) {
+            $options = unserialize($options);
+        }
+
+
+        $this->setUnserializedOptions($options);
+        return $options;
+    }
+
+    /**
+     * @param array|boolean|null $options
+     *
+     * @return $this
+     */
+    public function setOptions($options)
+    {
+
+        $this->setUnserializedOptions($options);
+
+        /**
+         * If the options are an empty array, remove the options instead. Otherwise, serialize the array before saving.
+         */
+        if (is_array($options)) {
+            if (empty($options)) {
+                $options = false;
+            } else {
+                $options = serialize($options);
+            }
+        }
+
+        $this->setData('options', $options);
+
+        return $this;
+    }
+
+    /**
      * @param Mage_Sales_Model_Order $order
      *
      * @return $this
@@ -261,6 +332,70 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
         $orderId = $order->getId();
 
         $this->load($orderId, 'order_id');
+        return $this;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return $this
+     */
+    public function loadByQuote(Mage_Sales_Model_Quote $quote)
+    {
+        $quoteId = $quote->getId();
+        $this->load($quoteId, 'quote_id');
+
+        return $this;
+    }
+
+    /**
+     * Check if this order is a PakjeGemak order.
+     *
+     * @return boolean
+     */
+    public function isPakjeGemak()
+    {
+        $type = $this->getType();
+        $pakjeGemakTypes = $this->getPakjeGemakTypes();
+
+        if (in_array($type, $pakjeGemakTypes)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Validate the chosen extra options. If an option is invalid, it will be unset.
+     *
+     * @return $this
+     */
+    public function validateOptions()
+    {
+        if (!$this->hasOptions()) {
+            return $this;
+        }
+
+        $options = $this->getOptions();
+        foreach ($options as $option => $value) {
+            if (!$value) {
+                continue;
+            }
+
+            switch ($option) {
+                case 'only_stated_address':
+                    if ($this->getType() == 'PG'
+                        || $this->getType() == 'PGE'
+                        || $this->getType() == 'PA'
+                    ) {
+                        unset($options[$option]);
+                    }
+                    break;
+                //no default
+            }
+        }
+
+        $this->setOptions($options);
         return $this;
     }
 

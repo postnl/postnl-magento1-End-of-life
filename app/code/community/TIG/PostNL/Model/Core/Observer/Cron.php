@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_Observer_Cron
@@ -52,6 +52,21 @@ class TIG_PostNL_Model_Core_Observer_Cron
      * XML path to setting that determines whether or not to send track and trace emails
      */
     const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
+
+    /**
+     * Xpath to the product attribute update data used by the product attribute update cron.
+     */
+    const XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA = 'postnl/general/product_attribute_update_data';
+
+    /**
+     * Cron expression definition for updating product attributes.
+     */
+    const UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH = 'crontab/jobs/postnl_update_product_attribute/schedule/cron_expr';
+
+    /**
+     * Maximum number of products to update per cron run.
+     */
+    const MAX_PRODUCTS_TO_UPDATE = 250;
 
     /**
      * Method to destroy temporary label files that have been stored for too long.
@@ -447,8 +462,12 @@ class TIG_PostNL_Model_Core_Observer_Cron
             return $this;
         }
 
+        /**
+         * @var $cifAbstractModelClassName TIG_PostNL_Model_Core_Cif_Abstract
+         */
+        $cifAbstractModelClassName = Mage::getConfig()->getModelClassName('postnl_core/cif_abstract');
         foreach ($errorNumbers as $errorNumber) {
-            if ($errorNumber != '13') { // Collo not found error
+            if ($errorNumber != $cifAbstractModelClassName::SHIPMENT_NOT_FOUND_ERROR_NUMBER) { // Collo not found error
                 $helper->logException($e);
                 return $this;
             }
@@ -468,7 +487,6 @@ class TIG_PostNL_Model_Core_Observer_Cron
             $yesterday->setTimestamp(Mage::getModel('core/date')->gmtTimestamp())
                       ->sub(new DateInterval('P1D'));
 
-            $now = Mage::getModel('core/date')->gmtTimestamp();
             $yesterday = $yesterday->getTimestamp();
 
             if ($confirmedAt > $yesterday) {
@@ -844,6 +862,133 @@ class TIG_PostNL_Model_Core_Observer_Cron
             $label->delete();
         }
         $helper->cronLog('RemoveOldLabels cron has finished.');
+
+        return $this;
+    }
+
+    /**
+     * Update products with newly added PostNL attributes. This cron will process 250 products per run.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     */
+    public function updateProductAttribute()
+    {
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Check if the PostNL module is active
+         */
+        if (!$helper->isEnabled()) {
+            return $this;
+        }
+
+        $helper->cronLog($helper->__('UpdateProductAttribute cron starting...'));
+
+        $data = Mage::getStoreConfig(self::XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA, Mage_Core_Model_App::ADMIN_STORE_ID);
+        if (!$data) {
+            $helper->cronLog($helper->__('No attribute data found. Exiting cron.'));
+            return $this;
+        }
+
+        $data = unserialize($data);
+        $currentAttributeData = current($data);
+
+        $helper->cronLog(
+            $helper->__('Updating product attribute data: %s', var_export($currentAttributeData, true))
+        );
+
+        /**
+         * Get all products that need to be updated.
+         */
+        $productCollection = Mage::getResourceModel('catalog/product_collection')
+                                 ->addStoreFilter(Mage_Core_Model_App::ADMIN_STORE_ID)
+                                 ->addFieldToFilter(
+                                     'type_id',
+                                     array(
+                                         'in' => $currentAttributeData[1]
+                                     )
+                                 );
+
+        foreach (array_keys($currentAttributeData[0]) as $attribute) {
+            $productCollection->addAttributeToSelect($attribute, 'left')
+                              ->addFieldToFilter($attribute, array('null' => true));
+        }
+
+        $productCollection->getSelect()->limit(self::MAX_PRODUCTS_TO_UPDATE);
+
+        /**
+         * If there are fewer than 250 products remaining, this will be the last time this cron is run.
+         */
+        $finalRun = false;
+        $allIds = $productCollection->getAllIds();
+        if (count($allIds) < self::MAX_PRODUCTS_TO_UPDATE) {
+            $finalRun = true;
+        }
+
+        $helper->cronLog($helper->__('Updating product IDs: %s', var_export($allIds, true)));
+
+        if (!empty($allIds)) {
+            try {
+                /**
+                 * Update the attributes of these products.
+                 */
+                Mage::getSingleton('catalog/product_action')
+                    ->updateAttributes(
+                        $allIds,
+                        $currentAttributeData[0],
+                        Mage_Core_Model_App::ADMIN_STORE_ID
+                    );
+            } catch (Exception $e) {
+                /**
+                 * If an error occurred not all products were processed, so the cron is not finished quite yet.
+                 */
+                $finalRun = false;
+                $helper->logException($e);
+            }
+        }
+
+        if ($finalRun) {
+            $helper->cronLog($helper->__('No products left to update.'));
+
+            /**
+             * Remove the processed attributes from the attribute data array.
+             */
+            array_shift($data);
+
+            if (!empty($data)) {
+                /**
+                 * If there is still data left, update the data for the next run.
+                 */
+                Mage::getConfig()->saveConfig(
+                    self::XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA,
+                    serialize($data),
+                    'default',
+                    Mage_Core_Model_App::ADMIN_STORE_ID
+                );
+            } else {
+                /**
+                 * If all attributes have been processed, remove the cron from the schedule.
+                 */
+                $helper->cronLog($helper->__('All attributes have been processed. Removing cron.'));
+
+                Mage::getConfig()->saveConfig(
+                    self::XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA,
+                    null,
+                    'default',
+                    Mage_Core_Model_App::ADMIN_STORE_ID
+                );
+
+                Mage::getModel('core/config_data')
+                    ->load(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH, 'path')
+                    ->setValue(null)
+                    ->setPath(self::UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH)
+                    ->save();
+            }
+        }
+
+        $helper->cronLog($helper->__('UpdateProductAttribute cron has finished.'));
 
         return $this;
     }

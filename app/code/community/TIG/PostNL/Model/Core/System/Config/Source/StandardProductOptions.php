@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
@@ -44,102 +44,116 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
      */
     protected $_options = array(
         array(
-            'value'        => '3085',
-            'label'        => 'Standard shipment',
-            'isExtraCover' => false,
-            'isAvond'      => false,
-            'isCod'        => false,
+            'value'             => '3085',
+            'label'             => 'Standard shipment',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isCod'             => false,
+            'statedAddressOnly' => false,
         ),
         array(
-            'value'        => '3087',
-            'label'        => 'Extra Cover',
-            'isExtraCover' => true,
-            'isAvond'      => true,
-            'isCod'        => false,
+            'value'             => '3087',
+            'label'             => 'Extra Cover',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isCod'             => false,
+            'statedAddressOnly' => false,
         ),
         array(
-            'value'        => '3094',
-            'label'        => 'Extra cover + Return when not home',
-            'isExtraCover' => true,
-            'isAvond'      => true,
-            'isCod'        => false,
+            'value'             => '3094',
+            'label'             => 'Extra cover + Return when not home',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isCod'             => false,
+            'statedAddressOnly' => false,
         ),
         array(
-            'value'        => '3189',
-            'label'        => 'Signature on delivery',
-            'isExtraCover' => false,
-            'isAvond'      => false,
-            'isCod'        => false,
+            'value'             => '3189',
+            'label'             => 'Signature on delivery',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isCod'             => false,
+            'statedAddressOnly' => false,
         ),
         array(
-            'value'        => '3089',
-            'label'        => 'Signature on delivery + Delivery to stated address only',
-            'isExtraCover' => false,
-            'isAvond'      => true,
-            'isCod'        => false,
+            'value'             => '3089',
+            'label'             => 'Signature on delivery + Delivery to stated address only',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isCod'             => false,
+            'statedAddressOnly' => true,
         ),
         array(
-            'value'        => '3389',
-            'label'        => 'Signature on delivery + Return when not home',
-            'isExtraCover' => false,
-            'isAvond'      => false,
-            'isCod'        => false,
+            'value'             => '3389',
+            'label'             => 'Signature on delivery + Return when not home',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isCod'             => false,
+            'statedAddressOnly' => false,
         ),
         array(
-            'value'        => '3096',
-            'label'        => 'Signature on delivery + Deliver to stated address only + Return when not home',
-            'isExtraCover' => false,
-            'isAvond'      => true,
-            'isCod'        => false,
+            'value'             => '3096',
+            'label'             => 'Signature on delivery + Deliver to stated address only + Return when not home',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isCod'             => false,
+            'statedAddressOnly' => true,
         ),
         array(
-            'value'        => '3090',
-            'label'        => 'Delivery to neighbour + Return when not home',
-            'isExtraCover' => false,
-            'isAvond'      => false,
-            'isCod'        => false,
+            'value'             => '3090',
+            'label'             => 'Delivery to neighbour + Return when not home',
+            'isExtraCover'      => false,
+            'isAvond'           => false,
+            'isCod'             => false,
+            'statedAddressOnly' => false,
         ),
         array(
-            'value'        => '3385',
-            'label'        => 'Deliver to stated address only',
-            'isExtraCover' => false,
-            'isAvond'      => true,
-            'isCod'        => false,
+            'value'             => '3385',
+            'label'             => 'Deliver to stated address only',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isCod'             => false,
+            'statedAddressOnly' => true,
         ),
         array(
-            'value'        => '3390',
-            'label'        => 'Deliver to stated address only + Return when not home',
-            'isExtraCover' => false,
-            'isAvond'      => true,
-            'isCod'        => false,
+            'value'             => '3390',
+            'label'             => 'Deliver to stated address only + Return when not home',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isCod'             => false,
+            'statedAddressOnly' => true,
         ),
         array(
-            'value'        => '3086',
-            'label'        => 'COD',
-            'isExtraCover' => false,
-            'isAvond'      => true,
-            'isCod'        => true,
+            'value'             => '3086',
+            'label'             => 'COD',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isCod'             => true,
+            'statedAddressOnly' => false,
         ),
         array(
-            'value'        => '3091',
-            'label'        => 'COD + Extra cover',
-            'isExtraCover' => true,
-            'isAvond'      => true,
-            'isCod'        => true,
+            'value'             => '3091',
+            'label'             => 'COD + Extra cover',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isCod'             => true,
+            'statedAddressOnly' => false,
         ),
         array(
-            'value'        => '3093',
-            'label'        => 'COD + Return when not home',
-            'isExtraCover' => false,
-            'isAvond'      => true,
-            'isCod'        => true,
+            'value'             => '3093',
+            'label'             => 'COD + Return when not home',
+            'isExtraCover'      => false,
+            'isAvond'           => true,
+            'isCod'             => true,
+            'statedAddressOnly' => false,
         ),
         array(
-            'value'        => '3097',
-            'label'        => 'COD + Extra cover + Return when not home',
-            'isExtraCover' => true,
-            'isAvond'      => true,
-            'isCod'        => true,
+            'value'             => '3097',
+            'label'             => 'COD + Extra cover + Return when not home',
+            'isExtraCover'      => true,
+            'isAvond'           => true,
+            'isCod'             => true,
+            'statedAddressOnly' => false,
         ),
     );
 
@@ -223,5 +237,17 @@ class TIG_PostNL_Model_Core_System_Config_Source_StandardProductOptions
     public function getAvailableAvondCodOptions($flat = false)
     {
         return $this->getOptions(array('isAvond' => true, 'isCod' => true), $flat, true);
+    }
+
+    /**
+     * Get available 'stated address only' options.
+     *
+     * @param boolean $flat
+     *
+     * @return array
+     */
+    public function getAvailableStatedAddressOnlyOptions($flat = false)
+    {
+        return $this->getOptions(array('statedAddressOnly' => true), $flat, true);
     }
 }

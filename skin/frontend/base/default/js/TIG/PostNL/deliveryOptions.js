@@ -24,15 +24,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
@@ -194,7 +194,8 @@ PostnlDeliveryOptions.prototype = {
             shippingMethodName        : 's_method_postnl_flatrate',
             postnlShippingMethods     : [
                 's_method_postnl_tablerate', 's_method_postnl_flatrate'
-            ]
+            ],
+            extraOptions              : {}
         }, options || {});
 
         this.debug = debug;
@@ -334,7 +335,16 @@ PostnlDeliveryOptions.prototype = {
     },
 
     setSelectedOption : function(option) {
+        var fire = false;
+        if (this.getSelectedOption() !== option) {
+            fire = true;
+        }
+
         this.selectedOption = option;
+
+        if (fire) {
+            document.fire('postnl:selectedOptionChange');
+        }
 
         return this;
     },
@@ -344,8 +354,16 @@ PostnlDeliveryOptions.prototype = {
     },
 
     setSelectedType : function(type) {
+        var fire = false;
+        if (this.getSelectedType() !== type) {
+            fire = true;
+        }
+
         this.selectedType = type;
 
+        if (fire) {
+            document.fire('postnl:selectedTypeChange');
+        }
         return this;
     },
 
@@ -475,6 +493,7 @@ PostnlDeliveryOptions.prototype = {
 
         document.stopObserving('postnl:saveDeliveryOptions');
         document.stopObserving('postnl:domModified');
+        document.stopObserving('postnl:selectedTypeChange');
 
         if (this.getOptions().isOsc && this.getOptions().oscSaveButton && $(this.getOptions().oscSaveButton)) {
             var saveButton = $(this.getOptions().oscSaveButton);
@@ -522,6 +541,25 @@ PostnlDeliveryOptions.prototype = {
             var saveButton = $(this.getOptions().oscSaveButton);
             saveButton.observe('click', this.saveOscOptions.bind(this));
         }
+
+        document.observe('postnl:selectedTypeChange', function() {
+            var extraOptions = this.options.extraOptions;
+            if (!extraOptions) {
+                return;
+            }
+
+            $H(extraOptions).each(function(option) {
+                var params = option.value;
+                var selectedType = this.getSelectedType();
+
+                if (params.allowedTypes.indexOf(selectedType) < 0) {
+                    params.element.checked = false;
+                    params.element.disabled = true;
+                } else {
+                    params.element.disabled = false;
+                }
+            }.bind(this));
+        }.bind(this));
 
         return this;
     },
@@ -1123,6 +1161,7 @@ PostnlDeliveryOptions.prototype = {
                 }
 
                 document.fire('postnl:selectTimeframe');
+                document.fire('postnl:selectDeliveryOption');
                 timeframe.select();
             } else {
                 timeframe.unSelect();
@@ -1189,6 +1228,7 @@ PostnlDeliveryOptions.prototype = {
                     }
 
                     document.fire('postnl:selectLocation');
+                    document.fire('postnl:selectDeliveryOption');
 
                     if (this.debug) {
                         console.log('Delivery location selected:', location);
@@ -1333,8 +1373,8 @@ PostnlDeliveryOptions.prototype = {
         this.saveSelectedOption();
 
         var body = $$('body')[0];
-        if (body.hasClassName('noscroll')) {
-            body.removeClassName('noscroll');
+        if (body.hasClassName('responsive-noscroll')) {
+            body.removeClassName('responsive-noscroll');
         }
 
         this.getOptions().postnlShippingMethods.each(function(shippingMethod) {
@@ -1576,8 +1616,8 @@ PostnlDeliveryOptions.prototype = {
         }
 
         var body = $$('body')[0];
-        if (!body.hasClassName('noscroll')) {
-            body.addClassName('noscroll');
+        if (!body.hasClassName('responsive-noscroll')) {
+            body.addClassName('responsive-noscroll');
         }
 
         phoneWindow.show();
@@ -1599,8 +1639,8 @@ PostnlDeliveryOptions.prototype = {
         }
 
         var body = $$('body')[0];
-        if (body.hasClassName('noscroll')) {
-            body.removeClassName('noscroll');
+        if (body.hasClassName('responsive-noscroll')) {
+            body.removeClassName('responsive-noscroll');
         }
 
         phoneWindow.hide();
@@ -2084,10 +2124,11 @@ PostnlDeliveryOptions.Map = new Class.create({
          */
         $('add_location').observe('click', this.openAddLocationWindow.bind(this));
         $('close_popup').observe('click', this.closeAddLocationWindow.bind(this));
-        $('search_button').observe('click', this.addressSearch.bind(this));
-        $('search_field').observe('keydown', this.addressSearch.bind(this));
-        $('responsive_search_button').observe('click', this.addressSearch.bind(this));
-        $('responsive_search_field').observe('keydown', this.addressSearch.bind(this));
+        $('postnl_back_link').observe('click', this.closeAddLocationWindow.bind(this));
+        $('search_button').observe('click', this.addressSearch.bindAsEventListener(this, 'search_field'));
+        $('search_field').observe('keydown', this.addressSearch.bindAsEventListener(this, 'search_field'));
+        $('responsive_search_button').observe('click', this.addressSearch.bindAsEventListener(this, 'responsive_search_field'));
+        $('responsive_search_field').observe('keydown', this.addressSearch.bindAsEventListener(this, 'responsive_search_field'));
         $('location-details-close').observe('click', this.closeLocationInfoWindow.bind(this));
         this.getSaveButton().observe('click', this.saveLocation.bind(this));
         Event.observe(this.getOptions().scrollbarTrack, 'mouse:wheel', this.scrollbar.boundMouseWheelEvent);
@@ -2229,7 +2270,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         $$('#postnl_delivery_options .responsive-protector')[0].addClassName('responsive-hidden');
-        $$('#postnl_delivery_options .responsive-switch-wrapper')[0].addClassName('responsive-hidden');
+        $$('#postnl_delivery_options .responsive-switch-wrapper ul')[0].addClassName('responsive-hidden');
+        $('postnl_back_link').show();
 
         this.getAddLocationWindow().show();
 
@@ -2269,7 +2311,8 @@ PostnlDeliveryOptions.Map = new Class.create({
         }
 
         $$('#postnl_delivery_options .responsive-protector')[0].removeClassName('responsive-hidden');
-        $$('#postnl_delivery_options .responsive-switch-wrapper')[0].removeClassName('responsive-hidden');
+        $$('#postnl_delivery_options .responsive-switch-wrapper ul')[0].removeClassName('responsive-hidden');
+        $('postnl_back_link').hide();
 
         this.getAddLocationWindow().hide();
 
@@ -2280,10 +2323,11 @@ PostnlDeliveryOptions.Map = new Class.create({
      * Search for an address. The address can be any value, but a postcode or street name is recommended.
      *
      * @param {Event} event
+     * @param {String} searchField
      *
      * @returns {PostnlDeliveryOptions.Map}
      */
-    addressSearch : function(event) {
+    addressSearch : function(event, searchField) {
         /**
          * If this event was triggered by a keypress, we want to ignore any except the return key.
          */
@@ -2310,7 +2354,7 @@ PostnlDeliveryOptions.Map = new Class.create({
             event.stop();
         }
 
-        var address = $('search_field').getValue();
+        var address = $(searchField).getValue();
         if (!address) {
             return this;
         }

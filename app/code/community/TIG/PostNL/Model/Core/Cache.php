@@ -25,15 +25,15 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * @method boolean                     hasPostnlCoreIsEnabled()
@@ -57,6 +57,10 @@
  * @method boolean                     hasPostnlMijnpakketCanShowNotification()
  * @method boolean                     hasPostnlCoreCanUseBuspakje()
  * @method boolean                     hasPostnlDeliveryOptionsCanUseDeliveryDays()
+ * @method boolean                     hasCanShowOnlyStatedAddressOption()
+ * @method boolean                     hasPostnlShippingMethods()
+ * @method boolean                     hasMatchedPostnlShippingMethods()
+ * @method boolean                     hasCanUseResponsiveDeliveryOptions()
  *
  * @method boolean                     getPostnlCoreIsEnabled()
  * @method boolean                     getPostnlCoreIsConfigured()
@@ -79,6 +83,10 @@
  * @method boolean                     getPostnlMijnpakketCanShowNotification()
  * @method boolean                     getPostnlCoreCanUseBuspakje()
  * @method boolean                     getPostnlDeliveryOptionsCanUseDeliveryDays()
+ * @method boolean                     getCanShowOnlyStatedAddressOption()
+ * @method array                       getPostnlShippingMethods()
+ * @method array                       getMatchedPostnlShippingMethods()
+ * @method boolean                     getCanUseResponsiveDeliveryOptions()
  *
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsEnabled(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreIsConfigured(boolean $value)
@@ -101,6 +109,10 @@
  * @method TIG_PostNL_Model_Core_Cache setPostnlMijnpakketCanShowNotification(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlCoreCanUseBuspakje(boolean $value)
  * @method TIG_PostNL_Model_Core_Cache setPostnlDeliveryOptionsCanUseDeliveryDays(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setCanShowOnlyStatedAddressOption(boolean $value)
+ * @method TIG_PostNL_Model_Core_Cache setPostnlShippingMethods(array $value)
+ * @method TIG_PostNL_Model_Core_Cache setMatchedPostnlShippingMethods(array $value)
+ * @method TIG_PostNL_Model_Core_Cache setCanUseResponsiveDeliveryOptions(boolean $value)
  */
 class TIG_PostNL_Model_Core_Cache extends Varien_Object
 {
