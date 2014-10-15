@@ -48,3 +48,8 @@ button.postnl-button { width:280px; margin-right:5px; }
 #postnl-wizard li a { display:block; line-height:28px; padding:0 12px; color:#2f2f2f; font-weight:bold; text-decoration:none; }
 #postnl-wizard li a:hover { color:#ea7601; }
 #postnl-wizard li a.active { background:#ea7601; color:#fff; }
+#postnl_advanced { border-top:0; }
+#row_postnl_cif_sender_address_region,
+#postnl_cif_sender_address_return_region { display:none; }
+.wrapper-radio { margin-bottom:3px; }
+.wrapper-radio input { margin-right:10px; }
