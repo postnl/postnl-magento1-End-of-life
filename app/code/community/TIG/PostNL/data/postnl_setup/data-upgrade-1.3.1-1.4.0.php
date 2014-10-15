@@ -113,16 +113,4 @@ $matrixRateData = array(
 
 $installer->installMatrixRates($matrixRateData)
           ->addSupportedShippingMethods(array('postnl_matrixrate'))
-          ->setProductAttributeUpdateCron(
-              array(
-                  array(
-                      $simpleAttributesData,
-                      array(Mage_Catalog_Model_Product_Type::TYPE_SIMPLE),
-                  ),
-                  array(
-                      $attributesData,
-                      $productTypes,
-                  )
-              )
-          )
           ->clearConfigCache();
