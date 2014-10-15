@@ -39,6 +39,23 @@ document.observe('dom:loaded', function(){
 
     if(null !== document.getElementById('postnl_support'))
     {
+        function toStep(rel)
+        {
+            // switch tabs
+            $$('#postnl-wizard .section-config').each(function(elem){
+                elem.hide();
+            });
+
+            $(rel).show().up().show();
+
+            // switch wizard nav active state
+            $$('#postnl-wizard ul a').each(function(elem){
+                elem.className = '';
+            });
+            $$('a[rel="'+rel+'"]')[0].className = 'active';
+            return false;
+        }
+
         // show the support tab
         var supportTab = document.getElementById('postnl_support');
         supportTab.show();
@@ -74,24 +91,13 @@ document.observe('dom:loaded', function(){
             var listClone = postnlWizardList.cloneNode(),
                 linkClone = postnlWizardLink.cloneNode();
 
-            linkClone.href = '#';
+            step++;
+            linkClone.href = '#wizard' + step;
             linkClone.rel = elem.id.replace('-head', '');
             linkClone.onclick = function(){
-                // switch tabs
-                $$('#postnl-wizard .section-config').each(function(elem){
-                    elem.hide();
-                });
-
-                $(this.rel).show().up().show();
-
-                // switch wizard nav active state
-                $$('#postnl-wizard ul a').each(function(elem){
-                    elem.className = '';
-                });
-                this.className = 'active';
-                return false;
+                toStep(this.rel);
             };
-            linkClone.innerHTML = (++step) + '. ' + elem.innerHTML;
+            linkClone.innerHTML = step + '. ' + elem.innerHTML;
 
             listClone.appendChild(linkClone);
             postnlWizardNavigation.appendChild(listClone);
@@ -136,5 +142,26 @@ document.observe('dom:loaded', function(){
         postnlAdvancedHeader.appendChild(postnlAdvancedLink);
 
         postnlAdvancedFieldset.parentNode.insertBefore(postnlAdvancedHeader, postnlAdvancedFieldset);
+
+        // hash navigation
+        function toHash()
+        {
+            var target = $$('a[href="' + window.location.hash + '"]')[0];
+            toStep(target.rel);
+        }
+        $$('#postnl-wizard ul a[href^="#"]').each(function(elem){
+            Event.observe(elem, 'click', function(){
+                var hash = elem.href;
+                if(window.history.pushState) {
+                    window.history.pushState(null, null, hash);
+                    toHash();
+                } else {
+                    window.location.hash = hash;
+                }
+
+            });
+        });
+        window.onhashchange = toHash;
+        window.onload = toHash;
     }
 });

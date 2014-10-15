@@ -49,3 +49,5 @@ button.postnl-button { width:280px; margin-right:5px; }
 #postnl-wizard li a:hover { color:#ea7601; }
 #postnl-wizard li a.active { background:#ea7601; color:#fff; }
 #postnl_advanced { border-top:0; }
+#row_postnl_cif_sender_address_region,
+#postnl_cif_sender_address_return_region { display:none; }
