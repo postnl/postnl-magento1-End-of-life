@@ -50,6 +50,10 @@ class TIG_PostNL_Model_System_Config_Source_Testlive
 
         $array = array(
              array(
+                'value' => '-1',
+                'label' => $helper->__('Off')
+             ),
+             array(
                 'value' => '1',
                 'label' => $helper->__('Test')
              ),
