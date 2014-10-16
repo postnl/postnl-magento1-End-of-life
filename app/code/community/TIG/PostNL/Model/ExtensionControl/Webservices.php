@@ -470,7 +470,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     protected function _getShipmentCollection($website, $shipmentTypes = false)
     {
         /**
-         * Get a list of all storeIds associated with this website
+         * Get a list of all storeIds associated with this website.
          *
          * @var Mage_Core_Model_Store_Group $group
          */
@@ -488,7 +488,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $resource = Mage::getSingleton('core/resource');
 
         /**
-         * Get the shipment collection
+         * Get the shipment collection.
          */
         $shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection');
         $shipmentCollection->addFieldToSelect('entity_id');
@@ -496,7 +496,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $select = $shipmentCollection->getSelect();
 
         /**
-         * Join sales_flat_order table
+         * Join sales_flat_order table.
          */
         $select->joinInner(
             array('order' => $resource->getTableName('sales/order')),
@@ -506,15 +506,16 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             )
         );
 
-        if ($shipmentTypes) {
-            $select->joinLeft(
-                array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
-                '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
-                array(
-                    'shipment_type'          => 'postnl_shipment.shipment_type',
-                )
-            );
-        }
+        /**
+         * Join the tig_postnl_shipment table.
+         */
+        $select->joinInner(
+            array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
+            '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
+            array(
+                'shipment_type' => 'postnl_shipment.shipment_type',
+            )
+        );
 
         $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $postnlShippingMethodsRegex = '';
@@ -529,8 +530,18 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         }
 
         $postnlShippingMethodsRegex .= '$';
-        $shipmentCollection->addFieldToFilter('`order`.`shipping_method`', array('regexp' => $postnlShippingMethodsRegex))
-                           ->addFieldToFilter('`main_table`.`store_id`', array('in' => $storeIds));
+        $shipmentCollection->addFieldToFilter(
+                               '`order`.`shipping_method`',
+                               array(
+                                   'regexp' => $postnlShippingMethodsRegex
+                               )
+                           )
+                           ->addFieldToFilter(
+                               '`main_table`.`store_id`',
+                               array(
+                                   'in' => $storeIds
+                               )
+                           );
 
         if ($shipmentTypes) {
             $shipmentCollection->addFieldToFilter('`shipment_type`', array('in', $shipmentTypes));
