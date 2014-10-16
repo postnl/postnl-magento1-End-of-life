@@ -132,7 +132,7 @@ document.observe('dom:loaded', function(){
             postnlAdvancedLink = postnlWizardLink.cloneNode();
 
         postnlAdvancedHeader.className = 'entry-edit-head collapseable';
-        postnlAdvancedLink.innerHTML = 'Advanced settings'; // TODO: translate
+        postnlAdvancedLink.innerHTML = Translator.translate('Advanced settings');
         postnlAdvancedLink.id = 'postnl_advanced-head';
         postnlAdvancedLink.href = '#';
         postnlAdvancedLink.onclick = function() {
