@@ -49,11 +49,11 @@ class TIG_PostNL_Model_Core_System_Config_Source_LabelSize
         $labelSizes = array(
             array(
                 'value' => 'A4',
-                'label' => $helper->__('A4')
+                'label' => $helper->__('A4 format')
             ),
             array(
                 'value' => 'A6',
-                'label' => $helper->__('A6')
+                'label' => $helper->__('A6 format')
             ),
         );
 
