@@ -45,7 +45,7 @@ button.postnl-button { width:280px; margin-right:5px; }
 #postnl-wizard .entry-edit-head { display:none; }
 #postnl-wizard ul { height:28px; background:#e6e6e6; border:1px solid #d6d6d6; }
 #postnl-wizard li { float:left; margin:0; }
-#postnl-wizard li a { display:block; line-height:28px; padding:0 12px; color:#2f2f2f; font-weight:bold; text-decoration:none; }
+#postnl-wizard li a { display:block; line-height:28px; padding:0 15px; color:#2f2f2f; font-weight:bold; text-decoration:none; }
 #postnl-wizard li a:hover { color:#ea7601; }
 #postnl-wizard li a.active { background:#ea7601; color:#fff; }
 #postnl_advanced { border-top:0; }

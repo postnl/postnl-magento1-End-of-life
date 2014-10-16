@@ -560,7 +560,7 @@
                     </fields>
                 </support>
                 <general translate="label comment" module="postnl">
-                    <label>General Settings</label>
+                    <label>Activation</label>
                     <comment>Here you can enable or disable the entire extension. This is also where you register your extension for use.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <frontend_class>postnl-wizard</frontend_class>
@@ -569,17 +569,6 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
-                        <active translate="label comment" module="postnl">
-                            <label>Active</label>
-                            <comment>Enable or disable the extension</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </active>
                         <activation_in_progress_header translate="label" module="postnl">
                             <label><![CDATA[The extension has been partially activated. Fill in the fields below and press the 'finish activation' button below to finish the procedure. Click <a href="#" onclick="%s">here</a> to reset the activation procedure.]]></label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_activatedFieldHeader</frontend_model>
@@ -674,7 +663,7 @@
                    </fields>
                 </general>
                 <cif_sender_address translate="label comment" module="postnl">
-                    <label>Sender Address</label>
+                    <label>Address Settings</label>
                     <comment>This is where you enter your address. This is required for the extension to work.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <frontend_class>postnl-wizard</frontend_class>
@@ -909,7 +898,7 @@
                     </fields>
                 </cif_sender_address>
                 <cif_labels_and_confirming translate="label comment" module="postnl">
-                    <label>Confirming &amp; Label Printing Settings</label>
+                    <label>Other settings</label>
                     <comment>Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track &amp; trace email to your customers.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <frontend_class>postnl-wizard</frontend_class>
@@ -1208,7 +1197,7 @@
                     </fields>
                 </cif_labels_and_confirming>
                 <delivery_options translate="label comment" module="postnl">
-                    <label>PostNL Delivery Options &amp; MijnPakket login</label>
+                    <label>PostNL Delivery Options</label>
                     <comment><![CDATA[Here you can configure your PostNL delivery options.<br />With PostNL delivery options, your customers can choose where and when they want their order delivered. They may choose a date and timeframe for their delivery. Also they can choose to have their order delivered to a nearby post office. New features include the 'evening' delivery option and the option to choose an 'early delivery' post office location. MijnPakket login gives your customers the option to quickly fill in their preferred billing and shipping address by logging in with their PostNL MijnPakket account.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <frontend_class>postnl-wizard</frontend_class>
@@ -1717,13 +1706,12 @@
                     <fields>
                         <mode translate="label" module="postnl">
                             <label>Mode</label>
-                            <frontend_type>select</frontend_type>
+                            <frontend_type>radios</frontend_type>
                             <source_model>postnl/system_config_source_testlive</source_model>
-                            <sort_order>10</sort_order>
+                            <sort_order>5</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <validate>validate-select</validate>
                         </mode>
                         <customer_number translate="label tooltip" module="postnl">
                             <label>Customer Number</label>
