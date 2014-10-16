@@ -89,10 +89,17 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Checkbox extends Varie
             return $this->getData('checked');
         }
 
-        $checked = (bool) $this->getValue();
+        /**
+         * Get the current element's value.
+         */
+        $value = $this->getValue();
+        if (is_object($value) && $value instanceof Mage_Core_Model_Config_Element) {
+            $value = $value->__toString();
+        }
+
+        $checked = (bool) $value;
 
         $this->setIsChecked($checked);
-
         return $checked;
     }
 }
