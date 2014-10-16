@@ -35,6 +35,8 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method mixed getValue()
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Checkbox extends Varien_Data_Form_Element_Checkbox
 {
@@ -49,7 +51,10 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Checkbox extends Varie
 
         $html = parent::getElementHtml();
 
-        $html .= '<input type="hidden" name="' . $this->getName() . '[hidden]" id="' . $this->getHtmlId() . '_hidden" value=""/>';
+        /**
+         * Render a second, hidden element to store the checkbox's unchecked value.
+         */
+        $html .= "<input type='hidden' name='{$this->getName()}' id='{$this->getHtmlId()}_hidden' value=''/>";
 
         return $html;
     }

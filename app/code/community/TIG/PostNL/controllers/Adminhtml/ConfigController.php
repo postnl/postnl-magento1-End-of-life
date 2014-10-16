@@ -396,6 +396,19 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
 
         $this->_saveState($this->getRequest()->getPost('config_state'));
 
+        /**
+         * Save the next wizard step as the current step the admin user is on.
+         */
+        $nextStep = $this->getRequest()->getPost('next_step_hash');
+        if ($nextStep) {
+            $adminUser = Mage::getSingleton('admin/session')->getUser();
+            $extra = $adminUser->getExtra();
+
+            $extra['postnl']['current_wizard_step'] = $nextStep;
+
+            $adminUser->saveExtra($extra);
+        }
+
         $this->getResponse()
              ->setBody('success');
 
@@ -466,6 +479,7 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
             foreach ($configState as $fieldset => $state) {
                 $extra['configState'][$fieldset] = $state;
             }
+
             $adminUser->saveExtra($extra);
         }
 

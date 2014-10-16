@@ -35,12 +35,16 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PostNL_Block_Adminhtml_System_Config_Js $this
  */
 ?>
 <?php $_helper = $this->helper('postnl'); ?>
 <?php $_activateUrl = $this->getUrl('postnl_admin/adminhtml_extensionControl/activate', array('_secure' => true)); ?>
 <?php $_validateUrl = $this->getUrl('postnl_admin/adminhtml_config/validateAccount', array('_secure' => true)); ?>
 <?php $_website = Mage::app()->getRequest()->getParam('website'); ?>
+<?php $_currentWizardStep = $this->getCurrentWizardStep(); ?>
+<?php $_saveWizardStepUrl = $this->getSaveWizardStepUrl(); ?>
 <script type="text/javascript">
     //<![CDATA[
     var postnlActivationUrl = '<?php echo $_activateUrl; ?>';
@@ -104,30 +108,27 @@
     });
 
     var postnlWizardSaveAndContinue = function(nextStepRel, currentStepRel) {
-        var params = {};
+        var nextStepHash = '';
+
+        /**
+         * If there is a next step, get it's hash.
+         */
+        if (nextStepRel) {
+            var nextStepAnchor = $$('a[rel="' + nextStepRel + '"]')[0];
+            if (nextStepAnchor) {
+                nextStepHash = nextStepAnchor.getAttribute('href');
+            }
+        }
+        var params = {
+            next_step_hash : nextStepHash
+        };
         $$('fieldset#' + currentStepRel + ' input, fieldset#' + currentStepRel + ' select').each(
             function(element) {
                 params[element.name] = element.getValue();
             }
         );
 
-        <?php
-            /**
-             * @todo move to block
-             */
-        ?>
-        <?php $urlParams = array(); ?>
-        <?php if ($this->getRequest()->getParam('section')): ?>
-            <?php $urlParams['section'] = $this->getRequest()->getParam('section'); ?>
-        <?php endif; ?>
-        <?php if ($this->getRequest()->getParam('website')): ?>
-            <?php $urlParams['website'] = $this->getRequest()->getParam('website'); ?>
-        <?php endif; ?>
-        <?php if ($this->getRequest()->getParam('store')): ?>
-            <?php $urlParams['store'] = $this->getRequest()->getParam('store'); ?>
-        <?php endif; ?>
-
-        new Ajax.Request('<?php echo $this->getUrl('postnl_admin/adminhtml_config/saveWizardStep', $urlParams); ?>', {
+        new Ajax.Request('<?php echo $_saveWizardStepUrl; ?>', {
             method : 'post',
             parameters : params,
             onSuccess : function(response) {
@@ -170,5 +171,19 @@
 
         return false;
     };
+
+    <?php if (!empty($_currentWizardStep)): ?>
+        document.observe('dom:loaded', function() {
+            var hash = '<?php echo $_currentWizardStep?>';
+            toHash(hash);
+
+            if(window.history.pushState) {
+                window.history.pushState(null, null, hash);
+                toHash();
+            } else {
+                window.location.hash = hash;
+            }
+        });
+    <?php endif; ?>
     //]]>
 </script>
