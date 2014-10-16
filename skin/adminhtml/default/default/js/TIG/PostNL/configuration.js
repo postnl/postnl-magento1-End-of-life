@@ -39,22 +39,6 @@ document.observe('dom:loaded', function(){
 
     if(null !== document.getElementById('postnl_support'))
     {
-        function toStep(rel)
-        {
-            // switch tabs
-            $$('#postnl-wizard .section-config').each(function(elem){
-                elem.hide();
-            });
-
-            $(rel).show().up().show();
-
-            // switch wizard nav active state
-            $$('#postnl-wizard ul a').each(function(elem){
-                elem.className = '';
-            });
-            $$('a[rel="'+rel+'"]')[0].className = 'active';
-            return false;
-        }
 
         // show the support tab
         var supportTab = document.getElementById('postnl_support');
@@ -143,12 +127,6 @@ document.observe('dom:loaded', function(){
 
         postnlAdvancedFieldset.parentNode.insertBefore(postnlAdvancedHeader, postnlAdvancedFieldset);
 
-        // hash navigation
-        function toHash()
-        {
-            var target = $$('a[href="' + window.location.hash + '"]')[0];
-            toStep(target.rel);
-        }
         $$('#postnl-wizard ul a[href^="#"]').each(function(elem){
             Event.observe(elem, 'click', function(){
                 var hash = elem.href;
@@ -161,8 +139,8 @@ document.observe('dom:loaded', function(){
 
             });
         });
-        window.onhashchange = toHash;
-        window.onload = toHash;
+        window.onhashchange = toHash.bind(null, '');
+        window.onload = toHash.bind(null, '');
 
         // wrap radio buttons with labels
         $$('#postnl-wizard input[type="radio"]').each(function(elem){
@@ -203,3 +181,30 @@ document.observe('dom:loaded', function(){
         modusColor();
     }
 });
+function toStep(rel)
+{
+    // switch tabs
+    $$('#postnl-wizard .section-config').each(function(elem){
+        elem.hide();
+    });
+
+    $(rel).show().up().show();
+
+    // switch wizard nav active state
+    $$('#postnl-wizard ul a').each(function(elem){
+        elem.className = '';
+    });
+    $$('a[rel="'+rel+'"]')[0].className = 'active';
+    return false;
+}
+
+// hash navigation
+function toHash(hash)
+{
+    if (!hash) {
+        hash = window.location.hash;
+    }
+
+    var target = $$('a[href="' + hash + '"]')[0];
+    toStep(target.rel);
+}
