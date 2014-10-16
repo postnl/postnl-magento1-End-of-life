@@ -408,6 +408,10 @@
                 return;
             }
 
+            if (onlyStatedAddressCheckbox.disabled) {
+                return;
+            }
+
             onlyStatedAddressCheckbox.checked = !onlyStatedAddressCheckbox.checked;
             onlyStatedAddressCheckbox.focus();
         });

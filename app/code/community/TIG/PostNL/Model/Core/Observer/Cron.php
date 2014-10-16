@@ -877,13 +877,6 @@ class TIG_PostNL_Model_Core_Observer_Cron
     {
         $helper = Mage::helper('postnl');
 
-        /**
-         * Check if the PostNL module is active
-         */
-        if (!$helper->isEnabled()) {
-            return $this;
-        }
-
         $helper->cronLog($helper->__('UpdateProductAttribute cron starting...'));
 
         $data = Mage::getStoreConfig(self::XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA, Mage_Core_Model_App::ADMIN_STORE_ID);
