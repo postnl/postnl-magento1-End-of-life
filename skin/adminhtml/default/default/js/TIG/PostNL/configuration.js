@@ -132,7 +132,7 @@ document.observe('dom:loaded', function(){
             postnlAdvancedLink = postnlWizardLink.cloneNode();
 
         postnlAdvancedHeader.className = 'entry-edit-head collapseable';
-        postnlAdvancedLink.innerHTML = 'Advanced settings'; // TODO: translate
+        postnlAdvancedLink.innerHTML = Translator.translate('Advanced settings');
         postnlAdvancedLink.id = 'postnl_advanced-head';
         postnlAdvancedLink.href = '#';
         postnlAdvancedLink.onclick = function() {
@@ -180,5 +180,26 @@ document.observe('dom:loaded', function(){
                 elem.parentNode.innerHTML = elem.parentNode.innerHTML.replace(/&nbsp;/g, ' ');
             }
         });
+
+        // modus colors
+        function modusColor()
+        {
+            switch(true)
+            {
+                case $('postnl_cif_mode-1').checked:
+                    $('row_postnl_cif_mode').style.background = '#F77';
+                    break;
+                case $('postnl_cif_mode1').checked:
+                    $('row_postnl_cif_mode').style.background = '#FF7';
+                    break;
+                case $('postnl_cif_mode0').checked:
+                    $('row_postnl_cif_mode').style.background = '#7F7';
+                    break;
+            }
+        }
+        $$('#row_postnl_cif_mode input').each(function(elem){
+            Event.observe(elem, 'change', modusColor);
+        });
+        modusColor();
     }
 });
