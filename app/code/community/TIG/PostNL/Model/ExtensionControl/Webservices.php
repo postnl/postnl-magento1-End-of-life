@@ -727,6 +727,11 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUseDeliveryOptions($website)
     {
+        $checkoutExtension = $this->_getCheckoutExtension($website);
+        if (!$checkoutExtension || $checkoutExtension == 'other') {
+            return false;
+        }
+
         $useDeliveryoptions = (bool) $website->getConfig(self::XPATH_DELIVERY_OPTIONS_ACTIVE);
 
         return $useDeliveryoptions;
@@ -741,6 +746,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUseDeliveryDays($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $useDeliveryDays = (bool) $website->getConfig(self::XPATH_ENABLE_DELIVERY_DAYS);
 
         return $useDeliveryDays;
@@ -755,6 +764,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUseTimeframes($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $useTimeframes = (bool) $website->getConfig(self::XPATH_ENABLE_TIMEFRAMES);
 
         return $useTimeframes;
@@ -769,6 +782,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUseAvond($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $useAvond = (bool) $website->getConfig(self::XPATH_ENABLE_EVENING_TIMEFRAMES);
 
         return $useAvond;
@@ -783,6 +800,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsePg($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $usePg = (bool) $website->getConfig(self::XPATH_ENABLE_PAKJEGEMAK);
 
         return $usePg;
@@ -797,6 +818,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsePa($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $usePa = (bool) $website->getConfig(self::XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS);
 
         return $usePa;
@@ -811,6 +836,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsePge($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $usePge = (bool) $website->getConfig(self::XPATH_ENABLE_PAKJEGEMAK_EXPRESS);
 
         return $usePge;
@@ -858,6 +887,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUseMijnPakketLogin($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $useMijnPakketLogin = (bool) $website->getConfig(self::XPATH_MIJNPAKKET_LOGIN_ACTIVE);
 
         return $useMijnPakketLogin;
@@ -872,7 +905,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsePostcodeCheck($website)
     {
-        $checkoutExtension = $website->getConfig(self::XPATH_CHECKOUT_EXTENSION);
+        $checkoutExtension = $this->_getCheckoutExtension($website);
         if (!$checkoutExtension || $checkoutExtension == 'other') {
             return false;
         }
@@ -880,6 +913,20 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $usePostcodeCheck = (bool) $website->getConfig(self::XPATH_USE_POSTCODE_CHECK);
 
         return $usePostcodeCheck;
+    }
+
+    /**
+     * Get the currently used checkout extension for this website.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return mixed
+     */
+    protected function _getCheckoutExtension($website)
+    {
+        $checkoutExtension = $website->getConfig(self::XPATH_CHECKOUT_EXTENSION);
+
+        return $checkoutExtension;
     }
 
     /**

@@ -2688,6 +2688,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             $storeId = Mage::app()->getStore()->getId();
         }
 
+        $checkoutExtension = Mage::getStoreConfig(
+            TIG_PostNL_Helper_AddressValidation::XPATH_CHECKOUT_EXTENSION,
+            $storeId
+        );
+
+        if (!$checkoutExtension || $checkoutExtension == 'other') {
+            return false;
+        }
+
         $isActive = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_ACTIVE, $storeId);
 
         return $isActive;
