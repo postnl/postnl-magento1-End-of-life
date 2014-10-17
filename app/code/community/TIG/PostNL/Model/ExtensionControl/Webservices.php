@@ -80,7 +80,8 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     const XPATH_BUSPAKJE_CALCULATION_MODE       = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
     const XPATH_COD_ACTIVE                      = 'payment/postnl_cod/active';
     const XPATH_MIJNPAKKET_LOGIN_ACTIVE         = 'postnl/delivery_options/mijnpakket_login_active';
-    const XPATH_USE_POSTCODE_CHECK              = 'postnl/cif_address/use_postcode_check';
+    const XPATH_USE_POSTCODE_CHECK              = 'postnl/cif_sender_address/use_postcode_check';
+    const XPATH_CHECKOUT_EXTENSION              = 'postnl/cif_sender_address/checkout_extension';
     const XPATH_PARCELWARE_EXPORT_ACTIVE        = 'postnl/parcelware_export/active';
     const XPATH_SEND_TRACK_AND_TRACE_EMAIL      = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
     const XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE  = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
@@ -871,6 +872,11 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsePostcodeCheck($website)
     {
+        $checkoutExtension = $website->getConfig(self::XPATH_CHECKOUT_EXTENSION);
+        if (!$checkoutExtension || $checkoutExtension == 'other') {
+            return false;
+        }
+
         $usePostcodeCheck = (bool) $website->getConfig(self::XPATH_USE_POSTCODE_CHECK);
 
         return $usePostcodeCheck;

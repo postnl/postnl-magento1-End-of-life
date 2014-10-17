@@ -382,9 +382,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                             . '_' . $fieldPrefix
                             . $dependentFieldNameValue;
                         $shouldBeAddedDependence = true;
-                        $dependentValue = (string)(isset($dependent->value) ? $dependent->value : $dependent);
-                        if (isset($dependent['separator'])) {
-                            $dependentValue = explode((string)$dependent['separator'], $dependentValue);
+                        $dependentValue = (string) (isset($dependent->value) ? $dependent->value : $dependent);
+                        if (isset($dependent->separator)) {
+                            $dependentValue = explode((string) $dependent->separator, $dependentValue);
                         }
                         $dependentFieldName = $fieldPrefix . $dependent->getName();
                         $dependentField     = $dependentFieldGroup->fields->$dependentFieldName;
@@ -519,7 +519,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
     /**
      * Return dependency block object
      *
-     * @return Mage_Adminhtml_Block_Widget_Form_Element_Dependence
+     * @return TIG_PostNL_Block_Adminhtml_Widget_Form_Element_Dependence
      */
     protected function _getDependence()
     {

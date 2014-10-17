@@ -39,9 +39,10 @@
 class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
 {
     /**
-     * XML path to use_postcode_check setting.
+     * XML paths used to check if postcode check is activated.
      */
-    const XPATH_USE_POSTCODE_CHECK = 'postnl/cif_address/use_postcode_check';
+    const XPATH_CHECKOUT_EXTENSION = 'postnl/cif_sender_address/checkout_extension';
+    const XPATH_USE_POSTCODE_CHECK = 'postnl/cif_sender_address/use_postcode_check';
 
     /**
      * Constants containing XML paths to cif address configuration options.
@@ -282,6 +283,11 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     {
         if (is_null($storeId)) {
             $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $checkoutExtension = Mage::getStoreConfig(self::XPATH_CHECKOUT_EXTENSION, $storeId);
+        if (!$checkoutExtension || $checkoutExtension == 'other') {
+            return false;
         }
 
         $usePostcodeCheck = Mage::getStoreConfigFlag(self::XPATH_USE_POSTCODE_CHECK, $storeId);
