@@ -165,7 +165,7 @@ document.observe('dom:loaded', function(){
         window.onload = toHash;
 
         // wrap radio buttons with labels
-        $$('#postnl-wizard input[type="radio"]').each(function(elem){
+        $$('#postnl-wizard input[type="radio"], #postnl_advanced_group input[type="radio"]').each(function(elem){
             var wrapper = document.createElement('div');
             wrapper.className = 'wrapper-radio';
 
