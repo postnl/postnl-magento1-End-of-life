@@ -101,13 +101,6 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     const XPATH_SENDER_ADDRESS = 'postnl/cif_address';
 
-    /**
-     * Xpath to return address data.
-     *
-     * N.B. missing last part so this will return an array of all fields.
-     */
-    const XPATH_RETURN_ADDRESS = 'postnl/cif_address/return_*';
-
     /**.
      * Xpaths for shipment reference info.
      */

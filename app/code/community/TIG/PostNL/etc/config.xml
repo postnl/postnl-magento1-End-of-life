@@ -865,10 +865,6 @@
                 <default_pge_product_option>3543</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
                 <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
                 <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
-        		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
-                <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
-                <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
-                <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
         	    <default_cod_product_option>3086</default_cod_product_option> <!-- COD -->
                 <default_evening_cod_product_option>3086</default_evening_cod_product_option> <!-- COD -->
                 <default_pakjegemak_cod_product_option>3535</default_pakjegemak_cod_product_option> <!-- Post Office + COD -->
@@ -929,6 +925,7 @@
                 <mijnpakket_login_btn_live_base_url>https://checkout.postnl.nl/</mijnpakket_login_btn_live_base_url> <!-- Base URL for MijnPakket login button in live mode -->
                 <mijnpakket_login_btn_test_base_url>https://tppcb-sandbox.e-id.nl/</mijnpakket_login_btn_test_base_url> <!-- Base URL for MijnPakket login button in test mode -->
                 <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
+                <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
         	</delivery_options>
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
@@ -1003,6 +1000,13 @@
                 <cif_version_timeframe>1_0</cif_version_timeframe> <!-- v1.0 -->
                 <cif_version_location>1_0</cif_version_location> <!-- v1.0 -->
         	</advanced>
+            <cif_globalpack_settings>
+                <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
+            </cif_globalpack_settings>
+            <grid>
+        		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
+                <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
+            </grid>
 
         	<!-- Login data for the postcode check functionality. DO NOT CHANGE THIS UNLESS SPECIFICALLY INSTRUCTED TO DO SO BY POSTNL OR TIG -->
         	<cendris>

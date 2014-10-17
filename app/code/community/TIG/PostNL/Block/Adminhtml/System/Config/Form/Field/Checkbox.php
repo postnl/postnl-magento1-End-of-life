@@ -54,7 +54,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Checkbox extends Varie
         /**
          * Render a second, hidden element to store the checkbox's unchecked value.
          */
-        $html .= "<input type='hidden' name='{$this->getName()}' id='{$this->getHtmlId()}_hidden' value=''/>";
+        $html .= "<input type='hidden' name='{$this->getName()}' id='{$this->getHtmlId()}_hidden'"
+               . " value='{$this->getValue()}'/>";
 
         return $html;
     }
