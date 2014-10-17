@@ -41,8 +41,8 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     /**
      * XML paths used to check if postcode check is activated.
      */
-    const XPATH_CHECKOUT_EXTENSION = 'postnl/cif_sender_address/checkout_extension';
-    const XPATH_USE_POSTCODE_CHECK = 'postnl/cif_sender_address/use_postcode_check';
+    const XPATH_CHECKOUT_EXTENSION = 'postnl/cif_address/checkout_extension';
+    const XPATH_USE_POSTCODE_CHECK = 'postnl/cif_address/use_postcode_check';
 
     /**
      * Constants containing XML paths to cif address configuration options.
@@ -63,7 +63,7 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
      * XML paths that control some features of postcode check.
      */
     const XPATH_POSTCODE_CHECK_MAX_ATTEMPTS = 'postnl/cif_address/postcode_check_max_attempts';
-    const XPATH_POSTCODE_CHECK_TIMEOUT     = 'postnl/cif_address/postcode_check_timeout';
+    const XPATH_POSTCODE_CHECK_TIMEOUT      = 'postnl/cif_address/postcode_check_timeout';
 
     /**
      * Xpath to OSC street fields sort order.

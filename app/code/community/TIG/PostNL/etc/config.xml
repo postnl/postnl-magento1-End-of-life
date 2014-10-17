@@ -830,7 +830,7 @@
         	    <floor_field/>
         	    <remark_field/>
         	</cif_address>
-        	<cif_sender_address>
+        	<cif_address>
         		<firstname/>
         		<lastname/>
         		<company/>
@@ -852,7 +852,7 @@
                 <return_city/>
                 <return_region/>
                 <return_country>NL</return_country> <!-- All return addresses must be located in the Netherlands -->
-        	</cif_sender_address>
+        	</cif_address>
         	<cif_product_options>
         		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2928,2828</supported_product_options> <!-- all possible options except for EPS BE only -->
                 <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->

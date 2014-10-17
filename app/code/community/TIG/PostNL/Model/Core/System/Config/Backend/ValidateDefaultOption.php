@@ -46,7 +46,7 @@ class TIG_PostNL_Model_Core_System_Config_Backend_ValidateDefaultOption extends 
     /**
      * Xpath to supported options configuration setting
      */
-    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/grid/supported_product_options';
 
     /**
      * Validate that a chosen default option is actually available.
