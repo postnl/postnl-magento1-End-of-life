@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Action
+class TIG_PostNL_Adminhtml_ConfigController extends TIG_PostNL_Controller_Adminhtml_Config
 {
     /**
      * Base XML path of config settings that will be checked.
@@ -401,12 +401,7 @@ class TIG_PostNL_Adminhtml_ConfigController extends Mage_Adminhtml_Controller_Ac
          */
         $nextStep = $this->getRequest()->getPost('next_step_hash');
         if ($nextStep) {
-            $adminUser = Mage::getSingleton('admin/session')->getUser();
-            $extra = $adminUser->getExtra();
-
-            $extra['postnl']['current_wizard_step'] = $nextStep;
-
-            $adminUser->saveExtra($extra);
+            $this->_saveCurrentWizardStep($nextStep);
         }
 
         $this->getResponse()

@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Controller_Action
+class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Controller_Adminhtml_Config
 {
     /**
      * XML path to extensioncontrol email setting
@@ -272,6 +272,11 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             $this->__('The extension has been successfully activated!')
         );
 
+        /**
+         * Proceed to the next step in the configuration wizard.
+         */
+        $this->_saveCurrentWizardStep('#wizard2');
+
         return $this;
     }
 
@@ -288,6 +293,11 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         Mage::helper('postnl')->saveConfigState(array('postnl_general' => 1));
 
         Mage::app()->cleanCache();
+
+        /**
+         * Reset the wizard to the first step.
+         */
+        $this->_saveCurrentWizardStep('#wizard1');
 
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;

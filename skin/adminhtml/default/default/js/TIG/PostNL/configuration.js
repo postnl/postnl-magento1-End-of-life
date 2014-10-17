@@ -150,6 +150,9 @@ document.observe('dom:loaded', function(){
             }
         );
         modusColor();
+
+        $('postnl_config_loader').hide();
+        $('postnl_config_form').show();
     }
 });
 function toStep(rel)
