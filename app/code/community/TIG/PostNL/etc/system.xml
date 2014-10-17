@@ -1948,7 +1948,10 @@
                             <show_in_store>0</show_in_store>
                             <validate>postnl-validate-empty</validate>
                             <depends>
-                                <mode>2</mode>
+                                <mode>
+                                    <value>0||2</value>
+                                    <separator>||</separator>
+                                </mode>
                             </depends>
                         </live_username>
                         <live_password translate="label tooltip" module="postnl">
@@ -1964,7 +1967,10 @@
                             <validate>postnl-validate-empty</validate>
                             <autocomplete>off</autocomplete>
                             <depends>
-                                <mode>2</mode>
+                                <mode>
+                                    <value>0||2</value>
+                                    <separator>||</separator>
+                                </mode>
                             </depends>
                         </live_password>
                         <test_username translate="label" module="postnl">
