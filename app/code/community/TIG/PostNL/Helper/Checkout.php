@@ -50,11 +50,6 @@ class TIG_PostNL_Helper_Checkout extends TIG_PostNL_Helper_Data
     const XPATH_CHECKOUT_PAYMENT_METHOD = 'postnl/checkout_payment_methods';
 
     /**
-     * XML path to test / live mode setting
-     */
-    const XPATH_TEST_MODE = 'postnl/cif/mode';
-
-    /**
      * XML path for config options used to determine whether or not PostNL Checkout is available
      */
     const XPATH_SHOW_CHECKOUT_FOR_LETTER     = 'postnl/checkout/show_checkout_for_letter';
