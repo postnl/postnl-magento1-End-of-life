@@ -135,7 +135,8 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         }
 
         /**
-         * Several checks to see if shipping to the selected country is allowed based on the supported PostNL shipping products
+         * Several checks to see if shipping to the selected country is allowed based on the supported PostNL shipping
+         * products
          */
         $countryId = $request->getDestCountryId();
         $helper = $this->getHelper();
