@@ -886,6 +886,14 @@
                                 <use_sender_address>0</use_sender_address>
                             </depends>
                         </return_region>
+                        <checkout_fields_header translate="label" module="postnl">
+                            <label>Checkout Settings</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>215</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </checkout_fields_header>
                         <checkout_extension translate="label" module="postnl">
                             <label>Checkout extension</label>
                             <frontend_type>select</frontend_type>
@@ -895,6 +903,17 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </checkout_extension>
+                        <checkout_extension_other translate="label" module="postnl">
+                            <label>Specify checkout extension</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>221</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <checkout_extension>other</checkout_extension>
+                            </depends>
+                        </checkout_extension_other>
                         <use_postcode_check translate="label comment tooltip" module="postnl">
                             <label>Use postcode check</label>
                             <comment>Using this feature will allow customers to only enter their postcode and housenumber, the extension will then automatically validate these fields and enter the correct streetname and city. This only works for Dutch addresses.</comment>
@@ -1351,13 +1370,32 @@
                                 </checkout_extension>
                             </depends>
                         </shipping_duration_header>
+                        <enable_delivery_days translate="label comment" module="postnl">
+                            <label>Enable delivery days</label>
+                            <comment>Delivery days allow customers to choose on which date they want their order delivered.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <checkout_extension>
+                                    <fieldset>cif_sender_address</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </enable_delivery_days>
                         <delivery_days_number translate="label comment tooltip" module="postnl">
                             <label>Maximum number of delivery days</label>
                             <comment>This determines how many days into the future the customer can choose to have their order delivered.</comment>
                             <tooltip>This value will be added to the earliest possible delivery date. Timeframes will be displayed for all options between the first possible delivery date and this number of days after that.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_deliveryoptions/system_config_source_deliveryDaysNumber</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1371,25 +1409,6 @@
                                 </checkout_extension>
                             </depends>
                         </delivery_days_number>
-                        <enable_delivery_days translate="label comment" module="postnl">
-                            <label>Enable delivery days</label>
-                            <comment>Delivery days allow customers to choose on which date they want their order delivered.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <checkout_extension>
-                                    <fieldset>cif_sender_address</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                            </depends>
-                        </enable_delivery_days>
                         <enable_timeframes translate="label comment" module="postnl">
                             <label>Enable timeframes</label>
                             <comment>Time frames allow customers to specify at which time they want their order delivered.</comment>
@@ -2056,7 +2075,7 @@
                         <shipment_reference_type translate="label comment" module="postnl">
                             <label>Shipment reference type</label>
                             <comment>Select what to use as a shipment's reference. This will be printed on the shipping label</comment>
-                            <frontend_type>select</frontend_type>
+                            <frontend_type>postnl_radios</frontend_type>
                             <source_model>postnl_core/system_config_source_referenceType</source_model>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2377,175 +2396,6 @@
                         </copy_method>
                     </fields>
                 </track_and_trace>
-                <cif_product_options translate="label comment" module="postnl">
-                    <label>Product Options</label>
-                    <comment>Here you can specify which PostNL product options you have a contract for. Also you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments. Please note that if you select a product option which is not covered by your PostNL contract it will result in an error.</comment>
-                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1300</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>0</show_in_website>
-                    <show_in_store>0</show_in_store>
-                    <fields>
-                        <supported_product_options translate="label comment tooltip" module="postnl">
-                            <label>Select supported option</label>
-                            <comment>Only the selected options will be available.</comment>
-                            <tooltip>If you are unsure which options to select, ask your PostNL account manager.</tooltip>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>postnl_core/system_config_source_allProductOptions</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <can_be_empty>0</can_be_empty>
-                            <validate>validate-select</validate>
-                        </supported_product_options>
-                        <default_product_option translate="label comment" module="postnl">
-                            <label>Default shipping option</label>
-                            <comment>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.</comment>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptions</source_model>
-                            <multidimensional>true</multidimensional>
-                            <sort_order>20</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </default_product_option>
-                        <use_alternative_default translate="label comment" module="postnl">
-                            <label>Use an alternative default option</label>
-                            <comment>Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>30</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </use_alternative_default>
-                        <alternative_default_max_amount translate="label comment" module="postnl">
-                            <label>Maximum amount</label>
-                            <comment>The alternative default option will be used when the shipment's total amount exceeds this value.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <use_alternative_default>1</use_alternative_default>
-                            </depends>
-                            <validate>validate-digits validate-greater-than-zero</validate> <!-- not negative integers only -->
-                        </alternative_default_max_amount>
-                        <alternative_default_option translate="label comment" module="postnl">
-                            <label>Alternative default shipping option</label>
-                            <comment>This option will be used as default when the shipment's total value exceeds the given amount.</comment>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptions</source_model>
-                            <multidimensional>true</multidimensional>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <use_alternative_default>1</use_alternative_default>
-                            </depends>
-                        </alternative_default_option>
-                        <default_evening_product_option translate="label comment" module="postnl">
-                            <label>Default evening delivery shipping option</label>
-                            <comment>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.</comment>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondOptions</source_model>
-                            <multidimensional>true</multidimensional>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <delivery_options_active>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </delivery_options_active>
-                                <enable_timeframes>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </enable_timeframes>
-                                <enable_evening_timeframes>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </enable_evening_timeframes>
-                            </depends>
-                        </default_evening_product_option>
-                        <default_pakjegemak_product_option translate="label comment" module="postnl">
-                            <label>Default 'deliver at the Post Office' option</label>
-                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.</comment>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableOptions</source_model>
-                            <multidimensional>true</multidimensional>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </default_pakjegemak_product_option>
-                        <default_pge_product_option translate="label comment" module="postnl">
-                            <label>Default early post office pickup option</label>
-                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.</comment>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
-                            <multidimensional>true</multidimensional>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <delivery_options_active>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </delivery_options_active>
-                                <enable_pakjegemak>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </enable_pakjegemak>
-                                <enable_pakjegemak_express>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </enable_pakjegemak_express>
-                            </depends>
-                        </default_pge_product_option>
-                        <default_buspakje_product_option translate="label comment" module="postnl">
-                            <label>Default letter box parcel option</label>
-                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to letter box parcel shipments.</comment>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>
-                            <multidimensional>true</multidimensional>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </default_buspakje_product_option>
-                        <default_stated_address_only_product_option translate="label comment" module="postnl">
-                            <label>Default 'stated address only' option</label>
-                            <comment>This option will be used as default when the customer has checked the 'stated address only' checkbox during checkout.</comment>
-                            <frontend_type>select</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
-                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableStatedAddressOnlyOptions</source_model>
-                            <multidimensional>true</multidimensional>
-                            <sort_order>100</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <stated_address_only_option>
-                                    <fieldset>delivery_options</fieldset>
-                                    <value>1</value>
-                                </stated_address_only_option>
-                            </depends>
-                        </default_stated_address_only_product_option>
-                    </fields>
-                </cif_product_options>
                 <cod translate="label comment" module="postnl">
                     <label>COD Settings</label>
                     <comment><![CDATA[Here you can configure the way PostNL COD works.<br/>Please note that this requires the PostNL COD payment method to be active. You can activate the PostNL COD payment method <a href="%s" target="_blank">here</a>.]]></comment>
@@ -3880,7 +3730,7 @@
                     </fields>
                 </parcelware_export>
                 <grid translate="label comment" module="postnl">
-                    <label>Grid Settings</label>
+                    <label>User Settings</label>
                     <comment>These fields allow you to alter the way the order and shipment grids are displayed.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>1900</sort_order>
@@ -3965,6 +3815,172 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </shipping_grid_massaction_default>
+                        <product_options_header translate="label" module="postnl">
+                            <label>Here you can specify which PostNL product options you have a contract for. Also you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments. Please note that if you select a product option which is not covered by your PostNL contract it will result in an error.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>300</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </product_options_header>
+                        <supported_product_options translate="label comment tooltip" module="postnl">
+                            <label>Select supported option</label>
+                            <comment>Only the selected options will be available.</comment>
+                            <tooltip>If you are unsure which options to select, ask your PostNL account manager.</tooltip>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>postnl_core/system_config_source_allProductOptions</source_model>
+                            <sort_order>310</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <can_be_empty>0</can_be_empty>
+                            <validate>validate-select</validate>
+                        </supported_product_options>
+                        <default_product_option translate="label comment" module="postnl">
+                            <label>Default shipping option</label>
+                            <comment>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>320</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </default_product_option>
+                        <use_alternative_default translate="label comment" module="postnl">
+                            <label>Use an alternative default option</label>
+                            <comment>Enable this to use an alternative default option when a shipment's total value exceeds a certain amount.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>330</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </use_alternative_default>
+                        <alternative_default_max_amount translate="label comment" module="postnl">
+                            <label>Maximum amount</label>
+                            <comment>The alternative default option will be used when the shipment's total amount exceeds this value.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>340</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <use_alternative_default>1</use_alternative_default>
+                            </depends>
+                            <validate>validate-digits validate-greater-than-zero</validate> <!-- not negative integers only -->
+                        </alternative_default_max_amount>
+                        <alternative_default_option translate="label comment" module="postnl">
+                            <label>Alternative default shipping option</label>
+                            <comment>This option will be used as default when the shipment's total value exceeds the given amount.</comment>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>350</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <use_alternative_default>1</use_alternative_default>
+                            </depends>
+                        </alternative_default_option>
+                        <default_evening_product_option translate="label comment" module="postnl">
+                            <label>Default evening delivery shipping option</label>
+                            <comment>This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic evening delivery shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableAvondOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>360</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_timeframes>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_timeframes>
+                                <enable_evening_timeframes>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_evening_timeframes>
+                            </depends>
+                        </default_evening_product_option>
+                        <default_pakjegemak_product_option translate="label comment" module="postnl">
+                            <label>Default 'deliver at the Post Office' option</label>
+                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>370</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </default_pakjegemak_product_option>
+                        <default_pge_product_option translate="label comment" module="postnl">
+                            <label>Default early post office pickup option</label>
+                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to early pickup Post Office shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_pakjeGemakProductOptions::getAvailablePgeOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>380</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <delivery_options_active>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </delivery_options_active>
+                                <enable_pakjegemak>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_pakjegemak>
+                                <enable_pakjegemak_express>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </enable_pakjegemak_express>
+                            </depends>
+                        </default_pge_product_option>
+                        <default_buspakje_product_option translate="label comment" module="postnl">
+                            <label>Default letter box parcel option</label>
+                            <comment>This setting can be overwritten by manually creating shipments. This option is only applicable to letter box parcel shipments.</comment>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_buspakjeProductOptions::getAvailableOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>390</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </default_buspakje_product_option>
+                        <default_stated_address_only_product_option translate="label comment" module="postnl">
+                            <label>Default 'stated address only' option</label>
+                            <comment>This option will be used as default when the customer has checked the 'stated address only' checkbox during checkout.</comment>
+                            <frontend_type>select</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_validateDefaultOption</backend_model>
+                            <source_model>postnl_core/system_config_source_standardProductOptions::getAvailableStatedAddressOnlyOptions</source_model>
+                            <multidimensional>true</multidimensional>
+                            <sort_order>400</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <stated_address_only_option>
+                                    <fieldset>delivery_options</fieldset>
+                                    <value>1</value>
+                                </stated_address_only_option>
+                            </depends>
+                        </default_stated_address_only_product_option>
                     </fields>
                 </grid>
                 <advanced translate="label comment" module="postnl">
