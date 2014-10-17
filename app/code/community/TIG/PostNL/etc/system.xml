@@ -989,156 +989,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </shipping_days>
-                        <grid_header translate="label" module="postnl">
-                            <label>These fields allow you to alter the way the order and shipment grids are displayed.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>130</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </grid_header>
-                        <show_grid_options translate="label comment tooltip" module="postnl">
-                            <label>Show product options in order grid</label>
-                            <comment>This will add a product options field to the create shipments mass action in the order grid. If disabled, default options will be used.</comment>
-                            <tooltip>These options will appear in a dropdown field next to the 'create shipments' mass action in the sales > order grid.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_grid_options>
-                        <show_buspakje_option translate="label comment tooltip" module="postnl">
-                            <label>Show letter box parcel option in order grid</label>
-                            <comment>This will add the option to mark shipments as being letter box parcels when creating shipments from the order grid.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <use_buspakje>1</use_buspakje>
-                                <buspakje_calculation_mode>manual</buspakje_calculation_mode>
-                            </depends>
-                        </show_buspakje_option>
-                        <shipping_grid_columns_anchor>
-                            <frontend_model>postnl_adminhtml/system_config_form_field_anchor</frontend_model>
-                            <anchor_name>shipment_grid_columns</anchor_name>
-                            <sort_order>160</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </shipping_grid_columns_anchor>
-                        <order_grid_columns translate="label comment tooltip" module="postnl">
-                            <label>Optional order grid columns</label>
-                            <comment>Select which optional columns to show in the order grid.</comment>
-                            <tooltip>Selecting too many columns may cause the order grid to no longer fit on your monitor.</tooltip>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>postnl_adminhtml/system_config_source_orderGridColumns</source_model>
-                            <sort_order>170</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <can_be_empty>1</can_be_empty>
-                        </order_grid_columns>
-                        <order_grid_massaction_default translate="label" module="postnl">
-                            <label>Select a default option for the order grid mass action.</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_adminhtml/system_config_source_orderGridMassaction</source_model>
-                            <sort_order>180</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </order_grid_massaction_default>
-                        <shipping_grid_columns translate="label comment tooltip" module="postnl">
-                            <label>Optional shipment grid columns</label>
-                            <comment>Select which optional columns to show in the shipment grid.</comment>
-                            <tooltip>Selecting too many columns may cause the shipment grid to no longer fit on your monitor.</tooltip>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>postnl_adminhtml/system_config_source_shipmentGridColumns</source_model>
-                            <sort_order>190</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <can_be_empty>1</can_be_empty>
-                        </shipping_grid_columns>
-                        <shipping_grid_massaction_default translate="label" module="postnl">
-                            <label>Select a default option for the shipment grid mass action.</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_adminhtml/system_config_source_shipmentGridMassaction</source_model>
-                            <sort_order>200</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </shipping_grid_massaction_default>
-                        <email_header translate="label" module="postnl">
-                            <label>These fields are used to configure the track &amp; trace email that may be automatically emailed to customers after a shipment has been confirmed.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>210</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </email_header>
-                        <send_track_and_trace_email translate="label comment" module="postnl">
-                            <label>Automatically send track &amp; trace email to customer</label>
-                            <comment>If enabled, a track &amp; trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>220</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </send_track_and_trace_email>
-                        <track_and_trace_email_template translate="label comment" module="postnl">
-                            <label>Track &amp; trace email template</label>
-                            <comment>You can customize the track &amp; trace email in system > transactional emails.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_email_template</source_model>
-                            <sort_order>230</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-select</validate>
-                        </track_and_trace_email_template>
-                        <send_copy translate="label comment" module="postnl">
-                            <label>Send a copy of the track &amp; trace email</label>
-                            <comment>If enabled, you may enter seperate email addresses to which the track &amp; trace email will be sent in addition to the customer.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>240</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </send_copy>
-                        <copy_to translate="label comment" module="postnl">
-                            <label>Send track &amp; trace email copy to</label>
-                            <comment>You can enter multiple email addresses seperated by commas.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>250</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <send_copy>1</send_copy>
-                            </depends>
-                        </copy_to>
-                        <copy_method translate="label" module="postnl">
-                            <label>Track &amp; trace email copy method</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_email_method</source_model>
-                            <sort_order>260</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <send_copy>1</send_copy>
-                            </depends>
-                        </copy_method>
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
@@ -1811,34 +1661,12 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </label_options_fields_header>
-                        <weight_per_parcel translate="label comment tooltip" module="postnl">
-                            <label>Maximum weight per parcel</label>
-                            <comment>Determine the maximum weight of each parcel. If a shipment's total weight exceeds this, the shipment will be spread out over multiple parcels.</comment>
-                            <tooltip>This only applies to Dutch shipments. Each parcel needs to be shipped seperately and will receive it's own shipping label.</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>3</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-greater-than-zero validate-number</validate>
-                        </weight_per_parcel>
-                        <weight_unit translate="label comment" module="postnl">
-                            <label>Weight unit</label>
-                            <comment>Select the unit in which you've entered products' weight</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_weightUnit</source_model>
-                            <sort_order>4</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-select</validate>
-                        </weight_unit>
                         <shipment_reference_type translate="label comment" module="postnl">
                             <label>Shipment reference type</label>
                             <comment>Select what to use as a shipment's reference. This will be printed on the shipping label</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_core/system_config_source_referenceType</source_model>
-                            <sort_order>5</sort_order>
+                            <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1848,7 +1676,7 @@
                             <comment>You can use the following variables: {{var shipment_increment_id}}, {{var order_increment_id}} and {{var store_frontend_name}}. The resulting text may not exceed 28 characters.</comment>
                             <tooltip>You can use this field to for example, add a prefix to the shipment increment ID or to help identify the shipment as coming from your webshop.</tooltip>
                             <frontend_type>text</frontend_type>
-                            <sort_order>6</sort_order>
+                            <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1856,6 +1684,17 @@
                                 <shipment_reference_type>custom</shipment_reference_type>
                             </depends>
                         </custom_shipment_reference>
+                        <show_label translate="label comment" module="postnl">
+                            <label>Show shipping label</label>
+                            <comment>If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_label>
                         <packing_slip_fields_header translate="label" module="postnl">
                             <label>Packing Slip</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -2046,17 +1885,36 @@
                                 <comment_type>static</comment_type>
                             </depends>
                         </comment_text>
-                        <show_label translate="label comment" module="postnl">
-                            <label>Show shipping label</label>
-                            <comment>If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>180</sort_order>
+                        <weight_options_fields_header translate="label" module="postnl">
+                            <label>Weight Options</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_label>
+                            <show_in_store>1</show_in_store>
+                        </weight_options_fields_header>
+                        <weight_per_parcel translate="label comment tooltip" module="postnl">
+                            <label>Maximum weight per parcel</label>
+                            <comment>Determine the maximum weight of each parcel. If a shipment's total weight exceeds this, the shipment will be spread out over multiple parcels.</comment>
+                            <tooltip>This only applies to Dutch shipments. Each parcel needs to be shipped seperately and will receive it's own shipping label.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>210</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-greater-than-zero validate-number</validate>
+                        </weight_per_parcel>
+                        <weight_unit translate="label comment" module="postnl">
+                            <label>Weight unit</label>
+                            <comment>Select the unit in which you've entered products' weight</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_weightUnit</source_model>
+                            <sort_order>220</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                        </weight_unit>
                     </fields>
                 </packing_slip>
                 <cif_address translate="label comment" module="postnl">
@@ -2274,6 +2132,74 @@
                         </remark_field>
                    </fields>
                 </cif_address>
+                <track_and_trace translate="label comment" module="postnl">
+                    <label>Track &amp; Trace</label>
+                    <comment>These fields are used to configure the track &amp; trace email that may be automatically emailed to customers after a shipment has been confirmed.</comment>
+                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <sort_order>1300</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <send_track_and_trace_email translate="label comment" module="postnl">
+                            <label>Automatically send track &amp; trace email to customer</label>
+                            <comment>If enabled, a track &amp; trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>220</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </send_track_and_trace_email>
+                        <track_and_trace_email_template translate="label comment" module="postnl">
+                            <label>Track &amp; trace email template</label>
+                            <comment>You can customize the track &amp; trace email in system > transactional emails.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>230</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                        </track_and_trace_email_template>
+                        <send_copy translate="label comment" module="postnl">
+                            <label>Send a copy of the track &amp; trace email</label>
+                            <comment>If enabled, you may enter seperate email addresses to which the track &amp; trace email will be sent in addition to the customer.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>240</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </send_copy>
+                        <copy_to translate="label comment" module="postnl">
+                            <label>Send track &amp; trace email copy to</label>
+                            <comment>You can enter multiple email addresses seperated by commas.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>250</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <send_copy>1</send_copy>
+                            </depends>
+                        </copy_to>
+                        <copy_method translate="label" module="postnl">
+                            <label>Track &amp; trace email copy method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_method</source_model>
+                            <sort_order>260</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <send_copy>1</send_copy>
+                            </depends>
+                        </copy_method>
+                    </fields>
+                </track_and_trace>
                 <cif_product_options translate="label comment" module="postnl">
                     <label>Product Options</label>
                     <comment>Here you can specify which PostNL product options you have a contract for. Also you can specify the PostNL product options that will be used by the extension. You can always override the 'default option' settings by manually creating shipments. Please note that if you select a product option which is not covered by your PostNL contract it will result in an error.</comment>
@@ -3694,7 +3620,7 @@
                     </fields>
                 </checkout_payment_methods>
                 <parcelware_export translate="label comment" module="postnl">
-                    <label>Parcelware Export Settings</label>
+                    <label>Parcelware Settings</label>
                     <comment><![CDATA[This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href="http://kb.tig.nl/topic/94906903" target="_blank" title="More info">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>1800</sort_order>
@@ -3776,6 +3702,94 @@
                         </sender_ref_nr>
                     </fields>
                 </parcelware_export>
+                <grid translate="label comment" module="postnl">
+                    <label>Grid Settings</label>
+                    <comment>These fields allow you to alter the way the order and shipment grids are displayed.</comment>
+                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <sort_order>1900</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <show_grid_options translate="label comment tooltip" module="postnl">
+                            <label>Show product options in order grid</label>
+                            <comment>This will add a product options field to the create shipments mass action in the order grid. If disabled, default options will be used.</comment>
+                            <tooltip>These options will appear in a dropdown field next to the 'create shipments' mass action in the sales > order grid.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>140</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_grid_options>
+                        <show_buspakje_option translate="label comment tooltip" module="postnl">
+                            <label>Show letter box parcel option in order grid</label>
+                            <comment>This will add the option to mark shipments as being letter box parcels when creating shipments from the order grid.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <use_buspakje>1</use_buspakje>
+                                <buspakje_calculation_mode>manual</buspakje_calculation_mode>
+                            </depends>
+                        </show_buspakje_option>
+                        <shipping_grid_columns_anchor>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_anchor</frontend_model>
+                            <anchor_name>shipment_grid_columns</anchor_name>
+                            <sort_order>160</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </shipping_grid_columns_anchor>
+                        <order_grid_columns translate="label comment tooltip" module="postnl">
+                            <label>Optional order grid columns</label>
+                            <comment>Select which optional columns to show in the order grid.</comment>
+                            <tooltip>Selecting too many columns may cause the order grid to no longer fit on your monitor.</tooltip>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>postnl_adminhtml/system_config_source_orderGridColumns</source_model>
+                            <sort_order>170</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                        </order_grid_columns>
+                        <order_grid_massaction_default translate="label" module="postnl">
+                            <label>Select a default option for the order grid mass action.</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_adminhtml/system_config_source_orderGridMassaction</source_model>
+                            <sort_order>180</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </order_grid_massaction_default>
+                        <shipping_grid_columns translate="label comment tooltip" module="postnl">
+                            <label>Optional shipment grid columns</label>
+                            <comment>Select which optional columns to show in the shipment grid.</comment>
+                            <tooltip>Selecting too many columns may cause the shipment grid to no longer fit on your monitor.</tooltip>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>postnl_adminhtml/system_config_source_shipmentGridColumns</source_model>
+                            <sort_order>190</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                        </shipping_grid_columns>
+                        <shipping_grid_massaction_default translate="label" module="postnl">
+                            <label>Select a default option for the shipment grid mass action.</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_adminhtml/system_config_source_shipmentGridMassaction</source_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </shipping_grid_massaction_default>
+                    </fields>
+                </grid>
                 <advanced translate="label comment" module="postnl">
                     <label>Technical Settings</label>
                     <comment>These settings are intended for advanced users only! If you're not 100% sure what you're doing, please do not touch these settings.</comment>
