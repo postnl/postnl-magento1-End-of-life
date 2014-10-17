@@ -142,23 +142,6 @@ document.observe('dom:loaded', function(){
         window.onhashchange = toHash.bind(null, '');
         window.onload = toHash.bind(null, '');
 
-        //// wrap radio buttons with labels
-        //$$('#postnl-wizard input[type="radio"]').each(function(elem){
-        //    var wrapper = document.createElement('div');
-        //    wrapper.className = 'wrapper-radio';
-        //
-        //    elem.parentNode.insertBefore(wrapper, elem);
-        //    wrapper.appendChild(elem);
-        //    wrapper.appendChild(wrapper.next());
-        //});
-        //// remove leftover spaces after wrapping the elements
-        //$$('.wrapper-radio').each(function(elem){
-        //    if(elem.parentNode)
-        //    {
-        //        elem.parentNode.innerHTML = elem.parentNode.innerHTML.replace(/&nbsp;/g, ' ');
-        //    }
-        //});
-
         $$('#row_postnl_cif_mode input').invoke(
             'observe',
             'change',
@@ -166,7 +149,6 @@ document.observe('dom:loaded', function(){
                 modusColor();
             }
         );
-
         modusColor();
     }
 });
