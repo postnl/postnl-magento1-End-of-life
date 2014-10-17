@@ -1,4 +1,4 @@
-TIG_PostNL::,Geactiveerd
+TIG_PostNL::Enabled,Geactiveerd
 TIG_PostNL::Method Name,Methode naam
 TIG_PostNL::Rate Type,Tarief type
 TIG_PostNL::Price,Prijs
@@ -14,7 +14,7 @@ TIG_PostNL::Displayed Error Message,Getoonde foutmelding indien niet beschikbaar
 TIG_PostNL::Condition,Voorwaarde
 TIG_PostNL::Include Virtual Products in Price Calculation,Neem de virtuele producten mee in de prijsberekening
 TIG_PostNL::Version & Support,Versie & Ondersteuning
-TIG_PostNL::General Settings,Algemene Instellingen
+,
 TIG_PostNL::Active,Actief
 TIG_PostNL::Enable or disable the extension,Activeer/deactiveer de extensie
 TIG_PostNL::Email,E-mailadres
@@ -78,7 +78,7 @@ TIG_PostNL::Department field,Afdeling veld
 TIG_PostNL::Doorcode field,Deurcode veld
 TIG_PostNL::Floor field,Verdieping veld
 TIG_PostNL::Remark field,Opmerking veld
-TIG_PostNL::Sender Address,Afzenderadres
+,
 TIG_PostNL::First Name,Voornaam
 TIG_PostNL::Last Name,Achternaam
 TIG_PostNL::Company,Bedrijf
@@ -89,10 +89,10 @@ TIG_PostNL::House Nr. Extension,Huisnummer toevoeging
 TIG_PostNL::Postcode,Postcode
 TIG_PostNL::City,Plaats
 TIG_PostNL::Region,Provincie
-TIG_PostNL::Return Address,Retouradres
+,
 TIG_PostNL::Use the sender address as the return adress,Gebruik afzenderadres als retouradres
 TIG_PostNL::Product Options,Productopties
-TIG_PostNL::Select supported option,Selecteer de beschikbare opties
+TIG_PostNL::Select selectable option,Selecteer de beschikbare opties
 TIG_PostNL::Only the selected options will be available.,Alleen de geselecteerde opties zijn beschikbaar
 TIG_PostNL::Default shipping option,Standaard verzendoptie
 TIG_PostNL::This setting may be overwritten by manualy creating shipments. This option is only applicable to domestic shipments.,Deze instelling kan overschreven worden door handmatig een zending aan te maken. Deze instelling is enkel van toepassing op binnenlandse zendingen.
@@ -104,7 +104,7 @@ TIG_PostNL::Alternative default shipping option,Alternatieve standaard verzendop
 TIG_PostNL::This option will be used as default when the shipment's total value exceeds the given amount.,Deze optie wordt gebruikt als standaard indien de totaalwaarde van de zending groter is dan hetopgegeven bedrag.
 TIG_PostNL::Default 'deliver at the Post Office' option,Standaard 'afhalen op postkantoor' optie
 TIG_PostNL::This setting can be overwritten by manually creating shipments. This option is only applicable to Post Office shipments.,Deze instelling kan worden overschreven door handmatig zendingen aan te maken. Deze instelling is enkel van toepassing op Postkantoor zendingen.
-TIG_PostNL::GlobalPack Settings,GlobalPack Instellingen
+TIG_PostNL::GlobalPack Settings,Wereldwijd Verzenden
 TIG_PostNL::Customs license number,Douane licentie nummer
 "TIG_PostNL::If you do not own a customs license, leave this field empty.","Als u geen douane licentie heeft, laat dit veld dan leeg"
 TIG_PostNL::Customs certificate number,Douane certificaat nummer
@@ -546,14 +546,14 @@ TIG_PostNL::One or more fields are missing. Please fill these fields and try aga
 TIG_PostNL::Validate account settings,Valideer account instellingen
 TIG_PostNL::Unconfirmed,Niet Voorgemeld
 TIG_PostNL::Confirm Status,Voormeld Status
-TIG_PostNL::A4,A4
-TIG_PostNL::A6,A6
+TIG_PostNL::A4 format,A4 formaat
+TIG_PostNL::A6 format,A6 formaat
 TIG_PostNL::PostNL - Print Shipping Label,PostNL - Print Verzendlabel
 TIG_PostNL::PostNL - Send Tracking Information,PostNL - Verstuur Track & Trace Informatie
 TIG_PostNL::No status history available.,Geen status geschiedenis informatie beschikbaar.
 TIG_PostNL::PostNL - Create Parcelware export,PostNL - Maak Parcelware export
 TIG_PostNL::Exported to Parcelware,Geëxporteerd naar Parcelware
-TIG_PostNL::Parcelware Export Settings,Parcelware Export Instellingen
+TIG_PostNL::Parcelware Settings,Parcelware Instellingen
 "TIG_PostNL::This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href=""http://kb.tig.nl/topic/94906903"" target=""_blank"" title=""More info"">here</a>.","Hier kunt u uw Parcelware export voorkeuren opgeven. U kunt <a href=""http://kb.tig.nl/topic/94906903"" target=""_blank"" title=""Meer informatie"">hier</a> meer informatie vinden over het configureren van deze instellingen."
 TIG_PostNL::Enable Parcelware export,Activeer Parcelware export
 TIG_PostNL::Parcelware export is disabled. Activate Parcelware export in order to edit these settings. Please note that you can only activate Parcelware export from the global level.,Parcelware export is gedeactiveerd. Activeer Parcelware export om deze instellingen te kunnen aanpassen. Houd er rekening mee dat Parcelware export enkel vanuit op globaal niveau kunt activeren.
@@ -618,7 +618,7 @@ TIG_PostNL::Sa,Za
 TIG_PostNL::in,te
 TIG_PostNL::Business Hours,Openingstijden
 TIG_PostNL::Closed,Gesloten
-TIG_PostNL::Delivery Options,Bezorgopties
+,
 TIG_PostNL::Delivery,Bezorgen
 TIG_PostNL::or Pickup,of Ophalen
 TIG_PostNL::More Info,Meer informatie
@@ -642,7 +642,7 @@ TIG_PostNL::Connection timeout duration,Connectie time-out duur
 TIG_PostNL::Show PostNL Checkout exclusively to MijnPakket users,Toon PostNL Checkout exclusief aan Mijnpakket gebruikers
 "TIG_PostNL::If enabled, PostNL Checkout will only be available to users who already have a Mijnpakket account.","Indien deze optie op ja staat, zal PostNL Checkout enkel getoond worden aan gebruikers die een Mijnpakket account hebben."
 TIG_PostNL::This option is only available if delivery options are enabled.,Deze optie is enkel beschikbaar indien bezorgopties geactiveerd zijn.
-TIG_PostNL::PostNL Delivery Options & MijnPakket login,PostNL Bezorgopties & MijnPakket login
+TIG_PostNL::Delivery Options,Bezorgopties
 "TIG_PostNL::Here you can configure your PostNL delivery options.<br />With PostNL delivery options, your customers can choose where and when they want their order delivered. They may choose a date and timeframe for their delivery. Also they can choose to have their order delivered to a nearby post office. New features include the 'evening' delivery option and the option to choose an 'early delivery' post office location. MijnPakket login gives your customers the option to quickly fill in their preferred billing and shipping address by logging in with their PostNL MijnPakket account.","Hier kunt u uw PostNL bezorgopties configureren.<br />Met PostNL bezorgopties kunnen uw klanten kiezen waar en wanneer zij hun bestelling bezorgd willen krijgen. Klanten kunnen kiezen voor een specifieke datum en tijdvak. Ook kunnen zij ervoor kiezen om hun bestelling op een nabij gelegen postkantoor te laten bezorgen. Ook zijn de nieuwe bezorgopties beschikbaar, te weten; bezorging in de avond (op dinsdag en donderdag) en extra vroeg ophalen op een PostNL postkantoor (vanaf 8.30 uur). Met MijnPakket login kunnen uw klanten gemakkelijk en snel hun voorkeursadres gebruiken als factuur- en verzendadres door in te loggen met hun PostNL MijnPakket account."
 TIG_PostNL::Enable PostNL delivery options,Activeer PostNL bezorgopties
 TIG_PostNL::You can disable PostNL delivery options in case the order has products that are not in stock or if the order weighs less than 2 kg.,U kunt PostNL bezorgopties deactiveren indien de bestelling een product bevat dat niet op voorraad is of indien de gehele bestelling minder weegt dan 2 kg.
@@ -909,7 +909,7 @@ TIG_PostNL::Order,Bestelling
 TIG_PostNL::Post office address,Postkantooradres
 TIG_PostNL::Invalid label type supplied for packing slip label pdf: %s.,Ongeldig label type opgegeven voor pakbon label pdf: %s.
 TIG_PostNL::Approaching memory limit for this operation. Please select fewer shipments and try again.,Geheugen limiet bereikt. Selecteer s.v.p. minder zendingen en probeer het opnieuw.
-TIG_PostNL::Packing Slip Settings,Pakbon Instellingen
+"TIG_PostNL::Label, Packing Slip and Weight Settings","Label, Pakbon en Gewichtsnstellingen"
 "TIG_PostNL::Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href=""http://kb.tig.nl/topic/95885953"" target=""_blank"" title=""More info"">here</a>.","Hier kunt u aangeven welke elementen u wilt tonen op de PostNL pakbonnen. U kunt <a href=""http://kb.tig.nl/topic/95885953"" target=""_blank"" title=""Meer informatie"">hier</a> meer lezen over hoe deze instellingen de pakbon aanpassen."
 TIG_PostNL::Logo for packing slips,Pakbon logo
 TIG_PostNL::The image will automatically be resized to fit the maximum dimensions of 900x100px.,"Deze afbeelding zal automatisch geschaald worden, zodat deze binnen de maximum afmetingen van 900x100px past."
@@ -1158,3 +1158,22 @@ TIG_PostNL::PostNL track & trace email has been sent for shipment #%s.,PostNL tr
 TIG_PostNL::Pickup your order %s,Je bestelling ophalen %s
 TIG_PostNL::Have your order delivered %s,Je bestelling laten bezorgen %s
 "TIG_PostNL::A prefilled csv file can be found <a href=""http://kb.tig.nl/topic/102462196"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/102462196"" target=""_blank"">hier</a> een voorgevuld csv bestand vinden."
+TIG_PostNL::Save and continue,Opslaan en doorgaan
+TIG_PostNL::Activation,Activatie
+TIG_PostNL::Other Settings,Overige Gegevens
+TIG_PostNL::Off,Uit
+TIG_PostNL::Technical Settings,Technische Instellingen
+TIG_PostNL::Address validation and Settings,Adresverificatie en Instellingen
+TIG_PostNL::Label Options,Verzendinstellingen
+TIG_PostNL::Packing Slip,Pakbon
+TIG_PostNL::Shipping Options,Verzendopties
+TIG_PostNL::Weight Options,Gewichtsinstellingen
+TIG_PostNL::Grid Settings,Overzichtsinstellingen
+TIG_PostNL::Magento's One Page Checkout,Magento's One Page Checkout
+TIG_PostNL::Idev's OneStepCheckout,Idev's OneStepCheckout
+TIG_PostNL::Other,Anders
+TIG_PostNL::Checkout extension,Checkout extensie
+TIG_PostNL::Checkout page address settings.,Checkout pagina adresinstellingen
+TIG_PostNL::PostNL delivery options are only available for Magento's One Page Checkout and Idev's OneStepCheckout extensions.,PostNL bezorgopties zijn enkel beschikbaar voor Magento's One Page Checkout en Idev's OneStepCheckout extensies.
+TIG_PostNL::Specify checkout extension,Specificeer checkout extensie
+TIG_PostNL::Checkout Settings,Checkout instellingen
