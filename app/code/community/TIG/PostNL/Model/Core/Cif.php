@@ -63,8 +63,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XPATH_CUSTOMER_CODE               = 'postnl/cif/customer_code';
     const XPATH_CUSTOMER_NUMBER             = 'postnl/cif/customer_number';
     const XPATH_COLLECTION_LOCATION         = 'postnl/cif/collection_location';
-    const XPATH_GLOBAL_BARCODE_TYPE         = 'postnl/cif/global_barcode_type';
-    const XPATH_GLOBAL_BARCODE_RANGE        = 'postnl/cif/global_barcode_range';
+    const XPATH_GLOBAL_BARCODE_TYPE         = 'postnl/cif_globalpack_settings/global_barcode_type';
+    const XPATH_GLOBAL_BARCODE_RANGE        = 'postnl/cif_globalpack_settings/global_barcode_range';
 
     /**
      * Constants containing xpaths to cif address configuration options.
@@ -111,8 +111,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**.
      * Xpaths for shipment reference info.
      */
-    const XPATH_SHIPMENT_REFERENCE_TYPE   = 'postnl/cif_labels_and_confirming/shipment_reference_type';
-    const XPATH_CUSTOM_SHIPMENT_REFERENCE = 'postnl/cif_labels_and_confirming/custom_shipment_reference';
+    const XPATH_SHIPMENT_REFERENCE_TYPE   = 'postnl/packing_slip/shipment_reference_type';
+    const XPATH_CUSTOM_SHIPMENT_REFERENCE = 'postnl/packing_slip/custom_shipment_reference';
 
     /**
      * Possible barcodes series per barcode type.
@@ -126,7 +126,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Xpath to weight per parcel config setting.
      */
-    const XPATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
+    const XPATH_WEIGHT_PER_PARCEL = 'postnl/packing_slip/weight_per_parcel';
 
     /**
      * XPaths for COD specific settings.

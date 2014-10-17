@@ -210,7 +210,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Xpath to weight per parcel config setting.
      */
-    const XPATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
+    const XPATH_WEIGHT_PER_PARCEL = 'postnl/packing_slip/weight_per_parcel';
 
     /**
      * Xpath to setting that determines whether or not to send track and trace emails.

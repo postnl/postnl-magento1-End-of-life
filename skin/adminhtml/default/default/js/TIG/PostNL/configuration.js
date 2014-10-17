@@ -142,42 +142,31 @@ document.observe('dom:loaded', function(){
         window.onhashchange = toHash.bind(null, '');
         window.onload = toHash.bind(null, '');
 
-        // wrap radio buttons with labels
-        $$('#postnl-wizard input[type="radio"]').each(function(elem){
-            var wrapper = document.createElement('div');
-            wrapper.className = 'wrapper-radio';
+        //// wrap radio buttons with labels
+        //$$('#postnl-wizard input[type="radio"]').each(function(elem){
+        //    var wrapper = document.createElement('div');
+        //    wrapper.className = 'wrapper-radio';
+        //
+        //    elem.parentNode.insertBefore(wrapper, elem);
+        //    wrapper.appendChild(elem);
+        //    wrapper.appendChild(wrapper.next());
+        //});
+        //// remove leftover spaces after wrapping the elements
+        //$$('.wrapper-radio').each(function(elem){
+        //    if(elem.parentNode)
+        //    {
+        //        elem.parentNode.innerHTML = elem.parentNode.innerHTML.replace(/&nbsp;/g, ' ');
+        //    }
+        //});
 
-            elem.parentNode.insertBefore(wrapper, elem);
-            wrapper.appendChild(elem);
-            wrapper.appendChild(wrapper.next());
-        });
-        // remove leftover spaces after wrapping the elements
-        $$('.wrapper-radio').each(function(elem){
-            if(elem.parentNode)
-            {
-                elem.parentNode.innerHTML = elem.parentNode.innerHTML.replace(/&nbsp;/g, ' ');
+        $$('#row_postnl_cif_mode input').invoke(
+            'observe',
+            'change',
+            function() {
+                modusColor();
             }
-        });
+        );
 
-        // modus colors
-        function modusColor()
-        {
-            switch(true)
-            {
-                case $('postnl_cif_mode-1').checked:
-                    $('row_postnl_cif_mode').style.background = '#F77';
-                    break;
-                case $('postnl_cif_mode1').checked:
-                    $('row_postnl_cif_mode').style.background = '#FF7';
-                    break;
-                case $('postnl_cif_mode0').checked:
-                    $('row_postnl_cif_mode').style.background = '#7F7';
-                    break;
-            }
-        }
-        $$('#row_postnl_cif_mode input').each(function(elem){
-            Event.observe(elem, 'change', modusColor);
-        });
         modusColor();
     }
 });
@@ -207,4 +196,29 @@ function toHash(hash)
 
     var target = $$('a[href="' + hash + '"]')[0];
     toStep(target.rel);
+}
+
+// modus colors
+function modusColor()
+{
+    var modeField = $('row_postnl_cif_mode');
+    var selectedRadioButton = $$('input[name="groups[cif][fields][mode][value]"]:checked')[0];
+    var value = '';
+    if (selectedRadioButton) {
+        value = selectedRadioButton.getValue();
+    }
+
+    switch(value)
+    {
+        case '1':
+            modeField.style.background = '#FF7';
+            break;
+        case '2':
+            modeField.style.background = '#7F7';
+            break;
+        case '0': //no break
+        default:
+            modeField.style.background = '#F77';
+            break;
+    }
 }

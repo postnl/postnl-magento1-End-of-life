@@ -50,7 +50,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ConfigCheck
     /**
      * XML paths to use GlobalPack/Checkout settings.
      */
-    const XPATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
+    const XPATH_USE_GLOBALPACK = 'postnl/cif_globalpack_settings/use_globalpack';
     const XPATH_USE_CHECKOUT   = 'postnl/cif/use_checkout';
 
     /**

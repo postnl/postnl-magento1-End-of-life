@@ -510,6 +510,23 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                                                       'postnl_adminhtml/system_config_form_field_wizardSaveButton'
                                                   );
 
+        $elementTypes['postnl_radios'] = Mage::getConfig()
+                                             ->getBlockClassName('postnl_adminhtml/system_config_form_field_radios');
+
         return $elementTypes;
+    }
+
+    /**
+     * Return dependency block object
+     *
+     * @return Mage_Adminhtml_Block_Widget_Form_Element_Dependence
+     */
+    protected function _getDependence()
+    {
+        if (!$this->getChild('element_dependense')){
+            $this->setChild('element_dependense',
+                $this->getLayout()->createBlock('postnl_adminhtml/widget_form_element_dependence'));
+        }
+        return $this->getChild('element_dependense');
     }
 }

@@ -480,6 +480,8 @@ FormElementDependenceController.prototype = {
      */
     initialize : function (elementsMap, config)
     {
+        this.elementsMap = elementsMap;
+
         if (config) {
             this._config = config;
         }

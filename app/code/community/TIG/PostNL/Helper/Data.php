@@ -59,14 +59,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const POSTNL_CRON_DEBUG_LOG_FILE = 'TIG_PostNL_Cron_Debug.log';
 
     /**
-     * XML path to postnl general active/inactive setting.
+     * XML path to postnl mode setting.
      */
-    const XPATH_EXTENSION_ACTIVE = 'postnl/general/active';
-
-    /**
-     * XML path to test/live mode config option.
-     */
-    const XPATH_TEST_MODE = 'postnl/cif/mode';
+    const XPATH_EXTENSION_MODE = 'postnl/cif/mode';
 
     /**
      * XML path to the test mode allowed config option.
@@ -91,7 +86,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * XML path to use_globalpack setting.
      */
-    const XPATH_USE_GLOBALPACK = 'postnl/cif/use_globalpack';
+    const XPATH_USE_GLOBALPACK = 'postnl/cif_globalpack_settings/use_globalpack';
 
     /**
      * Xpath to use_buspakje setting.
@@ -106,7 +101,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * XML path to weight unit used
      */
-    const XPATH_WEIGHT_UNIT = 'postnl/cif_labels_and_confirming/weight_unit';
+    const XPATH_WEIGHT_UNIT = 'postnl/packing_slip/weight_unit';
 
     /**
      * Xpath to the buspakje calculation mode setting.
@@ -196,9 +191,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * @var array
      */
     protected $_globalShipmentRequiredFields = array(
-        'postnl/cif/use_globalpack',
-        'postnl/cif/global_barcode_type',
-        'postnl/cif/global_barcode_range',
+        'postnl/cif_globalpack_settings/use_globalpack',
+        'postnl/cif_globalpack_settings/global_barcode_type',
+        'postnl/cif_globalpack_settings/global_barcode_range',
         'postnl/cif_globalpack_settings/customs_value_attribute',
         'postnl/cif_globalpack_settings/country_of_origin_attribute',
         'postnl/cif_globalpack_settings/description_attribute',
@@ -1155,7 +1150,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             $storeId = Mage::app()->getStore()->getId();
         }
 
-        $testMode = Mage::getStoreConfigFlag(self::XPATH_TEST_MODE, $storeId);
+        $testMode = false;
+        $mode = Mage::getStoreConfig(self::XPATH_EXTENSION_MODE, $storeId);
+
+        if ($mode === '1') {
+            $testMode = true;
+        }
 
         Mage::register('postnl_test_mode', $testMode);
         return $testMode;
@@ -1244,7 +1244,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         /**
          * Check if the module has been enabled
          */
-        $enabled = Mage::getStoreConfigFlag(self::XPATH_EXTENSION_ACTIVE, $storeId);
+        $enabled = Mage::getStoreConfigFlag(self::XPATH_EXTENSION_MODE, $storeId);
+
         if ($enabled === false) {
             $errors = array(
                 array(

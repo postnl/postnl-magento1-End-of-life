@@ -25,7 +25,7 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to servicedesk@tig.nl so we can send you a copy immediately.
+ * to servicedesk@totalinternetgroup.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
@@ -35,37 +35,27 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * Form element dependencies mapper
+ * Assumes that one element may depend on other element values.
+ * Will toggle as "enabled" only if all elements it depends from toggle as true.
  */
-
-class TIG_PostNL_Model_System_Config_Source_Testlive
+class TIG_PostNL_Block_Adminhtml_Widget_Form_Element_Dependence extends Mage_Adminhtml_Block_Widget_Form_Element_Dependence
 {
     /**
-     * Source model for test / live setting.
+     * HTML output getter
      *
-     * @return array
+     * @return string
      */
-    public function toOptionArray()
+    protected function _toHtml()
     {
-        $helper = Mage::helper('postnl');
-
-        /**
-         * Used 0, 1 and 2 as values so that Mage::getStoreConfigFlag() would still function for checking if the
-         * extension is active. You still need to check if the value is 2 to see if it's in live or test mode.
-         */
-        $array = array(
-             array(
-                'value' => '0',
-                'label' => $helper->__('Off')
-             ),
-             array(
-                'value' => '1',
-                'label' => $helper->__('Test')
-             ),
-             array(
-                'value' => '2',
-                'label' => $helper->__('Live')
-             ),
-        );
-        return $array;
+        if (!$this->_depends) {
+            return '';
+        }
+        return '<script type="text/javascript">'
+            . 'var formElementDependenceController = new FormElementDependenceController('
+            . $this->_getDependsJson()
+            . ($this->_configOptions ? ', ' . Mage::helper('core')->jsonEncode($this->_configOptions) : '')
+            . '); </script>';
     }
 }
