@@ -100,7 +100,7 @@ document.observe('dom:loaded', function(){
         postnlAdvanced.className = 'section-config';
 
         var postnlAdvancedFieldset = document.createElement('fieldset');
-        postnlAdvancedFieldset.id = 'postnl_advanced';
+        postnlAdvancedFieldset.id = 'postnl_advanced_group';
         postnlAdvancedFieldset.hide();
         postnlAdvanced.appendChild(postnlAdvancedFieldset);
 
@@ -117,10 +117,10 @@ document.observe('dom:loaded', function(){
 
         postnlAdvancedHeader.className = 'entry-edit-head collapseable';
         postnlAdvancedLink.innerHTML = Translator.translate('Advanced settings');
-        postnlAdvancedLink.id = 'postnl_advanced-head';
-        postnlAdvancedLink.href = '#';
+        postnlAdvancedLink.id = 'postnl_advanced_group-head';
+        postnlAdvancedLink.href = 'javascript:return false;';
         postnlAdvancedLink.onclick = function() {
-            Fieldset.toggleCollapse('postnl_advanced', '');
+            Fieldset.toggleCollapse('postnl_advanced_group', '');
             return false;
         };
         postnlAdvancedHeader.appendChild(postnlAdvancedLink);
