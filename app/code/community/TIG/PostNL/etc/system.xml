@@ -916,7 +916,6 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <validate>validate-select</validate>
                         </label_size>
                         <weight_per_parcel translate="label comment tooltip" module="postnl">
                             <label>Maximum weight per parcel</label>
@@ -1197,7 +1196,7 @@
                     </fields>
                 </cif_labels_and_confirming>
                 <delivery_options translate="label comment" module="postnl">
-                    <label>PostNL Delivery Options</label>
+                    <label>Delivery Options</label>
                     <comment><![CDATA[Here you can configure your PostNL delivery options.<br />With PostNL delivery options, your customers can choose where and when they want their order delivered. They may choose a date and timeframe for their delivery. Also they can choose to have their order delivered to a nearby post office. New features include the 'evening' delivery option and the option to choose an 'early delivery' post office location. MijnPakket login gives your customers the option to quickly fill in their preferred billing and shipping address by logging in with their PostNL MijnPakket account.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <frontend_class>postnl-wizard</frontend_class>
@@ -1829,51 +1828,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </validate_button>
-                        <global_fields_header translate="label" module="postnl">
-                            <label>These fields are only required if you intend to send products to countries outside the EU.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>110</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </global_fields_header>
-                        <use_globalpack translate="label comment" module="postnl">
-                            <label>Use GlobalPack</label>
-                            <comment>GlobalPack is used to ship orders outside the EU. Otherwise you can leave this field disabled.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </use_globalpack>
-                        <global_barcode_type translate="label comment" module="postnl">
-                            <label>Global Barcode Type</label>
-                            <comment>The current global barcode type as supplied by PostNL. Must contain 2 letters.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>130</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <validate>validate-alpha validate-length minimum-length-2 maximum-length-2</validate>
-                            <depends>
-                                <use_globalpack>1</use_globalpack>
-                            </depends>
-                        </global_barcode_type>
-                        <global_barcode_range translate="label comment" module="postnl">
-                            <label>Global Barcode Range</label>
-                            <comment>Your global barcode range as supplied by PostNL. Must contain 4 digits.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>140</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <validate>validate-digits validate-length minimum-length-4 maximum-length-4</validate>
-                            <depends>
-                                <use_globalpack>1</use_globalpack>
-                            </depends>
-                        </global_barcode_range>
                         <save_and_continue translate="label" module="postnl">
                             <label>Save</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
@@ -1885,11 +1839,218 @@
                         </save_and_continue>
                    </fields>
                 </cif>
-                <cif_address translate="label comment" module="postnl">
-                    <label>Address Settings</label>
-                    <comment>This is where you configure the way the extension handles addresses entered by your customers. If these settings are not configured correctly, PostNL cannot guarantee that all addresses will be printed in the correct format.</comment>
+                <packing_slip translate="label comment" module="postnl">
+                    <label>Label, Packing Slip and Weight Settings</label>
+                    <comment><![CDATA[Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href="http://kb.tig.nl/topic/95885953" target="_blank" title="More info">here</a>.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>1000</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <logo translate="label comment" module="postnl">
+                            <label>Logo for packing slips</label>
+                            <comment>The image will automatically be resized to fit the maximum dimensions of 900x100px.</comment>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>postnl_core/system_config_backend_image_pdf</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="1">TIG/PostNL/core/packing_slip_logo</upload_dir>
+                            <base_url type="media" scope_info="1">TIG/PostNL/core/packing_slip_logo</base_url>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </logo>
+                        <show_webshop_info translate="label comment" module="postnl">
+                            <label>Show webshop information</label>
+                            <comment>If enabled, the shop's name, contact address, CoC and VAT numbers will be displayed on the packing slip.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_webshop_info>
+                        <coc_number translate="label" module="postnl">
+                            <label>CoC number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <show_webshop_info>1</show_webshop_info>
+                            </depends>
+                        </coc_number>
+                        <vat_number translate="label" module="postnl">
+                            <label>VAT number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <show_webshop_info>1</show_webshop_info>
+                            </depends>
+                        </vat_number>
+                        <show_customer_number translate="label comment" module="postnl">
+                            <label>Show customer number</label>
+                            <comment>If enabled, the customer ID will be printed on the packing slip for registered customers.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_customer_number>
+                        <show_billing_address translate="label" module="postnl">
+                            <label>Show billing address</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_billing_address>
+                        <show_shipping_address translate="label" module="postnl">
+                            <label>Show shipping address</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_shipping_address>
+                        <show_pakjegemak_address translate="label" module="postnl">
+                            <label>Show post office address</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_pakjegemak_address>
+                        <show_order_info translate="label comment" module="postnl">
+                            <label>Show order information</label>
+                            <comment>If enabled, the order ID, shipment ID and order date will be shown on the packing slip.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_order_info>
+                        <show_payment_method translate="label" module="postnl">
+                            <label>Show payment method</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_payment_method>
+                        <show_shipping_method translate="label" module="postnl">
+                            <label>Show shipping method</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>110</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                        </show_shipping_method>
+                        <show_shipping_date translate="label" module="postnl">
+                            <label>Show shipping date</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>120</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_shipping_date>
+                        <item_columns translate="label comment" module="postnl">
+                            <label>Item columns</label>
+                            <comment>You can specify which item columns you would like to show on your packing slip pdf. We recommend you experiment with these settings before using them in a production environment. It may be diffcult to predict the outcome of these settings without trying them out by printing a PostNL packing slip.</comment>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_packingSlipItemColumns</frontend_model>
+                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+                            <sort_order>130</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </item_columns>
+                        <show_totals translate="label" module="postnl">
+                            <label>Show shipment totals</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>140</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_totals>
+                        <show_comment translate="label" module="postnl">
+                            <label>Show shipment comment</label>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_comment>
+                        <comment_type translate="label comment" module="postnl">
+                            <label>Comment type</label>
+                            <comment>You can choose to show a static, pre-configured message or you can show the last visible comment added to the shipment on the shipment detail page.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_commentType</source_model>
+                            <sort_order>160</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-select</validate>
+                            <depends>
+                                <show_comment>1</show_comment>
+                            </depends>
+                        </comment_type>
+                        <comment_text translate="label" module="postnl">
+                            <label>Comment text</label>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>170</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>validate-select</validate>
+                            <depends>
+                                <show_comment>1</show_comment>
+                                <comment_type>static</comment_type>
+                            </depends>
+                        </comment_text>
+                        <show_label translate="label comment" module="postnl">
+                            <label>Show shipping label</label>
+                            <comment>If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>180</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_label>
+                    </fields>
+                </packing_slip>
+                <cif_address translate="label comment" module="postnl">
+                    <label>Address validation and Settings</label>
+                    <comment>This is where you configure the way the extension handles addresses entered by your customers. If these settings are not configured correctly, PostNL cannot guarantee that all addresses will be printed in the correct format.</comment>
+                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <sort_order>1100</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -2100,213 +2261,6 @@
                         </remark_field>
                    </fields>
                 </cif_address>
-                <packing_slip translate="label comment" module="postnl">
-                    <label>Packing Slip Settings</label>
-                    <comment><![CDATA[Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href="http://kb.tig.nl/topic/95885953" target="_blank" title="More info">here</a>.]]></comment>
-                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <sort_order>1100</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <logo translate="label comment" module="postnl">
-                            <label>Logo for packing slips</label>
-                            <comment>The image will automatically be resized to fit the maximum dimensions of 900x100px.</comment>
-                            <frontend_type>image</frontend_type>
-                            <backend_model>postnl_core/system_config_backend_image_pdf</backend_model>
-                            <upload_dir config="system/filesystem/media" scope_info="1">TIG/PostNL/core/packing_slip_logo</upload_dir>
-                            <base_url type="media" scope_info="1">TIG/PostNL/core/packing_slip_logo</base_url>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </logo>
-                        <show_webshop_info translate="label comment" module="postnl">
-                            <label>Show webshop information</label>
-                            <comment>If enabled, the shop's name, contact address, CoC and VAT numbers will be displayed on the packing slip.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>20</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_webshop_info>
-                        <coc_number translate="label" module="postnl">
-                            <label>CoC number</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>30</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_webshop_info>1</show_webshop_info>
-                            </depends>
-                        </coc_number>
-                        <vat_number translate="label" module="postnl">
-                            <label>VAT number</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_webshop_info>1</show_webshop_info>
-                            </depends>
-                        </vat_number>
-                        <show_customer_number translate="label comment" module="postnl">
-                            <label>Show customer number</label>
-                            <comment>If enabled, the customer ID will be printed on the packing slip for registered customers.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_customer_number>
-                        <show_billing_address translate="label" module="postnl">
-                            <label>Show billing address</label>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_billing_address>
-                        <show_shipping_address translate="label" module="postnl">
-                            <label>Show shipping address</label>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_shipping_address>
-                        <show_pakjegemak_address translate="label" module="postnl">
-                            <label>Show post office address</label>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_pakjegemak_address>
-                        <show_order_info translate="label comment" module="postnl">
-                            <label>Show order information</label>
-                            <comment>If enabled, the order ID, shipment ID and order date will be shown on the packing slip.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_order_info>
-                        <show_payment_method translate="label" module="postnl">
-                            <label>Show payment method</label>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>100</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_payment_method>
-                        <show_shipping_method translate="label" module="postnl">
-                            <label>Show shipping method</label>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>110</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <validate>validate-select</validate>
-                        </show_shipping_method>
-                        <show_shipping_date translate="label" module="postnl">
-                            <label>Show shipping date</label>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_shipping_date>
-                        <item_columns translate="label comment" module="postnl">
-                            <label>Item columns</label>
-                            <comment>You can specify which item columns you would like to show on your packing slip pdf. We recommend you experiment with these settings before using them in a production environment. It may be diffcult to predict the outcome of these settings without trying them out by printing a PostNL packing slip.</comment>
-                            <frontend_model>postnl_adminhtml/system_config_form_field_packingSlipItemColumns</frontend_model>
-                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
-                            <sort_order>130</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </item_columns>
-                        <show_totals translate="label" module="postnl">
-                            <label>Show shipment totals</label>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_totals>
-                        <show_comment translate="label" module="postnl">
-                            <label>Show shipment comment</label>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>150</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_comment>
-                        <comment_type translate="label comment" module="postnl">
-                            <label>Comment type</label>
-                            <comment>You can choose to show a static, pre-configured message or you can show the last visible comment added to the shipment on the shipment detail page.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_commentType</source_model>
-                            <sort_order>160</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <validate>validate-select</validate>
-                            <depends>
-                                <show_comment>1</show_comment>
-                            </depends>
-                        </comment_type>
-                        <comment_text translate="label" module="postnl">
-                            <label>Comment text</label>
-                            <frontend_type>textarea</frontend_type>
-                            <sort_order>170</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-select</validate>
-                            <depends>
-                                <show_comment>1</show_comment>
-                                <comment_type>static</comment_type>
-                            </depends>
-                        </comment_text>
-                        <show_label translate="label comment" module="postnl">
-                            <label>Show shipping label</label>
-                            <comment>If enabled, the shipping label will be printed directly on the packing slip if possible. Otherwise it will always be printed on a separate page.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>180</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </show_label>
-                    </fields>
-                </packing_slip>
                 <parcelware_export translate="label comment" module="postnl">
                     <label>Parcelware Export Settings</label>
                     <comment><![CDATA[This is where you can configure your Parcelware export. You can find more information about configuring these settings <a href="http://kb.tig.nl/topic/94906903" target="_blank" title="More info">here</a>.]]></comment>
@@ -2712,20 +2666,43 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
-                        <globalpack_disabled_header translate="label" module="postnl">
-                            <label>You have not enabled GlobalPack. Please enable GlobalPack under 'Account Settings' in order to configure your GlobalPack preferences.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                        <use_globalpack translate="label comment" module="postnl">
+                            <label>Use GlobalPack</label>
+                            <comment>GlobalPack is used to ship orders outside the EU. Otherwise you can leave this field disabled.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </use_globalpack>
+                        <global_barcode_type translate="label comment" module="postnl">
+                            <label>Global Barcode Type</label>
+                            <comment>The current global barcode type as supplied by PostNL. Must contain 2 letters.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-alpha validate-length minimum-length-2 maximum-length-2</validate>
+                            <depends>
+                                <use_globalpack>1</use_globalpack>
+                            </depends>
+                        </global_barcode_type>
+                        <global_barcode_range translate="label comment" module="postnl">
+                            <label>Global Barcode Range</label>
+                            <comment>Your global barcode range as supplied by PostNL. Must contain 4 digits.</comment>
+                            <frontend_type>text</frontend_type>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-digits validate-length minimum-length-4 maximum-length-4</validate>
                             <depends>
-                                <use_globalpack>
-                                    <fieldset>cif</fieldset>
-                                    <value>0</value>
-                                </use_globalpack>
+                                <use_globalpack>1</use_globalpack>
                             </depends>
-                        </globalpack_disabled_header>
+                        </global_barcode_range>
                         <customs_license_number translate="label comment" module="postnl">
                             <label>Customs license number</label>
                             <comment>If you do not own a customs license, leave this field empty.</comment>
@@ -2735,10 +2712,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
-                                <use_globalpack>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_globalpack>
+                                <use_globalpack>1</use_globalpack>
                             </depends>
                         </customs_license_number>
                         <customs_certificate_number translate="label comment" module="postnl">
@@ -2750,10 +2724,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
-                                <use_globalpack>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_globalpack>
+                                <use_globalpack>1</use_globalpack>
                             </depends>
                         </customs_certificate_number>
                         <default_shipment_type translate="label comment" module="postnl">
@@ -2766,10 +2737,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
-                                <use_globalpack>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_globalpack>
+                                <use_globalpack>1</use_globalpack>
                             </depends>
                         </default_shipment_type>
                         <customs_attributes_header translate="label" module="postnl">
@@ -2780,10 +2748,7 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
-                                <use_globalpack>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_globalpack>
+                                <use_globalpack>1</use_globalpack>
                             </depends>
                         </customs_attributes_header>
                         <use_hs_tariff translate="label comment tooltip" module="postnl">
@@ -2798,10 +2763,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
-                                <use_globalpack>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_globalpack>
+                                <use_globalpack>1</use_globalpack>
                             </depends>
                         </use_hs_tariff>
                         <hs_tariff_attribute translate="label comment tooltip" module="postnl">
@@ -2815,10 +2777,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends>
-                                <use_globalpack>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_globalpack>
+                                <use_globalpack>1</use_globalpack>
                                 <use_hs_tariff>1</use_hs_tariff>
                             </depends>
                             <validate>validate-select</validate>
@@ -2834,10 +2793,7 @@
                             <show_in_store>0</show_in_store>
                             <validate>validate-select</validate>
                             <depends>
-                                <use_globalpack>
-                                    <fieldset>cif</fieldset>
-                                    <value>1</value>
-                                </use_globalpack>
+                                <use_globalpack>1</use_globalpack>
                             </depends>
                         </customs_value_attribute>
                         <country_of_origin_attribute translate="label comment" module="postnl">
@@ -2852,7 +2808,6 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <use_globalpack>
-                                    <fieldset>cif</fieldset>
                                     <value>1</value>
                                 </use_globalpack>
                             </depends>
@@ -2869,7 +2824,6 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <use_globalpack>
-                                    <fieldset>cif</fieldset>
                                     <value>1</value>
                                 </use_globalpack>
                             </depends>
@@ -2883,7 +2837,6 @@
                             <show_in_store>0</show_in_store>
                             <depends>
                                 <use_globalpack>
-                                    <fieldset>cif</fieldset>
                                     <value>1</value>
                                 </use_globalpack>
                             </depends>
@@ -2901,7 +2854,6 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <use_globalpack>
-                                    <fieldset>cif</fieldset>
                                     <value>1</value>
                                 </use_globalpack>
                             </depends>
@@ -2917,7 +2869,6 @@
                             <validate>validate-select</validate>
                             <depends>
                                 <use_globalpack>
-                                    <fieldset>cif</fieldset>
                                     <value>1</value>
                                 </use_globalpack>
                             </depends>
@@ -3823,7 +3774,7 @@
                     </fields>
                 </checkout_payment_methods>
                 <advanced translate="label comment" module="postnl">
-                    <label>Advanced Settings</label>
+                    <label>Technical Settings</label>
                     <comment>These settings are intended for advanced users only! If you're not 100% sure what you're doing, please do not touch these settings.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>1800</sort_order>
