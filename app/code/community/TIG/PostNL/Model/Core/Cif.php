@@ -92,21 +92,21 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Xpath to setting that determines whether to use a separate return address.
      */
-    const XPATH_USE_SENDER_ADDRESS_AS_RETURN = 'postnl/cif_sender_address/use_sender_address';
+    const XPATH_USE_SENDER_ADDRESS_AS_RETURN = 'postnl/cif_address/use_sender_address';
 
     /**
      * Xpath to sender address data.
      *
      * N.B. missing last part so this will return an array of all fields.
      */
-    const XPATH_SENDER_ADDRESS = 'postnl/cif_sender_address';
+    const XPATH_SENDER_ADDRESS = 'postnl/cif_address';
 
     /**
      * Xpath to return address data.
      *
      * N.B. missing last part so this will return an array of all fields.
      */
-    const XPATH_RETURN_ADDRESS = 'postnl/cif_sender_address/return_*';
+    const XPATH_RETURN_ADDRESS = 'postnl/cif_address/return_*';
 
     /**.
      * Xpaths for shipment reference info.
@@ -1014,7 +1014,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         switch ($addressType) {
             case 'Sender':
                 /**
-                 * Get all cif_sender_address fields as an array and convert that to a Varien_Object
+                 * Get all cif_address fields as an array and convert that to a Varien_Object
                  * This allows the _prepareAddress method to access this data in the same way as a
                  * conventional Mage_Sales_Model_Order_Address object.
                  */
@@ -1042,7 +1042,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 }
 
                 /**
-                 * Get all cif_sender_address fields with the 'return_' prefix as an array and convert that to a
+                 * Get all cif_address fields with the 'return_' prefix as an array and convert that to a
                  * Varien_Object. This allows the _prepareAddress method to access this data in the same way as a
                  * conventional Mage_Sales_Model_Order_Address object.
                  */

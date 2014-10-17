@@ -63,7 +63,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     /**
      * XML paths for setting statistics
      */
-    const XPATH_SUPPORTED_PRODUCT_OPTIONS       = 'postnl/cif_product_options/supported_product_options';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS       = 'postnl/grid/supported_product_options';
     const XPATH_SPLIT_STREET                    = 'postnl/cif_address/split_street';
     const XPATH_CHECKOUT_ACTIVE                 = 'postnl/checkout/active';
     const XPATH_CHECKOUT_WEBSHOP_ID             = 'postnl/cif/webshop_id';
@@ -80,11 +80,11 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     const XPATH_BUSPAKJE_CALCULATION_MODE       = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
     const XPATH_COD_ACTIVE                      = 'payment/postnl_cod/active';
     const XPATH_MIJNPAKKET_LOGIN_ACTIVE         = 'postnl/delivery_options/mijnpakket_login_active';
-    const XPATH_USE_POSTCODE_CHECK              = 'postnl/cif_sender_address/use_postcode_check';
-    const XPATH_CHECKOUT_EXTENSION              = 'postnl/cif_sender_address/checkout_extension';
+    const XPATH_USE_POSTCODE_CHECK              = 'postnl/cif_address/use_postcode_check';
+    const XPATH_CHECKOUT_EXTENSION              = 'postnl/cif_address/checkout_extension';
     const XPATH_PARCELWARE_EXPORT_ACTIVE        = 'postnl/parcelware_export/active';
-    const XPATH_SEND_TRACK_AND_TRACE_EMAIL      = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
-    const XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE  = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
+    const XPATH_SEND_TRACK_AND_TRACE_EMAIL      = 'postnl/track_and_trace/send_track_and_trace_email';
+    const XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE  = 'postnl/track_and_trace/track_and_trace_email_template';
     const XPATH_SHOW_LABEL                      = 'postnl/packing_slip/show_label';
 
     /**

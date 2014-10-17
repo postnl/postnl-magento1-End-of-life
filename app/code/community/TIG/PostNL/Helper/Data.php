@@ -156,13 +156,13 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         'postnl/cif/collection_location',
         'postnl/cif_labels_and_confirming/label_size',
         array(
-            'postnl/cif_sender_address/lastname',
-            'postnl/cif_sender_address/company',
+            'postnl/cif_address/lastname',
+            'postnl/cif_address/company',
         ),
-        'postnl/cif_sender_address/streetname',
-        'postnl/cif_sender_address/housenumber',
-        'postnl/cif_sender_address/postcode',
-        'postnl/cif_sender_address/city',
+        'postnl/cif_address/streetname',
+        'postnl/cif_address/housenumber',
+        'postnl/cif_address/postcode',
+        'postnl/cif_address/city',
     );
 
     /**

@@ -68,12 +68,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * XML path to show_grid_options setting.
      */
-    const XPATH_SHOW_OPTIONS = 'postnl/cif_labels_and_confirming/show_grid_options';
+    const XPATH_SHOW_OPTIONS = 'postnl/grid/show_grid_options';
 
     /**
      * XML path to show_buspakje_options setting.
      */
-    const XPATH_SHOW_BUSPAKJE_OPTION = 'postnl/cif_labels_and_confirming/show_buspakje_option';
+    const XPATH_SHOW_BUSPAKJE_OPTION = 'postnl/grid/show_buspakje_option';
 
     /**
      * XML path to buspakje_calculation_mode setting.
@@ -83,12 +83,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * XML path to 'order grid columns' setting
      */
-    const XPATH_ORDER_GRID_COLUMNS = 'postnl/cif_labels_and_confirming/order_grid_columns';
+    const XPATH_ORDER_GRID_COLUMNS = 'postnl/grid/order_grid_columns';
 
     /**
      * Xpath to the 'order_grid_massaction_default' setting.
      */
-    const XPATH_ORDER_GRID_MASSACTION_DEFAULT = 'postnl/cif_labels_and_confirming/order_grid_massaction_default';
+    const XPATH_ORDER_GRID_MASSACTION_DEFAULT = 'postnl/grid/order_grid_massaction_default';
 
     /**
      * Edits the sales order grid by adding a mass action to create shipments for selected orders.
@@ -1007,7 +1007,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
             $block = Mage::app()
                          ->getLayout()
                          ->createBlock('postnl_adminhtml/widget_grid_massaction_item_additional_productOptions');
-            
+
             $massActionData['additional'] = $block->createFromConfiguration($config);
         }
 

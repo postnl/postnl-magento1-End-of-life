@@ -51,7 +51,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * XML path to setting that determines whether or not to send track and trace emails
      */
-    const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
+    const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/track_and_trace/send_track_and_trace_email';
 
     /**
      * Xpath to the product attribute update data used by the product attribute update cron.
