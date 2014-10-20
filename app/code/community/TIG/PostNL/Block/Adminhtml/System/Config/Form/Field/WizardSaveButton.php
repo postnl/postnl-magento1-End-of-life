@@ -131,4 +131,21 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_WizardSaveButton
 
         return $this->_decorateRowHtml($element, $html);
     }
+
+    /**
+     * Decorate field row html.
+     *
+     * Extended, because this method is only present in Magento since v1.7.0.1.
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @param string                            $html
+     *
+     * @return string
+     *
+     * @see Mage_Adminhtml_Block_System_Config_Form_Field::_decorateRowHtml()
+     */
+    protected function _decorateRowHtml($element, $html)
+    {
+        return '<tr id="row_' . $element->getHtmlId() . '">' . $html . '</tr>';
+    }
 }

@@ -40,8 +40,23 @@
  * Assumes that one element may depend on other element values.
  * Will toggle as "enabled" only if all elements it depends from toggle as true.
  */
-class TIG_PostNL_Block_Adminhtml_Widget_Form_Element_Dependence extends Mage_Adminhtml_Block_Widget_Form_Element_Dependence
+class TIG_PostNL_Block_Adminhtml_Widget_Form_Element_Dependence
+    extends Mage_Adminhtml_Block_Widget_Form_Element_Dependence
 {
+    /**
+     * Register field name dependence one from each other by specified values
+     *
+     * @param string $fieldName
+     * @param string $fieldNameFrom
+     * @param string|array $refValues
+     * @return Mage_Adminhtml_Block_Widget_Form_Element_Dependence
+     */
+    public function addFieldDependence($fieldName, $fieldNameFrom, $refValues)
+    {
+        $this->_depends[$fieldName][$fieldNameFrom] = $refValues;
+        return $this;
+    }
+
     /**
      * HTML output getter
      *

@@ -544,6 +544,7 @@
                 </split_address_check>
                 <support translate="label" module="postnl">
                     <label>Version &amp; Support</label>
+                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <frontend_class>postnl-support</frontend_class>
                     <sort_order>300</sort_order> <!-- This should always be the first tab -->
                     <show_in_default>1</show_in_default>
