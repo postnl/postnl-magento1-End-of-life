@@ -76,7 +76,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     /**
      * Xpath to supported options configuration setting
      */
-    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/grid/supported_product_options';
 
     /**
      * Xpath to the item columns setting.
@@ -1195,6 +1195,30 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
             implode(',', $newDefaultShippingMethods),
             'default',
             Mage_Core_Model_App::ADMIN_STORE_ID
+        );
+
+        return $this;
+    }
+
+    /**
+     * Move a config setting directly in the database, rather than using Magento config entities.
+     * 
+     * @param string $fromXpath
+     * @param string $toXpath
+     *
+     * @return $this
+     */
+    public function moveConfigSettingInDb($fromXpath, $toXpath)
+    {
+        $conn = $this->getConnection();
+        $conn->update(
+            $this->getTable('core/config_data'),
+            array(
+                'path' => $toXpath,
+            ),
+            array(
+                'path = ?' => $fromXpath,
+            )
         );
 
         return $this;
