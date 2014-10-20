@@ -116,7 +116,7 @@ document.observe('dom:loaded', function(){
             postnlAdvancedLink = postnlWizardLink.cloneNode();
 
         postnlAdvancedHeader.className = 'entry-edit-head collapseable';
-        postnlAdvancedLink.innerHTML = Translator.translate('Advanced settings');
+        postnlAdvancedLink.innerHTML = Translator.translate('Advanced Settings');
         postnlAdvancedLink.id = 'postnl_advanced_group-head';
         postnlAdvancedLink.href = 'javascript:return false;';
         postnlAdvancedLink.onclick = function() {
