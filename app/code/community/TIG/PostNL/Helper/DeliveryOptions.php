@@ -2546,6 +2546,20 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
+     * Check if the module is set to test mode
+     *
+     * @param bool $storeId
+     *
+     * @return boolean
+     *
+     * @deprecated v1.5.0
+     */
+    public function isTestMode($storeId = false)
+    {
+        return parent::isTestMode($storeId);
+    }
+
+    /**
      * Checks if PostNL delivery options are enabled.
      *
      * @param null|int $storeId

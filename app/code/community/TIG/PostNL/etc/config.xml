@@ -725,10 +725,10 @@
         </carriers>
         <postnl>
         	<general>
-        		<is_activated>0</is_activated> <!-- Not activated -->
         		<email/>
                 <unique_key/>
         		<private_key/>
+        		<is_activated>0</is_activated> <!-- Not activated -->
                 <webservice_wsdl_url>http://api.tigpostnl.nl/soap?wsdl</webservice_wsdl_url> <!-- URL of the TIG extension control system that is used for activating the extension -->
         	    <changelog_url>http://kb.tig.nl/topic/38584893/</changelog_url> <!-- URL of the extension's changelog -->
                 <postnl_register_url>http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties</postnl_register_url> <!-- URL where new PostNL customers can register -->
@@ -759,7 +759,7 @@
                 <return_city/>
                 <return_region/>
                 <return_country>NL</return_country> <!-- All return addresses must be located in the Netherlands -->
-                <checkout_extension>magento_onepagecheckout</checkout_extension>
+                <checkout_extension>magento_onepagecheckout</checkout_extension> <!-- Use Magento's One Page CHeckout as the default checkout extension -->
                 <checkout_extension_other/>
                 <use_postcode_check>0</use_postcode_check> <!-- Do not use postcode check functionality -->
                 <postcode_check_in_checkout>1</postcode_check_in_checkout> <!-- Use postcode check on the checkout page -->
@@ -784,16 +784,15 @@
                 <buspakje_calculation_mode>manual</buspakje_calculation_mode> <!-- Manually determine if a shipment is a buspakje shipment -->
                 <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
                 <cutoff_time>17:00:00</cutoff_time> <!-- Add an extra shipping day if customers order after 17:00 P.M. -->
-                <shipping_days>1,2,3,4,5,6</shipping_days> <!-- Orders are shipped monday through saturday -->
                 <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
                 <sunday_cutoff_time/>
+                <shipping_days>1,2,3,4,5,6</shipping_days> <!-- Orders are shipped monday through saturday -->
             </cif_labels_and_confirming>
             <delivery_options>
                 <delivery_options_active>0</delivery_options_active> <!-- Delivery options are disabled -->
                 <theme>default</theme> <!-- Use the default PostNL theme -->
                 <responsive>0</responsive> <!-- Do not use the responsive design -->
                 <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
-                <show_options_for_letter>0</show_options_for_letter> <!-- Do not show delivery options if the order's total weight is less than 2 kg -->
                 <show_options_for_backorders>0</show_options_for_backorders> <!-- Do not show delivery options if the order is not in stock -->
                 <enable_delivery_days>1</enable_delivery_days> <!-- Delivery days are allowed -->
                 <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
@@ -827,7 +826,7 @@
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
             </delivery_options>
         	<cif>
-                <mode>1</mode> <!-- Test mode -->
+                <mode>0</mode> <!-- The extension is disabled by default -->
                 <customer_number>11223344</customer_number> <!-- Demo customer number -->
         		<customer_code>TOTA</customer_code> <!-- Demo customer code -->
                 <live_username/>

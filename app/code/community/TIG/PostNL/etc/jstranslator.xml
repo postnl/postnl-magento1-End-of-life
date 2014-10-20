@@ -123,4 +123,7 @@
     <show_map translate="message" module="postnl">
         <message>Show map</message>
     </show_map>
+    <advanced_settings translate="message" module="postnl">
+        <message>Advanced Settings</message>
+    </advanced_settings>
 </jstranslator>
