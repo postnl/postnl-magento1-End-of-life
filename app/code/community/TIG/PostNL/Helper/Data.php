@@ -64,11 +64,6 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const XPATH_EXTENSION_MODE = 'postnl/cif/mode';
 
     /**
-     * XML path to the test mode allowed config option.
-     */
-    const XPATH_TEST_MODE_ALLOWED = 'postnl/advanced/allow_test_mode';
-
-    /**
      * XML path to debug mode config option.
      */
     const XPATH_DEBUG_MODE = 'postnl/advanced/debug_mode';

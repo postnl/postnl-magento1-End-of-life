@@ -2546,32 +2546,6 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     }
 
     /**
-     * Check if the module is set to test mode
-     *
-     * @param bool $storeId
-     *
-     * @return boolean
-     */
-    public function isTestMode($storeId = false)
-    {
-        /**
-         * Check if the result of this method has been cached in the registry.
-         */
-        if (Mage::registry('delivery_options_test_mode') !== null) {
-            return Mage::registry('delivery_options_test_mode');
-        }
-
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
-
-        $testMode = Mage::getStoreConfigFlag(self::XPATH_TEST_MODE, $storeId);
-
-        Mage::register('delivery_options_test_mode', $testMode);
-        return $testMode;
-    }
-
-    /**
      * Checks if PostNL delivery options are enabled.
      *
      * @param null|int $storeId
