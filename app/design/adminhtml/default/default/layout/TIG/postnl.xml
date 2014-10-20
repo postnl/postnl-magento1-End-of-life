@@ -63,26 +63,6 @@
                 <type>skin_js</type>
                 <name>js/TIG/PostNL/validate.js</name>
             </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/TIG/PostNL/configuration.js</name>
-            </action>
-            <action method="removeItem">
-                <type>js</type>
-                <name>mage/adminhtml/form.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/TIG/PostNL/form.js</name>
-            </action>
-            <action method="removeItem">
-                <type>js</type>
-                <name>mage/adminhtml/tools.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/TIG/PostNL/tools.js</name>
-            </action>
             <block type="postnl_adminhtml/system_config_js" name="postnl_system_config_js" template="TIG/PostNL/system/config/form/field/js.phtml" output="tohtml" after="-"/>
         </reference>
         <remove name="form"/>

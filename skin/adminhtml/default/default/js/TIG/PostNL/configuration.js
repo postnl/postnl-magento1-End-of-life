@@ -120,7 +120,7 @@ document.observe('dom:loaded', function(){
         postnlAdvancedLink.id = 'postnl_advanced_group-head';
         postnlAdvancedLink.href = 'javascript:return false;';
         postnlAdvancedLink.onclick = function() {
-            Fieldset.toggleCollapse('postnl_advanced_group', '');
+            Fieldset.toggleCollapse('postnl_advanced_group');
             return false;
         };
         postnlAdvancedHeader.appendChild(postnlAdvancedLink);
@@ -155,6 +155,7 @@ document.observe('dom:loaded', function(){
         $('postnl_config_form').show();
     }
 });
+
 function toStep(rel)
 {
     // switch tabs
