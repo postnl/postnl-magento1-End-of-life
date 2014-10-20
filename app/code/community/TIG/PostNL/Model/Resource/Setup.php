@@ -1202,7 +1202,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
 
     /**
      * Move a config setting directly in the database, rather than using Magento config entities.
-     * 
+     *
      * @param string $fromXpath
      * @param string $toXpath
      *
