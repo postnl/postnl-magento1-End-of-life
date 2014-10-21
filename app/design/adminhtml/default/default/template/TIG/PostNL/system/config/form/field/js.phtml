@@ -189,5 +189,72 @@
             }
         });
     <?php endif; ?>
+
+    Fieldset.toggleCollapse = function(containerId, saveThroughAjax) {
+        /**
+         * Close all open fieldsets first.
+         */
+        $$('fieldset .config.collapseable').each(function(element) {
+            /**
+             * If the fieldset's ID is the same as the selected fieldset, or if the fieldset has nested fieldsets,
+             * skip this fieldset.
+             */
+            if (element.id == containerId || element.select('fieldset .config.collapseable').length) {
+                return;
+            }
+
+            /**
+             * If this fieldset is already hidden, skip it.
+             */
+            if (element.style.display == 'none') {
+                return;
+            }
+
+            /**
+             * Hide the fieldset.
+             */
+            if ($(element.id + '-state')) {
+                $(element.id + '-state').value = 0;
+            }
+            $(element.id + '-head').collapsed = 1;
+
+            Fieldset.applyCollapse(element.id);
+
+            /**
+             * Save the fieldset's new, collapsed state.
+             */
+            if (typeof saveThroughAjax != "undefined") {
+                Fieldset.saveState(saveThroughAjax, {container: element.id, value: $(element.id + '-state').value});
+            }
+        });
+
+        /**
+         * Continue as usual.
+         */
+        if ($(containerId + '-state')) {
+            collapsed = $(containerId + '-state').value == 1 ? 0 : 1;
+        } else {
+            collapsed = $(containerId + '-head').collapsed;
+        }
+        //Cookie.read(this.cookiePrefix + containerId);
+        if(collapsed==1 || collapsed===undefined) {
+            //Cookie.write(this.cookiePrefix + containerId,  0, 30*24*60*60);
+            if ($(containerId + '-state')) {
+                $(containerId + '-state').value = 1;
+            }
+            $(containerId + '-head').collapsed = 0;
+        } else {
+            //Cookie.clear(this.cookiePrefix + containerId);
+            if ($(containerId + '-state')) {
+                $(containerId + '-state').value = 0;
+            }
+            $(containerId + '-head').collapsed = 1;
+        }
+
+        Fieldset.applyCollapse(containerId);
+        if (typeof saveThroughAjax != "undefined") {
+            Fieldset.saveState(saveThroughAjax, {container: containerId, value: $(containerId + '-state').value});
+        }
+    };
     //]]>
 </script>
