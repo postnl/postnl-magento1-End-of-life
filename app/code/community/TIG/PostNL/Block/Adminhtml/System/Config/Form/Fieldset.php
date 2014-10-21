@@ -35,6 +35,8 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * This entire class is extended from Magento's core class for backwards compatibility on Magento 1.6.
  */
 class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminhtml_Block_System_Config_Form_Fieldset
 {
@@ -210,7 +212,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Fieldset extends Mage_Adminh
      * Collapsed or expanded fieldset when page loaded?
      *
      * @param Varien_Data_Form_Element_Abstract $element
-     * @return bool
+     * @return bool|int
      */
     protected function _getCollapseState($element)
     {
