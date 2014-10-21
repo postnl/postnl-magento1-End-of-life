@@ -22,8 +22,8 @@ TIG_PostNL::During activation 2 secure keys will be sent to this email address.,
 TIG_PostNL::Unique key,Unieke sleutel
 TIG_PostNL::Private key,Prive sleutel
 TIG_PostNL::Account Settings,Account Instellingen
-TIG_PostNL::Live Username,Live Gebruikersnaam
-TIG_PostNL::Live Password,Live Wachtwoord
+TIG_PostNL::Live Username,Live gebruikersnaam
+TIG_PostNL::Live Password,Live wachtwoord
 TIG_PostNL::Test Username,Test gebruikersnaam
 TIG_PostNL::Test Password,Test wachtwoord
 TIG_PostNL::Customer Number,Klantnummer
@@ -64,7 +64,7 @@ TIG_PostNL::Select a default option for the shipment grid mass action.,Selecteer
 TIG_PostNL::These fields are used to configure the track & trace email that may be automatically emailed to customers after a shipment has been confirmed.,Deze velden worden gebruikt om de Track & Trace e-mail te configureren. Deze e-mail wordt automatisch naar uw klanten verstuurd wanneer een zending wordt voorgemeld.
 TIG_PostNL::Automatically send track & trace email to customer,Stuur de Track & Trace e-mail automatisch naar de klant
 "TIG_PostNL::If enabled, a track & trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.","Indien geactiveerd, wordt er ongeveer 20 minuten na de zending voormelding een Track & Trace e-mail naar de klant gestuurd."
-TIG_PostNL::Track & trace email template,Track & trace e-mail sjabloon
+TIG_PostNL::Track & trace email template,Track & Trace e-mail sjabloon
 TIG_PostNL::Address Settings,Adres Instellingen
 TIG_PostNL::Split street parts,Deel straatnaam velden op
 TIG_PostNL::Streetname field,Straatnaam
@@ -250,7 +250,7 @@ TIG_PostNL::Wrong message type,Verkeerd bericht type
 TIG_PostNL::Are you sure you want to send PostNL tracking information to the customer?,Weet u zeker dat u de PostNL Track & Trace informatie naar de klant wilt versturen?
 TIG_PostNL::Send Date,Verzenddatum
 TIG_PostNL::Labels printed,Labels geprint
-TIG_PostNL::Track & Trace,Track & trace
+TIG_PostNL::Track & Trace,Track & Trace
 TIG_PostNL::Shipping Phase,Verzendfase
 TIG_PostNL::Print label,Print label
 TIG_PostNL::Confirm,Voormelden
@@ -772,7 +772,7 @@ TIG_PostNL::PostNL,PostNL
 TIG_PostNL::The PostNL extension v%s has been successfully installed.,De PostNL extensie v%s is succesvol geïnstalleerd.
 TIG_PostNL::Print label,Verzendlabel printen
 TIG_PostNL::Confirm shipment,Zending voormelden
-TIG_PostNL::Send track &amp; trace email,Track &amp; trace e-mail versturen
+TIG_PostNL::Send track &amp; trace email,Track &amp; Trace e-mail versturen
 TIG_PostNL::View status history,Status geschiedenis bekijken
 TIG_PostNL::Change confirmation,Voormelding Wijzigen
 TIG_PostNL::Delete labels,Labels verwijderen
@@ -880,7 +880,7 @@ TIG_PostNL::Send a copy of the track & trace email,Verstuur een kopie van de Tra
 "TIG_PostNL::If enabled, you may enter seperate email addresses to which the track & trace email will be sent in addition to the customer.","Indien u deze optie aan zet, zal er een kopie van de Track & Trace e-mail worden verstuurd naar de opgegeven e-mail adressen."
 TIG_PostNL::Send track & trace email copy to,Verstuur Track & Trace e-mail kopie naar
 TIG_PostNL::You can enter multiple email addresses seperated by commas.,U kunt meerdere e-mailaddressen invullen gescheiden door komma's
-TIG_PostNL::Track & trace email copy method,Track & trace e-mail kopie method
+TIG_PostNL::Track & trace email copy method,Track & Trace e-mail kopie method
 PostNL configuration.,PostNL configuratie.
 TIG_PostNL::A required configuration value is missing: %s.,Een verplichte configuratie waarde mist: %s.
 TIG_PostNL::Delivery options are not allowed for product #%s.,Bezorgopties zijn niet toegestaan voor product#%s.
@@ -909,7 +909,7 @@ TIG_PostNL::Order,Bestelling
 TIG_PostNL::Post office address,Postkantooradres
 TIG_PostNL::Invalid label type supplied for packing slip label pdf: %s.,Ongeldig label type opgegeven voor pakbon label pdf: %s.
 TIG_PostNL::Approaching memory limit for this operation. Please select fewer shipments and try again.,Geheugen limiet bereikt. Selecteer s.v.p. minder zendingen en probeer het opnieuw.
-"TIG_PostNL::Label, Packing Slip and Weight Settings","Label, Pakbon en Gewichtsnstellingen"
+"TIG_PostNL::Label, Packing Slip and Weight Settings","Label, Pakbon en Gewichtsinstellingen"
 "TIG_PostNL::Here you can configure which elements you would like to show on the PostNL packing slip. You can read more about these settings and the impact they have on the resulting packing slip <a href=""http://kb.tig.nl/topic/95885953"" target=""_blank"" title=""More info"">here</a>.","Hier kunt u aangeven welke elementen u wilt tonen op de PostNL pakbonnen. U kunt <a href=""http://kb.tig.nl/topic/95885953"" target=""_blank"" title=""Meer informatie"">hier</a> meer lezen over hoe deze instellingen de pakbon aanpassen."
 TIG_PostNL::Logo for packing slips,Pakbon logo
 TIG_PostNL::The image will automatically be resized to fit the maximum dimensions of 900x100px.,"Deze afbeelding zal automatisch geschaald worden, zodat deze binnen de maximum afmetingen van 900x100px past."
@@ -1151,10 +1151,10 @@ TIG_PostNL::All attributes have been processed. Removing cron.,All attributes ha
 TIG_PostNL::UpdateProductAttribute cron has finished.,UpdateProductAttribute cron has finished.
 "TIG_PostNL::A prefilled csv file can be found <a href="""" target=""_blank"">here</a>.","U kunt <a href="""" target=""_blank"">hier</a> een voorgevuld csv bestand downloaden."
 TIG_PostNL::Extra service,Extra service
-TIG_PostNL::Unable to send track & trace email due to missing shipment parameters.,De track & trace e-mail kan niet verzonden worden wegens missende zendinggegevens.
+TIG_PostNL::Unable to send track & trace email due to missing shipment parameters.,De Track & Trace e-mail kan niet verzonden worden wegens missende zendinggegevens.
 TIG_PostNL::Data has not been imported. See the following list of errors: %s,Data is niet geïmporteerd. Zie de lijst van foutmeldingen: %s
-TIG_PostNL::PostNL track & trace email has been sent.,PostNL track & trace e-mail is verstuurd.
-TIG_PostNL::PostNL track & trace email has been sent for shipment #%s.,PostNL track & trace e-mail is verstuurd voor zending #%s.
+TIG_PostNL::PostNL track & trace email has been sent.,PostNL Track & Trace e-mail is verstuurd.
+TIG_PostNL::PostNL track & trace email has been sent for shipment #%s.,PostNL Track & Trace e-mail is verstuurd voor zending #%s.
 TIG_PostNL::Pickup your order %s,Je bestelling ophalen %s
 TIG_PostNL::Have your order delivered %s,Je bestelling laten bezorgen %s
 "TIG_PostNL::A prefilled csv file can be found <a href=""http://kb.tig.nl/topic/102462196"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/102462196"" target=""_blank"">hier</a> een voorgevuld csv bestand vinden."
@@ -1168,7 +1168,7 @@ TIG_PostNL::Label Options,Verzendinstellingen
 TIG_PostNL::Packing Slip,Pakbon
 TIG_PostNL::Shipping Options,Verzendopties
 TIG_PostNL::Weight Options,Gewichtsinstellingen
-TIG_PostNL::Grid Settings,Overzichtsinstellingen
+TIG_PostNL::User Settings,Gebruikersinstellingen
 TIG_PostNL::Magento's One Page Checkout,Magento's One Page Checkout
 TIG_PostNL::Idev's OneStepCheckout,Idev's OneStepCheckout
 TIG_PostNL::Other,Anders

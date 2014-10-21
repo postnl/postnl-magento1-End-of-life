@@ -1211,15 +1211,20 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     public function moveConfigSettingInDb($fromXpath, $toXpath)
     {
         $conn = $this->getConnection();
-        $conn->update(
-            $this->getTable('core/config_data'),
-            array(
-                'path' => $toXpath,
-            ),
-            array(
-                'path = ?' => $fromXpath,
-            )
-        );
+
+        try {
+            $conn->update(
+                $this->getTable('core/config_data'),
+                array(
+                    'path' => $toXpath,
+                ),
+                array(
+                    'path = ?' => $fromXpath,
+                )
+            );
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+        }
 
         return $this;
     }
