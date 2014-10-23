@@ -25,7 +25,7 @@
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web,
-    please send an email
+ * please send an email
  * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
@@ -36,9 +36,7 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
- */
-
-/**
+ *
  * @var TIG_PostNL_Model_Resource_Setup $installer
  */
 $installer = $this;
@@ -102,6 +100,24 @@ $settingsToMove = array(
     'postnl/cif_product_options/default_eu_product_option'                  => 'postnl/grid/default_eu_product_option',
     'postnl/cif_product_options/default_eu_be_product_option'               => 'postnl/grid/default_eu_be_product_option',
     'postnl/cif_product_options/default_global_product_option'              => 'postnl/cif_globalpack_settings/default_global_product_option',
+    'postnl/cif_labels_and_confirming/use_buspakje'                         => 'postnl/delivery_options/use_buspakje',
+    'postnl/cif_labels_and_confirming/buspakje_calculation_mode'            => 'postnl/delivery_options/buspakje_calculation_mode',
+    'postnl/cif_address/use_postcode_check'                                 => 'postnl/cif_labels_and_confirming/use_postcode_check',
+    'postnl/cif_address/postcode_check_in_checkout'                         => 'postnl/cif_labels_and_confirming/postcode_check_in_checkout',
+    'postnl/cif_address/postcode_check_in_addressbook'                      => 'postnl/cif_labels_and_confirming/postcode_check_in_addressbook',
+    'postnl/cif_address/postcode_check_max_attempts'                        => 'postnl/cif_labels_and_confirming/postcode_check_max_attempts',
+    'postnl/cif_address/postcode_check_timeout'                             => 'postnl/cif_labels_and_confirming/postcode_check_timeout',
+    'postnl/cif_address/split_street'                                       => 'postnl/cif_labels_and_confirming/split_street',
+    'postnl/cif_address/streetname_field'                                   => 'postnl/cif_labels_and_confirming/streetname_field',
+    'postnl/cif_address/housenr_field'                                      => 'postnl/cif_labels_and_confirming/housenr_field',
+    'postnl/cif_address/split_housenr'                                      => 'postnl/cif_labels_and_confirming/split_housenr',
+    'postnl/cif_address/housenr_extension_field'                            => 'postnl/cif_labels_and_confirming/housenr_extension_field',
+    'postnl/cif_address/building_name_field'                                => 'postnl/cif_labels_and_confirming/building_name_field',
+    'postnl/cif_address/department_field'                                   => 'postnl/cif_labels_and_confirming/department_field',
+    'postnl/cif_address/doorcode_field'                                     => 'postnl/cif_labels_and_confirming/doorcode_field',
+    'postnl/cif_address/floor_field'                                        => 'postnl/cif_labels_and_confirming/floor_field',
+    'postnl/cif_address/remark_field'                                       => 'postnl/cif_labels_and_confirming/remark_field',
+    'postnl/cif_address/area_field'                                         => 'postnl/cif_labels_and_confirming/area_field',
 );
 
 foreach ($settingsToMove as $from => $to) {

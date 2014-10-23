@@ -69,12 +69,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Constants containing xpaths to cif address configuration options.
      */
-    const XPATH_AREA_FIELD                  = 'postnl/cif_address/area_field';
-    const XPATH_BUILDING_NAME_FIELD         = 'postnl/cif_address/building_name_field';
-    const XPATH_DEPARTMENT_FIELD            = 'postnl/cif_address/department_field';
-    const XPATH_DOORCODE_FIELD              = 'postnl/cif_address/doorcode_field';
-    const XPATH_FLOOR_FIELD                 = 'postnl/cif_address/floor_field';
-    const XPATH_REMARK_FIELD                = 'postnl/cif_address/remark_field';
+    const XPATH_AREA_FIELD                  = 'postnl/cif_labels_and_confirming/area_field';
+    const XPATH_BUILDING_NAME_FIELD         = 'postnl/cif_labels_and_confirming/building_name_field';
+    const XPATH_DEPARTMENT_FIELD            = 'postnl/cif_labels_and_confirming/department_field';
+    const XPATH_DOORCODE_FIELD              = 'postnl/cif_labels_and_confirming/doorcode_field';
+    const XPATH_FLOOR_FIELD                 = 'postnl/cif_labels_and_confirming/floor_field';
+    const XPATH_REMARK_FIELD                = 'postnl/cif_labels_and_confirming/remark_field';
 
     /**
      * Constants containing xpaths to cif customs configuration options.

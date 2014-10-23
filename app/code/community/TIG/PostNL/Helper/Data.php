@@ -86,7 +86,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Xpath to use_buspakje setting.
      */
-    const XPATH_USE_BUSPAKJE = 'postnl/cif_labels_and_confirming/use_buspakje';
+    const XPATH_USE_BUSPAKJE = 'postnl/delivery_options/use_buspakje';
 
     /**
      * XPATH to allow EPS BE only product option setting.
@@ -101,7 +101,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Xpath to the buspakje calculation mode setting.
      */
-    const XPATH_BUSPAKJE_CALC_MODE = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
+    const XPATH_BUSPAKJE_CALC_MODE = 'postnl/delivery_options/buspakje_calculation_mode';
 
     /**
      * Minimum PHP version required by this extension.

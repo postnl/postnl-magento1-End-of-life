@@ -34,6 +34,9 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @todo move hardcoded classnames and id to config object
+ * @todo remove PostNl references for portability
  */
 PostnlConfigWizard = new Class.create();
 PostnlConfigWizard.prototype = {
