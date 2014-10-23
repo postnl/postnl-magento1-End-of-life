@@ -653,6 +653,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
      * @param boolean $removeOldValue
      *
      * @return $this
+     *
+     * @deprecated v1.4.1 This method has been superseded by the
+     *                    TIG_PostNL_Model_Resource_Setup::moveConfigSettingInDb() method.
      */
     public function moveConfigSetting($fromXpath, $toXpath, $removeOldValue = true)
     {
@@ -709,8 +712,12 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
      * @param string  $scope
      * @param int     $scopeId
      * @param boolean $removeOldValue
+     * @param boolean $defaultValue
      *
      * @return $this
+     *
+     * @deprecated v1.4.1 This method has been superseded by the
+     *                    TIG_PostNL_Model_Resource_Setup::moveConfigSettingInDb() method.
      */
     public function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
                                              $removeOldValue = true, $defaultValue = false)

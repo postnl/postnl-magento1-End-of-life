@@ -1014,7 +1014,20 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $productIds = $items->getColumnValues('product_id');
 
         if (!$productIds) {
-            return end($durationArray);
+            $duration = new Varien_Object(
+                array(
+                    'duration'   => end($durationArray),
+                    'productIds' => $productIds
+                )
+            );
+
+            Mage::dispatchEvent(
+                'postnl_delivery_options_getshippingduration',
+                array(
+                    'duration' => $duration
+                )
+            );
+            return $duration->getData('duration');
         }
 
         /**
@@ -1040,7 +1053,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Sort the array and get it's last item. This will be the highest value.
          */
         natsort($durationArray);
-        $shippingDuration = end($durationArray);
+        $duration = new Varien_Object(
+            array(
+                'duration'   => end($durationArray),
+                'productIds' => $productIds
+            )
+        );
+
+        Mage::dispatchEvent(
+            'postnl_delivery_options_getshippingduration',
+            array(
+                'duration' => $duration
+            )
+        );
+
+        $shippingDuration = $duration->getData('duration');
 
         /**
          * Make sure the value is between 1 and 14 days.
