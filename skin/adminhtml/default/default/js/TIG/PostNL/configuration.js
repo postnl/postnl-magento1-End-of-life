@@ -35,176 +35,259 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-document.observe('dom:loaded', function(){
+PostnlConfigWizard = new Class.create();
+PostnlConfigWizard.prototype = {
+    config       : {},
+    postnlWizard : null,
 
-    if(null !== document.getElementById('postnl_support'))
-    {
+    initialize : function(config) {
+        this.config = Object.extend({
+            wizardId     : 'postnl_wizard',
+            wizardClass : 'postnl-wizard',
+            sectionClass : 'section-config',
+            supportTab   : $('postnl_support'),
+            advancedGroupContainerId : 'postnl_advanced_container',
+            advancedGroupId          : 'postnl_advanced_group'
+        }, config || {});
+    },
 
-        // show the support tab
-        var supportTab = document.getElementById('postnl_support');
-        supportTab.show();
+    render : function() {
+        this.showSupportTab()
+            .createWizard()
+            .createAdvancedGroup()
+            .registerObservers()
+            .modusColor();
 
-        $('postnl_support-state').setValue(1);
-        $('postnl_support-head').up().hide();
+        $('postnl_config_loader').hide();
+        $('postnl_config_form').show();
 
-        // create the wizard
-        var postnlWizard = document.createElement('div');
-        postnlWizard.id = 'postnl-wizard';
-        postnlWizard.className = 'section-config';
+        return this;
+    },
 
-        var postnlWizardFieldset = document.createElement('div');
-        postnlWizardFieldset.addClassName('fieldset');
-        postnlWizard.appendChild(postnlWizardFieldset);
-
-        supportTab.parentNode.insertBefore(postnlWizard, supportTab.nextSibling);
-
-        // move 5 existing config sections into the wizard
-        var wizardSectionConfigs = $$('.section-config.postnl-wizard');
-
-        wizardSectionConfigs.each(function(element) {
-            postnlWizardFieldset.appendChild(element);
-        });
-
-        // add navigation
-        var postnlWizardNavigation = document.createElement('ul'),
-            postnlWizardList = document.createElement('li'),
-            postnlWizardLink = document.createElement('a');
-
-        var step = 0;
-        $$('#postnl-wizard .section-config .entry-edit-head a').each(function(elem){
-            var listClone = postnlWizardList.cloneNode(),
-                linkClone = postnlWizardLink.cloneNode();
-
-            step++;
-            linkClone.href = '#wizard' + step;
-            linkClone.rel = elem.id.replace('-head', '');
-            linkClone.onclick = function(){
-                toStep(this.rel);
-            };
-            linkClone.innerHTML = step + '. ' + elem.innerHTML;
-
-            listClone.appendChild(linkClone);
-            postnlWizardNavigation.appendChild(listClone);
-        });
-
-        postnlWizardFieldset.insertBefore(postnlWizardNavigation, postnlWizardFieldset.firstChild);
-
-        // init active tab
-        postnlWizard.select('.section-config fieldset').invoke('hide');
-        postnlWizard.select('.section-config fieldset')[0].show();
-        postnlWizard.select('ul a')[0].className = 'active';
-
-        // create the advanced settings group
-        var postnlAdvanced = document.createElement('div');
-        postnlAdvanced.id = 'postnl-advanced';
-        postnlAdvanced.className = 'section-config';
-
-        var postnlAdvancedFieldset = document.createElement('fieldset');
-        postnlAdvancedFieldset.id = 'postnl_advanced_group';
-        postnlAdvancedFieldset.hide();
-        postnlAdvanced.appendChild(postnlAdvancedFieldset);
-
-        postnlWizard.parentNode.insertBefore(postnlAdvanced, postnlWizard.nextSibling);
-
-        // move all other sections to the advanced settings group
-        $$('.section-config:not(.postnl-wizard, .postnl-support, #postnl-advanced, #postnl-wizard)').each(function(element) {
-            postnlAdvancedFieldset.appendChild(element);
-        });
-
-        // advanced group header
-        var postnlAdvancedHeader = document.createElement('div'),
-            postnlAdvancedLink = postnlWizardLink.cloneNode();
-
-        postnlAdvancedHeader.className = 'entry-edit-head collapseable';
-        postnlAdvancedLink.innerHTML = Translator.translate('Advanced Settings');
-        postnlAdvancedLink.id = 'postnl_advanced_group-head';
-        postnlAdvancedLink.href = 'javascript:return false;';
-        postnlAdvancedLink.onclick = function() {
-            Fieldset.toggleCollapse('postnl_advanced_group');
-            return false;
-        };
-        postnlAdvancedHeader.appendChild(postnlAdvancedLink);
-
-        postnlAdvancedFieldset.parentNode.insertBefore(postnlAdvancedHeader, postnlAdvancedFieldset);
-
+    registerObservers : function() {
         $$('#postnl-wizard ul a[href^="#"]').each(function(elem){
             Event.observe(elem, 'click', function(){
                 var hash = elem.href;
                 if(window.history.pushState) {
                     window.history.pushState(null, null, hash);
-                    toHash();
+                    this.toHash();
                 } else {
                     window.location.hash = hash;
                 }
 
-            });
-        });
-        window.onhashchange = toHash.bind(null, '');
-        window.onload = toHash.bind(null, '');
+            }.bind(this));
+        }.bind(this));
+
+        window.onhashchange = function() {this.toHash('')}.bind(this);
+        window.onload = function() {this.toHash('')}.bind(this);
 
         $$('#row_postnl_cif_mode input').invoke(
             'observe',
             'change',
             function() {
-                modusColor();
+                this.modusColor();
+            }.bind(this)
+        );
+
+        return this;
+    },
+
+    showSupportTab : function() {
+        var config = this.config;
+
+        var supportTab = config.supportTab;
+        if (!supportTab) {
+            return this;
+        }
+
+        supportTab.show();
+
+        var supportTabState = supportTab.previous('input');
+        if (supportTabState) {
+            supportTabState.setValue(1);
+        }
+
+        var supportTabHead = supportTab.previous('div.entry-edit-head');
+        if (supportTabHead) {
+            supportTabHead.hide();
+        }
+
+        return this;
+    },
+
+    createWizard: function() {
+        var config = this.config;
+        var postnlWizard = new Element('div', {
+            id      : config.wizardId,
+            'class' : config.sectionClass
+        });
+
+        var postnlWizardFieldset = new Element('div', {
+            'class' : 'fieldset'
+        });
+
+        postnlWizard.insert(postnlWizardFieldset);
+
+        var supportTab = config.supportTab;
+        if (supportTab) {
+            supportTab.parentNode.insertBefore(postnlWizard, supportTab.nextSibling);
+        } else {
+            $('config_edit_form').insert({
+                top : postnlWizard
+            });
+        }
+
+        var wizardSectionConfigs = $$('.' + config.sectionClass + '.' + config.wizardClass);
+        wizardSectionConfigs.each(function(element) {
+            postnlWizardFieldset.insert(element);
+        });
+
+        var postnlWizardNavigation = new Element('ul');
+
+        var step = 0;
+        $$('#' + config.wizardId + ' .' + config.sectionClass + ' .entry-edit-head a').each(function(element) {
+            step++;
+
+            var listClone = new Element('li');
+            var linkClone = new Element('a', {
+                href      : '#wizard' + step,
+                rel       : element.id.replace('-head', '')
+            });
+
+            linkClone.update(step + '. ' + element.innerHTML);
+            linkClone.onclick   = function(){
+                this.toStep(element.id.replace('-head', ''));
+            }.bind(this);
+
+            listClone.appendChild(linkClone);
+            postnlWizardNavigation.appendChild(listClone);
+        }.bind(this));
+
+        postnlWizardFieldset.insert({
+            top : postnlWizardNavigation
+        });
+
+        postnlWizard.select('.section-config fieldset').invoke('hide');
+        postnlWizard.select('.section-config fieldset')[0].show();
+        postnlWizard.select('ul a')[0].addClassName('active');
+
+        this.postnlWizard = postnlWizard;
+
+        return this;
+    },
+
+    createAdvancedGroup : function() {
+        var postnlWizard = this.postnlWizard;
+
+        if (!postnlWizard) {
+            return this;
+        }
+
+        var config = this.config;
+        var postnlAdvanced = new Element('div', {
+            id      : config.advancedGroupContainerId,
+            'class' : config.sectionClass
+        });
+
+        var postnlAdvancedFieldset = new Element('fieldset', {
+            id : config.advancedGroupId,
+            style : 'display:none;'
+        });
+
+        postnlAdvanced.insert(postnlAdvancedFieldset);
+        postnlWizard.insert({
+            after : postnlAdvanced
+        });
+
+        /**
+         * move all other sections to the advanced settings group
+         *
+         * @todo get class list from config
+         */
+        $$('.section-config').each(
+            function(element) {
+                if (element.hasClassName(config.wizardClass)
+                    || element.hasClassName('postnl-support')
+                    || element.id == config.advancedGroupId
+                    || element.id == config.advancedGroupContainerId
+                    || element.id == config.wizardId
+                ) {
+                    return;
+                }
+
+                postnlAdvancedFieldset.insert(element);
             }
         );
-        modusColor();
 
-        $('postnl_config_loader').hide();
-        $('postnl_config_form').show();
+        var postnlAdvancedHeader = new Element('div', {
+            'class' : 'entry-edit-head collapseable'
+        });
+
+        var postnlAdvancedLink   = new Element('a', {
+            id        : 'postnl_advanced_group-head',
+            href      : 'javascript:return false;'
+        });
+        postnlAdvancedLink.update(Translator.translate('Advanced Settings'));
+        postnlAdvancedLink.onclick = function() {
+            Fieldset.toggleCollapse('postnl_advanced_group');
+            return false;
+        };
+
+        postnlAdvancedHeader.insert(postnlAdvancedLink);
+        postnlAdvancedFieldset.up().insert({
+            top : postnlAdvancedHeader
+        });
+
+        return this;
+    },
+
+    toStep : function(rel) {
+        // switch tabs
+        $$('#postnl_wizard .section-config').invoke('hide');
+
+        $(rel).show();
+        $(rel).up().show();
+
+        // switch wizard nav active state
+        $$('#postnl_wizard ul a').invoke('removeClassName', 'active');
+        $$('a[rel="'+rel+'"]')[0].addClassName('active');
+
+        return false;
+    },
+
+    toHash : function(hash) {
+        if (!hash) {
+            hash = window.location.hash;
+        }
+
+        var target = $$('a[href="' + hash + '"]')[0];
+        return this.toStep(target.rel);
+    },
+
+    modusColor : function() {
+        var modeField = $('row_postnl_cif_mode');
+        if (!modeField) {
+            return;
+        }
+
+        var selectedRadioButton = $$('input[name="groups[cif][fields][mode][value]"]:checked')[0];
+        var value = '';
+        if (selectedRadioButton) {
+            value = selectedRadioButton.getValue();
+        }
+
+        switch(value)
+        {
+            case '1':
+                modeField.style.background = '#FF7';
+                break;
+            case '2':
+                modeField.style.background = '#7F7';
+                break;
+            case '0': //no break
+            default:
+                modeField.style.background = '#F77';
+                break;
+        }
     }
-});
-
-function toStep(rel)
-{
-    // switch tabs
-    $$('#postnl-wizard .section-config').each(function(elem){
-        elem.hide();
-    });
-
-    $(rel).show().up().show();
-
-    // switch wizard nav active state
-    $$('#postnl-wizard ul a').each(function(elem){
-        elem.className = '';
-    });
-    $$('a[rel="'+rel+'"]')[0].className = 'active';
-    return false;
-}
-
-// hash navigation
-function toHash(hash)
-{
-    if (!hash) {
-        hash = window.location.hash;
-    }
-
-    var target = $$('a[href="' + hash + '"]')[0];
-    toStep(target.rel);
-}
-
-// modus colors
-function modusColor()
-{
-    var modeField = $('row_postnl_cif_mode');
-    var selectedRadioButton = $$('input[name="groups[cif][fields][mode][value]"]:checked')[0];
-    var value = '';
-    if (selectedRadioButton) {
-        value = selectedRadioButton.getValue();
-    }
-
-    switch(value)
-    {
-        case '1':
-            modeField.style.background = '#FF7';
-            break;
-        case '2':
-            modeField.style.background = '#7F7';
-            break;
-        case '0': //no break
-        default:
-            modeField.style.background = '#F77';
-            break;
-    }
-}
+};

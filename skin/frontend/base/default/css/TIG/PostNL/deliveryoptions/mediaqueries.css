@@ -10,6 +10,8 @@
     .responsive-protector { overflow:hidden !important; }
     .responsive-protector p.rate { display:block !important; background:url(../../../../images/TIG/PostNL/deliveryoptions/bkg_rwd_rate-line.png) left bottom no-repeat; padding:8px 8px 19px; margin-bottom:8px; font-weight:bold; font-size:13px; }
     .responsive-switch-wrapper { display:block; margin:16px 0 0; }
+    .responsive-switch-wrapper ul { margin-bottom:30px; }
+    .responsive-switch-wrapper.show-rates ul { margin-bottom:0; }
     .responsive-switch-wrapper li { display:block; float:left; width:50%; box-sizing:border-box; text-align:center; }
     .responsive-switch-wrapper li:first-child { padding-right:2px; }
     .responsive-switch-wrapper li:last-child { padding-left:2px; }

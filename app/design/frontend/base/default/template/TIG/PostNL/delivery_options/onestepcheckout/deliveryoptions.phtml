@@ -114,7 +114,7 @@
                     <div id="osc_scrollbar_handle"></div>
                 </div>
 
-                <div id="responsive_switch" class="responsive-switch-wrapper">
+                <div id="responsive_switch" class="responsive-switch-wrapper<?php if ($_canShowSeparateRates): ?> show-rates<?php endif; ?>">
                     <div class="title">
                         <a href="#" id="postnl_back_link" style="display:none;"><?php echo $this->__('Back'); ?></a>
                         <h2><?php echo $this->__('Delivery Options'); ?></h2>
@@ -160,7 +160,9 @@
                                                     <input type="checkbox" name="<?php echo $_methodName; ?>[postnl][only_stated_address]" id="<?php echo $_methodName; ?>_only_stated_address" value="1" class="checkbox" <?php if ($this->isOnlyStatedAddressOptionChecked()):?>checked="checked"<?php endif; ?>>
                                                     <label for="<?php echo $_methodName; ?>_only_stated_address">
                                                         <?php echo $this->__('do not deliver to neighbours'); ?>
-                                                        <span class="price">+ <?php echo Mage::helper('postnl/deliveryOptions')->getOptionFee('only_stated_address', true, true); ?></span>
+                                                        <?php if ($this->hasOptionFee('only_stated_address')):?>
+                                                            <span class="price">+ <?php echo $this->getOptionFee('only_stated_address', true, true); ?></span>
+                                                        <?php endif; ?>
                                                     </label>
                                                 </div>
                                             </div>

@@ -567,7 +567,7 @@
                     <frontend_class>postnl-wizard</frontend_class>
                     <sort_order>400</sort_order>
                     <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
+                    <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
                     <fields>
                         <activation_in_progress_header translate="label" module="postnl">
@@ -657,7 +657,7 @@
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
                             <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
+                            <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                             <next_step_rel>postnl_cif_address</next_step_rel>
                         </save_and_continue>
@@ -887,6 +887,76 @@
                                 <use_sender_address>0</use_sender_address>
                             </depends>
                         </return_region>
+                        <save_and_continue translate="label" module="postnl">
+                            <label>Save and continue</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
+                            <sort_order>420</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <next_step_rel>postnl_cif_labels_and_confirming</next_step_rel>
+                        </save_and_continue>
+                    </fields>
+                </cif_address>
+                <cif_labels_and_confirming translate="label comment" module="postnl">
+                    <label>Other Settings</label>
+                    <comment>Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track &amp; trace email to your customers.</comment>
+                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
+                    <frontend_class>postnl-wizard</frontend_class>
+                    <sort_order>600</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <label_size translate="label comment" module="postnl">
+                            <label>Label size</label>
+                            <comment>This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4.</comment>
+                            <frontend_type>postnl_radios</frontend_type>
+                            <source_model>postnl_core/system_config_source_labelSize</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </label_size>
+                        <duration_header translate="label" module="postnl">
+                            <label><![CDATA[PostNL delivery options determine the possible delivery dates based on a few settings. It is important that you configure these as accurately as you can. You should try to be conservative with these settings. If you cannot transfer a shipment to PostNL on time each day, customers may not receive their order on the requested date.<br />You can interpret these settings as "If ordered by {cut-off time}, the order will be delivered in {shipping duration} days".]]></label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </duration_header>
+                        <shipping_duration translate="label comment" module="postnl">
+                            <label>Shipping duration</label>
+                            <comment>The number of days shipping will take after a customer finishes their order.</comment>
+                            <source_model>postnl_core/system_config_source_shippingDuration</source_model>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </shipping_duration>
+                        <cutoff_time translate="label comment" module="postnl">
+                            <label>Order cut-off time</label>
+                            <comment>When an order is placed after this time, another day will be added to the shipping duration.</comment>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_hourMinute</frontend_model>
+                            <source_model>postnl_core/system_config_source_hourMinute</source_model>
+                            <backend_model>postnl_core/system_config_backend_hourMinute</backend_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cutoff_time>
+                        <shipping_days translate="label comment" module="postnl">
+                            <label>Shipping days</label>
+                            <comment><![CDATA[Select on which days of the week orders are shipped. You can read more about shipping and delivery days <a href="http://kb.tig.nl/topic/102775036" target="_blank">here</a>.]]></comment>
+                            <source_model>postnl_core/system_config_source_shippingDays</source_model>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </shipping_days>
                         <checkout_settings_header translate="titel" module="postnl">
                             <label>Checkout page address settings.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -1128,110 +1198,7 @@
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>420</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <next_step_rel>postnl_cif_labels_and_confirming</next_step_rel>
-                        </save_and_continue>
-                    </fields>
-                </cif_address>
-                <cif_labels_and_confirming translate="label comment" module="postnl">
-                    <label>Other Settings</label>
-                    <comment>Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track &amp; trace email to your customers.</comment>
-                    <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
-                    <frontend_class>postnl-wizard</frontend_class>
-                    <sort_order>600</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <label_size translate="label comment" module="postnl">
-                            <label>Label size</label>
-                            <comment>This setting only applies to multiple Dutch and EPS labels. GlobalPack labels are always printed as A4.</comment>
-                            <frontend_type>postnl_radios</frontend_type>
-                            <source_model>postnl_core/system_config_source_labelSize</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </label_size>
-                        <buspakje_header translate="label" module="postnl">
-                            <label>These settings allow you to configure if and how PostNL determines if a shipment is a letter box parcel or a regular package shipment. Letter box parcels have to be able to fit through a mail slot and will be delivered using the regular mail service, rather than PostNL's parcel service.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>20</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </buspakje_header>
-                        <use_buspakje translate="label comment" module="postnl">
-                            <label>Use letter box parcels</label>
-                            <comment><![CDATA[If you disable this field all shipments will be considered regular package shipments.<br/>It is very important that you have correctly configured all products when using letter box parcels. Orders weighing more than <strong>2kg</strong> or are larger than <strong>38 x 26.5 x 3.2 cm</strong> cannot be shipped as letter box parcels.]]></comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>30</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </use_buspakje>
-                        <buspakje_calculation_mode translate="label comment" module="postnl">
-                            <label>Calculation mode</label>
-                            <comment>You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend.</comment>
-                            <tooltip>If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>postnl_core/system_config_source_manualAutomatic</source_model>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                            <depends>
-                                <use_buspakje>1</use_buspakje>
-                            </depends>
-                        </buspakje_calculation_mode>
-                        <duration_header translate="label" module="postnl">
-                            <label><![CDATA[PostNL delivery options determine the possible delivery dates based on a few settings. It is important that you configure these as accurately as you can. You should try to be conservative with these settings. If you cannot transfer a shipment to PostNL on time each day, customers may not receive their order on the requested date.<br />You can interpret these settings as "If ordered by {cut-off time}, the order will be delivered in {shipping duration} days".]]></label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </duration_header>
-                        <shipping_duration translate="label comment" module="postnl">
-                            <label>Shipping duration</label>
-                            <comment>The number of days shipping will take after a customer finishes their order.</comment>
-                            <source_model>postnl_core/system_config_source_shippingDuration</source_model>
-                            <frontend_type>select</frontend_type>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </shipping_duration>
-                        <cutoff_time translate="label comment" module="postnl">
-                            <label>Order cut-off time</label>
-                            <comment>When an order is placed after this time, another day will be added to the shipping duration.</comment>
-                            <frontend_model>postnl_adminhtml/system_config_form_field_hourMinute</frontend_model>
-                            <source_model>postnl_core/system_config_source_hourMinute</source_model>
-                            <backend_model>postnl_core/system_config_backend_hourMinute</backend_model>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </cutoff_time>
-                        <shipping_days translate="label comment" module="postnl">
-                            <label>Shipping days</label>
-                            <comment><![CDATA[Select on which days of the week orders are shipped. You can read more about shipping and delivery days <a href="http://kb.tig.nl/topic/102775036" target="_blank">here</a>.]]></comment>
-                            <source_model>postnl_core/system_config_source_shippingDays</source_model>
-                            <frontend_type>multiselect</frontend_type>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </shipping_days>
-                        <save_and_continue translate="label" module="postnl">
-                            <label>Save and continue</label>
-                            <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>900</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
@@ -1258,7 +1225,7 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>other</value>
                                 </checkout_extension>
                             </depends>
@@ -1274,7 +1241,7 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1292,7 +1259,7 @@
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1311,15 +1278,15 @@
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
                         </responsive>
-                        <mijnpakket_login_active translate="label comment" module="postnl">
-                            <label>Enable MijnPakket login</label>
-                            <comment>MijnPakket login will only be available to customers who have a MijnPakket account. This will be automatically detected.</comment>
+                        <show_options_for_backorders translate="label tooltip" module="postnl">
+                            <label>Enable PostNL delivery options for orders containing out of stock products</label>
+                            <tooltip>Customers can select a specific date and time when they want their shipment delivered when they use PostNL delivery options. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL delivery options if they are attempting to order an item that is not in stock, thereby preventing this situation.</tooltip>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -1330,26 +1297,7 @@
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                            </depends>
-                        </mijnpakket_login_active>
-                        <show_options_for_backorders translate="label tooltip" module="postnl">
-                            <label>Enable PostNL delivery options for orders containing out of stock products</label>
-                            <tooltip>Customers can select a specific date and time when they want their shipment delivered when they use PostNL delivery options. If they are attempting to order an item that is not in stock it's possible that you won't be able to guarantee that the item will be delieverd on the chosen date and time. If this setting is disabled customers will not be able to use PostNL delivery options if they are attempting to order an item that is not in stock, thereby preventing this situation.</tooltip>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1358,14 +1306,14 @@
                         <delivery_options_settings_header translate="label" module="postnl">
                             <label>PostNL delivery options allows your customers to choose their delivery date and timeframe, or choose to have their order delivered to a post office, early delivery post office or parcel dispenser. Each of these options can be individually enabled and disabled. In the case of evening- and early delivery, you may charge an additional fee.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1377,14 +1325,14 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>80</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1396,7 +1344,7 @@
                             <tooltip>This value will be added to the earliest possible delivery date. Timeframes will be displayed for all options between the first possible delivery date and this number of days after that.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>postnl_deliveryoptions/system_config_source_deliveryDaysNumber</source_model>
-                            <sort_order>90</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1404,7 +1352,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_delivery_days>1</enable_delivery_days>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1416,7 +1364,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>100</sort_order>
+                            <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1424,7 +1372,7 @@
                                 <enable_delivery_days>1</enable_delivery_days>
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1437,7 +1385,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>110</sort_order>
+                            <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1446,7 +1394,7 @@
                                 <enable_delivery_days>1</enable_delivery_days>
                                 <enable_timeframes>1</enable_timeframes>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1458,7 +1406,7 @@
                             <tooltip>This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for evening timeframes.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
-                            <sort_order>120</sort_order>
+                            <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1469,7 +1417,7 @@
                                 <enable_timeframes>1</enable_timeframes>
                                 <enable_evening_timeframes>1</enable_evening_timeframes>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1481,14 +1429,14 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>130</sort_order>
+                            <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1501,7 +1449,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>140</sort_order>
+                            <sort_order>130</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1509,7 +1457,7 @@
                                 <delivery_options_active>1</delivery_options_active>
                                 <enable_pakjegemak>1</enable_pakjegemak>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1521,7 +1469,7 @@
                             <tooltip>This value must be between 0.00 and 2.00 EUR incl. VAT. Leave this field empty to charge no extra fee for early delivery locations.</tooltip>
                             <frontend_type>text</frontend_type>
                             <backend_model>postnl_deliveryoptions/system_config_backend_validateFee</backend_model>
-                            <sort_order>150</sort_order>
+                            <sort_order>140</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1531,7 +1479,7 @@
                                 <enable_pakjegemak>1</enable_pakjegemak>
                                 <enable_pakjegemak_express>1</enable_pakjegemak_express>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1544,14 +1492,14 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>160</sort_order>
+                            <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1563,14 +1511,14 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>170</sort_order>
+                            <sort_order>160</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1579,6 +1527,33 @@
                         <buspakje_header translate="label" module="postnl">
                             <label>These settings are only applicable to orders which fit as a letter box parcel.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>170</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <use_buspakje>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>1</value>
+                                </use_buspakje>
+                                <buspakje_calculation_mode>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>automatic</value>
+                                </buspakje_calculation_mode>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </buspakje_header>
+                        <show_options_for_buspakje translate="label tooltip" module="postnl">
+                            <label>Show PostNL delivery options for letter box parcel orders</label>
+                            <tooltip>If a customer chooses a delivery option, that order may not be shipped as a letter box parcel. Only shipments to a regular Dutch address may be shipped as letter box parcels. If you disable this setting delivery options will automatically be disabled when an order would fit as a letter box parcel. Enable this option if you always want to show delivery options to customers even when that means an order might not be shipped as a letter box parcel.</tooltip>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
                             <sort_order>180</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -1594,15 +1569,15 @@
                                     <value>automatic</value>
                                 </buspakje_calculation_mode>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
-                        </buspakje_header>
-                        <show_options_for_buspakje translate="label tooltip" module="postnl">
-                            <label>Show PostNL delivery options for letter box parcel orders</label>
-                            <tooltip>If a customer chooses a delivery option, that order may not be shipped as a letter box parcel. Only shipments to a regular Dutch address may be shipped as letter box parcels. If you disable this setting delivery options will automatically be disabled when an order would fit as a letter box parcel. Enable this option if you always want to show delivery options to customers even when that means an order might not be shipped as a letter box parcel.</tooltip>
+                        </show_options_for_buspakje>
+                        <show_all_options_for_buspakje translate="label comment" module="postnl">
+                            <label>Show all delivery options for letter box parcel orders</label>
+                            <comment>If set to 'yes' the same delivery options will be shown for letter box parcel orders as for regular orders. Please note that if the customer chooses a delivery option, the order may no longer be shipped as a letter box parcel.</comment>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -1620,16 +1595,16 @@
                                     <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>automatic</value>
                                 </buspakje_calculation_mode>
+                                <show_options_for_buspakje>1</show_options_for_buspakje>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
-                        </show_options_for_buspakje>
-                        <show_all_options_for_buspakje translate="label comment" module="postnl">
-                            <label>Show all delivery options for letter box parcel orders</label>
-                            <comment>If set to 'yes' the same delivery options will be shown for letter box parcel orders as for regular orders. Please note that if the customer chooses a delivery option, the order may no longer be shipped as a letter box parcel.</comment>
+                        </show_all_options_for_buspakje>
+                        <enable_delivery_days_for_buspakje translate="label" module="postnl">
+                            <label>Show delivery days for letter box parcel orders.</label>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -1648,15 +1623,18 @@
                                     <value>automatic</value>
                                 </buspakje_calculation_mode>
                                 <show_options_for_buspakje>1</show_options_for_buspakje>
+                                <show_all_options_for_buspakje>0</show_all_options_for_buspakje>
+                                <enable_delivery_days>1</enable_delivery_days>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
-                        </show_all_options_for_buspakje>
-                        <enable_delivery_days_for_buspakje translate="label" module="postnl">
-                            <label>Show delivery days for letter box parcel orders.</label>
+                        </enable_delivery_days_for_buspakje>
+                        <enable_pakjegemak_for_buspakje translate="label comment" module="postnl">
+                            <label>Show post office locations for letter box parcels.</label>
+                            <comment>If the customer chooses to have an order delivered to a post office location the order may no longer be shipped as a letter box parcel.</comment>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -1676,17 +1654,17 @@
                                 </buspakje_calculation_mode>
                                 <show_options_for_buspakje>1</show_options_for_buspakje>
                                 <show_all_options_for_buspakje>0</show_all_options_for_buspakje>
-                                <enable_delivery_days>1</enable_delivery_days>
+                                <enable_pakjegemak>1</enable_pakjegemak>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
-                        </enable_delivery_days_for_buspakje>
-                        <enable_pakjegemak_for_buspakje translate="label comment" module="postnl">
-                            <label>Show post office locations for letter box parcels.</label>
-                            <comment>If the customer chooses to have an order delivered to a post office location the order may no longer be shipped as a letter box parcel.</comment>
+                        </enable_pakjegemak_for_buspakje>
+                        <enable_pakketautomaat_for_buspakje translate="label comment" module="postnl">
+                            <label>Show parcel dispenser locations for letter box parcels</label>
+                            <comment>If the customer chooses to have an order delivered to a parcel dispenser the order may no longer be shipped as a letter box parcel.</comment>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -1706,130 +1684,25 @@
                                 </buspakje_calculation_mode>
                                 <show_options_for_buspakje>1</show_options_for_buspakje>
                                 <show_all_options_for_buspakje>0</show_all_options_for_buspakje>
-                                <enable_pakjegemak>1</enable_pakjegemak>
+                                <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
-                        </enable_pakjegemak_for_buspakje>
-                        <enable_pakketautomaat_for_buspakje translate="label comment" module="postnl">
-                            <label>Show parcel dispenser locations for letter box parcels</label>
-                            <comment>If the customer chooses to have an order delivered to a parcel dispenser the order may no longer be shipped as a letter box parcel.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
+                        </enable_pakketautomaat_for_buspakje>
+                        <stated_address_header translate="label" module="postnl">
+                            <label>If a customer is not home when a shipment is delivered, PostNL will try to deliver it to the neighbours instead and leave a note for the intended recipient. Using these settings you may allow the customer to choose whether they want to allow their order to be delieverd to their neighbours.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>230</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
-                                <use_buspakje>
+                                <checkout_extension>
                                     <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>1</value>
-                                </use_buspakje>
-                                <buspakje_calculation_mode>
-                                    <fieldset>cif_labels_and_confirming</fieldset>
-                                    <value>automatic</value>
-                                </buspakje_calculation_mode>
-                                <show_options_for_buspakje>1</show_options_for_buspakje>
-                                <show_all_options_for_buspakje>0</show_all_options_for_buspakje>
-                                <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations>
-                                <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                            </depends>
-                        </enable_pakketautomaat_for_buspakje>
-                        <mijnpakket_notification_header translate="label" module="postnl">
-                            <label>You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>240</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                            </depends>
-                        </mijnpakket_notification_header>
-                        <mijnpakket_notification translate="label comment" module="postnl">
-                            <label>Show MijnPakket notification on the order success page</label>
-                            <comment>This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>250</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                            </depends>
-                        </mijnpakket_notification>
-                        <show_create_mijnpakket_account_link translate="label comment" module="postnl">
-                            <label>Show create MijnPakket account link</label>
-                            <comment>If enabled, customers who do not yet have a MijnPakket account will be shown a link through which they can create a MijnPakket account without having to fully fill in the registration form.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>260</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <mijnpakket_notification>1</mijnpakket_notification>
-                                <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                            </depends>
-                        </show_create_mijnpakket_account_link>
-                        <show_mijnpakket_app_link translate="label comment" module="postnl">
-                            <label>Show MijnPakket app link</label>
-                            <comment>If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order.</comment>
-                            <frontend_type>checkbox</frontend_type>
-                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
-                            <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>270</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <mijnpakket_notification>1</mijnpakket_notification>
-                                <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                            </depends>
-                        </show_mijnpakket_app_link>
-                        <stated_address_header translate="label" module="postnl">
-                            <label>If a customer is not home when a shipment is delivered, PostNL will try to deliver it to the neighbours instead and leave a note for the intended recipient. Using these settings you may allow the customer to choose whether they want to allow their order to be delieverd to their neighbours.</label>
-                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                            <sort_order>280</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <delivery_options_active>1</delivery_options_active>
-                                <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1841,14 +1714,14 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>290</sort_order>
+                            <sort_order>240</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1859,7 +1732,7 @@
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
-                            <sort_order>300</sort_order>
+                            <sort_order>250</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1867,7 +1740,7 @@
                                 <stated_address_only_option>1</stated_address_only_option>
                                 <delivery_options_active>1</delivery_options_active>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
@@ -1875,6 +1748,99 @@
                         </stated_address_only_checked>
                         <stated_address_only_fee>
                             <label>Stated address only fee</label>
+                            <frontend_type>text</frontend_type>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>260</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <stated_address_only_option>1</stated_address_only_option>
+                                <delivery_options_active>1</delivery_options_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </stated_address_only_fee>
+                        <mijnpakket_notification_header translate="label" module="postnl">
+                            <label>You may choose to show a message to customers after they place their order about MijnPakket. This message will inform customers about the advantages of MijnPakket. Customers who have a MijnPakket account can use this to quickly log in to your webshop, thus reducing the amount of time it takes to complete an order.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>270</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </mijnpakket_notification_header>
+                        <mijnpakket_login_active translate="label comment" module="postnl">
+                            <label>Enable MijnPakket login</label>
+                            <comment>MijnPakket login will only be available to customers who have a MijnPakket account. This will be automatically detected.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>280</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </mijnpakket_login_active>
+                        <mijnpakket_notification translate="label comment" module="postnl">
+                            <label>Show MijnPakket notification on the order success page</label>
+                            <comment>This will cause a notification to be shown to customers after they have placed their order. The message may either inform the customer about MijnPakket accounts or the MijnPakket app.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>290</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </mijnpakket_notification>
+                        <show_create_mijnpakket_account_link translate="label comment" module="postnl">
+                            <label>Show create MijnPakket account link</label>
+                            <comment>If enabled, customers who do not yet have a MijnPakket account will be shown a link through which they can create a MijnPakket account without having to fully fill in the registration form.</comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>300</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <delivery_options_active>1</delivery_options_active>
+                                <mijnpakket_notification>1</mijnpakket_notification>
+                                <checkout_extension>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
+                            </depends>
+                        </show_create_mijnpakket_account_link>
+                        <show_mijnpakket_app_link translate="label comment" module="postnl">
+                            <label>Show MijnPakket app link</label>
+                            <comment>If enabled, customers who already have a MijnPakket account will be informed about the PostNL MijnPakket app with which they can easily track their order.</comment>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
                             <source_model>postnl/system_config_source_yesno</source_model>
@@ -1883,19 +1849,52 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <stated_address_only_option>1</stated_address_only_option>
                                 <delivery_options_active>1</delivery_options_active>
+                                <mijnpakket_notification>1</mijnpakket_notification>
                                 <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
+                                    <fieldset>cif_labels_and_confirming</fieldset>
                                     <value>magento_onepagecheckout||idev_onestepcheckout</value>
                                     <separator>||</separator>
                                 </checkout_extension>
                             </depends>
-                        </stated_address_only_fee>
+                        </show_mijnpakket_app_link>
+                        <buspakje_header translate="label" module="postnl">
+                            <label>These settings allow you to configure if and how PostNL determines if a shipment is a letter box parcel or a regular package shipment. Letter box parcels have to be able to fit through a mail slot and will be delivered using the regular mail service, rather than PostNL's parcel service.</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>320</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </buspakje_header>
+                        <use_buspakje translate="label comment" module="postnl">
+                            <label>Use letter box parcels</label>
+                            <comment><![CDATA[If you disable this field all shipments will be considered regular package shipments.<br/>It is very important that you have correctly configured all products when using letter box parcels. Orders weighing more than <strong>2kg</strong> or are larger than <strong>38 x 26.5 x 3.2 cm</strong> cannot be shipped as letter box parcels.]]></comment>
+                            <frontend_type>checkbox</frontend_type>
+                            <backend_model>postnl/system_config_backend_checkbox</backend_model>
+                            <source_model>postnl/system_config_source_yesno</source_model>
+                            <sort_order>330</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </use_buspakje>
+                        <buspakje_calculation_mode translate="label comment" module="postnl">
+                            <label>Calculation mode</label>
+                            <comment>You can let the PostNL extension calculate automatically whether a shipment would fit in a mail slot or you can manually determine this when creating shipments in the backend.</comment>
+                            <tooltip>If set to 'automatic' the PostNL extension will check the 'Weight' and 'PostNL Max Qty For Letter Box Parcels' of all products in an order to determine whether the shipment would fit through a mail slot. You may always overrule this and manually set whether a shipment is a letter box parcel or not.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>postnl_core/system_config_source_manualAutomatic</source_model>
+                            <sort_order>340</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <use_buspakje>1</use_buspakje>
+                            </depends>
+                        </buspakje_calculation_mode>
                         <save_and_continue translate="label" module="postnl">
                             <label>Save and continue</label>
                             <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
-                            <sort_order>320</sort_order>
+                            <sort_order>350</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>

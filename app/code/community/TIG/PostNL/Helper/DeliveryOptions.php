@@ -2492,7 +2492,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * This shipment cannot be used for buspakje shipments.
          */
-        if ($this->quoteIsBuspakje($quote) && !$this->canShowAllDeliveryOptionsForBuspakje($quote)) {
+        if ($this->quoteIsBuspakje($quote)) {
             Mage::register($registryKey, false);
             return false;
         }
