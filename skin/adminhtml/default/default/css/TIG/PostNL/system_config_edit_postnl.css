@@ -45,14 +45,15 @@ button.postnl-button { width:280px; margin-right:5px; }
 
 
 /* Wizard */
-#postnl-wizard .entry-edit-head { display:none; }
-#postnl-wizard ul { height:28px; background:#e6e6e6; border:1px solid #d6d6d6; }
-#postnl-wizard li { float:left; margin:0; }
-#postnl-wizard li a { display:block; line-height:28px; padding:0 15px; color:#2f2f2f; font-weight:bold; text-decoration:none; }
-#postnl-wizard li a:hover { color:#ea7601; }
-#postnl-wizard li a.active { background:#ea7601; color:#fff; }
+#postnl_wizard .entry-edit-head { display:none; }
+#postnl_wizard ul { height:28px; background:#e6e6e6; border:1px solid #d6d6d6; }
+#postnl_wizard li { float:left; margin:0; }
+#postnl_wizard li a { display:block; line-height:28px; padding:0 15px; color:#2f2f2f; font-weight:bold; text-decoration:none; }
+#postnl_wizard li a:hover { color:#ea7601; }
+#postnl_wizard li a.active { background:#ea7601; color:#fff; }
 #postnl_advanced_group { border-top:0; }
 #row_postnl_cif_sender_address_region,
 #postnl_cif_sender_address_return_region { display:none; }
 .wrapper-radio { margin-bottom:3px; }
 .wrapper-radio input { margin-right:10px; }
+.wizard-success { background:#3ead52; color:#fff; padding:12px 16px; margin:0 0 10px; }

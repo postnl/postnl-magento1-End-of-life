@@ -1201,7 +1201,8 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     }
 
     /**
-     * Move a config setting directly in the database, rather than using Magento config entities.
+     * Copy a config setting from an old xpath to a new xpath directly in the database, rather than using Magento config
+     * entities.
      *
      * @param string $fromXpath
      * @param string $toXpath
@@ -1213,15 +1214,95 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         $conn = $this->getConnection();
 
         try {
+            $select = $conn->select()
+                           ->from($this->getTable('core/config_data'))
+                           ->where('path = ?', $fromXpath);
+
+            $result = $conn->fetchAll($select);
+            foreach ($result as $row) {
+                try {
+                    /**
+                     * Copy the old setting to the new setting.
+                     *
+                     * @todo Check if the row already exists.
+                     */
+                    $conn->insert(
+                        $this->getTable('core/config_data'),
+                        array(
+                            'scope'    => $row['scope'],
+                            'scope_id' => $row['scope_id'],
+                            'value'    => $row['value'],
+                            'path'     => $toXpath
+                        )
+                    );
+                } catch (Exception $e) {
+                    Mage::helper('postnl')->logException($e);
+                }
+            }
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Moves and merges the PostNL active setting to and with the PostNL mode setting.
+     *
+     * @return $this
+     */
+    public function moveActiveSetting()
+    {
+        $conn = $this->getConnection();
+
+        try {
+            /**
+             * Modify all mode settings with value 0 (Live) to value 2 (the new live mode value).
+             */
             $conn->update(
                 $this->getTable('core/config_data'),
                 array(
-                    'path' => $toXpath,
+                    'value' => 2,
                 ),
                 array(
-                    'path = ?' => $fromXpath,
+                    'path = ?' => 'postnl/cif/mode',
+                    'value = ?' => 0
                 )
             );
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+        }
+
+        try {
+            /**
+             * Get all scopes for which PostNl is disabled.
+             */
+            $disabledSelect = $conn->select()
+                                   ->from($this->getTable('core/config_data'))
+                                   ->where('path = ?', 'postnl/general/active')
+                                   ->where('value = ?', 0);
+
+            $disabledRows = $conn->fetchAll($disabledSelect);
+            foreach ($disabledRows as $disabledRow) {
+                try {
+                    /**
+                     * Set the mode to 0 (off) for these scopes.
+                     */
+                    $conn->update(
+                        $this->getTable('core/config_data'),
+                        array(
+                            'value' => 0,
+                        ),
+                        array(
+                            'path = ?'     => 'postnl/cif/mode',
+                            'scope_id = ?' => $disabledRow['scope_id'],
+                            'scope = ?'    => $disabledRow['scope'],
+                        )
+                    );
+                } catch (Exception $e) {
+                    Mage::helper('postnl')->logException($e);
+                }
+            }
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
         }

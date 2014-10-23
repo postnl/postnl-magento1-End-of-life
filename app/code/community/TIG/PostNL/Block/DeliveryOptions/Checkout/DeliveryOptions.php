@@ -325,6 +325,39 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Check if a fee is set for this option.
+     *
+     * @param string $option
+     *
+     * @return bool
+     */
+    public function hasOptionFee($option)
+    {
+        $fee = $this->getOptionFee($option);
+
+        if ($fee > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the configured fee for a specified option.
+     *
+     * @param string $option
+     * @param bool  $formatted
+     * @param bool  $includingTax
+     * @param bool  $convert
+     *
+     * @return float|int
+     */
+    public function getOptionFee($option, $formatted = false, $includingTax = true, $convert = true)
+    {
+        return Mage::helper('postnl/deliveryOptions')->getOptionFee($option, $formatted, $includingTax, $convert);
+    }
+
+    /**
      * Get either the evening or express fee as a float or int.
      *
      * @param string  $type

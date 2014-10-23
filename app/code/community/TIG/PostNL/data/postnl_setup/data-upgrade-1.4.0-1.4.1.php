@@ -108,4 +108,5 @@ foreach ($settingsToMove as $from => $to) {
     $installer->moveConfigSettingInDb($from, $to);
 }
 
-$installer->clearConfigCache();
+$installer->moveActiveSetting()
+          ->clearConfigCache();

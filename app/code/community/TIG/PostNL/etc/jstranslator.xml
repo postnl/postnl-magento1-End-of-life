@@ -126,4 +126,10 @@
     <advanced_settings translate="message" module="postnl">
         <message>Advanced Settings</message>
     </advanced_settings>
+    <as_soon_as_possible translate="message" module="postnl">
+        <message>As soon as possible</message>
+    </as_soon_as_possible>
+    <wizard_step_saved translate="message" module="postnl">
+        <message>This step has been saved successfully!</message>
+    </wizard_step_saved>
 </jstranslator>
