@@ -65,7 +65,7 @@ TIG_PostNL::These fields are used to configure the track & trace email that may 
 TIG_PostNL::Automatically send track & trace email to customer,Stuur de Track & Trace e-mail automatisch naar de klant
 "TIG_PostNL::If enabled, a track & trace email will be sent to the customer roughly 20 minutes after a shipment has been confirmed.","Indien geactiveerd, wordt er ongeveer 20 minuten na de zending voormelding een Track & Trace e-mail naar de klant gestuurd."
 TIG_PostNL::Track & trace email template,Track & Trace e-mail sjabloon
-TIG_PostNL::Address Settings,Adres Instellingen
+TIG_PostNL::Address Settings,Adresgegevens
 TIG_PostNL::Split street parts,Deel straatnaam velden op
 TIG_PostNL::Streetname field,Straatnaam
 TIG_PostNL::Housenr. field,Huisnummer
@@ -1134,7 +1134,7 @@ TIG_PostNL::This option will be used as default when the customer has checked th
 TIG_PostNL::Extra options,Extra opties
 TIG_PostNL::Use responsive design,Gebruik responsive ontwerp
 "TIG_PostNL::Select 'yes' to make the delivery options theme responsive. Responsive themes allow users on their mobile phone, tablets and desktops to view the same page in a way that is optimized for their device. Beware: this option may conflict with custom Magento theme.","Selecteer 'ja' om het responsive ontwerp van de bezorgopties te gebruiken. Het responsive ontwerp zorgt ervoor dat gebruikers op een mobiele telefoon, tablet of desktop de bezorgopties te zien krijgen op een wijze die voor hun apperaat geoptimaliseerd is. N.B.: deze optie kan conflicteren met custom Magento thema's."
-"TIG_PostNL::If a customer is not home when a shipment is delivered, PostNL will try to deliver it to the neighbours instead and leave a note for the intended recipient. Using these settings you may allow the customer to choose whether they want to allow their order to be delieverd to their neighbours.","Indien een consument niet thuis is wanneer PostNl de zending komt bezorgen, zal de bezorger de zending bij de buren proberen af te leveren en een kaartje achter te laten bij de geaddresseerde. Met deze instellingen kunt u de consument de optie bieden om er voor te kiezen om de zending enkel bij de geaddresseerde te bezorgen en dus niet bij de buren."
+"TIG_PostNL::If a customer is not home when a shipment is delivered, PostNL will try to deliver it to the neighbours instead and leave a note for the intended recipient. Using these settings you may allow the customer to choose whether they want to allow their order to be delieverd to their neighbours.","Indien een consument niet thuis is wanneer PostNL de zending komt bezorgen, zal de bezorger de zending bij de buren proberen af te leveren en een kaartje achter te laten bij de geaddresseerde. Met deze instellingen kunt u de consument de optie bieden om er voor te kiezen om de zending enkel bij de geaddresseerde te bezorgen en dus niet bij de buren."
 TIG_PostNL::Show 'only send to stated address' option,Toon 'lever alleen op aangegeven adres' optie
 TIG_PostNL::Enable this option to show a checkbox on the checkout page with which the customer can choose to only send the shipment to the stated address.,Activeer deze instelling om een checkbox te tonen op de afrekenpagina waarmee de consument kan aangeven dat de zending enkel op het opgegeven adres bezorgd mag worden.
 TIG_PostNL::Stated address only option checked by default,Lever alleen aan opgegeven adres optie standaard aanvinken
@@ -1160,7 +1160,7 @@ TIG_PostNL::Have your order delivered %s,Je bestelling laten bezorgen %s
 "TIG_PostNL::A prefilled csv file can be found <a href=""http://kb.tig.nl/topic/102462196"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/102462196"" target=""_blank"">hier</a> een voorgevuld csv bestand vinden."
 TIG_PostNL::Save and continue,Opslaan en doorgaan
 TIG_PostNL::Activation,Activatie
-TIG_PostNL::Other Settings,Overige Gegevens
+TIG_PostNL::Shop Settings,Winkel Instellingen
 TIG_PostNL::Off,Uit
 TIG_PostNL::Technical Settings,Technische Instellingen
 TIG_PostNL::Address validation and Settings,Adresverificatie en Instellingen
@@ -1178,3 +1178,4 @@ TIG_PostNL::PostNL delivery options are only available for Magento's One Page Ch
 TIG_PostNL::Specify checkout extension,Specificeer checkout extensie
 TIG_PostNL::Checkout Settings,Checkout instellingen
 TIG_PostNL::As soon as possible,Eerst volgende mogelijkheid
+TIG_PostNL::This step has been saved successfully!,Deze stap is succesvol opgeslagen!

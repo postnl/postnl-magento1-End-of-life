@@ -899,7 +899,7 @@
                     </fields>
                 </cif_address>
                 <cif_labels_and_confirming translate="label comment" module="postnl">
-                    <label>Other Settings</label>
+                    <label>Shop Settings</label>
                     <comment>Here you can specify your confirming and label printing preferences. You can also customize the way our modified shipment and order grids are displayed. Lastly, you can specify whether the extension should automatically send a track &amp; trace email to your customers.</comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <frontend_class>postnl-wizard</frontend_class>

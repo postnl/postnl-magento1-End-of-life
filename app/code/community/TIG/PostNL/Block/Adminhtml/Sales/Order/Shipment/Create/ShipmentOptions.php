@@ -51,7 +51,7 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_Create_ShipmentOptions ext
     /**
      * Xpath to the buspakje calculation mode setting.
      */
-    const XPATH_BUSPAKJE_CALC_MODE = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
+    const XPATH_BUSPAKJE_CALC_MODE = 'postnl/delivery_options/buspakje_calculation_mode';
 
     /**
      * @var string
