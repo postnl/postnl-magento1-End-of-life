@@ -155,40 +155,25 @@
             onSuccess : function(response) {
                 var responseText = response.responseText;
                 if (responseText == 'success') {
-                    /**
-                     * TODO Merge with onclick events in the wizard.
-                     * TODO Add success message when there is no next step.
-                     */
-
                     if (!nextStepRel) {
                         nextStepRel = currentStepRel;
                     }
 
-                    // switch tabs
-                    $$('#postnl-wizard .section-config').invoke('hide');
-                    $$('#postnl-wizard .section-config').invoke('removeClassName', 'active');
-
-                    document.getElementById(nextStepRel).parentNode.style.display = 'block';
-                    document.getElementById(nextStepRel).style.display = 'block';
-
-                    // switch wizard nav active state
-                    $$('#postnl-wizard ul a').each(function (elem) {
-                        elem.removeClassName('active');
-                    });
-
-                    $$('a[rel="' + nextStepRel + '"]')[0].addClassName('active');
+                    postnlConfigWizard.toStep(nextStepRel);
 
                     var successMessage = new Element('div', {
                         'class' : 'wizard-success'
                     }).update(Translator.translate('This step has been saved successfully!'));
 
-                    $('nextStepRel').insert({
-                        before:successMessage
+                    $(nextStepRel).insert({
+                        top:successMessage
                     });
 
                     setTimeout(function() {
                         successMessage.fade();
                     }, 3000);
+
+                    window.scrollTo(0, $('postnl_wizard').offsetTop - 50);
 
                     return;
                 }
@@ -199,10 +184,7 @@
                     return;
                 }
 
-                $('postnl_wizard_save_error').show();
-                setTimeout(function() {
-                    $('postnl_wizard_save_error').fade();
-                }, 3000);
+                configForm.submit();
             }
         });
 
