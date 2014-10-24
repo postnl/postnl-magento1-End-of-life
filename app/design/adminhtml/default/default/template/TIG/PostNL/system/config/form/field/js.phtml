@@ -155,12 +155,21 @@
             onSuccess : function(response) {
                 var responseText = response.responseText;
                 if (responseText == 'success') {
+                    /**
+                     * If there is no next step, stay on the current step.
+                     */
                     if (!nextStepRel) {
                         nextStepRel = currentStepRel;
                     }
 
+                    /**
+                     * Go to the next step.
+                     */
                     postnlConfigWizard.toStep(nextStepRel);
 
+                    /**
+                     * Add a success message.
+                     */
                     var successMessage = new Element('div', {
                         'class' : 'wizard-success'
                     }).update(Translator.translate('This step has been saved successfully!'));
@@ -169,11 +178,23 @@
                         top:successMessage
                     });
 
+                    /**
+                     * Have the message fade away after 3 seconds.
+                     */
                     setTimeout(function() {
                         successMessage.fade();
                     }, 3000);
 
-                    window.scrollTo(0, $('postnl_wizard').offsetTop - 50);
+                    /**
+                     * Scroll to the top of the wizard.
+                     */
+                    new Effect.Tween(
+                        null,
+                        document.viewport.getScrollOffsets().top,
+                        $('postnl_wizard').cumulativeOffset()[1] - 50,
+                        {},
+                        function(p){ scrollTo(document.viewport.getScrollOffsets().left, p.round()); }
+                    );
 
                     return;
                 }
@@ -184,6 +205,9 @@
                     return;
                 }
 
+                /**
+                 * If something went wrong, submit the entire config form as a fallback.
+                 */
                 configForm.submit();
             }
         });
