@@ -171,7 +171,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         'GraphicFile|PDF',
         'GraphicFile|PS',
 
-        //Intermec FingerPrint
+        //Intermec FinnerPrint
         'IntermecEasyCoder PF4i',
 
         //Intermec IDP
@@ -931,7 +931,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getShipmentAddresses(TIG_PostnL_Model_Core_Shipment $postnlShipment, $shippingAddress)
     {
-        $useSenderAddressAsReturn = Mage::getStoreConfig(
+        $useSenderAddressAsReturn = Mage::getStoreConfigFlag(
             self::XPATH_USE_SENDER_ADDRESS_AS_RETURN,
             $this->getStoreId()
         );
@@ -959,7 +959,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
      *
-     * @return array|bool
+     * @return array|false
      */
     protected function _getProductOptions(TIG_PostnL_Model_Core_Shipment $postnlShipment)
     {
