@@ -717,12 +717,12 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function getIsBuspakje()
     {
-        /**
-         * Check if the buspakje calculation mode is set to automatic.
-         */
         $helper = Mage::helper('postnl');
-        $calculationMode = $helper->getBuspakjeCalculationMode();
-        if ($calculationMode != 'automatic') {
+
+        /**
+         * Check if buspakje can be used.
+         */
+        if (!$helper->canUseBuspakje()) {
             return false;
         }
 
@@ -730,7 +730,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
          * Check if the current quote fits as a letter box parcel.
          */
         $quote = Mage::getSingleton('checkout/session')->getQuote();
-        if (!$helper->fitsAsBuspakje($quote->getAllItems())) {
+        if (!$helper->quoteIsBuspakje($quote)) {
             return false;
         }
 

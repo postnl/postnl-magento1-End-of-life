@@ -3168,15 +3168,38 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 );
             }
 
+            $payment          = $order->getPayment();
+            $paymentBlockHtml = '';
+            if ($payment) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $paymentBlock = Mage::helper('payment')
+                                    ->getInfoBlock($payment)
+                                    ->setIsSecureMode(true);
+
+                /** @noinspection PhpUndefinedMethodInspection */
+                $paymentBlock->getMethod()
+                             ->setStore($storeId);
+
+                /**
+                 * @var Mage_Payment_Block_Info $paymentBlock
+                 */
+                $paymentBlockHtml = $paymentBlock->toHtml();
+            }
+
             /** @noinspection PhpUndefinedMethodInspection */
             $templateVariables = array(
-                'postnlshipment' => $this,
-                'barcode'        => $this->getMainBarcode(),
-                'barcode_url'    => $this->getBarcodeUrl(false),
-                'shipment'       => $shipment,
-                'order'          => $order,
-                'customer'       => $order->getCustomer(),
-                'quote'          => $order->getQuote(),
+                'postnlshipment'   => $this,
+                'barcode'          => $this->getMainBarcode(),
+                'barcode_url'      => $this->getBarcodeUrl(false),
+                'shipment'         => $shipment,
+                'order'            => $order,
+                'payment_html'     => $paymentBlockHtml,
+                'customer'         => $order->getCustomer(),
+                'quote'            => $order->getQuote(),
+                'shipment_comment' => '', /** @todo add last shipment comment */
+                'billing'          => $order->getBillingAddress(),
+                'shipping'         => $order->getShippingAddress(),
+                'pakje_gemak'      => $this->getPakjeGemakAddress(),
             );
 
             $templateVariables = new Varien_Object($templateVariables);

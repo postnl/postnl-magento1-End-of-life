@@ -146,7 +146,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Control
             $this->__(
                 'Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress ' .
                 'you specified. Please read this email carefully as it contains instructions on how to finish the ' .
-                'extension activation procedure.'
+                'extension registration procedure.'
             )
         );
 
@@ -269,7 +269,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Control
         Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 2);
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
-            $this->__('The extension has been successfully activated!')
+            $this->__('The extension has been successfully registered!')
         );
 
         /**
