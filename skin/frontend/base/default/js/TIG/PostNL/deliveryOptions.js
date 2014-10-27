@@ -1089,6 +1089,7 @@ PostnlDeliveryOptions.prototype = {
     renderLocations : function() {
         var pickUpList = $('postnl_pickup');
         pickUpList.show();
+        $('responsive_switch').show();
 
         $$('#' + this.getOptions().pgeLocationContainer + ' li').each(function(element) {
             element.remove();
@@ -1101,7 +1102,7 @@ PostnlDeliveryOptions.prototype = {
         });
 
         if (!this.isPgeAllowed() && !this.isPgAllowed() && !this.isPaAllowed()) {
-            pickUpList.hide();
+            this.hideLocations();
             return this;
         }
 
@@ -1130,6 +1131,9 @@ PostnlDeliveryOptions.prototype = {
     hideLocations : function() {
         this.setParsedLocations(true)
             .hideSpinner();
+
+        $('postnl_pickup').hide();
+        $('responsive_switch').hide();
 
         if (this.debug) {
             console.info('Delivery locations are hidden.');

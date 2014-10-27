@@ -282,17 +282,17 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         /**
          * Generate semi-random values for the cron expression.
          */
-        $cronMorningHour   = mt_rand(10, 12);
-        $cronMorningHour  += Mage::getModel('core/date')->getGmtOffset('hours');
-
-        $cronAfternoonHour = $cronMorningHour + 4; //4 hours after the morning update
         $cronMinute        = mt_rand(0, 59);
 
+        $cronNightHour     = mt_rand(1, 3);
+        $cronMorningHour   = $cronNightHour + 9; //9 hours after the night update
+        $cronAfternoonHour = $cronMorningHour + 4; //4 hours after the morning update
+
         /**
-         * Generate a cron expr that runs on a specified minute on a specified hour between 10 and 12 AM, and between 14
-         * and 16 PM.
+         * Generate a cron expr that runs on a specified minute on a specified hour between 1 and 3 AM, between 10 and
+         * 12 AM, and between 14 and 16 PM.
          */
-        $cronExpr = "{$cronMinute} {$cronMorningHour},{$cronAfternoonHour} * * *";
+        $cronExpr = "{$cronMinute} {$cronNightHour},{$cronMorningHour},{$cronAfternoonHour} * * *";
 
         /**
          * Store the cron expression in core_config_data.

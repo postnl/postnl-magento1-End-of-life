@@ -548,8 +548,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog("All confirmation placed before {$expireDate} will be expired.");
 
         /**
-         * Get all postnl shipments that have been confirmed over X days ago and who have not yet been shipped
-         * (shipping_phase other than 'collection')
+         * Get all postnl shipments that have been confirmed over X days ago and who have not yet been shipped.
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter(
@@ -939,6 +938,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                  */
                 $finalRun = false;
                 $helper->logException($e);
+                $helper->cronLog($helper->__('An error occurred while processing this attribute.'));
             }
         }
 
