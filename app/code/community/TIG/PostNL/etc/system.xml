@@ -1907,13 +1907,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <next_step_rel>postnl_cif</next_step_rel>
-                            <depends>
-                                <checkout_extension>
-                                    <fieldset>cif_address</fieldset>
-                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
-                                    <separator>||</separator>
-                                </checkout_extension>
-                            </depends>
                         </save_and_continue>
                     </fields>
                 </delivery_options>
