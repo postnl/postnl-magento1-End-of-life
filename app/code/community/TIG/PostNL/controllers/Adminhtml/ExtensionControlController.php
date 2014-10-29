@@ -65,6 +65,45 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Control
     const SHOP_ALREADY_REGISTERED_FAULTCODE = 'API-2-6';
 
     /**
+     * @var string|null
+     */
+    protected $_fragment;
+
+    /**
+     * @return mixed
+     */
+    public function getFragment()
+    {
+        return $this->_fragment;
+    }
+
+    /**
+     * @param mixed $fragment
+     *
+     * @return $this
+     */
+    public function setFragment($fragment)
+    {
+        $this->_fragment = $fragment;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFragment()
+    {
+        $fragment = $this->getFragment();
+
+        if (is_null($fragment)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Activate the extension by registering it with the extension control service
      *
      * @return $this
@@ -82,7 +121,14 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Control
 
         Mage::app()->cleanCache();
 
-        $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+        $urlParams = array(
+            'section' => 'postnl'
+        );
+        if ($this->hasFragment()) {
+            $urlParams['_fragment'] = $this->getFragment();
+        }
+
+        $this->_redirect('adminhtml/system_config/edit', $urlParams);
         return $this;
     }
 
@@ -276,6 +322,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Control
          * Proceed to the next step in the configuration wizard.
          */
         $this->_saveCurrentWizardStep('#wizard2');
+        $this->setFragment('wizard2');
 
         return $this;
     }
