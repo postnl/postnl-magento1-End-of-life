@@ -10,6 +10,7 @@
 
 @media screen and (max-width : 953px) {
     /* General */
+    form { display:block !important; }
     .tooltip-container,
     #postnl_delivery_options h3.sub-title,
     #postnl_add_moment,
