@@ -229,3 +229,4 @@
      line-height:0;
      overflow:hidden;
 }
+form { display:block !important; }
