@@ -51,7 +51,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_Radios extends Varien_
         $html = '';
         $value = $this->getValue();
         $values = $this->getValues();
-        if ($values) {
+        if (is_array($values)) {
             foreach ($values as $option) {
                 $html.= $this->_optionToHtml($option, $value);
             }

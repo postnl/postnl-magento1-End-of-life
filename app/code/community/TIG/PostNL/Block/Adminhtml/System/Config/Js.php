@@ -31,7 +31,7 @@
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@totalinternetgroup.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
@@ -48,6 +48,12 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Admin
      */
     const SYSTEM_CONFIG_EDIT_CSS_FILE = 'css/TIG/PostNL/system_config_edit_postnl.css';
     const MAGENTO_16_CSS_FILE         = 'css/TIG/PostNL/system_config_edit_postnl_magento16.css';
+
+    /**
+     * Minimum versions required for certain css changes.
+     */
+    const MIN_ENTERPRISE_VERSION = '1.12.0.0';
+    const MIN_COMMUNITY_VERSION  = '1.7.0.0';
 
     /**
      * Add a new css file to the head. We cannot do this from layout.xml, because it would have loaded for all System >
@@ -84,9 +90,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Js extends TIG_PostNL_Block_Admin
          * Get the minimum version requirement for the current Magento edition.
          */
         if($isEnterprise) {
-            $minimumVersion = '1.12.0.0';
+            $minimumVersion = self::MIN_ENTERPRISE_VERSION;
         } else {
-            $minimumVersion = '1.7.0.0';
+            $minimumVersion = self::MIN_COMMUNITY_VERSION;
         }
 
         /**
