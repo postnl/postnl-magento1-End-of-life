@@ -105,7 +105,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         /**
          * Check the maximum amount of time a temp file may be stored. By default this is 300s (5m).
-         * If this settings is empty, end the script.
+         * If this setting is empty, end the script.
          */
         $maxFileStorageTime = (int) Mage::getStoreConfig(
             self::XPATH_MAX_FILE_STORAGE,
