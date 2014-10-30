@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.4.1</version>
+			<version>1.5.0</version>
 		</TIG_PostNL>
 	</modules>
 
@@ -825,6 +825,12 @@
                 <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
                 <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
             </delivery_options>
+            <returns>
+                <return_labels_active>0</return_labels_active> <!-- Do not use return labels -->
+                <print_return_and_shipping_label>0</print_return_and_shipping_label> <!-- Do not print the return label along with the shipping labels -->
+                <customer_print_label>0</customer_print_label> <!-- Do not allow logged in customers to print return labels -->
+                <guest_print_label>0</guest_print_label> <!-- Do not allow guests to print return labels -->
+            </returns>
         	<cif>
                 <mode>0</mode> <!-- The extension is disabled by default -->
                 <customer_number>11223344</customer_number> <!-- Demo customer number -->
