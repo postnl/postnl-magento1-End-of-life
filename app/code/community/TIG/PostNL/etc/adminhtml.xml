@@ -87,6 +87,10 @@
                                                         <title>Print Packing Slip</title>
                                                         <sort_order>10</sort_order>
                                                     </print_packing_slips>
+                                                    <print_return_labels translate="title" module="postnl">
+                                                        <title>Print Return Label</title>
+                                                        <sort_order>20</sort_order>
+                                                    </print_return_labels>
                                                 </children>
                                             </print_label>
                                             <create_parcelware_export translate="title" module="postnl">
