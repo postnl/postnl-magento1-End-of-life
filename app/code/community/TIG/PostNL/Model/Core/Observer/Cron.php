@@ -329,8 +329,17 @@ class TIG_PostNL_Model_Core_Observer_Cron
              */
             try {
                 $helper->cronLog("Getting barcodes for shipment #{$postnlShipment->getId()}.");
-                $postnlShipment->generateBarcodes()
-                               ->save();
+                $postnlShipment->generateBarcodes();
+
+                $printReturnLabel = Mage::getStoreConfigFlag(
+                    'postnl/returns/return_labels_active',
+                    $postnlShipment->getStoreId()
+                );
+                if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
+                    $postnlShipment->generateReturnBarcode();
+                }
+
+                $postnlShipment->save();
 
                 $counter--;
             } catch (Exception $e) {
@@ -608,6 +617,15 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 if ($postnlShipment->canGenerateBarcode()) {
                     $postnlShipment->generateBarcodes();
                 }
+
+                $printReturnLabel = Mage::getStoreConfigFlag(
+                    'postnl/returns/return_labels_active',
+                    $postnlShipment->getStoreId()
+                );
+                if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
+                    $postnlShipment->generateReturnBarcode();
+                }
+
                 $postnlShipment->save();
             } catch (Exception $e) {
                 $helper->logException($e);

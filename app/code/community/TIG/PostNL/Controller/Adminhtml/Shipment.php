@@ -550,6 +550,11 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             $postnlShipment->generateBarcodes();
         }
 
+        $printReturnLabel = Mage::getStoreConfigFlag('postnl/returns/return_labels_active', $shipment->getStoreId());
+        if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
+            $postnlShipment->generateReturnBarcode();
+        }
+
         if ($confirm === true
             && !$postnlShipment->hasLabels()
             && !$postnlShipment->isConfirmed()
@@ -623,6 +628,11 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
          */
         if (!$postnlShipment->getMainBarcode() && $postnlShipment->canGenerateBarcode()) {
             $postnlShipment->generateBarcodes();
+        }
+
+        $printReturnLabel = Mage::getStoreConfigFlag('postnl/returns/return_labels_active', $shipment->getStoreId());
+        if ($printReturnLabel && !$shipment->hasReturnBarcode()) {
+            $postnlShipment->generateReturnBarcode();
         }
 
         if ($postnlShipment->getConfirmStatus() === $postnlShipment::CONFIRM_STATUS_CONFIRMED) {

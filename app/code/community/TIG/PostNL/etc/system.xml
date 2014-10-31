@@ -1959,17 +1959,20 @@
                                 <customer_print_label>1</customer_print_label>
                             </depends>
                         </guest_print_label>
-                        <save_and_continue translate="label" module="postnl">
-                            <label>Save and continue</label>
-                            <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
+                        <freepost_number translate="label" module="postnl">
+                            <label>Freepost number</label>
+                            <frontend_type>text</frontend_type>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <next_step_rel>postnl_cif</next_step_rel>
-                        </save_and_continue>
+                            <depends>
+                                <return_labels_active>1</return_labels_active>
+                            </depends>
+                            <validate>postnl-validate-empty</validate>
+                        </freepost_number>
                         <only_global_header translate="label" module="postnl">
-                            <label><![CDATA[These settings are only available on the 'global' scope.]]></label>
+                            <label>These settings are only available on the 'global' scope.</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>60</sort_order>
                             <show_in_default>0</show_in_default>
@@ -1979,6 +1982,15 @@
                                 <return_labels_active>0</return_labels_active>
                             </depends>
                         </only_global_header>
+                        <save_and_continue translate="label" module="postnl">
+                            <label>Save and continue</label>
+                            <frontend_model>postnl_adminhtml/system_config_form_field_wizardSaveButton</frontend_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <next_step_rel>postnl_cif</next_step_rel>
+                        </save_and_continue>
                     </fields>
                 </returns>
                 <cif translate="label comment" module="postnl">
