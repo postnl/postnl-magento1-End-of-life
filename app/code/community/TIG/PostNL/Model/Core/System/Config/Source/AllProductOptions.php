@@ -306,11 +306,8 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
          */
         $helper = Mage::helper('postnl');
         if ($helper->canUseEpsBEOnlyOption()
-            && (
-                (isset($flags['group'])
-                    && $flags['group'] == 'eu_options'
-                )
-                || (!isset($flags['group']))
+            && (!isset($flags['group'])
+                || $flags['group'] == 'eu_options'
             )
         ) {
             if (!$asFlatArray) {
@@ -350,6 +347,16 @@ class TIG_PostNL_Model_Core_System_Config_Source_AllProductOptions
         }
 
         return $options;
+    }
+
+    /**
+     * Get a flat array of all options.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->getOptions(array(), true);
     }
 
     /**

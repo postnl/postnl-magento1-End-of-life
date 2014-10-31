@@ -281,7 +281,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function getBarcodes()
     {
-        $helper = Mage::helper('postnl');
+        $helper = Mage::helper('postnl/cif');
 
         /**
          * Check if the PostNL module is active
@@ -331,10 +331,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 $helper->cronLog("Getting barcodes for shipment #{$postnlShipment->getId()}.");
                 $postnlShipment->generateBarcodes();
 
-                $printReturnLabel = Mage::getStoreConfigFlag(
-                    'postnl/returns/return_labels_active',
-                    $postnlShipment->getStoreId()
-                );
+                $printReturnLabel = $helper->canPrintReturnLabels($postnlShipment->getStoreId());
                 if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
                     $postnlShipment->generateReturnBarcode();
                 }
@@ -343,7 +340,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
                 $counter--;
             } catch (Exception $e) {
-                Mage::helper('postnl')->logException($e);
+                $helper->logException($e);
             }
         }
 
@@ -525,7 +522,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
      */
     public function expireConfirmation()
     {
-        $helper = Mage::helper('postnl');
+        $helper = Mage::helper('postnl/cif');
 
         /**
          * Check if the PostNL module is active
@@ -618,10 +615,8 @@ class TIG_PostNL_Model_Core_Observer_Cron
                     $postnlShipment->generateBarcodes();
                 }
 
-                $printReturnLabel = Mage::getStoreConfigFlag(
-                    'postnl/returns/return_labels_active',
-                    $postnlShipment->getStoreId()
-                );
+
+                $printReturnLabel = $helper->canPrintReturnLabels($postnlShipment->getStoreId());
                 if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
                     $postnlShipment->generateReturnBarcode();
                 }

@@ -56,6 +56,9 @@ $returnLabelsRequiredResources = array(
     'admin/postnl/shipment/actions/print_label',
 );
 
+/**
+ * These CIF webservices have been updated.
+ */
 $updatedWebservices = array(
     'cif_version_labelling',
     'cif_version_timeframe',

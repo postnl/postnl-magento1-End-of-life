@@ -51,10 +51,12 @@ class TIG_PostNL_Model_Core_Observer_Barcode
      */
     public function generateBarcode(Varien_Event_Observer $observer)
     {
+        $helper = Mage::helper('postnl/cif');
+
         /**
          * Check if the PostNL module is active
          */
-        if (!Mage::helper('postnl')->isEnabled()) {
+        if (!$helper->isEnabled()) {
             return $this;
         }
 
@@ -131,15 +133,12 @@ class TIG_PostNL_Model_Core_Observer_Barcode
                 $postnlShipment->generateBarcodes();
             }
 
-            $printReturnLabel = Mage::getStoreConfigFlag(
-                'postnl/returns/return_labels_active',
-                $shipment->getStoreId()
-            );
+            $printReturnLabel = $helper->canPrintReturnLabels($postnlShipment->getStoreId());
             if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
                 $postnlShipment->generateReturnBarcode();
             }
         } catch (Exception $e) {
-            Mage::helper('postnl')->logException($e);
+            $helper->logException($e);
         }
 
         $postnlShipment->save();

@@ -9,7 +9,7 @@ TIG_PostNL::Title,Titel
 TIG_PostNL::Type,Type
 TIG_PostNL::Ship to Applicable Countries,Verzend naar beschikbare landen
 TIG_PostNL::Ship to Specific Countries,Verzend naar specifieke landen
-TIG_PostNL::mogelij,Toon methode indien niet beschikbaar
+TIG_PostNL::Show Method if Not Applicable,Toon methode indien niet beschikbaar
 TIG_PostNL::Displayed Error Message,Getoonde foutmelding indien niet beschikbaar
 TIG_PostNL::Condition,Voorwaarde
 TIG_PostNL::Include Virtual Products in Price Calculation,Neem de virtuele producten mee in de prijsberekening
@@ -1179,3 +1179,17 @@ TIG_PostNL::As soon as possible,Eerst volgende mogelijkheid
 TIG_PostNL::This step has been saved successfully!,Deze stap is succesvol opgeslagen!
 TIG_PostNL::These settings are only available on the 'global' and 'website' scopes.,Deze instellingen zijn enkel beschikbaar op de 'globaal' en 'website' niveaus.
 TIG_PostNL::Extension registration is only available on the 'global' scope.,Extensie registratie is enkel beschikbaar op het 'globaal' niveau.
+TIG_PostNL::PostNL - Print Return Label,PostNL - Print retourlabel
+TIG_PostNL::Unable to retrieve return labels for this shipment.,Het is mogelijk om retourlabels op te halen voor deze zending.
+TIG_PostNL::The generateReturnBarcode action is currently unavailable.,De generateReturnBarcode actie is momenteel niet beschikbaar.
+TIG_PostNL::Print Return Label,Print Retourlabel
+TIG_PostNL::Use return labels,Gebruik retourlabels
+TIG_PostNL::Print the return label along with regular shipping labels,Print het retourlabel tezamen met de verzendlabels
+TIG_PostNL::If enabled a return label will be printed directly when priting the regular shipping labels. This is usefull if you want to include the shipping label with the shipment.,"Indien geactiveerd, zal een retourlabel automatisch geprint worden wanneer de reguliere verzendlabels geprint worden. Dit is handig als u het retourlabel wilt meesturen met de zending."
+TIG_PostNL::Allow customers to print the return labels from their account,Sta klanten toe om het retourlabel te printen
+TIG_PostNL::This will add a button to the customer's account to print the return label for this shipment.,Hiermee wordt een knop toegevoegd aan de accountpagina van de klant om het retourlabel te printen.
+TIG_PostNL::Allow guests to print the return labels,Sta gasten toe om het retourlabel te printen
+TIG_PostNL::This will add a button to the sales/guest/shipment page so that guests can print a return label for this shipment.,Hiermee wordt een knop toegevoegd aan de sales/guest/shipment pagina waar gasten een retourlabel kunnen printen voor de zending.
+TIG_PostNL::Freepost number,Antwoordnummer
+TIG_PostNL::These settings are only available on the 'global' scope.,Deze instellingen zijn enkel beschikbaar op het 'globaal' niveau.
+TIG_PostNL::Return Settings,Retouren Instellingen

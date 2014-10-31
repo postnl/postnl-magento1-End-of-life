@@ -39,6 +39,11 @@
 class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller_Action
 {
     /**
+     * Xpath to the 'print_return_and_shipping_label' setting.
+     */
+    const XPATH_PRINT_RETURN_AND_SHIPPING_LABEL = 'postnl/returns/print_return_and_shipping_label';
+
+    /**
      * Used module name in current adminhtml controller.
      */
     protected $_usedModuleName = 'TIG_PostNL';
@@ -502,19 +507,67 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
     }
 
     /**
+     * Get all return labels for a shipment.
+     *
+     * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
+     *
+     * @return TIG_PostNL_Model_Core_Shipment_Label[]|false
+     */
+    protected function _getReturnLabels($shipment)
+    {
+        /**
+         * Load the PostNL shipment.
+         */
+        if ($shipment instanceof Mage_Sales_Model_Order_Shipment) {
+            $postnlShipment = $this->_getPostnlShipment($shipment->getId());
+        } else {
+            $postnlShipment = $shipment;
+        }
+
+        if (!$postnlShipment->hasReturnBarcode() && !$postnlShipment->canGenerateReturnBarcode()) {
+            return false;
+        }
+
+        $labels = $this->_getLabels($postnlShipment, false, true);
+
+        foreach ($labels as $key => $label) {
+            if (!$label->isReturnLabel()) {
+                unset($labels[$key]);
+            }
+        }
+
+        return $labels;
+    }
+
+    /**
      * Retrieves the shipping label for a given shipment ID.
      *
      * If the shipment has a stored label, it is returned. Otherwise a new one is generated.
      *
      * @param Mage_Sales_Model_Order_Shipment|TIG_PostNL_Model_Core_Shipment $shipment
      * @param boolean $confirm Optional parameter to also confirm the shipment
+     * @param boolean|null $includeReturnLabels
      *
-     * @return array
+     * @return TIG_PostNL_Model_Core_Shipment_Label[]
      *
      * @throws TIG_PostNL_Exception
      */
-    protected function _getLabels($shipment, $confirm = false)
+    protected function _getLabels($shipment, $confirm = false, $includeReturnLabels = null)
     {
+        if (is_null($includeReturnLabels)) {
+            $includeReturnLabels = Mage::getStoreConfigFlag(
+                self::XPATH_PRINT_RETURN_AND_SHIPPING_LABEL,
+                $shipment->getStoreId()
+            );
+
+            /**
+             * Return labels may only be included if the current admin user is allowed to print them.
+             */
+            if (!$this->_checkIsAllowed(array('print_return_labels'))) {
+                $includeReturnLabels = false;
+            }
+        }
+
         /**
          * Load the PostNL shipment.
          */
@@ -533,7 +586,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                 $this->_confirmShipment($postnlShipment);
             }
 
-            return $postnlShipment->getlabels();
+            return $postnlShipment->getlabels($includeReturnLabels);
         }
 
         /**
@@ -550,7 +603,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             $postnlShipment->generateBarcodes();
         }
 
-        $printReturnLabel = Mage::getStoreConfigFlag('postnl/returns/return_labels_active', $shipment->getStoreId());
+        $printReturnLabel = Mage::helper('postnl/cif')->canPrintReturnLabels($postnlShipment->getStoreId());
         if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
             $postnlShipment->generateReturnBarcode();
         }
@@ -578,7 +631,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                            ->save();
         }
 
-        $labels = $postnlShipment->getLabels();
+        $labels = $postnlShipment->getLabels($includeReturnLabels);
         return $labels;
     }
 
@@ -630,7 +683,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             $postnlShipment->generateBarcodes();
         }
 
-        $printReturnLabel = Mage::getStoreConfigFlag('postnl/returns/return_labels_active', $shipment->getStoreId());
+        $printReturnLabel = Mage::helper('postnl/cif')->canPrintReturnLabels($shipment->getStoreId());
         if ($printReturnLabel && !$shipment->hasReturnBarcode()) {
             $postnlShipment->generateReturnBarcode();
         }

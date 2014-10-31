@@ -792,20 +792,28 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Gets all shipping labels associated with this shipment
      *
-     * @return array Array of TIG_PostNL_Model_Core_Shipment_Label objects
+     * @param boolean $includeReturnLabels
+     *
+     * @return TIG_PostNL_Model_Core_Shipment_Label[]
      */
-    public function getLabels()
+    public function getLabels($includeReturnLabels = true)
     {
         if ($this->hasLabels(false)) {
-            return $this->_getData('labels');
+            $labels = $this->_getData('labels');
+
+            if (!$includeReturnLabels) {
+                return $this->_filterReturnLabels($labels);
+            }
+
+            return $labels;
         }
 
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()));
 
         /**
-         * If the 'labels_printed' flag is false, yet there are labels present something has gone wrong.
-         * Delete the labels so the extension will generate new ones.
+         * If the 'labels_printed' flag is false, yet there are labels present something has gone wrong. Delete the
+         * labels so the extension will generate new ones.
          */
         if (!$this->getLabelsPrinted() && $labelCollection->getSize() > 0) {
             $this->deleteLabels();
@@ -815,6 +823,32 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $labels = $labelCollection->getItems();
 
         $this->setLabels($labels);
+
+        /**
+         * If all labels are allowed, return the labels.
+         */
+        if (!$includeReturnLabels) {
+            return $this->_filterReturnLabels($labels);
+        }
+
+        return $labels;
+    }
+
+    /**
+     * Filter out return labels.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment_Label[] $labels
+     *
+     * @return TIG_PostNL_Model_Core_Shipment_Label[]
+     */
+    protected function _filterReturnLabels($labels)
+    {
+        foreach ($labels as $key => $label) {
+            if ($label->isReturnLabel()) {
+                unset($labels[$key]);
+            }
+        }
+
         return $labels;
     }
 
@@ -1804,7 +1838,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function hasLabels($checkCollection = true)
     {
-        if ($this->_getData('labels')) {
+        if ($this->hasData('labels')) {
             return true;
         }
 
@@ -1906,6 +1940,24 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         if (!empty($barcodes)) {
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if this shipment has a return label.
+     *
+     * @return boolean
+     */
+    public function hasReturnLabel()
+    {
+        $labels = $this->getLabels(true);
+
+        foreach ($labels as $label) {
+            if ($label->isReturnLabel()) {
+                return true;
+            }
         }
 
         return false;
@@ -2276,6 +2328,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canGenerateReturnBarcode()
     {
+        if (!$this->isDutchShipment() || $this->isBuspakjeShipment()) {
+            return false;
+        }
 
         if (!$this->getShipmentId() && !$this->getShipment(false)) {
             return false;
@@ -2870,7 +2925,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $returnBarcode    = false;
-        $printReturnLabel = Mage::getStoreConfigFlag('postnl/returns/return_labels_active', $storeId); // @todo move to helper
+        $printReturnLabel = $this->getHelper('cif')->canPrintReturnLabels($storeId);
 
         /**
          * If we should print a return label, get the return barcode.
