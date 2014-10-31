@@ -120,6 +120,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
          */
         $confirmAllowed           = $helper->checkIsPostnlActionAllowed('confirm');
         $printAllowed             = $helper->checkIsPostnlActionAllowed('print_label');
+        $printReturnLabelAllowed  = $helper->checkIsPostnlActionAllowed(array('print_label', 'print_return_label'));
         $printPackingSlipAllowed  = $helper->checkIsPostnlActionAllowed(array('print_label', 'print_packing_slip'));
         $deleteLabelsAllowed      = $helper->checkIsPostnlActionAllowed('delete_labels');
         $resetConfirmAllowed      = $helper->checkIsPostnlActionAllowed(array('reset_confirmation', 'delete_labels'));
@@ -137,6 +138,24 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
                 'print_shipping_label',
                 array(
                     'label'   => $helper->__('PostNL - Print Shipping Label'),
+                    'onclick' => "printLabel('{$printShippingLabelUrl}')",
+                    'class'   => 'download',
+                )
+            );
+        }
+
+        if ($printReturnLabelAllowed
+            && ($postnlShipment->hasReturnLabel()
+                || $postnlShipment->hasReturnBarcode()
+                || $postnlShipment->canGenerateReturnBarcode()
+            )
+        ) {
+            $printShippingLabelUrl = $this->getPrintReturnLabelUrl($shipment->getId());
+
+            $block->addButton(
+                'print_return_label',
+                array(
+                    'label'   => $helper->__('PostNL - Print Return Label'),
                     'onclick' => "printLabel('{$printShippingLabelUrl}')",
                     'class'   => 'download',
                 )
@@ -323,6 +342,23 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentView
     {
         $url = Mage::helper('adminhtml')->getUrl(
             'postnl_admin/adminhtml_shipment/printLabel',
+            array('shipment_id' => $shipmentId)
+        );
+
+        return $url;
+    }
+
+    /**
+     * Get adminhtml url for PostNL print return label action.
+     *
+     * @param int $shipmentId The ID of the current shipment
+     *
+     * @return string
+     */
+    public function getPrintReturnLabelUrl($shipmentId)
+    {
+        $url = Mage::helper('adminhtml')->getUrl(
+            'postnl_admin/adminhtml_shipment/printReturnLabel',
             array('shipment_id' => $shipmentId)
         );
 

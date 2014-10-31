@@ -1085,6 +1085,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'print_packing_slips':
                 $aclPath = 'postnl/shipment/actions/print_label/print_packing_slips';
                 break;
+            case 'print_return_label': //no break
+            case 'print_return_labels':
+                $aclPath = 'postnl/shipment/actions/print_label/print_return_labels';
+                break;
             case 'convert_to_buspakje':
                 $aclPath = 'postnl/shipment/actions/convert/to_buspakje';
                 break;
@@ -1094,10 +1098,10 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'change_product_code':
                 $aclPath = 'postnl/shipment/actions/convert/change_product_code';
                 break;
-            case 'confirm': //no break
-            case 'print_label': //no break
-            case 'reset_confirmation': //no break
-            case 'delete_labels': //no break
+            case 'confirm':                  //no break
+            case 'print_label':              //no break
+            case 'reset_confirmation':       //no break
+            case 'delete_labels':            //no break
             case 'create_parcelware_export': //no break
             case 'send_track_and_trace':
                 $aclPath = 'postnl/shipment/actions/' . $action;

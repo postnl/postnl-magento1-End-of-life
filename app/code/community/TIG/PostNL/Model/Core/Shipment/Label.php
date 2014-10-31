@@ -86,4 +86,21 @@ class TIG_PostNL_Model_Core_Shipment_Label extends Mage_Core_Model_Abstract
 
         return $label;
     }
+
+    /**
+     * Check if this label is a return label.
+     *
+     * @return bool
+     */
+    public function isReturnLabel()
+    {
+        $labelType = $this->getLabelType();
+        $returnLabelTypes = Mage::helper('postnl/cif')->getReturnLabelTypes();
+
+        if (in_array($labelType, $returnLabelTypes)) {
+            return true;
+        }
+
+        return false;
+    }
 }
