@@ -141,14 +141,16 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Array containing possible address types.
      *
+     * N.B. the value of the return and alternative sender addresses were switched in v1.5.0.
+     *
      * @var array
      */
     protected $_addressTypes = array(
         'Receiver'    => '01',
         'Sender'      => '02',
-        'Return'      => '03',
+        'Alternative' => '03', // alternative sender. Parcels that cannot be delivered will be returned here
         'Collection'  => '04',
-        'Alternative' => '08', // alternative sender. Parcels that cannot be delivered will be returned here
+        'Return'      => '08',
         'Delivery'    => '09', // for use with PakjeGemak
     );
 
@@ -611,20 +613,26 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Generates shipping labels for the chosen shipment.
      *
-     * @param        TIG_PostnL_Model_Core_Shipment $postnlShipment
-     * @param        $barcode
-     * @param bool   $mainBarcode
-     * @param bool   $shipmentNumber
-     * @param string $printerType The printertype used. Currently only 'GraphicFile|PDF' is fully supported
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     * @param string                         $barcode
+     * @param boolean|string                 $mainBarcode
+     * @param boolean|int                    $shipmentNumber
+     * @param boolean                        $printReturnLabel
+     * @param boolean|string                 $returnBarcode
+     * @param string                         $printerType The printertype used. Currently only 'GraphicFile|PDF' is
+     *                                                    fully supported
      *
      * @throws TIG_PostNL_Exception
      *
      * @return array
      *
      */
-    public function generateLabels(TIG_PostnL_Model_Core_Shipment $postnlShipment, $barcode, $mainBarcode = false,
-                                   $shipmentNumber = false, $printerType = 'GraphicFile|PDF')
-    {
+    public function generateLabels(TIG_PostnL_Model_Core_Shipment $postnlShipment, $barcode,
+                                   $mainBarcode = false, $shipmentNumber = false,
+                                   $printReturnLabel = false, $returnBarcode = false,
+                                   $printerType = 'GraphicFile|PDF'
+
+    ) {
         $shipment = $postnlShipment->getShipment();
 
         $availablePrinterTypes = $this->_printerTypes;
@@ -639,9 +647,23 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * Create a single shipment object
          */
         if ($mainBarcode === false || $shipmentNumber === false) {
-            $cifShipment = $this->_getShipment($postnlShipment, $barcode);
+            $cifShipment = $this->_getShipment(
+                $postnlShipment,
+                $barcode,
+                false,
+                false,
+                $printReturnLabel,
+                $returnBarcode
+            );
         } else {
-            $cifShipment = $this->_getShipment($postnlShipment, $barcode, $mainBarcode, $shipmentNumber);
+            $cifShipment = $this->_getShipment(
+                $postnlShipment,
+                $barcode,
+                $mainBarcode,
+                $shipmentNumber,
+                $printReturnLabel,
+                $returnBarcode
+            );
         }
 
         $message  = $this->_getMessage($barcode, array('Printertype' => $printerType));
@@ -675,12 +697,14 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Generates shipping labels for the chosen shipment without confirming it.
      *
-     * @param        TIG_PostnL_Model_Core_Shipment $postnlShipment
-     * @param        string                         $barcode
-     * @param        boolean|string                 $mainBarcode
-     * @param        bool|int                       $shipmentNumber
-     * @param        string                         $printerType The printertype used. Currently only 'GraphicFile|PDF'
-     *                                                           is fully supported.
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     * @param string                         $barcode
+     * @param boolean|string                 $mainBarcode
+     * @param boolean|int                    $shipmentNumber
+     * @param boolean                        $printReturnLabel
+     * @param boolean|string                 $returnBarcode
+     * @param string                         $printerType The printertype used. Currently only 'GraphicFile|PDF' is
+     *                                                    fully supported
      *
      *
      * @throws TIG_PostNL_Exception
@@ -688,13 +712,19 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @return array
      *
      */
-    public function generateLabelsWithoutConfirm(
-        TIG_PostnL_Model_Core_Shipment $postnlShipment,
-        $barcode,
-        $mainBarcode = false,
-        $shipmentNumber = false,
-        $printerType = 'GraphicFile|PDF'
+    public function generateLabelsWithoutConfirm(TIG_PostnL_Model_Core_Shipment $postnlShipment, $barcode,
+                                                 $mainBarcode = false, $shipmentNumber = false,
+                                                 $printReturnLabel = false, $returnBarcode = false,
+                                                 $printerType = 'GraphicFile|PDF'
+
     ) {
+        /**
+         * Return barcodes are required when printing return labels.
+         */
+        if ($printReturnLabel && empty($returnBarcode)) {
+            throw new InvalidArgumentException('Missing return barcode.');
+        }
+
         $shipment = $postnlShipment->getShipment();
 
         $availablePrinterTypes = $this->_printerTypes;
@@ -709,9 +739,23 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
          * Create a single shipment object
          */
         if ($mainBarcode === false || $shipmentNumber === false) {
-            $cifShipment = $this->_getShipment($postnlShipment, $barcode);
+            $cifShipment = $this->_getShipment(
+                $postnlShipment,
+                $barcode,
+                false,
+                false,
+                $printReturnLabel,
+                $returnBarcode
+            );
         } else {
-            $cifShipment = $this->_getShipment($postnlShipment, $barcode, $mainBarcode, $shipmentNumber);
+            $cifShipment = $this->_getShipment(
+                $postnlShipment,
+                $barcode,
+                $mainBarcode,
+                $shipmentNumber,
+                $printReturnLabel,
+                $returnBarcode
+            );
         }
 
         $message     = $this->_getMessage($barcode, array('Printertype' => $printerType));
@@ -804,15 +848,17 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Creates the CIF shipment object based on a PostNL shipment.
      *
-     * @param      TIG_PostnL_Model_Core_Shipment $postnlShipment
-     * @param      $barcode
-     * @param bool $mainBarcode
-     * @param bool $shipmentNumber
+     * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
+     * @param string                         $barcode
+     * @param bool                           $mainBarcode
+     * @param bool                           $shipmentNumber
+     * @param bool                           $printReturnLabel
+     * @param bool|string                    $returnBarcode
      *
      * @return array
      */
-    protected function _getShipment(TIG_PostnL_Model_Core_Shipment $postnlShipment,
-                                    $barcode, $mainBarcode = false, $shipmentNumber = false)
+    protected function _getShipment(TIG_PostnL_Model_Core_Shipment $postnlShipment, $barcode, $mainBarcode = false,
+                                    $shipmentNumber = false, $printReturnLabel = false, $returnBarcode = false)
     {
         $shipment        = $postnlShipment->getShipment();
         $shippingAddress = $postnlShipment->getShippingAddress();
@@ -858,6 +904,8 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             $deliveryDate = $deliveryTime->format('d-m-Y H:i:s');
         }
 
+        $reference = $this->_getReference($shipment);
+
         $shipmentData = array(
             'Barcode'                  => $barcode,
             'CollectionTimeStampEnd'   => '',
@@ -874,6 +922,11 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
             'Reference'                => $this->_getReference($shipment),
             'DeliveryDate'             => $deliveryDate,
         );
+
+        if ($printReturnLabel) {
+            $shipmentData['ReturnBarcode']   = $returnBarcode;
+            $shipmentData['ReturnReference'] = $reference;
+        }
 
         /**
          * Add group data (for multi-collo shipments)
@@ -893,7 +946,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         /**
          * Add address data
          */
-        $addresses = $this->_getShipmentAddresses($postnlShipment, $shippingAddress);
+        $addresses = $this->_getShipmentAddresses($postnlShipment, $shippingAddress, $printReturnLabel);
         $shipmentData['Addresses'] = $addresses;
 
         /**
@@ -926,11 +979,13 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
      * @param Mage_Sales_Model_order_Address $shippingAddress
+     * @param boolean                        $printReturnLabel
      *
      * @return array
      */
-    protected function _getShipmentAddresses(TIG_PostnL_Model_Core_Shipment $postnlShipment, $shippingAddress)
-    {
+    protected function _getShipmentAddresses(TIG_PostnL_Model_Core_Shipment $postnlShipment, $shippingAddress,
+                                             $printReturnLabel
+    ) {
         $useSenderAddressAsReturn = Mage::getStoreConfigFlag(
             self::XPATH_USE_SENDER_ADDRESS_AS_RETURN,
             $this->getStoreId()
@@ -949,6 +1004,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
         if ($pakjeGemakAddress) {
             $addresses['Address'][] = $this->_getAddress('Delivery', $pakjeGemakAddress);
+        }
+
+        if ($printReturnLabel) {
+            $addresses['Address'][] = $this->_getAddress('Return');
         }
 
         return $addresses;
@@ -989,10 +1048,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      * @throws TIG_PostNL_Exception
      * @return array
      */
-    protected function _getAddress($addressType, $shippingAddress= false)
+    protected function _getAddress($addressType, $shippingAddress = false)
     {
         $availableAddressTypes = $this->getAddressTypes();
-        if (!array_key_exists($addressType, $availableAddressTypes)) {
+        if (!isset($availableAddressTypes[$addressType])) {
             throw new TIG_PostNL_Exception(
                 Mage::helper('postnl')->__('Invalid address type supplied: %s', $addressType),
                 'POSTNL-0108'
@@ -1022,6 +1081,51 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
 
                 $address = new Varien_Object($senderAddress);
                 break;
+            case 'Return':
+                /**
+                 * Check if the return address is the same as the sender address. If so, no address is returned.
+                 */
+                $useSenderAddress = Mage::getStoreConfig(
+                    self::XPATH_USE_SENDER_ADDRESS_AS_RETURN,
+                    $this->getStoreId()
+                );
+
+                $returnAddress = Mage::getStoreConfig(self::XPATH_SENDER_ADDRESS, $this->getStoreId());
+
+                if ($useSenderAddress) {
+                    $streetData = array(
+                        'streetname'           => $returnAddress['streetname'],
+                        'housenumber'          => $returnAddress['housenumber'],
+                        'housenumberExtension' => $returnAddress['housenumber_extension'],
+                        'fullStreet'           => '',
+                    );
+
+                    $address = new Varien_Object($returnAddress);
+                } else {
+                    $streetData = array(
+                        'streetname'           => $returnAddress['return_streetname'],
+                        'housenumber'          => $returnAddress['return_housenumber'],
+                        'housenumberExtension' => $returnAddress['return_housenumber_extension'],
+                        'fullStreet'           => '',
+                    );
+
+                    /**
+                     * Get all cif_address fields with the 'return_' prefix as an array and convert that to a
+                     * Varien_Object. This allows the _prepareAddress method to access this data in the same way as a
+                     * conventional Mage_Sales_Model_Order_Address object.
+                     */
+                    $returnAddressData = array();
+                    foreach($returnAddress as $field => $value) {
+                        if (strpos($field, 'return_') === false) {
+                            continue;
+                        }
+
+                        $returnAddressData[substr($field, 7)] = $value;
+                    }
+
+                    $address = new Varien_Object($returnAddressData);
+                }
+                break;
             case 'Alternative':
                 /**
                  * Check if the return address is the same as the sender address. If so, no address is returned.
@@ -1030,6 +1134,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                     self::XPATH_USE_SENDER_ADDRESS_AS_RETURN,
                     $this->getStoreId()
                 );
+
                 if ($useSenderAddress) {
                     return false;
                 }

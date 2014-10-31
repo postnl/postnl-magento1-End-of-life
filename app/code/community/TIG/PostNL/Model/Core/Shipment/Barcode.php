@@ -36,18 +36,25 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
- * Class TIG_PostNL_Model_Core_Shipment_Barcode@method getBarcode
+ * Class TIG_PostNL_Model_Core_Shipment_Barcode
  *
- * @method int getBarcodeNumber()
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeNumber(int $value)
- * @method int getBarcodeId()
+ * @method int    getBarcodeId()
+ * @method int    getParentId()
+ * @method string getBarcodeType()
+ * @method int    getBarcodeNumber()
+ * @method string getBarcode()
+ *
  * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeId(int $value)
- * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcode(string $value)
- * @method int getParentId()
  * @method TIG_PostNL_Model_Core_Shipment_Barcode setParentId(int $value)
+ * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeType(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcodeNumber(int $value)
+ * @method TIG_PostNL_Model_Core_Shipment_Barcode setBarcode(string $value)
  */
 class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
 {
+    const BARCODE_TYPE_SHIPMENT = 'shipment';
+    const BARCODE_TYPE_RETURN   = 'return';
+
     /**
      * Prefix of model events names
      *
@@ -76,6 +83,7 @@ class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
         $collection = $this->getCollection();
         $collection->addFieldToSelect('*')
                    ->addFieldToFilter('parent_id', array('eq' => $parentId))
+                   ->addFieldToFilter('type', array('eq' => self::BARCODE_TYPE_SHIPMENT))
                    ->addFieldToFilter('barcode_number', array('eq' => $barcodeNumber));
 
         if ($collection->getSize()) {

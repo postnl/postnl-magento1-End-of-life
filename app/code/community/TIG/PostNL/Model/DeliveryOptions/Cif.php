@@ -212,8 +212,10 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $message  = $this->_getMessage('');
 
         $soapParams = array(
-            'Location' => $location,
-            'Message'  => $message,
+            'Location'    => $location,
+            'Message'     => $message,
+            'Countrycode' => 'NL' // @todo make dynamic
+
         );
 
         /**
@@ -238,7 +240,7 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
     }
 
     /**
-     * gets post office locations within a specific area, marked by a set of coordinates.
+     * Gets post office locations within a specific area, marked by a set of coordinates.
      *
      * @param $data
      *
@@ -259,8 +261,9 @@ class TIG_PostNL_Model_DeliveryOptions_Cif extends TIG_PostNL_Model_Core_Cif
         $message  = $this->_getMessage('');
 
         $soapParams = array(
-            'Location' => $location,
-            'Message'  => $message,
+            'Location'    => $location,
+            'Message'     => $message,
+            'Countrycode' => 'NL' // @todo make dynamic
         );
 
         /**

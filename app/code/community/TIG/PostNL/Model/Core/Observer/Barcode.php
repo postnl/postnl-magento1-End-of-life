@@ -130,6 +130,14 @@ class TIG_PostNL_Model_Core_Observer_Barcode
             if ($postnlShipment->canGenerateBarcode()) {
                 $postnlShipment->generateBarcodes();
             }
+
+            $printReturnLabel = Mage::getStoreConfigFlag(
+                'postnl/returns/return_labels_active',
+                $shipment->getStoreId()
+            );
+            if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
+                $postnlShipment->generateReturnBarcode();
+            }
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
         }
