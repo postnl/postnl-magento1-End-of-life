@@ -44,6 +44,8 @@
  * Supported events:
  *  - postnl_shipment_generatebarcode_before
  *  - postnl_shipment_generatebarcode_after
+ *  - postnl_shipment_generatereturnbarcode_before
+ *  - postnl_shipment_generatereturnbarcode_after
  *  - postnl_shipment_generatelabel_before
  *  - postnl_shipment_generatelabel_after
  *  - postnl_shipment_register_confirmation_before
@@ -119,10 +121,11 @@
  * @method TIG_PostNL_Model_Core_Shipment setShipmentIncrementId(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setIsBuspakjeShipment(bool $value)
  * @method TIG_PostNL_Model_Core_Shipment setDefaultProductCode(string $value)
- * @method TIG_PostNL_Model_Core_Shipment setLabels(array $value)
+ * @method TIG_PostNL_Model_Core_Shipment setLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPayment(Mage_Sales_Model_Order_Payment $value)
  * @method TIG_PostNL_Model_Core_Shipment setReturnBarcode(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setReturnLabels(mixed $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -146,6 +149,7 @@
  * @method bool                           hasDefaultProductCode()
  * @method bool                           hasProductOption()
  * @method bool                           hasPayment()
+ * @method bool                           hasReturnLabels()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -835,20 +839,52 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Filter out return labels.
-     *
-     * @param TIG_PostNL_Model_Core_Shipment_Label[] $labels
+     * Get all return labels for this shipment.
      *
      * @return TIG_PostNL_Model_Core_Shipment_Label[]
      */
-    protected function _filterReturnLabels($labels)
+    public function getReturnLabels()
     {
-        foreach ($labels as $key => $label) {
-            if ($label->isReturnLabel()) {
-                unset($labels[$key]);
-            }
+        /**
+         * If we already have all return labels stored, retrieve them from the entity's data.
+         */
+        if ($this->hasReturnLabels()) {
+            $labels = $this->_getData('return_labels');
+
+            return $labels;
         }
 
+        /**
+         * If we already have all labels, get them and filter out all non-return labels.
+         */
+        if ($this->hasLabels(false)) {
+            $labels = $this->_getData('labels');
+
+            /**
+             * Filter out all regular shipping labels.
+             *
+             * @var TIG_PostNL_Model_Core_Shipment_Label[] $labels
+             */
+            foreach ($labels as $key => $label) {
+                if (!$label->isReturnLabel()) {
+                    unset($labels[$key]);
+                }
+            }
+
+            $this->setReturnLabels($labels);
+            return $labels;
+        }
+
+        /**
+         * Get the entire label collection and filter out all non-return labels.
+         */
+        $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
+        $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()))
+                        ->addFieldToFilter('type', array('in' => $this->getHelper('cif')->getReturnLabelTypes()));
+
+        $labels = $labelCollection->getItems();
+
+        $this->setReturnLabels($labels);
         return $labels;
     }
 
@@ -1838,7 +1874,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function hasLabels($checkCollection = true)
     {
-        if ($this->hasData('labels')) {
+        if ($this->_getData('labels')) {
             return true;
         }
 
@@ -3810,6 +3846,24 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return true;
     }
 
+    /**
+     * Filter out return labels.
+     *
+     * @param TIG_PostNL_Model_Core_Shipment_Label[] $labels
+     *
+     * @return TIG_PostNL_Model_Core_Shipment_Label[]
+     */
+    protected function _filterReturnLabels($labels)
+    {
+        foreach ($labels as $key => $label) {
+            if ($label->isReturnLabel()) {
+                unset($labels[$key]);
+            }
+        }
+
+        return $labels;
+    }
+
     /*******************************************************************************************************************
      * STATUS PROCESSING METHODS
      ******************************************************************************************************************/
@@ -4339,6 +4393,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         foreach ($labels as $label) {
             $label->delete();
         }
+
+        $this->setLabels(false)
+             ->setReturnLabels(false);
 
         return $this;
     }

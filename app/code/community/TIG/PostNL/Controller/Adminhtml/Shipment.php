@@ -528,13 +528,13 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             return false;
         }
 
-        $labels = $this->_getLabels($postnlShipment, false, true);
-
-        foreach ($labels as $key => $label) {
-            if (!$label->isReturnLabel()) {
-                unset($labels[$key]);
-            }
+        if ($postnlShipment->hasLabels()) {
+            return $postnlShipment->getReturnLabels();
         }
+
+        $postnlShipment = $this->_generateLabels($shipment, $postnlShipment, false);
+
+        $labels = $postnlShipment->getReturnLabels();
 
         return $labels;
     }
@@ -590,6 +590,28 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
         }
 
         /**
+         * Generate the required labels.
+         */
+        $postnlShipment = $this->_generateLabels($shipment, $postnlShipment, $confirm);
+
+        $labels = $postnlShipment->getLabels($includeReturnLabels);
+        return $labels;
+    }
+
+    /**
+     * Generate shipping labels for this given shipment. This method includes the functionality required to prepare the
+     * shipment for generating labels if required.
+     *
+     * @param Mage_Sales_Model_Order_Shipment $shipment
+     * @param TIG_PostNL_Model_Core_Shipment  $postnlShipment
+     * @param boolean                         $confirm
+     *
+     * @return TIG_PostNL_Model_Core_Shipment
+     */
+    protected function _generateLabels($shipment, $postnlShipment, $confirm = false)
+    {
+
+        /**
          * If the PostNL shipment is new, set the magento shipment ID.
          */
         if (!$postnlShipment->getShipmentId()) {
@@ -608,7 +630,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
             $postnlShipment->generateReturnBarcode();
         }
 
-        if ($confirm === true
+        if (true === $confirm
             && !$postnlShipment->hasLabels()
             && !$postnlShipment->isConfirmed()
             && $postnlShipment->canConfirm(true)
@@ -631,8 +653,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
                            ->save();
         }
 
-        $labels = $postnlShipment->getLabels($includeReturnLabels);
-        return $labels;
+        return $postnlShipment;
     }
 
     /**
