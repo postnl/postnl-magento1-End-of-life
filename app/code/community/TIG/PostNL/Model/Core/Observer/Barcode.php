@@ -133,7 +133,7 @@ class TIG_PostNL_Model_Core_Observer_Barcode
                 $postnlShipment->generateBarcodes();
             }
 
-            $printReturnLabel = $helper->canPrintReturnLabels($postnlShipment->getStoreId());
+            $printReturnLabel = $helper->isReturnsEnabled($postnlShipment->getStoreId());
             if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
                 $postnlShipment->generateReturnBarcode();
             }

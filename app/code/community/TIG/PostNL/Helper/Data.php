@@ -145,6 +145,8 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      */
     const XPATH_RETURN_LABELS_ACTIVE = 'postnl/returns/return_labels_active';
     const XPATH_FREEPOST_NUMBER      = 'postnl/returns/freepost_number';
+    const XPATH_CUSTOMER_PRINT_LABEL = 'postnl/returns/customer_print_label';
+    const XPATH_GUEST_PRINT_LABEL    = 'postnl/returns/guest_print_label';
 
     /**
      * Required configuration fields.
@@ -1689,14 +1691,14 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Check if return labels may be printed.
      *
-     * @param bool|int $storeId
+     * @param boolean|int $storeId
      *
-     * @return bool
+     * @return boolean
      */
     public function isReturnsEnabled($storeId = false)
     {
         if (false === $storeId) {
-            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+            $storeId = Mage::app()->getStore()->getId();
         }
 
         if (!$this->isEnabled($storeId)) {
@@ -1717,6 +1719,104 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return true;
+    }
+
+    /**
+     * Check if return label printing is available for logged-in customers.
+     *
+     * @param boolean|int $storeId
+     *
+     * @return boolean
+     */
+    public function canPrintReturnLabelForCustomer($storeId = false)
+    {
+        if (false === $storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (!$this->isReturnsEnabled($storeId)) {
+            return false;
+        }
+
+        $canPrintReturnLabelForCustomer = Mage::getStoreConfigFlag(self::XPATH_CUSTOMER_PRINT_LABEL, $storeId);
+        return $canPrintReturnLabelForCustomer;
+    }
+
+    /**
+     * Check if return label printing is available for guests.
+     *
+     * @param boolean|int $storeId
+     *
+     * @return boolean
+     */
+    public function canPrintReturnLabelForGuest($storeId = false)
+    {
+        if (false === $storeId) {
+            $storeId = Mage::app()->getStore()->getId();
+        }
+
+        if (!$this->canPrintReturnLabelForCustomer($storeId)) {
+            return false;
+        }
+
+        $canPrintReturnLabelForGuest = Mage::getStoreConfigFlag(self::XPATH_GUEST_PRINT_LABEL, $storeId);
+        return $canPrintReturnLabelForGuest;
+    }
+
+    /**
+     * Check if printing return labels is allowed for this order.
+     *
+     * @param Mage_Sales_Model_Order|null $order
+     *
+     * @return bool
+     */
+    public function canPrintReturnLabelForOrder($order)
+    {
+        if (!$order || !$order->getId()) {
+            return false;
+        }
+
+        /**
+         * Check if printing return labels is allowed for the order's store ID and if it's allowed for logged-in
+         * customers or guests depending on who placed the order.
+         */
+        if ($order->getCustomerIsGuest()
+            && !$this->canPrintReturnLabelForGuest($order->getStoreId())
+        ) {
+            return false;
+        } elseif (!$this->canPrintReturnLabelForCustomer($order->getStoreId())) {
+            return false;
+        }
+
+        /**
+         * Return labels are only available for orders that are shipped with PostNL.
+         */
+        $shippingMethod = $order->getShippingMethod();
+        if (!Mage::helper('postnl/carrier')->isPostnlShippingMethod($shippingMethod)) {
+            return false;
+        }
+
+        /**
+         * Check if there are any confirmed PostNl shipments for this order.
+         */
+        $postnlShipmentsCollection = Mage::getResourceModel('postnl_core/shipment_collection');
+        $postnlShipmentsCollection->addFieldToFilter('order_id', array('eq' => $order->getId()))
+                                  ->addFieldToFilter(
+                                      'confirm_status',
+                                      array(
+                                          'eq' => TIG_PostNL_Model_Core_Shipment::CONFIRM_STATUS_CONFIRMED
+                                      )
+                                  );
+
+        /**
+         * We can only print return labels for confirmed shipments, so we need to make sure that at least one such
+         * shipment is available.
+         */
+        if ($postnlShipmentsCollection->getSize() > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -550,7 +550,7 @@
                     <returns_view_link>
                         <type>singleton</type>
                         <class>postnl_core/observer_returns</class>
-                        <method>addReturnLink</method>
+                        <method>addReturnLinkToAccount</method>
                     </returns_view_link>
                 </observers>
             </core_block_abstract_to_html_before>

@@ -883,7 +883,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $labelCollection = Mage::getResourceModel('postnl_core/shipment_label_collection');
         $labelCollection->addFieldToFilter('parent_id', array('eq' => $this->getid()))
-                        ->addFieldToFilter('type', array('in' => $this->getHelper('cif')->getReturnLabelTypes()));
+                        ->addFieldToFilter('label_type', array('in' => $this->getHelper('cif')->getReturnLabelTypes()));
 
         $labels = $labelCollection->getItems();
 
@@ -1346,13 +1346,21 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         if ($asObject === false) {
-            $barcodeNumbers = $barcodeCollection->getColumnValues('barcode_number');
-            $barcodes       = $barcodeCollection->getColumnValues('barcode');
-
             /**
              * Combine the arrays so that the barcode numbers are the keys and the barcodes themselves are the values.
+             *
+             * @var TIG_postNL_Model_Core_Shipment_Barcode $barcode
              */
-            $barcodeArray    = array_combine($barcodeNumbers, $barcodes);
+            $barcodeArray = array();
+            $numberlessBarcodes = array();
+            foreach ($barcodeCollection as $key => $barcode) {
+                if ($barcode->getBarcodeNumber()) {
+                    $barcodeArray[$barcode->getBarcodeNumber()] = $barcode->getBarcode();
+                } else {
+                    $numberlessBarcodes[] = $barcode->getBarcode();
+                }
+            }
+            $barcodeArray = array_merge($barcodeArray, $numberlessBarcodes);
 
             /**
              * Add the main barcode if the requested type is 'shipment'.
@@ -1977,7 +1985,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $barcodeModel = Mage::getConfig()->getModelClassName('postnl_core/shipment_barcode');
         $barcodes = $this->getBarcodes(false, $barcodeModel::BARCODE_TYPE_RETURN);
 
-        if (!empty($barcodes)) {
+        if (count($barcodes) > 0) {
             return true;
         }
 

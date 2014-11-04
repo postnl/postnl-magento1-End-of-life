@@ -784,6 +784,39 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     }
 
     /**
+     * Check if return labels may be printed.
+     *
+     * @param bool|int $storeId
+     *
+     * @return bool
+     */
+    public function isReturnsEnabled($storeId = false)
+    {
+        if (false === $storeId) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
+
+        if (!$this->isEnabled($storeId)) {
+            return false;
+        }
+
+        $canPrintLabels = Mage::getStoreConfigFlag(self::XPATH_RETURN_LABELS_ACTIVE, $storeId);
+
+        if (!$canPrintLabels) {
+            return false;
+        }
+
+        $freePostNumber = Mage::getStoreConfig(self::XPATH_FREEPOST_NUMBER, $storeId);
+        $freePostNumber = trim($freePostNumber);
+
+        if (empty($freePostNumber)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Checks if a given postnl shipment exists using Zend_Validate_Db_RecordExists.
      *
      * @param string $shipmentId
