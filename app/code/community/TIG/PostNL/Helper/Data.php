@@ -141,6 +141,12 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
     const BUSPAKJE_CALCULATION_MODE_MANUAL    = 'manual';
 
     /**
+     * Xpaths to return label settings.
+     */
+    const XPATH_RETURN_LABELS_ACTIVE = 'postnl/returns/return_labels_active';
+    const XPATH_FREEPOST_NUMBER      = 'postnl/returns/freepost_number';
+
+    /**
      * Required configuration fields.
      *
      * @var array
@@ -1678,6 +1684,39 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $message;
+    }
+
+    /**
+     * Check if return labels may be printed.
+     *
+     * @param bool|int $storeId
+     *
+     * @return bool
+     */
+    public function isReturnsEnabled($storeId = false)
+    {
+        if (false === $storeId) {
+            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
+        }
+
+        if (!$this->isEnabled($storeId)) {
+            return false;
+        }
+
+        $canPrintLabels = Mage::getStoreConfigFlag(self::XPATH_RETURN_LABELS_ACTIVE, $storeId);
+
+        if (!$canPrintLabels) {
+            return false;
+        }
+
+        $freePostNumber = Mage::getStoreConfig(self::XPATH_FREEPOST_NUMBER, $storeId);
+        $freePostNumber = trim($freePostNumber);
+
+        if (empty($freePostNumber)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

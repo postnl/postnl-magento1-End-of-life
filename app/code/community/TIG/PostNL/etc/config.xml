@@ -546,6 +546,12 @@
                         <class>postnl_deliveryoptions/observer_shippingMethodAvailable</class>
                         <method>addDeliveryOptions</method>
                     </checkout_deliveryoptions>
+                    <!-- Adds a link to the returns page on the sales/order/view page -->
+                    <returns_view_link>
+                        <type>singleton</type>
+                        <class>postnl_core/observer_returns</class>
+                        <method>addReturnLink</method>
+                    </returns_view_link>
                 </observers>
             </core_block_abstract_to_html_before>
             <controller_action_postdispatch_checkout_onepage_saveShippingMethod>

@@ -78,12 +78,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
 
     /**
-     * Xpaths to return label settings.
-     */
-    const XPATH_RETURN_LABELS_ACTIVE = 'postnl/returns/return_labels_active';
-    const XPATH_FREEPOST_NUMBER      = 'postnl/returns/freepost_number';
-
-    /**
      * Regular expression used to split street name from house number. This regex works well for dutch addresses, but
      * may fail for international addresses. We strongly recommend using split address lines instead.
      */
@@ -787,35 +781,6 @@ class TIG_PostNL_Helper_Cif extends TIG_PostNL_Helper_Data
         }
 
         return $parcelCount;
-    }
-
-    /**
-     * Check if return labels may be printed.
-     *
-     * @param bool|int $storeId
-     *
-     * @return bool
-     */
-    public function canPrintReturnLabels($storeId = false)
-    {
-        if (false === $storeId) {
-            $storeId = Mage_Core_Model_App::ADMIN_STORE_ID;
-        }
-
-        $canPrintLabels = Mage::getStoreConfigFlag(self::XPATH_RETURN_LABELS_ACTIVE, $storeId);
-
-        if (!$canPrintLabels) {
-            return false;
-        }
-
-        $freePostNumber = Mage::getStoreConfig(self::XPATH_FREEPOST_NUMBER, $storeId);
-        $freePostNumber = trim($freePostNumber);
-
-        if (empty($freePostNumber)) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

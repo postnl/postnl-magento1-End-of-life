@@ -89,6 +89,7 @@
  * @method int                            getLabelsPrinted()
  * @method bool|int                       getIsPakketautomaat()
  * @method bool                           getIsBuspakjeShipment()
+ * @method int                            getReturnLabelsPrinted()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -126,6 +127,7 @@
  * @method TIG_PostNL_Model_Core_Shipment setPayment(Mage_Sales_Model_Order_Payment $value)
  * @method TIG_PostNL_Model_Core_Shipment setReturnBarcode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setReturnLabels(mixed $value)
+ * @method TIG_PostNL_Model_Core_Shipment setReturnLabelsPrinted(int $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -150,6 +152,7 @@
  * @method bool                           hasProductOption()
  * @method bool                           hasPayment()
  * @method bool                           hasReturnLabels()
+ * @method bool                           hasReturnLabelsPrinted()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {
@@ -2961,7 +2964,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         $returnBarcode    = false;
-        $printReturnLabel = $this->getHelper('cif')->canPrintReturnLabels($storeId);
+        $printReturnLabel = $this->getHelper('cif')->isReturnsEnabled($storeId);
 
         /**
          * If we should print a return label, get the return barcode.
@@ -4510,8 +4513,15 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Set whether labels have printed or not.
          */
-        if ($this->getlabelsPrinted() == 0 && $this->hasLabels()) {
+        if ($this->getLabelsPrinted() == 0 && $this->hasLabels()) {
             $this->setLabelsPrinted(1);
+        }
+
+        /**
+         * Set whether return labels have printed or not.
+         */
+        if ($this->getReturnLabelsPrinted() == 0 && $this->hasReturnLabels()) {
+            $this->setReturnLabelsPrinted(1);
         }
 
         /**
