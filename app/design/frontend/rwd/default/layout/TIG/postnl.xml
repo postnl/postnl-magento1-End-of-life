@@ -93,6 +93,57 @@
         </reference>
     </sales_order_shipment>
 
+    <!-- RETURNS -->
+
+    <postnl_order_returns translate="label">
+        <label>Customer My Account Order PostNL Returns View</label>
+        <update handle="customer_account"/>
+        <reference name="my.account.wrapper">
+            <block type="postnl_core/order_returns_info" as="info" name="sales.order.info">
+                <block type="sales/order_info_buttons" as="buttons" name="sales.order.info.buttons" />
+                <action method="addLink" translate="label" module="sales">
+                    <name>view</name>
+                    <path>sales/order/view</path>
+                    <label>Order Information</label>
+                </action>
+                <action method="addLink" translate="label" module="sales">
+                    <name>invoice</name>
+                    <path>sales/order/invoice</path>
+                    <label>Invoices</label>
+                </action>
+                <action method="addLink" translate="label" module="sales">
+                    <name>shipment</name>
+                    <path>sales/order/shipment</path>
+                    <label>Shipments</label>
+                </action>
+                <action method="addLink" translate="label" module="sales">
+                    <name>creditmemo</name>
+                    <path>sales/order/creditmemo</path>
+                    <label>Refunds</label>
+                </action>
+                <action method="addLink" translate="label" module="postnl">
+                    <name>postnl_returns</name>
+                    <path/>
+                    <label>Returns</label>
+                </action>
+            </block>
+            <block type="sales/order_shipment" name="sales.order.shipment">
+                <block type="sales/order_shipment_items" name="shipment_items" template="TIG/PostNL/core/order/returns/shipment/items.phtml">
+                    <action method="addItemRender">
+                        <type>default</type>
+                        <block>sales/order_item_renderer_default</block>
+                        <template>sales/order/shipment/items/renderer/default.phtml</template>
+                    </action>
+                    <block type="sales/order_comments" name="shipment_comments" template="sales/order/comments.phtml"/>
+                </block>
+            </block>
+        </reference>
+        <reference name="content">
+            <block type="core/template" name="pakje_gemak_address" template="TIG/PostNL/core/sales/order/pakje_gemak_address.phtml"/>
+        </reference>
+        <block type="core/text_list" name="additional.product.info" />
+    </postnl_order_returns>
+
     <!--  POSTNL CHECKOUT  -->
 
     <checkout_cart_index>

@@ -47,6 +47,26 @@ $installer->startSetup();
 $conn = $installer->getConnection();
 
 /***********************************************************************************************************************
+ * POSTNL SHIPMENT
+ **********************************************************************************************************************/
+
+$tableName = $installer->getTable('postnl_core/shipment');
+
+if (!$conn->tableColumnExists($tableName, 'return_labels_printed')) {
+    $conn->addColumn(
+        $tableName,
+        'return_labels_printed',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+            'nullable' => false,
+            'default'  => '0',
+            'comment'  => 'Return labels Printed',
+            'after'    => 'labels_printed',
+        )
+    );
+}
+
+/***********************************************************************************************************************
  * POSTNL SHIPMENT BARCODE
  **********************************************************************************************************************/
 
