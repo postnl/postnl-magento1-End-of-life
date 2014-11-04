@@ -98,6 +98,12 @@
     <postnl_order_returns translate="label">
         <label>Customer My Account Order PostNL Returns View</label>
         <update handle="customer_account"/>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <file>css/TIG/PostNL/returns.css</file>
+            </action>
+        </reference>
         <reference name="my.account.wrapper">
             <block type="postnl_core/order_returns_info" as="info" name="sales.order.info">
                 <block type="sales/order_info_buttons" as="buttons" name="sales.order.info.buttons" />
@@ -128,7 +134,7 @@
                 </action>
             </block>
             <block type="sales/order_shipment" name="sales.order.shipment">
-                <block type="sales/order_shipment_items" name="shipment_items" template="TIG/PostNL/core/order/returns/shipment/items.phtml">
+                <block type="postnl_core/order_returns_shipment_items" name="shipment_items" template="TIG/PostNL/core/order/returns/shipment/items.phtml">
                     <action method="addItemRender">
                         <type>default</type>
                         <block>sales/order_item_renderer_default</block>

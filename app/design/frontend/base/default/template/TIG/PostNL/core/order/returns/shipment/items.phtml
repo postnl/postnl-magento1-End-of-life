@@ -35,11 +35,28 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @var TIG_PostNL_Block_Core_Order_Returns_Shipment_Items $this
+ * @var TIG_postNL_Model_Core_Shipment                     $_postnlShipment
  */
 ?>
-<?php  $_order = $this->getOrder() ?>
-<?php foreach ($_order->getShipmentsCollection() as $_shipment): ?>
-    <h2 class="sub-title"><?php echo $this->__('Shipment #') ?><?php echo $_shipment->getIncrementId(); ?></h2>
+<?php $_postnlShipmentCollection = $this->getPostnlShipmentCollection(); ?>
+<?php foreach ($_postnlShipmentCollection as $_postnlShipment): ?>
+    <?php $_shipment = $_postnlShipment->getShipment(); ?>
+    <h2 class="sub-title" id="print_return_label_title"><?php echo $this->__('Shipment #') ?><?php echo $_shipment->getIncrementId(); ?></h2>
+    <?php if ($_postnlShipment->isConfirmed()): ?>
+        <button type="button" title="<?php echo $this->__('Print return label'); ?>" class="button print-return-label-button" onclick="setLocation('<?php echo $this->getUrl('postnl/order/printReturnLabel', array('shipment_id' => $_shipment->getIncrementId())); ?>')">
+            <span>
+                <span><?php echo $this->__('Print return label'); ?></span>
+            </span>
+        </button>
+    <?php else: ?>
+        <button type="button" title="<?php echo $this->__('This shipment has not yet been shipped.'); ?>" class="button disabled print-return-label-button">
+            <span>
+                <span><?php echo $this->__('Print return label'); ?></span>
+            </span>
+        </button>
+    <?php endif; ?>
     <?php $tracks = $_shipment->getTracksCollection(); ?>
     <?php  if ($tracks->count()): ?>
         <table class="data-table tracking-table" id="my-tracking-table-<?php echo $_shipment->getId(); ?>">
@@ -70,7 +87,7 @@
         </table>
         <script type="text/javascript">decorateTable('my-tracking-table-<?php echo $_shipment->getId(); ?>')</script>
     <?php  endif; ?>
-    <h3 class="table-caption"><?php echo $this->__('Items Shipped') ?></h3>
+    <h3 class="table-caption print-return-label-caption"><?php echo $this->__('Items Shipped') ?></h3>
     <table class="data-table" id="my-shipment-table-<?php echo $_shipment->getId(); ?>">
         <col />
         <col width="1" />
