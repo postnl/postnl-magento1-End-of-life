@@ -44,7 +44,8 @@ class TIG_PostNL_OrderController extends Mage_Sales_Controller_Abstract
      * @var array
      */
     protected $_allowedActions = array(
-        'returns'
+        'returns',
+        'printReturnLabel',
     );
 
     /**
@@ -135,5 +136,10 @@ class TIG_PostNL_OrderController extends Mage_Sales_Controller_Abstract
             $navigationBlock->setActive('sales/order/history');
         }
         $this->renderLayout();
+    }
+
+    public function printReturnLabelAction()
+    {
+
     }
 }
