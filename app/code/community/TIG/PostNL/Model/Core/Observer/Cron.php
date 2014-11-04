@@ -331,7 +331,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 $helper->cronLog("Getting barcodes for shipment #{$postnlShipment->getId()}.");
                 $postnlShipment->generateBarcodes();
 
-                $printReturnLabel = $helper->canPrintReturnLabels($postnlShipment->getStoreId());
+                $printReturnLabel = $helper->isReturnsEnabled($postnlShipment->getStoreId());
                 if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
                     $postnlShipment->generateReturnBarcode();
                 }
@@ -616,7 +616,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                 }
 
 
-                $printReturnLabel = $helper->canPrintReturnLabels($postnlShipment->getStoreId());
+                $printReturnLabel = $helper->isReturnsEnabled($postnlShipment->getStoreId());
                 if ($printReturnLabel && $postnlShipment->canGenerateReturnBarcode()) {
                     $postnlShipment->generateReturnBarcode();
                 }

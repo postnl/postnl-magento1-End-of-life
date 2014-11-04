@@ -109,9 +109,31 @@ class TIG_PostNL_OrderController extends Mage_Sales_Controller_Abstract
 
     /**
      * View the returns page.
+     *
+     * @return void
      */
     public function returnsAction()
     {
-        $this->_viewAction();
+        if (!$this->_loadValidOrder()) {
+            return;
+        }
+
+        $order = Mage::registry('current_order');
+        if (!Mage::helper('postnl')->canPrintReturnLabelForOrder($order)) {
+            $this->_redirect('sales/order/history');
+            return;
+        }
+
+        $this->loadLayout();
+        $this->_initLayoutMessages('catalog/session');
+
+        /**
+         * @var Mage_Customer_Block_Account_Navigation $navigationBlock
+         */
+        $navigationBlock = $this->getLayout()->getBlock('customer_account_navigation');
+        if ($navigationBlock) {
+            $navigationBlock->setActive('sales/order/history');
+        }
+        $this->renderLayout();
     }
 }

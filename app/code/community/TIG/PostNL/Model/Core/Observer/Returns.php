@@ -112,7 +112,7 @@ class TIG_PostNL_Model_Core_Observer_Returns
      *
      * @observer returns_view_link
      */
-    public function addReturnLink(Varien_Event_Observer $observer)
+    public function addReturnLinkToAccount(Varien_Event_Observer $observer)
     {
         if ($this->isProcessed()) {
             return $this;
@@ -139,13 +139,22 @@ class TIG_PostNL_Model_Core_Observer_Returns
             return $this;
         }
 
+        $helper = Mage::helper('postnl');
+
+        /**
+         * Check if printing return labels is allowed for the current order.
+         */
+        if (!$helper->canPrintReturnLabelForOrder(Mage::registry('current_order'))) {
+            return $this;
+        }
+
         /**
          * Add the link.
          */
         $block->addLink(
             'postnl_returns',
             'postnl/order/returns',
-            Mage::helper('postnl')->__('Returns')
+            $helper->__('Returns')
         );
 
         $this->setProcessed(true);

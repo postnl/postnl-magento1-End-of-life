@@ -716,7 +716,7 @@ class TIG_PostNL_Controller_Adminhtml_Shipment extends Mage_Adminhtml_Controller
         }
 
         $printReturnLabel = Mage::helper('postnl/cif')->isReturnsEnabled($shipment->getStoreId());
-        if ($printReturnLabel && !$shipment->hasReturnBarcode()) {
+        if ($printReturnLabel && !$postnlShipment->hasReturnBarcode() && $postnlShipment->canGenerateReturnBarcode()) {
             $postnlShipment->generateReturnBarcode();
         }
 
