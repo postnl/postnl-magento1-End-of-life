@@ -62,7 +62,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
         if ($isActivated === '1') {
             $label = $this->__('Finish registration');
         } else {
-            $label = $this->__('Register the extension');
+            $label = $this->__('Send security keys');
         }
 
         $html = $this->getLayout()->createBlock('adminhtml/widget_button')
