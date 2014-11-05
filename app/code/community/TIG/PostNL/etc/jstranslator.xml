@@ -130,6 +130,6 @@
         <message>As soon as possible</message>
     </as_soon_as_possible>
     <wizard_step_saved translate="message" module="postnl">
-        <message>This step has been saved successfully!</message>
+        <message>The previous has been saved successfully!</message>
     </wizard_step_saved>
 </jstranslator>

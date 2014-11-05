@@ -53,6 +53,7 @@ $settingsToMove = array(
     'postnl/cif_return_address/city'                                        => 'postnl/cif_address/return_city',
     'postnl/cif_return_address/region'                                      => 'postnl/cif_address/return_region',
     'postnl/cif_return_address/country'                                     => 'postnl/cif_address/return_country',
+    'postnl/cif_return_address/use_sender_address'                          => 'postnl/cif_address/use_sender_address',
     'postnl/cif/use_globalpack'                                             => 'postnl/cif_globalpack_settings/use_globalpack',
     'postnl/cif/global_barcode_type'                                        => 'postnl/cif_globalpack_settings/global_barcode_type',
     'postnl/cif/global_barcode_range'                                       => 'postnl/cif_globalpack_settings/global_barcode_range',
