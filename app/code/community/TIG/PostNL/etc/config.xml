@@ -736,6 +736,7 @@
                 <new_ticket_url>http://kb.tig.nl/ticket/form/new</new_ticket_url> <!-- URL where merchants can submit a support ticket -->
                 <installation_manual_url>http://kb.tig.nl/topic/39335103</installation_manual_url> <!-- URL to the extension's installation manual -->
                 <user_guide_url>http://kb.tig.nl/topic/44206406</user_guide_url> <!-- URL to the extension's user guide -->
+                <kb_url>http://kb.tig.nl/forum/23046087</kb_url> <!-- URL of the TIG PostNL knowledgebase -->
             </general>
             <cif_address>
                 <firstname/>

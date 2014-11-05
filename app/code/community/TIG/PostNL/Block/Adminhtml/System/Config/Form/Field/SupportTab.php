@@ -52,6 +52,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     const NEW_TICKET_URL_XPATH          = 'postnl/general/new_ticket_url';
     const INSTALLATION_MANUAL_URL_XPATH = 'postnl/general/installation_manual_url';
     const USER_GUIDE_URL_XPATH          = 'postnl/general/user_guide_url';
+    const KB_URL_XPATH                  = 'postnl/general/kb_url';
 
     /**
      * Template file used
@@ -126,6 +127,16 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     public function getChangelogUrl()
     {
         $url = Mage::helper('postnl')->getChangelogUrl();
+
+        return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKbUrl()
+    {
+        $url = Mage::getStoreConfig(self::KB_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
 
         return $url;
     }
