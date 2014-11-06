@@ -66,28 +66,38 @@
 
         postnlConfigWizard.render();
 
+        var topMessages = $$('.entry-edit > .module-message');
+        topMessages.each(function(element) {
+            $('postnl_wizard').insert({
+                before : element
+            });
+        });
+
         <?php if (!empty($_currentWizardStep)): ?>
-            if (window.location.hash.length > 1) {
-                return;
+            if (window.location.hash.length < 1) {
+                var hash = '<?php echo $_currentWizardStep?>';
+                postnlConfigWizard.toHash(hash);
+
+                if(window.history.pushState) {
+                    window.history.pushState(null, null, hash);
+                    postnlConfigWizard.toHash();
+                } else {
+                    window.location.hash = hash;
+                }
             }
 
-            var hash = '<?php echo $_currentWizardStep?>';
-            postnlConfigWizard.toHash(hash);
-
-            if(window.history.pushState) {
-                window.history.pushState(null, null, hash);
-                postnlConfigWizard.toHash();
-
-                new Effect.Tween(
-                    null,
-                    document.viewport.getScrollOffsets().top,
-                    $('postnl_wizard').cumulativeOffset()[1] - 50,
-                    {},
-                    function(p){ scrollTo(document.viewport.getScrollOffsets().left, p.round()); }
-                );
-            } else {
-                window.location.hash = hash;
+            var scrollTarget = $('postnl_wizard');
+            if (topMessages[0]) {
+                scrollTarget = topMessages[0];
             }
+
+            new Effect.Tween(
+                null,
+                document.viewport.getScrollOffsets().top,
+                scrollTarget.cumulativeOffset()[1] - 50,
+                {},
+                function(p){ scrollTo(document.viewport.getScrollOffsets().left, p.round()); }
+            );
         <?php endif; ?>
     });
 
