@@ -92,6 +92,8 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SplitAddressCheck
 
         if ((!$checkoutExtension || $checkoutExtension == 'other') && !$splitStreet) {
             return false;
+        } elseif ($checkoutExtension && $checkoutExtension != 'other' && $splitStreet) {
+            return true;
         }
 
         return $usePostcodeCheck;

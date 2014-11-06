@@ -49,22 +49,55 @@
     //<![CDATA[
     var postnlConfigWizard = new PostnlConfigWizard({});
     document.observe('dom:loaded', function() {
+        $('postnl_cif_labels_and_confirming_checkout_extension').observe('change', function() {
+            if ($('postnl_cif_labels_and_confirming_checkout_extension').getValue() == 'other') {
+                $('postnl_cif_labels_and_confirming_use_postcode_check').checked = false;
+
+                var elementsMap = formElementDependenceController.elementsMap;
+                for (var idTo in elementsMap) {
+                    if (!elementsMap[idTo]['postnl_cif_labels_and_confirming_use_postcode_check']) {
+                        continue;
+                    }
+                    formElementDependenceController.trackChange(null, idTo, elementsMap[idTo]);
+                }
+
+            }
+        });
+
         postnlConfigWizard.render();
 
+        var topMessages = $$('.entry-edit > .module-message');
+        topMessages.each(function(element) {
+            $('postnl_wizard').insert({
+                before : element
+            });
+        });
+
         <?php if (!empty($_currentWizardStep)): ?>
-        if (window.location.hash.length > 1) {
-            return;
-        }
+            if (window.location.hash.length < 1) {
+                var hash = '<?php echo $_currentWizardStep?>';
+                postnlConfigWizard.toHash(hash);
 
-        var hash = '<?php echo $_currentWizardStep?>';
-        postnlConfigWizard.toHash(hash);
+                if(window.history.pushState) {
+                    window.history.pushState(null, null, hash);
+                    postnlConfigWizard.toHash();
+                } else {
+                    window.location.hash = hash;
+                }
+            }
 
-        if(window.history.pushState) {
-            window.history.pushState(null, null, hash);
-            postnlConfigWizard.toHash();
-        } else {
-            window.location.hash = hash;
-        }
+            var scrollTarget = $('postnl_wizard');
+            if (topMessages[0]) {
+                scrollTarget = topMessages[0];
+            }
+
+            new Effect.Tween(
+                null,
+                document.viewport.getScrollOffsets().top,
+                scrollTarget.cumulativeOffset()[1] - 50,
+                {},
+                function(p){ scrollTo(document.viewport.getScrollOffsets().left, p.round()); }
+            );
         <?php endif; ?>
     });
 
@@ -143,7 +176,35 @@
         var params = {
             next_step_hash : nextStepHash
         };
-        $$('fieldset#' + currentStepRel + ' input, fieldset#' + currentStepRel + ' select').each(
+
+        var valid = true;
+        var fields = $$('#' + currentStepRel + ' input,#' + currentStepRel + ' select');
+        fields.each(
+            function(element) {
+                if (element.hasClassName('postnl-validate-empty-failed')) {
+                    element.addClassName('required-entry');
+                }
+
+                if (!Validation.validate(element.id)) {
+                    valid = false;
+                } else {
+                    var advice = $('advice-required-entry-' + element.id);
+                    if (advice) {
+                        Validation.hideAdvice(element.id, advice);
+                    }
+                }
+
+                if (element.hasClassName('required-entry')) {
+                    element.removeClassName('required-entry');
+                }
+            }
+        );
+
+        if (!valid) {
+            return;
+        }
+
+        fields.each(
             function(element) {
                 params[element.name] = element.getValue();
             }
@@ -172,7 +233,7 @@
                      */
                     var successMessage = new Element('div', {
                         'class' : 'wizard-success'
-                    }).update(Translator.translate('This step has been saved successfully!'));
+                    }).update(Translator.translate('The previous has been saved successfully!'));
 
                     $(nextStepRel).insert({
                         top:successMessage
