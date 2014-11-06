@@ -1883,6 +1883,14 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
+                        <returns_header translate="label" module="postnl">
+                            <label>Returns</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </returns_header>
                         <return_labels_active translate="label" module="postnl">
                             <label>Use return labels</label>
                             <frontend_type>checkbox</frontend_type>
