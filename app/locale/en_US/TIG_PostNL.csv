@@ -469,8 +469,8 @@ TIG_PostNL::Request help directly:,Request help directly:
 TIG_PostNL::Email:,Email:
 TIG_PostNL::For questions about installing and configuring the extension please consult the relevant documentation:,For questions about installing and configuring the extension please consult the relevant documentation:
 TIG_PostNL::A list of documents regarding the extension.,A list of documents regarding the extension.
-TIG_PostNL::View the installation and configuration manual.,View the installation and configuration manual.
-TIG_PostNL::Installation and configuration manual,Installation and configuration manual
+TIG_PostNL::View the installation manual.,View the installation manual.
+TIG_PostNL::Installation manual,Installation manual
 TIG_PostNL::View the complete changelog of the extension.,View the complete changelog of the extension.
 TIG_PostNL::Full changelog,Full changelog
 TIG_PostNL::PostNL Checkout has been disabled,PostNL Checkout has been disabled
