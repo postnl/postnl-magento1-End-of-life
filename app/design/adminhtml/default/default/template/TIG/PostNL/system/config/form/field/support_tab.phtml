@@ -51,14 +51,11 @@
         <h2 class="content-heading"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>"/> <?php echo $this->__('PostNL version %s', $this->getVersion());?></h2>
         <table id="supportWrap" cellpadding="0" cellspacing="0">
             <tr>
-                <td colspan="3">
+                <td class="col-left">
                     <div class="text-box">
                         <h4><?php echo $this->__("We urge you to read these instructions before you proceed to use this extension."); ?></h4>
                     </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
+
                     <div class="text-box">
                         <ul class="postnl-config-warning">
                             <li><?php echo $this->__("You should make sure that each product you intend to ship using PostNL has a maximum size of 175 x 78 x 58 cm and weighs less than 30 kg. You will have to split heavier orders into separate parcels. To do this you may create multiple shipments for a single order or you may use the extension's multi-colli functionality."); ?></li>
@@ -67,17 +64,32 @@
                             <li><?php echo $this->__("We highly recommend you place several 'test' shipments, before you use the extension for real shipments."); ?></li>
                         </ul>
                     </div>
+
+                    <div class="text-box">
+                        <h3><?php echo $this->__('Magento & 3rd party version compatibility');?></h3>
+                        <ul>
+                            <li><?php echo $this->__('Magento Community Edition version');?> v1.6, v1.7, v1.8 &amp; v1.9</li>
+                            <li><?php echo $this->__('Magento Enterprise Edition version');?> v1.11, v1.12, v1.13 &amp; v1.14</li>
+                        </ul>
+                        <ul>
+                            <li><?php echo $this->__("Idev's OneStepCheckout version");?> v4.0 &amp; v4.1</li>
+                        </ul>
+                        <ul>
+                            <li><?php echo $this->__('We cannot guarantee compatibility with non supported extensions and versions of Magento.'); ?></li>
+                        </ul>
+                    </div>
                 </td>
-            </tr>
-            <tr>
-                <td class="col-left">
+
+                <td class="col-faux"></td>
+
+                <td class="col-right">
                     <div class="text-box">
                         <h3><?php echo $this->__('Support');?></h3>
                         <p><?php echo $this->__('The extension is developed by Total Internet Group, commissioned by PostNL.');?></p>
                         <h4><em><?php echo $this->__('PostNL account information and PostNL services');?></em></h4>
                         <p><?php echo $this->__('For questions related to your PostNL account and PostNL delivery options, please contact PostNL.');?></p>
                         <table class="contact">
-                             <tr>
+                            <tr>
                                 <td class="first"><?php echo $this->__('Website:');?></td>
                                 <td class="last"><a target="_blank" href="<?php echo $_postnlRegisterUrl; ?>"><?php echo $_postnlRegisterUrl; ?></a></td>
                             </tr>
@@ -94,23 +106,10 @@
                             <li><a target="_blank" href="<?php echo $_changelogUrl; ?>" title="<?php echo $this->__('View the complete changelog of the extension.');?>"><?php echo $this->__('Full changelog');?></a></li>
                             <li><a target="_blank" href="<?php echo $_kbUrl; ?>" title="<?php echo $this->__('Frequently asked questions.');?>"><?php echo $this->__('FAQ');?></a></li>
                         </ul>
-                    </div>
-                </td>
-
-                <td class="col-faux"></td>
-
-                <td class="col-right">
-                    <div class="text-box">
-                        <h3><?php echo $this->__('Magento &amp; 3rd party version compatibility');?></h3>
-                        <ul>
-                            <li><?php echo $this->__('Magento Community Edition version');?> v1.6, v1.7, v1.8 &amp; v1.9</li>
-                            <li><?php echo $this->__('Magento Enterprise Edition version');?> v1.11, v1.12, v1.13 &amp; v1.14</li>
-                        </ul>
-                        <ul>
-                            <li><?php echo $this->__("Idev's OneStepCheckout version");?> v4.0 &amp; v4.1</li>
-                        </ul>
-                        <ul>
-                            <li><?php echo $this->__('We cannot guarantee compatibility with non supported extensions and versions of Magento.'); ?></li>
+                        <h4><em><?php echo $this->__('Unable to find the answer you need using the links above?'); ?></em></h4>
+                        <p><?php echo $this->__('Use the button below to request help from the TIG servicedesk.'); ?></p>
+                        <ul class="manual-links">
+                            <li><a target="_blank" href="<?php echo $_newTicketUrl; ?>" title="<?php echo $this->__('New support ticket');?>"><?php echo $this->__('New support ticket');?></a></li>
                         </ul>
                     </div>
                 </td>

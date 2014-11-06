@@ -143,7 +143,35 @@
         var params = {
             next_step_hash : nextStepHash
         };
-        $$('fieldset#' + currentStepRel + ' input, fieldset#' + currentStepRel + ' select').each(
+
+        var valid = true;
+        var fields = $$('#' + currentStepRel + ' input,#' + currentStepRel + ' select');
+        fields.each(
+            function(element) {
+                if (element.hasClassName('postnl-validate-empty-failed')) {
+                    element.addClassName('required-entry');
+                }
+
+                if (!Validation.validate(element.id)) {
+                    valid = false;
+                } else {
+                    var advice = $('advice-required-entry-' + element.id);
+                    if (advice) {
+                        Validation.hideAdvice(element.id, advice);
+                    }
+                }
+
+                if (element.hasClassName('required-entry')) {
+                    element.removeClassName('required-entry');
+                }
+            }
+        );
+
+        if (!valid) {
+            return;
+        }
+
+        fields.each(
             function(element) {
                 params[element.name] = element.getValue();
             }

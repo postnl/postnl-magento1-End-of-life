@@ -71,7 +71,7 @@ TIG_PostNL::Streetname field,Streetname field
 TIG_PostNL::Housenr. field,Housenr. field
 TIG_PostNL::Split house number parts,Split house number parts
 TIG_PostNL::Housenr. extension field,Housenr. extension field
-TIG_PostNL::Optional address fields.,Optional address fields.
+TIG_PostNL::Optional address fields,Optional address fields
 TIG_PostNL::Area field,Area field
 TIG_PostNL::Building name field,Building name field
 TIG_PostNL::Department field,Department field
@@ -655,7 +655,7 @@ TIG_PostNL::Allow weekend sorting,Allow weekend sorting
 TIG_PostNL::Please ask your PostNL account manager if this service is available for your webshop.,Please ask your PostNL account manager if this service is available for your webshop.
 TIG_PostNL::Weekend cut-off time,Weekend cut-off time
 "TIG_PostNL::When an order is placed after this time on sunday, another day will be added to the shipping duration.","When an order is placed after this time on sunday, another day will be added to the shipping duration."
-TIG_PostNL::Delivery options on the checkout page.,Delivery options on the checkout page.
+TIG_PostNL::Delivery options on the checkout page,Delivery options on the checkout page
 TIG_PostNL::Enable timeframes,Enable timeframes
 TIG_PostNL::Enable timeframes to show the expected delivery times for each delivery day.,Enable timeframes to show the expected delivery times for each delivery day.
 TIG_PostNL::Enable evening delivery,Enable evening delivery
@@ -855,7 +855,7 @@ TIG_PostNL::Bankaccount IBAN,Bankaccount IBAN
 TIG_PostNL::Bankaccount BIC,Bankaccount BIC
 TIG_PostNL::Automatically create an invoice,Automatically create an invoice
 "TIG_PostNL::If enabled, this will allow the PostNL COD payment method to automatically create an invoice once a shipment has been delivered.","If enabled, this will allow the PostNL COD payment method to automatically create an invoice once a shipment has been delivered."
-TIG_PostNL::Bankaccount credentials.,Bankaccount credentials.
+TIG_PostNL::Bankaccount credentials,Bankaccount credentials
 TIG_PostNL::PostNL Cash on Delivery,PostNL Cash on Delivery
 TIG_PostNL::Enable or disable the PostNL Cash on Delivery payment method.,Enable or disable the PostNL Cash on Delivery payment method.
 TIG_PostNL::Title,Title
@@ -1178,3 +1178,6 @@ TIG_PostNL::These settings are only available on the 'global' and 'website' scop
 TIG_PostNL::Extension registration is only available on the 'global' scope.,Extension registration is only available on the 'global' scope.
 TIG_PostNL::Frequently asked questions.,Frequently asked questions.
 TIG_PostNL::FAQ,FAQ
+TIG_PostNL::Unable to find the answer you need using the links above?,Unable to find the answer you need using the links above?
+TIG_PostNL::Use the button below to request help from the TIG servicedesk.,Use the button below to request help from the TIG servicedesk.
+TIG_PostNL::New support ticket,New support ticket

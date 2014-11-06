@@ -1402,7 +1402,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
      */
     protected function _filterConfirmDate($collection, $column)
     {
-        $cond  = $column->getFilter()->getCondition();
+        $filter = $column->getFilter();
+        if (!$filter) {
+            return $this;
+        }
+
+        $cond = $filter->getCondition();
         if (!$cond) {
             return $this;
         }

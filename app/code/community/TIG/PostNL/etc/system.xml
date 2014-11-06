@@ -1135,7 +1135,7 @@
                             <validate>validate-select</validate>
                         </housenr_extension_field>
                         <optional_street_fields_header translate="label" module="postnl">
-                            <label>Optional address fields.</label>
+                            <label>Optional address fields</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1306,7 +1306,7 @@
                             </depends>
                         </show_options_for_backorders>
                         <delivery_options_settings_header translate="label" module="postnl">
-                            <label>Delivery options on the checkout page.</label>
+                            <label>Delivery options on the checkout page</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2409,7 +2409,7 @@
                     <show_in_store>0</show_in_store>
                     <fields>
                         <bankaccount_header translate="label" module="postnl">
-                            <label>Bankaccount credentials.</label>
+                            <label>Bankaccount credentials</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
