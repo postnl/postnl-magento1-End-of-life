@@ -1241,7 +1241,7 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     /**
      * Adds new filters to the collection if these filters are based on columns added by this observer
      *
-     * @param array                                           $filter     Array of filters to be added
+     * @param array $filter Array of filters to be added
      *
      * @return $this
      */
@@ -1403,6 +1403,9 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
     protected function _filterConfirmDate($collection, $column)
     {
         $cond  = $column->getFilter()->getCondition();
+        if (!$cond) {
+            return $this;
+        }
 
         $field = "IF(`postnl_shipment`.`confirm_date`, `postnl_shipment`.`confirm_date`, "
                . "`postnl_order`.`confirm_date`)";
