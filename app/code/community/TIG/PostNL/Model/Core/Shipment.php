@@ -3493,7 +3493,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         /**
          * Set the 'email sent' flag to true for this shipment.
          */
-        if (!$this->getShipment()->getEmailSent()) {
+        if ($this->getShipment() && !$this->getShipment()->getEmailSent()) {
             $this->getShipment()
                  ->setEmailSent(true)
                  ->save();
