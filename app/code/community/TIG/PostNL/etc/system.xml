@@ -1038,6 +1038,10 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <use_postcode_check>1</use_postcode_check>
+                                <checkout_extension>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
                             </depends>
                         </postcode_check_in_checkout>
                         <postcode_check_in_addressbook translate="label" module="postnl">
@@ -1051,6 +1055,10 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <use_postcode_check>1</use_postcode_check>
+                                <checkout_extension>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
                             </depends>
                         </postcode_check_in_addressbook>
                         <postcode_check_max_attempts translate="label tooltip" module="postnl">
@@ -1063,6 +1071,10 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <use_postcode_check>1</use_postcode_check>
+                                <checkout_extension>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
                             </depends>
                             <validate>validate-int validate-greater-than-zero</validate>
                         </postcode_check_max_attempts>
@@ -1076,6 +1088,10 @@
                             <show_in_store>1</show_in_store>
                             <depends>
                                 <use_postcode_check>1</use_postcode_check>
+                                <checkout_extension>
+                                    <value>magento_onepagecheckout||idev_onestepcheckout</value>
+                                    <separator>||</separator>
+                                </checkout_extension>
                             </depends>
                             <validate>validate-int validate-greater-than-zero</validate>
                         </postcode_check_timeout>

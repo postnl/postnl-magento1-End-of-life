@@ -49,22 +49,45 @@
     //<![CDATA[
     var postnlConfigWizard = new PostnlConfigWizard({});
     document.observe('dom:loaded', function() {
+        $('postnl_cif_labels_and_confirming_checkout_extension').observe('change', function() {
+            if ($('postnl_cif_labels_and_confirming_checkout_extension').getValue() == 'other') {
+                $('postnl_cif_labels_and_confirming_use_postcode_check').checked = false;
+
+                var elementsMap = formElementDependenceController.elementsMap;
+                for (var idTo in elementsMap) {
+                    if (!elementsMap[idTo]['postnl_cif_labels_and_confirming_use_postcode_check']) {
+                        continue;
+                    }
+                    formElementDependenceController.trackChange(null, idTo, elementsMap[idTo]);
+                }
+
+            }
+        });
+
         postnlConfigWizard.render();
 
         <?php if (!empty($_currentWizardStep)): ?>
-        if (window.location.hash.length > 1) {
-            return;
-        }
+            if (window.location.hash.length > 1) {
+                return;
+            }
 
-        var hash = '<?php echo $_currentWizardStep?>';
-        postnlConfigWizard.toHash(hash);
+            var hash = '<?php echo $_currentWizardStep?>';
+            postnlConfigWizard.toHash(hash);
 
-        if(window.history.pushState) {
-            window.history.pushState(null, null, hash);
-            postnlConfigWizard.toHash();
-        } else {
-            window.location.hash = hash;
-        }
+            if(window.history.pushState) {
+                window.history.pushState(null, null, hash);
+                postnlConfigWizard.toHash();
+
+                new Effect.Tween(
+                    null,
+                    document.viewport.getScrollOffsets().top,
+                    $('postnl_wizard').cumulativeOffset()[1] - 50,
+                    {},
+                    function(p){ scrollTo(document.viewport.getScrollOffsets().left, p.round()); }
+                );
+            } else {
+                window.location.hash = hash;
+            }
         <?php endif; ?>
     });
 
