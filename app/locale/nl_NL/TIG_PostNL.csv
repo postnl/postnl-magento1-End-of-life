@@ -71,7 +71,7 @@ TIG_PostNL::Streetname field,Straatnaam
 TIG_PostNL::Housenr. field,Huisnummer
 TIG_PostNL::Split house number parts,Deel huisnummer op
 TIG_PostNL::Housenr. extension field,Huisnummer toevoeging
-TIG_PostNL::Optional address fields.,Optionele adresvelden.
+TIG_PostNL::Optional address fields,Optionele adresvelden
 TIG_PostNL::Area field,Gebied/wijk veld
 TIG_PostNL::Building name field,Gebouwnaam veld
 TIG_PostNL::Department field,Afdeling veld
@@ -657,9 +657,9 @@ TIG_PostNL::Allow weekend sorting,gebruik weekend sortering
 TIG_PostNL::Please ask your PostNL account manager if this service is available for your webshop.,Vraag aan uw PostNL account manager of weekend sortering voor uw webshop beschikbaar is.
 TIG_PostNL::Weekend cut-off time,Weekend cut-off tijd
 "TIG_PostNL::When an order is placed after this time on sunday, another day will be added to the shipping duration.","Indien een bestelling na dit tijdstip besteld wordt op zondag, zal er een dag bij de overkomstduur opgeteld worden."
-TIG_PostNL::Delivery options on the checkout page.,Bezorgopties in eigen checkout.
+TIG_PostNL::Delivery options on the checkout page,Bezorgopties in eigen checkout
 TIG_PostNL::Enable timeframes,Activeer tijdvensters
-TIG_PostNL::Enable timeframes to show the expected delivery times for each delivery day.,Activeer tijdsvensters om per dag het verwachtte bezorgmoment te tonen.
+TIG_PostNL::Enable timeframes to show the expected delivery times for each delivery day.,Activeer tijdsvensters om per dag het verwachte bezorgmoment te tonen.
 TIG_PostNL::Enable evening delivery,Activeer avondbezorging
 ,
 TIG_PostNL::Activate evening delivery for your customers. Evening delivery is not enabled for every area. The extension will automatically show evening delivery as a delivery option for addresses in enabled areas.,Activeer avondbezorging voor uw klanten. Avondbezorging is niet in elk gebied mogelijk. De extensie toont deze optie automatisch voor afleveradressen waar avondlevering mogelijk is.
@@ -857,7 +857,7 @@ TIG_PostNL::Bankaccount IBAN,Bankrekening IBAN
 TIG_PostNL::Bankaccount BIC,Bankrekening BIC
 TIG_PostNL::Automatically create an invoice,Automatisch factureren
 "TIG_PostNL::If enabled, this will allow the PostNL COD payment method to automatically create an invoice once a shipment has been delivered.","Indien deze optie aan staat, zullen bestellingen die geplaatst zijn met de PostNL rembours betaalmethode automatisch gefactureerd worden nadat een bijbehorende zending bezorgd is."
-TIG_PostNL::Bankaccount credentials.,Bankrekeninggegevens.
+TIG_PostNL::Bankaccount credentials,Bankrekeninggegevens
 TIG_PostNL::PostNL Cash on Delivery,PostNL rembours
 TIG_PostNL::Enable or disable the PostNL Cash on Delivery payment method.,Activeer de PostNL rembours betaalmethode.
 TIG_PostNL::Title,Titel
@@ -1181,3 +1181,6 @@ TIG_PostNL::These settings are only available on the 'global' and 'website' scop
 TIG_PostNL::Extension registration is only available on the 'global' scope.,Extensie registratie is enkel beschikbaar op het 'globaal' niveau.
 TIG_PostNL::Frequently asked questions.,Veelgestelde vragen.
 TIG_PostNL::FAQ,FAQ
+TIG_PostNL::Unable to find the answer you need using the links above?,Kunt u met de links hierboven het antwoord niet vinden?
+TIG_PostNL::Use the button below to request help from the TIG servicedesk.,Gebruik de knop hieronder om hulp te vragen aan de TIG servicedesk.
+TIG_PostNL::New support ticket,Nieuw support ticket
