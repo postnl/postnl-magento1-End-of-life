@@ -377,6 +377,12 @@ class TIG_PostNL_Model_Core_Order extends Mage_Core_Model_Abstract
         }
 
         $options = $this->getOptions();
+        if (empty($options) || !is_array($options)) {
+            $this->setOptions(false);
+
+            return $this;
+        }
+
         foreach ($options as $option => $value) {
             if (!$value) {
                 continue;

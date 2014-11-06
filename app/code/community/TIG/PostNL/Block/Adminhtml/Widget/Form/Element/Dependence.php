@@ -35,28 +35,42 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * Form element dependencies mapper
+ * Assumes that one element may depend on other element values.
+ * Will toggle as "enabled" only if all elements it depends from toggle as true.
  */
-class TIG_PostNL_Model_Core_System_Config_Source_LabelSize
+class TIG_PostNL_Block_Adminhtml_Widget_Form_Element_Dependence
+    extends Mage_Adminhtml_Block_Widget_Form_Element_Dependence
 {
     /**
-     * Returns an option array for all supported label sizes
+     * Register field name dependence one from each other by specified values
      *
-     * @return array
+     * @param string $fieldName
+     * @param string $fieldNameFrom
+     * @param string|array $refValues
+     * @return Mage_Adminhtml_Block_Widget_Form_Element_Dependence
      */
-    public function toOptionArray()
+    public function addFieldDependence($fieldName, $fieldNameFrom, $refValues)
     {
-        $helper = Mage::helper('postnl');
-        $labelSizes = array(
-            array(
-                'value' => 'A4',
-                'label' => $helper->__('A4 format')
-            ),
-            array(
-                'value' => 'A6',
-                'label' => $helper->__('A6 format')
-            ),
-        );
+        $this->_depends[$fieldName][$fieldNameFrom] = $refValues;
+        return $this;
+    }
 
-        return $labelSizes;
+    /**
+     * HTML output getter
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        if (!$this->_depends) {
+            return '';
+        }
+        return '<script type="text/javascript">'
+            . 'var formElementDependenceController = new FormElementDependenceController('
+            . $this->_getDependsJson()
+            . ($this->_configOptions ? ', ' . Mage::helper('core')->jsonEncode($this->_configOptions) : '')
+            . '); </script>';
     }
 }

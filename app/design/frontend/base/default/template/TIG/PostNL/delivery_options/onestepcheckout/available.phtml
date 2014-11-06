@@ -47,6 +47,7 @@
     }
     //]]>
 </script>
+<?php $_methodName = ''; ?>
 <?php if (!($_shippingRateGroups = $this->getShippingRates())): ?>
     <strong><?php echo $this->__('Sorry, no quotes are available for this order at this time.') ?></strong>
 <?php else: ?>
@@ -55,7 +56,6 @@
     <?php $_store = $this->getQuote()->getStore(); ?>
     <?php $_carrierHelper = Mage::helper('postnl/carrier'); ?>
     <?php $_deliveryOptionsHelper = Mage::helper('postnl/deliveryOptions'); ?>
-    <?php $_methodName = ''; ?>
 
     <?php if ($_deliveryOptionsHelper->canUseDeliveryOptions($this->getQuote())
         && $_deliveryOptionsHelper->canUseDeliveryOptionsForCountry($this->getQuote())): ?>

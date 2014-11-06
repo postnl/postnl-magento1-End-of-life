@@ -87,7 +87,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivatedFieldHeader
 
         $url = $this->getUrl('postnl_admin/adminhtml_extensionControl/showActivationFields', $urlParams);
         $onclick = "confirmSetLocation('"
-                 . $this->__("Are you sure? The PostNL extension will not function until you\'ve reactivated the extension.")
+                 . $this->__(
+                       "Are you sure? The PostNL extension will not function until you\'ve registered the extension."
+                   )
                  . "', '"
                  . $url
                  . "');";

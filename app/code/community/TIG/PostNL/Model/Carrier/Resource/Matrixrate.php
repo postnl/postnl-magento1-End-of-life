@@ -394,7 +394,7 @@ class TIG_PostNL_Model_Carrier_Resource_Matrixrate extends Mage_Shipping_Model_R
         }
 
         // detect zip code
-        if ($row[2] == '*' || $row[2] == '') {
+        if ($row[2] == '') {
             $zipCode = '*';
         } else {
             $zipCode = $row[2];

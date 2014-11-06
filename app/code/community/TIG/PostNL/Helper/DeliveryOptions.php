@@ -1014,7 +1014,20 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $productIds = $items->getColumnValues('product_id');
 
         if (!$productIds) {
-            return end($durationArray);
+            $duration = new Varien_Object(
+                array(
+                    'duration'   => end($durationArray),
+                    'productIds' => $productIds
+                )
+            );
+
+            Mage::dispatchEvent(
+                'postnl_delivery_options_getshippingduration',
+                array(
+                    'duration' => $duration
+                )
+            );
+            return $duration->getData('duration');
         }
 
         /**
@@ -1040,7 +1053,21 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
          * Sort the array and get it's last item. This will be the highest value.
          */
         natsort($durationArray);
-        $shippingDuration = end($durationArray);
+        $duration = new Varien_Object(
+            array(
+                'duration'   => end($durationArray),
+                'productIds' => $productIds
+            )
+        );
+
+        Mage::dispatchEvent(
+            'postnl_delivery_options_getshippingduration',
+            array(
+                'duration' => $duration
+            )
+        );
+
+        $shippingDuration = $duration->getData('duration');
 
         /**
          * Make sure the value is between 1 and 14 days.
@@ -2492,7 +2519,7 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         /**
          * This shipment cannot be used for buspakje shipments.
          */
-        if ($this->quoteIsBuspakje($quote) && !$this->canShowAllDeliveryOptionsForBuspakje($quote)) {
+        if ($this->quoteIsBuspakje($quote)) {
             Mage::register($registryKey, false);
             return false;
         }
@@ -2551,24 +2578,12 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
      * @param bool $storeId
      *
      * @return boolean
+     *
+     * @deprecated v1.5.0
      */
     public function isTestMode($storeId = false)
     {
-        /**
-         * Check if the result of this method has been cached in the registry.
-         */
-        if (Mage::registry('delivery_options_test_mode') !== null) {
-            return Mage::registry('delivery_options_test_mode');
-        }
-
-        if ($storeId === false) {
-            $storeId = Mage::app()->getStore()->getId();
-        }
-
-        $testMode = Mage::getStoreConfigFlag(self::XPATH_TEST_MODE, $storeId);
-
-        Mage::register('delivery_options_test_mode', $testMode);
-        return $testMode;
+        return parent::isTestMode($storeId);
     }
 
     /**
@@ -2686,6 +2701,15 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
     {
         if (is_null($storeId)) {
             $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $checkoutExtension = Mage::getStoreConfig(
+            TIG_PostNL_Helper_AddressValidation::XPATH_CHECKOUT_EXTENSION,
+            $storeId
+        );
+
+        if (!$checkoutExtension || $checkoutExtension == 'other') {
+            return false;
         }
 
         $isActive = Mage::getStoreConfigFlag(self::XPATH_DELIVERY_OPTIONS_ACTIVE, $storeId);

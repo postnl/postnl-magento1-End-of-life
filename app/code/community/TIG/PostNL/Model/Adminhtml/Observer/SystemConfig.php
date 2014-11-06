@@ -42,15 +42,13 @@ class TIG_PostNL_Model_Adminhtml_Observer_SystemConfig
      * Adds a button to the system > config page for the PostNL section, allowing the admin to download all PostNL debug
      * logs.
      *
-     * @param Varien_Event_Observer $observer
-     *
      * @return $this
      *
      * @event controller_action_layout_render_before_adminhtml_system_config_edit
      *
      * @observer postnl_add_download_log_button
      */
-    public function addDownloadLogButton(Varien_Event_Observer $observer)
+    public function addDownloadLogButton()
     {
         $section = Mage::app()->getRequest()->getParam('section');
         if ($section !== 'postnl') {

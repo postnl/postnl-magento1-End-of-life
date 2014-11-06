@@ -189,41 +189,41 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Xpaths to default product options settings.
      */
-    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/cif_product_options/default_product_option';
-    const XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION   = 'postnl/cif_product_options/default_cod_product_option';
-    const XPATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/cif_product_options/default_evening_product_option';
-    const XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION    = 'postnl/cif_product_options/default_evening_cod_product_option';
-    const XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION     = 'postnl/cif_product_options/default_pakjegemak_product_option';
-    const XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakjegemak_cod_product_option';
-    const XPATH_DEFAULT_PGE_PRODUCT_OPTION            = 'postnl/cif_product_options/default_pge_product_option';
-    const XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION        = 'postnl/cif_product_options/default_pge_cod_product_option';
-    const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/cif_product_options/default_pakketautomaat_product_option';
-    const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/cif_product_options/default_eu_product_option';
-    const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION          = 'postnl/cif_product_options/default_eu_be_product_option';
-    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_product_options/default_global_product_option';
-    const XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION       = 'postnl/cif_product_options/default_buspakje_product_option';
-    const XPATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/cif_product_options/use_alternative_default';
-    const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/cif_product_options/alternative_default_max_amount';
-    const XPATH_ALTERNATIVE_DEFAULT_OPTION            = 'postnl/cif_product_options/alternative_default_option';
-    const XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION    = 'postnl/cif_product_options/default_stated_address_only_product_option';
+    const XPATH_DEFAULT_STANDARD_PRODUCT_OPTION       = 'postnl/grid/default_product_option';
+    const XPATH_DEFAULT_STANDARD_COD_PRODUCT_OPTION   = 'postnl/cod/default_cod_product_option';
+    const XPATH_DEFAULT_EVENING_PRODUCT_OPTION        = 'postnl/grid/default_evening_product_option';
+    const XPATH_DEFAULT_EVENING_COD_PRODUCT_OPTION    = 'postnl/cod/default_evening_cod_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_PRODUCT_OPTION     = 'postnl/grid/default_pakjegemak_product_option';
+    const XPATH_DEFAULT_PAKJEGEMAK_COD_PRODUCT_OPTION = 'postnl/cod/default_pakjegemak_cod_product_option';
+    const XPATH_DEFAULT_PGE_PRODUCT_OPTION            = 'postnl/grid/default_pge_product_option';
+    const XPATH_DEFAULT_PGE_COD_PRODUCT_OPTION        = 'postnl/cod/default_pge_cod_product_option';
+    const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/delivery_options/default_pakketautomaat_product_option';
+    const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/grid/default_eu_product_option';
+    const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION          = 'postnl/grid/default_eu_be_product_option';
+    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/grid/default_global_product_option';
+    const XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION       = 'postnl/grid/default_buspakje_product_option';
+    const XPATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/grid/use_alternative_default';
+    const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/grid/alternative_default_max_amount';
+    const XPATH_ALTERNATIVE_DEFAULT_OPTION            = 'postnl/grid/alternative_default_option';
+    const XPATH_DEFAULT_STATED_ADDRESS_ONLY_OPTION    = 'postnl/grid/default_stated_address_only_product_option';
 
     /**
      * Xpath to weight per parcel config setting.
      */
-    const XPATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
+    const XPATH_WEIGHT_PER_PARCEL = 'postnl/packing_slip/weight_per_parcel';
 
     /**
      * Xpath to setting that determines whether or not to send track and trace emails.
      */
-    const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
+    const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/track_and_trace/send_track_and_trace_email';
 
     /**
      * Xpath to track and trace email settings.
      */
-    const XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
-    const XPATH_EMAIL_COPY                     = 'postnl/cif_labels_and_confirming/send_copy';
-    const XPATH_EMAIL_COPY_TO                  = 'postnl/cif_labels_and_confirming/copy_to';
-    const XPATH_EMAIL_COPY_METHOD              = 'postnl/cif_labels_and_confirming/copy_method';
+    const XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE = 'postnl/track_and_trace/track_and_trace_email_template';
+    const XPATH_EMAIL_COPY                     = 'postnl/track_and_trace/send_copy';
+    const XPATH_EMAIL_COPY_TO                  = 'postnl/track_and_trace/copy_to';
+    const XPATH_EMAIL_COPY_METHOD              = 'postnl/track_and_trace/copy_method';
 
     /**
      * Xpath to maximum allowed parcel count settings.
@@ -3168,15 +3168,38 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
                 );
             }
 
+            $payment          = $order->getPayment();
+            $paymentBlockHtml = '';
+            if ($payment) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $paymentBlock = Mage::helper('payment')
+                                    ->getInfoBlock($payment)
+                                    ->setIsSecureMode(true);
+
+                /** @noinspection PhpUndefinedMethodInspection */
+                $paymentBlock->getMethod()
+                             ->setStore($storeId);
+
+                /**
+                 * @var Mage_Payment_Block_Info $paymentBlock
+                 */
+                $paymentBlockHtml = $paymentBlock->toHtml();
+            }
+
             /** @noinspection PhpUndefinedMethodInspection */
             $templateVariables = array(
-                'postnlshipment' => $this,
-                'barcode'        => $this->getMainBarcode(),
-                'barcode_url'    => $this->getBarcodeUrl(false),
-                'shipment'       => $shipment,
-                'order'          => $order,
-                'customer'       => $order->getCustomer(),
-                'quote'          => $order->getQuote(),
+                'postnlshipment'   => $this,
+                'barcode'          => $this->getMainBarcode(),
+                'barcode_url'      => $this->getBarcodeUrl(false),
+                'shipment'         => $shipment,
+                'order'            => $order,
+                'payment_html'     => $paymentBlockHtml,
+                'customer'         => $order->getCustomer(),
+                'quote'            => $order->getQuote(),
+                'shipment_comment' => '', /** @todo add last shipment comment */
+                'billing'          => $order->getBillingAddress(),
+                'shipping'         => $order->getShippingAddress(),
+                'pakje_gemak'      => $this->getPakjeGemakAddress(),
             );
 
             $templateVariables = new Varien_Object($templateVariables);

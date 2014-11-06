@@ -63,18 +63,18 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     const XPATH_CUSTOMER_CODE               = 'postnl/cif/customer_code';
     const XPATH_CUSTOMER_NUMBER             = 'postnl/cif/customer_number';
     const XPATH_COLLECTION_LOCATION         = 'postnl/cif/collection_location';
-    const XPATH_GLOBAL_BARCODE_TYPE         = 'postnl/cif/global_barcode_type';
-    const XPATH_GLOBAL_BARCODE_RANGE        = 'postnl/cif/global_barcode_range';
+    const XPATH_GLOBAL_BARCODE_TYPE         = 'postnl/cif_globalpack_settings/global_barcode_type';
+    const XPATH_GLOBAL_BARCODE_RANGE        = 'postnl/cif_globalpack_settings/global_barcode_range';
 
     /**
      * Constants containing xpaths to cif address configuration options.
      */
-    const XPATH_AREA_FIELD                  = 'postnl/cif_address/area_field';
-    const XPATH_BUILDING_NAME_FIELD         = 'postnl/cif_address/building_name_field';
-    const XPATH_DEPARTMENT_FIELD            = 'postnl/cif_address/department_field';
-    const XPATH_DOORCODE_FIELD              = 'postnl/cif_address/doorcode_field';
-    const XPATH_FLOOR_FIELD                 = 'postnl/cif_address/floor_field';
-    const XPATH_REMARK_FIELD                = 'postnl/cif_address/remark_field';
+    const XPATH_AREA_FIELD                  = 'postnl/cif_labels_and_confirming/area_field';
+    const XPATH_BUILDING_NAME_FIELD         = 'postnl/cif_labels_and_confirming/building_name_field';
+    const XPATH_DEPARTMENT_FIELD            = 'postnl/cif_labels_and_confirming/department_field';
+    const XPATH_DOORCODE_FIELD              = 'postnl/cif_labels_and_confirming/doorcode_field';
+    const XPATH_FLOOR_FIELD                 = 'postnl/cif_labels_and_confirming/floor_field';
+    const XPATH_REMARK_FIELD                = 'postnl/cif_labels_and_confirming/remark_field';
 
     /**
      * Constants containing xpaths to cif customs configuration options.
@@ -92,27 +92,20 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Xpath to setting that determines whether to use a separate return address.
      */
-    const XPATH_USE_SENDER_ADDRESS_AS_RETURN = 'postnl/cif_return_address/use_sender_address';
+    const XPATH_USE_SENDER_ADDRESS_AS_RETURN = 'postnl/cif_address/use_sender_address';
 
     /**
      * Xpath to sender address data.
      *
      * N.B. missing last part so this will return an array of all fields.
      */
-    const XPATH_SENDER_ADDRESS = 'postnl/cif_sender_address';
-
-    /**
-     * Xpath to return address data.
-     *
-     * N.B. missing last part so this will return an array of all fields.
-     */
-    const XPATH_RETURN_ADDRESS = 'postnl/cif_return_address';
+    const XPATH_SENDER_ADDRESS = 'postnl/cif_address';
 
     /**.
      * Xpaths for shipment reference info.
      */
-    const XPATH_SHIPMENT_REFERENCE_TYPE   = 'postnl/cif_labels_and_confirming/shipment_reference_type';
-    const XPATH_CUSTOM_SHIPMENT_REFERENCE = 'postnl/cif_labels_and_confirming/custom_shipment_reference';
+    const XPATH_SHIPMENT_REFERENCE_TYPE   = 'postnl/packing_slip/shipment_reference_type';
+    const XPATH_CUSTOM_SHIPMENT_REFERENCE = 'postnl/packing_slip/custom_shipment_reference';
 
     /**
      * Possible barcodes series per barcode type.
@@ -126,7 +119,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Xpath to weight per parcel config setting.
      */
-    const XPATH_WEIGHT_PER_PARCEL = 'postnl/cif_labels_and_confirming/weight_per_parcel';
+    const XPATH_WEIGHT_PER_PARCEL = 'postnl/packing_slip/weight_per_parcel';
 
     /**
      * XPaths for COD specific settings.
@@ -178,7 +171,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         'GraphicFile|PDF',
         'GraphicFile|PS',
 
-        //Intermec FingerPrint
+        //Intermec FinnerPrint
         'IntermecEasyCoder PF4i',
 
         //Intermec IDP
@@ -938,7 +931,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      */
     protected function _getShipmentAddresses(TIG_PostnL_Model_Core_Shipment $postnlShipment, $shippingAddress)
     {
-        $useSenderAddressAsReturn = Mage::getStoreConfig(
+        $useSenderAddressAsReturn = Mage::getStoreConfigFlag(
             self::XPATH_USE_SENDER_ADDRESS_AS_RETURN,
             $this->getStoreId()
         );
@@ -966,7 +959,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
      *
      * @param TIG_PostnL_Model_Core_Shipment $postnlShipment
      *
-     * @return array|bool
+     * @return array|false
      */
     protected function _getProductOptions(TIG_PostnL_Model_Core_Shipment $postnlShipment)
     {
@@ -1014,7 +1007,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
         switch ($addressType) {
             case 'Sender':
                 /**
-                 * Get all cif_sender_address fields as an array and convert that to a Varien_Object
+                 * Get all cif_address fields as an array and convert that to a Varien_Object
                  * This allows the _prepareAddress method to access this data in the same way as a
                  * conventional Mage_Sales_Model_Order_Address object.
                  */
@@ -1042,20 +1035,29 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 }
 
                 /**
-                 * Get all cif_return_address fields as an array and convert that to a Varien_Object. This allows the
-                 * _prepareAddress method to access this data in the same way as a conventional
-                 * Mage_Sales_Model_Order_Address object.
+                 * Get all cif_address fields with the 'return_' prefix as an array and convert that to a
+                 * Varien_Object. This allows the _prepareAddress method to access this data in the same way as a
+                 * conventional Mage_Sales_Model_Order_Address object.
                  */
-                $returnAddress = Mage::getStoreConfig(self::XPATH_RETURN_ADDRESS, $this->getStoreId());
+                $returnAddress = Mage::getStoreConfig(self::XPATH_SENDER_ADDRESS, $this->getStoreId());
 
                 $streetData = array(
-                    'streetname'           => $returnAddress['streetname'],
-                    'housenumber'          => $returnAddress['housenumber'],
-                    'housenumberExtension' => $returnAddress['housenumber_extension'],
+                    'streetname'           => $returnAddress['return_streetname'],
+                    'housenumber'          => $returnAddress['return_housenumber'],
+                    'housenumberExtension' => $returnAddress['return_housenumber_extension'],
                     'fullStreet'           => '',
                 );
 
-                $address = new Varien_Object($returnAddress);
+                $returnAddressData = array();
+                foreach($returnAddress as $field => $value) {
+                    if (strpos($field, 'return_') === false) {
+                        continue;
+                    }
+
+                    $returnAddressData[substr($field, 7)] = $value;
+                }
+
+                $address = new Varien_Object($returnAddressData);
                 break;
             case 'PakjeGemak': //no break
             case 'Receiver': //no break

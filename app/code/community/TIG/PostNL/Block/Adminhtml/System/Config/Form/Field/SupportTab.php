@@ -45,12 +45,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     protected $_eventPrefix = 'postnl_adminhtml_system_config_form_field_supporttab';
 
     /**
-     * Css files loaded for PostNL's system > config section
-     */
-    const SYSTEM_CONFIG_EDIT_CSS_FILE = 'css/TIG/PostNL/system_config_edit_postnl.css';
-    const MAGENTO_16_CSS_FILE         = 'css/TIG/PostNL/system_config_edit_postnl_magento16.css';
-
-    /**
      * Xpaths to URLs used in the support tab.
      */
     const POSTNL_REGISTER_URL_XPATH     = 'postnl/general/postnl_register_url';
@@ -58,6 +52,7 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     const NEW_TICKET_URL_XPATH          = 'postnl/general/new_ticket_url';
     const INSTALLATION_MANUAL_URL_XPATH = 'postnl/general/installation_manual_url';
     const USER_GUIDE_URL_XPATH          = 'postnl/general/user_guide_url';
+    const KB_URL_XPATH                  = 'postnl/general/kb_url';
 
     /**
      * Template file used
@@ -65,50 +60,6 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
      * @var string
      */
     protected $_template = 'TIG/PostNL/system/config/form/field/support_tab.phtml';
-
-    /**
-     * Add a new css file to the head. We couldn't do this from layout.xml, because it would have loaded for all
-     * System > Config pages, rather than just PostNL's section.
-     *
-     * @return Mage_Adminhtml_Block_Abstract::_prepareLayout()
-     *
-     * @see Mage_Adminhtml_Block_Abstract::_prepareLayout()
-     */
-    protected function _prepareLayout()
-    {
-        /**
-         * @var Mage_Adminhtml_Block_Page_Head $head
-         */
-        $head = $this->getLayout()
-                     ->getBlock('head');
-
-        $head->addCss(self::SYSTEM_CONFIG_EDIT_CSS_FILE);
-
-        /**
-         * For Magento 1.6 and 1.11 we need to add another css file.
-         */
-        $helper = Mage::helper('postnl');
-        $isEnterprise = $helper->isEnterprise();
-
-        /**
-         * Get the minimum version requirement for the current Magento edition.
-         */
-        if($isEnterprise) {
-            $minimumVersion = '1.12.0.0';
-        } else {
-            $minimumVersion = '1.7.0.0';
-        }
-
-        /**
-         * Check if the current version is below the minimum version requirement.
-         */
-        $isBelowMinimumVersion = version_compare(Mage::getVersion(), $minimumVersion, '<');
-        if ($isBelowMinimumVersion) {
-            $head->addCss(self::MAGENTO_16_CSS_FILE);
-        }
-
-        return parent::_prepareLayout();
-    }
 
     /**
      * @return string
@@ -176,6 +127,16 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_SupportTab
     public function getChangelogUrl()
     {
         $url = Mage::helper('postnl')->getChangelogUrl();
+
+        return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKbUrl()
+    {
+        $url = Mage::getStoreConfig(self::KB_URL_XPATH, Mage_Core_Model_App::ADMIN_STORE_ID);
 
         return $url;
     }

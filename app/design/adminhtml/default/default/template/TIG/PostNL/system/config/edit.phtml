@@ -47,10 +47,13 @@
          </tr>
     </table>
 </div>
-<form action="<?php echo $this->getSaveUrl() ?>" method="post" id="config_edit_form" enctype="multipart/form-data">
-    <?php echo $this->getBlockHtml('formkey')?>
-    <?php echo $this->getChildHtml('form') ?>
-</form>
+<div id="postnl_config_loader" class="postnl-loader"><?php echo $this->__('Loading...'); ?></div>
+<div id="postnl_config_form" style="display:none;">
+    <form action="<?php echo $this->getSaveUrl() ?>" method="post" id="config_edit_form" enctype="multipart/form-data">
+        <?php echo $this->getBlockHtml('formkey')?>
+        <?php echo $this->getChildHtml('form') ?>
+    </form>
+</div>
 <script type="text/javascript">
 //<![CDATA[
     var configForm = new varienForm('config_edit_form');
