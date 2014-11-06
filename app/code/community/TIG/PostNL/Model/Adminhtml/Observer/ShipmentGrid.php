@@ -70,12 +70,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * XML path to 'shipping grid columns' setting
      */
-    const XPATH_SHIPPING_GRID_COLUMNS = 'postnl/cif_labels_and_confirming/shipping_grid_columns';
+    const XPATH_SHIPPING_GRID_COLUMNS = 'postnl/grid/shipping_grid_columns';
 
     /**
      * XML path to default selected mass action setting
      */
-    const XPATH_SHIPPING_GRID_MASSACTION_DEFAULT = 'postnl/cif_labels_and_confirming/shipping_grid_massaction_default';
+    const XPATH_SHIPPING_GRID_MASSACTION_DEFAULT = 'postnl/grid/shipping_grid_massaction_default';
 
     /**
      * Xpath to label size setting.
@@ -85,12 +85,12 @@ class TIG_PostNL_Model_Adminhtml_Observer_ShipmentGrid extends Varien_Object
     /**
      * XML path to show_buspakje_options setting.
      */
-    const XPATH_SHOW_BUSPAKJE_OPTION = 'postnl/cif_labels_and_confirming/show_buspakje_option';
+    const XPATH_SHOW_BUSPAKJE_OPTION = 'postnl/grid/show_buspakje_option';
 
     /**
      * XML path to buspakje_calculation_mode setting.
      */
-    const XPATH_BUSPAKJE_CALCULATION_MODE = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
+    const XPATH_BUSPAKJE_CALCULATION_MODE = 'postnl/delivery_options/buspakje_calculation_mode';
 
     /**
      * Gets an array of optional columns to display

@@ -36,27 +36,24 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_LabelSize
+class TIG_PostNL_Controller_Adminhtml_Config extends Mage_Adminhtml_Controller_Action
 {
     /**
-     * Returns an option array for all supported label sizes
+     * Saves the current wizard step.
      *
-     * @return array
+     * @param string $step
+     *
+     * @return $this
      */
-    public function toOptionArray()
+    protected function _saveCurrentWizardStep($step)
     {
-        $helper = Mage::helper('postnl');
-        $labelSizes = array(
-            array(
-                'value' => 'A4',
-                'label' => $helper->__('A4 format')
-            ),
-            array(
-                'value' => 'A6',
-                'label' => $helper->__('A6 format')
-            ),
-        );
+        $adminUser = Mage::getSingleton('admin/session')->getUser();
+        $extra = $adminUser->getExtra();
 
-        return $labelSizes;
+        $extra['postnl']['current_wizard_step'] = $step;
+
+        $adminUser->saveExtra($extra);
+
+        return $this;
     }
 }

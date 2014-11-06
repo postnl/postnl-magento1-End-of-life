@@ -36,27 +36,20 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_LabelSize
+class TIG_PostNL_Model_System_Config_Backend_Checkbox extends Mage_Core_Model_Config_Data
 {
     /**
-     * Returns an option array for all supported label sizes
+     * Modify the value before saving so it uses the value from the hidden element.
      *
-     * @return array
+     * @return Mage_Core_Model_Abstract
      */
-    public function toOptionArray()
+    protected function _beforeSave()
     {
-        $helper = Mage::helper('postnl');
-        $labelSizes = array(
-            array(
-                'value' => 'A4',
-                'label' => $helper->__('A4 format')
-            ),
-            array(
-                'value' => 'A6',
-                'label' => $helper->__('A6 format')
-            ),
-        );
+        $value = $this->getValue();
+        if (isset($value['hidden'])) {
+            $this->setValue($value['hidden']);
+        }
 
-        return $labelSizes;
+        return parent::_beforeSave();
     }
 }

@@ -325,6 +325,39 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
     }
 
     /**
+     * Check if a fee is set for this option.
+     *
+     * @param string $option
+     *
+     * @return bool
+     */
+    public function hasOptionFee($option)
+    {
+        $fee = $this->getOptionFee($option);
+
+        if ($fee > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the configured fee for a specified option.
+     *
+     * @param string $option
+     * @param bool  $formatted
+     * @param bool  $includingTax
+     * @param bool  $convert
+     *
+     * @return float|int
+     */
+    public function getOptionFee($option, $formatted = false, $includingTax = true, $convert = true)
+    {
+        return Mage::helper('postnl/deliveryOptions')->getOptionFee($option, $formatted, $includingTax, $convert);
+    }
+
+    /**
      * Get either the evening or express fee as a float or int.
      *
      * @param string  $type
@@ -684,12 +717,12 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
      */
     public function getIsBuspakje()
     {
-        /**
-         * Check if the buspakje calculation mode is set to automatic.
-         */
         $helper = Mage::helper('postnl');
-        $calculationMode = $helper->getBuspakjeCalculationMode();
-        if ($calculationMode != 'automatic') {
+
+        /**
+         * Check if buspakje can be used.
+         */
+        if (!$helper->canUseBuspakje()) {
             return false;
         }
 
@@ -697,7 +730,7 @@ class TIG_PostNL_Block_DeliveryOptions_Checkout_DeliveryOptions extends TIG_Post
          * Check if the current quote fits as a letter box parcel.
          */
         $quote = Mage::getSingleton('checkout/session')->getQuote();
-        if (!$helper->fitsAsBuspakje($quote->getAllItems())) {
+        if (!$helper->quoteIsBuspakje($quote)) {
             return false;
         }
 

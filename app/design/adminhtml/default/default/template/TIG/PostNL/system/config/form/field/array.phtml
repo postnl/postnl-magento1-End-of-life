@@ -99,8 +99,6 @@ var arrayRow<?php echo $_htmlId ?> = {
             };
         }
 
-        console.log(templateData);
-
         // insert before last row
         if ('' == insertAfterId) {
             Element.insert($('addRow<?php echo $_htmlId ?>'), {before: this.template.evaluate(templateData)});

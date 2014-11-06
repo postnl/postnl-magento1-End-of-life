@@ -39,30 +39,31 @@
 class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
 {
     /**
-     * XML path to use_postcode_check setting.
+     * XML paths used to check if postcode check is activated.
      */
-    const XPATH_USE_POSTCODE_CHECK = 'postnl/cif_address/use_postcode_check';
+    const XPATH_CHECKOUT_EXTENSION = 'postnl/cif_labels_and_confirming/checkout_extension';
+    const XPATH_USE_POSTCODE_CHECK = 'postnl/cif_labels_and_confirming/use_postcode_check';
 
     /**
      * Constants containing XML paths to cif address configuration options.
      */
-    const XPATH_SPLIT_STREET                = 'postnl/cif_address/split_street';
-    const XPATH_STREETNAME_FIELD            = 'postnl/cif_address/streetname_field';
-    const XPATH_HOUSENUMBER_FIELD           = 'postnl/cif_address/housenr_field';
-    const XPATH_SPLIT_HOUSENUMBER           = 'postnl/cif_address/split_housenr';
-    const XPATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
+    const XPATH_SPLIT_STREET                = 'postnl/cif_labels_and_confirming/split_street';
+    const XPATH_STREETNAME_FIELD            = 'postnl/cif_labels_and_confirming/streetname_field';
+    const XPATH_HOUSENUMBER_FIELD           = 'postnl/cif_labels_and_confirming/housenr_field';
+    const XPATH_SPLIT_HOUSENUMBER           = 'postnl/cif_labels_and_confirming/split_housenr';
+    const XPATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_labels_and_confirming/housenr_extension_field';
 
     /**
      * XML paths to flags that determine which environment allows the postcode check functionality.
      */
-    const XPATH_POSTCODE_CHECK_IN_CHECKOUT    = 'postnl/cif_address/postcode_check_in_checkout';
-    const XPATH_POSTCODE_CHECK_IN_ADDRESSBOOK = 'postnl/cif_address/postcode_check_in_addressbook';
+    const XPATH_POSTCODE_CHECK_IN_CHECKOUT    = 'postnl/cif_labels_and_confirming/postcode_check_in_checkout';
+    const XPATH_POSTCODE_CHECK_IN_ADDRESSBOOK = 'postnl/cif_labels_and_confirming/postcode_check_in_addressbook';
 
     /**
      * XML paths that control some features of postcode check.
      */
-    const XPATH_POSTCODE_CHECK_MAX_ATTEMPTS = 'postnl/cif_address/postcode_check_max_attempts';
-    const XPATH_POSTCODE_CHECK_TIMEOUT     = 'postnl/cif_address/postcode_check_timeout';
+    const XPATH_POSTCODE_CHECK_MAX_ATTEMPTS = 'postnl/cif_labels_and_confirming/postcode_check_max_attempts';
+    const XPATH_POSTCODE_CHECK_TIMEOUT      = 'postnl/cif_labels_and_confirming/postcode_check_timeout';
 
     /**
      * Xpath to OSC street fields sort order.
@@ -282,6 +283,11 @@ class TIG_PostNL_Helper_AddressValidation extends TIG_PostNL_Helper_Data
     {
         if (is_null($storeId)) {
             $storeId = Mage::app()->getStore()->getId();
+        }
+
+        $checkoutExtension = Mage::getStoreConfig(self::XPATH_CHECKOUT_EXTENSION, $storeId);
+        if (!$checkoutExtension || $checkoutExtension == 'other') {
+            return false;
         }
 
         $usePostcodeCheck = Mage::getStoreConfigFlag(self::XPATH_USE_POSTCODE_CHECK, $storeId);

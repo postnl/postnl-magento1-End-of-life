@@ -36,27 +36,31 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Model_Core_System_Config_Source_LabelSize
+class TIG_PostNL_Model_Core_System_Config_Source_CheckoutExtensions
 {
     /**
-     * Returns an option array for all supported label sizes
+     * Returns an option array for supported checkout extensions.
      *
      * @return array
      */
     public function toOptionArray()
     {
         $helper = Mage::helper('postnl');
-        $labelSizes = array(
+        $options = array(
             array(
-                'value' => 'A4',
-                'label' => $helper->__('A4 format')
+                'value' => 'magento_onepagecheckout',
+                'label' => $helper->__("Magento's One Page Checkout"),
             ),
             array(
-                'value' => 'A6',
-                'label' => $helper->__('A6 format')
+                'value' => 'idev_onestepcheckout',
+                'label' => $helper->__("Idev's OneStepCheckout"),
+            ),
+            array(
+                'value' => 'other',
+                'label' => $helper->__('Other'),
             ),
         );
 
-        return $labelSizes;
+        return $options;
     }
 }
