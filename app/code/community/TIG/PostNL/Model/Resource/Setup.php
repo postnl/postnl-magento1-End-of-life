@@ -1121,7 +1121,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         $cronExpr = "*/5 * * * *";
 
         /**
-         * Store the cron expression in core_config_data
+         * Store the cron expression in core_config_data.
          */
         try {
             Mage::getModel('core/config_data')
