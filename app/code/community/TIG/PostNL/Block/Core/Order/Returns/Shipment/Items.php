@@ -59,4 +59,22 @@ class TIG_PostNL_Block_Core_Order_Returns_Shipment_Items extends Mage_Sales_Bloc
         $this->setPostnlShipmentCollection($postnlShipmentCollection);
         return $postnlShipmentCollection;
     }
+
+    /**
+     * Get the URL for the print return label action.
+     *
+     * @param string $shipmentId
+     *
+     * @return string
+     */
+    public function getPrintLabelUrl($shipmentId)
+    {
+        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+            $url = $this->getUrl('postnl/order/printReturnLabel', array('shipment_id' => $shipmentId));
+        } else {
+            $url = $this->getUrl('postnl/guest/printReturnLabel', array('shipment_id' => $shipmentId));
+        }
+
+        return $url;
+    }
 }

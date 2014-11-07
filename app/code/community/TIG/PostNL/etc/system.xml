@@ -1877,7 +1877,7 @@
                     </fields>
                 </delivery_options>
                 <returns translate="label comment" module="postnl">
-                    <label>Return Settings</label>
+                    <label>Returns</label>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <frontend_class>postnl-wizard</frontend_class>
                     <sort_order>750</sort_order>
