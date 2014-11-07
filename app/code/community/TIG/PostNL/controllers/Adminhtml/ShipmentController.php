@@ -110,13 +110,13 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
             return $this;
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
             return $this;
         } catch (Exception $e) {
             $helper->logException($e);
@@ -124,7 +124,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                 $this->__('An error occurred while processing this action.')
             );
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
             return $this;
         }
 
@@ -211,13 +211,13 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
             return $this;
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
             return $this;
         } catch (Exception $e) {
             $helper->logException($e);
@@ -225,7 +225,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                 $this->__('An error occurred while processing this action.')
             );
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
             return $this;
         }
 
@@ -290,19 +290,19 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
         } catch (Exception $e) {
             $helper->logException($e);
             $helper->addSessionMessage('adminhtml/session', 'POSTNL-0010', 'error',
                 $this->__('An error occurred while processing this action.')
             );
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
         }
 
         return $this;
@@ -365,13 +365,13 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
             return $this;
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
             return $this;
         } catch (Exception $e) {
             $helper->logException($e);
@@ -379,7 +379,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
                 $this->__('An error occurred while processing this action.')
             );
 
-            $this->_redirect('adminhtml/sales_shipment/index');
+            $this->_redirect('adminhtml/sales_shipment/view', array('shipment_id' => $shipmentId));
             return $this;
         }
 

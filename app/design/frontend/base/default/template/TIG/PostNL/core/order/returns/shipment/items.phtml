@@ -44,14 +44,8 @@
 <?php foreach ($_postnlShipmentCollection as $_postnlShipment): ?>
     <?php $_shipment = $_postnlShipment->getShipment(); ?>
     <h2 class="sub-title" id="print_return_label_title"><?php echo $this->__('Shipment #') ?><?php echo $_shipment->getIncrementId(); ?></h2>
-    <?php if ($_postnlShipment->isConfirmed()): ?>
+    <?php if ($_postnlShipment->isConfirmed() && $_postnlShipment->canPrintReturnLabels()): ?>
         <button type="button" title="<?php echo $this->__('Print return label'); ?>" class="button print-return-label-button" onclick="setLocation('<?php echo $this->getUrl('postnl/order/printReturnLabel', array('shipment_id' => $_shipment->getIncrementId())); ?>')">
-            <span>
-                <span><?php echo $this->__('Print return label'); ?></span>
-            </span>
-        </button>
-    <?php else: ?>
-        <button type="button" title="<?php echo $this->__('This shipment has not yet been shipped.'); ?>" class="button disabled print-return-label-button">
             <span>
                 <span><?php echo $this->__('Print return label'); ?></span>
             </span>

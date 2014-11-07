@@ -756,16 +756,16 @@
                 <region/>
                 <country>NL</country> <!-- All sender addresses must be located in the Netherlands -->
                 <use_sender_address>1</use_sender_address> <!-- Use the sender address as the return address -->
-                <return_firstname/>
-                <return_lastname/>
-                <return_company/>
-                <return_streetname/>
-                <return_housenumber/>
-                <return_housenumber_extension/>
-                <return_postcode/>
-                <return_city/>
-                <return_region/>
-                <return_country>NL</return_country> <!-- All return addresses must be located in the Netherlands -->
+                <alternative_sender_firstname/>
+                <alternative_sender_lastname/>
+                <alternative_sender_company/>
+                <alternative_sender_streetname/>
+                <alternative_sender_housenumber/>
+                <alternative_sender_housenumber_extension/>
+                <alternative_sender_postcode/>
+                <alternative_sender_city/>
+                <alternative_sender_region/>
+                <alternative_sender_country>NL</alternative_sender_country> <!-- All alternative sender addresses must be located in the Netherlands -->
             </cif_address>
             <cif_labels_and_confirming>
                 <label_size>A4</label_size> <!-- A4 size labels -->
@@ -837,6 +837,14 @@
                 <print_return_and_shipping_label>0</print_return_and_shipping_label> <!-- Do not print the return label along with the shipping labels -->
                 <customer_print_label>0</customer_print_label> <!-- Do not allow logged in customers to print return labels -->
                 <guest_print_label>0</guest_print_label> <!-- Do not allow guests to print return labels -->
+                <return_label_instructions_block/>
+                <return_company/>
+                <return_department/>
+                <return_freepost_number/>
+                <return_postcode/>
+                <return_city/>
+                <return_region/>
+                <return_country>NL</return_country> <!-- Only returns to the Netherlands are supported at this time -->
             </returns>
         	<cif>
                 <mode>0</mode> <!-- The extension is disabled by default -->
@@ -1042,7 +1050,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>stable</postnl>
+            <postnl>develop</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->
