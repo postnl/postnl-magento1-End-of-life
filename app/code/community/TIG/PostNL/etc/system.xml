@@ -2744,7 +2744,7 @@
                 </cif_globalpack_settings>
                 <checkout translate="label comment" module="postnl">
                     <label>PostNL Checkout Settings</label>
-                    <comment>PostNL Checkout is a method alongside your own order process that allows your customers to choose where, when and how to receive their order. Please note: Use the Delivery Options to configure the PostNL settings in your own checkout. Use the settings below to configure the settings for the PostNL Checkout.</comment>
+                    <comment><![CDATA[PostNL Checkout is a method alongside your own order process that allows your customers to choose where, when and how to receive their order. Please note: Use the Delivery Options to configure the PostNL settings in your own checkout. Use the settings below to configure the settings for the PostNL Checkout.<br/><br/>Does the PostNL Checkout button stay gray? Click <a href="http://kb.tig.nl/topic/39102986" target="_blank">here</a> for possible causes and solutions.]]></comment>
                     <frontend_model>postnl_adminhtml/system_config_form_fieldset</frontend_model>
                     <sort_order>1300</sort_order>
                     <show_in_default>1</show_in_default>
@@ -2759,7 +2759,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </activation_header>
-                        <active translate="label" module="postnl">
+                        <active translate="label comment" module="postnl">
                             <label>Enable PostNL Checkout</label>
                             <frontend_type>checkbox</frontend_type>
                             <backend_model>postnl/system_config_backend_checkbox</backend_model>
