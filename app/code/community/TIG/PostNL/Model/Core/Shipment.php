@@ -1183,14 +1183,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If no default product code was found, try to use another product code that is available.
          */
         if (!$productCode) {
-            Zend_Debug::dump($xpath);exit;
             $availableProductCodes = $this->getAllowedProductCodes();
 
             /**
              * If no other product codes are available for this shipment type, throw an error.
              */
             if (empty($availableProductCodes)) {
-                Zend_Debug::dump($availableProductCodes);exit;
                 throw new TIG_PostNL_Exception(
                     $this->getHelper()->__(
                         "No default product options are available for this shipment. Please check that you have " .

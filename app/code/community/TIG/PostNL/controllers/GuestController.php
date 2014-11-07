@@ -36,10 +36,53 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_OrderController extends TIG_PostNL_Controller_Sales
+class TIG_PostNL_GuestController extends TIG_PostNL_Controller_Sales
 {
     /**
      * @var string
      */
-    protected $_errorRedirect = 'sales/order/history';
+    protected $_errorRedirect = 'sales/guest/view';
+
+    /**
+     * Try to load valid order and register it.
+     *
+     * @param int|null $orderId
+     *
+     * @return boolean
+     */
+    protected function _loadValidOrder($orderId = null)
+    {
+        return Mage::helper('sales/guest')->loadValidOrder();
+    }
+
+    /**
+     * Check PostNL shipment view availability
+     *
+     * @param TIG_PostNL_Model_Core_Shipment $postnlShipment
+     *
+     * @return boolean
+     */
+    protected function _canViewPostnlShipment($postnlShipment)
+    {
+        $availableStates = Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates();
+
+        if (!$this->_loadValidOrder($postnlShipment->getOrderId())) {
+            return false;
+        }
+
+        /**
+         * @var Mage_Sales_Model_Order $order
+         */
+        $order = Mage::registry('current_order');
+
+        if ($postnlShipment->getId()
+            && $postnlShipment->isConfirmed()
+            && $order->getId()
+            && in_array($order->getState(), $availableStates, $strict = true)
+        ) {
+            return true;
+        }
+
+        return false;
+    }
 }
