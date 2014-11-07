@@ -69,6 +69,24 @@ $updatedWebservices = array(
     'cif_version_barcode',
 );
 
+$settingsToMove = array(
+    'postnl/cif_address/return_firstname'             => 'postnl/cif_address/alternative_sender_firstname',
+    'postnl/cif_address/return_lastname'              => 'postnl/cif_address/alternative_sender_lastname',
+    'postnl/cif_address/return_company'               => 'postnl/cif_address/alternative_sender_company',
+    'postnl/cif_address/return_department'            => 'postnl/cif_address/alternative_sender_department',
+    'postnl/cif_address/return_streetname'            => 'postnl/cif_address/alternative_sender_streetname',
+    'postnl/cif_address/return_housenumber'           => 'postnl/cif_address/alternative_sender_housenumber',
+    'postnl/cif_address/return_housenumber_extension' => 'postnl/cif_address/alternative_sender_housenumber_extension',
+    'postnl/cif_address/return_postcode'              => 'postnl/cif_address/alternative_sender_postcode',
+    'postnl/cif_address/return_city'                  => 'postnl/cif_address/alternative_sender_city',
+    'postnl/cif_address/return_region'                => 'postnl/cif_address/alternative_sender_region',
+    'postnl/cif_address/return_country'               => 'postnl/cif_address/alternative_sender_country',
+);
+
+foreach ($settingsToMove as $from => $to) {
+    $installer->moveConfigSettingInDb($from, $to);
+}
+
 $installer->addAclRules($returnLabelsAclResource, $returnLabelsRequiredResources)
           ->resetWebserviceVersions($updatedWebservices)
           ->clearConfigCache();

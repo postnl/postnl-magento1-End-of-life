@@ -144,7 +144,7 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
      * Xpaths to return label settings.
      */
     const XPATH_RETURN_LABELS_ACTIVE = 'postnl/returns/return_labels_active';
-    const XPATH_FREEPOST_NUMBER      = 'postnl/returns/freepost_number';
+    const XPATH_FREEPOST_NUMBER      = 'postnl/returns/return_freepost_number';
     const XPATH_CUSTOMER_PRINT_LABEL = 'postnl/returns/customer_print_label';
     const XPATH_GUEST_PRINT_LABEL    = 'postnl/returns/guest_print_label';
 
@@ -1812,8 +1812,17 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
          * We can only print return labels for confirmed shipments, so we need to make sure that at least one such
          * shipment is available.
          */
-        if ($postnlShipmentsCollection->getSize() > 0) {
-            return true;
+        if ($postnlShipmentsCollection->getSize() < 1) {
+            return false;
+        }
+
+        /**
+         * Loop through all confirmed shipments. If at least one of them is able to print return labels, return true.
+         */
+        foreach ($postnlShipmentsCollection as $postnlShipment) {
+            if ($postnlShipment->canPrintReturnLabels()) {
+                return true;
+            }
         }
 
         return false;

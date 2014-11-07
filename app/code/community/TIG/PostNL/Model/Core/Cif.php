@@ -92,14 +92,15 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     /**
      * Xpath to setting that determines whether to use a separate return address.
      */
-    const XPATH_USE_SENDER_ADDRESS_AS_RETURN = 'postnl/cif_address/use_sender_address';
+    const XPATH_USE_SENDER_ADDRESS_AS_ALTERNATIVE_SENDER = 'postnl/cif_address/use_sender_address';
 
     /**
-     * Xpath to sender address data.
+     * Xpath to sender and return addresses data.
      *
      * N.B. missing last part so this will return an array of all fields.
      */
     const XPATH_SENDER_ADDRESS = 'postnl/cif_address';
+    const XPATH_RETURN_ADDRESS = 'postnl/returns';
 
     /**.
      * Xpaths for shipment reference info.
@@ -148,10 +149,10 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
     protected $_addressTypes = array(
         'Receiver'    => '01',
         'Sender'      => '02',
-        'Alternative' => '03', // alternative sender. Parcels that cannot be delivered will be returned here
+        'Alternative' => '03', // Alternative sender. Parcels that cannot be delivered will be returned here.
         'Collection'  => '04',
         'Return'      => '08',
-        'Delivery'    => '09', // for use with PakjeGemak
+        'Delivery'    => '09', // Post office address. For use with PakjeGemak.
     );
 
     /**
@@ -987,7 +988,7 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                                              $printReturnLabel
     ) {
         $useSenderAddressAsReturn = Mage::getStoreConfigFlag(
-            self::XPATH_USE_SENDER_ADDRESS_AS_RETURN,
+            self::XPATH_USE_SENDER_ADDRESS_AS_ALTERNATIVE_SENDER,
             $this->getStoreId()
         );
         $pakjeGemakAddress = $postnlShipment->getPakjeGemakAddress();
@@ -1082,74 +1083,12 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                 $address = new Varien_Object($senderAddress);
                 break;
             case 'Return':
-                /**
-                 * Check if the return address is the same as the sender address. If so, no address is returned.
-                 */
-                $useSenderAddress = Mage::getStoreConfig(
-                    self::XPATH_USE_SENDER_ADDRESS_AS_RETURN,
-                    $this->getStoreId()
-                );
-
-                $returnAddress = Mage::getStoreConfig(self::XPATH_SENDER_ADDRESS, $this->getStoreId());
-
-                if ($useSenderAddress) {
-                    $streetData = array(
-                        'streetname'           => $returnAddress['streetname'],
-                        'housenumber'          => $returnAddress['housenumber'],
-                        'housenumberExtension' => $returnAddress['housenumber_extension'],
-                        'fullStreet'           => '',
-                    );
-
-                    $address = new Varien_Object($returnAddress);
-                } else {
-                    $streetData = array(
-                        'streetname'           => $returnAddress['return_streetname'],
-                        'housenumber'          => $returnAddress['return_housenumber'],
-                        'housenumberExtension' => $returnAddress['return_housenumber_extension'],
-                        'fullStreet'           => '',
-                    );
-
-                    /**
-                     * Get all cif_address fields with the 'return_' prefix as an array and convert that to a
-                     * Varien_Object. This allows the _prepareAddress method to access this data in the same way as a
-                     * conventional Mage_Sales_Model_Order_Address object.
-                     */
-                    $returnAddressData = array();
-                    foreach($returnAddress as $field => $value) {
-                        if (strpos($field, 'return_') === false) {
-                            continue;
-                        }
-
-                        $returnAddressData[substr($field, 7)] = $value;
-                    }
-
-                    $address = new Varien_Object($returnAddressData);
-                }
-                break;
-            case 'Alternative':
-                /**
-                 * Check if the return address is the same as the sender address. If so, no address is returned.
-                 */
-                $useSenderAddress = Mage::getStoreConfig(
-                    self::XPATH_USE_SENDER_ADDRESS_AS_RETURN,
-                    $this->getStoreId()
-                );
-
-                if ($useSenderAddress) {
-                    return false;
-                }
-
-                /**
-                 * Get all cif_address fields with the 'return_' prefix as an array and convert that to a
-                 * Varien_Object. This allows the _prepareAddress method to access this data in the same way as a
-                 * conventional Mage_Sales_Model_Order_Address object.
-                 */
-                $returnAddress = Mage::getStoreConfig(self::XPATH_SENDER_ADDRESS, $this->getStoreId());
+                $returnAddress = Mage::getStoreConfig(self::XPATH_RETURN_ADDRESS, $this->getStoreId());
 
                 $streetData = array(
-                    'streetname'           => $returnAddress['return_streetname'],
-                    'housenumber'          => $returnAddress['return_housenumber'],
-                    'housenumberExtension' => $returnAddress['return_housenumber_extension'],
+                    'streetname'           => 'Antwoordnummer:',
+                    'housenumber'          => $returnAddress['return_freepost_number'],
+                    'housenumberExtension' => $returnAddress['housenumber_extension'],
                     'fullStreet'           => '',
                 );
 
@@ -1160,6 +1099,44 @@ class TIG_PostNL_Model_Core_Cif extends TIG_PostNL_Model_Core_Cif_Abstract
                     }
 
                     $returnAddressData[substr($field, 7)] = $value;
+                }
+
+                $address = new Varien_Object($returnAddressData);
+                break;
+            case 'Alternative':
+                /**
+                 * Check if the return address is the same as the sender address. If so, no address is returned.
+                 */
+                $useSenderAddress = Mage::getStoreConfig(
+                    self::XPATH_USE_SENDER_ADDRESS_AS_ALTERNATIVE_SENDER,
+                    $this->getStoreId()
+                );
+
+                if ($useSenderAddress) {
+                    return false;
+                }
+
+                /**
+                 * Get all cif_address fields with the 'alternative_sender_' prefix as an array and convert that to a
+                 * Varien_Object. This allows the _prepareAddress method to access this data in the same way as a
+                 * conventional Mage_Sales_Model_Order_Address object.
+                 */
+                $returnAddress = Mage::getStoreConfig(self::XPATH_SENDER_ADDRESS, $this->getStoreId());
+
+                $streetData = array(
+                    'streetname'           => $returnAddress['alternative_sender_streetname'],
+                    'housenumber'          => $returnAddress['alternative_sender_housenumber'],
+                    'housenumberExtension' => $returnAddress['alternative_sender_housenumber_extension'],
+                    'fullStreet'           => '',
+                );
+
+                $returnAddressData = array();
+                foreach($returnAddress as $field => $value) {
+                    if (strpos($field, 'alternative_sender_') === false) {
+                        continue;
+                    }
+
+                    $returnAddressData[substr($field, 19)] = $value;
                 }
 
                 $address = new Varien_Object($returnAddressData);

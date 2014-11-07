@@ -106,7 +106,7 @@ class TIG_PostNL_OrderController extends Mage_Core_Controller_Front_Action
              * Merge the labels and print them.
              */
             $labelModel = Mage::getModel('postnl_core/label');
-            $output = $labelModel->createPdf($labels);
+            $output = $labelModel->setLabelSize('A6')->createPdf($labels);
 
             $filename = 'PostNL Return Labels-' . date('YmdHis') . '.pdf';
 
@@ -268,7 +268,7 @@ class TIG_PostNL_OrderController extends Mage_Core_Controller_Front_Action
      */
     protected function _getReturnLabels($postnlShipment)
     {
-        if (!$postnlShipment->hasReturnBarcode() && !$postnlShipment->canGenerateReturnBarcode()) {
+        if (!$postnlShipment->canPrintReturnLabels()) {
             return false;
         }
 

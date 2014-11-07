@@ -2721,6 +2721,28 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         return false;
     }
 
+    /**
+     * Check if a return label may be printed for this shipment.
+     *
+     * @return boolean
+     */
+    public function canPrintReturnLabels()
+    {
+        if ($this->hasReturnLabels()) {
+            return true;
+        }
+
+        if ($this->hasReturnBarcode()) {
+            return true;
+        }
+
+        if ($this->canGenerateReturnBarcode()) {
+            return true;
+        }
+
+        return false;
+    }
+
     /*******************************************************************************************************************
      * SHIPMENT LOCKING AND UNLOCKING FUNCTIONS
      ******************************************************************************************************************/
