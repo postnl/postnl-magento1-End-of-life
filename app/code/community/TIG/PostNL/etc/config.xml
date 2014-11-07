@@ -852,10 +852,7 @@
         	    <wsdl_base_url>https://service.postnl.com/CIF/</wsdl_base_url> <!-- Base URL of CIF WSDL files -->
         	    <test_wsdl_base_url>https://testservice.postnl.com/CIF_SB/</test_wsdl_base_url> <!-- Base URL of CIF sandbox WSDL files -->
                 <track_and_trace_nl_base_url>https://mijnpakket.postnl.nl/Inbox/Search?</track_and_trace_nl_base_url> <!-- Base URL for the Dutch track & trace page -->
-                <track_and_trace_gb_base_url>http://parcels-uk.tntpost.com/mytrackandtrace/trackandtrace.aspx?</track_and_trace_gb_base_url> <!-- Base URL for the UK track & trace page -->
-                <track_and_trace_de_base_url>http://parcels-de.tntpost.com/de/mytrackandtrace/TrackAndTrace.aspx?</track_and_trace_de_base_url> <!-- Base URL for the German track & trace page -->
-                <track_and_trace_fr_base_url>http://parcels-fr.tntpost.com/fr/mytrackandtrace/TrackAndTrace.aspx?</track_and_trace_fr_base_url> <!-- Base URL for the French track & trace page -->
-                <track_and_trace_int_base_url>http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?</track_and_trace_int_base_url> <!-- Base URL for the international track & trace page -->
+                <track_and_trace_int_base_url>https://www.internationalparceltracking.com/Main.aspx#/track</track_and_trace_int_base_url> <!-- Base URL for the international track & trace page -->
             </cif>
             <packing_slip>
                 <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
