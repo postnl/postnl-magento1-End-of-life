@@ -151,11 +151,19 @@ class TIG_PostNL_Model_Core_Observer_Returns
         /**
          * Add the link.
          */
-        $block->addLink(
-            'postnl_returns',
-            'postnl/order/returns',
-            $helper->__('Returns')
-        );
+        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+            $block->addLink(
+                'postnl_returns',
+                'postnl/order/returns',
+                $helper->__('Returns')
+            );
+        } else {
+            $block->addLink(
+                'postnl_returns',
+                'postnl/guest/returns',
+                $helper->__('Returns')
+            );
+        }
 
         $this->setProcessed(true);
         return $this;
