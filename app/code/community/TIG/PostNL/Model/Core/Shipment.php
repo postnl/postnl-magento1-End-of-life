@@ -200,7 +200,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     const XPATH_DEFAULT_PAKKETAUTOMAAT_PRODUCT_OPTION = 'postnl/delivery_options/default_pakketautomaat_product_option';
     const XPATH_DEFAULT_EU_PRODUCT_OPTION             = 'postnl/grid/default_eu_product_option';
     const XPATH_DEFAULT_EU_BE_PRODUCT_OPTION          = 'postnl/grid/default_eu_be_product_option';
-    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/grid/default_global_product_option';
+    const XPATH_DEFAULT_GLOBAL_PRODUCT_OPTION         = 'postnl/cif_globalpack_settings/default_global_product_option';
     const XPATH_DEFAULT_BUSPAKJE_PRODUCT_OPTION       = 'postnl/grid/default_buspakje_product_option';
     const XPATH_USE_ALTERNATIVE_DEFAULT               = 'postnl/grid/use_alternative_default';
     const XPATH_ALTERNATIVE_DEFAULT_MAX_AMOUNT        = 'postnl/grid/alternative_default_max_amount';
@@ -943,13 +943,10 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $helper = $this->getHelper('carrier');
 
-        $locale = Mage::getStoreConfig('general/locale/code', $this->getStoreId());
-        $lang = substr($locale, 0, 2);
-
         $url = '';
         $shippingAddress = $this->getShippingAddress();
         if ($shippingAddress) {
-            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, $lang, $forceNl);
+            $url = $helper->getBarcodeUrl($barcode, $shippingAddress, false, $forceNl);
         }
 
         $this->setBarcodeUrl($url);
@@ -1107,12 +1104,14 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If no default product code was found, try to use another product code that is available.
          */
         if (!$productCode) {
+            Zend_Debug::dump($xpath);exit;
             $availableProductCodes = $this->getAllowedProductCodes();
 
             /**
              * If no other product codes are available for this shipment type, throw an error.
              */
             if (empty($availableProductCodes)) {
+                Zend_Debug::dump($availableProductCodes);exit;
                 throw new TIG_PostNL_Exception(
                     $this->getHelper()->__(
                         "No default product options are available for this shipment. Please check that you have " .
