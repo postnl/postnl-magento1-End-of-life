@@ -156,13 +156,13 @@ TIG_PostNL::Service URL,Service URL
 TIG_PostNL::URL of a page where customers can find information regarding the webshop's customer service department. Leave empty to disable this feature.,Pagina van een website waar klanten informatie over de serviceafdeling van uw webshop kunnen vinden. Laat leeg om niet te gebruiken.
 TIG_PostNL::PostNL Checkout Payment Settings,PostNL Checkout Betalingsinstellingen
 TIG_PostNL::PostNL Checkout is disabled. please enable PostNL Checkout in order to configure these settings.,PostNL Checkout is niet geactiveerd. Activeer PostNL Checkout om deze instellingen te configureren.
-TIG_PostNL::Use iDEAL,Gebruik iDeal
-TIG_PostNL::iDEAL payment method,iDeal betaalmethode
-TIG_PostNL::iDeal Bank Field,iDeal bank
+TIG_PostNL::Use iDEAL,Gebruik iDEAL
+TIG_PostNL::iDEAL payment method,iDEAL betaalmethode
+TIG_PostNL::iDeal Bank Field,iDEAL bank
 TIG_PostNL::Enter the field name used by the selected payment method for the 'bank' field.,Vul de veldnaam in die de gekozen betaalmethode gebruikt om de bankkeuze te verwerken.
 TIG_PostNL::Use creditcard,Gebruik credit card
-TIG_PostNL::Creditcard payment method,Creditcard betaalmethode
-TIG_PostNL::Creditcard card type field,Creditcard type
+TIG_PostNL::Creditcard payment method,Credit card betaalmethode
+TIG_PostNL::Creditcard card type field,Credit card type
 TIG_PostNL::Enter the field name used by the selected payment method for the 'creditcard type' field.,Vul de veldnaam in die de gekozen betaalmethode gebruikt om dekaartkeuze te verwerken.
 TIG_PostNL::Use CheckPay,Gebruik CheckPay
 TIG_PostNL::CheckPay payment method,CheckPay betaalmethode
@@ -1196,3 +1196,6 @@ TIG_PostNL::Return address,Retouradres
 TIG_PostNL::PostNL account credentials,PostNL accountgegevens
 "TIG_PostNL::You can read more about the way the extension calculates whether or not an order is a letter box parcel <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">hier</a> meer lezen over de wijze waarop de extensie bepaalt of een bestelling een brievenbuspakje is."
 "TIG_PostNL::You can read more on how to configure split address lines <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">here</a>.","U kunt <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">hier</a> meer lezen over het instellen van gesplitste adresregels in Magento."
+TIG_PostNL::Direct Debit,Automatische Incasso
+TIG_PostNL::Credit Card,Credit Card
+TIG_PostNL::Giftcard,Cadeaubon
