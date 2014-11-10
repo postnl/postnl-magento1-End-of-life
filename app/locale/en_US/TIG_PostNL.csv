@@ -1193,3 +1193,6 @@ TIG_PostNL::Return address,Return address
 TIG_PostNL::PostNL account credentials,PostNL account credentials
 "TIG_PostNL::You can read more about the way the extension calculates whether or not an order is a letter box parcel <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">here</a>.","You can read more about the way the extension calculates whether or not an order is a letter box parcel <a href=""http://kb.tig.nl/topic/94905773"" target=""_blank"">here</a>."
 "TIG_PostNL::You can read more on how to configure split address lines <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">here</a>.","You can read more on how to configure split address lines <a href=""http://kb.tig.nl/topic/55961916"" target=""_blank"">here</a>."
+TIG_PostNL::Direct Debit,Direct Debit
+TIG_PostNL::Creditcard,Creditcard
+TIG_PostNL::Giftcard,Giftcard

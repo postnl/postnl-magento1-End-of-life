@@ -3094,7 +3094,7 @@
                         </ideal_option_field>
                         <!-- Creditcard -->
                         <creditcard_header translate="label" module="postnl">
-                            <label>Creditcard</label>
+                            <label>Credit Card</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
