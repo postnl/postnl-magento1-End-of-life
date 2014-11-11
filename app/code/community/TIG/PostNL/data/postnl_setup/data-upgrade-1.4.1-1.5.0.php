@@ -57,6 +57,20 @@ $returnLabelsRequiredResources = array(
 );
 
 /**
+ * A new ACl role has been added for changing the parcel count of a shipment.
+ */
+$changeParcelCountAclResource = array(
+    'admin/postnl/shipment/actions/convert/change_parcel_count',
+);
+
+$changeParcelCountRequiredResources = array(
+    'admin/postnl',
+    'admin/postnl/shipment',
+    'admin/postnl/shipment/actions',
+    'admin/postnl/shipment/actions/convert',
+);
+
+/**
  * These CIF webservices have been updated.
  */
 $updatedWebservices = array(
@@ -88,5 +102,6 @@ foreach ($settingsToMove as $from => $to) {
 }
 
 $installer->addAclRules($returnLabelsAclResource, $returnLabelsRequiredResources)
+          ->addAclRules($changeParcelCountAclResource, $changeParcelCountRequiredResources)
           ->resetWebserviceVersions($updatedWebservices)
           ->clearConfigCache();

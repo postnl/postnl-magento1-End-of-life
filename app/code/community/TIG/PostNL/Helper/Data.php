@@ -1103,8 +1103,9 @@ class TIG_PostNL_Helper_Data extends Mage_Core_Helper_Abstract
             case 'convert_to_package':
                 $aclPath = 'postnl/shipment/actions/convert/to_package';
                 break;
-            case 'change_product_code':
-                $aclPath = 'postnl/shipment/actions/convert/change_product_code';
+            case 'change_product_code': //no break
+            case 'change_parcel_count':
+                $aclPath = 'postnl/shipment/actions/convert/' . $action;
                 break;
             case 'confirm':                  //no break
             case 'print_label':              //no break
