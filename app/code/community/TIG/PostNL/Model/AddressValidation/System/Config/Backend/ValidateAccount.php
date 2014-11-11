@@ -199,7 +199,7 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
         $cifTestMode = false;
         $cifMode = $this->_getConfigValue(self::XPATH_MODE);
 
-        if ($cifMode === '1') {
+        if ($cifMode !== '2') {
             $cifTestMode = true;
         }
 
