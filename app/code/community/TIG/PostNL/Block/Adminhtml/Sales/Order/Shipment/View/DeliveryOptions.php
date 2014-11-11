@@ -67,19 +67,34 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
      */
     protected function _prepareLayout()
     {
-        $onclick = "changeProductCode('{$this->getChangeProductCodeUrl()}')";
+        $productCodeOnclick = "changeProductCode('{$this->getChangeProductCodeUrl()}')";
+        $parcelCountOnclick = "changeParcelCount('{$this->getChangeParcelCountUrl()}')";
 
-        $block = $this->getLayout()
-                      ->createBlock('adminhtml/widget_button')
-                      ->setData(
-                          array(
-                              'label'   => $this->__('Change'),
-                              'class'   => 'btn-reset',
-                              'onclick' => $onclick
-                          )
-                      );
+        /**
+         * @var Mage_Adminhtml_Block_Widget_Button $changeProductCodeButton
+         * @var Mage_Adminhtml_Block_Widget_Button $changeParcelCountButton
+         */
+        $changeProductCodeButton = $this->getLayout()
+                                        ->createBlock('adminhtml/widget_button')
+                                        ->setData(
+                                            array(
+                                                'label'   => $this->__('Change'),
+                                                'class'   => 'btn-reset',
+                                                'onclick' => $productCodeOnclick
+                                            )
+                                        );
+        $changeParcelCountButton = $this->getLayout()
+                                        ->createBlock('adminhtml/widget_button')
+                                        ->setData(
+                                            array(
+                                                'label'   => $this->__('Change'),
+                                                'class'   => 'btn-reset',
+                                                'onclick' => $parcelCountOnclick
+                                            )
+                                        );
 
-        $this->setChild('change_product_code_button', $block);
+        $this->setChild('change_product_code_button', $changeProductCodeButton);
+        $this->setChild('change_parcel_count_button', $changeParcelCountButton);
 
         return parent::_prepareLayout();
     }
@@ -308,5 +323,51 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
         }
 
         return $formattedOptions;
+    }
+
+    /**
+     * Get whether the PostNL shipment's parcel count may be changed.
+     *
+     * @return boolean
+     */
+    public function canChangeParcelCount()
+    {
+        $postnlShipment = $this->getPostnlShipment();
+
+        /**
+         * Check if the current user is allowed to perform this action.
+         */
+        if (!Mage::helper('postnl')->checkIsPostnlActionAllowed(array('change_parcel_count'))) {
+            return false;
+        }
+
+        return $postnlShipment->canChangeParcelCount();
+    }
+
+    /**
+     * Get the changeParcelCountUrl for this shipment.
+     *
+     * @return string
+     */
+    public function getChangeParcelCountUrl()
+    {
+        $url = $this->getUrl(
+            'postnl_admin/adminhtml_shipment/changeParcelCount',
+            array(
+                'shipment_id' => $this->getShipment()->getId()
+            )
+        );
+
+        return $url;
+    }
+
+    /**
+     * Retrieve the change_parcel_count_button html.
+     *
+     * @return string
+     */
+    public function getChangeParcelCountButtonHtml()
+    {
+        return $this->getChildHtml('change_parcel_count_button');
     }
 }

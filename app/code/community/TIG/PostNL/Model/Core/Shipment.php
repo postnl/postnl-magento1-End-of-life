@@ -2685,14 +2685,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             return false;
         }
 
-        $shippingPhase = $this->getShippingPhase();
-        if ($shippingPhase == self::SHIPPING_PHASE_DELIVERED
-            || $shippingPhase == self::SHIPPING_PHASE_DISTRIBUTION
-            || $shippingPhase == self::SHIPPING_PHASE_SORTING
-        ) {
-            return false;
-        }
-
         if (!$checkAvailableProductOptions) {
             return true;
         }
@@ -2739,6 +2731,28 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         }
 
         return false;
+    }
+
+    /**
+     * Check if the current shipment's parcel count may be altered.
+     *
+     * @return boolean
+     */
+    public function canChangeParcelCount()
+    {
+        if ($this->isConfirmed()) {
+            return false;
+        }
+
+        if (!$this->isDutchShipment()) {
+            return false;
+        }
+
+        if ($this->isCod()) {
+            return false;
+        }
+
+        return true;
     }
 
     /*******************************************************************************************************************
@@ -4337,6 +4351,36 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $this->_checkProductCodeAllowed($productCode);
 
         $this->setProductCode($productCode);
+
+        return $this;
+    }
+
+    /**
+     * Changes the current shipment's product code.
+     *
+     * @param int $parcelCount
+     *
+     * @return $this
+     *
+     * @throws TIG_PostNL_Exception
+     */
+    public function changeParcelCount($parcelCount)
+    {
+        if (!$this->canChangeParcelCount()) {
+            throw new TIG_PostNL_Exception(
+                $this->getHelper()->__('The changeParcelCount action is currently unavailable.'),
+                'POSTNL-0203'
+            );
+        }
+
+        $parcelCount = (int) $parcelCount;
+
+        if ($parcelCount < 1) {
+            $parcelCount = 1;
+        }
+
+        $this->deleteBarcodes()
+             ->setParcelCount($parcelCount);
 
         return $this;
     }
