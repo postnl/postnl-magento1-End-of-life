@@ -1957,7 +1957,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function hasCustomBarcode()
     {
-        $productCode = $this->getProductCode();
+        $productCode = (string) $this->getProductCode();
 
         $customBarcodes         = $this->getCustomBarcodes();
         $disallowedProductCodes = array_keys($customBarcodes);
