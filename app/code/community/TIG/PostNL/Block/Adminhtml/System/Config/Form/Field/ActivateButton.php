@@ -60,9 +60,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form_Field_ActivateButton
 
         $isActivated = Mage::getStoreConfig(self::XPATH_IS_ACTIVATED, Mage_Core_Model_App::ADMIN_STORE_ID);
         if ($isActivated === '1') {
-            $label = $this->__('Finish activation');
+            $label = $this->__('Finish registration');
         } else {
-            $label = $this->__('Activate the extension');
+            $label = $this->__('Send security keys');
         }
 
         $html = $this->getLayout()->createBlock('adminhtml/widget_button')

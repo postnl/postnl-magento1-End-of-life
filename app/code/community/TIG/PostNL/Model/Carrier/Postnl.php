@@ -135,7 +135,8 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         }
 
         /**
-         * Several checks to see if shipping to the selected country is allowed based on the supported PostNL shipping products
+         * Several checks to see if shipping to the selected country is allowed based on the supported PostNL shipping
+         * products
          */
         $countryId = $request->getDestCountryId();
         $helper = $this->getHelper();
@@ -624,9 +625,6 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
         $track = $this->_getTrackByNumber($tracking);
         $shipment = $track->getShipment();
 
-        $locale = Mage::getStoreConfig('general/locale/code', $shipment->getStoreId());
-        $lang = substr($locale, 0, 2);
-
         $shippingAddress = $shipment->getShippingAddress();
 
         /**
@@ -645,7 +643,7 @@ class TIG_PostNL_Model_Carrier_Postnl extends Mage_Shipping_Model_Carrier_Abstra
                     ->setTracking($track->getTrackNumber())
                     ->setPopup(1)
                     ->setUrl(
-                        $this->getHelper()->getBarcodeUrl($track->getTrackNumber(), $shippingAddress, $lang, false)
+                        $this->getHelper()->getBarcodeUrl($track->getTrackNumber(), $shippingAddress, false, false)
                     );
 
         return $statusModel;

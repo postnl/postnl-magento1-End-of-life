@@ -36,7 +36,7 @@
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Controller_Action
+class TIG_PostNL_Adminhtml_ExtensionControlController extends TIG_PostNL_Controller_Adminhtml_Config
 {
     /**
      * XML path to extensioncontrol email setting
@@ -65,6 +65,45 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
     const SHOP_ALREADY_REGISTERED_FAULTCODE = 'API-2-6';
 
     /**
+     * @var string|null
+     */
+    protected $_fragment;
+
+    /**
+     * @return mixed
+     */
+    public function getFragment()
+    {
+        return $this->_fragment;
+    }
+
+    /**
+     * @param mixed $fragment
+     *
+     * @return $this
+     */
+    public function setFragment($fragment)
+    {
+        $this->_fragment = $fragment;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFragment()
+    {
+        $fragment = $this->getFragment();
+
+        if (is_null($fragment)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Activate the extension by registering it with the extension control service
      *
      * @return $this
@@ -82,7 +121,14 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
 
         Mage::app()->cleanCache();
 
-        $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
+        $urlParams = array(
+            'section' => 'postnl'
+        );
+        if ($this->hasFragment()) {
+            $urlParams['_fragment'] = $this->getFragment();
+        }
+
+        $this->_redirect('adminhtml/system_config/edit', $urlParams);
         return $this;
     }
 
@@ -146,7 +192,7 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
             $this->__(
                 'Your webshop has been registered. Within a few minutes you will recieve an email at the emailaddress ' .
                 'you specified. Please read this email carefully as it contains instructions on how to finish the ' .
-                'extension activation procedure.'
+                'extension registration procedure.'
             )
         );
 
@@ -269,8 +315,14 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         Mage::getModel('core/config')->saveConfig(self::XPATH_IS_ACTIVATED, 2);
 
         $helper->addSessionMessage('adminhtml/session', null, 'success',
-            $this->__('The extension has been successfully activated!')
+            $this->__('The extension has been successfully registered!')
         );
+
+        /**
+         * Proceed to the next step in the configuration wizard.
+         */
+        $this->_saveCurrentWizardStep('#wizard2');
+        $this->setFragment('wizard2');
 
         return $this;
     }
@@ -288,6 +340,11 @@ class TIG_PostNL_Adminhtml_ExtensionControlController extends Mage_Adminhtml_Con
         Mage::helper('postnl')->saveConfigState(array('postnl_general' => 1));
 
         Mage::app()->cleanCache();
+
+        /**
+         * Reset the wizard to the first step.
+         */
+        $this->_saveCurrentWizardStep('#wizard1');
 
         $this->_redirect('adminhtml/system_config/edit', array('section' => 'postnl'));
         return $this;

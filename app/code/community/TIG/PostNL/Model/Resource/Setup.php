@@ -76,7 +76,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     /**
      * Xpath to supported options configuration setting
      */
-    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/cif_product_options/supported_product_options';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS = 'postnl/grid/supported_product_options';
 
     /**
      * Xpath to the item columns setting.
@@ -282,17 +282,17 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         /**
          * Generate semi-random values for the cron expression.
          */
-        $cronMorningHour   = mt_rand(10, 12);
-        $cronMorningHour  += Mage::getModel('core/date')->getGmtOffset('hours');
-
-        $cronAfternoonHour = $cronMorningHour + 4; //4 hours after the morning update
         $cronMinute        = mt_rand(0, 59);
 
+        $cronNightHour     = mt_rand(1, 3);
+        $cronMorningHour   = $cronNightHour + 9; //9 hours after the night update
+        $cronAfternoonHour = $cronMorningHour + 4; //4 hours after the morning update
+
         /**
-         * Generate a cron expr that runs on a specified minute on a specified hour between 10 and 12 AM, and between 14
-         * and 16 PM.
+         * Generate a cron expr that runs on a specified minute on a specified hour between 1 and 3 AM, between 10 and
+         * 12 AM, and between 14 and 16 PM.
          */
-        $cronExpr = "{$cronMinute} {$cronMorningHour},{$cronAfternoonHour} * * *";
+        $cronExpr = "{$cronMinute} {$cronNightHour},{$cronMorningHour},{$cronAfternoonHour} * * *";
 
         /**
          * Store the cron expression in core_config_data.
@@ -653,6 +653,9 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
      * @param boolean $removeOldValue
      *
      * @return $this
+     *
+     * @deprecated v1.4.1 This method has been superseded by the
+     *                    TIG_PostNL_Model_Resource_Setup::moveConfigSettingInDb() method.
      */
     public function moveConfigSetting($fromXpath, $toXpath, $removeOldValue = true)
     {
@@ -709,8 +712,12 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
      * @param string  $scope
      * @param int     $scopeId
      * @param boolean $removeOldValue
+     * @param boolean $defaultValue
      *
      * @return $this
+     *
+     * @deprecated v1.4.1 This method has been superseded by the
+     *                    TIG_PostNL_Model_Resource_Setup::moveConfigSettingInDb() method.
      */
     public function moveConfigSettingForScope($fromXpath, $toXpath, $scope = 'default', $scopeId = 0,
                                              $removeOldValue = true, $defaultValue = false)
@@ -1121,7 +1128,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
         $cronExpr = "*/5 * * * *";
 
         /**
-         * Store the cron expression in core_config_data
+         * Store the cron expression in core_config_data.
          */
         try {
             Mage::getModel('core/config_data')
@@ -1196,6 +1203,116 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
             'default',
             Mage_Core_Model_App::ADMIN_STORE_ID
         );
+
+        return $this;
+    }
+
+    /**
+     * Copy a config setting from an old xpath to a new xpath directly in the database, rather than using Magento config
+     * entities.
+     *
+     * @param string $fromXpath
+     * @param string $toXpath
+     *
+     * @return $this
+     */
+    public function moveConfigSettingInDb($fromXpath, $toXpath)
+    {
+        $conn = $this->getConnection();
+
+        try {
+            $select = $conn->select()
+                           ->from($this->getTable('core/config_data'))
+                           ->where('path = ?', $fromXpath);
+
+            $result = $conn->fetchAll($select);
+            foreach ($result as $row) {
+                try {
+                    /**
+                     * Copy the old setting to the new setting.
+                     *
+                     * @todo Check if the row already exists.
+                     */
+                    $conn->insert(
+                        $this->getTable('core/config_data'),
+                        array(
+                            'scope'    => $row['scope'],
+                            'scope_id' => $row['scope_id'],
+                            'value'    => $row['value'],
+                            'path'     => $toXpath
+                        )
+                    );
+                } catch (Exception $e) {
+                    Mage::helper('postnl')->logException($e);
+                }
+            }
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Moves and merges the PostNL active setting to and with the PostNL mode setting.
+     *
+     * @return $this
+     */
+    public function moveActiveSetting()
+    {
+        $conn = $this->getConnection();
+
+        try {
+            /**
+             * Modify all mode settings with value 0 (Live) to value 2 (the new live mode value).
+             */
+            $conn->update(
+                $this->getTable('core/config_data'),
+                array(
+                    'value' => 2,
+                ),
+                array(
+                    'path = ?' => 'postnl/cif/mode',
+                    'value = ?' => 0
+                )
+            );
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+        }
+
+        try {
+            /**
+             * Get all scopes for which PostNl is disabled.
+             */
+            $disabledSelect = $conn->select()
+                                   ->from($this->getTable('core/config_data'))
+                                   ->where('path = ?', 'postnl/general/active')
+                                   ->where('value = ?', 0);
+
+            $disabledRows = $conn->fetchAll($disabledSelect);
+            foreach ($disabledRows as $disabledRow) {
+                try {
+                    /**
+                     * Set the mode to 0 (off) for these scopes.
+                     */
+                    $conn->update(
+                        $this->getTable('core/config_data'),
+                        array(
+                            'value' => 0,
+                        ),
+                        array(
+                            'path = ?'     => 'postnl/cif/mode',
+                            'scope_id = ?' => $disabledRow['scope_id'],
+                            'scope = ?'    => $disabledRow['scope'],
+                        )
+                    );
+                } catch (Exception $e) {
+                    Mage::helper('postnl')->logException($e);
+                }
+            }
+        } catch (Exception $e) {
+            Mage::helper('postnl')->logException($e);
+        }
 
         return $this;
     }

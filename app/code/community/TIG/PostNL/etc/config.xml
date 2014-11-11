@@ -41,7 +41,7 @@
 <config>
 	<modules>
 		<TIG_PostNL>
-			<version>1.4.0</version>
+			<version>1.4.1</version>
 		</TIG_PostNL>
 	</modules>
 
@@ -689,9 +689,9 @@
                 <fee>17.45</fee> <!-- Charge an additional fee of 17.45 EUR for the use of PostNL COD. This is the amount PostNL charges for using COD -->
                 <fee_label>PostNL rembourstoeslag</fee_label> <!-- PostNL COD fee -->
                 <order_status>processing</order_status> <!-- Pending status -->
+                <instructions/>
                 <allowspecific>1</allowspecific> <!-- Allow only specific countries -->
                 <specificcountry>NL</specificcountry> <!-- Allow only NL -->
-                <instructions/>
                 <min_order_total/>
                 <max_order_total>2000</max_order_total> <!-- PostNL COD is only available for orders whose base grand total amount is less than 2000 EUR -->
                 <allow_for_non_postnl>0</allow_for_non_postnl> <!-- Only show this payment method if the order is being shipped using PostNL -->
@@ -725,11 +725,10 @@
         </carriers>
         <postnl>
         	<general>
-        		<active>0</active> <!-- Inactive -->
-        		<is_activated>0</is_activated> <!-- Not activated -->
         		<email/>
                 <unique_key/>
         		<private_key/>
+        		<is_activated>0</is_activated> <!-- Not activated -->
                 <webservice_wsdl_url>http://api.tigpostnl.nl/soap?wsdl</webservice_wsdl_url> <!-- URL of the TIG extension control system that is used for activating the extension -->
         	    <changelog_url>http://kb.tig.nl/topic/38584893/</changelog_url> <!-- URL of the extension's changelog -->
                 <postnl_register_url>http://www.postnl.nl/zakelijk/e-commerce/flexibele-bezorgopties</postnl_register_url> <!-- URL where new PostNL customers can register -->
@@ -737,9 +736,98 @@
                 <new_ticket_url>http://kb.tig.nl/ticket/form/new</new_ticket_url> <!-- URL where merchants can submit a support ticket -->
                 <installation_manual_url>http://kb.tig.nl/topic/39335103</installation_manual_url> <!-- URL to the extension's installation manual -->
                 <user_guide_url>http://kb.tig.nl/topic/44206406</user_guide_url> <!-- URL to the extension's user guide -->
+                <kb_url>http://kb.tig.nl/forum/23046087</kb_url> <!-- URL of the TIG PostNL knowledgebase -->
             </general>
+            <cif_address>
+                <firstname/>
+                <lastname/>
+                <company/>
+                <streetname/>
+                <housenumber/>
+                <housenumber_extension/>
+                <postcode/>
+                <city/>
+                <region/>
+                <country>NL</country> <!-- All sender addresses must be located in the Netherlands -->
+                <use_sender_address>1</use_sender_address> <!-- Use the sender address as the return address -->
+                <return_firstname/>
+                <return_lastname/>
+                <return_company/>
+                <return_streetname/>
+                <return_housenumber/>
+                <return_housenumber_extension/>
+                <return_postcode/>
+                <return_city/>
+                <return_region/>
+                <return_country>NL</return_country> <!-- All return addresses must be located in the Netherlands -->
+            </cif_address>
+            <cif_labels_and_confirming>
+                <label_size>A4</label_size> <!-- A4 size labels -->
+                <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
+                <cutoff_time>17:00:00</cutoff_time> <!-- Add an extra shipping day if customers order after 17:00 P.M. -->
+                <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
+                <sunday_cutoff_time/>
+                <shipping_days>1,2,3,4,5,6</shipping_days> <!-- Orders are shipped monday through saturday -->
+                <checkout_extension>magento_onepagecheckout</checkout_extension> <!-- Use Magento's One Page CHeckout as the default checkout extension -->
+                <checkout_extension_other/>
+                <use_postcode_check>0</use_postcode_check> <!-- Do not use postcode check functionality -->
+                <postcode_check_in_checkout>1</postcode_check_in_checkout> <!-- Use postcode check on the checkout page -->
+                <postcode_check_in_addressbook>1</postcode_check_in_addressbook> <!-- Use postcode check in the customer's addressbook -->
+                <postcode_check_max_attempts>1</postcode_check_max_attempts> <!-- Allow 1 attempt before disabling postcode check and allowing users to enter their addess manually -->
+                <postcode_check_timeout>5</postcode_check_timeout> <!-- Postcode check will timeout after 5 seconds -->
+                <split_street>1</split_street> <!-- split street -->
+                <streetname_field>1</streetname_field> <!-- first address line -->
+                <housenr_field>2</housenr_field> <!-- second address line -->
+                <split_housenr>0</split_housenr> <!-- do not split housenumber and houndenumber extension -->
+                <housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
+                <area_field/>
+                <building_name_field/>
+                <department_field/>
+                <doorcode_field/>
+                <floor_field/>
+                <remark_field/>
+            </cif_labels_and_confirming>
+            <delivery_options>
+                <delivery_options_active>0</delivery_options_active> <!-- Delivery options are disabled -->
+                <theme>default</theme> <!-- Use the default PostNL theme -->
+                <responsive>0</responsive> <!-- Do not use the responsive design -->
+                <show_options_for_backorders>0</show_options_for_backorders> <!-- Do not show delivery options if the order is not in stock -->
+                <enable_delivery_days>1</enable_delivery_days> <!-- Delivery days are allowed -->
+                <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
+                <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
+                <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
+                <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
+                <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
+                <enable_pakjegemak_express>1</enable_pakjegemak_express> <!-- PakjeGemak express locations are allowed -->
+                <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
+                <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
+                <allow_streetview>1</allow_streetview> <!-- Google streetview is allowed. -->
+                <show_options_for_buspakje>0</show_options_for_buspakje> <!-- Do not show delivery options if the order is a letter box parcel -->
+                <show_all_options_for_buspakje>0</show_all_options_for_buspakje> <!-- Do not show all delivery options for letter box parcel orders -->
+                <enable_delivery_days_for_buspakje>1</enable_delivery_days_for_buspakje> <!-- Show delivery days for letter box parcel orders -->
+                <enable_pakjegemak_for_buspakje>0</enable_pakjegemak_for_buspakje> <!-- Do not show post office locations for letter box parcel orders -->
+                <enable_pakketautomaat_for_buspakje>0</enable_pakketautomaat_for_buspakje> <!-- Do not show parcel dispenser locations for letter box parcel orders -->
+                <stated_address_only_option>0</stated_address_only_option> <!-- Do not show the 'stated address only' option -->
+                <stated_address_only_checked>0</stated_address_only_checked> <!-- The stated address only option is not checked by default -->
+                <stated_address_only_fee>0.26</stated_address_only_fee> <!-- Charge 26 cents extra -->
+                <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
+                <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
+                <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
+                <show_mijnpakket_app_link>1</show_mijnpakket_app_link> <!-- Show the MijnPakket app link -->
+                <use_buspakje>1</use_buspakje> <!-- Use buspakje -->
+                <buspakje_calculation_mode>manual</buspakje_calculation_mode> <!-- Manually determine if a shipment is a buspakje shipment -->
+                <create_account_base_url>https://mijnpakket.postnl.nl/Register/RegisterFromWebshop?</create_account_base_url> <!-- Base URl for create MijnPakket account link -->
+                <mijnpakket_live_base_url>https://mijnpakket.postnl.nl/</mijnpakket_live_base_url> <!-- Base URL for MijnPakket in live mode -->
+                <mijnpakket_test_base_url>https://tppwscheckout-sandbox.e-id.nl/</mijnpakket_test_base_url> <!-- Base URL for MijnPakket in test mode -->
+                <mijnpakket_login_js_path>Checkout2/Login.js</mijnpakket_login_js_path> <!-- Path to MijnPakket login JS file -->
+                <mijnpakket_checkout_premium_js_path>Checkout2/CheckoutPremium.js</mijnpakket_checkout_premium_js_path> <!-- Path to MijnPakket Checkout premium JS file -->
+                <mijnpakket_login_btn_live_base_url>https://checkout.postnl.nl/</mijnpakket_login_btn_live_base_url> <!-- Base URL for MijnPakket login button in live mode -->
+                <mijnpakket_login_btn_test_base_url>https://tppcb-sandbox.e-id.nl/</mijnpakket_login_btn_test_base_url> <!-- Base URL for MijnPakket login button in test mode -->
+                <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
+                <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
+            </delivery_options>
         	<cif>
-                <mode>1</mode> <!-- Test mode -->
+                <mode>0</mode> <!-- The extension is disabled by default -->
                 <customer_number>11223344</customer_number> <!-- Demo customer number -->
         		<customer_code>TOTA</customer_code> <!-- Demo customer code -->
                 <live_username/>
@@ -749,43 +837,15 @@
         		<collection_location>103861</collection_location> <!-- Demo collection location -->
                 <webshop_id/> <!-- The demo webshop ID will be generated on install as it needs to be encrypted -->
                 <public_webshop_id>a98e0769d6bf40a8b49d85e7aff41d7a</public_webshop_id> <!-- Demo public webshop ID -->
-        		<use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
-        		<global_barcode_type>CD</global_barcode_type> <!-- Demo barcode type -->
-        		<global_barcode_range>1660</global_barcode_range> <!-- Demo barcode range -->
         	    <wsdl_base_url>https://service.postnl.com/CIF/</wsdl_base_url> <!-- Base URL of CIF WSDL files -->
         	    <test_wsdl_base_url>https://testservice.postnl.com/CIF_SB/</test_wsdl_base_url> <!-- Base URL of CIF sandbox WSDL files -->
                 <track_and_trace_nl_base_url>https://mijnpakket.postnl.nl/Inbox/Search?</track_and_trace_nl_base_url> <!-- Base URL for the Dutch track & trace page -->
-                <track_and_trace_gb_base_url>http://parcels-uk.tntpost.com/mytrackandtrace/trackandtrace.aspx?</track_and_trace_gb_base_url> <!-- Base URL for the UK track & trace page -->
-                <track_and_trace_de_base_url>http://parcels-de.tntpost.com/de/mytrackandtrace/TrackAndTrace.aspx?</track_and_trace_de_base_url> <!-- Base URL for the German track & trace page -->
-                <track_and_trace_fr_base_url>http://parcels-fr.tntpost.com/fr/mytrackandtrace/TrackAndTrace.aspx?</track_and_trace_fr_base_url> <!-- Base URL for the French track & trace page -->
-                <track_and_trace_int_base_url>http://www.postnlpakketten.nl/klantenservice/tracktrace/basicsearch.aspx?</track_and_trace_int_base_url> <!-- Base URL for the international track & trace page -->
+                <track_and_trace_int_base_url>https://www.internationalparceltracking.com/Main.aspx#/track</track_and_trace_int_base_url> <!-- Base URL for the international track & trace page -->
             </cif>
-        	<cif_labels_and_confirming>
-                <label_size>A4</label_size> <!-- A4 size labels -->
-                <weight_per_parcel>20000</weight_per_parcel> <!-- 20 kg -->
-                <weight_unit>gram</weight_unit> <!-- gram -->
+            <packing_slip>
                 <shipment_reference_type>shipment_increment_id</shipment_reference_type> <!-- Use the shipment's increment ID as the shipment reference -->
                 <custom_shipment_reference/>
-                <use_buspakje>1</use_buspakje> <!-- Use buspakje -->
-                <buspakje_calculation_mode>manual</buspakje_calculation_mode> <!-- Manually determine if a shipment is a buspakje shipment -->
-                <shipping_duration>1</shipping_duration> <!-- Shipping takes 1 day -->
-                <cutoff_time>17:00:00</cutoff_time> <!-- Add an extra shipping day if customers order after 17:00 P.M. -->
-                <shipping_days>1,2,3,4,5,6</shipping_days> <!-- Orders are shipped monday through saturday -->
-                <allow_sunday_sorting>0</allow_sunday_sorting> <!-- Sunday sorting is disabled -->
-                <sunday_cutoff_time/>
-                <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
-                <show_buspakje_option>1</show_buspakje_option> <!-- Show the option to mark a shipment as being a buspakje -->
-                <order_grid_columns>shipment_type</order_grid_columns> <!-- Show the shipment type column -->
-                <order_grid_massaction_default>postnl_create_shipments</order_grid_massaction_default> <!-- Select the create shipments mass action by default -->
-                <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
-                <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
-                <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
-                <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
-        	    <send_copy>0</send_copy> <!-- Do not send a copy of the track & trace email -->
-                <copy_to/>
-                <copy_method>bcc</copy_method> <!-- Use the bcc method for sending the track & trace email copy -->
-            </cif_labels_and_confirming>
-            <packing_slip>
+                <show_label>1</show_label> <!-- Automatically add the shipping label to the packing slip -->
                 <logo/>
                 <show_webshop_info>1</show_webshop_info> <!-- Show webshop info on the packing slip -->
                 <coc_number/>
@@ -803,135 +863,43 @@
                 <show_comment>1</show_comment> <!-- Show a comment on the packing slip -->
                 <comment_type>shipment_comment</comment_type> <!-- Show the shipment's last comment, rather than a pre-defined comment -->
                 <comment_text/>
-                <show_label>1</show_label> <!-- Automatically add the shipping label to the packing slip -->
+                <weight_per_parcel>20000</weight_per_parcel> <!-- 20 kg -->
+                <weight_unit>gram</weight_unit> <!-- gram -->
             </packing_slip>
-        	<parcelware_export>
-        	    <active>0</active> <!-- Inactive -->
-        	    <auto_confirm>0</auto_confirm> <!-- Do not auto confirm -->
-        	    <contract_ref_nr/>
-        	    <contract_name/>
-        	    <sender_ref_nr/>
-        	</parcelware_export>
-        	<cif_address>
-        	    <use_postcode_check>0</use_postcode_check> <!-- Do not use postcode check functionality -->
-        	    <postcode_check_in_checkout>1</postcode_check_in_checkout> <!-- Use postcode check on the checkout page -->
-        	    <postcode_check_in_addressbook>1</postcode_check_in_addressbook> <!-- Use postcode check in the customer's addressbook -->
-        		<postcode_check_max_attempts>1</postcode_check_max_attempts> <!-- Allow 1 attempt before disabling postcode check and allowing users to enter their addess manually -->
-        		<postcode_check_timeout>5</postcode_check_timeout> <!-- Postcode check will timeout after 5 seconds -->
-        		<split_street>1</split_street> <!-- split street -->
-        		<streetname_field>1</streetname_field> <!-- first address line -->
-        		<housenr_field>2</housenr_field> <!-- second address line -->
-        		<split_housenr>0</split_housenr> <!-- do not split housenumber and houndenumber extension -->
-        		<housenr_extension_field>3</housenr_extension_field> <!-- third address line (not used, since split_housenr is disabled) -->
-        	    <area_field/>
-        	    <building_name_field/>
-        	    <department_field/>
-        	    <doorcode_field/>
-        	    <floor_field/>
-        	    <remark_field/>
-        	</cif_address>
-        	<cif_sender_address>
-        		<firstname/>
-        		<lastname/>
-        		<company/>
-        		<streetname/>
-                <housenumber/>
-                <housenumber_extension/>
-        		<postcode/>
-        		<city/>
-        		<region/>
-        		<country>NL</country> <!-- All sender addresses must be located in the Netherlands -->
-        	</cif_sender_address>
-        	<cif_return_address>
-        	    <use_sender_address>1</use_sender_address> <!-- Use the sender address as the return address -->
-                <firstname/>
-                <lastname/>
-                <company/>
-                <streetname/>
-                <housenumber/>
-                <housenumber_extension/>
-                <postcode/>
-                <city/>
-                <region/>
-                <country>NL</country> <!-- All return addresses must be located in the Netherlands -->
-        	</cif_return_address>
-        	<cif_product_options>
-        		<supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2928,2828</supported_product_options> <!-- all possible options except for EPS BE only -->
-                <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->
-        		<default_product_option>3085</default_product_option> <!-- standard shipment -->
-        		<use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
-        		<alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
-        		<alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
-                <default_evening_product_option>3385</default_evening_product_option> <!-- Deliver to stated address only -->
-                <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- Post Office + signature on delivery -->
-                <default_pge_product_option>3543</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
-                <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
-                <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
-        		<default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
-                <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
-                <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
-                <default_pakketautomaat_product_option>3553</default_pakketautomaat_product_option> <!-- Parcel dispenser -->
-        	    <default_cod_product_option>3086</default_cod_product_option> <!-- COD -->
-                <default_evening_cod_product_option>3086</default_evening_cod_product_option> <!-- COD -->
-                <default_pakjegemak_cod_product_option>3535</default_pakjegemak_cod_product_option> <!-- Post Office + COD -->
-                <default_pge_cod_product_option>3545</default_pge_cod_product_option> <!-- Post Office + COD + Notification -->
-            </cif_product_options>
+            <track_and_trace>
+                <send_track_and_trace_email>1</send_track_and_trace_email> <!-- automatically send a track & trace email to the customer -->
+                <track_and_trace_email_template>postnl_cif_labels_and_confirming_track_and_trace_email_template</track_and_trace_email_template> <!-- Default template from locale -->
+                <send_copy>0</send_copy> <!-- Do not send a copy of the track & trace email -->
+                <copy_to/>
+                <copy_method>bcc</copy_method> <!-- Use the bcc method for sending the track & trace email copy -->
+            </track_and_trace>
             <cod>
                 <account_name/>
                 <iban/>
                 <bic/>
                 <auto_invoice>1</auto_invoice> <!-- Enable auto-invoice -->
                 <allow_cod_for_buspakje>0</allow_cod_for_buspakje> <!-- Disable COD for letter box parcels -->
+                <default_cod_product_option>3086</default_cod_product_option> <!-- COD -->
+                <default_evening_cod_product_option>3086</default_evening_cod_product_option> <!-- COD -->
+                <default_pakjegemak_cod_product_option>3535</default_pakjegemak_cod_product_option> <!-- Post Office + COD -->
+                <default_pge_cod_product_option>3545</default_pge_cod_product_option> <!-- Post Office + COD + Notification -->
             </cod>
-        	<cif_globalpack_settings>
-        	    <customs_license_number/>
-        	    <customs_certificate_number/>
+            <cif_globalpack_settings>
+                <use_globalpack>0</use_globalpack> <!-- Do not use GlobalPack -->
+                <global_barcode_type>CD</global_barcode_type> <!-- Demo barcode type -->
+                <global_barcode_range>1660</global_barcode_range> <!-- Demo barcode range -->
+                <customs_license_number/>
+                <customs_certificate_number/>
                 <default_shipment_type>Commercial Goods</default_shipment_type>
-        		<use_hs_tariff>0</use_hs_tariff> <!-- Do not use a specific HS tariff -->
-        		<hs_tariff_attribute/>
-        		<customs_value_attribute>price</customs_value_attribute> <!-- price attribute -->
-        		<country_of_origin_attribute>country_of_manufacture</country_of_origin_attribute> <!-- country of manufacture attribute -->
-        		<description_attribute>name</description_attribute> <!-- name attribute -->
-        		<product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
-        		<product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
-        	</cif_globalpack_settings>
-        	<delivery_options>
-        	    <delivery_options_active>0</delivery_options_active> <!-- Delivery options are disabled -->
-                <theme>default</theme> <!-- Use the default PostNL theme -->
-                <responsive>0</responsive> <!-- Do not use the responsive design -->
-                <mijnpakket_login_active>1</mijnpakket_login_active> <!-- Enable MijnPakket login -->
-                <show_options_for_letter>0</show_options_for_letter> <!-- Do not show delivery options if the order's total weight is less than 2 kg -->
-                <show_options_for_backorders>0</show_options_for_backorders> <!-- Do not show delivery options if the order is not in stock -->
-                <delivery_days_number>7</delivery_days_number> <!-- Show up to 7 delivery days -->
-        	    <enable_delivery_days>1</enable_delivery_days> <!-- Delivery days are allowed -->
-                <enable_timeframes>1</enable_timeframes> <!-- Timeframes are allowed -->
-        	    <enable_evening_timeframes>1</enable_evening_timeframes> <!-- Evening timeframes are enabled -->
-        	    <evening_timeframe_fee>2</evening_timeframe_fee> <!-- Evening timeframes cost 2 {base currency} extra -->
-        	    <enable_pakjegemak>1</enable_pakjegemak> <!-- PakjeGemak locations are allowed -->
-        	    <enable_pakjegemak_express>1</enable_pakjegemak_express> <!-- PakjeGemak express locations are allowed -->
-        	    <pakjegemak_express_fee>2</pakjegemak_express_fee> <!-- PakjeGemak Express locations cost 2 {base currency} extra -->
-        	    <enable_pakketautomaat_locations>1</enable_pakketautomaat_locations> <!-- Pakketautomaat locations are allowed -->
-                <allow_streetview>1</allow_streetview> <!-- Google streetview is allowed. -->
-                <show_options_for_buspakje>0</show_options_for_buspakje> <!-- Do not show delivery options if the order is a letter box parcel -->
-                <show_all_options_for_buspakje>0</show_all_options_for_buspakje> <!-- Do not show all delivery options for letter box parcel orders -->
-                <enable_delivery_days_for_buspakje>1</enable_delivery_days_for_buspakje> <!-- Show delivery days for letter box parcel orders -->
-                <enable_pakjegemak_for_buspakje>0</enable_pakjegemak_for_buspakje> <!-- Do not show post office locations for letter box parcel orders -->
-                <enable_pakketautomaat_for_buspakje>0</enable_pakketautomaat_for_buspakje> <!-- Do not show parcel dispenser locations for letter box parcel orders -->
-                <mijnpakket_notification>0</mijnpakket_notification> <!-- Do not show MijnPakket notifications after customers have placed their order -->
-                <show_create_mijnpakket_account_link>1</show_create_mijnpakket_account_link> <!-- Show the create MijnPakket account link -->
-                <show_mijnpakket_app_link>1</show_mijnpakket_app_link> <!-- Show the MijnPakket app link -->
-                <stated_address_only_option>0</stated_address_only_option> <!-- Do not show the 'stated address only' option -->
-                <stated_address_only_checked>0</stated_address_only_checked> <!-- The stated address only option is not checked by default -->
-                <stated_address_only_fee>0.26</stated_address_only_fee> <!-- Charge 26 cents extra -->
-                <create_account_base_url>https://mijnpakket.postnl.nl/Register/RegisterFromWebshop?</create_account_base_url> <!-- Base URl for create MijnPakket account link -->
-                <mijnpakket_live_base_url>https://mijnpakket.postnl.nl/</mijnpakket_live_base_url> <!-- Base URL for MijnPakket in live mode -->
-                <mijnpakket_test_base_url>https://tppwscheckout-sandbox.e-id.nl/</mijnpakket_test_base_url> <!-- Base URL for MijnPakket in test mode -->
-                <mijnpakket_login_js_path>Checkout2/Login.js</mijnpakket_login_js_path> <!-- Path to MijnPakket login JS file -->
-                <mijnpakket_checkout_premium_js_path>Checkout2/CheckoutPremium.js</mijnpakket_checkout_premium_js_path> <!-- Path to MijnPakket Checkout premium JS file -->
-                <mijnpakket_login_btn_live_base_url>https://checkout.postnl.nl/</mijnpakket_login_btn_live_base_url> <!-- Base URL for MijnPakket login button in live mode -->
-                <mijnpakket_login_btn_test_base_url>https://tppcb-sandbox.e-id.nl/</mijnpakket_login_btn_test_base_url> <!-- Base URL for MijnPakket login button in test mode -->
-                <mijnpakket_login_btn_url_path>Button/PremiumLogin</mijnpakket_login_btn_url_path> <!-- Path to MijnPakket login button -->
-        	</delivery_options>
+                <use_hs_tariff>0</use_hs_tariff> <!-- Do not use a specific HS tariff -->
+                <hs_tariff_attribute/>
+                <customs_value_attribute>price</customs_value_attribute> <!-- price attribute -->
+                <country_of_origin_attribute>country_of_manufacture</country_of_origin_attribute> <!-- country of manufacture attribute -->
+                <description_attribute>name</description_attribute> <!-- name attribute -->
+                <product_sorting_attribute>price</product_sorting_attribute> <!-- price attribute -->
+                <product_sorting_direction>desc</product_sorting_direction> <!-- descending -->
+                <default_global_product_option>4945</default_global_product_option> <!-- GlobalPack -->
+            </cif_globalpack_settings>
         	<checkout>
         	    <active>0</active> <!-- PostNL Checkout is inactive -->
                 <show_exclusively_for_mijnpakket_users>0</show_exclusively_for_mijnpakket_users> <!-- Do not show PostNL Checkout exclusively to MijnPakket users -->
@@ -984,6 +952,36 @@
                 <klarna>0</klarna> <!-- Do not use Klarna -->
                 <klarna_method/>
         	</checkout_payment_methods>
+            <parcelware_export>
+                <active>0</active> <!-- Inactive -->
+                <auto_confirm>0</auto_confirm> <!-- Do not auto confirm -->
+                <contract_ref_nr/>
+                <contract_name/>
+                <sender_ref_nr/>
+            </parcelware_export>
+        	<grid>
+                <show_grid_options>1</show_grid_options> <!-- Show product options in the order grid -->
+                <show_buspakje_option>1</show_buspakje_option> <!-- Show the option to mark a shipment as being a buspakje -->
+                <order_grid_columns>shipment_type</order_grid_columns> <!-- Show the shipment type column -->
+                <order_grid_massaction_default>postnl_create_shipments</order_grid_massaction_default> <!-- Select the create shipments mass action by default -->
+                <shipping_grid_columns>shipment_type,confirm_date,confirm_status,labels_printed,barcode,shipping_phase</shipping_grid_columns> <!-- Show the shipping description, shipment type, label-printed and shipping phase columns -->
+                <shipping_grid_massaction_default>postnl_print_labels_and_confirm</shipping_grid_massaction_default> <!-- 'Print labels and confirm shipment' massaction -->
+                <supported_product_options>3085,3086,3091,3093,3097,3087,3094,3189,3089,3389,3096,3090,3385,3390,3535,3545,3536,3546,3534,3544,3533,3543,4952,4945,3553,2928,2828</supported_product_options> <!-- all possible options except for EPS BE only -->
+                <default_product_option>3085</default_product_option> <!-- standard shipment -->
+                <use_alternative_default>0</use_alternative_default> <!-- Do not use an alternative default -->
+                <alternative_default_max_amount>100</alternative_default_max_amount> <!-- 100 EUR -->
+                <alternative_default_option>3189</alternative_default_option> <!-- Signature on delivery -->
+                <default_evening_product_option>3385</default_evening_product_option> <!-- Deliver to stated address only -->
+                <default_pakjegemak_product_option>3533</default_pakjegemak_product_option> <!-- Post Office + signature on delivery -->
+                <default_pge_product_option>3543</default_pge_product_option> <!-- Post Office + Signature on Delivery + Notification -->
+                <default_buspakje_product_option>2928</default_buspakje_product_option> <!-- Buspakje Extra -->
+                <default_stated_address_only_product_option>3385</default_stated_address_only_product_option> <!-- Deliver to stated address only -->
+                <default_eu_product_option>4952</default_eu_product_option> <!-- EU Pack Special to consumer (combilabel) -->
+                <default_eu_be_product_option>4955</default_eu_be_product_option> <!-- EU Pack Standard (Belgium only, no signature) (combilabel) -->
+        	</grid>
+            <cif_product_options>
+                <allow_eps_be_only_options>0</allow_eps_be_only_options> <!-- Do not allow the EPS BE only product option -->
+            </cif_product_options>
         	<advanced>
         	    <debug_mode>1</debug_mode> <!-- Exception logging only -->
         		<infinite_label_printing>0</infinite_label_printing> <!-- do not allow infinite printing -->
@@ -1032,7 +1030,7 @@
 
         <!-- Stability of this release -->
         <stability>
-            <postnl>alpha</postnl>
+            <postnl>stable</postnl>
         </stability>
 
         <!-- PostNL delivery options configuration -->

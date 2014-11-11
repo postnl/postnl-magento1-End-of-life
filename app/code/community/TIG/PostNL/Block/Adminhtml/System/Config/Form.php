@@ -382,9 +382,9 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
                             . '_' . $fieldPrefix
                             . $dependentFieldNameValue;
                         $shouldBeAddedDependence = true;
-                        $dependentValue = (string)(isset($dependent->value) ? $dependent->value : $dependent);
-                        if (isset($dependent['separator'])) {
-                            $dependentValue = explode((string)$dependent['separator'], $dependentValue);
+                        $dependentValue = (string) (isset($dependent->value) ? $dependent->value : $dependent);
+                        if (isset($dependent->separator)) {
+                            $dependentValue = explode((string) $dependent->separator, $dependentValue);
                         }
                         $dependentFieldName = $fieldPrefix . $dependent->getName();
                         $dependentField     = $dependentFieldGroup->fields->$dependentFieldName;
@@ -492,5 +492,41 @@ class TIG_PostNL_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml_Block
         }
 
         return $this;
+    }
+
+    /**
+     * Add a new checkbox element type.
+     *
+     * @return array
+     */
+    protected function _getAdditionalElementTypes()
+    {
+        $elementTypes = parent::_getAdditionalElementTypes();
+        $elementTypes['checkbox'] = Mage::getConfig()
+                                        ->getBlockClassName('postnl_adminhtml/system_config_form_field_checkbox');
+
+        $elementTypes['wizard_save_button'] = Mage::getConfig()
+                                                  ->getBlockClassName(
+                                                      'postnl_adminhtml/system_config_form_field_wizardSaveButton'
+                                                  );
+
+        $elementTypes['postnl_radios'] = Mage::getConfig()
+                                             ->getBlockClassName('postnl_adminhtml/system_config_form_field_radios');
+
+        return $elementTypes;
+    }
+
+    /**
+     * Return dependency block object
+     *
+     * @return TIG_PostNL_Block_Adminhtml_Widget_Form_Element_Dependence
+     */
+    protected function _getDependence()
+    {
+        if (!$this->getChild('element_dependense')){
+            $this->setChild('element_dependense',
+                $this->getLayout()->createBlock('postnl_adminhtml/widget_form_element_dependence'));
+        }
+        return $this->getChild('element_dependense');
     }
 }

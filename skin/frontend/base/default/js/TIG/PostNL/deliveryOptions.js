@@ -1089,6 +1089,7 @@ PostnlDeliveryOptions.prototype = {
     renderLocations : function() {
         var pickUpList = $('postnl_pickup');
         pickUpList.show();
+        $('responsive_switch').show();
 
         $$('#' + this.getOptions().pgeLocationContainer + ' li').each(function(element) {
             element.remove();
@@ -1101,7 +1102,7 @@ PostnlDeliveryOptions.prototype = {
         });
 
         if (!this.isPgeAllowed() && !this.isPgAllowed() && !this.isPaAllowed()) {
-            pickUpList.hide();
+            this.hideLocations();
             return this;
         }
 
@@ -1130,6 +1131,9 @@ PostnlDeliveryOptions.prototype = {
     hideLocations : function() {
         this.setParsedLocations(true)
             .hideSpinner();
+
+        $('postnl_pickup').hide();
+        $('responsive_switch').hide();
 
         if (this.debug) {
             console.info('Delivery locations are hidden.');
@@ -5036,6 +5040,11 @@ PostnlDeliveryOptions.Timeframe = new Class.create({
         if (!this.getDeliveryOptions().isTimeframesAllowed() && this.getDeliveryOptions().getIsBuspakje()) {
             spanClass    += ' no-timeframe-buspakje';
             openingHours += Translator.translate('Fits through the mailslot');
+        } else if (!this.getDeliveryOptions().isTimeframesAllowed()
+            && !this.getDeliveryOptions().isDeliveryDaysAllowed()
+        ) {
+            spanClass    += ' no-timeframe-buspakje';
+            openingHours += Translator.translate('As soon as possible');
         } else if (!this.getDeliveryOptions().isTimeframesAllowed()) {
             spanClass    += ' no-timeframe-buspakje';
             openingHours += '09:00 - 18:00';

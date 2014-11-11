@@ -50,17 +50,17 @@ class TIG_PostNL_Model_Checkout_Service extends Varien_Object
     /**
      * Constants containing XML paths to cif address configuration options
      */
-    const XPATH_SPLIT_STREET                = 'postnl/cif_address/split_street';
-    const XPATH_STREETNAME_FIELD            = 'postnl/cif_address/streetname_field';
-    const XPATH_HOUSENUMBER_FIELD           = 'postnl/cif_address/housenr_field';
-    const XPATH_SPLIT_HOUSENUMBER           = 'postnl/cif_address/split_housenr';
-    const XPATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_address/housenr_extension_field';
-    const XPATH_AREA_FIELD                  = 'postnl/cif_address/area_field';
-    const XPATH_BUILDING_NAME_FIELD         = 'postnl/cif_address/building_name_field';
-    const XPATH_DEPARTMENT_FIELD            = 'postnl/cif_address/department_field';
-    const XPATH_DOORCODE_FIELD              = 'postnl/cif_address/doorcode_field';
-    const XPATH_FLOOR_FIELD                 = 'postnl/cif_address/floor_field';
-    const XPATH_REMARK_FIELD                = 'postnl/cif_address/remark_field';
+    const XPATH_SPLIT_STREET                = 'postnl/cif_labels_and_confirming/split_street';
+    const XPATH_STREETNAME_FIELD            = 'postnl/cif_labels_and_confirming/streetname_field';
+    const XPATH_HOUSENUMBER_FIELD           = 'postnl/cif_labels_and_confirming/housenr_field';
+    const XPATH_SPLIT_HOUSENUMBER           = 'postnl/cif_labels_and_confirming/split_housenr';
+    const XPATH_HOUSENUMBER_EXTENSION_FIELD = 'postnl/cif_labels_and_confirming/housenr_extension_field';
+    const XPATH_AREA_FIELD                  = 'postnl/cif_labels_and_confirming/area_field';
+    const XPATH_BUILDING_NAME_FIELD         = 'postnl/cif_labels_and_confirming/building_name_field';
+    const XPATH_DEPARTMENT_FIELD            = 'postnl/cif_labels_and_confirming/department_field';
+    const XPATH_DOORCODE_FIELD              = 'postnl/cif_labels_and_confirming/doorcode_field';
+    const XPATH_FLOOR_FIELD                 = 'postnl/cif_labels_and_confirming/floor_field';
+    const XPATH_REMARK_FIELD                = 'postnl/cif_labels_and_confirming/remark_field';
 
     /**
      * XML path to all PostNL Checkout payment settings
