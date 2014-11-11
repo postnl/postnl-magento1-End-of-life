@@ -100,4 +100,25 @@ if ($conn->tableColumnExists($tableName, 'barcode_number')) {
     );
 }
 
+/***********************************************************************************************************************
+ * POSTNL SHIPMENT STATUS HISTORY
+ **********************************************************************************************************************/
+
+$tableName = $installer->getTable('postnl_core/shipment_status_history');
+
+if (!$conn->tableColumnExists($tableName, 'return_labels_printed')) {
+    $conn->addColumn(
+        $tableName,
+        'shipment_type',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'length'   => '16',
+            'nullable' => true,
+            'default'  => 'shipment',
+            'comment'  => 'Shipment Type',
+            'after'    => 'parent_id',
+        )
+    );
+}
+
 $installer->endSetup();
