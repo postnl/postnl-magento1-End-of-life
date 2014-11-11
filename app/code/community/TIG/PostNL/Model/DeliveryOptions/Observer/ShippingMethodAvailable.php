@@ -111,7 +111,7 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
          *
          * Unfortunately there is no unique event for this block.
          *
-         * @var Mage_Core_Block_Abstract $block
+         * @var Mage_Checkout_Block_Onepage_Shipping_Method_Available $block
          */
         $block = $observer->getBlock();
         $blockClass = $this->getBlockClass();
@@ -120,11 +120,11 @@ class TIG_PostNL_Model_DeliveryOptions_Observer_ShippingMethodAvailable extends 
             return $this;
         }
 
+        $this->_resetPostnlOrder();
+
         if (!$this->getCanUseDeliveryOptions()) {
             return $this;
         }
-
-        $this->_resetPostnlOrder();
 
         /**
          * Get the template for the current module.

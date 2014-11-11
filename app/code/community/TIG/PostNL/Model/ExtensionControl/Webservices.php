@@ -63,8 +63,8 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     /**
      * XML paths for setting statistics
      */
-    const XPATH_SUPPORTED_PRODUCT_OPTIONS       = 'postnl/cif_product_options/supported_product_options';
-    const XPATH_SPLIT_STREET                    = 'postnl/cif_address/split_street';
+    const XPATH_SUPPORTED_PRODUCT_OPTIONS       = 'postnl/grid/supported_product_options';
+    const XPATH_SPLIT_STREET                    = 'postnl/cif_labels_and_confirming/split_street';
     const XPATH_CHECKOUT_ACTIVE                 = 'postnl/checkout/active';
     const XPATH_CHECKOUT_WEBSHOP_ID             = 'postnl/cif/webshop_id';
     const XPATH_CONTACT_NAME                    = 'postnl/cif/contact_name';
@@ -76,14 +76,15 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     const XPATH_ENABLE_PAKJEGEMAK               = 'postnl/delivery_options/enable_pakjegemak';
     const XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS = 'postnl/delivery_options/enable_pakketautomaat_locations';
     const XPATH_ENABLE_PAKJEGEMAK_EXPRESS       = 'postnl/delivery_options/enable_pakjegemak_express';
-    const XPATH_USE_BUSPAKJE                    = 'postnl/cif_labels_and_confirming/use_buspakje';
-    const XPATH_BUSPAKJE_CALCULATION_MODE       = 'postnl/cif_labels_and_confirming/buspakje_calculation_mode';
+    const XPATH_USE_BUSPAKJE                    = 'postnl/delivery_options/use_buspakje';
+    const XPATH_BUSPAKJE_CALCULATION_MODE       = 'postnl/delivery_options/buspakje_calculation_mode';
     const XPATH_COD_ACTIVE                      = 'payment/postnl_cod/active';
     const XPATH_MIJNPAKKET_LOGIN_ACTIVE         = 'postnl/delivery_options/mijnpakket_login_active';
-    const XPATH_USE_POSTCODE_CHECK              = 'postnl/cif_address/use_postcode_check';
+    const XPATH_USE_POSTCODE_CHECK              = 'postnl/cif_labels_and_confirming/use_postcode_check';
+    const XPATH_CHECKOUT_EXTENSION              = 'postnl/cif_address/checkout_extension';
     const XPATH_PARCELWARE_EXPORT_ACTIVE        = 'postnl/parcelware_export/active';
-    const XPATH_SEND_TRACK_AND_TRACE_EMAIL      = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
-    const XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE  = 'postnl/cif_labels_and_confirming/track_and_trace_email_template';
+    const XPATH_SEND_TRACK_AND_TRACE_EMAIL      = 'postnl/track_and_trace/send_track_and_trace_email';
+    const XPATH_TRACK_AND_TRACE_EMAIL_TEMPLATE  = 'postnl/track_and_trace/track_and_trace_email_template';
     const XPATH_SHOW_LABEL                      = 'postnl/packing_slip/show_label';
 
     /**
@@ -470,7 +471,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
     protected function _getShipmentCollection($website, $shipmentTypes = false)
     {
         /**
-         * Get a list of all storeIds associated with this website
+         * Get a list of all storeIds associated with this website.
          *
          * @var Mage_Core_Model_Store_Group $group
          */
@@ -488,7 +489,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $resource = Mage::getSingleton('core/resource');
 
         /**
-         * Get the shipment collection
+         * Get the shipment collection.
          */
         $shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection');
         $shipmentCollection->addFieldToSelect('entity_id');
@@ -496,7 +497,7 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         $select = $shipmentCollection->getSelect();
 
         /**
-         * Join sales_flat_order table
+         * Join sales_flat_order table.
          */
         $select->joinInner(
             array('order' => $resource->getTableName('sales/order')),
@@ -506,15 +507,16 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
             )
         );
 
-        if ($shipmentTypes) {
-            $select->joinLeft(
-                array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
-                '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
-                array(
-                    'shipment_type'          => 'postnl_shipment.shipment_type',
-                )
-            );
-        }
+        /**
+         * Join the tig_postnl_shipment table.
+         */
+        $select->joinInner(
+            array('postnl_shipment' => $resource->getTableName('postnl_core/shipment')),
+            '`main_table`.`entity_id`=`postnl_shipment`.`shipment_id`',
+            array(
+                'shipment_type' => 'postnl_shipment.shipment_type',
+            )
+        );
 
         $postnlShippingMethods = Mage::helper('postnl/carrier')->getPostnlShippingMethods();
         $postnlShippingMethodsRegex = '';
@@ -529,8 +531,18 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
         }
 
         $postnlShippingMethodsRegex .= '$';
-        $shipmentCollection->addFieldToFilter('`order`.`shipping_method`', array('regexp' => $postnlShippingMethodsRegex))
-                           ->addFieldToFilter('`main_table`.`store_id`', array('in' => $storeIds));
+        $shipmentCollection->addFieldToFilter(
+                               '`order`.`shipping_method`',
+                               array(
+                                   'regexp' => $postnlShippingMethodsRegex
+                               )
+                           )
+                           ->addFieldToFilter(
+                               '`main_table`.`store_id`',
+                               array(
+                                   'in' => $storeIds
+                               )
+                           );
 
         if ($shipmentTypes) {
             $shipmentCollection->addFieldToFilter('`shipment_type`', array('in', $shipmentTypes));
@@ -715,6 +727,11 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUseDeliveryOptions($website)
     {
+        $checkoutExtension = $this->_getCheckoutExtension($website);
+        if (!$checkoutExtension || $checkoutExtension == 'other') {
+            return false;
+        }
+
         $useDeliveryoptions = (bool) $website->getConfig(self::XPATH_DELIVERY_OPTIONS_ACTIVE);
 
         return $useDeliveryoptions;
@@ -729,6 +746,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUseDeliveryDays($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $useDeliveryDays = (bool) $website->getConfig(self::XPATH_ENABLE_DELIVERY_DAYS);
 
         return $useDeliveryDays;
@@ -743,6 +764,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUseTimeframes($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $useTimeframes = (bool) $website->getConfig(self::XPATH_ENABLE_TIMEFRAMES);
 
         return $useTimeframes;
@@ -757,6 +782,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUseAvond($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $useAvond = (bool) $website->getConfig(self::XPATH_ENABLE_EVENING_TIMEFRAMES);
 
         return $useAvond;
@@ -771,6 +800,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsePg($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $usePg = (bool) $website->getConfig(self::XPATH_ENABLE_PAKJEGEMAK);
 
         return $usePg;
@@ -785,6 +818,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsePa($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $usePa = (bool) $website->getConfig(self::XPATH_ENABLE_PAKKETAUTOMAAT_LOCATIONS);
 
         return $usePa;
@@ -799,6 +836,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsePge($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $usePge = (bool) $website->getConfig(self::XPATH_ENABLE_PAKJEGEMAK_EXPRESS);
 
         return $usePge;
@@ -846,6 +887,10 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUseMijnPakketLogin($website)
     {
+        if (!$this->_getUseDeliveryOptions($website)) {
+            return false;
+        }
+
         $useMijnPakketLogin = (bool) $website->getConfig(self::XPATH_MIJNPAKKET_LOGIN_ACTIVE);
 
         return $useMijnPakketLogin;
@@ -860,9 +905,28 @@ class TIG_PostNL_Model_ExtensionControl_Webservices extends TIG_PostNL_Model_Ext
      */
     protected function _getUsePostcodeCheck($website)
     {
+        $checkoutExtension = $this->_getCheckoutExtension($website);
+        if (!$checkoutExtension || $checkoutExtension == 'other') {
+            return false;
+        }
+
         $usePostcodeCheck = (bool) $website->getConfig(self::XPATH_USE_POSTCODE_CHECK);
 
         return $usePostcodeCheck;
+    }
+
+    /**
+     * Get the currently used checkout extension for this website.
+     *
+     * @param Mage_Core_Model_Website $website
+     *
+     * @return mixed
+     */
+    protected function _getCheckoutExtension($website)
+    {
+        $checkoutExtension = $website->getConfig(self::XPATH_CHECKOUT_EXTENSION);
+
+        return $checkoutExtension;
     }
 
     /**

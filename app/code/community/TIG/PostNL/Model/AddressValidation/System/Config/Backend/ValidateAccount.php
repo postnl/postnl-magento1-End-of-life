@@ -35,6 +35,16 @@
  *
  * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
+ *
+ * @method boolean hasStoreId()
+ * @method boolean hasWebsite()
+ *
+ * @method string getStoreCode()
+ * @method string getWebsiteCode()
+ * @method array  getGroups()
+ *
+ * @method TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount setStoreId(int $value)
+ * @method TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount setWebsite(Mage_Core_Model_Website $value)
  */
 class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount extends Mage_Core_Model_Config_Data
 {
@@ -148,7 +158,9 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
         );
 
         /**
-         * Load the CIF model and set to test mode to false
+         * Load the CIF model and set to test mode to false.
+         *
+         * @var TIG_PostNL_Model_Core_Cif $cif
          */
         $cif = Mage::getModel('postnl_core/cif')
                    ->setTestMode($testMode);
@@ -184,7 +196,12 @@ class TIG_PostNL_Model_AddressValidation_System_Config_Backend_ValidateAccount e
      */
     protected function _getIsTestMode()
     {
-        $cifTestMode = (bool) $this->_getConfigValue(self::XPATH_MODE);
+        $cifTestMode = false;
+        $cifMode = $this->_getConfigValue(self::XPATH_MODE);
+
+        if ($cifMode !== '2') {
+            $cifTestMode = true;
+        }
 
         return $cifTestMode;
     }

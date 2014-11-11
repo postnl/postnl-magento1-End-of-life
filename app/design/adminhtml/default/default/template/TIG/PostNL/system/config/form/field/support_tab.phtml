@@ -45,33 +45,28 @@
 <?php $_installationManualUrl = $this->getInstallationManualUrl(); ?>
 <?php $_userGuideUrl          = $this->getUserGuideUrl(); ?>
 <?php $_changelogUrl          = $this->getChangelogUrl(); ?>
+<?php $_kbUrl                 = $this->getKbUrl(); ?>
 <tr>
     <td>
         <h2 class="content-heading"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>"/> <?php echo $this->__('PostNL version %s', $this->getVersion());?></h2>
         <table id="supportWrap" cellpadding="0" cellspacing="0">
             <tr>
-                <td colspan="3">
-                    <div class="text-box">
-                        <h4><?php echo $this->__("We highly reccommend you place several 'test'  shipments, before you use the extension for real orders and real shipments."); ?></h4>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <div class="text-box">
-                        <h4><?php echo $this->__('Before you proceed to use this extension it is very important that you have properly configured certain elements of your Magento webshop.'); ?></h4>
-                        <ul class="postnl-config-warning">
-                            <li><?php echo $this->__("You should make sure that each product you intend to ship using PostNL has a maximum size of 175 x 78 x 58 cm and weighs less than 30 kg. The shipment will only be invoiced after the weigh-in at the PostNL sorting centre. If you wish to ship an order that weighs over 30 kg, you will have to split it into separate parcels that each weigh less than 30 kg. To do this you may create multiple shipments for a single order or you may use the extension's multi-colli functionality."); ?></li>
-                            <li><?php echo $this->__("Make sure the PostNL shipping method is configured under system > config > shipping methods > PostNL. Only shipments made using this shipping method will be able to use PostNL's services. You may choose to charge either a flat rate or a table rate-based shipping fee. In the case of the latter, the table rates you have added under the Table Rate shipping method will be used. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.", 'http://www.magentocommerce.com/knowledge-base/entry/how-do-i-set-up-table-rate-shipping'); ?></li>
-                            <li><?php echo $this->__("You should properly configure your checkout process. PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. In order to do so, you need to enable the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.", 'http://kb.tig.nl/topic/55961916'); ?></li>
-                        </ul>
-                    </div>
-                </td>
-            </tr>
-            <tr>
                 <td class="col-left">
                     <div class="text-box">
-                        <h3><?php echo $this->__('Magento &amp; 3rd party version compatibility');?></h3>
+                        <h4><?php echo $this->__("We urge you to read these instructions before you proceed to use this extension."); ?></h4>
+                    </div>
+
+                    <div class="text-box">
+                        <ul class="postnl-config-warning">
+                            <li><?php echo $this->__("You should make sure that each product you intend to ship using PostNL has a maximum size of 175 x 78 x 58 cm and weighs less than 30 kg. You will have to split heavier orders into separate parcels. To do this you may create multiple shipments for a single order or you may use the extension's multi-colli functionality."); ?></li>
+                            <li><?php echo $this->__("Configure the PostNL sending method under system > config > shipping methods > PostNL. You may choose to charge either a flat rate or a table rate-based shipping fee. More info on how to setup the Table Rate shipping method can be found <a href='%s' target='_blank'>here</a>.", 'http://www.magentocommerce.com/knowledge-base/entry/how-do-i-set-up-table-rate-shipping'); ?></li>
+                            <li><?php echo $this->__("PostNL needs to be able to retrieve a properly formatted address from the checkout process in order to guarantee the order is delivered at the correct address. To do so, you need to enable the postcode validation or configure the appropriate number of street lines in your checkout flow and make sure these have correct labels and validation settings. More info on how to do this, can be found <a href='%s' target='_blank'>here</a>.", 'http://kb.tig.nl/topic/55961916'); ?></li>
+                            <li><?php echo $this->__("We highly recommend you place several 'test' shipments, before you use the extension for real shipments."); ?></li>
+                        </ul>
+                    </div>
+
+                    <div class="text-box">
+                        <h3><?php echo $this->__('Magento & 3rd party version compatibility');?></h3>
                         <ul>
                             <li><?php echo $this->__('Magento Community Edition version');?> v1.6, v1.7, v1.8 &amp; v1.9</li>
                             <li><?php echo $this->__('Magento Enterprise Edition version');?> v1.11, v1.12, v1.13 &amp; v1.14</li>
@@ -80,16 +75,7 @@
                             <li><?php echo $this->__("Idev's OneStepCheckout version");?> v4.0 &amp; v4.1</li>
                         </ul>
                         <ul>
-                            <li><?php echo $this->__('If you wish to use this extension on an unsupported Magento version or edition, or in combination with an unsupported 3rd party extension, we cannot guarantee the PostNL extension will function as expected. For questions please contact the Total Internet Group servicedesk.'); ?></li>
-                        </ul>
-                    </div>
-                    <div class="text-box">
-                        <h3><?php echo $this->__('Documentation');?></h3>
-                        <p><?php echo $this->__('A list of documents regarding the extension.');?></p>
-                        <ul>
-                            <li><a class="link" target="_blank" href="<?php echo $_installationManualUrl; ?>" title="<?php echo $this->__('View the installation and configuration manual.');?>"><?php echo $this->__('Installation and configuration manual');?></a></li>
-                            <li><a class="link" target="_blank" href="<?php echo $_userGuideUrl; ?>" title="<?php echo $this->__('View the user manual.');?>"><?php echo $this->__('User manual');?></a></li>
-                            <li><a class="link" target="_blank" href="<?php echo $_changelogUrl; ?>" title="<?php echo $this->__('View the complete changelog of the extension.');?>"><?php echo $this->__('Full changelog');?></a></li>
+                            <li><?php echo $this->__('We cannot guarantee compatibility with non supported extensions and versions of Magento.'); ?></li>
                         </ul>
                     </div>
                 </td>
@@ -99,13 +85,12 @@
                 <td class="col-right">
                     <div class="text-box">
                         <h3><?php echo $this->__('Support');?></h3>
-                        <p><?php echo $this->__('The extension is developed by Total Internet Group, commissioned by PostNL. Depending on the nature of the issue or question you should contact either PostNL or Total Internet Group.');?></p>
-                        <h4><?php echo $this->__('PostNL account information and PostNL services');?></h4>
+                        <p><?php echo $this->__('The extension is developed by Total Internet Group, commissioned by PostNL.');?></p>
+                        <h4><em><?php echo $this->__('PostNL account information and PostNL services');?></em></h4>
                         <p><?php echo $this->__('For questions related to your PostNL account and PostNL delivery options, please contact PostNL.');?></p>
-                        <p><a href="http://www.postnl.nl" target="_blank"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/logo_postnl.png'); ?>" alt="" /></a></p>
                         <table class="contact">
-                             <tr>
-                                <td class="first"><?php echo $this->__('PostNL:');?></td>
+                            <tr>
+                                <td class="first"><?php echo $this->__('Website:');?></td>
                                 <td class="last"><a target="_blank" href="<?php echo $_postnlRegisterUrl; ?>"><?php echo $_postnlRegisterUrl; ?></a></td>
                             </tr>
                             <tr>
@@ -113,27 +98,19 @@
                                 <td class="last">058-2333343</td>
                             </tr>
                         </table>
-                        <h4><?php echo $this->__('Extension support and configuration questions');?></h4>
-                        <p><?php echo $this->__('For configuration problems, extension conflicts and bugs, contact Total Internet Group.');?></p>
-                        <p><a href="http://www.tig.nl" target="_blank"><img src="<?php echo $this->getSkinUrl('images/TIG/PostNL/tig_logo_medium.gif'); ?>" alt="" /></a></p>
-                        <table class="contact">
-                             <tr>
-                                <td class="first"><?php echo $this->__('Online knowledgebase:');?></td>
-                                <td class="last"><a target="_blank" href="<?php echo $_knowledgebaseUrl; ?>"><?php echo $_knowledgebaseUrl; ?></a></td>
-                            </tr>
-                             <tr>
-                                <td class="first"><?php echo $this->__('Request help directly:');?></td>
-                                <td class="last"><a target="_blank" href="<?php echo $_newTicketUrl; ?>"><?php echo $_newTicketUrl; ?></a></td>
-                            </tr>
-                            <tr>
-                                <td class="first"><?php echo $this->__('Email:');?></td>
-                                <td class="last"><a href="mailto:servicedesk@tig.nl">servicedesk@tig.nl</a></td>
-                            </tr>
-                            <tr>
-                                <td class="first"><?php echo $this->__('Phone:');?></td>
-                                <td class="last">+31(0)20 - 21 81 008</td>
-                            </tr>
-                        </table>
+                        <h4><em><?php echo $this->__('Extension support and configuration questions');?></em></h4>
+                        <p><?php echo $this->__('For questions about installing and configuring the extension please consult the relevant documentation:');?></p>
+                        <ul class="manual-links">
+                            <li><a target="_blank" href="<?php echo $_installationManualUrl; ?>" title="<?php echo $this->__('View the installation manual.');?>"><?php echo $this->__('Installation manual');?></a></li>
+                            <li><a target="_blank" href="<?php echo $_userGuideUrl; ?>" title="<?php echo $this->__('View the user manual.');?>"><?php echo $this->__('User manual');?></a></li>
+                            <li><a target="_blank" href="<?php echo $_changelogUrl; ?>" title="<?php echo $this->__('View the complete changelog of the extension.');?>"><?php echo $this->__('Full changelog');?></a></li>
+                            <li><a target="_blank" href="<?php echo $_kbUrl; ?>" title="<?php echo $this->__('Frequently asked questions.');?>"><?php echo $this->__('FAQ');?></a></li>
+                        </ul>
+                        <h4><em><?php echo $this->__('Unable to find the answer you need using the links above?'); ?></em></h4>
+                        <p><?php echo $this->__('Use the button below to request help from the TIG servicedesk.'); ?></p>
+                        <ul class="manual-links">
+                            <li><a target="_blank" href="<?php echo $_newTicketUrl; ?>" title="<?php echo $this->__('Request help from the servicedesk');?>"><?php echo $this->__('Request help from the servicedesk');?></a></li>
+                        </ul>
                     </div>
                 </td>
             </tr>

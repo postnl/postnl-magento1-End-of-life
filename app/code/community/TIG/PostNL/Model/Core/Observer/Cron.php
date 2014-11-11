@@ -51,7 +51,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
     /**
      * XML path to setting that determines whether or not to send track and trace emails
      */
-    const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/cif_labels_and_confirming/send_track_and_trace_email';
+    const XPATH_SEND_TRACK_AND_TRACE_EMAIL = 'postnl/track_and_trace/send_track_and_trace_email';
 
     /**
      * Xpath to the product attribute update data used by the product attribute update cron.
@@ -105,7 +105,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
 
         /**
          * Check the maximum amount of time a temp file may be stored. By default this is 300s (5m).
-         * If this settings is empty, end the script.
+         * If this setting is empty, end the script.
          */
         $maxFileStorageTime = (int) Mage::getStoreConfig(
             self::XPATH_MAX_FILE_STORAGE,
@@ -548,8 +548,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $helper->cronLog("All confirmation placed before {$expireDate} will be expired.");
 
         /**
-         * Get all postnl shipments that have been confirmed over X days ago and who have not yet been shipped
-         * (shipping_phase other than 'collection')
+         * Get all postnl shipments that have been confirmed over X days ago and who have not yet been shipped.
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter(
@@ -939,6 +938,7 @@ class TIG_PostNL_Model_Core_Observer_Cron
                  */
                 $finalRun = false;
                 $helper->logException($e);
+                $helper->cronLog($helper->__('An error occurred while processing this attribute.'));
             }
         }
 
