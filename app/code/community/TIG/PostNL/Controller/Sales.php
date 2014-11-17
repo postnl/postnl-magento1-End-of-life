@@ -182,7 +182,7 @@ class TIG_PostNL_Controller_Sales extends Mage_Core_Controller_Front_Action
             $orderId = (int) $this->getRequest()->getParam('order_id');
         }
         if (!$orderId) {
-            $this->_forward('noRoute');
+            $this->_redirect($this->getErrorRedirect());
             return false;
         }
 
