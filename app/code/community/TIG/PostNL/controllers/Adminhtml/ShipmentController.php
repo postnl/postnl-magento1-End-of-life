@@ -1941,7 +1941,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
     }
 
     /**
-     * Creates a Parcelware export file based on the selected shipments
+     * Creates a Parcelware export file based on the selected shipments.
      *
      * @return $this
      */
@@ -1961,7 +1961,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $shipmentIds = $this->_getShipmentIds();
 
             /**
-             * Load the shipments and check if they are valid
+             * Load the shipments and check if they are valid.
              */
             $shipments = $this->_loadAndCheckShipments($shipmentIds, true);
 
@@ -1974,6 +1974,7 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $timestamp = date('Ymd_His', Mage::getModel('core/date')->timestamp());
 
             $this->_prepareDownloadResponse("PostNL_Parcelware_Export_{$timestamp}.csv", $csvContents);
+            return $this;
         } catch (TIG_PostNL_Exception $e) {
             $helper->logException($e);
             $helper->addExceptionSessionMessage('adminhtml/session', $e);
@@ -1989,8 +1990,5 @@ class TIG_PostNL_Adminhtml_ShipmentController extends TIG_PostNL_Controller_Admi
             $this->_redirect('adminhtml/sales_shipment/index');
             return $this;
         }
-
-        $this->_redirect('adminhtml/sales_shipment/index');
-        return $this;
     }
 }
