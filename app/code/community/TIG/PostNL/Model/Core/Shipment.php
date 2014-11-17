@@ -44,8 +44,8 @@
  * Supported events:
  *  - postnl_shipment_generatebarcode_before
  *  - postnl_shipment_generatebarcode_after
- *  - postnl_shipment_generatereturnbarcode_before
- *  - postnl_shipment_generatereturnbarcode_after
+ *  - postnl_shipment_generatereturnbarcodes_before
+ *  - postnl_shipment_generatereturnbarcodes_after
  *  - postnl_shipment_generatelabel_before
  *  - postnl_shipment_generatelabel_after
  *  - postnl_shipment_register_confirmation_before
@@ -125,7 +125,6 @@
  * @method TIG_PostNL_Model_Core_Shipment setLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setProductOption(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setPayment(Mage_Sales_Model_Order_Payment $value)
- * @method TIG_PostNL_Model_Core_Shipment setReturnBarcode(string $value)
  * @method TIG_PostNL_Model_Core_Shipment setReturnLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setReturnLabelsPrinted(int $value)
  *
@@ -1379,27 +1378,23 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
     /**
      * Get this shipment's return barcode if available.
      *
+     * @param int|null $barcodeNumber
+     *
      * @return string|null
      */
-    public function getReturnBarcode()
+    public function getReturnBarcode($barcodeNumber = null)
     {
-        if ($this->hasData('return_barcode')) {
-            return $this->_getData('return_barcode');
+        if (!is_numeric($barcodeNumber) || $barcodeNumber < 1) {
+            $barcodeNumber = 0;
         }
 
-        if (!$this->hasReturnBarcode()) {
-            return null;
-        }
+        /**
+         * @var TIG_PostNL_Model_Core_Shipment_Barcode $barcode
+         */
+        $barcode = Mage::getModel('postnl_core/shipment_barcode');
+        $barcode->loadByParentAndBarcodeNumber($this->getId(), $barcodeNumber, $barcode::BARCODE_TYPE_RETURN);
 
-        $returnBarcodes = $this->getBarcodes(false, TIG_PostNL_Model_Core_Shipment_Barcode::BARCODE_TYPE_RETURN);
-        if (empty($returnBarcodes)) {
-            return null;
-        }
-
-        $returnBarcode = current($returnBarcodes);
-
-        $this->setReturnBarcode($returnBarcode);
-        return $returnBarcode;
+        return $barcode->getBarcode();
     }
 
     /**
@@ -2372,6 +2367,9 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      */
     public function canGenerateReturnBarcode()
     {
+        /**
+         * Return barcodes are only available for Dutch parcel shipments.
+         */
         if (!$this->isDutchShipment() || $this->isBuspakjeShipment()) {
             return false;
         }
@@ -2877,15 +2875,22 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 
         $this->lock();
 
-        Mage::dispatchEvent('postnl_shipment_generatereturnbarcode_before', array('shipment' => $this));
+        Mage::dispatchEvent('postnl_shipment_generatereturnbarcodes_before', array('shipment' => $this));
+
+        $parcelCount = $this->getParcelCount();
+        if (!$parcelCount) {
+            $parcelCount = $this->_calculateParcelCount();
+        }
 
         /**
-         * Generate and save the barcode.
+         * Generate a return barcode for each parcel and save it.
          */
-        $barcode = $this->_generateBarcode();
-        $this->_addReturnBarcode($barcode);
+        for ($i = 0; $i < $parcelCount; $i++) {
+            $barcode = $this->_generateBarcode();
+            $this->_addReturnBarcode($barcode, $i);
+        }
 
-        Mage::dispatchEvent('postnl_shipment_generatereturnbarcode_after', array('shipment' => $this));
+        Mage::dispatchEvent('postnl_shipment_generatereturnbarcodes_after', array('shipment' => $this));
         $this->unlock();
         return $this;
     }
@@ -3001,7 +3006,6 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
             $barcode = $mainBarcode;
         } else {
             $barcode = $this->getBarcode($barcodeNumber);
-            $barcodeNumber++; //while barcode numbers start at 0, shipment numbers start at 1
         }
 
         $returnBarcode    = false;
@@ -3011,11 +3015,12 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          * If we should print a return label, get the return barcode.
          */
         if ($printReturnLabel) {
-            $returnBarcode = $this->getReturnBarcode();
+            $returnBarcode = $this->getReturnBarcode($barcodeNumber);
+
             /**
              * If no return barcode is available, we can only print the regular shipping labels.
              */
-            if (!$returnBarcode) {
+            if (empty($returnBarcode)) {
                 $printReturnLabel = false;
             }
         }
@@ -3025,6 +3030,8 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
          */
         $cif = Mage::getModel('postnl_core/cif');
         $cif->setStoreId($storeId);
+
+        $barcodeNumber++; //while barcode numbers start at 0, shipment numbers start at 1
 
         /**
          * @var StdClass $result
@@ -3715,10 +3722,11 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
      * Add a return barcode to this shipment's barcode collection
      *
      * @param string $barcode The barcode to add
+     * @param int $barcodeNumber The number of this barcode
      *
      * @return $this
      */
-    protected function _addReturnBarcode($barcode)
+    protected function _addReturnBarcode($barcode, $barcodeNumber)
     {
         /**
          * @var TIG_PostNL_Model_Core_Shipment_Barcode $barcodeModel
@@ -3726,6 +3734,7 @@ class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
         $barcodeModel = Mage::getModel('postnl_core/shipment_barcode');
         $barcodeModel->setParentId($this->getId())
                      ->setBarcode($barcode)
+                     ->setBarcodeNumber($barcodeNumber)
                      ->setBarcodeType($barcodeModel::BARCODE_TYPE_RETURN)
                      ->save();
 

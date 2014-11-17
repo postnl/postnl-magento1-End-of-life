@@ -70,20 +70,25 @@ class TIG_PostNL_Model_Core_Shipment_Barcode extends Mage_Core_Model_Abstract
     /**
      * Load a barcode object based on a postnl shipment Id and a barcode number
      *
-     * @param $parentId
-     * @param $barcodeNumber
+     * @param int            $parentId
+     * @param int            $barcodeNumber
+     * @param string|boolean $type
      *
      * @return $this
      */
-    public function loadByParentAndBarcodeNumber($parentId, $barcodeNumber)
+    public function loadByParentAndBarcodeNumber($parentId, $barcodeNumber, $type = false)
     {
+        if (!$type) {
+            $type = self::BARCODE_TYPE_SHIPMENT;
+        }
+
         /**
          * @var TIG_PostNL_Model_Core_Resource_Shipment_Barcode_Collection $collection
          */
         $collection = $this->getCollection();
         $collection->addFieldToSelect('*')
                    ->addFieldToFilter('parent_id', array('eq' => $parentId))
-                   ->addFieldToFilter('barcode_type', array('eq' => self::BARCODE_TYPE_SHIPMENT))
+                   ->addFieldToFilter('barcode_type', array('eq' => $type))
                    ->addFieldToFilter('barcode_number', array('eq' => $barcodeNumber));
 
         if ($collection->getSize()) {

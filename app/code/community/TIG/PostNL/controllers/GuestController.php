@@ -62,10 +62,8 @@ class TIG_PostNL_GuestController extends TIG_PostNL_Controller_Sales
      *
      * @return boolean
      */
-    protected function _canViewPostnlShipment($postnlShipment)
+    protected function _canViewPostnlShipment(TIG_PostNL_Model_Core_Shipment $postnlShipment)
     {
-        $availableStates = Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates();
-
         if (!$this->_loadValidOrder($postnlShipment->getOrderId())) {
             return false;
         }
@@ -74,10 +72,12 @@ class TIG_PostNL_GuestController extends TIG_PostNL_Controller_Sales
          * @var Mage_Sales_Model_Order $order
          */
         $order = Mage::registry('current_order');
+        $availableStates = Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates();
 
         if ($postnlShipment->getId()
             && $postnlShipment->isConfirmed()
             && $order->getId()
+            && $postnlShipment->getOrderId() == $order->getId()
             && in_array($order->getState(), $availableStates, $strict = true)
         ) {
             return true;
