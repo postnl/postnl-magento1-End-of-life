@@ -47,6 +47,40 @@ $installer->startSetup();
 $conn = $installer->getConnection();
 
 /***********************************************************************************************************************
+ * POSTNL ORDER
+ **********************************************************************************************************************/
+
+$tableName = $installer->getTable('postnl_core/order');
+
+if (!$conn->tableColumnExists($tableName, 'expected_delivery_time_start')) {
+    $conn->addColumn(
+        $tableName,
+        'expected_delivery_time_start',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'length'   => '16',
+            'nullable' => true,
+            'comment'  => 'Expected Delivery Time Start',
+            'after'    => 'delivery_date',
+        )
+    );
+}
+
+if (!$conn->tableColumnExists($tableName, 'expected_delivery_time_end')) {
+    $conn->addColumn(
+        $tableName,
+        'expected_delivery_time_end',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'length'   => '16',
+            'nullable' => true,
+            'comment'  => 'Expected Delivery Time End',
+            'after'    => 'expected_delivery_time_start',
+        )
+    );
+}
+
+/***********************************************************************************************************************
  * POSTNL SHIPMENT
  **********************************************************************************************************************/
 
@@ -62,6 +96,34 @@ if (!$conn->tableColumnExists($tableName, 'return_labels_printed')) {
             'default'  => '0',
             'comment'  => 'Return labels Printed',
             'after'    => 'labels_printed',
+        )
+    );
+}
+
+if (!$conn->tableColumnExists($tableName, 'expected_delivery_time_start')) {
+    $conn->addColumn(
+        $tableName,
+        'expected_delivery_time_start',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'length'   => '16',
+            'nullable' => true,
+            'comment'  => 'Expected Delivery Time Start',
+            'after'    => 'delivery_date',
+        )
+    );
+}
+
+if (!$conn->tableColumnExists($tableName, 'expected_delivery_time_end')) {
+    $conn->addColumn(
+        $tableName,
+        'expected_delivery_time_end',
+        array(
+            'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'length'   => '16',
+            'nullable' => true,
+            'comment'  => 'Expected Delivery Time End',
+            'after'    => 'expected_delivery_time_start',
         )
     );
 }

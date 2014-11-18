@@ -114,6 +114,14 @@ class TIG_PostNL_Model_Core_Observer_Barcode
             if ($postnlOrder->getIsPakketautomaat()) {
                 $postnlShipment->setIsPakketautomaat($postnlOrder->getIsPakketautomaat());
             }
+
+            if ($postnlOrder->hasExpectedDeliveryTimeStart()) {
+                $postnlShipment->setExpectedDeliveryTimeStart($postnlOrder->getExpectedDeliveryTimeStart());
+            }
+
+            if ($postnlOrder->hasExpectedDeliveryTimeEnd()) {
+                $postnlShipment->setExpectedDeliveryTimeEnd($postnlOrder->getExpectedDeliveryTimeEnd());
+            }
         }
 
         /**

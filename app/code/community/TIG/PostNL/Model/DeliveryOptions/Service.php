@@ -275,6 +275,18 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         }
 
         /**
+         * Set the expected delivery timeframe if available.
+         */
+        if (isset($data['from'])) {
+            $from = Mage::getSingleton('core/date')->gmtDate('H:i:s', $data['from']);
+            $postnlOrder->setExpectedDeliveryTimeStart($from);
+        }
+        if (isset($data['to'])) {
+            $to = Mage::getSingleton('core/date')->gmtDate('H:i:s', $data['to']);
+            $postnlOrder->setExpectedDeliveryTimeEnd($to);
+        }
+
+        /**
          * Remove any existing PakjeGemak addresses.
          *
          * @var Mage_Sales_Model_Quote_Address $quoteAddress
@@ -288,7 +300,7 @@ class TIG_PostNL_Model_DeliveryOptions_Service extends Varien_Object
         /**
          * Add an optional PakjeGemak address.
          */
-        if (array_key_exists('address', $data)) {
+        if (isset($data['address'])) {
             $address = $data['address'];
 
             $street = array(

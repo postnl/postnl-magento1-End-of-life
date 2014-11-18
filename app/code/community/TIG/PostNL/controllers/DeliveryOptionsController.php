@@ -63,6 +63,11 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
     const MOBILE_PHONE_NUMBER_REGEX = '#^(((\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$#i';
 
     /**
+     * Regular expression to match a valid PostNL time.
+     */
+    const TIME_REGEX = '#^[0-9]{2,2}:[0-9]{2,2}(:[0-9]{2,2})?$#';
+
+    /**
      * @var null|array
      */
     protected $_validTypes = null;
@@ -708,6 +713,16 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $date  = $params['date'];
         $costs = Mage::helper('core')->jsonDecode($params['costs']);
 
+        $from = false;
+        if (!empty($params['from'])) {
+            $from = $params['from'];
+        }
+
+        $to = false;
+        if (!empty($params['to'])) {
+            $to = $params['to'];
+        }
+
         /**
          * The costs object should contain an amount incl. VAT and excl. VAT.
          */
@@ -737,6 +752,7 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
         $typeValidator  = new Zend_Validate_InArray(array('haystack' => $validTypes));
         $dateValidator  = new Zend_Validate_Date(array('format' => 'd-m-Y'));
         $costsValidator = new Zend_Validate_Float();
+        $timeValidator  = new Zend_Validate_Regex(array('pattern' => self::TIME_REGEX));
 
         /**
          * Validate the postcode.
@@ -782,6 +798,14 @@ class TIG_PostNL_DeliveryOptionsController extends Mage_Core_Controller_Front_Ac
             'date'  => $date,
             'costs' => $costs,
         );
+
+        if ($from && $timeValidator->isValid($from)) {
+            $data['from'] = $from;
+        }
+
+        if ($to && $timeValidator->isValid($to)) {
+            $data['to'] = $to;
+        }
 
         if (isset($params['number'])) {
             $phoneNumber = $this->_getSavePhonePostData($params);
