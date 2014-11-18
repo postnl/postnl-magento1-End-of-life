@@ -90,6 +90,8 @@
  * @method bool|int                       getIsPakketautomaat()
  * @method bool                           getIsBuspakjeShipment()
  * @method int                            getReturnLabelsPrinted()
+ * @method string                         getExpectedDeliveryTimeStart()
+ * @method string                         getExpectedDeliveryTimeEnd()
  *
  * @method TIG_PostNL_Model_Core_Shipment setLabelsPrinted(int $value)
  * @method TIG_PostNL_Model_Core_Shipment setTreatAsAbandoned(int $value)
@@ -127,6 +129,8 @@
  * @method TIG_PostNL_Model_Core_Shipment setPayment(Mage_Sales_Model_Order_Payment $value)
  * @method TIG_PostNL_Model_Core_Shipment setReturnLabels(mixed $value)
  * @method TIG_PostNL_Model_Core_Shipment setReturnLabelsPrinted(int $value)
+ * @method TIG_PostNL_Model_Core_Shipment setExpectedDeliveryTimeStart(string $value)
+ * @method TIG_PostNL_Model_Core_Shipment setExpectedDeliveryTimeEnd(string $value)
  *
  * @method bool                           hasBarcodeUrl()
  * @method bool                           hasPostnlOrder()
@@ -152,6 +156,8 @@
  * @method bool                           hasPayment()
  * @method bool                           hasReturnLabels()
  * @method bool                           hasReturnLabelsPrinted()
+ * @method bool                           hasExpectedDeliveryTimeStart()
+ * @method bool                           hasExpectedDeliveryTimeEnd()
  */
 class TIG_PostNL_Model_Core_Shipment extends Mage_Core_Model_Abstract
 {

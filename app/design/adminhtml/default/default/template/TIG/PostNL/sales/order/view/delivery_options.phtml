@@ -42,6 +42,8 @@
 <?php $_helper = Mage::helper('postnl'); ?>
 
 <?php $_postnlOrder = $this->getPostnlOrder(); ?>
+
+<?php $_deliveryTimeInfo = $this->getDeliveryTimeInfo(); ?>
 <?php if ($_postnlOrder->getId() && $_postnlOrder->getType()): ?>
     <div class="hor-scroll" id="postnl_delivery_option_info">
         <table cellspacing="0" class="form-list">
@@ -62,6 +64,16 @@
                 <td class="label"><label><?php echo $this->__('Requested delivery date'); ?></label></td>
                 <td class="value"><strong><?php echo $this->formatDate($_postnlOrder->getDeliveryDate(), Mage_Core_Model_Locale::FORMAT_TYPE_FULL) ?></strong></td>
             </tr>
+            <?php if ($_deliveryTimeInfo): ?>
+                <tr>
+                    <td class="label"><label><?php echo $this->__('Requested delivery time'); ?></label></td>
+                    <?php if (!empty($_deliveryTimeInfo['delivery_time_end'])): ?>
+                        <td class="value"><strong><?php echo $_deliveryTimeInfo['delivery_time_start']; ?> - <?php echo $_deliveryTimeInfo['delivery_time_end']; ?></strong><?php if ($_deliveryTimeInfo['timezone_differ']): ?> (<?php  echo $_deliveryTimeInfo['store_delivery_time_start']; ?> - <?php  echo $_deliveryTimeInfo['store_delivery_time_end']; ?>)<?php endif;?></td>
+                    <?php else: ?>
+                        <td class="value"><strong><?php echo $this->__('from'); ?> <?php echo $_deliveryTimeInfo['delivery_time_start']; ?><?php if ($_deliveryTimeInfo['timezone_differ']): ?> (<?php echo $_deliveryTimeInfo['store_delivery_time_start'] ?>)<?php endif;?></strong></td>
+                    <?php endif; ?>
+                </tr>
+            <?php endif; ?>
             <?php if ($this->hasExtraOptions()): ?>
                 <tr>
                     <td class="label"><label><?php echo $this->__('Extra options'); ?></label></td>

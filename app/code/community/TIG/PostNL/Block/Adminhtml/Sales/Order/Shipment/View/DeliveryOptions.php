@@ -370,4 +370,52 @@ class TIG_PostNL_Block_Adminhtml_Sales_Order_Shipment_View_DeliveryOptions
     {
         return $this->getChildHtml('change_parcel_count_button');
     }
+
+    /**
+     * Get delivery time information for this PostNL shipment.
+     *
+     * @return array|false
+     */
+    public function getDeliveryTimeInfo()
+    {
+        $postnlShipment = $this->getPostnlShipment();
+        if (!$postnlShipment->hasExpectedDeliveryTimeStart()) {
+            return false;
+        }
+
+        $info = array(
+            'delivery_time_start'       => '',
+            'delivery_time_end'         => '',
+            'store_delivery_time_start' => '',
+            'store_delivery_time_end'   => '',
+            'timezone_differ'           => false,
+        );
+
+        $dateModel = Mage::getSingleton('core/date');
+        $storeTimezone = Mage::getStoreConfig(
+            Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE,
+            $postnlShipment->getStoreId()
+        );
+        $storeTimezone = new DateTimeZone($storeTimezone);
+
+        $storeStartTime = new DateTime($postnlShipment->getExpectedDeliveryTimeStart());
+        $storeStartTime->setTimezone($storeTimezone);
+        $info['delivery_time_start'] = $dateModel->date('H:i', $postnlShipment->getExpectedDeliveryTimeStart());
+        $info['store_delivery_time_start'] = $storeStartTime->format('H:i');
+
+        if ($info['delivery_time_start'] != $info['store_delivery_time_start']) {
+            $info['timezone_differ'] = true;
+        }
+
+        if (!$postnlShipment->hasExpectedDeliveryTimeEnd()) {
+            return $info;
+        }
+
+        $storeEndTime = new DateTime($postnlShipment->getExpectedDeliveryTimeEnd());
+        $storeEndTime->setTimezone($storeTimezone);
+        $info['delivery_time_end'] = $dateModel->date('H:i', $postnlShipment->getExpectedDeliveryTimeEnd());
+        $info['store_delivery_time_end'] = $storeEndTime->format('H:i');
+
+        return $info;
+    }
 }

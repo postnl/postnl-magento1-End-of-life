@@ -1429,10 +1429,19 @@ PostnlDeliveryOptions.prototype = {
             excl : this.getExtraCosts(false)
         };
 
+        var from = selectedOption.from;
+        if (selectedType == 'PG') {
+            from = '16:00:00';
+        } else if (selectedType == 'PGE') {
+            from = '08:30:00'
+        }
+
         var params = {
             isAjax : true,
             type   : selectedType,
             date   : selectedOption.getDate(),
+            from   : from,
+            to     : selectedOption.to,
             costs  : Object.toJSON(extraCosts)
         };
 

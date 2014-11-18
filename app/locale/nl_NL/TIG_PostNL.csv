@@ -1183,3 +1183,5 @@ TIG_PostNL::An error occurred while retrieving the return labels. Please try aga
 TIG_PostNL::Direct Debit,Automatische Incasso
 TIG_PostNL::Creditcard,Creditcard
 TIG_PostNL::Giftcard,Cadeaubon
+TIG_PostNL::Expected delivery time,Verwachtte bezorgtijd
+TIG_PostNL::Requested delivery time,Gekozen bezorgtijd
