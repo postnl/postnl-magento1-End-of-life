@@ -450,6 +450,8 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
             'confirm_status'           => false,
             'shipping_phase'           => false,
             'formatted_shipping_phase' => false,
+            'delivery_time_start'      => false,
+            'delivery_time_end'        => false,
         );
 
         /**
@@ -466,6 +468,19 @@ class TIG_PostNL_Helper_DeliveryOptions extends TIG_PostNL_Helper_Checkout
         $shipmentCosts = $postnlOrder->getShipmentCosts();
         if ($shipmentCosts) {
             $deliveryOptionsInfo['shipment_costs'] = $shipmentCosts;
+        }
+
+        /**
+         * If the customer chose a specific delivery time, add that to the array.
+         */
+        if ($postnlOrder->hasExpectedDeliveryTimeStart()) {
+            $deliveryOptionsInfo['delivery_time_start'] = $postnlOrder->getExpectedDeliveryTimeStart();
+            /**
+             * In the case of PakjeGemak shipments there is only a start time and no end time.
+             */
+            if ($postnlOrder->hasExpectedDeliveryTimeEnd()) {
+                $deliveryOptionsInfo['delivery_time_end'] = $postnlOrder->getExpectedDeliveryTimeEnd();
+            }
         }
 
         /**
