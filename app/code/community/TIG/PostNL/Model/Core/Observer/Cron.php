@@ -541,7 +541,6 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                      )
                                  );
 
-        echo $postnlShipmentCollection->getSelect();
         if ($postnlShipmentCollection->getSize() < 1) {
             $helper->cronLog('No valid shipments found. Exiting cron.');
             return $this;
