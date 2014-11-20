@@ -233,10 +233,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * Join sales_flat_order table.
          */
         $select->joinInner(
-            array('order' => $resource->getTableName('sales/order')),
-            '`main_table`.`entity_id`=`order`.`entity_id`',
+            array('postnl_join_order' => $resource->getTableName('sales/order')),
+            '`main_table`.`entity_id`=`postnl_join_order`.`entity_id`',
             array(
-                'shipping_method' => 'order.shipping_method',
+                'shipping_method' => 'postnl_join_order.shipping_method',
             )
         );
 
@@ -244,10 +244,10 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * Join sales_flat_order_payment table.
          */
         $select->joinLeft(
-            array('payment' => $resource->getTableName('sales/order_payment')),
-            '`main_table`.`entity_id`=`payment`.`parent_id`',
+            array('postnl_join_payment' => $resource->getTableName('sales/order_payment')),
+            '`main_table`.`entity_id`=`postnl_join_payment`.`parent_id`',
             array(
-                'payment_method' => 'payment.method',
+                'payment_method' => 'postnl_join_payment.method',
             )
         );
 
@@ -255,10 +255,11 @@ class TIG_PostNL_Model_Adminhtml_Observer_OrderGrid extends Varien_Object
          * Join sales_flat_order_address table.
          */
         $select->joinLeft(
-            array('shipping_address' => $resource->getTableName('sales/order_address')),
-            "`main_table`.`entity_id`=`shipping_address`.`parent_id` AND `shipping_address`.`address_type`='shipping'",
+            array('postnl_join_shipping_address' => $resource->getTableName('sales/order_address')),
+            "`main_table`.`entity_id`=`postnl_join_shipping_address`.`parent_id` AND" .
+            " `postnl_join_shipping_address`.`address_type`='shipping'",
             array(
-                'country_id' => 'shipping_address.country_id',
+                'country_id' => 'postnl_join_shipping_address.country_id',
             )
         );
 

@@ -59,6 +59,11 @@ class TIG_PostNL_Model_Core_Observer_Cron
     const XPATH_PRODUCT_ATTRIBUTE_UPDATE_DATA = 'postnl/general/product_attribute_update_data';
 
     /**
+     * Xpath to the return_expire_days setting.
+     */
+    const XPATH_RETURN_EXPIRE_DAYS = 'postnl/advanced/return_expire_days';
+
+    /**
      * Cron expression definition for updating product attributes.
      */
     const UPDATE_PRODUCT_ATTRIBUTE_STRING_PATH = 'crontab/jobs/postnl_update_product_attribute/schedule/cron_expr';
@@ -472,7 +477,40 @@ class TIG_PostNL_Model_Core_Observer_Cron
         $deliveredStatus = $postnlShipmentModelClass::SHIPPING_PHASE_DELIVERED;
 
         /**
+         * Get the date on which we can no longer requests return status updates for shipments.
+         */
+        $maxReturnDuration = Mage::getStoreConfig(self::XPATH_RETURN_EXPIRE_DAYS, Mage_Core_Model_App::ADMIN_STORE_ID);
+        $returnExpireDate  = new DateTime();
+        $returnExpireDate->sub(new DateInterval("P{$maxReturnDuration}D"));
+
+        /**
          * Get all postnl shipments with a barcode, that are confirmed and are not yet delivered.
+         *
+         * Resulting SQL:
+         * SELECT  `main_table` . *
+         * FROM  `tig_postnl_shipment` AS  `main_table`
+         * WHERE (
+         *     return_labels_printed =1
+         * )
+         * AND (
+         *     confirm_status =  'confirmed'
+         * )
+         * AND (
+         *     (
+         *         (
+         *             return_phase !=  '4'
+         *         )
+         *         OR (
+         *             return_phase IS NULL
+         *         )
+         *     )
+         * )
+         * AND (
+         *     shipment_id IS NOT NULL
+         * )
+         * AND (
+         *     confirmed_at >=  '{$returnExpireDate->format('Y-m-d')}'
+         * )
          */
         $postnlShipmentCollection = Mage::getResourceModel('postnl_core/shipment_collection');
         $postnlShipmentCollection->addFieldToFilter(
@@ -495,8 +533,15 @@ class TIG_PostNL_Model_Core_Observer_Cron
                                      array(
                                          'notnull' => true
                                      )
+                                 )
+                                 ->addFieldToFilter(
+                                     'confirmed_at',
+                                     array(
+                                         'gteq' => $returnExpireDate->format('Y-m-d')
+                                     )
                                  );
 
+        echo $postnlShipmentCollection->getSelect();
         if ($postnlShipmentCollection->getSize() < 1) {
             $helper->cronLog('No valid shipments found. Exiting cron.');
             return $this;

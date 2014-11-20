@@ -104,4 +104,5 @@ foreach ($settingsToMove as $from => $to) {
 $installer->addAclRules($returnLabelsAclResource, $returnLabelsRequiredResources)
           ->addAclRules($changeParcelCountAclResource, $changeParcelCountRequiredResources)
           ->resetWebserviceVersions($updatedWebservices)
+          ->generateReturnStatusCronExpr()
           ->clearConfigCache();

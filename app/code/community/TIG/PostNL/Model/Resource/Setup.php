@@ -45,6 +45,12 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
     const SHIPPING_STATUS_CRON_MODEL_PATH  = 'crontab/jobs/postnl_update_shipping_status/run/model';
 
     /**
+     * Cron expression and cron model definitions for return_status cron
+     */
+    const RETURN_STATUS_CRON_STRING_PATH = 'crontab/jobs/postnl_update_return_status/schedule/cron_expr';
+    const RETURN_STATUS_CRON_MODEL_PATH  = 'crontab/jobs/postnl_update_return_status/run/model';
+
+    /**
      * Cron expression and cron model definitions for statistics update cron
      */
     const UPDATE_STATISTICS_CRON_STRING_PATH = 'crontab/jobs/postnl_update_statistics/schedule/cron_expr';
@@ -98,6 +104,7 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
      */
     const SUCCESSFUL_UPDATE_ERROR_CODE           = 'POSTNL-0083';
     const SHIPPING_STATUS_CRON_ERROR_CODE        = 'POSTNL-0084';
+    const RETURN_STATUS_CRON_ERROR_CODE          = 'POSTNL-0205';
     const UPDATE_STATISTICS_CRON_ERROR_CODE      = 'POSTNL-0085';
     const UNSUPPORTED_MAGENTO_VERSION_ERROR_CODE = 'POSTNL-0086';
     const SUCCESSFUL_INSTALL_ERROR_CODE          = 'POSTNL-0156';
@@ -1312,6 +1319,56 @@ class TIG_PostNL_Model_Resource_Setup extends Mage_Catalog_Model_Resource_Setup
             }
         } catch (Exception $e) {
             Mage::helper('postnl')->logException($e);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Generate a random cron expression for the return status update cron for this merchant and store it in the
+     * database.
+     *
+     * @throws TIG_PostNL_Exception
+     *
+     * @return $this
+     */
+    public function generateReturnStatusCronExpr()
+    {
+        /**
+         * Generate semi-random values for the cron expression.
+         */
+        $cronMinute        = mt_rand(0, 59);
+
+        $cronNightHour     = mt_rand(0, 3);
+        $cronMorningHour   = $cronNightHour + 8; //8 hours after the night update
+        $cronAfternoonHour = $cronMorningHour + 8; //8 hours after the morning update
+
+        /**
+         * Generate a cron expr that runs on a specified minute on a specified hour between 0 and 3 AM, between 8 and
+         * 11 AM, and between 4 and 7 PM.
+         */
+        $cronExpr = "{$cronMinute} {$cronNightHour},{$cronMorningHour},{$cronAfternoonHour} * * *";
+
+        /**
+         * Store the cron expression in core_config_data.
+         */
+        try {
+            Mage::getModel('core/config_data')
+                ->load(self::RETURN_STATUS_CRON_STRING_PATH, 'path')
+                ->setValue($cronExpr)
+                ->setPath(self::RETURN_STATUS_CRON_STRING_PATH)
+                ->save();
+            Mage::getModel('core/config_data')
+                ->load(self::RETURN_STATUS_CRON_MODEL_PATH, 'path')
+                ->setValue((string) Mage::getConfig()->getNode(self::RETURN_STATUS_CRON_MODEL_PATH))
+                ->setPath(self::RETURN_STATUS_CRON_MODEL_PATH)
+                ->save();
+        } catch (Exception $e) {
+            throw new TIG_PostNL_Exception(
+                Mage::helper('postnl')->__('Unable to save return_status cron expression: %s', $cronExpr),
+                self::RETURN_STATUS_CRON_ERROR_CODE,
+                $e
+            );
         }
 
         return $this;
